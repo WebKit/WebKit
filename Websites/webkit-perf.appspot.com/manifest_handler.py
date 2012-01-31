@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 
 import json
 
@@ -40,7 +41,10 @@ from models import Test
 class ManifestHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8';
-        self.response.out.write('{"testMap":')
+        cache = memcache.get('manifest')
+        if cache:
+            self.response.out.write(cache)
+            return
 
         testMap = {}
         platformIdMap = {}
@@ -64,9 +68,6 @@ class ManifestHandler(webapp2.RequestHandler):
                 branchIdMap[branchId]['tests'].append(test.id)
                 branchIdMap[branchId]['platforms'] += platformIds
 
-        self.response.out.write(json.dumps(testMap))
-        self.response.out.write(',"platformMap":')
-
         platformMap = {}
         for platform in Platform.all():
             if platform.id not in platformIdMap:
@@ -76,9 +77,6 @@ class ManifestHandler(webapp2.RequestHandler):
                 'testIds': list(set(platformIdMap[platform.id]['tests'])),
                 'branchIds': list(set(platformIdMap[platform.id]['branches'])),
             }
-
-        self.response.out.write(json.dumps(platformMap))
-        self.response.out.write(',"branchMap":')
 
         branchMap = {}
         for branch in Branch.all():
@@ -90,5 +88,6 @@ class ManifestHandler(webapp2.RequestHandler):
                 'platformIds': list(set(branchIdMap[branch.id]['platforms'])),
             }
 
-        self.response.out.write(json.dumps(branchMap))
-        self.response.out.write('}')
+        result = json.dumps({'testMap': testMap, 'platformMap': platformMap, 'branchMap': branchMap})
+        self.response.out.write(result)
+        memcache.add('manifest', result)

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 
 import json
 
@@ -39,6 +40,13 @@ from models import Test
 
 class DashboardHandler(webapp2.RequestHandler):
     def get(self):
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8';
+
+        cache = memcache.get('dashboard')
+        if cache:
+            self.response.out.write(cache)
+            return
+
         webkitTrunk = Branch.get_by_key_name('webkit-trunk')
 
         # FIXME: Determine popular branches, platforms, and tests
@@ -55,5 +63,6 @@ class DashboardHandler(webapp2.RequestHandler):
         for test in Test.all():
             dashboard['testToId'][test.name] = test.id
 
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8';
-        self.response.out.write(json.dumps(dashboard))
+        result = json.dumps(dashboard)
+        self.response.out.write(result)
+        memcache.add('dashboard', result)

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 from google.appengine.ext.webapp import template
 
 import os
@@ -55,6 +56,10 @@ class MergeTestsHandler(webapp2.RequestHandler):
         for result in mergedResults:
             result.name = into.name
             result.put()
+
+        # Just flush everyting since we rarely merge tests and we need to flush
+        # dashboard, manifest, and all runs for this test here.
+        memcache.flush_all()
 
         deleteModelWithNumericIdHolder(merge)
 

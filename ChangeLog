@@ -1,5 +1,34 @@
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Enable memcache on webkit-perf.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=77378
+
+        Reviewed by Adam Barth.
+
+        Eanble memcache on dashboard, manifest, and runs handlers. Clear appropriate caches when new runs are reported,
+        or new models are created. We flush all caches when tests are merged since it's hard to figure out dependencies
+        in that case. Luckily, we merge tests only occassionally and manually (or hope so) so this shouldn't be an issue.
+
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler.post):
+        * Websites/webkit-perf.appspot.com/dashboard_handler.py:
+        (DashboardHandler.get):
+        * Websites/webkit-perf.appspot.com/manifest_handler.py:
+        (ManifestHandler.get):
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py:
+        (MergeTestsHandler.post):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (createInTransactionWithNumericIdHolder):
+        (Test):
+        (Test.cacheKey):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+        (ReportHandler._addTestIfNeeded):
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.get):
+
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         webkit-perf.appspot.com should have an ability to merge tests
         https://bugs.webkit.org/show_bug.cgi?id=77250
 

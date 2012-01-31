@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 from google.appengine.ext import db
 
 import json
@@ -61,6 +62,8 @@ class CreateHandler(webapp2.RequestHandler):
         else:
             error = "Unknown model type: %s\n" % model
 
+        # No need to clear manifest or runs since they only contain ones with test results
+        memcache.delete('dashboard')
         self.response.out.write(error + '\n' if error else 'OK')
 
     def _createBuilder(self, name, password):

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 
 import json
 from time import mktime
@@ -45,6 +46,8 @@ from models import modelFromNumericId
 
 class RunsHandler(webapp2.RequestHandler):
     def get(self):
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+
         try:
             testId = int(self.request.get('id', 0))
             branchId = int(self.request.get('branchid', 0))
@@ -57,6 +60,12 @@ class RunsHandler(webapp2.RequestHandler):
 
         # FIXME: Just fetch builds specified by "days"
         # days = self.request.get('days', 365)
+
+        cacheKey = Test.cacheKey(testId, branchId, platformId)
+        cache = memcache.get(cacheKey)
+        if cache:
+            self.response.out.write(cache)
+            return
 
         builds = Build.all()
         builds.filter('branch =', modelFromNumericId(branchId, Branch))
@@ -84,11 +93,12 @@ class RunsHandler(webapp2.RequestHandler):
                 values.append(result.value)
                 timestamps.append(posixTimestamp)
 
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8';
-        self.response.out.write(json.dumps({
+        result = json.dumps({
             'test_runs': test_runs,
             'averages': averages,
             'min': min(values) if values else None,
             'max': max(values) if values else None,
             'date_range': [min(timestamps), max(timestamps)] if timestamps else None,
-            'stat': 'ok'}))
+            'stat': 'ok'})
+        self.response.out.write(result)
+        memcache.add(cacheKey, result)

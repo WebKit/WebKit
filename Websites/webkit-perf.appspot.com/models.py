@@ -50,7 +50,6 @@ def createInTransactionWithNumericIdHolder(callback):
         idHolder.delete()
     return owner
 
-
 def deleteModelWithNumericIdHolder(model):
     idHolder = NumericIdHolder.get_by_id(model.id)
     model.delete()
@@ -99,6 +98,10 @@ class Test(db.Model):
     name = db.StringProperty(required=True)
     branches = db.ListProperty(db.Key)
     platforms = db.ListProperty(db.Key)
+
+    @staticmethod
+    def cacheKey(testId, branchId, platformId):
+        return 'runs:%d,%d,%d' % (testId, branchId, platformId)
 
 
 class TestResult(db.Model):

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
+from google.appengine.api import memcache
 from google.appengine.ext import db
 
 import json
@@ -85,16 +86,21 @@ class ReportHandler(webapp2.RequestHandler):
         if not build:
             return
 
-        for test, result in self._body['results'].iteritems():
-            self._addTestIfNeeded(test, branch, platform)
+        for testName, result in self._body['results'].iteritems():
+            test = self._addTestIfNeeded(testName, branch, platform)
+            memcache.delete(Test.cacheKey(test.id, branch.id, platform.id))
             if isinstance(result, dict):
-                TestResult(name=test, build=build, value=float(result.get('avg', 0)), valueMedian=float(result.get('median', 0)),
+                TestResult(name=testName, build=build, value=float(result.get('avg', 0)), valueMedian=float(result.get('median', 0)),
                     valueStdev=float(result.get('stdev', 0)), valueMin=float(result.get('min', 0)), valueMax=float(result.get('max', 0))).put()
             else:
-                TestResult(name=test, build=build, value=float(result)).put()
+                TestResult(name=testName, build=build, value=float(result)).put()
 
         log = ReportLog.get(log.key())
         log.delete()
+
+        # We need to update dashboard and manifest because they are affected by the existance of test results
+        memcache.delete('dashboard')
+        memcache.delete('manifest')
 
         return self._output('OK')
 
@@ -176,7 +182,7 @@ class ReportHandler(webapp2.RequestHandler):
                 test.platforms.append(platform.key())
             test.put()
             return returnValue
-        createInTransactionWithNumericIdHolder(execute)
+        return createInTransactionWithNumericIdHolder(execute) or Test.get_by_key_name(testName)
 
 
 class AdminReportHandler(ReportHandler):
