@@ -47,17 +47,5 @@ sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
 sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
 sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
 
-# REGRESSION(r74971): [Qt] /editing/selection/caret-bidi-first-and-last-letters.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=51884
-editing/selection/caret-bidi-first-and-last-letters.html
-
-# [Qt] editing/selection/collapse-selection-in-bidi.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=66431
-editing/selection/collapse-selection-in-bidi.html
-
-# [Qt] editing/selection/caret-at-bidi-boundary.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=66514
-editing/selection/caret-at-bidi-boundary.html
-
 editing/selection/click-left-of-rtl-wrapping-text.html
 #################################################

@@ -104,10 +104,6 @@ inspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42545>
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
-# [Qt][WK2] Crash in fast/text/regional-indicator-symobls.html
-# https://bugs.webkit.org/show_bug.cgi?id=69419
-fast/text/regional-indicator-symobls.html
-
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
@@ -177,7 +173,6 @@ fast/js/switch-behaviour.html
 fast/text/format-control.html
 fast/text/zero-width-characters.html
 fast/url/anchor.html
-fast/url/path.html
 http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
 # EventSender.mouseMoveTo is not yet supported
@@ -307,9 +302,6 @@ fast/events/media-element-focus-tab.html
 # Missing layoutTestController.setUserStyleSheetEnabled() implementation
 platform/qt/fast/loader/user-stylesheet-qrc-path.html
 
-# Qt specific result was added by r97008, but it fails on Qt-WK2 platform
-fast/css/text-transform-select.html
-
 # Skip failing tests
 fast/events/blur-focus-window-should-blur-focus-element.html
 plugins/iframe-plugin-bgcolor.html
@@ -396,6 +388,9 @@ security/autocomplete-cleared-on-back.html
 # Crashing test on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 editing/execCommand/align-in-span.html
 
+# It made the following test(s) timeout
+editing/selection/drag-in-iframe.html
+
 # [Qt][WK2] 2 editing tests introduced in r103073 fails
 # https://bugs.webkit.org/show_bug.cgi?id=74937
 editing/input/caret-at-the-edge-of-contenteditable.html
@@ -446,15 +441,3 @@ http/tests/navigation/anchor-frames-gbk.html
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
-
-# [Qt][WK2] Still failing tests after moving to ICU
-# https://bugs.webkit.org/show_bug.cgi?id=77102
-css1/text_properties/text_transform.html
-editing/execCommand/findString-diacriticals.html
-editing/selection/caret-at-bidi-boundary.html
-editing/selection/caret-bidi-first-and-last-letters.html
-editing/selection/regional-indicators.html
-fast/text/find-kana.html
-fast/text/find-russian.html
-fast/text/find-soft-hyphen.html
-svg/as-background-image/background-image-preserveaspectRatio-support.html

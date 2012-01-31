@@ -1,9 +1,0 @@
-This test checks how character breaks are computed for regional indicator characters.
-
-🇯🇵🇯🇵
-FAIL document.getSelection().toString() should be 🇯🇵. Was 🇵.
-FAIL document.getSelection().toString() should be 🇯🇵. Was 🇵.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
