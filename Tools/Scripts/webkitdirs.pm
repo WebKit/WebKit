@@ -879,12 +879,12 @@ sub determineIsQt()
         return;
     }
 
-    # The presence of QTDIR only means Qt if --gtk or --wx or --efl or --blackberry or --chromium are not on the command-line
-    if (isGtk() || isWx() || isEfl() || isBlackBerry() || isChromium()) {
+    # The presence of QTDIR only means Qt if --gtk or --wx or --efl or --blackberry or --chromium or --wincairo are not on the command-line
+    if (isGtk() || isWx() || isEfl() || isBlackBerry() || isChromium() || isWinCairo()) {
         $isQt = 0;
         return;
     }
-    
+
     $isQt = defined($ENV{'QTDIR'});
 }
 
