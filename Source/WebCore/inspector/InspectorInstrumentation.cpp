@@ -71,9 +71,6 @@
 
 namespace WebCore {
 
-static const char* const listenerEventCategoryType = "listener";
-static const char* const instrumentationEventCategoryType = "instrumentation";
-
 static const char* const setTimerEventName = "setTimer";
 static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
@@ -232,14 +229,14 @@ void InspectorInstrumentation::didScheduleResourceRequestImpl(InstrumentingAgent
 
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents* instrumentingAgents, int timerId, int timeout, bool singleShot)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, instrumentationEventCategoryType, setTimerEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, false, setTimerEventName, true);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didInstallTimer(timerId, timeout, singleShot);
 }
 
 void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents* instrumentingAgents, int timerId)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, instrumentationEventCategoryType, clearTimerEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, false, clearTimerEventName, true);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didRemoveTimer(timerId);
 }
@@ -290,7 +287,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
 
 InspectorInstrumentationCookie InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents* instrumentingAgents, Event* event)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, listenerEventCategoryType, event->type(), false);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, true, event->type(), false);
     return InspectorInstrumentationCookie(instrumentingAgents, 0);
 }
 
@@ -340,7 +337,7 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents* instrumentingAgents, int timerId)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, instrumentationEventCategoryType, timerFiredEventName, false);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, false, timerFiredEventName, false);
 
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
@@ -961,11 +958,11 @@ bool InspectorInstrumentation::hasFrontendForScriptContext(ScriptExecutionContex
     return page && page->inspectorController()->hasFrontend();
 }
 
-void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents* instrumentingAgents, const String& categoryType, const String& eventName, bool synchronous)
+void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents* instrumentingAgents, bool isDOMEvent, const String& eventName, bool synchronous)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents->inspectorDOMDebuggerAgent())
-        domDebuggerAgent->pauseOnNativeEventIfNeeded(categoryType, eventName, synchronous);
+        domDebuggerAgent->pauseOnNativeEventIfNeeded(isDOMEvent, eventName, synchronous);
 #endif
 }
 

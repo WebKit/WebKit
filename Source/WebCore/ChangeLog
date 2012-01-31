@@ -1,3 +1,34 @@
+2012-01-31  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: DOMDebugger.setEventListenerBreakpoint should accept regular DOM event names.
+        https://bugs.webkit.org/show_bug.cgi?id=77409
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::setEventListenerBreakpoint):
+        (WebCore):
+        (WebCore::InspectorDOMDebuggerAgent::setInstrumentationBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeEventListenerBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        (InspectorDOMDebuggerAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._removeBreakpoint):
+
 2012-01-31  Pablo Flouret  <pablof@motorola.com>
 
         Fix compilation errors on build-webkit --debug --no-workers on mac.

@@ -66,6 +66,8 @@ public:
     void removeXHRBreakpoint(ErrorString*, const String& url);
     void setEventListenerBreakpoint(ErrorString*, const String& eventName);
     void removeEventListenerBreakpoint(ErrorString*, const String& eventName);
+    void setInstrumentationBreakpoint(ErrorString*, const String& eventName);
+    void removeInstrumentationBreakpoint(ErrorString*, const String& eventName);
     void setDOMBreakpoint(ErrorString*, int nodeId, const String& type);
     void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type);
 
@@ -77,7 +79,7 @@ public:
     void didRemoveDOMNode(Node*);
     void willModifyDOMAttr(Element*);
     void willSendXMLHttpRequest(const String& url);
-    void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
+    void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 
     virtual void clearFrontend();
     virtual void discardAgent();
@@ -94,6 +96,8 @@ private:
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
     void discardBindings();
+    void setBreakpoint(ErrorString*, const String& eventName);
+    void removeBreakpoint(ErrorString*, const String& eventName);
 
     void clear();
 

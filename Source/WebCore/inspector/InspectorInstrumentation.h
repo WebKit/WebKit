@@ -367,7 +367,7 @@ private:
 #endif
 
     static bool collectingHTMLParseErrors(InstrumentingAgents*);
-    static void pauseOnNativeEventIfNeeded(InstrumentingAgents*, const String& categoryType, const String& eventName, bool synchronous);
+    static void pauseOnNativeEventIfNeeded(InstrumentingAgents*, bool isDOMEvent, const String& eventName, bool synchronous);
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 

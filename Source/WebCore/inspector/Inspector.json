@@ -2268,7 +2268,7 @@
             {
                 "name": "setEventListenerBreakpoint",
                 "parameters": [
-                    { "name": "eventName", "type": "string", "description": "Event name to stop on (any DOM event will do)." }
+                    { "name": "eventName", "type": "string", "description": "DOM Event name to stop on (any DOM event will do)." }
                 ],
                 "description": "Sets breakpoint on particular DOM event."
             },
@@ -2278,6 +2278,22 @@
                     { "name": "eventName", "type": "string", "description": "Event name." }
                 ],
                 "description": "Removes breakpoint on particular DOM event."
+            },
+            {
+                "name": "setInstrumentationBreakpoint",
+                "parameters": [
+                    { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
+                ],
+                "description": "Sets breakpoint on particular native event.",
+                "hidden": true
+            },
+            {
+                "name": "removeInstrumentationBreakpoint",
+                "parameters": [
+                    { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
+                ],
+                "description": "Sets breakpoint on particular native event.",
+                "hidden": true
             },
             {
                 "name": "setXHRBreakpoint",

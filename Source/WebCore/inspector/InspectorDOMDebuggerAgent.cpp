@@ -38,6 +38,7 @@
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
@@ -51,6 +52,9 @@ enum DOMBreakpointType {
     NodeRemoved,
     DOMBreakpointTypesCount
 };
+
+static const char* const listenerEventCategoryType = "listener:";
+static const char* const instrumentationEventCategoryType = "instrumentation:";
 
 static const char* const domNativeBreakpointType = "DOM";
 static const char* const eventListenerNativeBreakpointType = "EventListener";
@@ -124,6 +128,16 @@ void InspectorDOMDebuggerAgent::discardBindings()
 
 void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString* error, const String& eventName)
 {
+    setBreakpoint(error, String(listenerEventCategoryType) + eventName);
+}
+
+void InspectorDOMDebuggerAgent::setInstrumentationBreakpoint(ErrorString* error, const String& eventName)
+{
+    setBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
+}
+
+void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString* error, const String& eventName)
+{
     if (eventName.isEmpty()) {
         *error = "Event name is empty";
         return;
@@ -135,6 +149,16 @@ void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString* error, c
 }
 
 void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString* error, const String& eventName)
+{
+    removeBreakpoint(error, String(listenerEventCategoryType) + eventName);
+}
+
+void InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint(ErrorString* error, const String& eventName)
+{
+    removeBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
+}
+
+void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString* error, const String& eventName)
 {
     if (eventName.isEmpty()) {
         *error = "Event name is empty";
@@ -333,9 +357,9 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
         updateSubtreeBreakpoints(child, newRootMask, set);
 }
 
-void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous)
+void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous)
 {
-    String fullEventName = categoryType + ':' + eventName;
+    String fullEventName = (isDOMEvent ? listenerEventCategoryType : instrumentationEventCategoryType) + eventName;
     RefPtr<InspectorObject> eventListenerBreakpoints = m_state->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
     if (eventListenerBreakpoints->find(fullEventName) == eventListenerBreakpoints->end())
         return;
