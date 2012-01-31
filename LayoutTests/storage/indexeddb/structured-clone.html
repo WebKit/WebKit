@@ -114,7 +114,6 @@ function testValue(value, callback)
     transaction.onabort = unexpectedAbortCallback;
     evalAndLog("store = transaction.objectStore('storeName')");
 
-    debug("value is: " + String(value) + " (type: " + typeof value + ")");
     window.value = value;
     request = evalAndLog("store.put(value, 'key')");
     request.onerror = unexpectedErrorCallback;
@@ -122,7 +121,6 @@ function testValue(value, callback)
         request = evalAndLog("store.get('key')");
         request.onerror = unexpectedErrorCallback;
         request.onsuccess = function(e) {
-            //debug("got back: " + String(request.result) + " (type: " + typeof request.result + ")");
             callback(request.result);
         };
     };
@@ -168,7 +166,6 @@ function testObjectWithValue(string, callback)
     test_data = value;
     testValue(test_data, function(result) {
         window.result = result;
-        debug("String(result): " + String(result));
         shouldBeEqualToString("typeof result", "object");
         shouldBe("Object.prototype.toString.call(result)", "Object.prototype.toString.call(test_data)");
         shouldBeTrue("test_data !== result");
