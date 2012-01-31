@@ -36,7 +36,7 @@
 
 + (unsigned) workerThreadCount
 {
-#if ENABLE_WORKERS
+#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
     return WebCore::WorkerThread::workerThreadCount();
 #else
     return 0;
