@@ -1,3 +1,5 @@
+var jsTestIsAsync = true;
+
 function done()
 {
     isSuccessfullyParsed();

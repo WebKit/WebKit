@@ -3,9 +3,9 @@ Test IndexedDB's basics.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'webkitIndexedDB' in window is true
+PASS 'webkitIndexedDB' in self is true
 PASS webkitIndexedDB == null is false
-PASS 'webkitIDBCursor' in window is true
+PASS 'webkitIDBCursor' in self is true
 PASS webkitIDBCursor == null is false
 webkitIndexedDB.open('basics')
 PASS 'result' in request is true

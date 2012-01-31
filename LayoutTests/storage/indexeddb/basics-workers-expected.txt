@@ -1,0 +1,55 @@
+[Worker] Test IndexedDB's basics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/basics.js
+PASS [Worker] 'webkitIndexedDB' in self is true
+PASS [Worker] webkitIndexedDB == null is false
+PASS [Worker] 'webkitIDBCursor' in self is true
+PASS [Worker] webkitIDBCursor == null is false
+[Worker] webkitIndexedDB.open('basics')
+PASS [Worker] 'result' in request is true
+[Worker] Expecting exception from request.result
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] 'errorCode' in request is true
+[Worker] Expecting exception from request.errorCode
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] 'webkitErrorMessage' in request is true
+[Worker] Expecting exception from request.webkitErrorMessage
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] 'source' in request is true
+PASS [Worker] request.source is webkitIndexedDB
+PASS [Worker] 'transaction' in request is true
+PASS [Worker] request.transaction is null
+PASS [Worker] 'readyState' in request is true
+PASS [Worker] request.readyState is webkitIDBRequest.LOADING
+PASS [Worker] 'onsuccess' in request is true
+PASS [Worker] request.onsuccess is null
+PASS [Worker] 'onerror' in request is true
+PASS [Worker] request.onerror is null
+PASS [Worker] request.LOADING is 1
+PASS [Worker] request.DONE is 2
+PASS [Worker] 'result' in event.target is true
+PASS [Worker] !!event.target.result is true
+PASS [Worker] 'errorCode' in event.target is true
+PASS [Worker] event.target.errorCode is 0
+PASS [Worker] 'webkitErrorMessage' in event.target is true
+PASS [Worker] event.target.webkitErrorMessage is undefined.
+PASS [Worker] 'source' in event.target is true
+PASS [Worker] request.source is webkitIndexedDB
+PASS [Worker] 'transaction' in event.target is true
+PASS [Worker] event.target.transaction is null
+PASS [Worker] 'readyState' in request is true
+PASS [Worker] event.target.readyState is webkitIDBRequest.DONE
+PASS [Worker] 'onsuccess' in event.target is true
+PASS [Worker] 'onerror' in event.target is true
+PASS [Worker] event.target.LOADING is 1
+PASS [Worker] event.target.DONE is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
