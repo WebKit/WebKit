@@ -29,7 +29,6 @@
 #include "CCLayerTreeTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerTextureUpdater.h"
-#include "Region.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
@@ -39,12 +38,6 @@
 
 using namespace WebCore;
 using namespace WTF;
-
-#define EXPECT_EQ_RECT(a, b) \
-    EXPECT_EQ(a.x(), b.x()); \
-    EXPECT_EQ(a.y(), b.y()); \
-    EXPECT_EQ(a.width(), b.width()); \
-    EXPECT_EQ(a.height(), b.height());
 
 namespace {
 
@@ -77,20 +70,17 @@ public:
     int prepareCount() const { return m_prepareCount; }
     void clearPrepareCount() { m_prepareCount = 0; }
 
-    void setOpaquePaintRect(const IntRect& opaquePaintRect) { m_opaquePaintRect = opaquePaintRect; }
-
     // Last rect passed to prepareToUpdate().
     const IntRect& lastUpdateRect()  const { return m_lastUpdateRect; }
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect* resultingOpaqueRect);
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect*);
 
 private:
     int m_prepareCount;
     IntRect m_rectToInvalidate;
     IntRect m_lastUpdateRect;
-    IntRect m_opaquePaintRect;
     RefPtr<FakeTiledLayerChromium> m_layer;
 };
 
@@ -149,7 +139,7 @@ public:
 
     virtual TextureManager* textureManager() const { return m_textureManager; }
 
-    virtual void paintContentsIfDirty(const Region& /* occludedScreenSpace */)
+    virtual void paintContentsIfDirty()
     {
         prepareToUpdate(visibleLayerRect());
     }
@@ -197,7 +187,7 @@ void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const 
         m_rectToInvalidate = IntRect();
         m_layer = 0;
     }
-    *resultingOpaqueRect = m_opaquePaintRect;
+    *resultingOpaqueRect = IntRect();
 }
 
 TEST(TiledLayerChromiumTest, pushDirtyTiles)
@@ -468,100 +458,6 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     ccLayerTreeHost->setRootLayer(0);
     ccLayerTreeHost.clear();
     WebKit::WebCompositor::shutdown();
-}
-
-TEST(TiledLayerChromiumTest, layerAddsSelfToOccludedRegion)
-{
-    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
-    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-
-    // The tile size is 100x100, so this invalidates and then paints two tiles in various ways.
-
-    Region occluded;
-    IntRect contentBounds = IntRect(0, 0, 100, 200);
-    IntRect visibleBounds = IntRect(0, 0, 100, 150);
-
-    layer->setBounds(contentBounds.size());
-    layer->setVisibleLayerRect(visibleBounds);
-    layer->setDrawOpacity(1);
-
-    // The screenSpaceTransform is verified in CCLayerTreeHostCommonTests
-    TransformationMatrix screenSpaceTransform;
-    layer->setScreenSpaceTransform(screenSpaceTransform);
-
-    // If the layer is opaque then the occluded region should be the whole layer's visible region.
-    layer->setOpaque(true);
-    layer->invalidateRect(contentBounds);
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    EXPECT_EQ_RECT(visibleBounds, occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
-
-    // If the layer is not opaque then the occluded region should be empty.
-    layer->setOpaque(false);
-    layer->invalidateRect(contentBounds);
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    EXPECT_EQ_RECT(IntRect(), occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
-
-    // If the layer paints opaque content, then the occluded region should match the visible opaque content.
-    IntRect opaquePaintRect = IntRect(10, 10, 90, 190);
-    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
-    layer->invalidateRect(contentBounds);
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
-
-    // If we paint again without invalidating, the same stuff should be occluded.
-    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
-
-    // If the layer is transformed then the resulting occluded area needs to be transformed to its target space.
-    TransformationMatrix transform;
-    transform.translate(contentBounds.width() / 2.0, contentBounds.height() / 2.0);
-    transform.rotate(90);
-    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-    transform.translate(10, 10);
-    screenSpaceTransform.translate(contentBounds.width() / 2.0, contentBounds.height() / 2.0);
-    screenSpaceTransform *= transform;
-    screenSpaceTransform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-    layer->setScreenSpaceTransform(screenSpaceTransform);
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    EXPECT_EQ_RECT(screenSpaceTransform.mapRect(intersection(opaquePaintRect, visibleBounds)), occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
-
-    // But a non-axis-aligned transform does not get considered for occlusion.
-    transform.translate(contentBounds.width() / 2.0, contentBounds.height() / 2.0);
-    transform.rotate(5);
-    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-    screenSpaceTransform.translate(contentBounds.width() / 2.0, contentBounds.height() / 2.0);
-    screenSpaceTransform *= transform;
-    screenSpaceTransform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-    layer->setScreenSpaceTransform(screenSpaceTransform);
-    layer->prepareToUpdate(contentBounds);
-
-    occluded = Region();
-    layer->addSelfToOccludedScreenSpace(occluded);
-    // FIXME: If we find an opaque rect contained in the rotated non-axis-aligned rect, then
-    // this won't be an empty result.
-    EXPECT_EQ_RECT(IntRect(), occluded.bounds());
-    EXPECT_EQ(0u, occluded.rects().size());
 }
 
 } // namespace

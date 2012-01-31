@@ -39,7 +39,6 @@
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #endif
-#include "Region.h"
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
 #include "skia/ext/platform_canvas.h"
@@ -468,35 +467,6 @@ void LayerChromium::setContentsScale(float contentsScale)
         return;
     m_contentsScale = contentsScale;
     setNeedsDisplay();
-}
-
-TransformationMatrix LayerChromium::contentToScreenSpaceTransform() const
-{
-    IntSize boundsInLayerSpace = bounds();
-    IntSize boundsInContentSpace = contentBounds();
-
-    TransformationMatrix transform = screenSpaceTransform();
-
-    // Scale from content space to layer space
-    transform.scaleNonUniform(boundsInLayerSpace.width() / static_cast<double>(boundsInContentSpace.width()),
-                              boundsInLayerSpace.height() / static_cast<double>(boundsInContentSpace.height()));
-
-    return transform;
-}
-
-void LayerChromium::addSelfToOccludedScreenSpace(Region& occludedScreenSpace)
-{
-    if (!opaque() || drawOpacity() != 1 || !isPaintedAxisAlignedInScreen())
-        return;
-
-    FloatRect targetRect = contentToScreenSpaceTransform().mapRect(FloatRect(visibleLayerRect()));
-    occludedScreenSpace.unite(enclosedIntRect(targetRect));
-}
-
-bool LayerChromium::isPaintedAxisAlignedInScreen() const
-{
-    FloatQuad quad = contentToScreenSpaceTransform().mapQuad(FloatQuad(visibleLayerRect()));
-    return quad.isRectilinear();
 }
 
 void LayerChromium::createRenderSurface()

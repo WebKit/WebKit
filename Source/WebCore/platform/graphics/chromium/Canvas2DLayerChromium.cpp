@@ -91,7 +91,7 @@ bool Canvas2DLayerChromium::drawsContent() const
         && m_context && (m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
 }
 
-void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
+void Canvas2DLayerChromium::paintContentsIfDirty()
 {
     if (!drawsContent())
         return;

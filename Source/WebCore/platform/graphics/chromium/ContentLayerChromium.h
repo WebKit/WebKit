@@ -41,7 +41,6 @@ namespace WebCore {
 
 class LayerTilerChromium;
 class LayerTextureUpdater;
-class Region;
 
 class ContentLayerDelegate {
 public:
@@ -59,7 +58,7 @@ public:
     void clearDelegate() { m_delegate = 0; }
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const Region& occludedScreenSpace);
+    virtual void paintContentsIfDirty();
     virtual void idlePaintContentsIfDirty();
 
     virtual void setOpaque(bool);

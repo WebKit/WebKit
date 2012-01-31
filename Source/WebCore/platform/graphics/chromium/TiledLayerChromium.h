@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class LayerTextureUpdater;
-class Region;
 class UpdatableTile;
 
 class TiledLayerChromium : public LayerChromium {
@@ -63,8 +62,6 @@ public:
     void protectTileTextures(const IntRect& layerRect);
 
     virtual void reserveTextures();
-
-    virtual void addSelfToOccludedScreenSpace(Region& occludedScreenSpace);
 
 protected:
     TiledLayerChromium();

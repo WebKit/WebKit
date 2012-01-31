@@ -1,3 +1,49 @@
+2012-01-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106324.
+        http://trac.webkit.org/changeset/106324
+        https://bugs.webkit.org/show_bug.cgi?id=77406
+
+        Broke CCLayerTreeHostTestLayerOcclusion.runMultiThread and
+        runSingleThread (Requested by yuzo1 on #webkit).
+
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        (WebCore):
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        (WebCore):
+        (Canvas2DLayerChromium):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore):
+        (ContentLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (WebCore):
+        (ImageLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (WebCore::LayerChromium::paintContentsIfDirty):
+        (LayerChromium):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintContentsIfDirty):
+        (WebCore::CCLayerTreeHost::paintMaskAndReplicaForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::enclosedIntRect):
+        (WebCore):
+
 2012-01-30  Raymond Liu  <raymond.liu@intel.com>
 
         Fix ASSERT fail within AudioBus::processWithGainFrom()

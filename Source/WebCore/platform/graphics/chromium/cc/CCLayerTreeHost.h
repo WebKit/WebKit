@@ -48,7 +48,6 @@ class CCLayerTreeHostImpl;
 class CCTextureUpdater;
 class GraphicsContext3D;
 class LayerPainterChromium;
-class Region;
 class TextureAllocator;
 class TextureManager;
 
@@ -206,7 +205,7 @@ private:
     typedef Vector<OwnPtr<ManagedTexture> > TextureList;
 
     enum PaintType { PaintVisible, PaintIdle };
-    static void paintContentsIfDirty(LayerChromium*, PaintType, const Region& occludedScreenSpace);
+    static void paintContentsIfDirty(LayerChromium*, PaintType);
     void paintLayerContents(const LayerList&, PaintType);
     void paintMaskAndReplicaForRenderSurface(LayerChromium*, PaintType);
 

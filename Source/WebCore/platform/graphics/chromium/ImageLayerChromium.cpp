@@ -158,7 +158,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
+void ImageLayerChromium::paintContentsIfDirty()
 {
     if (m_needsDisplay) {
         m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
