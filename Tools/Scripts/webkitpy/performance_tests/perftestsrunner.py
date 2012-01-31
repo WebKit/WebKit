@@ -88,7 +88,7 @@ class PerfTestsRunner(object):
                 help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
             optparse.make_option("--build-directory",
                 help="Path to the directory under which build files are kept (should not include configuration)"),
-            optparse.make_option("--time-out-ms", default=240 * 1000,
+            optparse.make_option("--time-out-ms", default=600 * 1000,
                 help="Set the timeout for each test"),
             optparse.make_option("--output-json-path",
                 help="Filename of the JSON file that summaries the results"),

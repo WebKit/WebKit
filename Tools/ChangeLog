@@ -1,3 +1,11 @@
+2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Bump up the timeout for performance tests since DOM/DOMTable.html
+        and Parser/html5-full-render.html are timing out on the bot.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+
 2012-01-31  Ehsan Akhgari  <ehsan.akhgari@gmail.com>
 
         Fix the update_webgl_conformance_tests.py script in order to enable it
