@@ -1,3 +1,16 @@
+2011-01-30  Hayato Ito  <hayato@chromium.org>
+
+        Attach light children after removing a shadow root.
+        https://bugs.webkit.org/show_bug.cgi?id=74267
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/dom/shadow/dynamically-created-shadow-root-expected.html
+               fast/dom/shadow/dynamically-created-shadow-root.html:
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot):
+
 2012-01-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106324.

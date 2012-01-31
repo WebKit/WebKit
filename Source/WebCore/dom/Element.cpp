@@ -1220,6 +1220,11 @@ void Element::removeShadowRoot()
             oldRoot->removedFromDocument();
         else
             oldRoot->removedFromTree(true);
+        if (attached()) {
+            for (Node* child = firstChild(); child; child = child->nextSibling())
+                if (!child->attached())
+                    child->lazyAttach();
+        }
     }
 }
 
