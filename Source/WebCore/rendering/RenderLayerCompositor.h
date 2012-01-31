@@ -187,7 +187,7 @@ public:
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const LayoutPoint& contentsOffset);
     void frameViewDidChangeSize();
-    void frameViewDidScroll(const LayoutPoint& = LayoutPoint());
+    void frameViewDidScroll();
 
     String layerTreeAsText(bool showDebugInfo = false);
 

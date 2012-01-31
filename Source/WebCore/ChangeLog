@@ -1,3 +1,24 @@
+2012-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Simplify RenderLayerCompositor::frameViewDidScroll
+        https://bugs.webkit.org/show_bug.cgi?id=77398
+
+        Reviewed by Sam Weinig.
+
+        Remove the scrollPosition parameter from RenderLayerCompositor::frameViewDidScroll; we can just get it
+        from the associated FrameView object.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        Call frameViewDidScroll() here instead of setting the scroll layer position explicitly.
+
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-01-30  Pablo Flouret  <pablof@motorola.com>
 
         Don't select the next selectable index when deselecting an option in select elements with size set to a value greater than one.

@@ -964,8 +964,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         FrameView* frameView = m_renderView->frameView();
         m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
 
-        LayoutPoint scrollPosition = frameView->scrollPosition();
-        m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
+        frameViewDidScroll();
         updateOverflowControlsLayers();
 
 #if ENABLE(RUBBER_BANDING)
@@ -980,8 +979,11 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     }
 }
 
-void RenderLayerCompositor::frameViewDidScroll(const LayoutPoint& scrollPosition)
+void RenderLayerCompositor::frameViewDidScroll()
 {
+    FrameView* frameView = m_renderView->frameView();
+    LayoutPoint scrollPosition = frameView->scrollPosition();
+
     if (m_scrollLayer)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
@@ -1867,7 +1869,7 @@ void RenderLayerCompositor::ensureRootLayer()
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
             frameViewDidChangeSize();
-            frameViewDidScroll(m_renderView->frameView()->scrollPosition());
+            frameViewDidScroll();
 
 #if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())

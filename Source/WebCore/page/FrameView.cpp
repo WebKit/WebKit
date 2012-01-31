@@ -1729,7 +1729,7 @@ void FrameView::scrollPositionChanged()
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = rootRenderer(this)) {
         if (root->usesCompositing())
-            root->compositor()->frameViewDidScroll(scrollPosition());
+            root->compositor()->frameViewDidScroll();
     }
 #endif
 }
