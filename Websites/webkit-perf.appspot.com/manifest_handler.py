@@ -59,12 +59,12 @@ class ManifestHandler(webapp2.RequestHandler):
             }
 
             for platform_id in platform_ids:
-                platform_id_map.setdefault(platformId, {'tests': [], 'branches': []})
+                platform_id_map.setdefault(platform_id, {'tests': [], 'branches': []})
                 platform_id_map[platform_id]['tests'].append(test.id)
                 platform_id_map[platform_id]['branches'] += branch_ids
 
             for branch_id in branch_ids:
-                branch_id_map.setdefault(branchId, {'tests': [], 'platforms': []})
+                branch_id_map.setdefault(branch_id, {'tests': [], 'platforms': []})
                 branch_id_map[branch_id]['tests'].append(test.id)
                 branch_id_map[branch_id]['platforms'] += platform_ids
 

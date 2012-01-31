@@ -1,5 +1,13 @@
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r106321.
+
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        * Websites/webkit-perf.appspot.com/manifest_handler.py:
+        (ManifestHandler.get):
+
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Python code in webkit-perf.appspot.com uses camelCase
         https://bugs.webkit.org/show_bug.cgi?id=77392
 

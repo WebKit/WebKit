@@ -165,7 +165,7 @@ class ReportHandler(webapp2.RequestHandler):
                 return self._output('The build at %s already exists for %s' % (str(timestamp), builder.name))
 
             return Build(branch=branch, platform=platform, builder=builder, buildNumber=build_number,
-                timestamp=timestamp, revision=revision, keyName=key_name).put()
+                timestamp=timestamp, revision=revision, key_name=key_name).put()
         return db.run_in_transaction(execute)
 
     def _add_test_if_needed(self, test_name, branch, platform):
