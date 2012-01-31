@@ -170,7 +170,7 @@ void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuad
     if (!hasDebugBorders())
         return;
 
-    IntRect layerRect(IntPoint(), bounds());
+    IntRect layerRect(IntPoint(), contentBounds());
     quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, layerRect, debugBorderColor(), debugBorderWidth()));
 }
 

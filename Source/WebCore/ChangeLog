@@ -1,3 +1,16 @@
+2012-01-31  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Compositor debug borders are not scaled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=77468
+
+        Use CCLayerImpl::contentBounds() instead of CCLayerImpl::bounds() to calculate debug
+        border geometry so that the borders are properly scaled.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::appendDebugBorderQuad):
+
 2012-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106376.
