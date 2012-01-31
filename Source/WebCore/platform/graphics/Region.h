@@ -47,6 +47,9 @@ public:
 
     void translate(const IntSize&);
 
+    // Returns true if the query region is a subset of this region.
+    bool contains(const Region&) const;
+
 #ifndef NDEBUG
     void dump() const;
 #endif
@@ -104,13 +107,18 @@ private:
 
         bool canCoalesce(SegmentIterator begin, SegmentIterator end);
 
-        // FIXME: These vectors should have inline sizes. Figure out a good optimal value.
-        Vector<int> m_segments;
-        Vector<Span> m_spans;        
+        Vector<int, 32> m_segments;
+        Vector<Span, 16> m_spans;
+
+        friend bool operator==(const Shape&, const Shape&);
     };
 
     IntRect m_bounds;
     Shape m_shape;
+
+    friend bool operator==(const Region&, const Region&);
+    friend bool operator==(const Shape&, const Shape&);
+    friend bool operator==(const Span&, const Span&);
 };
 
 static inline Region intersect(const Region& a, const Region& b)
@@ -135,6 +143,21 @@ static inline Region translate(const Region& region, const IntSize& offset)
     result.translate(offset);
 
     return result;
+}
+
+inline bool operator==(const Region& a, const Region& b)
+{
+    return a.m_bounds == b.m_bounds && a.m_shape == b.m_shape;
+}
+
+inline bool operator==(const Region::Shape& a, const Region::Shape& b)
+{
+    return a.m_spans == b.m_spans && a.m_segments == b.m_segments;
+}
+
+inline bool operator==(const Region::Span& a, const Region::Span& b)
+{
+    return a.y == b.y && a.segmentIndex == b.segmentIndex;
 }
 
 } // namespace WebCore
