@@ -269,6 +269,38 @@ if test "$with_hildon" = "yes"; then
     AC_SUBST([HILDON_LIBS])
 fi
 
+AC_MSG_CHECKING([the GStreamer version to use])
+AC_ARG_WITH([gstreamer],
+        [AS_HELP_STRING([--with-gstreamer=0.10|0.11], [the GStreamer version to use (default: 0.10)])],
+        [case "$with_gstreamer" in
+        0.10|0.11) ;;
+        *) AC_MSG_ERROR([invalid GStreamer version specified]) ;;
+        esac],
+        [with_gstreamer=0.10])
+AC_MSG_RESULT([$with_gstreamer])
+
+GSTREAMER_0_10_REQUIRED_VERSION=0.10
+GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
+GSTREAMER_0_11_REQUIRED_VERSION=0.11
+GSTREAMER_0_11_PLUGINS_BASE_REQUIRED_VERSION=0.11.0.2
+
+case "$with_gstreamer" in
+     0.10) GSTREAMER_REQUIRED_VERSION=GSTREAMER_0_10_REQUIRED_VERSION
+           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION
+           GST_API_VERSION=0.10
+           ;;
+     0.11) GSTREAMER_REQUIRED_VERSION=GSTREAMER_0_11_REQUIRED_VERSION
+           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=GSTREAMER_0_11_PLUGINS_BASE_REQUIRED_VERSION
+           GST_API_VERSION=0.11
+           ;;
+esac
+
+AC_SUBST([GST_API_VERSION])
+if test "$GST_API_VERSION" = "0.11"; then
+AC_DEFINE([GST_USE_UNSTABLE_API], [1], [Using unstable GStreamer API])
+AC_DEFINE([GST_API_VERSION_1],[1], [Using GStreamer 0.11])
+fi
+
 # minimum base dependencies
 LIBSOUP_REQUIRED_VERSION=2.37.2.1
 CAIRO_REQUIRED_VERSION=1.10
@@ -282,8 +314,6 @@ PANGO_REQUIRED_VERSION=1.12
 # optional modules
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
-GSTREAMER_REQUIRED_VERSION=0.10
-GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
 ENCHANT_REQUIRED_VERSION=0.22
 LIBFFTW_REQUIRED_VERSION=3.2.2
 CLUTTER_REQUIRED_VERSION=1.8.2
@@ -1032,14 +1062,14 @@ fi
 # check if gstreamer is available
 if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER],
-                     [gstreamer-0.10 >= $GSTREAMER_REQUIRED_VERSION
-                     gstreamer-app-0.10
-                     gstreamer-audio-0.10
-                     gstreamer-base-0.10
-                     gstreamer-interfaces-0.10
-                     gstreamer-pbutils-0.10
-                     gstreamer-plugins-base-0.10 >= $GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION
-                     gstreamer-video-0.10],
+                     [gstreamer-$GST_API_VERSION >= $GSTREAMER_REQUIRED_VERSION
+                     gstreamer-app-$GST_API_VERSION
+                     gstreamer-audio-$GST_API_VERSION
+                     gstreamer-base-$GST_API_VERSION
+                     gstreamer-interfaces-$GST_API_VERSION
+                     gstreamer-pbutils-$GST_API_VERSION
+                     gstreamer-plugins-base-$GST_API_VERSION >= $GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION
+                     gstreamer-video-$GST_API_VERSION],
                      [have_gstreamer=yes])
 
    AC_SUBST([GSTREAMER_CFLAGS])
@@ -1337,6 +1367,7 @@ GTK+ configuration:
  GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
+ GStreamer version                                        : $with_gstreamer
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc
 "

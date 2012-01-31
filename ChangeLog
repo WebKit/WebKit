@@ -1,3 +1,12 @@
+2012-01-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 build support
+        https://bugs.webkit.org/show_bug.cgi?id=77085
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: New --with-gstreamer option, defaulting to 0.10.
+
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r106321.
