@@ -627,11 +627,6 @@
 - (void)setSelectionRange:(int)start end:(int)end AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
-@interface DOMHTMLIsIndexElement : DOMHTMLInputElement WEBKIT_VERSION_1_3
-@property(readonly, retain) DOMHTMLFormElement *form;
-@property(copy) NSString *prompt;
-@end
-
 @interface DOMHTMLLIElement : DOMHTMLElement WEBKIT_VERSION_1_3
 @property(copy) NSString *type;
 @property int value;

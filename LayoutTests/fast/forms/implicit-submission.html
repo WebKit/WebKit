@@ -33,7 +33,6 @@ var allTests = [
     [ "Multi-line select with a disabled submit", "!selectBox,-submit", "n" ],
     [ "Text field and single select, text focused", "!text,select", "y" ],
     [ "Text field and single select, select focused", "text,!select", "n" ],
-    [ "Isindex", "!isindex", "y"],
     [ "Multiple text inputs with a button", "!text,text,button", "y"],
     [ "Multiple text inputs with a disabled button", "!text,text,-button", "n"]
 ];
@@ -88,7 +87,7 @@ function runTestInIframe()
             disabled = true;
         }
         var control;
-        if (type == "textarea" || type == "isindex") {
+        if (type == "textarea") {
             control = document.createElement(type);
         } else if (type == "select") {
             control = document.createElement(type);

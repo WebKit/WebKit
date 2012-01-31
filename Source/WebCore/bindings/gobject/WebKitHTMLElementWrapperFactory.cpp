@@ -60,7 +60,6 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLIsIndexElement.h"
 #include "HTMLKeygenElement.h"
 #include "HTMLLIElement.h"
 #include "HTMLLabelElement.h"
@@ -120,7 +119,6 @@
 #include "webkit/WebKitDOMHTMLIFrameElementPrivate.h"
 #include "webkit/WebKitDOMHTMLImageElementPrivate.h"
 #include "webkit/WebKitDOMHTMLInputElementPrivate.h"
-#include "webkit/WebKitDOMHTMLIsIndexElementPrivate.h"
 #include "webkit/WebKitDOMHTMLKeygenElementPrivate.h"
 #include "webkit/WebKitDOMHTMLLIElementPrivate.h"
 #include "webkit/WebKitDOMHTMLLabelElementPrivate.h"
@@ -327,11 +325,6 @@ static gpointer createInputWrapper(PassRefPtr<HTMLElement> element)
     return wrapHTMLInputElement(static_cast<HTMLInputElement*>(element.get()));
 }
 
-static gpointer createIsIndexWrapper(PassRefPtr<HTMLElement> element)
-{
-    return wrapHTMLIsIndexElement(static_cast<HTMLIsIndexElement*>(element.get()));
-}
-
 static gpointer createKeygenWrapper(PassRefPtr<HTMLElement> element)
 {
     return wrapHTMLKeygenElement(static_cast<HTMLKeygenElement*>(element.get()));
@@ -504,7 +497,6 @@ gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
        map.set(iframeTag.localName().impl(), createIFrameWrapper);
        map.set(imgTag.localName().impl(), createImageWrapper);
        map.set(inputTag.localName().impl(), createInputWrapper);
-       map.set(isindexTag.localName().impl(), createIsIndexWrapper);
        map.set(labelTag.localName().impl(), createLabelWrapper);
        map.set(legendTag.localName().impl(), createLegendWrapper);
        map.set(liTag.localName().impl(), createLIWrapper);

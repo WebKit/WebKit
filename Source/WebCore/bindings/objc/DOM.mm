@@ -112,7 +112,6 @@ static void createElementClassMap()
     addElementClass(HTMLNames::imgTag, [DOMHTMLImageElement class]);
     addElementClass(HTMLNames::inputTag, [DOMHTMLInputElement class]);
     addElementClass(HTMLNames::insTag, [DOMHTMLModElement class]);
-    addElementClass(HTMLNames::isindexTag, [DOMHTMLIsIndexElement class]);
     addElementClass(HTMLNames::labelTag, [DOMHTMLLabelElement class]);
     addElementClass(HTMLNames::legendTag, [DOMHTMLLegendElement class]);
     addElementClass(HTMLNames::liTag, [DOMHTMLLIElement class]);

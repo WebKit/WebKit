@@ -93,7 +93,7 @@ PASS: canGet('HTMLImageElement') should be 'true' and is.
 PASS: canSet('HTMLImageElement') should be 'true' and is.
 PASS: canGet('HTMLInputElement') should be 'true' and is.
 PASS: canSet('HTMLInputElement') should be 'true' and is.
-PASS: canGet('HTMLIsIndexElement') should be 'true' and is.
+*** FAIL: canGet('HTMLIsIndexElement') should be 'true' but instead is false. ***
 PASS: canSet('HTMLIsIndexElement') should be 'true' and is.
 PASS: canGet('HTMLLIElement') should be 'true' and is.
 PASS: canSet('HTMLLIElement') should be 'true' and is.

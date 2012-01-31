@@ -137,8 +137,6 @@ TEST SUCCEEDED: The value was the string 'text'. [tested HTMLInputElement.type]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLInputElement.useMap]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLInputElement.value]
 
-TEST SUCCEEDED: The value was the empty string. [tested HTMLIsIndexElement.prompt]
-
 TEST SUCCEEDED: The value was the empty string. [tested HTMLLabelElement.accessKey]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLLabelElement.htmlFor]
 

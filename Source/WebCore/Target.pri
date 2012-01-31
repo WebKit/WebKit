@@ -743,7 +743,6 @@ SOURCES += \
     html/HTMLImageElement.cpp \
     html/HTMLImageLoader.cpp \
     html/HTMLInputElement.cpp \
-    html/HTMLIsIndexElement.cpp \
     html/HTMLKeygenElement.cpp \
     html/HTMLLIElement.cpp \
     html/HTMLLabelElement.cpp \
@@ -1823,7 +1822,6 @@ HEADERS += \
     html/HTMLImageElement.h \
     html/HTMLImageLoader.h \
     html/HTMLInputElement.h \
-    html/HTMLIsIndexElement.h \
     html/HTMLKeygenElement.h \
     html/HTMLLabelElement.h \
     html/HTMLLegendElement.h \

@@ -48,8 +48,6 @@ HTMLImageElement: [object HTMLImageElementConstructor]
 
 HTMLInputElement: [object HTMLInputElementConstructor]
 
-HTMLIsIndexElement: [object HTMLIsIndexElementConstructor]
-
 HTMLLabelElement: [object HTMLLabelElementConstructor]
 
 HTMLLegendElement: [object HTMLLegendElementConstructor]

@@ -1,3 +1,44 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        HTMLIsIndexElement should not expose HTMLInputElement properties
+        https://bugs.webkit.org/show_bug.cgi?id=76095
+
+        Reviewed by Adam Barth.
+
+        document.createElement("isindex") should produce an HTMLUnknownElement
+        per the HTML5 spec.  The parser automagically translates <isindex> into
+        a whole dom tree roughly representing what <isindex> used to do 15 years ago. :)
+
+        This patch just removes our support for HTMLIsIndexElement.  The parser
+        support was already in.  Having support for HTMLIsIndexElement was causing
+        one of the IE TestCenter tests to fail.
+
+        Test: fast/dom/HTMLIsIndexElement/prototype-chain.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp:
+        (WebKit::createHTMLElementWrapper):
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLIsIndexElement.cpp: Removed.
+        * html/HTMLIsIndexElement.h: Removed.
+        * html/HTMLIsIndexElement.idl: Removed.
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+
 2012-01-31  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed include cleanup.

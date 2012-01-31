@@ -176,8 +176,6 @@ PASS win['HTMLImageElement'] == '[object HTMLImageElementConstructor]' is true
 PASS win['HTMLImageElement'] == '[object HTMLImageElementConstructor]' is true
 PASS win['HTMLInputElement'] == '[object HTMLInputElementConstructor]' is true
 PASS win['HTMLInputElement'] == '[object HTMLInputElementConstructor]' is true
-PASS win['HTMLIsIndexElement'] == '[object HTMLIsIndexElementConstructor]' is true
-PASS win['HTMLIsIndexElement'] == '[object HTMLIsIndexElementConstructor]' is true
 PASS win['HTMLLIElement'] == '[object HTMLLIElementConstructor]' is true
 PASS win['HTMLLIElement'] == '[object HTMLLIElementConstructor]' is true
 PASS win['HTMLLabelElement'] == '[object HTMLLabelElementConstructor]' is true

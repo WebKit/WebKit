@@ -87,7 +87,6 @@ var propertyInfo = [
     ["HTMLIFrameElement", "object"],
     ["HTMLImageElement", "object"],
     ["HTMLInputElement", "object"],
-    ["HTMLIsIndexElement", "object"],
     ["HTMLLIElement", "object"],
     ["HTMLLabelElement", "object"],
     ["HTMLLegendElement", "object"],

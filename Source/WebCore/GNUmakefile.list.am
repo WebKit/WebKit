@@ -258,8 +258,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLImageElement.h \
 	DerivedSources/WebCore/JSHTMLInputElement.cpp \
 	DerivedSources/WebCore/JSHTMLInputElement.h \
-	DerivedSources/WebCore/JSHTMLIsIndexElement.cpp \
-	DerivedSources/WebCore/JSHTMLIsIndexElement.h \
 	DerivedSources/WebCore/JSHTMLKeygenElement.cpp \
 	DerivedSources/WebCore/JSHTMLKeygenElement.h \
 	DerivedSources/WebCore/JSHTMLLabelElement.cpp \
@@ -777,7 +775,6 @@ dom_binding_idls += \
 	$(WebCore)/html/HTMLIFrameElement.idl \
 	$(WebCore)/html/HTMLImageElement.idl \
 	$(WebCore)/html/HTMLInputElement.idl \
-	$(WebCore)/html/HTMLIsIndexElement.idl \
 	$(WebCore)/html/HTMLKeygenElement.idl \
 	$(WebCore)/html/HTMLLIElement.idl \
 	$(WebCore)/html/HTMLLabelElement.idl \
@@ -2061,8 +2058,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLImageLoader.h \
 	Source/WebCore/html/HTMLInputElement.cpp \
 	Source/WebCore/html/HTMLInputElement.h \
-	Source/WebCore/html/HTMLIsIndexElement.cpp \
-	Source/WebCore/html/HTMLIsIndexElement.h \
 	Source/WebCore/html/HTMLKeygenElement.cpp \
 	Source/WebCore/html/HTMLKeygenElement.h \
 	Source/WebCore/html/HTMLLabelElement.cpp \

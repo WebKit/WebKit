@@ -90,7 +90,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLHtmlElement') is 'objec
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLIFrameElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLImageElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLInputElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLIsIndexElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLKeygenElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLLIElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLLabelElement') is 'object'

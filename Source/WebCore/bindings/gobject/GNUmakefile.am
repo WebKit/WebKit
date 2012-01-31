@@ -126,8 +126,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLImageElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLInputElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLInputElementPrivate.h \
-	DerivedSources/webkit/WebKitDOMHTMLIsIndexElement.cpp \
-	DerivedSources/webkit/WebKitDOMHTMLIsIndexElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLKeygenElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLKeygenElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLLabelElement.cpp \
@@ -324,7 +322,6 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLIFrameElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLImageElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLInputElement.h \
-	DerivedSources/webkit/WebKitDOMHTMLIsIndexElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLKeygenElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLLabelElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLLegendElement.h \

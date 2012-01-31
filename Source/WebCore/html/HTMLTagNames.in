@@ -68,7 +68,7 @@ image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
-isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement
+isindex interfaceName=HTMLUnknownElement
 kbd interfaceName=HTMLElement
 keygen constructorNeedsFormElement
 label

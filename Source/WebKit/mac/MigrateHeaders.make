@@ -112,7 +112,6 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLInputElementInternal.h \
-    $(PUBLIC_HEADERS_DIR)/DOMHTMLIsIndexElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLIElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLabelElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLegendElement.h \

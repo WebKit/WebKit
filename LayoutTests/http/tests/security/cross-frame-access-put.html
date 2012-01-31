@@ -1,3 +1,4 @@
+
 <p>This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).</p>
 <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html" style=""></iframe>
 <pre id="console"></pre>
@@ -25,6 +26,7 @@ window.onload = function()
         layoutTestController.waitUntilDone();
     }
 
+    // FIXME: This test should use fast/window/resources/window-properties.js instead of a custom list.
     // Constructors
     setForbiddenProperty(targetWindow, "Attr");
     setForbiddenProperty(targetWindow, "CDATASection");
@@ -71,7 +73,6 @@ window.onload = function()
     setForbiddenProperty(targetWindow, "HTMLIFrameElement");
     setForbiddenProperty(targetWindow, "HTMLImageElement");
     setForbiddenProperty(targetWindow, "HTMLInputElement");
-    setForbiddenProperty(targetWindow, "HTMLIsIndexElement");
     setForbiddenProperty(targetWindow, "HTMLLabelElement");
     setForbiddenProperty(targetWindow, "HTMLLegendElement");
     setForbiddenProperty(targetWindow, "HTMLLIElement");

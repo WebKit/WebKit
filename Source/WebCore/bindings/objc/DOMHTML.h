@@ -56,7 +56,6 @@
 #import <WebCore/DOMHTMLIFrameElement.h>
 #import <WebCore/DOMHTMLImageElement.h>
 #import <WebCore/DOMHTMLInputElement.h>
-#import <WebCore/DOMHTMLIsIndexElement.h>
 #import <WebCore/DOMHTMLLIElement.h>
 #import <WebCore/DOMHTMLLabelElement.h>
 #import <WebCore/DOMHTMLLegendElement.h>

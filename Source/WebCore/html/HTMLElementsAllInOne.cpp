@@ -65,7 +65,6 @@
 #include "HTMLIFrameElement.cpp"
 #include "HTMLImageElement.cpp"
 #include "HTMLInputElement.cpp"
-#include "HTMLIsIndexElement.cpp"
 #include "HTMLKeygenElement.cpp"
 #include "HTMLLIElement.cpp"
 #include "HTMLLabelElement.cpp"
