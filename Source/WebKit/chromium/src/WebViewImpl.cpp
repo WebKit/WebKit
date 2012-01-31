@@ -1776,6 +1776,12 @@ void WebViewImpl::didLosePointerLock()
 #endif
 }
 
+void WebViewImpl::didChangeWindowResizerRect()
+{
+    if (mainFrameImpl()->frameView())
+        mainFrameImpl()->frameView()->windowResizerRectChanged();
+}
+
 // WebView --------------------------------------------------------------------
 
 WebSettings* WebViewImpl::settings()
