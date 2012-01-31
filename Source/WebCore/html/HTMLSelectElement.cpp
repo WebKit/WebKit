@@ -767,8 +767,10 @@ void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement* option, b
     ASSERT(option->ownerSelectElement() == this);
     if (optionIsSelected)
         selectOption(option->index());
+    else if (!usesMenuList())
+        selectOption(-1);
     else
-        selectOption(m_multiple ? -1 : nextSelectableListIndex(-1));
+        selectOption(nextSelectableListIndex(-1));
 }
 
 void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
