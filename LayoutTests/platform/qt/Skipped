@@ -1080,7 +1080,7 @@ css3/filters/effect-custom-disabled.html
 
 # ERROR: LayoutTestController::overridePreference() does not support the 'WebKitPageCacheSupportsPluginsPreferenceKey' preference
 # http://trac.webkit.org/changeset/106305
-# plugins/crash-restoring-pluging-page-from-page-cache.html
+plugins/crash-restoring-pluging-page-from-page-cache.html
 
 # ============================================================================= #
 # Failing SVG tests
