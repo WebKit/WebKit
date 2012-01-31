@@ -442,6 +442,15 @@ Number.bytesToString = function(bytes, higherResolution)
         return WebInspector.UIString("%.0fMB", megabytes);
 }
 
+Number.withThousandsSeparator = function(num)
+{
+    var str = num + "";
+    var re = /(\d+)(\d{3})/;
+    while (str.match(re))
+        str = str.replace(re, "$1,$2");
+    return str;
+}
+
 WebInspector._missingLocalizedStrings = {};
 
 /**

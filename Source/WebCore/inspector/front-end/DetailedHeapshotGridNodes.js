@@ -268,8 +268,8 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         data["object"] = { valueStyle: valueStyle, value: value + ": @" + this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
-        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.bytesToString(this._shallowSize);
-        data["retainedSize"] = view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.bytesToString(this._retainedSize);
+        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.withThousandsSeparator(this._shallowSize);
+        data["retainedSize"] = view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.withThousandsSeparator(this._retainedSize);
 
         return this._enhanceData ? this._enhanceData(data) : data;
     },
@@ -503,10 +503,10 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
             data["addedCount"] = "";
             data["addedSize"] = "";
             data["removedCount"] = "\u2022";
-            data["removedSize"] = Number.bytesToString(this._shallowSize);
+            data["removedSize"] = Number.withThousandsSeparator(this._shallowSize);
         } else {
             data["addedCount"] = "\u2022";
-            data["addedSize"] = Number.bytesToString(this._shallowSize);
+            data["addedSize"] = Number.withThousandsSeparator(this._shallowSize);
             data["removedCount"] = "";
             data["removedSize"] = "";
         }
@@ -570,8 +570,8 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
         var data = {object: this._name, count: this._count};
         var view = this.dataGrid.snapshotView;
         data["count"] = view.showCountAsPercent ? WebInspector.UIString("%.2f%%", this._countPercent) : this._count;
-        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.bytesToString(this._shallowSize);
-        data["retainedSize"] = "> " + (view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.bytesToString(this._retainedSize));
+        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.withThousandsSeparator(this._shallowSize);
+        data["retainedSize"] = view.showRetainedSizeAsPercent ? "~" + WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.withThousandsSeparator(this._retainedSize) + "+";
         return data;
     },
 
@@ -751,9 +751,9 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
         data["addedCount"] = this._addedCount;
         data["removedCount"] = this._removedCount;
         data["countDelta"] = WebInspector.UIString("%s%d", this._signForDelta(this._countDelta), Math.abs(this._countDelta));
-        data["addedSize"] = Number.bytesToString(this._addedSize);
-        data["removedSize"] = Number.bytesToString(this._removedSize);
-        data["sizeDelta"] = WebInspector.UIString("%s%s", this._signForDelta(this._sizeDelta), Number.bytesToString(Math.abs(this._sizeDelta)));
+        data["addedSize"] = Number.withThousandsSeparator(this._addedSize);
+        data["removedSize"] = Number.withThousandsSeparator(this._removedSize);
+        data["sizeDelta"] = WebInspector.UIString("%s%s", this._signForDelta(this._sizeDelta), Number.withThousandsSeparator(Math.abs(this._sizeDelta)));
 
         return data;
     }
