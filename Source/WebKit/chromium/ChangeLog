@@ -1,3 +1,33 @@
+2012-01-31  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Import PaintAggregator
+        https://bugs.webkit.org/show_bug.cgi?id=53715
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/painting/PaintAggregator.cpp: Added.
+        (WebKit::calculateArea):
+        (WebKit::subtractIntersection):
+        (WebKit::sharesEdge):
+        (WebKit::PaintAggregator::PendingUpdate::PendingUpdate):
+        (WebKit::PaintAggregator::PendingUpdate::~PendingUpdate):
+        (WebKit::PaintAggregator::PendingUpdate::calculateScrollDamage):
+        (WebKit::PaintAggregator::PendingUpdate::calculatePaintBounds):
+        (WebKit::PaintAggregator::hasPendingUpdate):
+        (WebKit::PaintAggregator::clearPendingUpdate):
+        (WebKit::PaintAggregator::popPendingUpdate):
+        (WebKit::PaintAggregator::invalidateRect):
+        (WebKit::PaintAggregator::scrollRect):
+        (WebKit::PaintAggregator::scrollPaintRect):
+        (WebKit::PaintAggregator::shouldInvalidateScrollRect):
+        (WebKit::PaintAggregator::invalidateScrollRect):
+        (WebKit::PaintAggregator::combinePaintRects):
+        * src/painting/PaintAggregator.h: Added.
+        * tests/PaintAggregatorTest.cpp: Added.
+        (WebKit::TEST):
+
 2012-01-31  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] ChromeClientImpl::dispatchViewportPropertiesDidChange is repeatedly called in Google News

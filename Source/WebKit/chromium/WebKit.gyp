@@ -445,6 +445,8 @@
                 'src/NotificationPresenterImpl.h',
                 'src/NotificationPresenterImpl.cpp',
                 'src/painting/GraphicsContextBuilder.h',
+                'src/painting/PaintAggregator.h',
+                'src/painting/PaintAggregator.cpp',
                 'src/PageOverlay.cpp',
                 'src/PageOverlay.h',
                 'src/PageOverlayList.cpp',

@@ -101,6 +101,7 @@
             'tests/KURLTest.cpp',
             'tests/LayerChromiumTest.cpp',
             'tests/LayerTextureUpdaterTest.cpp',
+            'tests/PaintAggregatorTest.cpp',
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
