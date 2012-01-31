@@ -104,28 +104,28 @@ autoIncrementCheckCursor()
 PASS counter is 5
 trans.objectStore('keyPathStore').openCursor(keyRange)
 keyPathUpdateCursor()
-event.target.result.update({id: 100 + counter, number: 100 + counter})
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
-event.target.source.update({id: counter, number: 100 + counter++})
+Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
-event.target.result.update({id: 100 + counter, number: 100 + counter})
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
-event.target.source.update({id: counter, number: 100 + counter++})
+Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
-event.target.result.update({id: 100 + counter, number: 100 + counter})
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
-event.target.source.update({id: counter, number: 100 + counter++})
+Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
-event.target.result.update({id: 100 + counter, number: 100 + counter})
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
-event.target.source.update({id: counter, number: 100 + counter++})
+Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 PASS counter is 5

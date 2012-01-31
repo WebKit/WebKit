@@ -1,3 +1,20 @@
+2012-01-31  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBCursor.update() should raise exception if key changed
+        https://bugs.webkit.org/show_bug.cgi?id=76952
+
+        Move the test from the async task to the synchronous call, per spec. Also re-ordered the tests
+        done during the synchronous call and the asynchronous task to follow the spec order.
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/cursor-update.html
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put): Added check during update() call, order checks per spec.
+        (WebCore::IDBObjectStoreBackendImpl::putInternal): Move effective key calculation inline.
+        * storage/IDBObjectStoreBackendImpl.h: Removed selectKeyForPut method.
+
 2012-01-31  Anders Carlsson  <andersca@apple.com>
 
         Inform the tile cache whenever the visible rect changes

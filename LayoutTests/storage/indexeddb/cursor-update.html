@@ -163,17 +163,11 @@ function keyPathUpdateCursor()
         return;
     }
 
-    request = evalAndLog("event.target.result.update({id: 100 + counter, number: 100 + counter})");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = function() {
-        shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("event.target.result.update({id: 100 + counter, number: 100 + counter})", "webkitIDBDatabaseException.DATA_ERR");
 
-        evalAndLog("event.preventDefault()");
-
-        request = evalAndLog("event.target.source.update({id: counter, number: 100 + counter++})");
-        request.onsuccess = function() { evalAndLog("event.target.source.continue()") };
-        request.onerror = unexpectedErrorCallback;
-    }
+    request = evalAndLog("event.target.result.update({id: counter, number: 100 + counter++})");
+    request.onsuccess = function() { evalAndLog("event.target.source.continue()") };
+    request.onerror = unexpectedErrorCallback;
 }
 
 function keyPathCheckCursor()

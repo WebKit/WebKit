@@ -132,37 +132,46 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
 
     if (putMode != CursorUpdate) {
-        if (key && !key->valid()) {
+        const bool autoIncrement = objectStore->autoIncrement();
+        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
+
+        if (hasKeyPath && key) {
             ec = IDBDatabaseException::DATA_ERR;
             return;
         }
-        const bool autoIncrement = objectStore->autoIncrement();
-        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-        if (!key && !autoIncrement && !hasKeyPath) {
+        if (!hasKeyPath && !autoIncrement && !key) {
             ec = IDBDatabaseException::DATA_ERR;
             return;
         }
         if (hasKeyPath) {
-            if (key) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-
             RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-            if (!autoIncrement) {
-                if (!keyPathKey || !keyPathKey->valid()) {
-                    ec = IDBDatabaseException::DATA_ERR;
-                    return;
-                }
-            } else if (keyPathKey && !keyPathKey->valid()) {
+            if (keyPathKey && !keyPathKey->valid()) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
+            if (!autoIncrement && !keyPathKey) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+        }
+        if (key && !key->valid()) {
+            ec = IDBDatabaseException::DATA_ERR;
+            return;
         }
         for (IndexMap::iterator it = m_indexes.begin(); it != m_indexes.end(); ++it) {
             const RefPtr<IDBIndexBackendImpl>& index = it->second;
             RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
             if (indexKey && !indexKey->valid()) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+        }
+    } else {
+        ASSERT(key);
+        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
+        if (hasKeyPath) {
+            RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+            if (!keyPathKey || !keyPathKey->isEqual(key.get())) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
@@ -173,67 +182,48 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBackendImpl* objectStore, IDBKey* key, PutMode putMode, IDBCallbacks* callbacks, RefPtr<SerializedScriptValue>& value)
-{
-    if (putMode == CursorUpdate)
-        ASSERT(key);
-
-    const bool autoIncrement = objectStore->autoIncrement();
-    const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-
-    if (autoIncrement && key) {
-        objectStore->resetAutoIncrementKeyCache();
-        return key;
-    }
-
-    if (autoIncrement) {
-        ASSERT(!key);
-        if (!hasKeyPath)
-            return objectStore->genAutoIncrementKey();
-
-        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-        if (keyPathKey) {
-            objectStore->resetAutoIncrementKeyCache();
-            return keyPathKey;
-        }
-
-        RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
-        RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
-        if (!valueAfterInjection) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The generated key could not be inserted into the object using the keyPath."));
-            return 0;
-        }
-        value = valueAfterInjection;
-        return autoIncKey.release();
-    }
-
-    if (hasKeyPath) {
-        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-
-        // FIXME: This check should be moved to put() and raise an exception. WK76952
-        if (putMode == CursorUpdate && !keyPathKey->isEqual(key)) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key fetched from the keyPath does not match the key of the cursor."));
-            return 0;
-        }
-
-        return keyPathKey.release();
-    }
-
-    if (!key) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied"));
-        return 0;
-    }
-
-    return key;
-}
-
 void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     RefPtr<SerializedScriptValue> value = prpValue;
-    RefPtr<IDBKey> key = selectKeyForPut(objectStore.get(), prpKey.get(), putMode, callbacks.get(), value);
-    if (!key)
+    RefPtr<IDBKey> key = prpKey;
+
+    if (putMode != CursorUpdate) {
+        const bool autoIncrement = objectStore->autoIncrement();
+        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
+        if (hasKeyPath) {
+            ASSERT(!key);
+            RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+            if (keyPathKey)
+                key = keyPathKey;
+        }
+        if (autoIncrement) {
+            if (!key) {
+                RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
+                if (hasKeyPath) {
+                    // FIXME: Add checks in put() to ensure this will always succeed (apart from I/O errors).
+                    // https://bugs.webkit.org/show_bug.cgi?id=77374
+                    RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
+                    if (!valueAfterInjection) {
+                        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The generated key could not be inserted into the object using the keyPath."));
+                        return;
+                    }
+                    value = valueAfterInjection;
+                }
+                key = autoIncKey;
+            } else {
+                // FIXME: Logic to update generator state should go here. Currently it does a scan.
+                objectStore->resetAutoIncrementKeyCache();
+            }
+        }
+    }
+
+    ASSERT(key && key->valid());
+
+    RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->m_backingStore->createInvalidRecordIdentifier();
+    if (putMode == AddOnly && objectStore->m_backingStore->keyExistsInObjectStore(objectStore->m_databaseId, objectStore->id(), *key, recordIdentifier.get())) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
-    ASSERT(key->valid());
+    }
 
     Vector<RefPtr<IDBKey> > indexKeys;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
@@ -261,14 +251,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         }
 
         indexKeys.append(indexKey.release());
-    }
-
-    RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->m_backingStore->createInvalidRecordIdentifier();
-    bool isExistingValue = objectStore->m_backingStore->keyExistsInObjectStore(objectStore->m_databaseId, objectStore->id(), *key, recordIdentifier.get());
-
-    if (putMode == AddOnly && isExistingValue) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
-        return;
     }
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
