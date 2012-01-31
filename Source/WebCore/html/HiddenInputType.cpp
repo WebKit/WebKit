@@ -46,8 +46,20 @@ PassOwnPtr<InputType> HiddenInputType::create(HTMLInputElement* element)
     return adoptPtr(new HiddenInputType(element));
 }
 
-const AtomicString& HiddenInputType::formControlType() const {
+const AtomicString& HiddenInputType::formControlType() const
+{
     return InputTypeNames::hidden();
+}
+
+bool HiddenInputType::saveFormControlState(String& result) const
+{
+    result = element()->value();
+    return true;
+}
+
+void HiddenInputType::restoreFormControlState(const String& string) const
+{
+    element()->setAttribute(valueAttr, string);
 }
 
 bool HiddenInputType::supportsValidation() const

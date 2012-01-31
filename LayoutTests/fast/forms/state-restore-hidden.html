@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+
+<div id="console"></div>
+
+<input id="emptyOnFirstVisit" />
+<form action="data:text/html,<script>history.back()&lt;/script>" name=f>
+    <input type="hidden" name="hidden" value="before" />
+</form>
+
+<script>
+description("Bug 77391 - Hidden form elements do not save their state prior to form submission");
+
+function runTest() {
+    var state = document.getElementById("emptyOnFirstVisit");
+    if (!state.value) {
+        // First visit.
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+        state.value = "visited";
+
+        document.f.hidden.value = "after";
+        // Submit form in a timeout to make sure that we create a new back/forward list item.
+        setTimeout(function() {document.f.submit();}, 0);
+    } else {
+        // Second visit.
+        shouldBeEqualToString("document.f.hidden.value", "after");
+        successfullyParsed = true;
+        
+        var script = document.createElement('script');
+        script.src = "../js/resources/js-test-post.js";
+        script.type = "text/javascript";
+        script.onload = function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        };
+        document.body.appendChild(script);
+    }
+}
+</script>
+</body>
