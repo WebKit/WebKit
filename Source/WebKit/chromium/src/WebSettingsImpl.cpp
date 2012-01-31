@@ -393,6 +393,11 @@ void WebSettingsImpl::setHyperlinkAuditingEnabled(bool enabled)
     m_settings->setHyperlinkAuditingEnabled(enabled);
 }
 
+void WebSettingsImpl::setLayoutFallbackWidth(int width)
+{
+    m_settings->setLayoutFallbackWidth(width);
+}
+
 void WebSettingsImpl::setAsynchronousSpellCheckingEnabled(bool enabled)
 {
     m_settings->setAsynchronousSpellCheckingEnabled(enabled);

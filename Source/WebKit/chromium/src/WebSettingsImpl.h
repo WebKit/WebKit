@@ -112,6 +112,7 @@ public:
     virtual void setAcceleratedFiltersEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
+    virtual void setLayoutFallbackWidth(int);
     virtual void setAsynchronousSpellCheckingEnabled(bool);
     virtual void setUnifiedTextCheckerEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
