@@ -50,6 +50,7 @@ class DrawingBuffer;
 class Extensions3DChromium;
 class GraphicsContextLostCallbackAdapter;
 class GraphicsContext3DSwapBuffersCompleteCallbackAdapter;
+class GraphicsErrorMessageCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
@@ -273,6 +274,7 @@ public:
     void synthesizeGLError(GC3Denum error);
 
     void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
+    void setErrorMessageCallback(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback>);
 
     // Extensions3D support.
     Extensions3D* getExtensions();
@@ -321,6 +323,7 @@ private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
+    OwnPtr<GraphicsErrorMessageCallbackAdapter> m_errorMessageCallbackAdapter;
     OwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;

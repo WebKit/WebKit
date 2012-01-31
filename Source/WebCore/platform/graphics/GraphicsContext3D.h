@@ -454,7 +454,14 @@ public:
         virtual ~ContextLostCallback() {}
     };
 
+    class ErrorMessageCallback {
+    public:
+        virtual void onErrorMessage(const String& message, GC3Dint id) = 0;
+        virtual ~ErrorMessageCallback() { }
+    };
+
     void setContextLostCallback(PassOwnPtr<ContextLostCallback>);
+    void setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>);
 
     static PassRefPtr<GraphicsContext3D> create(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
     ~GraphicsContext3D();

@@ -374,6 +374,15 @@ private:
     WebGLRenderingContext* m_context;
 };
 
+class WebGLRenderingContextErrorMessageCallback : public GraphicsContext3D::ErrorMessageCallback {
+public:
+    explicit WebGLRenderingContextErrorMessageCallback(WebGLRenderingContext* cb) : m_context(cb) { }
+    virtual void onErrorMessage(const String& message, GC3Dint) { m_context->printWarningToConsole(message); }
+    virtual ~WebGLRenderingContextErrorMessageCallback() { }
+private:
+    WebGLRenderingContext* m_context;
+};
+
 PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
     HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
@@ -500,6 +509,7 @@ void WebGLRenderingContext::initializeNewContext()
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 
     m_context->setContextLostCallback(adoptPtr(new WebGLRenderingContextLostCallback(this)));
+    m_context->setErrorMessageCallback(adoptPtr(new WebGLRenderingContextErrorMessageCallback(this)));
 }
 
 void WebGLRenderingContext::setupFlags()
@@ -548,6 +558,7 @@ WebGLRenderingContext::~WebGLRenderingContext()
 
     detachAndRemoveAllObjects();
     m_context->setContextLostCallback(nullptr);
+    m_context->setErrorMessageCallback(nullptr);
     m_contextGroup->removeContext(this);
 }
 

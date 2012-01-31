@@ -836,6 +836,11 @@ void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
     notImplemented();
 }
 
+void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>)
+{
+    notImplemented();
+}
+
 bool GraphicsContext3D::getImageData(Image* image, GC3Denum format, GC3Denum type, bool premultiplyAlpha,
                                      bool ignoreGammaAndColorProfile, Vector<uint8_t>& outputVector)
 {

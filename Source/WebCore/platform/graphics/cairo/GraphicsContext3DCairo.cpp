@@ -115,6 +115,10 @@ void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
 {
 }
 
+void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>)
+{
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {

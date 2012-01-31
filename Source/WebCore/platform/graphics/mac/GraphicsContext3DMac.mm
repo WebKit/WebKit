@@ -278,6 +278,10 @@ void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
 {
 }
 
+void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>)
+{
+}
+
 }
 
 #endif // ENABLE(WEBGL)

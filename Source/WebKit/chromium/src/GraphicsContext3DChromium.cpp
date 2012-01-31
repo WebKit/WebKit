@@ -1032,6 +1032,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*,
 GraphicsContext3D::~GraphicsContext3D()
 {
     m_private->setContextLostCallback(nullptr);
+    m_private->setErrorMessageCallback(nullptr);
     m_private->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
 }
 
@@ -1268,6 +1269,7 @@ DELEGATE_TO_INTERNAL_1(synthesizeGLError, GC3Denum)
 DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
 
 DELEGATE_TO_INTERNAL_1(setContextLostCallback, PassOwnPtr<GraphicsContext3D::ContextLostCallback>)
+DELEGATE_TO_INTERNAL_1(setErrorMessageCallback, PassOwnPtr<GraphicsContext3D::ErrorMessageCallback>)
 
 class GraphicsContextLostCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
 public:
@@ -1294,6 +1296,33 @@ void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext
 {
     m_contextLostCallbackAdapter = GraphicsContextLostCallbackAdapter::create(cb);
     m_impl->setContextLostCallback(m_contextLostCallbackAdapter.get());
+}
+
+class GraphicsErrorMessageCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsErrorMessageCallback {
+public:
+    virtual void onErrorMessage(const WebKit::WebString&, WebKit::WGC3Dint);
+    static PassOwnPtr<GraphicsErrorMessageCallbackAdapter> create(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback>);
+    virtual ~GraphicsErrorMessageCallbackAdapter() { }
+private:
+    GraphicsErrorMessageCallbackAdapter(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb) : m_errorMessageCallback(cb) { }
+    OwnPtr<GraphicsContext3D::ErrorMessageCallback> m_errorMessageCallback;
+};
+
+void GraphicsErrorMessageCallbackAdapter::onErrorMessage(const WebKit::WebString& message, WebKit::WGC3Dint id)
+{
+    if (m_errorMessageCallback)
+        m_errorMessageCallback->onErrorMessage(message, id);
+}
+
+PassOwnPtr<GraphicsErrorMessageCallbackAdapter> GraphicsErrorMessageCallbackAdapter::create(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb)
+{
+    return adoptPtr(cb.get() ? new GraphicsErrorMessageCallbackAdapter(cb) : 0);
+}
+
+void GraphicsContext3DPrivate::setErrorMessageCallback(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb)
+{
+    m_errorMessageCallbackAdapter = GraphicsErrorMessageCallbackAdapter::create(cb);
+    m_impl->setErrorMessageCallback(m_errorMessageCallbackAdapter.get());
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const

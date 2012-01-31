@@ -118,6 +118,12 @@ public:
         virtual ~WebGraphicsContextLostCallback() { }
     };
 
+    class WebGraphicsErrorMessageCallback {
+    public:
+        virtual void onErrorMessage(const WebString&, WGC3Dint) = 0;
+        virtual ~WebGraphicsErrorMessageCallback() { }
+    };
+
     class WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
     public:
         virtual void onSwapBuffersComplete() = 0;
@@ -369,6 +375,7 @@ public:
     virtual void deleteTexture(WebGLId) = 0;
 
     virtual void setContextLostCallback(WebGraphicsContextLostCallback* callback) {}
+    virtual void setErrorMessageCallback(WebGraphicsErrorMessageCallback* callback) { }
     // GL_ARB_robustness
     //
     // This entry point must provide slightly different semantics than

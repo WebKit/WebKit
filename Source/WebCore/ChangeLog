@@ -1,3 +1,37 @@
+2012-01-30  Gregg Tavares  <gman@chromium.org>
+
+        Add Plumming to get graphics error messages to JS Console
+        https://bugs.webkit.org/show_bug.cgi?id=77238
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. No change in behavior.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebGLRenderingContextErrorMessageCallback):
+        (WebCore::WebGLRenderingContextErrorMessageCallback::WebGLRenderingContextErrorMessageCallback):
+        (WebCore::WebGLRenderingContextErrorMessageCallback::onErrorMessage):
+        (WebCore::WebGLRenderingContextErrorMessageCallback::~WebGLRenderingContextErrorMessageCallback):
+        (WebCore):
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+        * platform/graphics/GraphicsContext3D.h:
+        (ErrorMessageCallback):
+        (WebCore::GraphicsContext3D::ErrorMessageCallback::~ErrorMessageCallback):
+        (GraphicsContext3D):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore):
+
 2012-01-30  Anders Carlsson  <andersca@apple.com>
 
         Simplify RenderLayerCompositor::frameViewDidScroll
