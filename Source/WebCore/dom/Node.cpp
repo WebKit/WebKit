@@ -93,8 +93,6 @@
 #include "TreeScopeAdopter.h"
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
-#include "WebKitAnimationEvent.h"
-#include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
 #include "WindowEventContext.h"
 #include "XMLNames.h"
