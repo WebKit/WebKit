@@ -77,6 +77,11 @@ using namespace WebCore;
     return _tileCache->tileContainerLayer();
 }
 
+- (void)visibleRectChanged
+{
+    _tileCache->visibleRectChanged();
+}
+
 - (CGColorRef)borderColor
 {
     return _tileCache->tileDebugBorderColor();

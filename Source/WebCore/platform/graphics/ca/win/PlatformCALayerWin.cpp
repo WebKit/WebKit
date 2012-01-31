@@ -620,6 +620,10 @@ void PlatformCALayer::setContentsScale(float)
 {
 }
 
+void PlatformCALayer::visibleRectChanged()
+{
+}
+
 #ifndef NDEBUG
 static void printIndent(int indent)
 {

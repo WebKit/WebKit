@@ -408,6 +408,9 @@ public:
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
+    // Called whenever the visible rect of the given GraphicsLayer changed.
+    virtual void visibleRectChanged() { }
+
 #if PLATFORM(QT) || PLATFORM(GTK)
     // This allows several alternative GraphicsLayer implementations in the same port,
     // e.g. if a different GraphicsLayer implementation is needed in WebKit1 vs. WebKit2.

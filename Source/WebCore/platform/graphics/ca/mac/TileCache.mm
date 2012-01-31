@@ -165,6 +165,11 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 #endif
 }
 
+void TileCache::visibleRectChanged()
+{
+    // FIXME: Implement.
+}
+
 void TileCache::setTileDebugBorderWidth(float borderWidth)
 {
     if (m_tileDebugBorderWidth == borderWidth)
@@ -183,6 +188,28 @@ void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
     m_tileDebugBorderColor = borderColor;
     for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
         [tileLayer setBorderColor:m_tileDebugBorderColor.get()];
+}
+
+FloatRect TileCache::visibleRect() const
+{
+    CGRect rect = [m_tileCacheLayer bounds];
+
+    CALayer *layer = m_tileCacheLayer;
+    CALayer *superlayer = [layer superlayer];
+
+    while (superlayer) {
+        CGRect rectInSuperlayerCoordinates = [superlayer convertRect:rect fromLayer:layer];
+
+        if ([superlayer masksToBounds])
+            rect = CGRectIntersection([superlayer bounds], rectInSuperlayerCoordinates);
+        else
+            rect = rectInSuperlayerCoordinates;
+
+        layer = superlayer;
+        superlayer = [layer superlayer];
+    }
+
+    return [m_tileCacheLayer convertRect:rect fromLayer:layer];
 }
 
 IntRect TileCache::bounds() const

@@ -37,6 +37,7 @@ OBJC_CLASS WebTileLayer;
 
 namespace WebCore {
 
+class FloatRect;
 class IntPoint;
 class IntRect;
 
@@ -56,6 +57,7 @@ public:
     void setAcceleratesDrawing(bool);
 
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
+    void visibleRectChanged();
 
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     void setTileDebugBorderWidth(float);
@@ -65,6 +67,8 @@ public:
 
 private:
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
+
+    FloatRect visibleRect() const;
 
     IntRect bounds() const;
     void getTileRangeForRect(const IntRect&, IntPoint& topLeft, IntPoint& bottomRight);

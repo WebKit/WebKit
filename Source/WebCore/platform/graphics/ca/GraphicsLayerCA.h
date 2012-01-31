@@ -134,6 +134,8 @@ public:
     virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
 
+    virtual void visibleRectChanged() OVERRIDE;
+
     bool allowTiledLayer() const { return m_allowTiledLayer; }
     virtual void setAllowTiledLayer(bool b);
 

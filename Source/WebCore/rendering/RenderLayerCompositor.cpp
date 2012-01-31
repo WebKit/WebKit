@@ -984,6 +984,9 @@ void RenderLayerCompositor::frameViewDidScroll()
     FrameView* frameView = m_renderView->frameView();
     LayoutPoint scrollPosition = frameView->scrollPosition();
 
+    if (RenderLayerBacking* backing = rootRenderLayer()->backing())
+        backing->graphicsLayer()->visibleRectChanged();
+
     if (m_scrollLayer)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }

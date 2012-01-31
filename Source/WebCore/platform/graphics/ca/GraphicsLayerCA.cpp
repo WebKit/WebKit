@@ -843,6 +843,11 @@ void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
     commitLayerChangesAfterSublayers();
 }
 
+void GraphicsLayerCA::visibleRectChanged()
+{
+    m_layer->visibleRectChanged();
+}
+
 void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     // Save the state before sending down to kids and restore it after
