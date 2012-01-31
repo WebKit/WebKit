@@ -1,3 +1,17 @@
+2012-01-31  Adam Roben  <aroben@apple.com>
+
+        Only call -typingAttributes on WebViews, not WebHTMLViews
+
+        Looks like this case was just missed in r105908.
+
+        Fixes <http://webkit.org/b/77432> REGRESSION (r105908): WebKit1.InspectorBarTest is crashing
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/mac/InspectorBar.mm:
+        (TestWebKitAPI::TEST): Call -typingAttributes on the WebView, just like we do 2 lines
+        earlier.
+
 2012-01-31  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] MiniBrowser: Show touch mocking indicators only when Ctrl is held down.

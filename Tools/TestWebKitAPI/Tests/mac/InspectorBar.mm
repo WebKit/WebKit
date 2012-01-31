@@ -66,7 +66,7 @@ TEST(WebKit1, InspectorBarTest)
     EXPECT_TRUE([webView.get() respondsToSelector:@selector(typingAttributes)]);
     NSDictionary *attributes = [(id)webView.get() typingAttributes];
     [(id)[[[webView.get() mainFrame] frameView] documentView] doCommandBySelector:@selector(bold:)];
-    EXPECT_FALSE([attributes isEqual:[(id)[[[webView.get() mainFrame] frameView] documentView] typingAttributes]]);
+    EXPECT_FALSE([attributes isEqual:[(id)webView.get() typingAttributes]]);
     
     [webView.get() selectAll:nil];
     NSAttributedString *attrString = [(NSView <NSTextInput> *)[[[webView.get() mainFrame] frameView] documentView] attributedSubstringFromRange:NSMakeRange(0, 5)];
