@@ -1,3 +1,35 @@
+2012-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Put tiles in a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=77480
+
+        Reviewed by Antti Koivisto.
+
+        Put tiles in a hash map keyed off the tile index.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        Shuffle member variables around so the order makes more sense.
+        Add the tile map.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache):
+        Update member initializers.
+
+        (WebCore::TileCache::setNeedsDisplayInRect):
+        Call tileLayerAtIndex instead of tileLayerAtPosition.
+
+        (WebCore::TileCache::setAcceleratesDrawing):
+        (WebCore::TileCache::setTileDebugBorderWidth):
+        (WebCore::TileCache::setTileDebugBorderColor):
+        Iterate over the hash map instead of the sublayers.
+
+        (WebCore::TileCache::resizeTileGrid):
+        Add the created layers to the map.
+
+        (WebCore::TileCache::tileLayerAtIndex):
+        Rename from tileLayerAtPoint to better reflect that this member function
+        returns a tile layer at the given index and not the given point.
+
 2012-01-31  Antti Koivisto  <antti@apple.com>
 
         Make CSSOM style() return CSSStyleDeclaration*

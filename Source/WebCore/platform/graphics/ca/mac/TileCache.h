@@ -26,7 +26,9 @@
 #ifndef TileCache_h
 #define TileCache_h
 
+#include "IntPointHash.h"
 #include "IntSize.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
@@ -66,6 +68,8 @@ public:
     void setTileDebugBorderColor(CGColorRef);
 
 private:
+    typedef IntPoint TileIndex;
+
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
 
     FloatRect visibleRect() const;
@@ -76,23 +80,25 @@ private:
     IntSize numTilesForGridSize(const IntSize&) const;
     void resizeTileGrid(const IntSize& numTiles);
 
-    WebTileLayer* tileLayerAtPosition(const IntPoint&) const;
+    WebTileLayer* tileLayerAtIndex(const TileIndex&) const;
     RetainPtr<WebTileLayer> createTileLayer();
 
     bool shouldShowRepaintCounters() const;
 
     WebTileCacheLayer* m_tileCacheLayer;
-    const IntSize m_tileSize;
-
     RetainPtr<CALayer> m_tileContainerLayer;
-
-    RetainPtr<CGColorRef> m_tileDebugBorderColor;
-    float m_tileDebugBorderWidth;
+    const IntSize m_tileSize;
 
     // Number of tiles in each dimension.
     IntSize m_numTilesInGrid;
 
+    typedef HashMap<TileIndex, RetainPtr<WebTileLayer> > TileMap;
+    TileMap m_tiles;
+
     bool m_acceleratesDrawing;
+
+    RetainPtr<CGColorRef> m_tileDebugBorderColor;
+    float m_tileDebugBorderWidth;
 };
 
 } // namespace WebCore

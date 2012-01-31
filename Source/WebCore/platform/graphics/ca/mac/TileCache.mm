@@ -50,10 +50,10 @@ PassOwnPtr<TileCache> TileCache::create(WebTileCacheLayer* tileCacheLayer, const
 
 TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     : m_tileCacheLayer(tileCacheLayer)
-    , m_tileSize(tileSize)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
-    , m_tileDebugBorderWidth(0)
+    , m_tileSize(tileSize)
     , m_acceleratesDrawing(false)
+    , m_tileDebugBorderWidth(0)
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -87,7 +87,7 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            WebTileLayer* tileLayer = tileLayerAtPosition(IntPoint(x, y));
+            WebTileLayer* tileLayer = tileLayerAtIndex(IntPoint(x, y));
 
             CGRect tileRect = [m_tileCacheLayer convertRect:rect toLayer:tileLayer];
 
@@ -158,8 +158,8 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 
     m_acceleratesDrawing = acceleratesDrawing;
 
-    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
-        [tileLayer setAcceleratesDrawing:m_acceleratesDrawing];
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        [it->second.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #else
     UNUSED_PARAM(acceleratesDrawing);
 #endif
@@ -176,8 +176,8 @@ void TileCache::setTileDebugBorderWidth(float borderWidth)
         return;
 
     m_tileDebugBorderWidth = borderWidth;
-    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
-        [tileLayer setBorderWidth:m_tileDebugBorderWidth];
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        [it->second.get() setBorderWidth:m_tileDebugBorderWidth];
 }
 
 void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
@@ -186,8 +186,8 @@ void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
         return;
 
     m_tileDebugBorderColor = borderColor;
-    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
-        [tileLayer setBorderColor:m_tileDebugBorderColor.get()];
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        [it->second.get() setBorderColor:m_tileDebugBorderColor.get()];
 }
 
 FloatRect TileCache::visibleRect() const
@@ -245,10 +245,11 @@ void TileCache::resizeTileGrid(const IntSize& numTilesInGrid)
             RetainPtr<WebTileLayer> tileLayer;
 
             if (x < m_numTilesInGrid.width() && y < m_numTilesInGrid.height()) {
-                // We can reuse the tile layer at this position.
-                tileLayer = tileLayerAtPosition(IntPoint(x, y));
+                // We can reuse the tile layer at this index.
+                tileLayer = tileLayerAtIndex(IntPoint(x, y));
             } else {
                 tileLayer = createTileLayer();
+                m_tiles.set(IntPoint(x, y), tileLayer.get());
             }
 
             [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
@@ -263,14 +264,14 @@ void TileCache::resizeTileGrid(const IntSize& numTilesInGrid)
     [CATransaction commit];
 }
 
-WebTileLayer* TileCache::tileLayerAtPosition(const IntPoint& point) const
+WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
 {
-    ASSERT(point.x() >= 0);
-    ASSERT(point.x() <= m_numTilesInGrid.width());
-    ASSERT(point.y() >= 0);
-    ASSERT(point.y() <= m_numTilesInGrid.height());
+    ASSERT(index.x() >= 0);
+    ASSERT(index.x() <= m_numTilesInGrid.width());
+    ASSERT(index.y() >= 0);
+    ASSERT(index.y() <= m_numTilesInGrid.height());
 
-    return [[m_tileContainerLayer.get() sublayers] objectAtIndex:point.y() * m_numTilesInGrid.width() + point.x()];
+    return m_tiles.get(index).get();
 }
 
 RetainPtr<WebTileLayer> TileCache::createTileLayer()
