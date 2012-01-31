@@ -1,3 +1,44 @@
+2012-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Show debug borders for individual tile cache tiles
+        https://bugs.webkit.org/show_bug.cgi?id=77388
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::updateDebugIndicators):
+        Give tile cache tiles a thin dark blue border.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        (WebCore::TileCache::tileDebugBorderWidth):
+        (WebCore::TileCache::tileDebugBorderColor):
+        Add getters and member variables for the tile debug border width and color.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache):
+        Initialize m_tileDebugBorderWidth.
+
+        (WebCore::TileCache::setTileDebugBorderWidth):
+        Update the border width of each tile layer.
+
+        (WebCore::TileCache::setTileDebugBorderColor):
+        Update the border color of each tile layer.
+
+        (WebCore::TileCache::createTileLayer):
+        Set the border color and border width.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.h:
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer borderColor]):
+        (-[WebTileCacheLayer setBorderColor:]):
+        (-[WebTileCacheLayer borderWidth]):
+        (-[WebTileCacheLayer setBorderWidth:]):
+        Call through to the TileCache.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        Don't draw the repaint counter for tile cache layers, each tile will maintain its own repaint counter.
+
 2012-01-30  Rakesh KN  <rakesh.kn@motorola.com>
 
         single-file input elements should refuse multi-file drags

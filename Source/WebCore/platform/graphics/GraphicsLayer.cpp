@@ -326,7 +326,11 @@ void GraphicsLayer::updateDebugIndicators()
 {
     if (GraphicsLayer::showDebugBorders()) {
         if (drawsContent()) {
-            if (m_usingTiledLayer)
+            // FIXME: It's weird to ask the client if this layer is a tile cache layer.
+            // Maybe we should just cache that information inside GraphicsLayer?
+            if (m_client->shouldUseTileCache(this)) // tile cache layer: dark blue
+                setDebugBorder(Color(0, 0, 128, 128), 0.5);
+            else if (m_usingTiledLayer)
                 setDebugBorder(Color(255, 128, 0, 128), 2); // tiled layer: orange
             else
                 setDebugBorder(Color(0, 128, 32, 128), 2); // normal layer: green

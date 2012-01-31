@@ -52,6 +52,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     : m_tileCacheLayer(tileCacheLayer)
     , m_tileSize(tileSize)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
+    , m_tileDebugBorderWidth(0)
     , m_acceleratesDrawing(false)
 {
     [CATransaction begin];
@@ -114,7 +115,7 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
 void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 {
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (acceleratesDrawing == m_acceleratesDrawing)
+    if (m_acceleratesDrawing == acceleratesDrawing)
         return;
 
     m_acceleratesDrawing = acceleratesDrawing;
@@ -124,6 +125,26 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 #else
     UNUSED_PARAM(acceleratesDrawing);
 #endif
+}
+
+void TileCache::setTileDebugBorderWidth(float borderWidth)
+{
+    if (m_tileDebugBorderWidth == borderWidth)
+        return;
+
+    m_tileDebugBorderWidth = borderWidth;
+    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
+        [tileLayer setBorderWidth:m_tileDebugBorderWidth];
+}
+
+void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
+{
+    if (m_tileDebugBorderColor == borderColor)
+        return;
+
+    m_tileDebugBorderColor = borderColor;
+    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
+        [tileLayer setBorderColor:m_tileDebugBorderColor.get()];
 }
 
 IntRect TileCache::bounds() const
@@ -193,6 +214,8 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer()
     [layer.get() setBounds:CGRectMake(0, 0, m_tileSize.width(), m_tileSize.height())];
     [layer.get() setAnchorPoint:CGPointZero];
     [layer.get() setTileCache:this];
+    [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
+    [layer.get() setBorderWidth:m_tileDebugBorderWidth];
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];

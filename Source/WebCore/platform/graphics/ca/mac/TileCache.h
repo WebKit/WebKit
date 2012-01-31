@@ -57,6 +57,12 @@ public:
 
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
 
+    float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
+    void setTileDebugBorderWidth(float);
+
+    CGColorRef tileDebugBorderColor() const { return m_tileDebugBorderColor.get(); }
+    void setTileDebugBorderColor(CGColorRef);
+
 private:
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
 
@@ -73,6 +79,9 @@ private:
     const IntSize m_tileSize;
 
     RetainPtr<CALayer> m_tileContainerLayer;
+
+    RetainPtr<CGColorRef> m_tileDebugBorderColor;
+    float m_tileDebugBorderWidth;
 
     // Number of tiles in each dimension.
     IntSize m_numTilesInGrid;

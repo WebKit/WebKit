@@ -85,7 +85,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
     layerContents = platformLayer->owner();
     ASSERT(layerContents);
-    if (layerContents && layerContents->platformCALayerShowRepaintCounter()) {
+    if (platformLayer->layerType() != PlatformCALayer::LayerTypeTileCacheLayer && layerContents && layerContents->platformCALayerShowRepaintCounter()) {
         bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
 
         char text[16]; // that's a lot of repaints

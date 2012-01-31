@@ -35,4 +35,5 @@ namespace WebCore {
 }
 
 - (CALayer *)tileContainerLayer;
+
 @end

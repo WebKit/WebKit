@@ -77,4 +77,24 @@ using namespace WebCore;
     return _tileCache->tileContainerLayer();
 }
 
+- (CGColorRef)borderColor
+{
+    return _tileCache->tileDebugBorderColor();
+}
+
+- (void)setBorderColor:(CGColorRef)borderColor
+{
+    _tileCache->setTileDebugBorderColor(borderColor);
+}
+
+- (CGFloat)borderWidth
+{
+    return _tileCache->tileDebugBorderWidth();
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    _tileCache->setTileDebugBorderWidth(borderWidth);
+}
+
 @end
