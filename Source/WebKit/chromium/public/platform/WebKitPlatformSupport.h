@@ -36,6 +36,7 @@
 #include "WebCommon.h"
 #include "WebData.h"
 #include "WebGamepads.h"
+#include "WebGraphicsContext3D.h"
 #include "WebLocalizedString.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
@@ -313,11 +314,11 @@ public:
     // Callable from a background WebKit thread.
     virtual void callOnMainThread(void (*func)(void*), void* context) { }
 
-    // WebGL --------------------------------------------------------------
-
-    // May return null if WebGL is not supported.
-    // Returns newly allocated WebGraphicsContext3D instance.
-    virtual WebGraphicsContext3D* createGraphicsContext3D() { return 0; }
+    // GPU ----------------------------------------------------------------
+    //
+    // May return null if GPU is not supported.
+    // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
+    virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
     // Audio --------------------------------------------------------------
 

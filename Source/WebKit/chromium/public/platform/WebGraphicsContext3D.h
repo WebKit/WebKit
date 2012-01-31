@@ -133,9 +133,8 @@ public:
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
 
-    // Initializes the graphics context; should be the first operation performed
-    // on newly-constructed instances. Returns true on success.
-    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) = 0;
+    // This function is deprecated and will be removed soon.
+    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return false; }
 
     // Makes the OpenGL context current on the current thread. Returns true on
     // success.

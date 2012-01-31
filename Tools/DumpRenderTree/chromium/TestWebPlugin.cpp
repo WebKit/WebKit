@@ -32,6 +32,7 @@
 #include "platform/WebKitPlatformSupport.h"
 #include "WebPluginContainer.h"
 #include "WebPluginParams.h"
+#include "WebViewClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
@@ -61,9 +62,11 @@ static void premultiplyAlpha(const unsigned colorIn[3], float alpha, float color
     colorOut[3] = alpha;
 }
 
-TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
+TestWebPlugin::TestWebPlugin(WebKit::WebViewClient* webViewClient,
+                             WebKit::WebFrame* frame,
                              const WebKit::WebPluginParams& params)
-    : m_frame(frame)
+    : m_webViewClient(webViewClient)
+    , m_frame(frame)
     , m_container(0)
     , m_context(0)
 {
@@ -101,12 +104,9 @@ const WebString& TestWebPlugin::mimeType()
 
 bool TestWebPlugin::initialize(WebPluginContainer* container)
 {
-    m_context = webKitPlatformSupport()->createGraphicsContext3D();
-    if (!m_context)
-        return false;
-
     WebGraphicsContext3D::Attributes attrs;
-    if (!m_context->initialize(attrs, m_frame->view(), false))
+    m_context = m_webViewClient->createGraphicsContext3D(attrs, false);
+    if (!m_context)
         return false;
 
     if (!m_context->makeContextCurrent())

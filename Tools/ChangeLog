@@ -1,3 +1,20 @@
+2012-01-31  Antoine Labour  <piman@chromium.org>
+
+        Merge WebGraphicsContext3D creation and initialization, and move it to
+        WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=76593
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::TestWebPlugin):
+        (TestWebPlugin::initialize):
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createGraphicsContext3D):
+        (WebViewHost::createPlugin):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2012-01-31  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [GTK] build-webkit warning.

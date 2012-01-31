@@ -42,6 +42,7 @@
 #include "WebTextDirection.h"
 #include "WebWidgetClient.h"
 #include "platform/WebColor.h"
+#include "platform/WebGraphicsContext3D.h"
 #include "platform/WebString.h"
 
 namespace WebKit {
@@ -108,6 +109,12 @@ public:
 
     // Create a session storage namespace object associated with this WebView.
     virtual WebStorageNamespace* createSessionStorageNamespace(unsigned quota) { return 0; }
+
+    // Creates a graphics context associated with the client's WebView.
+    // renderDirectlyToWebView means whether the context should be setup to
+    // render directly to the WebView (e.g. compositor context), or to an
+    // offscreen surface (e.g. WebGL context).
+    virtual WebGraphicsContext3D* createGraphicsContext3D(const WebGraphicsContext3D::Attributes&, bool renderDirectlyToWebView) { return 0; }
 
     // Misc ----------------------------------------------------------------
 

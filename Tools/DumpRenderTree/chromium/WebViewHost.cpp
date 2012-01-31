@@ -272,6 +272,13 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
     return WebKit::WebStorageNamespace::createSessionStorageNamespace(quota);
 }
 
+WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes& attributes, bool direct)
+{
+    if (!webView())
+        return 0;
+    return webkit_support::CreateGraphicsContext3D(attributes, webView(), direct);
+}
+
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)
 {
     // This matches win DumpRenderTree's UIDelegate.cpp.
@@ -906,7 +913,7 @@ void WebViewHost::exitFullScreen()
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
 {
     if (params.mimeType == TestWebPlugin::mimeType())
-        return new TestWebPlugin(frame, params);
+        return new TestWebPlugin(this, frame, params);
 
     return webkit_support::CreateWebPlugin(frame, params);
 }

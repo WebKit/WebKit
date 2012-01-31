@@ -46,9 +46,10 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
+#include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "platform/WebGraphicsContext3D.h"
+#include "platform/WebKitPlatformSupport.h"
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
@@ -151,14 +152,17 @@ PassRefPtr<GraphicsContext3D> createGraphicsContext(GraphicsContext3D::Attribute
     webAttributes.noExtensions = attrs.noExtensions;
     webAttributes.shareResources = attrs.shareResources;
     webAttributes.forUseOnAnotherThread = threadUsage == GraphicsContext3DPrivate::ForUseOnAnotherThread;
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createGraphicsContext3D());
-    if (!webContext)
-        return 0;
 
     Chrome* chrome = static_cast<Chrome*>(hostWindow);
     WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
-
-    if (!webContext->initialize(webAttributes, webViewImpl, renderDirectlyToHostWindow))
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext;
+    if (!webViewImpl || !webViewImpl->client()) {
+        if (renderDirectlyToHostWindow)
+            return 0;
+        webContext = adoptPtr(WebKit::webKitPlatformSupport()->createOffscreenGraphicsContext3D(webAttributes));
+    } else
+        webContext = adoptPtr(webViewImpl->client()->createGraphicsContext3D(webAttributes, renderDirectlyToHostWindow));
+    if (!webContext)
         return 0;
 
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attrs, hostWindow, renderStyle, threadUsage);

@@ -1,3 +1,18 @@
+2012-01-31  Antoine Labour  <piman@chromium.org>
+
+        Merge WebGraphicsContext3D creation and initialization, and move it to
+        WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=76593
+
+        Reviewed by Darin Fisher.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createGraphicsContext3D):
+        * public/platform/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::initialize):
+        * public/platform/WebKitPlatformSupport.h:
+        * src/GraphicsContext3DChromium.cpp:
+
 2012-01-26  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation

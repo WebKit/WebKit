@@ -31,6 +31,7 @@
 
 namespace WebKit {
 class WebGraphicsContext3D;
+class WebViewClient;
 }
 
 // A fake implemention of WebKit::WebPlugin for testing purposes.
@@ -44,7 +45,7 @@ class WebGraphicsContext3D;
 // opacity: [0.0 - 1.0]. Default is 1.0.
 class TestWebPlugin : public WebKit::WebPlugin {
 public:
-    TestWebPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
+    TestWebPlugin(WebKit::WebViewClient*, WebKit::WebFrame*, const WebKit::WebPluginParams&);
     virtual ~TestWebPlugin();
 
     static const WebKit::WebString& mimeType();
@@ -115,6 +116,7 @@ private:
     unsigned loadProgram(const WTF::CString& vertexSource,
                          const WTF::CString& fragmentSource);
 
+    WebKit::WebViewClient* m_webViewClient;
     WebKit::WebFrame* m_frame;
     WebKit::WebPluginContainer* m_container;
 
