@@ -1,3 +1,65 @@
+2012-01-31  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: reimplement generated array types
+        https://bugs.webkit.org/show_bug.cgi?id=77289
+
+        Reviewed by Vsevolod Vlasov.
+
+        Arrays are now rendered as a single template class. Its type-specific
+        details are provided by an additional ArrayItemHelper class that is
+        defined using C++ specialization technique.
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.String):
+        (RawTypes.String.get_array_item_raw_c_type_text):
+        (RawTypes.Int):
+        (RawTypes.Int.get_array_item_raw_c_type_text):
+        (RawTypes.Number):
+        (RawTypes.Number.get_array_item_raw_c_type_text):
+        (RawTypes.Bool):
+        (RawTypes.Bool.get_array_item_raw_c_type_text):
+        (RawTypes.Object):
+        (RawTypes.Object.get_array_item_raw_c_type_text):
+        (RawTypes.Any):
+        (RawTypes.Any.get_array_item_raw_c_type_text):
+        (RawTypes.Array):
+        (RawTypes.Array.get_array_item_raw_c_type_text):
+        (RawTypes):
+        (TypeBindings.create_type_declaration_.EnumBinding):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_array_item_c_type_text):
+        (TypeBindings.create_type_declaration_.PlainString):
+        (TypeBindings.create_type_declaration_.PlainString.get_array_item_c_type_text):
+        (TypeBindings.create_type_declaration_.TypedefString):
+        (TypeBindings.create_type_declaration_.TypedefString.get_array_item_c_type_text):
+        (StructItemTraits):
+        (get_array_item_c_type_text):
+        (PlainObjectBinding):
+        (PlainObjectBinding.get_array_item_c_type_text):
+        (AdHocTypeContext):
+        (AdHocTypeContext.get_type_name_fix):
+        (AdHocTypeContext.add_type):
+        (ArrayBinding):
+        (ArrayBinding.resolve_inner):
+        (ArrayBinding.resolve_inner.ResolveData):
+        (ArrayBinding.request_user_runtime_cast):
+        (ArrayBinding.request_internal_runtime_cast):
+        (ArrayBinding.get_code_generator):
+        (ArrayBinding.get_code_generator.CodeGenerator):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_forward_declaration):
+        (ArrayBinding.get_code_generator.CodeGenerator.register_use):
+        (ArrayBinding.get_code_generator.CodeGenerator.get_generate_pass_id):
+        (ArrayBinding.get_validator_call_text):
+        (ArrayBinding.get_in_c_type_text):
+        (ArrayBinding.get_array_item_c_type_text):
+        (ArrayBinding.get_setter_value_expression_pattern):
+        (ArrayBinding.reduce_to_raw_type):
+        (RawTypeBinding.get_array_item_c_type_text):
+        (ArrayItemHelper):
+        (typename):
+        (ArrayOf):
+        (Traits):
+
 2012-01-31  Antti Koivisto  <antti@apple.com>
 
         Parent SVGFontFaceElements style declaration to the rule

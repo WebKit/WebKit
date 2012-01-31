@@ -317,6 +317,10 @@ class RawTypes(object):
         def is_heavy_value():
             return True
 
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "String"
+
         _plain_c_type = CParamType("String")
         _ref_c_type = CParamType("const String&")
 
@@ -353,6 +357,10 @@ class RawTypes(object):
         def is_heavy_value():
             return False
 
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "int"
+
         default_c_param_type = CParamType("int")
 
     class Number(BaseType):
@@ -383,6 +391,10 @@ class RawTypes(object):
         @staticmethod
         def is_heavy_value():
             return False
+
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "double"
 
         default_c_param_type = CParamType("double")
 
@@ -426,6 +438,10 @@ class RawTypes(object):
         @staticmethod
         def is_heavy_value():
             return False
+
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "bool"
 
         _plain_c_type = CParamType("bool")
         _ref_c_type = CParamType("const bool* const", "*%s")
@@ -471,6 +487,10 @@ class RawTypes(object):
         @staticmethod
         def is_heavy_value():
             return True
+
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "InspectorObject"
 
         _plain_c_type = CParamType("RefPtr<InspectorObject>")
         _ref_c_type = CParamType("PassRefPtr<InspectorObject>")
@@ -520,6 +540,10 @@ class RawTypes(object):
         def is_heavy_value():
             return True
 
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "InspectorValue"
+
         _plain_c_type = CParamType("RefPtr<InspectorValue>")
         _ref_c_type = CParamType("PassRefPtr<InspectorValue>")
 
@@ -566,6 +590,10 @@ class RawTypes(object):
         @staticmethod
         def is_heavy_value():
             return True
+
+        @staticmethod
+        def get_array_item_raw_c_type_text():
+            return "InspectorArray"
 
         _plain_c_type = CParamType("RefPtr<InspectorArray>")
         _ref_c_type = CParamType("PassRefPtr<InspectorArray>")
@@ -810,6 +838,10 @@ class TypeBindings:
                     def get_in_c_type_text(cls, optional):
                         return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::Enum"
 
+                    @classmethod
+                    def get_array_item_c_type_text(cls):
+                        return cls.get_in_c_type_text(False)
+
                     @staticmethod
                     def get_setter_value_expression_pattern():
                         return "getEnumConstantValue(%s)"
@@ -854,6 +886,10 @@ class TypeBindings:
                         @classmethod
                         def get_in_c_type_text(cls, optional):
                             return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+                        @classmethod
+                        def get_array_item_c_type_text(cls):
+                            return cls.reduce_to_raw_type().get_array_item_raw_c_type_text()
 
                     return PlainString
 
@@ -908,6 +944,10 @@ class TypeBindings:
                         @classmethod
                         def get_in_c_type_text(cls, optional):
                             return "const %s%s&" % (helper.full_name_prefix_for_use, fixed_type_name.class_name)
+
+                        @classmethod
+                        def get_array_item_c_type_text(cls):
+                            return cls.get_in_c_type_text(False)
 
                     return TypedefString
 
@@ -1089,6 +1129,8 @@ class TypeBindings:
     }
 """ % class_name)
 
+                                writer.newline("    typedef StructItemTraits ItemTraits;\n")
+
                                 for prop_data in resolve_data.optional_properties:
                                     prop_name = prop_data.p["name"]
                                     param_type_binding = prop_data.param_type_binding
@@ -1177,6 +1219,10 @@ class TypeBindings:
                     def get_in_c_type_text(cls, optional):
                         return "PassRefPtr<" + helper.full_name_prefix_for_use + fixed_type_name.class_name + ">"
 
+                    @classmethod
+                    def get_array_item_c_type_text(cls):
+                        return helper.full_name_prefix_for_use + fixed_type_name.class_name
+
                     @staticmethod
                     def get_setter_value_expression_pattern():
                         return None
@@ -1234,6 +1280,10 @@ class TypeBindings:
                     def get_in_c_type_text(cls, optional):
                         return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
 
+                    @classmethod
+                    def get_array_item_c_type_text(cls):
+                        return cls.reduce_to_raw_type().get_array_item_raw_c_type_text()
+
                     @staticmethod
                     def get_setter_value_expression_pattern():
                         return None
@@ -1244,156 +1294,105 @@ class TypeBindings:
 
                 return PlainObjectBinding
         elif json_typable["type"] == "array":
+            if "items" in json_typable:
 
-            class ArrayBinding:
-                resolve_data_ = None
-                need_internal_runtime_cast_ = False
+                ad_hoc_types = []
 
-                @classmethod
-                def resolve_inner(cls, resolve_context):
-                    if cls.resolve_data_:
-                        return
+                class AdHocTypeContext:
+                    container_full_name_prefix = "<not yet defined>"
 
-                    ad_hoc_types = []
-                    if "items" in json_typable:
+                    @staticmethod
+                    def get_type_name_fix():
+                        return fixed_type_name
 
-                        class AdHocTypeContext:
-                            container_full_name_prefix = "<not yet defined>"
+                    @staticmethod
+                    def add_type(binding):
+                        ad_hoc_types.append(binding)
+
+                item_binding = resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
+
+                class ArrayBinding:
+                    resolve_data_ = None
+                    need_internal_runtime_cast_ = False
+
+                    @classmethod
+                    def resolve_inner(cls, resolve_context):
+                        if cls.resolve_data_:
+                            return
+
+                        class ResolveData:
+                            item_type_binding = item_binding
+                            ad_hoc_type_list = ad_hoc_types
+
+                        cls.resolve_data_ = ResolveData
+
+                        for t in ad_hoc_types:
+                            t.resolve_inner(resolve_context)
+
+                    @classmethod
+                    def request_user_runtime_cast(cls, request):
+                        raise Exception("Not implemented yet")
+
+                    @classmethod
+                    def request_internal_runtime_cast(cls):
+                        cls.need_internal_runtime_cast_ = True
+                        cls.resolve_data_.item_type_binding.request_internal_runtime_cast()
+
+                    @classmethod
+                    def get_code_generator(array_binding_cls):
+
+                        class CodeGenerator:
+                            @staticmethod
+                            def generate_type_builder(writer, generate_context):
+                                ad_hoc_type_writer = writer
+
+                                resolve_data = array_binding_cls.resolve_data_
+
+                                for ad_hoc_type in resolve_data.ad_hoc_type_list:
+                                    code_generator = ad_hoc_type.get_code_generator()
+                                    if code_generator:
+                                        code_generator.generate_type_builder(ad_hoc_type_writer, generate_context)
 
                             @staticmethod
-                            def get_type_name_fix():
-                                class NameFix:
-                                    class_name = "Item"
-
-                                    @staticmethod
-                                    def output_comment(writer):
-                                        pass
-
-                                return NameFix
+                            def generate_forward_declaration(writer):
+                                pass
 
                             @staticmethod
-                            def add_type(binding):
-                                ad_hoc_types.append(binding)
+                            def register_use(forward_listener):
+                                item_code_generator = item_binding.get_code_generator()
+                                if item_code_generator:
+                                    item_code_generator.register_use(forward_listener)
 
-                        item_binding = resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
-                    else:
-                        item_binding = RawTypeBinding(RawTypes.Any)
+                            @staticmethod
+                            def get_generate_pass_id():
+                                return TypeBuilderPass.MAIN
 
-                    code_generator = item_binding.get_code_generator()
-                    if code_generator:
-                        code_generator.register_use(resolve_context.forward_listener)
+                        return CodeGenerator
 
-                    class ResolveData:
-                        item_type_binding = item_binding
-                        ad_hoc_type_list = ad_hoc_types
+                    @classmethod
+                    def get_validator_call_text(cls):
+                        return cls.get_array_item_c_type_text() + "::assertCorrectValue"
 
-                    cls.resolve_data_ = ResolveData
+                    @classmethod
+                    def get_in_c_type_text(cls, optional):
+                        return "PassRefPtr<TypeBuilder::Array<%s > >" % cls.resolve_data_.item_type_binding.get_array_item_c_type_text()
 
-                    for t in ad_hoc_types:
-                        t.resolve_inner(resolve_context)
+                    @classmethod
+                    def get_array_item_c_type_text(cls):
+                        return "TypeBuilder::Array<%s >" % cls.resolve_data_.item_type_binding.get_array_item_c_type_text()
 
-                @classmethod
-                def request_user_runtime_cast(cls, request):
-                    raise Exception("Not implemented yet")
+                    @staticmethod
+                    def get_setter_value_expression_pattern():
+                        return None
 
-                @classmethod
-                def request_internal_runtime_cast(cls):
-                    cls.need_internal_runtime_cast_ = True
-                    cls.resolve_data_.item_type_binding.request_internal_runtime_cast()
+                    @staticmethod
+                    def reduce_to_raw_type():
+                        return RawTypes.Array
 
-                @classmethod
-                def get_code_generator(array_binding_cls):
-
-                    class CodeGenerator:
-                        @staticmethod
-                        def generate_type_builder(writer, generate_context):
-                            helper.write_doc(writer)
-                            class_name = fixed_type_name.class_name
-                            fixed_type_name.output_comment(writer)
-                            writer.newline("class ")
-                            writer.append(class_name)
-                            writer.append(" : public InspectorArray {\n")
-                            writer.newline("private:\n")
-                            writer.newline("    %s() { }\n" % fixed_type_name.class_name)
-                            writer.append("\n")
-                            writer.newline("public:\n")
-                            ad_hoc_type_writer = writer.insert_writer("    ")
-
-                            resolve_data = array_binding_cls.resolve_data_
-
-                            for ad_hoc_type in resolve_data.ad_hoc_type_list:
-                                code_generator = ad_hoc_type.get_code_generator()
-                                if code_generator:
-                                    code_generator.generate_type_builder(ad_hoc_type_writer, generate_context)
-
-                            item_type_binding = resolve_data.item_type_binding
-
-                            for item_type_opt in MethodGenerateModes.get_modes(item_type_binding):
-                                writer.newline("    void addItem")
-                                writer.append("(%s value)\n" % item_type_opt.get_c_param_type_text(item_type_binding))
-                                writer.newline("    {\n")
-                                writer.newline("        this->push%s(%s);\n"
-                                    % (item_type_binding.reduce_to_raw_type().get_setter_name(),
-                                       item_type_opt.get_setter_value_expression(item_type_binding, "value")))
-                                writer.newline("    }\n")
-
-                            writer.append("\n")
-                            writer.newline("    static PassRefPtr<%s> create() {\n" % fixed_type_name.class_name)
-                            writer.newline("        return adoptRef(new %s());\n" % fixed_type_name.class_name)
-                            writer.newline("    }\n")
-
-                            if array_binding_cls.need_internal_runtime_cast_:
-                                writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
-                                writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
-                                writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
-
-                                validator_writer = generate_context.validator_writer
-                                validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
-                                validator_writer.newline("{\n")
-                                validator_writer.newline("    RefPtr<InspectorArray> array;\n")
-                                validator_writer.newline("    bool castRes = value->asArray(&array);\n")
-                                validator_writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
-                                validator_writer.newline("    for (unsigned i = 0; i < array->length(); ++i) {\n")
-                                validator_writer.newline("        %s(array->get(i).get());\n" % resolve_data.item_type_binding.get_validator_call_text())
-                                validator_writer.newline("    }\n")
-                                validator_writer.newline("}\n\n\n")
-
-                            writer.newline("};\n\n")
-
-                        @staticmethod
-                        def generate_forward_declaration(writer):
-                            class_name = fixed_type_name.class_name
-                            writer.newline("class ")
-                            writer.append(class_name)
-                            writer.append(";\n")
-
-                        @staticmethod
-                        def register_use(forward_listener):
-                            helper.add_to_forward_listener(forward_listener)
-
-                        @staticmethod
-                        def get_generate_pass_id():
-                            return TypeBuilderPass.MAIN
-
-                    return CodeGenerator
-
-                @staticmethod
-                def get_validator_call_text():
-                    return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::assertCorrectValue"
-
-                @classmethod
-                def get_in_c_type_text(cls, optional):
-                    return "PassRefPtr<%s%s>" % (helper.full_name_prefix_for_use, fixed_type_name.class_name)
-
-                @staticmethod
-                def get_setter_value_expression_pattern():
-                    return None
-
-                @staticmethod
-                def reduce_to_raw_type():
-                    return RawTypes.Array
-
-            return ArrayBinding
+                return ArrayBinding
+            else:
+                # Fall-through to raw type.
+                pass
 
         raw_type = RawTypes.get(json_typable["type"])
 
@@ -1421,6 +1420,9 @@ class RawTypeBinding:
 
     def get_in_c_type_text(self, optional):
         return self.raw_type_.get_c_param_type(ParamType.EVENT, optional).get_text()
+
+    def get_array_item_c_type_text(self):
+        return self.raw_type_.get_array_item_raw_c_type_text()
 
     def get_setter_value_expression_pattern(self):
         return None
@@ -1642,6 +1644,72 @@ typedef String ErrorString;
 #if ENABLE(INSPECTOR)
 
 namespace TypeBuilder {
+
+// This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
+// technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
+template<typename T>
+struct ArrayItemHelper {
+    typedef typename T::ItemTraits Traits;
+};
+
+template<typename T>
+class Array : public InspectorArray {
+private:
+    Array() { }
+
+public:
+    void addItem(PassRefPtr<T> value)
+    {
+        ArrayItemHelper<T>::Traits::pushRefPtr(this, value);
+    }
+
+    void addItem(T value)
+    {
+        ArrayItemHelper<T>::Traits::pushRaw(this, value);
+    }
+
+    static PassRefPtr<Array<T> > create()
+    {
+        return adoptRef(new Array<T>());
+    }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+    static void assertCorrectValue(InspectorValue* value);
+#endif // """ + VALIDATOR_IFDEF_NAME + """
+};
+
+struct StructItemTraits {
+    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+    {
+        array->pushObject(value);
+    }
+
+    template<typename T>
+    static void assertCorrectValue(InspectorValue* value) {
+        T::assertCorrectValue(value);
+    }
+};
+
+template<>
+struct ArrayItemHelper<String> {
+    struct Traits {
+        static void pushRaw(InspectorArray* array, const String& value)
+        {
+            array->pushString(value);
+        }
+    };
+};
+
+template<>
+struct ArrayItemHelper<InspectorObject> {
+    struct Traits {
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+        {
+            array->pushObject(value);
+        }
+    };
+};
+
 ${forwards}
 
 String getEnumConstantValue(int code);
@@ -2125,7 +2193,19 @@ String getEnumConstantValue(int code) {
 } // namespace TypeBuilder
 
 #if """ + VALIDATOR_IFDEF_NAME + """
+
+template<typename T>
+void TypeBuilder::Array<T>::assertCorrectValue(InspectorValue* value)
+{
+    RefPtr<InspectorArray> array;
+    bool castRes = value->asArray(&array);
+    ASSERT_UNUSED(castRes, castRes);
+    for (unsigned i = 0; i < array->length(); i++)
+        ArrayItemHelper<T>::Traits::template assertCorrectValue<T>(array->get(i).get());
+}
+
 $validatorCode
+
 #endif // """ + VALIDATOR_IFDEF_NAME + """
 
 } // namespace WebCore
