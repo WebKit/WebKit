@@ -316,7 +316,9 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
     }
 
     if (lowerKey == "www-authenticate")
-        handleAuthHeader(value);
+        handleAuthHeader(ProtectionSpaceServerHTTP, value);
+    else if (lowerKey == "proxy-authenticate" && !BlackBerry::Platform::Client::get()->getProxyAddress().empty())
+        handleAuthHeader(ProtectionSpaceProxyHTTP, value);
 
     if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
         handleFTPHeader(value);
@@ -701,7 +703,7 @@ void NetworkJob::parseData()
     notifyClose(BlackBerry::Platform::FilterStream::StatusSuccess);
 }
 
-bool NetworkJob::handleAuthHeader(const String& header)
+bool NetworkJob::handleAuthHeader(const ProtectionSpaceServerType space, const String& header)
 {
     if (!m_handle)
         return false;
@@ -713,12 +715,12 @@ bool NetworkJob::handleAuthHeader(const String& header)
         return false;
 
     if (equalIgnoringCase(header, "ntlm"))
-        sendRequestWithCredentials(ProtectionSpaceServerHTTP, ProtectionSpaceAuthenticationSchemeNTLM, "NTLM");
+        sendRequestWithCredentials(space, ProtectionSpaceAuthenticationSchemeNTLM, "NTLM");
 
     // Extract the auth scheme and realm from the header.
     size_t spacePos = header.find(' ');
     if (spacePos == notFound) {
-        LOG(Network, "WWW-Authenticate field '%s' badly formatted: missing scheme.", header.utf8().data());
+        LOG(Network, "%s-Authenticate field '%s' badly formatted: missing scheme.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
         return false;
     }
 
@@ -736,7 +738,7 @@ bool NetworkJob::handleAuthHeader(const String& header)
 
     size_t realmPos = header.findIgnoringCase("realm=", spacePos);
     if (realmPos == notFound) {
-        LOG(Network, "WWW-Authenticate field '%s' badly formatted: missing realm.", header.utf8().data());
+        LOG(Network, "%s-Authenticate field '%s' badly formatted: missing realm.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
         return false;
     }
     size_t beginPos = realmPos + 6;
@@ -745,14 +747,14 @@ bool NetworkJob::handleAuthHeader(const String& header)
         beginPos += 1;
         size_t endPos = header.find("\"", beginPos);
         if (endPos == notFound) {
-            LOG(Network, "WWW-Authenticate field '%s' badly formatted: invalid realm.", header.utf8().data());
+            LOG(Network, "%s-Authenticate field '%s' badly formatted: invalid realm.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
             return false;
         }
         realm = header.substring(beginPos, endPos - beginPos);
     }
 
     // Get the user's credentials and resend the request.
-    sendRequestWithCredentials(ProtectionSpaceServerHTTP, protectionSpaceScheme, realm);
+    sendRequestWithCredentials(space, protectionSpaceScheme, realm);
 
     return true;
 }
@@ -796,7 +798,15 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     if (!newURL.isValid())
         return false;
 
-    ProtectionSpace protectionSpace(m_response.url().host(), m_response.url().port(), type, realm, scheme);
+    int port = 0;
+    if (type == ProtectionSpaceProxyHTTP) {
+        std::stringstream toPort(BlackBerry::Platform::Client::get()->getProxyPort());
+        toPort >> port;
+    } else
+        port = m_response.url().port();
+
+    ProtectionSpace protectionSpace((type == ProtectionSpaceProxyHTTP) ? BlackBerry::Platform::Client::get()->getProxyAddress().c_str() : m_response.url().host()
+            , port, type, realm, scheme);
 
     // We've got the scheme and realm. Now we need a username and password.
     // First search the CredentialStorage.

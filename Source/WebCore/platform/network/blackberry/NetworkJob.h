@@ -129,7 +129,7 @@ private:
 
     // The server needs authentication credentials. Search in the
     // CredentialStorage or prompt the user via dialog.
-    bool handleAuthHeader(const String& header);
+    bool handleAuthHeader(const ProtectionSpaceServerType, const String& header);
 
     bool handleFTPHeader(const String& header);
 

@@ -104,6 +104,8 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
             }
         } else if (type == ProtectionSpaceServerFTP)
             authType = BlackBerry::Platform::NetworkRequest::AuthFTP;
+        else if (type == ProtectionSpaceProxyHTTP)
+            authType = BlackBerry::Platform::NetworkRequest::AuthProxy;
 
         if (authType != BlackBerry::Platform::NetworkRequest::AuthNone)
             platformRequest.setCredentials(username.utf8().data(), password.utf8().data(), authType);

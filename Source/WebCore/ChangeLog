@@ -1,3 +1,21 @@
+2012-01-30  Christopher Hutten-Czapski  <chutten@rim.com>
+
+        BlackBerry - Support Proxy-Authenticate headers when a proxy is configured
+        https://bugs.webkit.org/show_bug.cgi?id=77361
+
+        Though we have a proxy configured, we might not have the auth
+        credentials it requires. Support Proxy-Authenticate for that case.
+
+        Reviewed by George Staikos.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyHeaderReceived):
+        (WebCore::NetworkJob::handleAuthHeader):
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        * platform/network/blackberry/NetworkJob.h:
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+
 2012-01-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unnecessary retry logic in LayerRendererChromium initialization for accelerated painting
