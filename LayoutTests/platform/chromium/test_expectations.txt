@@ -3311,8 +3311,6 @@ BUGWK65874 : fast/js/preventExtensions.html = TEXT
 
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING FAIL
 
-BUGCR97646 : media/media-blocked-by-beforeload.html = PASS TEXT
-
 BUGWK66417 WIN : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
 BUGWK66417 MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
 BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
