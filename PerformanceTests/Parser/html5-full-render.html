@@ -45,12 +45,12 @@ function loadChunkedSpecIntoIframe(iframe) {
 // Running from the onload callback just makes the UI nicer as it shows the logs before starting the test.
 window.onload = function() {
     // Depending on the chosen chunk size, iterations can take over 60s to run on a fast machine, so we only run 2.
-    start(2, function() {
+    PerfTestRunner.run(function() {
         var iframe = document.createElement("iframe");
         document.body.appendChild(iframe);
         loadChunkedSpecIntoIframe(iframe);
         document.body.removeChild(iframe);
-    }, 1); // We only loop once for each run, again because this test is so slow.
+    }, 1, 2); // We only loop once for each run, again because this test is so slow.
 }
 
 </script>

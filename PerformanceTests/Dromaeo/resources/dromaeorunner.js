@@ -3,11 +3,11 @@
          baseURL: "./resources/dromaeo/web/index.html",
 
          computeScores: function (results) {
-             var avg = 0, min = 0, max = 0, stdev = 0, varsum = 0;
+             var mean = 0, min = 0, max = 0, stdev = 0, varsum = 0;
 
              for (var i = 0; i < results.length; ++i) {
                  var item = results[i];
-                 avg += item.mean;
+                 mean += item.mean;
                  min += item.min;
                  max += item.max;
                  varsum += item.deviation * item.deviation;
@@ -15,7 +15,7 @@
 
              return {
                  median: 0,
-                 avg: avg,
+                 mean: mean,
                  min: min,
                  max: max,
                  stdev: Math.sqrt(varsum)
@@ -61,7 +61,7 @@
 
          teardown: function(data) {
              var scores = DRT.computeScores(data.result);
-             printStatistics(scores, DRT.log);
+             PerfTestRunner.printStatistics(scores, DRT.log);
              window.setTimeout(function() {
                  if (window.layoutTestController)
                      layoutTestController.notifyDone();

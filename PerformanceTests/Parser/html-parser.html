@@ -3,9 +3,9 @@
 <pre id="log"></pre>
 <script src="../resources/runner.js"></script>
 <script>
-var spec = loadFile("resources/html5.html");
+var spec = PerfTestRunner.loadFile("resources/html5.html");
 
-start(10, function() {
+PerfTestRunner.run(function() {
     var iframe = document.createElement("iframe");
     iframe.style.display = "none";  // Prevent creation of the rendering tree, so we only test HTML parsing.
     iframe.sandbox = '';  // Prevent external script loads which could cause write() to return before completing the parse.

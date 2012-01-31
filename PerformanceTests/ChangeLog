@@ -1,3 +1,39 @@
+2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        runner.js in performance tests should define a class
+        https://bugs.webkit.org/show_bug.cgi?id=77074
+
+        Reviewed by Eric Seidel.
+
+        Wrap all functions in runner.js by PerfTestRunner and update tests that runner.js accordingly.
+        Also replace compute* functions in runner.js by more robust code from dom-perf.js.
+
+        * Bindings/event-target-wrapper.html:
+        * DOM/DOMTable.html:
+        * DOM/resources/dom-perf.js:
+        (BenchmarkSuite.prototype.RunSingle):
+        (runBenchmarkSuite):
+        * Mutation/append-child-deep.html:
+        * Mutation/append-child.html:
+        * Mutation/inner-html.html:
+        * Mutation/remove-child-deep.html:
+        * Mutation/remove-child.html:
+        * Parser/html-parser.html:
+        * Parser/html5-full-render.html:
+        * Parser/simple-url.html:
+        * Parser/tiny-innerHTML.html:
+        * Parser/url-parser.html:
+        * Parser/xml-parser.html:
+        * resources/runner.js:
+        (PerfTestRunner.log):
+        (PerfTestRunner.logInfo):
+        (PerfTestRunner.loadFile):
+        (PerfTestRunner.computeStatistics):
+        (PerfTestRunner.logStatistics):
+        (PerfTestRunner._runLoop.else):
+        (PerfTestRunner._runLoop):
+        (PerfTestRunner._runner):
+
 2012-01-31  Hajime Morrita  <morrita@chromium.org>
 
         [PerformanceTests] Add landing html for Dromaeo dom-query test

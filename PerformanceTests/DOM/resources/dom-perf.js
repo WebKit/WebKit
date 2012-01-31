@@ -210,57 +210,15 @@ function BenchmarkResult(benchmark, times, error, benchmarkContent) {
         }
     }
     if (!error) {
-        var data = times.slice();
-        var count = data.length;
-
-        // Sort the data so that all seemingly
-        // insignificant values such as 0.000000003 will
-        // be at the beginning of the array and their
-        // contribution to the mean and variance of the
-        // data will not be lost because of the precision
-        // of the CPU.
-        data.sort(BenchmarkSuite.Math.ascend);
-
-        // Since the data is now sorted, the minimum value
-        // is at the beginning of the array, the median
-        // value is in the middle of the array, and the
-        // maximum value is at the end of the array.
-        this.min = data[0];
-        var middle = Math.floor(data.length / 2);
-        if ((data.length % 2) !== 0)
-            this.median = data[middle];
-        else
-            this.median = (data[middle - 1] + data[middle]) / 2;
-        this.max = data[data.length - 1];
-
-        // Compute the mean and variance using a
-        // numerically stable algorithm.
-        var sqsum = 0;
-        this.mean = data[0];
-        var nZeros = 0;
-        for (var i = 1; i < data.length; ++i) {
-            var x = data[i];
-            var delta = x - this.mean;
-            var sweep = i + 1.0;
-            this.mean += delta / sweep;
-            sqsum += delta * delta * (i / sweep);
-        }
-        this.sum = this.mean * count;
-        this.variance = sqsum / count;
-
-        this.sdev = Math.sqrt(this.variance);
-        this.score = 1000 / this.mean;
+        var statistics = PerfTestRunner.computeStatistics(times);
+        this.min = statistics.min;
+        this.max = statistics.max;
+        this.median = statistics.median;
+        this.mean = statistics.mean;
+        this.sum = statistics.sum;
+        this.variance = statistics.variance;
+        this.stdev = statistics.stdev;
     }
-
-    this.toString = function() {
-        var s =
-          " min: " + this.min + 
-          " max: " + this.max + 
-          " mean: " + this.mean + 
-          " median: " + this.median + 
-          " sdev: " + this.sdev;
-        return s;
-    };
 
     // Convert results to numbers. Used by the geometric mean computation.
     this.valueOf = function() { return this.time; };
@@ -284,7 +242,7 @@ BenchmarkSuite.prototype.RunSingle = function(benchmark, times) {
             this.benchmarkContentHolder.removeChild(this.benchmarkContent);
         this.benchmarkContent = this.benchmarkContentProto.cloneNode();
         this.benchmarkContentHolder.appendChild(this.benchmarkContent);
-        gc();
+        PerfTestRunner.gc();
 
         try {
             if (benchmark.setup) {
@@ -384,8 +342,8 @@ BenchmarkSuite.prototype.generateLargeTree = function() {
     return this.generateDOMTree(26, 26, 4);
 };
 
-function runBenchmarkSuite(suite) {
-    startCustom(20, function () {
+function runBenchmarkSuite(suite, runCount) {
+    PerfTestRunner.run(function () {
         var container = document.getElementById('container');
         var content = document.getElementById('benchmark_content');
         suite.benchmarkContentHolder = container;
@@ -399,7 +357,7 @@ function runBenchmarkSuite(suite) {
                 totalMeanTime += result.mean;
         }
         return totalMeanTime;
-    }, function () {
+    }, 1, runCount || 20, function () {
         var container = document.getElementById('container');
         if (container.firstChild)
             container.removeChild(container.firstChild);

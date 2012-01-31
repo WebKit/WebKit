@@ -28,7 +28,7 @@ function listener(mutations) {
     if (start) {
         var time = Date.now() - start;
         times.push(time);
-        log(time);
+        PerfTestRunner.log(time);
     }
     if (numRuns-- >= 0) {
         runAgain();
@@ -41,19 +41,19 @@ function listener(mutations) {
         for (var i = 0; i < elems.length; ++i)
             sandbox.appendChild(elems[i]);
     } else {
-        logStatistics(times);
+        PerfTestRunner.logStatistics(times);
         if (!observing) {
             observing = true;
             resetState();
-            log('\n------------\n');
-            log('Running ' + numRuns + ' times with observation');
+            PerfTestRunner.log('\n------------\n');
+            PerfTestRunner.log('Running ' + numRuns + ' times with observation');
             setTimeout(runAgain, 0);
         }
     }
 }
 
 resetState();
-log('Running ' + numRuns + ' times without observation');
+PerfTestRunner.log('Running ' + numRuns + ' times without observation');
 window.addEventListener('load', runAgain);
 </script>
 </body>

@@ -12,7 +12,7 @@ for (var i = 0; i < 0x7FFF; ++i)
 xmlArray.push('</root>')
 var xmlData = xmlArray.join('');
 
-start(20, function() {
+PerfTestRunner.run(function() {
     domParser.parseFromString(xmlData, "text/xml");
 });
 </script>

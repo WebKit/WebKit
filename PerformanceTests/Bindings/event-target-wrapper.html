@@ -13,12 +13,12 @@ link.addEventListener('click', function(event) {
     window.evt = event;
     event.preventDefault();
 
-    start(20, function() {
+    PerfTestRunner.run(function () {
         var e = window.evt;
         for (var x = 0; x < kIteratonsPerTest; x++) {
             e.target;
         }
-    }, 10);
+    });
 
     return false;
 }, false);
