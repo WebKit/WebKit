@@ -37,7 +37,7 @@ from models import Builder
 from models import Branch
 from models import NumericIdHolder
 from models import Platform
-from models import createInTransactionWithNumericIdHolder
+from models import create_in_transaction_with_numeric_id_holder
 
 
 class CreateHandler(webapp2.RequestHandler):
@@ -54,11 +54,11 @@ class CreateHandler(webapp2.RequestHandler):
             return
 
         if model == 'builder':
-            error = self._createBuilder(name, password)
+            error = self._create_builder(name, password)
         elif model == 'branch':
-            error = self._createBranch(key, name)
+            error = self._create_branch(key, name)
         elif model == 'platform':
-            error = self._createPlatform(key, name)
+            error = self._create_platform(key, name)
         else:
             error = "Unknown model type: %s\n" % model
 
@@ -66,11 +66,11 @@ class CreateHandler(webapp2.RequestHandler):
         memcache.delete('dashboard')
         self.response.out.write(error + '\n' if error else 'OK')
 
-    def _createBuilder(self, name, password):
+    def _create_builder(self, name, password):
         if not name or not password:
             return 'Invalid name or password'
 
-        password = Builder.hashedPassword(password)
+        password = Builder.hashed_password(password)
 
         def execute():
             message = None
@@ -85,7 +85,7 @@ class CreateHandler(webapp2.RequestHandler):
 
         return db.run_in_transaction(execute)
 
-    def _createBranch(self, key, name):
+    def _create_branch(self, key, name):
         if not key or not name:
             return 'Invalid key or name'
 
@@ -99,10 +99,10 @@ class CreateHandler(webapp2.RequestHandler):
             branch.put()
             return branch
 
-        createInTransactionWithNumericIdHolder(execute)
+        create_in_transaction_with_numeric_id_holder(execute)
         return error[0]
 
-    def _createPlatform(self, key, name):
+    def _create_platform(self, key, name):
         if not key or not name:
             return 'Invalid key name'
 
@@ -116,5 +116,5 @@ class CreateHandler(webapp2.RequestHandler):
             platform.put()
             return platform
 
-        createInTransactionWithNumericIdHolder(execute)
+        create_in_transaction_with_numeric_id_holder(execute)
         return error[0]

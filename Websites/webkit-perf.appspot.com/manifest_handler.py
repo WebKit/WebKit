@@ -46,48 +46,48 @@ class ManifestHandler(webapp2.RequestHandler):
             self.response.out.write(cache)
             return
 
-        testMap = {}
-        platformIdMap = {}
-        branchIdMap = {}
+        test_map = {}
+        platform_id_map = {}
+        branch_id_map = {}
         for test in Test.all():
-            branchIds = [Branch.get(branchKey).id for branchKey in test.branches]
-            platformIds = [Platform.get(platformKey).id for platformKey in test.platforms]
-            testMap[test.id] = {
+            branch_ids = [Branch.get(branch_key).id for branch_key in test.branches]
+            platform_ids = [Platform.get(platform_key).id for platform_key in test.platforms]
+            test_map[test.id] = {
                 'name': test.name,
-                'branchIds': branchIds,
-                'platformIds': platformIds,
+                'branchIds': branch_ids,
+                'platformIds': platform_ids,
             }
 
-            for platformId in platformIds:
-                platformIdMap.setdefault(platformId, {'tests': [], 'branches': []})
-                platformIdMap[platformId]['tests'].append(test.id)
-                platformIdMap[platformId]['branches'] += branchIds
+            for platform_id in platform_ids:
+                platform_id_map.setdefault(platformId, {'tests': [], 'branches': []})
+                platform_id_map[platform_id]['tests'].append(test.id)
+                platform_id_map[platform_id]['branches'] += branch_ids
 
-            for branchId in branchIds:
-                branchIdMap.setdefault(branchId, {'tests': [], 'platforms': []})
-                branchIdMap[branchId]['tests'].append(test.id)
-                branchIdMap[branchId]['platforms'] += platformIds
+            for branch_id in branch_ids:
+                branch_id_map.setdefault(branchId, {'tests': [], 'platforms': []})
+                branch_id_map[branch_id]['tests'].append(test.id)
+                branch_id_map[branch_id]['platforms'] += platform_ids
 
-        platformMap = {}
+        platform_map = {}
         for platform in Platform.all():
-            if platform.id not in platformIdMap:
+            if platform.id not in platform_id_map:
                 continue
-            platformMap[platform.id] = {
+            platform_map[platform.id] = {
                 'name': platform.name,
-                'testIds': list(set(platformIdMap[platform.id]['tests'])),
-                'branchIds': list(set(platformIdMap[platform.id]['branches'])),
+                'testIds': list(set(platform_id_map[platform.id]['tests'])),
+                'branchIds': list(set(platform_id_map[platform.id]['branches'])),
             }
 
-        branchMap = {}
+        branch_map = {}
         for branch in Branch.all():
-            if branch.id not in branchIdMap:
+            if branch.id not in branch_id_map:
                 continue
-            branchMap[branch.id] = {
+            branch_map[branch.id] = {
                 'name': branch.name,
-                'testIds': list(set(branchIdMap[branch.id]['tests'])),
-                'platformIds': list(set(branchIdMap[branch.id]['platforms'])),
+                'testIds': list(set(branch_id_map[branch.id]['tests'])),
+                'platformIds': list(set(branch_id_map[branch.id]['platforms'])),
             }
 
-        result = json.dumps({'testMap': testMap, 'platformMap': platformMap, 'branchMap': branchMap})
+        result = json.dumps({'testMap': test_map, 'platformMap': platform_map, 'branchMap': branch_map})
         self.response.out.write(result)
         memcache.add('manifest', result)

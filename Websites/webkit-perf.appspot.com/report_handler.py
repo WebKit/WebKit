@@ -44,7 +44,7 @@ from models import Platform
 from models import ReportLog
 from models import Test
 from models import TestResult
-from models import createInTransactionWithNumericIdHolder
+from models import create_in_transaction_with_numeric_id_holder
 
 
 class ReportHandler(webapp2.RequestHandler):
@@ -63,37 +63,37 @@ class ReportHandler(webapp2.RequestHandler):
         except ValueError:
             return self._output('Failed to parse the payload as a json. Report key: %d' % log.key().id())
 
-        builder = self._modelByKeyNameInBodyOrError(Builder, 'builder-name')
-        branch = self._modelByKeyNameInBodyOrError(Branch, 'branch')
-        platform = self._modelByKeyNameInBodyOrError(Platform, 'platform')
-        buildNumber = self._integerInBody('build-number')
-        revision = self._integerInBody('revision')
-        timestamp = self._timestampInBody()
+        builder = self._model_by_key_name_in_body_or_error(Builder, 'builder-name')
+        branch = self._model_by_key_name_in_body_or_error(Branch, 'branch')
+        platform = self._model_by_key_name_in_body_or_error(Platform, 'platform')
+        build_number = self._integer_in_body('build-number')
+        revision = self._integer_in_body('revision')
+        timestamp = self._timestamp_in_body()
 
         failed = False
-        if builder and not (self.bypassAuthentication() or builder.authenticate(self._body.get('password', ''))):
+        if builder and not (self.bypass_authentication() or builder.authenticate(self._body.get('password', ''))):
             self._output('Authentication failed')
             failed = True
 
-        if not self._resultsAreValid():
+        if not self._results_are_valid():
             self._output("The payload doesn't contain results or results are malformed")
             failed = True
 
-        if not (builder and branch and platform and buildNumber and revision and timestamp) or failed:
+        if not (builder and branch and platform and build_number and revision and timestamp) or failed:
             return
 
-        build = self._createBuildIfPossible(builder, buildNumber, branch, platform, revision, timestamp)
+        build = self._create_build_if_possible(builder, build_number, branch, platform, revision, timestamp)
         if not build:
             return
 
-        for testName, result in self._body['results'].iteritems():
-            test = self._addTestIfNeeded(testName, branch, platform)
-            memcache.delete(Test.cacheKey(test.id, branch.id, platform.id))
+        for test_name, result in self._body['results'].iteritems():
+            test = self._add_test_if_needed(test_name, branch, platform)
+            memcache.delete(Test.cache_key(test.id, branch.id, platform.id))
             if isinstance(result, dict):
-                TestResult(name=testName, build=build, value=float(result.get('avg', 0)), valueMedian=float(result.get('median', 0)),
+                TestResult(name=test_name, build=build, value=float(result.get('avg', 0)), valueMedian=float(result.get('median', 0)),
                     valueStdev=float(result.get('stdev', 0)), valueMin=float(result.get('min', 0)), valueMax=float(result.get('max', 0))).put()
             else:
-                TestResult(name=testName, build=build, value=float(result)).put()
+                TestResult(name=test_name, build=build, value=float(result)).put()
 
         log = ReportLog.get(log.key())
         log.delete()
@@ -104,21 +104,21 @@ class ReportHandler(webapp2.RequestHandler):
 
         return self._output('OK')
 
-    def _modelByKeyNameInBodyOrError(self, model, keyName):
+    def _model_by_key_name_in_body_or_error(self, model, keyName):
         key = self._body.get(keyName, '')
         instance = key and model.get_by_key_name(key)
         if not instance:
             self._output('There are no %s named "%s"' % (model.__name__.lower(), key))
         return instance
 
-    def _integerInBody(self, key):
+    def _integer_in_body(self, key):
         value = self._body.get(key, '')
         try:
             return int(value)
         except:
             return self._output('Invalid %s: "%s"' % (key.replace('-', ' '), value))
 
-    def _timestampInBody(self):
+    def _timestamp_in_body(self):
         value = self._body.get('timestamp', '')
         try:
             return datetime.fromtimestamp(int(value))
@@ -128,12 +128,12 @@ class ReportHandler(webapp2.RequestHandler):
     def _output(self, message):
         self.response.out.write(message + '\n')
 
-    def bypassAuthentication(self):
+    def bypass_authentication(self):
         return False
 
-    def _resultsAreValid(self):
+    def _results_are_valid(self):
 
-        def _isFloatConvertible(value):
+        def _is_float_convertible(value):
             try:
                 float(value)
                 return True
@@ -146,17 +146,17 @@ class ReportHandler(webapp2.RequestHandler):
         for testResult in self._body['results'].values():
             if isinstance(testResult, dict):
                 for value in testResult.values():
-                    if not _isFloatConvertible(value):
+                    if not _is_float_convertible(value):
                         return False
                 if 'avg' not in testResult:
                     return False
                 continue
-            if not _isFloatConvertible(testResult):
+            if not _is_float_convertible(testResult):
                 return False
 
         return True
 
-    def _createBuildIfPossible(self, builder, buildNumber, branch, platform, revision, timestamp):
+    def _create_build_if_possible(self, builder, build_number, branch, platform, revision, timestamp):
         key_name = builder.name + ':' + str(int(time.mktime(timestamp.timetuple())))
 
         def execute():
@@ -164,17 +164,17 @@ class ReportHandler(webapp2.RequestHandler):
             if build:
                 return self._output('The build at %s already exists for %s' % (str(timestamp), builder.name))
 
-            return Build(branch=branch, platform=platform, builder=builder, buildNumber=buildNumber,
-                timestamp=timestamp, revision=revision, key_name=key_name).put()
+            return Build(branch=branch, platform=platform, builder=builder, buildNumber=build_number,
+                timestamp=timestamp, revision=revision, keyName=key_name).put()
         return db.run_in_transaction(execute)
 
-    def _addTestIfNeeded(self, testName, branch, platform):
+    def _add_test_if_needed(self, test_name, branch, platform):
 
         def execute(id):
-            test = Test.get_by_key_name(testName)
+            test = Test.get_by_key_name(test_name)
             returnValue = None
             if not test:
-                test = Test(id=id, name=testName, key_name=testName)
+                test = Test(id=id, name=test_name, key_name=test_name)
                 returnValue = test
             if branch.key() not in test.branches:
                 test.branches.append(branch.key())
@@ -182,9 +182,9 @@ class ReportHandler(webapp2.RequestHandler):
                 test.platforms.append(platform.key())
             test.put()
             return returnValue
-        return createInTransactionWithNumericIdHolder(execute) or Test.get_by_key_name(testName)
+        return create_in_transaction_with_numeric_id_holder(execute) or Test.get_by_key_name(test_name)
 
 
 class AdminReportHandler(ReportHandler):
-    def bypassAuthentication(self):
+    def bypass_authentication(self):
         return True

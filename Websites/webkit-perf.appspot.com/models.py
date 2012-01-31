@@ -38,27 +38,28 @@ class NumericIdHolder(db.Model):
     # Dummy class whose sole purpose is to generate key().id()
 
 
-def createInTransactionWithNumericIdHolder(callback):
-    idHolder = NumericIdHolder()
-    idHolder.put()
-    idHolder = NumericIdHolder.get(idHolder.key())
-    owner = db.run_in_transaction(callback, idHolder.key().id())
+def create_in_transaction_with_numeric_id_holder(callback):
+    id_holder = NumericIdHolder()
+    id_holder.put()
+    id_holder = NumericIdHolder.get(id_holder.key())
+    owner = db.run_in_transaction(callback, id_holder.key().id())
     if owner:
-        idHolder.owner = owner
-        idHolder.put()
+        id_holder.owner = owner
+        id_holder.put()
     else:
-        idHolder.delete()
+        id_holder.delete()
     return owner
 
-def deleteModelWithNumericIdHolder(model):
-    idHolder = NumericIdHolder.get_by_id(model.id)
+
+def delete_model_with_numeric_id_holder(model):
+    id_holder = NumericIdHolder.get_by_id(model.id)
     model.delete()
-    idHolder.delete()
+    id_holder.delete()
 
 
-def modelFromNumericId(id, expectedKind):
-    idHolder = NumericIdHolder.get_by_id(id)
-    return idHolder.owner if idHolder and idHolder.owner and isinstance(idHolder.owner, expectedKind) else None
+def modelFromNumericId(id, expected_kind):
+    id_holder = NumericIdHolder.get_by_id(id)
+    return id_holder.owner if id_holder and id_holder.owner and isinstance(id_holder.owner, expected_kind) else None
 
 
 class Branch(db.Model):
@@ -75,12 +76,12 @@ class Builder(db.Model):
     name = db.StringProperty(required=True)
     password = db.StringProperty(required=True)
 
-    def authenticate(self, rawPassword):
-        return self.password == hashlib.sha256(rawPassword).hexdigest()
+    def authenticate(self, raw_password):
+        return self.password == hashlib.sha256(raw_password).hexdigest()
 
     @staticmethod
-    def hashedPassword(rawPassword):
-        return hashlib.sha256(rawPassword).hexdigest()
+    def hashed_password(raw_password):
+        return hashlib.sha256(raw_password).hexdigest()
 
 
 class Build(db.Model):
@@ -100,8 +101,8 @@ class Test(db.Model):
     platforms = db.ListProperty(db.Key)
 
     @staticmethod
-    def cacheKey(testId, branchId, platformId):
-        return 'runs:%d,%d,%d' % (testId, branchId, platformId)
+    def cache_key(test_id, branch_id, platform_id):
+        return 'runs:%d,%d,%d' % (test_id, branch_id, platform_id)
 
 
 class TestResult(db.Model):

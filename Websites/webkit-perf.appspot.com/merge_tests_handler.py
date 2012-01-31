@@ -35,7 +35,7 @@ import os
 
 from models import Test
 from models import TestResult
-from models import deleteModelWithNumericIdHolder
+from models import delete_model_with_numeric_id_holder
 
 
 class MergeTestsHandler(webapp2.RequestHandler):
@@ -51,9 +51,9 @@ class MergeTestsHandler(webapp2.RequestHandler):
             self.response.out.write('Invalid test names')
             return
 
-        mergedResults = TestResult.all()
-        mergedResults.filter('name =', merge.name)
-        for result in mergedResults:
+        merged_results = TestResult.all()
+        merged_results.filter('name =', merge.name)
+        for result in merged_results:
             result.name = into.name
             result.put()
 
@@ -61,6 +61,6 @@ class MergeTestsHandler(webapp2.RequestHandler):
         # dashboard, manifest, and all runs for this test here.
         memcache.flush_all()
 
-        deleteModelWithNumericIdHolder(merge)
+        delete_model_with_numeric_id_holder(merge)
 
         self.response.out.write('OK')

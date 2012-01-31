@@ -49,30 +49,30 @@ class RunsHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
         try:
-            testId = int(self.request.get('id', 0))
-            branchId = int(self.request.get('branchid', 0))
-            platformId = int(self.request.get('platformid', 0))
+            test_id = int(self.request.get('id', 0))
+            branch_id = int(self.request.get('branchid', 0))
+            platform_id = int(self.request.get('platformid', 0))
         except TypeError:
             # FIXME: Output an error here
-            testId = 0
-            branchId = 0
-            platformId = 0
+            test_id = 0
+            branch_id = 0
+            platform_id = 0
 
         # FIXME: Just fetch builds specified by "days"
         # days = self.request.get('days', 365)
 
-        cacheKey = Test.cacheKey(testId, branchId, platformId)
-        cache = memcache.get(cacheKey)
+        cache_key = Test.cache_key(test_id, branch_id, platform_id)
+        cache = memcache.get(cache_key)
         if cache:
             self.response.out.write(cache)
             return
 
         builds = Build.all()
-        builds.filter('branch =', modelFromNumericId(branchId, Branch))
-        builds.filter('platform =', modelFromNumericId(platformId, Platform))
+        builds.filter('branch =', modelFromNumericId(branch_id, Branch))
+        builds.filter('platform =', modelFromNumericId(platform_id, Platform))
 
-        test = modelFromNumericId(testId, Test)
-        testName = test.name if test else None
+        test = modelFromNumericId(test_id, Test)
+        test_name = test.name if test else None
         test_runs = []
         averages = {}
         values = []
@@ -80,7 +80,7 @@ class RunsHandler(webapp2.RequestHandler):
 
         for build in builds:
             results = TestResult.all()
-            results.filter('name =', testName)
+            results.filter('name =', test_name)
             results.filter('build =', build)
             for result in results:
                 builderId = build.builder.key().id()
@@ -101,4 +101,4 @@ class RunsHandler(webapp2.RequestHandler):
             'date_range': [min(timestamps), max(timestamps)] if timestamps else None,
             'stat': 'ok'})
         self.response.out.write(result)
-        memcache.add(cacheKey, result)
+        memcache.add(cache_key, result)

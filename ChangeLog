@@ -1,5 +1,49 @@
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Python code in webkit-perf.appspot.com uses camelCase
+        https://bugs.webkit.org/show_bug.cgi?id=77392
+
+        Reviewed by Adam Barth.
+
+        Use PEP8 style naming conventions instead of camelCase.
+
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler.post):
+        (CreateHandler._create_builder):
+        (CreateHandler._create_branch):
+        (CreateHandler._create_platform):
+        * Websites/webkit-perf.appspot.com/dashboard_handler.py:
+        (DashboardHandler.get):
+        * Websites/webkit-perf.appspot.com/manifest_handler.py:
+        (ManifestHandler.get):
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py:
+        (MergeTestsHandler.post):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (create_in_transaction_with_numeric_id_holder):
+        (delete_model_with_numeric_id_holder):
+        (modelFromNumericId):
+        (Builder.authenticate):
+        (Builder.hashed_password):
+        (Test.cache_key):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+        (ReportHandler._model_by_key_name_in_body_or_error):
+        (ReportHandler._integer_in_body):
+        (ReportHandler._timestamp_in_body):
+        (ReportHandler.bypass_authentication):
+        (ReportHandler._results_are_valid):
+        (ReportHandler._results_are_valid._is_float_convertible):
+        (ReportHandler._create_build_if_possible):
+        (ReportHandler._create_build_if_possible.execute):
+        (ReportHandler._add_test_if_needed):
+        (ReportHandler._add_test_if_needed.execute):
+        (ReportHandler):
+        (AdminReportHandler.bypass_authentication):
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.get):
+
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Enable memcache on webkit-perf.appspot.com
         https://bugs.webkit.org/show_bug.cgi?id=77378
 

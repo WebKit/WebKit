@@ -41,18 +41,17 @@ from models import Test
 class DashboardHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8';
-
         cache = memcache.get('dashboard')
         if cache:
             self.response.out.write(cache)
             return
 
-        webkitTrunk = Branch.get_by_key_name('webkit-trunk')
+        webkit_trunk = Branch.get_by_key_name('webkit-trunk')
 
         # FIXME: Determine popular branches, platforms, and tests
         dashboard = {
             'defaultBranch': 'WebKit trunk',
-            'branchToId': {webkitTrunk.name: webkitTrunk.id},
+            'branchToId': {webkit_trunk.name: webkit_trunk.id},
             'platformToId': {},
             'testToId': {},
         }
