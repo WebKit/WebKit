@@ -1,3 +1,10 @@
+2012-01-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Small build fixes.
+
+        * configure.ac: Correct the version number to be 1.6.2 and fix
+        a bad merge of gtkdoc patches.
+
 2012-01-30  Priit Laes  <plaes@plaes.org>
 
         [GTK] Create .xz tarballs during distcheck
