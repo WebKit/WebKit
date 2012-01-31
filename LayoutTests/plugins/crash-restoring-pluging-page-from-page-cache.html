@@ -1,0 +1,94 @@
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    layoutTestController.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+}
+
+function pageShown() {
+    if (event.persisted)
+        setTimeout("testComplete()", 0);   
+    else
+        setTimeout("startTest()", 0);
+}
+
+function testComplete() {
+    alert("Made it back!");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function startTest() {
+    document.getElementById("ExamplePlugin").setAttribute("style", "display:none");
+    window.location.href = 'resources/go-back.html';
+}
+
+</script>
+
+<style>
+    object { border-color: red; border-width: 2px; border-style:solid; }
+</style>
+</head>
+
+<body onpageshow="pageShown();">
+    
+This test - assuming it will pass - does the following:<br>
+1 - Has nested plugin elements<br>
+2 - Leaves the page, and the page enters the page cache<br>
+3 - Returns, pulling the page from the page cache<br>
+4 - Doesn't crash<br>
+<br>
+If you're not running under DRT, you'll need to leave the page then return to it yourself.
+<br>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+<object>
+
+<object type="application/x-shockwave-flash" width="500" height="375" id="ExamplePlugin">
+    <img src="resources/apple.gif">
+</object>
+
+Some fallback text to force a renderer.
+
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object>
+</object><br><br>
+
+(Yes, the extreme number of object elements are necessary to more reliably reproduce the crash.  Leave them.)
+</body>

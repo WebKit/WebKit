@@ -217,25 +217,23 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 
 void HTMLPlugInImageElement::documentWillSuspendForPageCache()
 {
-    if (RenderStyle* rs = renderStyle()) {
-        m_customStyleForPageCache = RenderStyle::clone(rs);
+    if (RenderStyle* renderStyle = this->renderStyle()) {
+        m_customStyleForPageCache = RenderStyle::clone(renderStyle);
         m_customStyleForPageCache->setDisplay(NONE);
+        setHasCustomStyleForRenderer();
+
+        recalcStyle(Force);
     }
 
-    setHasCustomStyleForRenderer();
-
-    if (m_customStyleForPageCache)
-        recalcStyle(Force);
-        
     HTMLPlugInElement::documentWillSuspendForPageCache();
 }
 
 void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 {
-    clearHasCustomStyleForRenderer();
-
     if (m_customStyleForPageCache) {
         m_customStyleForPageCache = 0;
+        clearHasCustomStyleForRenderer();
+
         recalcStyle(Force);
     }
     
@@ -244,9 +242,7 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 
 PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
 {
-    if (!m_customStyleForPageCache)
-        return renderStyle();
-
+    ASSERT(m_customStyleForPageCache);
     return m_customStyleForPageCache;
 }
 

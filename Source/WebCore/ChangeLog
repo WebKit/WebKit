@@ -1,3 +1,27 @@
+2012-01-30  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10707072>
+        Crashes in WebProcess at WebCore::Node::rendererIsNeeded
+
+        Reviewed by Darin Adler.
+
+        In specific circumstances a plugin element can be without a render style at the point in time where
+        the page navigated and enters the page cache.
+
+        When this is the cash, the element should not enter into the "custom style for renderer" mode and should
+        instead use the default render style machinery.
+
+        Test: plugins/crash-restoring-pluging-page-from-page-cache.html
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::documentWillSuspendForPageCache): Only setHasCustomStyleForRenderer and 
+          forceRecalc if there actually is a custom style to be used.
+        (WebCore::HTMLPlugInImageElement::documentDidResumeFromPageCache): Only clearHasCustomStyleForRenderer if there
+          actually was a custom style to be cleared.
+        (WebCore::HTMLPlugInImageElement::customStyleForRenderer): This should only be called if there actually is a 
+          custom style to be used. Otherwise the element would have to fallback to the "normal" RenderStyle which might
+          not exist.
+
 2012-01-30  Anders Carlsson  <andersca@apple.com>
 
         Show debug borders for individual tile cache tiles
