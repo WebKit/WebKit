@@ -1,5 +1,19 @@
 2012-01-30  Anders Carlsson  <andersca@apple.com>
 
+        Scrollbars don't show when scrolling on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=77396
+        <rdar://problem/10710736>
+
+        Reviewed by Sam Weinig.
+
+        Use ScrollAnimator::scrollToOffsetWithoutAnimation when updating the frame view scroll offset,
+        since that function will end up invalidating the scrollbars correctly.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::didUpdateMainFrameScrollPosition):
+
+2012-01-30  Anders Carlsson  <andersca@apple.com>
+
         Show repaint counters in individual tiles
         https://bugs.webkit.org/show_bug.cgi?id=77390
         <rdar://problem/10767967>

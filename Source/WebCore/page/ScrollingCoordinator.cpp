@@ -34,6 +34,7 @@
 #include "IntRect.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimator.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -141,8 +142,11 @@ void ScrollingCoordinator::didUpdateMainFrameScrollPosition()
         m_didDispatchDidUpdateMainFrameScrollPosition = false;
     }
 
-    if (FrameView* frameView = m_page->mainFrame()->view())
-        frameView->setScrollOffset(scrollPosition);
+    if (FrameView* frameView = m_page->mainFrame()->view()) {
+        frameView->setConstrainsScrollingToContentEdge(false);
+        frameView->scrollToOffsetWithoutAnimation(scrollPosition);
+        frameView->setConstrainsScrollingToContentEdge(true);
+    }
 }
 
 } // namespace WebCore
