@@ -106,6 +106,7 @@ Q_SIGNALS:
     void contentResumeRequested();
 
     void viewportTrajectoryVectorChanged(const QPointF&);
+    void visibleContentRectAndScaleChanged();
 
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.

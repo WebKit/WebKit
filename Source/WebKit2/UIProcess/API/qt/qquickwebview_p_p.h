@@ -83,7 +83,7 @@ public:
     void updateTouchViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
-    void updateVisibleContentRectAndScale();
+    void _q_updateVisibleContentRectAndScale();
 
     void _q_suspend();
     void _q_resume();

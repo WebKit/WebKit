@@ -137,6 +137,7 @@ void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
         QObject::disconnect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
         QObject::disconnect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
         QObject::disconnect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
+        QObject::disconnect(interactionEngine.data(), SIGNAL(visibleContentRectAndScaleChanged()), viewport, SLOT(_q_updateVisibleContentRectAndScale()));
     }
     interactionEngine.reset(0);
     pageView->d->eventHandler->setViewportInteractionEngine(0);
@@ -152,6 +153,7 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
+    QObject::connect(interactionEngine.data(), SIGNAL(visibleContentRectAndScaleChanged()), viewport, SLOT(_q_updateVisibleContentRectAndScale()));
     updateTouchViewportSize();
 }
 
@@ -214,7 +216,7 @@ void QQuickWebViewPrivate::_q_resume()
         postTransitionState->apply();
     }
 
-    updateVisibleContentRectAndScale();
+    _q_updateVisibleContentRectAndScale();
 }
 
 void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
@@ -298,7 +300,7 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
     context->downloadManager()->addDownload(download, downloadItem);
 }
 
-void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
+void QQuickWebViewPrivate::_q_updateVisibleContentRectAndScale()
 {
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
@@ -365,7 +367,7 @@ void QQuickWebViewPrivate::updateTouchViewportSize()
     webPageProxy->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
-    updateVisibleContentRectAndScale();
+    _q_updateVisibleContentRectAndScale();
 }
 
 void QQuickWebViewPrivate::PostTransitionState::apply()

@@ -305,6 +305,8 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
 
     QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentScale());
     m_content->setPos(-boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight()));
+
+    emit visibleContentRectAndScaleChanged();
 }
 
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
