@@ -307,8 +307,9 @@ public:
     virtual void appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
     {
         m_quadsAppended = true;
-        
-        OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCSolidColorDrawQuad::create(sharedQuadState, IntRect(5, 5, 5, 5), Color::white);
+
+        Color color = m_opaqueColor ? Color::white : Color(0, 0, 0, 0);
+        OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCSolidColorDrawQuad::create(sharedQuadState, IntRect(5, 5, 5, 5), color);
         EXPECT_EQ(m_blend, testBlendingDrawQuad->needsBlending());
         EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
     }
@@ -322,12 +323,15 @@ public:
 
     bool quadsAppended() const { return m_quadsAppended; }
 
+    void setOpaqueColor(bool opaqueColor) { m_opaqueColor = opaqueColor; }
+
 private:
     explicit BlendStateCheckLayer(int id)
         : CCLayerImpl(id)
         , m_blend(false)
         , m_hasRenderSurface(false)
         , m_quadsAppended(false)
+        , m_opaqueColor(true)
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
@@ -337,6 +341,7 @@ private:
     bool m_blend;
     bool m_hasRenderSurface;
     bool m_quadsAppended;
+    bool m_opaqueColor;
 };
 
 // https://bugs.webkit.org/show_bug.cgi?id=75783
@@ -358,18 +363,36 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 
     // Opaque layer, drawn without blending.
     layer1->setOpaque(true);
+    layer1->setOpaqueColor(true);
     layer1->setExpectation(false, false);
     m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
-    // Layer with translucent content, drawn with blending.
+    // Layer with translucent content, but solid color is opaque, so drawn without blending.
     layer1->setOpaque(false);
+    layer1->setOpaqueColor(true);
+    layer1->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->quadsAppended());
+
+    // Layer with translucent content and painting, so drawn with blending.
+    layer1->setOpaque(false);
+    layer1->setOpaqueColor(false);
     layer1->setExpectation(true, false);
     m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent opacity, drawn with blending.
     layer1->setOpaque(true);
+    layer1->setOpaqueColor(true);
+    layer1->setOpacity(0.5);
+    layer1->setExpectation(true, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->quadsAppended());
+
+    // Layer with translucent opacity and painting, drawn with blending.
+    layer1->setOpaque(true);
+    layer1->setOpaqueColor(false);
     layer1->setOpacity(0.5);
     layer1->setExpectation(true, false);
     m_hostImpl->drawLayers();
@@ -380,9 +403,11 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 
     // 2 opaque layers, drawn without blending.
     layer1->setOpaque(true);
+    layer1->setOpaqueColor(true);
     layer1->setOpacity(1);
     layer1->setExpectation(false, false);
     layer2->setOpaque(true);
+    layer2->setOpaqueColor(true);
     layer2->setOpacity(1);
     layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
@@ -392,7 +417,18 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     // Parent layer with translucent content, drawn with blending.
     // Child layer with opaque content, drawn without blending.
     layer1->setOpaque(false);
+    layer1->setOpaqueColor(false);
     layer1->setExpectation(true, false);
+    layer2->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
+
+    // Parent layer with translucent content but opaque painting, drawn without blending.
+    // Child layer with opaque content, drawn without blending.
+    layer1->setOpaque(false);
+    layer1->setOpaqueColor(true);
+    layer1->setExpectation(false, false);
     layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
@@ -404,6 +440,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     // Child layer with opaque content, drawn without blending (parent surface
     // carries the inherited opacity).
     layer1->setOpaque(true);
+    layer1->setOpaqueColor(true);
     layer1->setOpacity(0.5);
     layer1->setExpectation(false, true);
     layer2->setExpectation(false, false);
@@ -414,9 +451,11 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     // Draw again, but with child non-opaque, to make sure
     // layer1 not culled.
     layer1->setOpaque(true);
+    layer1->setOpaqueColor(true);
     layer1->setOpacity(1);
     layer1->setExpectation(false, false);
     layer2->setOpaque(true);
+    layer2->setOpaqueColor(true);
     layer2->setOpacity(0.5);
     layer2->setExpectation(true, false);
     m_hostImpl->drawLayers();
@@ -428,8 +467,21 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpacity(1);
     layer1->setExpectation(false, false);
     layer2->setOpaque(false);
+    layer2->setOpaqueColor(false);
     layer2->setOpacity(1);
     layer2->setExpectation(true, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
+
+    // And when the layer says its not opaque but is painted opaque, it is not blended.
+    layer1->setOpaque(true);
+    layer1->setOpacity(1);
+    layer1->setExpectation(false, false);
+    layer2->setOpaque(false);
+    layer2->setOpaqueColor(true);
+    layer2->setOpacity(1);
+    layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
     EXPECT_TRUE(layer2->quadsAppended());

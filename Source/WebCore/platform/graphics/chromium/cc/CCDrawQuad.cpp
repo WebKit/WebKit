@@ -50,6 +50,15 @@ CCDrawQuad::CCDrawQuad(const CCSharedQuadState* sharedQuadState, Material materi
     ASSERT(m_material != Invalid);
 }
 
+IntRect CCDrawQuad::opaqueRect() const
+{
+    if (opacity() != 1)
+        return IntRect();
+    if (m_sharedQuadState->isOpaque() && m_quadOpaque)
+        return m_quadRect;
+    return m_opaqueRect;
+}
+
 void CCDrawQuad::setQuadVisibleRect(const IntRect& quadVisibleRect)
 {
     m_quadVisibleRect = quadVisibleRect;

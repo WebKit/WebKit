@@ -1,3 +1,42 @@
+2012-01-30  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use region reported painted opaque for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=76015
+
+        Reviewed by James Robinson.
+
+        New unit tests in CCTiledLayerImplTest.cpp, CCQuadCullerTest.cpp, CCLayerTreeHostImplTest.cpp
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setOpaque):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (UpdatableTile):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::opaqueRect):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (CCDrawQuad):
+        (WebCore::CCDrawQuad::needsBlending):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp:
+        (WebCore::CCSolidColorDrawQuad::CCSolidColorDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp:
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h:
+        (CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (DrawableTile):
+        (WebCore::DrawableTile::opaqueRect):
+        (WebCore::DrawableTile::setOpaqueRect):
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        (WebCore::CCTiledLayerImpl::pushTileProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in previousLinePosition when moving into a root inline box without leaves

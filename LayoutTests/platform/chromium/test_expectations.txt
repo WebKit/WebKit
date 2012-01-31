@@ -4008,6 +4008,9 @@ BUG_CARYCLARK MAC : editing/style/create-block-for-style-012.html = IMAGE
 BUG_CARYCLARK MAC : editing/style/create-block-for-style-013.html = IMAGE
 BUG_CARYCLARK MAC : fast/dom/blur-contenteditable.html = IMAGE
 
+// May fail if these platforms differ from Linux. Remove this or rebaseline them once the bug lands.
+BUGWK76015 WIN MAC : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
+
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
 

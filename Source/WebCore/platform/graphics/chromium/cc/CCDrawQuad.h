@@ -51,9 +51,9 @@ public:
     const IntRect& layerRect() const { return m_sharedQuadState->layerRect(); }
     const IntRect& clipRect() const { return m_sharedQuadState->clipRect(); }
     float opacity() const { return m_sharedQuadState->opacity(); }
-    // For the purposes of culling, are the contents of this quad opaque?
-    bool drawsOpaque() const { return m_sharedQuadState->isOpaque() && m_quadOpaque && opacity() == 1; }
-    bool needsBlending() const { return !m_sharedQuadState->isOpaque() || m_needsBlending || opacity() != 1; }
+    // For the purposes of culling, what part of the contents of this quad are opaque?
+    IntRect opaqueRect() const;
+    bool needsBlending() const { return m_needsBlending || opaqueRect() != m_quadRect; }
     bool isLayerAxisAlignedIntRect() const { return m_sharedQuadState->isLayerAxisAlignedIntRect(); }
 
     // Allows changing the rect that gets drawn to make it smaller. Parameter passed
@@ -96,6 +96,10 @@ protected:
     // variables.
     bool m_quadOpaque;
     bool m_needsBlending;
+
+    // Be default, this rect is empty. It is used when the shared quad state and above
+    // variables determine that the quad is not fully opaque but may be partially opaque.
+    IntRect m_opaqueRect;
 };
 
 }

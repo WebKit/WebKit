@@ -326,7 +326,7 @@ void LayerChromium::setOpaque(bool opaque)
     if (m_opaque == opaque)
         return;
     m_opaque = opaque;
-    setNeedsCommit();
+    setNeedsDisplay();
 }
 
 void LayerChromium::setPosition(const FloatPoint& position)

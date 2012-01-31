@@ -1,3 +1,30 @@
+2012-01-30  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use region reported painted opaque for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=76015
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::BlendStateCheckLayer::appendQuads):
+        (WebKit::BlendStateCheckLayer::setOpaqueColor):
+        (BlendStateCheckLayer):
+        (WebKit::BlendStateCheckLayer::BlendStateCheckLayer):
+        (WebKit::TEST_F):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::MakeTileQuad):
+        (WebCore::setQuads):
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::createLayer):
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        (CCLayerTestCommon::coverageVisibleRectOnTileBoundaries):
+        (CCLayerTestCommon::coverageVisibleRectIntersectsTiles):
+        (CCLayerTestCommon::coverageVisibleRectIntersectsBounds):
+        (CCLayerTestCommon):
+
 2012-01-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Always pre-reserve scrollbar and scroll corner textures

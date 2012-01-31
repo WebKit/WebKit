@@ -113,8 +113,10 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
             drawQuad->setQuadVisibleRect(drawQuad->quadTransform().inverse().mapRect(transformedVisibleQuadRect));
 
         // When adding rect to opaque region, deflate it to stay conservative.
-        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect())
-            opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatTransformedRect)));
+        if (keepQuad && drawQuad->isLayerAxisAlignedIntRect()) {
+            FloatRect floatOpaqueRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->opaqueRect()));
+            opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatOpaqueRect)));
+        }
 
         if (keepQuad)
             culledList.append(quadList[i].release());

@@ -37,29 +37,29 @@ namespace {
 class CCQuadCullerTest : public testing::Test {
 };
 
-static PassOwnPtr<CCDrawQuad> MakeTileQuad(CCSharedQuadState* state, const IntRect& rect)
+static PassOwnPtr<CCDrawQuad> MakeTileQuad(CCSharedQuadState* state, const IntRect& rect, const IntRect& opaqueRect = IntRect())
 {
-    return CCTileDrawQuad::create(state, rect, 1, IntPoint(1, 1), IntSize(100, 100), 0, false, false, false, false, false);
+    return CCTileDrawQuad::create(state, rect, intersection(rect, opaqueRect), 1, IntPoint(1, 1), IntSize(100, 100), 0, false, false, false, false, false);
 }
 
-void setQuads(CCSharedQuadState* rootState, CCSharedQuadState* childState, CCQuadList& quadList)
+void setQuads(CCSharedQuadState* rootState, CCSharedQuadState* childState, CCQuadList& quadList, const IntRect& opaqueRect = IntRect())
 {
     quadList.clear();
 
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 0), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 0), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 100), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 100), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 100), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 200), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 200), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 200), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 0), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 0), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 100), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 100), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 100), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 200), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 200), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 200), IntSize(100, 100)), opaqueRect));
 
-    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 0), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(0, 100), IntSize(100, 100))));
-    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 0), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(0, 100), IntSize(100, 100)), opaqueRect));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 100), IntSize(100, 100)), opaqueRect));
 }
 
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
@@ -198,6 +198,54 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
     EXPECT_EQ(quadList.size(), 13u);
     CCQuadCuller::cullOccludedQuads(quadList);
     EXPECT_EQ(quadList.size(), 9u);
+}
+
+TEST(CCQuadCullerTest, verifyCullSubRegion)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    childTransform.translate(50, 50);
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, false);
+    IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
+
+    setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList);
+    EXPECT_EQ(quadList.size(), 12u);
+}
+
+TEST(CCQuadCullerTest, verifyCullSubRegion2)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    childTransform.translate(50, 10);
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, false);
+    IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() * 3 / 4);
+
+    setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList);
+    EXPECT_EQ(quadList.size(), 12u);
+}
+
+TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    childTransform.translate(50, 49);
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, false);
+    IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
+
+    setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList);
+    EXPECT_EQ(quadList.size(), 13u);
 }
 
 TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
