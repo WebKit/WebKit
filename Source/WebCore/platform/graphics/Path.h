@@ -146,9 +146,9 @@ namespace WebCore {
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);
 
-    private:
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 
+    private:
         PlatformPathPtr m_path;
     };
 

@@ -1,3 +1,19 @@
+2012-01-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Tap highlighting: Support better outlines for multiline inlines
+        https://bugs.webkit.org/show_bug.cgi?id=77428
+
+        Reviewed by Simon Hausmann.
+
+        Covered by manual tests.
+
+        Do not use the linesBoundingBox anymore but draw a custom path
+        with rounded corners. Inlines are drawn as max 3 rects, first
+        line rect, joined middle rect and the rect for the last line.
+
+        * page/GestureTapHighlighter.cpp:
+        * platform/graphics/Path.h: Make addBeziersForRoundedRect public.
+
 2012-01-31  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: show sizes in bytes instead of KB, MB in heap profiler.

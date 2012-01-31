@@ -46,17 +46,17 @@ namespace WebCore {
 
 namespace {
 
-inline LayoutSize ownerFrameToMainFrameOffset(const RenderObject* o)
+inline LayoutPoint ownerFrameToMainFrameOffset(const RenderObject* o)
 {
     ASSERT(o->node());
     Frame* containingFrame = o->frame();
     if (!containingFrame)
-        return LayoutSize();
+        return LayoutPoint();
 
     Frame* mainFrame = containingFrame->page()->mainFrame();
 
     LayoutPoint mainFramePoint = mainFrame->view()->rootViewToContents(containingFrame->view()->contentsToRootView(LayoutPoint()));
-    return toLayoutSize(mainFramePoint);
+    return mainFramePoint;
 }
 
 AffineTransform localToAbsoluteTransform(const RenderObject* o)
@@ -84,6 +84,7 @@ AffineTransform localToAbsoluteTransform(const RenderObject* o)
 Path pathForRenderBox(RenderBox* o)
 {
     ASSERT(o);
+    const int rounding = 4;
 
     LayoutRect contentBox;
     LayoutRect paddingBox;
@@ -102,28 +103,86 @@ Path pathForRenderBox(RenderBox* o)
             paddingBox.height() + o->borderTop() + o->borderBottom());
 
     FloatRect rect(borderBox);
-    rect.inflate(5);
+    rect.inflate(rounding);
 
-    rect.move(ownerFrameToMainFrameOffset(o));
+    rect.move(toLayoutSize(ownerFrameToMainFrameOffset(o)));
 
     Path path;
-    path.addRoundedRect(rect, FloatSize(10, 10));
+    FloatSize rounded(rounding * 1.8, rounding * 1.8);
+    path.addRoundedRect(rect, rounded);
 
     return path;
 }
 
+void addRectWithRoundedCorners(Path& path, const LayoutRect& rect, bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
+{
+    const int rounding = 4;
+
+    FloatRect copy(rect);
+    copy.inflateX(rounding);
+    copy.inflateY(rounding / 2);
+
+    FloatSize rounded(rounding * 1.8, rounding * 1.8);
+    FloatSize squared(0, 0);
+
+    path.addBeziersForRoundedRect(copy,
+            topLeft ? rounded : squared, topRight ? rounded : squared,
+            bottomLeft ? rounded : squared, bottomRight ? rounded : squared);
+}
+
+inline bool contains(LayoutRect rect, int x)
+{
+    return !rect.isEmpty() && x >= rect.x() && x <= rect.maxX();
+}
+
 Path pathForRenderInline(RenderInline* o)
 {
-    // FIXME: Adapt this to not just use the bounding box.
-    LayoutRect borderBox = o->linesBoundingBox();
-
-    FloatRect rect(borderBox);
-    rect.inflate(5);
-
-    rect.move(ownerFrameToMainFrameOffset(o));
-
+    ASSERT(o);
     Path path;
-    path.addRoundedRect(rect, FloatSize(10, 10));
+
+    Vector<LayoutRect> rects;
+    o->absoluteRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
+
+    LayoutRect first = rects.size() ? rects.first() : LayoutRect();
+    LayoutRect last = rects.size() > 1 ? rects.last() : LayoutRect();
+    LayoutRect middle;
+    for (int i = 1; i < rects.size() - 1; ++i)
+        middle.uniteIfNonZero(rects.at(i));
+
+    if (!middle.isEmpty()) {
+        int leftSide = middle.x();
+        int rightSide = middle.maxX();
+
+        if (!first.isEmpty()) {
+            leftSide = std::min(leftSide, first.x());
+            rightSide = std::max(rightSide, first.maxX());
+        }
+        if (!last.isEmpty()) {
+            leftSide = std::min(leftSide, last.x());
+            rightSide = std::max(rightSide, last.maxX());
+        }
+
+        middle.setX(leftSide);
+        middle.setWidth(rightSide - leftSide);
+    }
+
+    if (!first.isEmpty()) {
+        bool roundBottomLeft = !contains(middle, first.x()) && !contains(last, first.x());
+        bool roundBottomRight = !contains(middle, first.maxX()) && !contains(last, first.maxX());
+        addRectWithRoundedCorners(path, first, /* roundTopLeft */ true, /* roundTopRight */ true, roundBottomLeft, roundBottomRight);
+    }
+
+    if (!middle.isEmpty()) {
+        bool roundTopLeft = !contains(first, middle.x());
+        bool roundBottomRight = !contains(last, middle.maxX());
+        addRectWithRoundedCorners(path, middle, roundTopLeft, /* roundTopRight */ false, /* roundBottomLeft */ false, roundBottomRight);
+    }
+
+    if (!last.isEmpty()) {
+        bool roundTopLeft = !contains(middle, last.x()) && !contains(first, last.x());
+        bool roundTopRight = !contains(middle, last.maxX()) && !contains(first, last.maxX());
+        addRectWithRoundedCorners(path, last, roundTopLeft, roundTopRight, /* roundBottomLeft */ true, /* roundBottomRight */ true);
+    }
 
     return path;
 }
