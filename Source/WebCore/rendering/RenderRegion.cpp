@@ -98,6 +98,9 @@ bool RenderRegion::isLastRegion() const
 
 void RenderRegion::setRegionBoxesRegionStyle()
 {
+    if (!hasCustomRegionStyle())
+        return;
+
     for (RenderBoxRegionInfoMap::iterator iter = m_renderBoxRegionInfo.begin(), end = m_renderBoxRegionInfo.end(); iter != end; ++iter) {
         const RenderBox* box = iter->first;
         if (!box->canHaveRegionStyle())
@@ -115,6 +118,9 @@ void RenderRegion::setRegionBoxesRegionStyle()
 
 void RenderRegion::restoreRegionBoxesOriginalStyle()
 {
+    if (!hasCustomRegionStyle())
+        return;
+
     for (RenderBoxRegionInfoMap::iterator iter = m_renderBoxRegionInfo.begin(), end = m_renderBoxRegionInfo.end(); iter != end; ++iter) {
         const RenderBox* box = iter->first;
         RenderBoxRegionStyleMap::iterator it = m_renderBoxRegionStyle.find(box);

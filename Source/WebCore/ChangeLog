@@ -1,3 +1,16 @@
+2012-01-31  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Reduce the cases when the box style in region is computed
+        https://bugs.webkit.org/show_bug.cgi?id=77446
+
+        Reviewed by David Hyatt.
+
+        Covered by existing region style tests.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRegionBoxesRegionStyle):
+        (WebCore::RenderRegion::restoreRegionBoxesOriginalStyle):
+
 2012-01-31  Anders Carlsson  <andersca@apple.com>
 
         Put tiles in a HashMap
