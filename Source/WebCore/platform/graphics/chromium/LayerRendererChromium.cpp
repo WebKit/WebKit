@@ -163,10 +163,6 @@ private:
 
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
 {
-#if USE(SKIA)
-    if (owner->settings().acceleratePainting && !contextSupportsAcceleratedPainting(context.get()))
-        return nullptr;
-#endif
     OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(owner, context)));
     if (!layerRenderer->initialize())
         return nullptr;
@@ -191,8 +187,10 @@ bool LayerRendererChromium::initialize()
     if (!m_context->makeContextCurrent())
         return false;
 
-    if (settings().acceleratePainting)
+#if USE(SKIA)
+    if (settings().acceleratePainting && contextSupportsAcceleratedPainting(m_context.get()))
         m_capabilities.usingAcceleratedPainting = true;
+#endif
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
     m_capabilities.contextHasCachedFrontBuffer = extensions->supports("GL_CHROMIUM_front_buffer_cached");

@@ -355,14 +355,6 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     OwnPtr<LayerRendererChromium> layerRenderer;
     layerRenderer = LayerRendererChromium::create(this, context);
 
-    // If creation failed, and we had asked for accelerated painting, disable accelerated painting
-    // and try creating the renderer again.
-    if (!layerRenderer && m_settings.acceleratePainting) {
-        m_settings.acceleratePainting = false;
-
-        layerRenderer = LayerRendererChromium::create(this, context);
-    }
-
     if (m_layerRenderer)
         m_layerRenderer->close();
 

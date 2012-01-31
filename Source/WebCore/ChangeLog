@@ -1,3 +1,20 @@
+2012-01-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unnecessary retry logic in LayerRendererChromium initialization for accelerated painting
+        https://bugs.webkit.org/show_bug.cgi?id=77247
+
+        Reviewed by Kenneth Russell.
+
+        The accelerate painting setting is done differently from other capability-dependent settings for no good reason,
+        requiring that we retry initialization with different settings. For all other settings we set the capabilities
+        bit to true if the setting is requested and if the required capabilities exist on the underlying context.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+
 2012-01-30  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10707072>
