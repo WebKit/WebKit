@@ -1134,9 +1134,6 @@
           ],
         }],
         ['OS=="win"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
           'defines': [
             'WEBCORE_NAVIGATOR_PLATFORM="Win32"',
             '__PRETTY_FUNCTION__=__FUNCTION__',
@@ -1339,12 +1336,6 @@
           },
         }],
         ['OS=="win"', {
-          'dependencies': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
-          'export_dependent_settings': [
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
           'direct_dependent_settings': {
             'defines': [
               # Match Safari and Mozilla on Windows.

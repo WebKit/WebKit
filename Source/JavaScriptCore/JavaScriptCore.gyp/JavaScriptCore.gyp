@@ -198,11 +198,6 @@
       'dependencies': [
         'wtf',
       ],
-      'conditions': [
-        ['OS=="win"', {
-          'dependencies': ['<(chromium_src_dir)/build/win/system.gyp:cygwin'],
-        }],
-      ],
       'variables': { 'optimize': 'max' },
       'actions': [
         {
