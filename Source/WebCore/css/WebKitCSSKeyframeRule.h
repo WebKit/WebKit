@@ -26,13 +26,12 @@
 #ifndef WebKitCSSKeyframeRule_h
 #define WebKitCSSKeyframeRule_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class CSSMutableStyleDeclaration;
 
 typedef int ExceptionCode;
 
@@ -54,14 +53,12 @@ public:
 
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
 
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
+    CSSStyleDeclaration* style() const { return m_style.get(); }
 
     String cssText() const;
 
+    CSSMutableStyleDeclaration* declaration() const { return m_style.get(); }
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
-
-    CSSMutableStyleDeclaration*         declaration()       { return m_style.get(); }
-    const CSSMutableStyleDeclaration*   declaration() const { return m_style.get(); }
 
 private:
     static void parseKeyString(const String& s, Vector<float>& keys);

@@ -86,7 +86,7 @@ bool CSSFontSelector::isEmpty() const
 void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 {
     // Obtain the font-family property and the src property.  Both must be defined.
-    const CSSMutableStyleDeclaration* style = fontFaceRule->style();
+    const CSSMutableStyleDeclaration* style = fontFaceRule->declaration();
     RefPtr<CSSValue> fontFamily = style->getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr<CSSValue> src = style->getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style->getPropertyCSSValue(CSSPropertyUnicodeRange);

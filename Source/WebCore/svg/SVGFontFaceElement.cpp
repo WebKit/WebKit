@@ -113,7 +113,7 @@ void SVGFontFaceElement::parseMappedAttribute(Attribute* attr)
 {    
     int propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
-        m_fontFaceRule->style()->setProperty(propId, attr->value(), false);
+        m_fontFaceRule->declaration()->setProperty(propId, attr->value(), false);
         rebuildFontFace();
         return;
     }
@@ -258,7 +258,7 @@ int SVGFontFaceElement::descent() const
 
 String SVGFontFaceElement::fontFamily() const
 {
-    return m_fontFaceRule->style()->getPropertyValue(CSSPropertyFontFamily);
+    return m_fontFaceRule->declaration()->getPropertyValue(CSSPropertyFontFamily);
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
@@ -299,11 +299,11 @@ void SVGFontFaceElement::rebuildFontFace()
     // Parse in-memory CSS rules
     CSSProperty srcProperty(CSSPropertySrc, list);
     const CSSProperty* srcPropertyRef = &srcProperty;
-    m_fontFaceRule->style()->addParsedProperties(&srcPropertyRef, 1);
+    m_fontFaceRule->declaration()->addParsedProperties(&srcPropertyRef, 1);
 
     if (describesParentFont) {    
         // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
-        RefPtr<CSSValue> src = m_fontFaceRule->style()->getPropertyCSSValue(CSSPropertySrc);
+        RefPtr<CSSValue> src = m_fontFaceRule->declaration()->getPropertyCSSValue(CSSPropertySrc);
         CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
 
         unsigned srcLength = srcList ? srcList->length() : 0;

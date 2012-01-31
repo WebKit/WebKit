@@ -1529,7 +1529,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* elementStyle, const WebKitCSSKeyframeRule* keyframeRule, KeyframeValue& keyframe)
 {
     if (keyframeRule->style())
-        addMatchedDeclaration(keyframeRule->style());
+        addMatchedDeclaration(keyframeRule->declaration());
 
     ASSERT(!m_style);
 
@@ -1568,7 +1568,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 #endif
 
     // Add all the animating properties to the keyframe.
-    if (CSSMutableStyleDeclaration* styleDeclaration = keyframeRule->style()) {
+    if (CSSMutableStyleDeclaration* styleDeclaration = keyframeRule->declaration()) {
         unsigned propertyCount = styleDeclaration->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
             int property = styleDeclaration->propertyAt(i).id();

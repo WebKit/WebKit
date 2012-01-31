@@ -42,10 +42,11 @@ public:
 
     ~CSSFontFaceRule();
 
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
+    CSSStyleDeclaration* style() const { return m_style.get(); }
 
     String cssText() const;
 
+    CSSMutableStyleDeclaration* declaration() const { return m_style.get(); }
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style) { m_style = style; }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>& urls);

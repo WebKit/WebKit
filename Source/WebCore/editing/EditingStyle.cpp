@@ -1018,7 +1018,7 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(El
     if (matchedRules) {
         for (unsigned i = 0; i < matchedRules->length(); i++) {
             if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
+                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->declaration();
                 style->merge(s.get(), true);
             }
         }

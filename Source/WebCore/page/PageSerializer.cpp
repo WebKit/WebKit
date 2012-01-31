@@ -303,7 +303,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderObject* image
 
 void PageSerializer::retrieveResourcesForCSSRule(CSSStyleRule* rule)
 {
-    retrieveResourcesForCSSDeclaration(rule->style());
+    retrieveResourcesForCSSDeclaration(rule->declaration());
 }
 
 void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration* styleDeclaration)
