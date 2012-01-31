@@ -81,24 +81,26 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
         return;
 
     // Find the tiles that need to be invalidated.
-    IntPoint topLeft;
-    IntPoint bottomRight;
-    getTileRangeForRect(rect, topLeft, bottomRight);
+    TileIndex topLeft;
+    TileIndex bottomRight;
+    getTileIndexRangeForRect(rect, topLeft, bottomRight);
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            WebTileLayer* tileLayer = tileLayerAtIndex(IntPoint(x, y));
+            WebTileLayer* tileLayer = tileLayerAtIndex(TileIndex(x, y));
+            if (!tileLayer)
+                continue;
 
             CGRect tileRect = [m_tileCacheLayer convertRect:rect toLayer:tileLayer];
+            if (CGRectIsEmpty(tileRect))
+                continue;
 
-            if (!CGRectIsEmpty(tileRect)) {
-                [tileLayer setNeedsDisplayInRect:tileRect];
+            [tileLayer setNeedsDisplayInRect:tileRect];
 
-                if (shouldShowRepaintCounters()) {
-                    CGRect bounds = [tileLayer bounds];
-                    CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
-                    [tileLayer setNeedsDisplayInRect:indicatorRect];
-                }
+            if (shouldShowRepaintCounters()) {
+                CGRect bounds = [tileLayer bounds];
+                CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
+                [tileLayer setNeedsDisplayInRect:indicatorRect];
             }
         }
     }
@@ -217,7 +219,7 @@ IntRect TileCache::bounds() const
     return IntRect(IntPoint(), IntSize([m_tileCacheLayer bounds].size));
 }
 
-void TileCache::getTileRangeForRect(const IntRect& rect, IntPoint& topLeft, IntPoint& bottomRight)
+void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight)
 {
     topLeft.setX(max(rect.x() / m_tileSize.width(), 0));
     topLeft.setY(max(rect.y() / m_tileSize.height(), 0));
@@ -246,10 +248,10 @@ void TileCache::resizeTileGrid(const IntSize& numTilesInGrid)
 
             if (x < m_numTilesInGrid.width() && y < m_numTilesInGrid.height()) {
                 // We can reuse the tile layer at this index.
-                tileLayer = tileLayerAtIndex(IntPoint(x, y));
+                tileLayer = tileLayerAtIndex(TileIndex(x, y));
             } else {
                 tileLayer = createTileLayer();
-                m_tiles.set(IntPoint(x, y), tileLayer.get());
+                m_tiles.set(TileIndex(x, y), tileLayer.get());
             }
 
             [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];

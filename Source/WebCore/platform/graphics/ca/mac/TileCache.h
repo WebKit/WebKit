@@ -75,7 +75,7 @@ private:
     FloatRect visibleRect() const;
 
     IntRect bounds() const;
-    void getTileRangeForRect(const IntRect&, IntPoint& topLeft, IntPoint& bottomRight);
+    void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
 
     IntSize numTilesForGridSize(const IntSize&) const;
     void resizeTileGrid(const IntSize& numTiles);
