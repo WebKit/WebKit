@@ -1,3 +1,16 @@
+2012-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        PluginProcess should be able to use remote open and save panels
+        https://bugs.webkit.org/show_bug.cgi?id=77461
+        <rdar://problem/10783615>
+
+        Reviewed by Mark Rowe.
+
+        * PluginProcess/mac/PluginProcess.entitlements: Added.
+        * PluginProcess/mac/add-entitlements.sh: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add appropriate entitlement, plus ad hoc binary signing for it to work.
+
 2012-01-31  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Ensure tiles are repainted when scrolling using mouse wheel.
