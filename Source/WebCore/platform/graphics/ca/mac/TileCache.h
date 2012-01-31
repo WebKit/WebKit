@@ -75,6 +75,8 @@ private:
     WebTileLayer* tileLayerAtPosition(const IntPoint&) const;
     RetainPtr<WebTileLayer> createTileLayer();
 
+    bool shouldShowRepaintCounters() const;
+
     WebTileCacheLayer* m_tileCacheLayer;
     const IntSize m_tileSize;
 

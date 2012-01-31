@@ -91,8 +91,15 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
 
             CGRect tileRect = [m_tileCacheLayer convertRect:rect toLayer:tileLayer];
 
-            if (!CGRectIsEmpty(tileRect))
+            if (!CGRectIsEmpty(tileRect)) {
                 [tileLayer setNeedsDisplayInRect:tileRect];
+
+                if (shouldShowRepaintCounters()) {
+                    CGRect bounds = [tileLayer bounds];
+                    CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
+                    [tileLayer setNeedsDisplayInRect:indicatorRect];
+                }
+            }
         }
     }
 }
@@ -109,6 +116,37 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
     CGContextTranslateCTM(context, -layerOrigin.x, -layerOrigin.y);
     drawLayerContents(context, layer, platformLayer);
 
+    CGContextRestoreGState(context);
+
+    unsigned repaintCount = [layer incrementRepaintCount];
+    if (!shouldShowRepaintCounters())
+        return;
+
+    // FIXME: Some of this code could be shared with WebLayer.
+    char text[16]; // that's a lot of repaints
+    snprintf(text, sizeof(text), "%d", repaintCount);
+
+    CGRect indicatorBox = [layer bounds];
+    indicatorBox.size.width = 12 + 10 * strlen(text);
+    indicatorBox.size.height = 27;
+    CGContextSaveGState(context);
+
+    CGContextSetAlpha(context, 0.5f);
+    CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
+
+    CGContextSetFillColorWithColor(context, m_tileDebugBorderColor.get());
+    CGContextFillRect(context, indicatorBox);
+
+    if (platformLayer->acceleratesDrawing())
+        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+    else
+        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
+
+    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+    CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
+    CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
+
+    CGContextEndTransparencyLayer(context);
     CGContextRestoreGState(context);
 }
 
@@ -222,6 +260,20 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer()
 #endif
 
     return layer;
+}
+
+bool TileCache::shouldShowRepaintCounters() const
+{
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    if (!platformLayer)
+        return false;
+
+    WebCore::PlatformCALayerClient* layerContents = platformLayer->owner();
+    ASSERT(layerContents);
+    if (!layerContents)
+        return false;
+
+    return layerContents->platformCALayerShowRepaintCounter();
 }
 
 } // namespace WebCore

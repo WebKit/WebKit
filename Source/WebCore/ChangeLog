@@ -1,3 +1,27 @@
+2012-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Show repaint counters in individual tiles
+        https://bugs.webkit.org/show_bug.cgi?id=77390
+        <rdar://problem/10767967>
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setNeedsDisplayInRect):
+        Make sure to invalidate the repaint counter rect if necessary.
+
+        (WebCore::TileCache::drawLayer):
+        Draw the repaint counter.
+
+        (WebCore::TileCache::showRepaintCounter):
+        New function that determines whether we should show repaint counters for the given tile cache.
+
+        * platform/graphics/ca/mac/WebTileLayer.h:
+        * platform/graphics/ca/mac/WebTileLayer.mm:
+        (-[WebTileLayer incrementRepaintCount]):
+        Add method for getting the repaint count.
+
 2012-01-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10778045> REGRESSION (r91935): text-combine fails

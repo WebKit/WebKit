@@ -32,8 +32,11 @@ namespace WebCore {
 
 @interface WebTileLayer : CALayer {
     WebCore::TileCache* _tileCache;
+    unsigned _repaintCount;
 }
+
 - (void)setTileCache:(WebCore::TileCache*)tileCache;
+- (unsigned)incrementRepaintCount;
 @end
 
 

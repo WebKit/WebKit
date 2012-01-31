@@ -52,5 +52,10 @@ using namespace WebCore;
     _tileCache = tileCache;
 }
 
+- (unsigned)incrementRepaintCount
+{
+    return ++_repaintCount;
+}
+
 @end
 
