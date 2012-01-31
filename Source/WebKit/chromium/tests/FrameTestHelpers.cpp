@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FrameTestHelpers.h"
 
+#include "StdLibExtras.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebSettings.h"
@@ -71,7 +72,7 @@ class TestWebFrameClient : public WebFrameClient {
 
 static WebFrameClient* defaultWebFrameClient()
 {
-    static TestWebFrameClient client;
+    DEFINE_STATIC_LOCAL(TestWebFrameClient, client, ());
     return &client;
 }
 
@@ -80,7 +81,7 @@ class TestWebViewClient : public WebViewClient {
 
 static WebViewClient* defaultWebViewClient()
 {
-    static TestWebViewClient client;
+    DEFINE_STATIC_LOCAL(TestWebViewClient,  client, ());
     return &client;
 }
 

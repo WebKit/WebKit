@@ -1,3 +1,16 @@
+2012-01-31  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] enable -Wexit-time-destructors for webkit unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=77300
+        Fix the only extant violation (verified by building webkit_unit_tests in static build).
+
+        Reviewed by Tony Chang.
+
+        * WebKitUnitTests.gyp:
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::defaultWebFrameClient):
+        (WebKit::FrameTestHelpers::defaultWebViewClient):
+
 2012-01-31  Nico Weber  <thakis@chromium.org>
 
         [chromium] Expose windowResizerRectChanged() on WebWidget.
