@@ -3831,6 +3831,8 @@ BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 
 BUGWK76580 : media/media-document-audio-repaint.html = IMAGE PASS
 
+BUGWK76562 : fast/canvas/webgl/drawingbuffer-test.html = TEXT
+
 // This test is passing, but it doesn't seem possible to add GPU+Leopard specific baselines.
 BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
