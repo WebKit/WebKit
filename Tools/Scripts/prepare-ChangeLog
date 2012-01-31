@@ -270,6 +270,14 @@ sub generateFunctionLists($$$$$)
             FUNCTION: foreach my $function_range_ref (@function_ranges) {
                 my @function_range = @$function_range_ref;
 
+                # FIXME: This is a hack. If the function name is empty, skip it.
+                # The cpp, python, javascript, perl, css and java parsers
+                # are not perfectly implemented and sometimes function names cannot be retrieved
+                # correctly. As you can see in get_function_line_ranges_XXXX(), those parsers
+                # are not intended to implement real parsers but intended to just retrieve function names
+                # for most practical syntaxes.
+                next unless $function_range[2];
+
                 # Advance to successive change ranges.
                 for (;; @change_range = @{shift @change_ranges}) {
                     last FUNCTION unless @change_range;
@@ -618,10 +626,12 @@ sub get_function_line_ranges_for_cpp($$)
     my $in_method_declaration = 0;
     my $in_parentheses = 0;
     my $in_braces = 0;
+    my $in_toplevel_array_brace = 0;
     my $brace_start = 0;
     my $brace_end = 0;
     my $namespace_start = -1;
     my $skip_til_brace_or_semicolon = 0;
+    my $equal_observed = 0;
 
     my $word = "";
     my $interface_name = "";
@@ -749,7 +759,23 @@ sub get_function_line_ranges_for_cpp($$)
 
 
         # Find function, interface and method names.
-        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
+        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;=])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
+            # Skip an array definition at the top level.
+            # e.g. static int arr[] = { 1, 2, 3 };
+            if ($1) {
+                if ($1 eq "=" and !$in_parentheses and !$in_braces) {
+                    $equal_observed = 1;
+                } elsif ($1 eq "{" and $equal_observed) {
+                    # This '{' is the beginning of an array definition, not the beginning of a method.
+                    $in_toplevel_array_brace = 1;
+                    $in_braces++;
+                    $equal_observed = 0;
+                    next;
+                } elsif ($1 !~ /[ \t]/) {
+                    $equal_observed = 0;
+                }
+            }
+
             # interface name
             if ($2) {
                 $interface_name = $2;
@@ -833,6 +859,12 @@ sub get_function_line_ranges_for_cpp($$)
                 # End of an outer level set of braces.
                 # This could be a function body.
                 if (!$in_braces and $name) {
+                    # This is the end of an array definition at the top level, not the end of a method.
+                    if ($in_toplevel_array_brace) {
+                        $in_toplevel_array_brace = 0;
+                        next;
+                    }
+
                     push @ranges, [ $start, $., $name ];
                     if (@namespaces) {
                         $name = $namespaces[-1];

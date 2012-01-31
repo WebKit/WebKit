@@ -1,3 +1,42 @@
+2012-01-30  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r105797): prepare-ChangeLog for a .cpp file can
+        output an empty method name (i.e. "()")
+        https://bugs.webkit.org/show_bug.cgi?id=77336
+
+        Reviewed by Darin Adler.
+
+        r105797 tried to detect a change outside methods, but it causes a bug that
+        prepare-ChangeLog can output an empty method name, like this:
+
+            * foo/bar/baz.cpp:
+            (method1):
+            ():
+            (method2):
+
+        This is because the cpp parser in prepare-ChangeLog cannot distinguish
+        '{' as the beginning of a method with '{' as the beginning of an array definition
+        at the top level.
+
+            int a[] = { 1, 2, 3 };  // This '{' is the beginning of an array definition.
+
+            void func() { // This '{' is the beginning of a method.
+                ...;
+            }
+
+        This patch fixes prepare-ChangeLog so that it skips an array definition at the top level.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp): Modified as described above.
+        (generateFunctionLists): As a hack, modified so that prepare-ChangeLog does not output
+        an empty method name. Ideally this should not happen but may happen, since the
+        parsers are not perfect.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp: Added test cases.
+        (NameSpace7):
+        (NameSpace8):
+        (Class109):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+
 2012-01-30  Ojan Vafai  <ojan@chromium.org>
 
         run-webkit-tests calls out to webkit-build-directory twice

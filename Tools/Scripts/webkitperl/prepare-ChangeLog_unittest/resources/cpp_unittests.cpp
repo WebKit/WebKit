@@ -320,3 +320,70 @@ class Class108 {
     }
     int h;
 };
+
+int a[] = { };
+int a[] = {
+};
+int a[] = { 1, 2, 3 };
+int a[] = {
+    1,
+    2,
+    3
+};
+int a[3] = { 1, 2, 3 };
+int a[][3] = { {1, 2, 3}, {4, 5, 6} };
+int a[2][3] = { {1, 2, 3}, {4, 5, 6} };
+extern int a[];
+char a[4] = "test";
+
+namespace NameSpace7 {
+int a[] = { };
+int a[] = {
+};
+int a[] = { 1, 2, 3 };
+int a[] = {
+    1,
+    2,
+    3
+};
+int a[3] = { 1, 2, 3 };
+int a[][3] = { {1, 2, 3}, {4, 5, 6} };
+int a[2][3] = { {1, 2, 3}, {4, 5, 6} };
+extern int a[];
+char a[4] = "test";
+
+namespace NameSpace8 {
+int a[] = { };
+int a[] = {
+};
+int a[] = { 1, 2, 3 };
+int a[] = {
+    1,
+    2,
+    3
+};
+int a[3] = { 1, 2, 3 };
+int a[][3] = { {1, 2, 3}, {4, 5, 6} };
+int a[2][3] = { {1, 2, 3}, {4, 5, 6} };
+extern int a[];
+char a[4] = "test";
+};
+
+class Class109 {
+    int a[] = { };
+    int a[] = {
+    };
+    int a[] = { 1, 2, 3 };
+    int a[] = {
+        1,
+        2,
+        3
+    };
+    int a[3] = { 1, 2, 3 };
+    int a[][3] = { {1, 2, 3}, {4, 5, 6} };
+    int a[2][3] = { {1, 2, 3}, {4, 5, 6} };
+    extern int a[];
+    char a[4] = "test";
+};
+
+};
