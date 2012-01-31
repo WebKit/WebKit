@@ -1,3 +1,21 @@
+2012-01-31  Michael Saboff  <msaboff@apple.com>
+
+        ASSERT(m_jumpsToLink.isEmpty()) failing in ARMv7Assembler dtor
+        https://bugs.webkit.org/show_bug.cgi?id=77443
+
+        Reviewed by Gavin Barraclough.
+
+        Removed failing ASSERT() and thus destructor.  The ASSERT isn't needed.
+        We are hitting it in the YARR JIT case where we bail out and go to the
+        interpreter with a partially JIT'ed function.  Since we haven't linked
+        the JIT'ed code, there is likely to be some unresolved jumps in the vector
+        when the ARMv7Assembler destructor is called.  For the case where we
+        complete the JIT process, we clear the vector at the end of
+        LinkBuffer::linkCode (LinkBuffer.h:292).
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+
 2012-01-31  Anders Carlsson  <andersca@apple.com>
 
         Vector<T>::operator== shouldn't require T to have operator!=

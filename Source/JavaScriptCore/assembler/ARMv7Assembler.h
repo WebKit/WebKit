@@ -414,11 +414,6 @@ private:
 
 class ARMv7Assembler {
 public:
-    ~ARMv7Assembler()
-    {
-        ASSERT(m_jumpsToLink.isEmpty());
-    }
-
     typedef ARMRegisters::RegisterID RegisterID;
     typedef ARMRegisters::FPSingleRegisterID FPSingleRegisterID;
     typedef ARMRegisters::FPDoubleRegisterID FPDoubleRegisterID;
