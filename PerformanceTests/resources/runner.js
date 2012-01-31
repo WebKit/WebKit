@@ -2,6 +2,11 @@
 var PerfTestRunner = {};
 
 PerfTestRunner.log = function (text) {
+    if (!document.getElementById("log")) {
+        var pre = document.createElement('pre');
+        pre.id = 'log';
+        document.body.appendChild(pre);
+    }
     document.getElementById("log").innerHTML += text + "\n";
     window.scrollTo(0, document.body.height);
 }
@@ -52,16 +57,16 @@ PerfTestRunner.computeStatistics = function (times) {
 PerfTestRunner.logStatistics = function (times) {
     this.log("");
     var statistics = this.computeStatistics(times);
-    this.printStatistics(statistics, this.log);
+    this.printStatistics(statistics);
 }
 
-PerfTestRunner.printStatistics = function (statistics, printFunction) {
-    printFunction("");
-    printFunction("avg " + statistics.mean);
-    printFunction("median " + statistics.median);
-    printFunction("stdev " + statistics.stdev);
-    printFunction("min " + statistics.min);
-    printFunction("max " + statistics.max);
+PerfTestRunner.printStatistics = function (statistics) {
+    this.log("");
+    this.log("avg " + statistics.mean);
+    this.log("median " + statistics.median);
+    this.log("stdev " + statistics.stdev);
+    this.log("min " + statistics.min);
+    this.log("max " + statistics.max);
 }
 
 PerfTestRunner.gc = function () {

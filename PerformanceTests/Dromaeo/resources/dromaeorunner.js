@@ -61,7 +61,7 @@
 
          teardown: function(data) {
              var scores = DRT.computeScores(data.result);
-             PerfTestRunner.printStatistics(scores, DRT.log);
+             PerfTestRunner.printStatistics(scores);
              window.setTimeout(function() {
                  if (window.layoutTestController)
                      layoutTestController.notifyDone();
@@ -75,7 +75,7 @@
          },
 
          log: function(text) {
-             document.getElementById("console").innerHTML += (text + "\n");
+             PerfTestRunner.log(text);
          }
      };
 

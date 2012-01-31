@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <body>
-<pre id="log"></pre>
 <script src="../resources/runner.js"></script>
 <script>
 var spec = PerfTestRunner.loadFile("resources/html5.html");
@@ -15,5 +14,6 @@ PerfTestRunner.run(function() {
     iframe.contentDocument.close();
     document.body.removeChild(iframe);
 }, 1);
+
 </script>
 </body>
