@@ -263,7 +263,6 @@ Never found HTMLHRElement
 Never found HTMLHeadingElement
 Never found HTMLIFrameElement
 Never found HTMLImageElement
-Never found HTMLIsIndexElement
 Never found HTMLKeygenElement
 Never found HTMLLIElement
 Never found HTMLLabelElement
