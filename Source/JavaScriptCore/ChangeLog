@@ -1,3 +1,14 @@
+2012-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Stop using -fomit-frame-pointer
+        https://bugs.webkit.org/show_bug.cgi?id=77403
+
+        Reviewed by Filip Pizlo.
+        
+        JavaScriptCore is too fast. I'm just the man to fix it.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2012-01-31  Michael Saboff  <msaboff@apple.com>
 
         StringProtoFuncToUpperCase should call StringImpl::upper similar to StringProtoToLowerCase
