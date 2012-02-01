@@ -1,3 +1,19 @@
+2011-02-01  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 106271
+
+    2012-01-30  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=77263
+            PlatformScreenMac should not rely on NSWindow for important bits of data
+
+            Reviewed by Geoff Garen.
+
+            These two functions now take a FrameView instead of a Widget.
+            * src/PlatformSupport.cpp:
+            (WebCore::PlatformSupport::screenRect):
+            (WebCore::PlatformSupport::screenAvailableRect):
+
 2011-1-5  Lucas Forschler  <lforschler@apple.com>
 
     Merge 99439
