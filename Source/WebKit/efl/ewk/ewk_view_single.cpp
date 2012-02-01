@@ -25,6 +25,7 @@
 #include "ewk_logging.h"
 #include "ewk_private.h"
 
+#include <Ecore_Evas.h>
 #include <Evas.h>
 #include <eina_safety_checks.h>
 #include <string.h>
@@ -57,6 +58,12 @@ static void _ewk_view_single_smart_add(Evas_Object* ewkView)
 static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* smartData)
 {
     Evas_Object* bs = evas_object_image_add(smartData->base.evas);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(bs, 0);
+    const Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    const char* engine = ecore_evas_engine_name_get(ecoreEvas);
+    if (!strncmp(engine, "opengl_x11", strlen("opengl_x11")))
+        evas_object_image_content_hint_set(bs, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+
     evas_object_image_alpha_set(bs, false);
     evas_object_image_smooth_scale_set(bs, smartData->zoom_weak_smooth_scale);
 

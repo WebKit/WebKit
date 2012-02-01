@@ -1,3 +1,17 @@
+2012-01-31  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Set content hint information for ewk_view_single.
+        https://bugs.webkit.org/show_bug.cgi?id=77319
+
+        Reviewed by Ryosuke Niwa.
+
+        The content hint information corresponding to opengl_x11 engine is set
+        for the image object which ewk_view_single owns when evas is based on
+        opengl_x11 engine.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_backing_store_add):
+
 2012-01-30  Eunsol Park  <eunsol47.park@samsung.com>
 
         [EFL] Define the names of view smart class
