@@ -1837,7 +1837,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, event);
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
-    Node* newTarget = targetNode(mev);
+    RefPtr<Node> newTarget = targetNode(mev);
     if (newTarget && newTarget->isTextNode())
         newTarget = newTarget->parentNode();
     if (newTarget)
@@ -1850,7 +1850,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         //
         // Moreover, this ordering conforms to section 7.9.4 of the HTML 5 spec. <http://dev.w3.org/html5/spec/Overview.html#drag-and-drop-processing-model>.
         Frame* targetFrame;
-        if (targetIsFrame(newTarget, targetFrame)) {
+        if (targetIsFrame(newTarget.get(), targetFrame)) {
             if (targetFrame)
                 accept = targetFrame->eventHandler()->updateDragAndDrop(event, clipboard);
         } else if (newTarget) {
@@ -1859,9 +1859,9 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
-            accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
+            accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget.get(), event, clipboard);
             if (!accept)
-                accept = findDropZone(newTarget, clipboard);
+                accept = findDropZone(newTarget.get(), clipboard);
         }
 
         if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
@@ -1877,7 +1877,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         }
     } else {
         Frame* targetFrame;
-        if (targetIsFrame(newTarget, targetFrame)) {
+        if (targetIsFrame(newTarget.get(), targetFrame)) {
             if (targetFrame)
                 accept = targetFrame->eventHandler()->updateDragAndDrop(event, clipboard);
         } else if (newTarget) {
@@ -1886,9 +1886,9 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
-            accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
+            accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget.get(), event, clipboard);
             if (!accept)
-                accept = findDropZone(newTarget, clipboard);
+                accept = findDropZone(newTarget.get(), clipboard);
             m_shouldOnlyFireDragOverEvent = false;
         }
     }
