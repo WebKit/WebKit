@@ -94,6 +94,31 @@ StorageTracker::StorageTracker(const String& storagePath)
 {
 }
 
+void StorageTracker::setDatabaseDirectoryPath(const String& path)
+{
+    MutexLocker lockStorage(m_databaseGuard);
+
+    if (m_database.isOpen())
+        m_database.close();
+
+    m_storageDirectoryPath = path.isolatedCopy();
+
+    {
+        MutexLocker lockOrigins(m_originSetGuard);
+        m_originSet.clear();
+    }
+
+    if (!m_isActive)
+        return;
+
+    importOriginIdentifiers();
+}
+
+String StorageTracker::databaseDirectoryPath() const
+{
+    return m_storageDirectoryPath.isolatedCopy();
+}
+
 String StorageTracker::trackerDatabasePath()
 {
     ASSERT(!m_databaseGuard.tryLock());

@@ -1,3 +1,19 @@
+2012-02-01  Gustavo Lima Chaves  <glima@profusion.mobi>
+
+        Make one able to set the local storage (tracker) database dir's path
+        https://bugs.webkit.org/show_bug.cgi?id=77006
+
+        Reviewed by Darin Adler.
+
+        There are no behavior changes with the diff, so no need for new tests.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::setDatabaseDirectoryPath):
+        (WebCore):
+        (WebCore::StorageTracker::databaseDirectoryPath):
+        * storage/StorageTracker.h:
+        (StorageTracker):
+
 2012-02-01  Anders Carlsson  <andersca@apple.com>
 
         Fix Window build.
