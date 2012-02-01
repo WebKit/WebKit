@@ -1,3 +1,17 @@
+2012-01-26  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 webkitwebsrc
+        https://bugs.webkit.org/show_bug.cgi?id=77086
+
+        Port the webkitwebsrc element to GStreamer 0.11 APIs.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests, existing http media layout tests should cover this.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_class_init):
+
 2012-01-31  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: Report speech element rect relative to window rather than frame
