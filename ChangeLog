@@ -1,3 +1,16 @@
+2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-perf.appspot.com should accept test results without medians
+        https://bugs.webkit.org/show_bug.cgi?id=77513
+
+        Reviewed by Hajime Morita.
+
+        Don't store 0s when values are not in JSON.
+
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post._float_or_none):
+        (ReportHandler.post):
+
 2012-01-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Tap highlighting: Support better outlines for multiline inlines

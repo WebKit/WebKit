@@ -86,12 +86,18 @@ class ReportHandler(webapp2.RequestHandler):
         if not build:
             return
 
+        def _float_or_none(dictionary, key):
+            value = dictionary.get(key)
+            if value:
+                return float(value)
+            return None
+
         for test_name, result in self._body['results'].iteritems():
             test = self._add_test_if_needed(test_name, branch, platform)
             memcache.delete(Test.cache_key(test.id, branch.id, platform.id))
             if isinstance(result, dict):
-                TestResult(name=test_name, build=build, value=float(result.get('avg', 0)), valueMedian=float(result.get('median', 0)),
-                    valueStdev=float(result.get('stdev', 0)), valueMin=float(result.get('min', 0)), valueMax=float(result.get('max', 0))).put()
+                TestResult(name=test_name, build=build, value=float(result['avg']), valueMedian=_float_or_none(result, 'median'),
+                    valueStdev=_float_or_none(result, 'stdev'), valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max')).put()
             else:
                 TestResult(name=test_name, build=build, value=float(result)).put()
 
