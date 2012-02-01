@@ -11,6 +11,10 @@ PASS array[0] is NaN
 PASS array[49999] is undefined
 PASS array[50000] is 100
 PASS array[50001] is undefined
+PASS array[0] is NaN
+PASS array[49999] is undefined
+PASS array[50000] is 100
+PASS array[50001] is undefined
 
 PASS successfullyParsed is true
 

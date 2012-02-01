@@ -1,3 +1,29 @@
+2012-02-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Replace JSArray destructor with finalizer
+        https://bugs.webkit.org/show_bug.cgi?id=77488
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.exp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::finalize): Added finalizer.
+        (JSC::JSArray::allocateSparseMap): Factored out code for allocating new sparse maps.
+        (JSC):
+        (JSC::JSArray::deallocateSparseMap): Factored out code for deallocating sparse maps.
+        (JSC::JSArray::enterDictionaryMode): Renamed enterSparseMode to enterDictionaryMode 
+        because the old name was confusing because we could have a sparse array that never 
+        called enterSparseMode.
+        (JSC::JSArray::defineOwnNumericProperty):
+        (JSC::JSArray::setLengthWritable):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSArray):
+
 2012-02-01  Andy Wingo  <wingo@igalia.com>
 
         Refactor identifier resolution in BytecodeGenerator

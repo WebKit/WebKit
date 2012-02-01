@@ -133,8 +133,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        JS_EXPORT_PRIVATE ~JSArray();
-        JS_EXPORT_PRIVATE static void destroy(JSCell*);
+        static void finalize(JSCell*);
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength = 0)
         {
@@ -275,7 +274,9 @@ namespace JSC {
         void setLengthWritable(ExecState*, bool writable);
         void putDescriptor(ExecState*, SparseArrayEntry*, PropertyDescriptor&, PropertyDescriptor& old);
         bool defineOwnNumericProperty(ExecState*, unsigned, PropertyDescriptor&, bool throwException);
-        void enterSparseMode(JSGlobalData&);
+        void enterDictionaryMode(JSGlobalData&);
+        void allocateSparseMap(JSGlobalData&);
+        void deallocateSparseMap();
 
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue);

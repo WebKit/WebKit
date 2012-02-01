@@ -200,16 +200,12 @@ JSArray* JSArray::tryFinishCreationUninitialized(JSGlobalData& globalData, unsig
     return this;
 }
 
-JSArray::~JSArray()
+// This function can be called multiple times on the same object.
+void JSArray::finalize(JSCell* cell)
 {
-    ASSERT(jsCast<JSArray*>(this));
-    checkConsistency(DestructorConsistencyCheck);
-    delete m_sparseValueMap;
-}
-
-void JSArray::destroy(JSCell* cell)
-{
-    jsCast<JSArray*>(cell)->JSArray::~JSArray();
+    JSArray* thisObject = jsCast<JSArray*>(cell);
+    thisObject->checkConsistency(DestructorConsistencyCheck);
+    thisObject->deallocateSparseMap();
 }
 
 inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(JSArray* array, unsigned i)
@@ -309,13 +305,27 @@ inline void SparseArrayValueMap::visitChildren(SlotVisitor& visitor)
         visitor.append(&it->second);
 }
 
-void JSArray::enterSparseMode(JSGlobalData& globalData)
+void JSArray::allocateSparseMap(JSGlobalData& globalData)
+{
+    m_sparseValueMap = new SparseArrayValueMap;
+    globalData.heap.addFinalizer(this, finalize);
+}
+
+void JSArray::deallocateSparseMap()
+{
+    delete m_sparseValueMap;
+    m_sparseValueMap = 0;
+}
+
+void JSArray::enterDictionaryMode(JSGlobalData& globalData)
 {
     ArrayStorage* storage = m_storage;
     SparseArrayValueMap* map = m_sparseValueMap;
 
-    if (!map)
-        map = m_sparseValueMap = new SparseArrayValueMap;
+    if (!map) {
+        allocateSparseMap(globalData);
+        map = m_sparseValueMap;
+    }
 
     if (map->sparseMode())
         return;
@@ -404,7 +414,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
             return true;
         }
 
-        enterSparseMode(exec->globalData());
+        enterDictionaryMode(exec->globalData());
     }
 
     SparseArrayValueMap* map = m_sparseValueMap;
@@ -514,7 +524,7 @@ void JSArray::setLengthWritable(ExecState* exec, bool writable)
     if (!isLengthWritable() || writable)
         return;
 
-    enterSparseMode(exec->globalData());
+    enterDictionaryMode(exec->globalData());
 
     SparseArrayValueMap* map = m_sparseValueMap;
     ASSERT(map);
@@ -787,8 +797,8 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigne
             return;
         }
         // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
-        map = new SparseArrayValueMap;
-        m_sparseValueMap = map;
+        allocateSparseMap(exec->globalData());
+        map = m_sparseValueMap;
         map->put(exec, this, i, value);
         return;
     }
@@ -822,8 +832,7 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigne
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
         vector[it->first].set(globalData, this, it->second.getNonSparseMode());
-    delete map;
-    m_sparseValueMap = 0;
+    deallocateSparseMap();
 
     // Store the new property into the vector.
     WriteBarrier<Unknown>& valueSlot = vector[i];
@@ -1134,10 +1143,8 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
             } else {
                 for (unsigned i = 0; i < keys.size(); ++i)
                     map->remove(keys[i]);
-                if (map->isEmpty()) {
-                    delete map;
-                    m_sparseValueMap = 0;
-                }
+                if (map->isEmpty())
+                    deallocateSparseMap();
             }
         }
     }
@@ -1202,10 +1209,8 @@ JSValue JSArray::pop(ExecState* exec)
                 }
                 
                 map->remove(it);
-                if (map->isEmpty() && !map->sparseMode()) {
-                    delete map;
-                    m_sparseValueMap = 0;
-                }
+                if (map->isEmpty() && !map->sparseMode())
+                    deallocateSparseMap();
             }
         }
     }
@@ -1640,8 +1645,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
             ++numDefined;
         }
 
-        delete map;
-        m_sparseValueMap = 0;
+        deallocateSparseMap();
     }
 
     ASSERT(tree.abstractor().m_nodes.size() >= numDefined);
@@ -1753,8 +1757,7 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
             storage->m_vector[numDefined++].setWithoutWriteBarrier(it->second.getNonSparseMode());
 
-        delete map;
-        m_sparseValueMap = 0;
+        deallocateSparseMap();
     }
 
     for (unsigned i = numDefined; i < newUsedVectorLength; ++i)
