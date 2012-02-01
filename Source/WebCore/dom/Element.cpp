@@ -940,16 +940,25 @@ void Element::attach()
     RenderWidget::suspendWidgetHierarchyUpdates();
 
     createRendererIfNeeded();
-    
     StyleSelectorParentPusher parentPusher(this);
 
-    if (firstChild())
-        parentPusher.push();
-    ContainerNode::attach();
-
+    // When a shadow root exists, it does the work of attaching the children.
     if (ShadowRoot* shadow = shadowRoot()) {
+        Node::attach();
         parentPusher.push();
         shadow->attach();
+
+        // In a shadow tree, some of light children may be attached by 'content' element.
+        // However, when there is no content element or content element does not select
+        // all light children, we have to attach the rest of light children here.
+        for (Node* child = firstChild(); child; child = child->nextSibling()) {
+            if (!child->attached())
+                child->attach();
+        }
+    } else {
+        if (firstChild())
+            parentPusher.push();
+        ContainerNode::attach();
     }
 
     if (hasRareData()) {   

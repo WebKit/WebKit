@@ -83,8 +83,6 @@ void HTMLContentElement::attach()
 
     if (root) {
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
-            inclusion->content()->detach();
-        for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
             inclusion->content()->attach();
     }
 }
@@ -94,6 +92,12 @@ void HTMLContentElement::detach()
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
         if (ContentInclusionSelector* selector = root->inclusions())
             selector->unselect(m_inclusions.get());
+
+        // When content element is detached, shadow tree should be recreated to re-calculate inclusions for
+        // other content elements.
+        root->setNeedsShadowTreeStyleRecalc();
+        if (root->shadowHost())
+            root->shadowHost()->setNeedsStyleRecalc();
     }
 
     ASSERT(m_inclusions->isEmpty());

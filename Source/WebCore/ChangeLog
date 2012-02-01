@@ -1,3 +1,36 @@
+2012-01-31  Shinya Kawanaka  <shinyak@google.com>
+
+        Content element should be able to be dynamically added/removed/replaced in a shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=76611
+
+        Reviewed by Hajime Morita.
+
+        When a content element is added/removed/replaced in a shadow tree, we have to recreate
+        the shadow tree to recalculate inclusions of content elements. Currently we didn't recalculate it
+        when content element is removed. (When added, it is recalculated.)
+        This patch enables us to recalcurate the shadow tree when content element is removed.
+
+        Test: fast/dom/shadow/content-element-move.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+          If a shadow root exists, attaches shadow tree before attaching child elements.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::recalcShadowTreeStyle):
+          Recalculates light children and shadow tree.
+        (WebCore::ShadowRoot::reattachHostChildrenAndShadow):
+          Detaches shadow tree and host light children, and attaches them again.
+        * dom/ShadowRoot.h:
+          Added a flag to recalculate shadow tree.
+        (WebCore::ShadowRoot::setNeedsShadowTreeStyleRecalc):
+        (WebCore::ShadowRoot::clearNeedsShadowTreeStyleRecalc):
+        (WebCore::ShadowRoot::needsShadowTreeStyleRecalc):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+          Does not need to detach included elements, because they are not attached in ContainerNode anymore.
+        (WebCore::HTMLContentElement::detach):
+          When a content element detached, reattaches a shadow tree.
+
 2012-01-31  Joe Thomas  <joethomas@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76801
