@@ -1,3 +1,39 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Improve FrameLoader signals. Resource loading
+        https://bugs.webkit.org/show_bug.cgi?id=49543
+
+        New signals:
+        WebKitWebFrame::resource-request-starting
+        WebKitWebFrame::resource-response-received
+        WebKitWebFrame::resource-load-finished
+        WebKitWebFrame::resource-content-length-received
+        WebKitWebFrame::resource-load-failed
+        WebKitWebResource::response-received
+        WebKitWebResource::load-failed
+        WebKitWebResource::load-finished
+        WebKitWebResource::content-length-received
+        WebKitWebView::resource-response-received
+        WebKitWebView::resource-load-finished
+        WebKitWebView::resource-content-length-received
+        WebKitWebView::resource-load-failed
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoading):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_class_init):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        * webkitmarshal.list:
+
 2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Refactor GTK's accessibilitity code to be more modular

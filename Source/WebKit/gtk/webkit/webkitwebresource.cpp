@@ -27,6 +27,7 @@
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include "webkitnetworkresponse.h"
 #include "webkitwebresourceprivate.h"
 #include <glib.h>
 #include <glib/gi18n-lib.h>
@@ -45,13 +46,24 @@
 using namespace WebCore;
 
 enum {
-    PROP_0,
+    // Resource loading
+    RESPONSE_RECEIVED,
+    LOAD_FINISHED,
+    CONTENT_LENGTH_RECEIVED,
+    LOAD_FAILED,
 
+    LAST_SIGNAL
+};
+
+enum {
+    PROP_0,
     PROP_URI,
     PROP_MIME_TYPE,
     PROP_ENCODING,
     PROP_FRAME_NAME
 };
+
+static guint webkit_web_resource_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT);
 
@@ -101,14 +113,84 @@ static void webkit_web_resource_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_resource_parent_class)->finalize(object);
 }
 
-static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
+static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceClass)
 {
-    GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
+    GObjectClass* gobject_class = G_OBJECT_CLASS(webResourceClass);
 
     gobject_class->dispose = webkit_web_resource_dispose;
     gobject_class->finalize = webkit_web_resource_finalize;
     gobject_class->get_property = webkit_web_resource_get_property;
     gobject_class->set_property = webkit_web_resource_set_property;
+
+    /*
+     * WebKitWebResource::response-received
+     * @webResource: the #WebKitWebResource being loaded
+     * @response: the #WebKitNetworkResponse that was received
+     *
+     * Emitted when the first byte of data arrives
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_resource_signals[RESPONSE_RECEIVED] = g_signal_new("response-received",
+            G_TYPE_FROM_CLASS(webResourceClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /*
+     * WebKitWebResource::load-failed
+     * @webResource: the #WebKitWebResource that was loaded
+     * @webError: the #GError that was triggered
+     *
+     * Invoked when a resource failed to load
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_resource_signals[LOAD_FAILED] = g_signal_new("load-failed",
+            G_TYPE_FROM_CLASS(webResourceClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            G_TYPE_POINTER);
+
+    /*
+     * WebKitWebResource::load-finished
+     * @webResource: the #WebKitWebResource being loaded
+     *
+     * Emitted when all the data for the resource was loaded
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_resource_signals[LOAD_FINISHED] = g_signal_new("load-finished",
+            G_TYPE_FROM_CLASS(webResourceClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /*
+     * WebKitWebResource::content-length-received
+     * @webResource: the #WebKitWebResource that was loaded
+     * @lengthReceived: the resource data length in bytes
+     *
+     * Emitted when all the data for the resource was loaded
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_resource_signals[CONTENT_LENGTH_RECEIVED] = g_signal_new("content-length-received",
+            G_TYPE_FROM_CLASS(webResourceClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__INT,
+            G_TYPE_NONE, 1,
+            G_TYPE_INT);
 
     /**
      * WebKitWebResource:uri:

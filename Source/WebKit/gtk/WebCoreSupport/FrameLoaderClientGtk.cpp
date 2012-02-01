@@ -233,8 +233,9 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
         g_free(webResource->priv->uri);
         webResource->priv->uri = g_strdup(request.url().string().utf8().data());
     }
-    
+
     g_signal_emit_by_name(webView, "resource-request-starting", m_frame, webResource, networkRequest.get(), networkResponse.get());
+    g_signal_emit_by_name(m_frame, "resource-request-starting", webResource, networkRequest.get(), networkResponse.get());
 
     // Feed any changes back into the ResourceRequest object.
     SoupMessage* message = webkit_network_request_get_message(networkRequest.get());
@@ -298,13 +299,22 @@ void FrameLoaderClient::frameLoaderDestroyed()
     delete this;
 }
 
-void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, unsigned long, const ResourceResponse& response)
+void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response)
 {
     // Update our knowledge of request soup flags - some are only set
     // after the request is done.
     loader->request().setSoupMessageFlags(response.soupMessageFlags());
 
     m_response = response;
+
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GOwnPtr<gchar> identifierString(toString(identifier));
+    WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
+    GRefPtr<WebKitNetworkResponse> networkResponse(adoptGRef(kitNew(response)));
+
+    g_signal_emit_by_name(webResource, "response-received", networkResponse.get());
+    g_signal_emit_by_name(m_frame, "resource-response-received", webResource, networkResponse.get());
+    g_signal_emit_by_name(webView, "resource-response-received", m_frame, webResource, networkResponse.get());
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction policyFunction, const ResourceResponse& response, const ResourceRequest& resourceRequest)
@@ -992,7 +1002,13 @@ void FrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& u
 
 void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength)
 {
-    notImplemented();
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GOwnPtr<gchar> identifierString(toString(identifier));
+    WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
+
+    g_signal_emit_by_name(webResource, "content-length-received", dataLength);
+    g_signal_emit_by_name(m_frame, "resource-content-length-received", webResource, dataLength);
+    g_signal_emit_by_name(webView, "resource-content-length-received", m_frame, webResource, dataLength);
 }
 
 void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, unsigned long identifier)
@@ -1021,20 +1037,25 @@ void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader
 
     webkit_web_resource_init_with_core_resource(webResource, coreResource.get());
 
-    // FIXME: This function should notify the application that the resource
-    // finished loading, maybe using a load-status property in the
-    // WebKitWebResource object, similar to what we do for WebKitWebFrame'
-    // signal.
-    notImplemented();
+    g_signal_emit_by_name(webResource, "load-finished");
+    g_signal_emit_by_name(m_frame, "resource-load-finished", webResource);
+    g_signal_emit_by_name(webView, "resource-load-finished", m_frame, webResource);
 }
 
 void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
 
-    // FIXME: This function should notify the application that the resource failed
-    // loading, maybe a 'load-error' signal in the WebKitWebResource object.
-    notImplemented();
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GOwnPtr<gchar> identifierString(toString(identifier));
+    WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
+    GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
+                                                 error.errorCode(),
+                                                 error.localizedDescription().utf8().data()));
+
+    g_signal_emit_by_name(webResource, "load-failed", webError.get());
+    g_signal_emit_by_name(m_frame, "resource-load-failed", webResource, webError.get());
+    g_signal_emit_by_name(webView, "resource-load-failed", m_frame, webResource, webError.get());
 }
 
 bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)

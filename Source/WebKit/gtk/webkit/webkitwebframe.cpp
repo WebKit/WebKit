@@ -60,10 +60,12 @@
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include "webkitnetworkresponse.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponseprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include "webkitwebframeprivate.h"
+#include "webkitwebresource.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -104,6 +106,13 @@ enum {
     TITLE_CHANGED,
     HOVERING_OVER_LINK,
     SCROLLBARS_POLICY_CHANGED,
+    // Resource loading signals
+    RESOURCE_REQUEST_STARTING,
+    RESOURCE_RESPONSE_RECEIVED,
+    RESOURCE_LOAD_FINISHED,
+    RESOURCE_CONTENT_LENGTH_RECEIVED,
+    RESOURCE_LOAD_FAILED,
+
     LAST_SIGNAL
 };
 
@@ -300,6 +309,124 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             0,
             webkit_marshal_BOOLEAN__VOID,
             G_TYPE_BOOLEAN, 0);
+
+
+    /**
+     * WebKitWebFrame::resource-request-starting:
+     * @web_frame: the #WebKitWebFrame whose load dispatched this request
+     * @web_resource: an empty #WebKitWebResource object
+     * @request: the #WebKitNetworkRequest that will be dispatched
+     * @response: the #WebKitNetworkResponse representing the redirect
+     * response, if any
+     *
+     * Emitted when a request is about to be sent. You can modify the
+     * request while handling this signal. You can set the URI in the
+     * #WebKitNetworkRequest object itself, and add/remove/replace
+     * headers using the #SoupMessage object it carries, if it is
+     * present. See webkit_network_request_get_message(). Setting the
+     * request URI to "about:blank" will effectively cause the request
+     * to load nothing, and can be used to disable the loading of
+     * specific resources.
+     *
+     * Notice that information about an eventual redirect is available
+     * in @response's #SoupMessage, not in the #SoupMessage carried by
+     * the @request. If @response is %NULL, then this is not a
+     * redirected request.
+     *
+     * The #WebKitWebResource object will be the same throughout all
+     * the lifetime of the resource, but the contents may change
+     * between signal emissions.
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_frame_signals[RESOURCE_REQUEST_STARTING] = g_signal_new("resource-request-starting",
+            G_TYPE_FROM_CLASS(frameClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT_OBJECT,
+            G_TYPE_NONE, 3,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            WEBKIT_TYPE_NETWORK_REQUEST,
+            WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /*
+     * WebKitWebFrame::resource-response-received
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource being loaded
+     * @response: the #WebKitNetworkResponse that was received.
+     *
+     * Emitted when the first byte of data arrives
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_frame_signals[RESOURCE_RESPONSE_RECEIVED] = g_signal_new("resource-response-received",
+            G_TYPE_FROM_CLASS(frameClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT,
+            G_TYPE_NONE, 2,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /*
+     * WebKitWebFrame::resource-load-finished
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource being loaded
+     *
+     * Emitted when all the data for the resource was loaded.
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_frame_signals[RESOURCE_LOAD_FINISHED] = g_signal_new("resource-load-finished",
+            G_TYPE_FROM_CLASS(frameClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_RESOURCE);
+
+    /*
+     * WebKitWebFrame::resource-content-length-received
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource that was loaded
+     * @lengthReceived: the resource data length in bytes
+     *
+     * Emitted when all the data for the resource was loaded.
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_frame_signals[RESOURCE_CONTENT_LENGTH_RECEIVED] = g_signal_new("resource-content-length-received",
+            G_TYPE_FROM_CLASS(frameClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_INT,
+            G_TYPE_NONE, 2,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            G_TYPE_INT);
+
+    /*
+     * WebKitWebFrame::resource-load-failed
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource that was loaded
+     * @webError: the #GError that was triggered
+     *
+     * Invoked when a resource failed to load.
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_frame_signals[RESOURCE_LOAD_FAILED] = g_signal_new("resource-load-failed",
+            G_TYPE_FROM_CLASS(frameClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_POINTER,
+            G_TYPE_NONE, 2,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            G_TYPE_POINTER);
 
     /*
      * implementations of virtual methods

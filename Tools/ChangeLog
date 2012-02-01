@@ -1,3 +1,22 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Improve FrameLoader signals. Resource loading
+        https://bugs.webkit.org/show_bug.cgi?id=49543
+
+        Support for the new loader signals in DRT.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (urlPath):
+        (willSendRequestCallback):
+        (urlSuitableForTestResult):
+        (descriptionSuitableForTestResult):
+        (didReceiveResponse):
+        (didFinishLoading):
+        (didFailLoadingWithError):
+        (createWebView):
+
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should restart DRT for each test

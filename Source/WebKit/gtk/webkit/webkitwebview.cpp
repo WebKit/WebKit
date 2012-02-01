@@ -208,6 +208,10 @@ enum {
     EDITING_ENDED,
     VIEWPORT_ATTRIBUTES_RECOMPUTE_REQUESTED,
     VIEWPORT_ATTRIBUTES_CHANGED,
+    RESOURCE_RESPONSE_RECEIVED,
+    RESOURCE_LOAD_FINISHED,
+    RESOURCE_CONTENT_LENGTH_RECEIVED,
+    RESOURCE_LOAD_FAILED,
 
     LAST_SIGNAL
 };
@@ -2606,6 +2610,93 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_VIEWPORT_ATTRIBUTES);
+
+    /*
+     * WebKitWebView::resource-response-received
+     * @webView: the object which received the signal
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource being loaded
+     * @response: the #WebKitNetworkResponse that was received
+     *
+     * Emitted when the first byte of data arrives
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_view_signals[RESOURCE_RESPONSE_RECEIVED] = g_signal_new("resource-response-received",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT_OBJECT,
+            G_TYPE_NONE, 3,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /*
+     * WebKitWebView::resource-load-finished
+     * @webView: the object which received the signal
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource that was loaded
+     *
+     * Emitted when all the data for the resource was loaded
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_view_signals[RESOURCE_LOAD_FINISHED] = g_signal_new("resource-load-finished",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT,
+            G_TYPE_NONE, 2,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_WEB_RESOURCE);
+
+    /*
+     * WebKitWebView::resource-content-length-received
+     * @webView: the object which received the signal
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource that was loaded
+     * @lengthReceived: the resource data length in bytes
+     *
+     * Emitted when the HTTP Content-Length response header has been
+     * received and parsed successfully.
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_view_signals[RESOURCE_CONTENT_LENGTH_RECEIVED] = g_signal_new("resource-content-length-received",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT_INT,
+            G_TYPE_NONE, 3,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            G_TYPE_INT);
+
+    /*
+     * WebKitWebView::resource-load-failed
+     * @webView: the object which received the signal
+     * @webFrame: the #WebKitWebFrame the response was received for
+     * @webResource: the #WebKitWebResource that was loaded
+     * @webError: the #GError that was triggered
+     *
+     * Invoked when a resource failed to load
+     *
+     * Since: 1.7.5
+     */
+    webkit_web_view_signals[RESOURCE_LOAD_FAILED] = g_signal_new("resource-load-failed",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            0, 0,
+            webkit_marshal_VOID__OBJECT_OBJECT_POINTER,
+            G_TYPE_NONE, 3,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            G_TYPE_POINTER);
 
     /*
      * implementations of virtual methods

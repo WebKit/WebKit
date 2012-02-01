@@ -457,12 +457,7 @@ fast/forms/select-script-onchange.html
 fast/html/tab-order.html
 
 # Missing delegates:
-# Need proper frame loader callbacks reporting
-# See https://bugs.webkit.org/show_bug.cgi?id=32170
-fast/loader/file-protocol-fragment.html
-# Tests failing because of missing resource load delegate callbacks.
-fast/loader/main-document-url-for-non-http-loads.html
-http/tests/misc/link-rel-icon-beforeload.html
+
 # Tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
@@ -694,13 +689,8 @@ http/tests/xmlhttprequest/origin-whitelisting-removal.html
 # https://bugs.webkit.org/show_bug.cgi?id=55682
 fast/images/support-broken-image-delegate.html
 
-# Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
-fast/loader/onload-willSendRequest-null-for-script.html
-fast/loader/willSendRequest-null-for-preload.html
-
 # Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 http/tests/misc/will-send-request-returns-null-on-redirect.html
-http/tests/misc/favicon-loads-with-icon-loading-override.html
 # Requires willPerformClientRedirectToURL
 # https://bugs.webkit.org/show_bug.cgi?id=58526
 http/tests/loading/onload-vs-immediate-refresh.pl
@@ -807,11 +797,6 @@ fast/text/midword-break-after-breakable-char.html
 fast/text/capitalize-boundaries.html
 # https://bugs.webkit.org/show_bug.cgi?id=54189
 fast/replaced/border-radius-clip.html
-
-# New test needs enhanced frameloader delegate logging in DRT
-# Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
-fast/loader/recursive-before-unload-crash.html 
-fast/loader/null-request-after-willSendRequest.html
 
 # Need to dump context menu items on eventSender.contextClick(true).
 # https://bugs.webkit.org/show_bug.cgi?id=39102
@@ -1300,10 +1285,6 @@ http/tests/navigation/post-307-response.html
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
 fast/events/dropzone-005.html
-
-# [GTK] DumpRenderTree doesn't block external requests
-# https://bugs.webkit.org/show_bug.cgi?id=62585
-fast/workers/worker-crash-with-invalid-location.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=64085
 http/tests/misc/iframe-reparenting-id-collision.html
