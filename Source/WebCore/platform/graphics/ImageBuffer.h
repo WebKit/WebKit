@@ -68,14 +68,19 @@ namespace WebCore {
         DontCopyBackingStore // Subsequent draws may affect the copy.
     };
 
+    enum DeferralMode {
+        NonDeferred,
+        Deferred
+    };
+
     class ImageBuffer {
         WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
     public:
         // Will return a null pointer on allocation failure.
-        static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
+        static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated, DeferralMode deferralMode = NonDeferred)
         {
             bool success = false;
-            OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, colorSpace, renderingMode, success));
+            OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, colorSpace, renderingMode, deferralMode, success));
             if (success)
                 return buf.release();
             return nullptr;
@@ -143,7 +148,7 @@ namespace WebCore {
 
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, ColorSpace, RenderingMode, bool& success);
+        ImageBuffer(const IntSize&, ColorSpace, RenderingMode, DeferralMode, bool& success);
     };
 
 #if USE(CG) || USE(SKIA)

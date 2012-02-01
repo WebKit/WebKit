@@ -1,3 +1,60 @@
+2012-02-01  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Enable deferred canvas rendering in the skia port
+        https://bugs.webkit.org/show_bug.cgi?id=76732
+
+        Reviewed by Stephen White.
+
+        No new tests: covered by existing canvas layout tests
+
+        Adding a new setting to enable deferred 2d canvas rendering.
+        Added support for deferred 2d canvas rendering in ImageBufferSkia
+        and Canvas2DLayerChromium, mostly plumbing. Deffered rendering
+        implementation is provided by skia (class SkDeferredCanvas).
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::shouldDefer):
+        (WebCore):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCanvasElement.h:
+        (HTMLCanvasElement):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setAccelerated2dCanvasEnabled):
+        (WebCore):
+        (WebCore::Settings::setDeferred2dCanvasEnabled):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::deferred2dCanvasEnabled):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+        (ImageBuffer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore):
+        (WebCore::Canvas2DLayerChromium::setCanvas):
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        (Canvas2DLayerChromium):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (AcceleratedDeviceContext):
+        (WebCore::AcceleratedDeviceContext::AcceleratedDeviceContext):
+        (WebCore::AcceleratedDeviceContext::prepareForDraw):
+        (WebCore::AcceleratedDeviceContext::flush):
+        (WebCore):
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Gcc build fix after r106482.

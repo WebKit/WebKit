@@ -37,6 +37,8 @@
 #include "CanvasLayerChromium.h"
 #include "ManagedTexture.h"
 
+class SkCanvas;
+
 namespace WebCore {
 
 class GraphicsContext3D;
@@ -61,6 +63,8 @@ public:
     virtual void unreserveContentsTexture();
     virtual void cleanupResources();
 
+    void setCanvas(SkCanvas*);
+
 private:
     Canvas2DLayerChromium(GraphicsContext3D*, const IntSize&);
 
@@ -77,6 +81,7 @@ private:
     // synchronize its draws with the canvas updates.
     bool m_useDoubleBuffering;
     OwnPtr<ManagedTexture> m_frontTexture;
+    SkCanvas* m_canvas;
 };
 
 }

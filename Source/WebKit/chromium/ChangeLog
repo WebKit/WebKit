@@ -1,3 +1,19 @@
+2012-02-01  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Enable deferred canvas rendering in the skia port
+        https://bugs.webkit.org/show_bug.cgi?id=76732
+
+        Reviewed by Stephen White.
+
+        Adding a new setting for enabling deferred 2d canvas rendering
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDeferred2dCanvasEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106382.

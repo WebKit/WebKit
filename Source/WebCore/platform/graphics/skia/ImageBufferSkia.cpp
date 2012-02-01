@@ -46,6 +46,7 @@
 #include "PlatformContextSkia.h"
 #include "SharedGraphicsContext3D.h"
 #include "SkColorPriv.h"
+#include "SkDeferredCanvas.h"
 #include "SkGpuDevice.h"
 #include "SkiaUtils.h"
 #include "WEBPImageEncoder.h"
@@ -65,7 +66,29 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data)
+class AcceleratedDeviceContext : public SkDeferredCanvas::DeviceContext {
+public:
+    AcceleratedDeviceContext(GraphicsContext3D* context3D)
+    {
+        ASSERT(context3D);
+        m_context3D = context3D;
+    }
+
+    virtual void prepareForDraw()
+    {
+        m_context3D->makeContextCurrent();
+    }
+
+    virtual void flush()
+    {
+        m_context3D->flush();
+    }
+
+private:
+    GraphicsContext3D* m_context3D;
+};
+
+static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data, DeferralMode deferralMode)
 {
     GraphicsContext3D* context3D = SharedGraphicsContext3D::get();
     if (!context3D)
@@ -83,12 +106,18 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     SkAutoTUnref<GrTexture> texture(gr->createUncachedTexture(desc, 0, 0));
     if (!texture.get())
         return 0;
-    SkCanvas* canvas = new SkCanvas();
-    canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
+    SkCanvas* canvas;
+    SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
+    if (deferralMode == Deferred) {
+        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D));
+        canvas = new SkDeferredCanvas(device.get(), deviceContext.get());
+    } else
+        canvas = new SkCanvas(device.get());
     data->m_platformContext.setGraphicsContext3D(context3D);
 #if USE(ACCELERATED_COMPOSITING)
     data->m_platformLayer = Canvas2DLayerChromium::create(context3D, size);
     data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
+    data->m_platformLayer->setCanvas(canvas);
 #endif
     return canvas;
 }
@@ -100,14 +129,14 @@ static SkCanvas* createNonPlatformCanvas(const IntSize& size)
     return canvas;
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
     : m_data(size)
     , m_size(size)
 {
     OwnPtr<SkCanvas> canvas;
 
     if (renderingMode == Accelerated)
-        canvas = adoptPtr(createAcceleratedCanvas(size, &m_data));
+        canvas = adoptPtr(createAcceleratedCanvas(size, &m_data, deferralMode));
     else if (renderingMode == UnacceleratedNonPlatformBuffer)
         canvas = adoptPtr(createNonPlatformCanvas(size));
 

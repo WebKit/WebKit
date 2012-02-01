@@ -146,6 +146,8 @@ private:
 
     void setSurfaceSize(const IntSize&);
 
+    bool shouldDefer() const;
+
     HashSet<CanvasObserver*> m_observers;
 
     IntSize m_size;

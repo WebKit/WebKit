@@ -115,6 +115,7 @@ public:
     virtual void setAcceleratedCompositingForPluginsEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForAnimationEnabled(bool) = 0;
     virtual void setAccelerated2dCanvasEnabled(bool) = 0;
+    virtual void setDeferred2dCanvasEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForFixedPositionEnabled(bool)  = 0;
     virtual void setMinimumAccelerated2dCanvasSize(int) = 0;
     virtual void setAcceleratedFiltersEnabled(bool) = 0;

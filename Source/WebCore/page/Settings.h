@@ -366,6 +366,9 @@ namespace WebCore {
         void setAccelerated2dCanvasEnabled(bool);
         bool accelerated2dCanvasEnabled() const { return m_acceleratedCanvas2dEnabled; }
 
+        void setDeferred2dCanvasEnabled(bool);
+        bool deferred2dCanvasEnabled() const { return m_deferredCanvas2dEnabled; }
+
         // Number of pixels below which 2D canvas is rendered in software
         // even if hardware acceleration is enabled.
         // Hardware acceleration is useful for large canvases where it can avoid the
@@ -619,6 +622,7 @@ namespace WebCore {
         bool m_privilegedWebGLExtensionsEnabled : 1;
         bool m_webAudioEnabled : 1;
         bool m_acceleratedCanvas2dEnabled : 1;
+        bool m_deferredCanvas2dEnabled : 1;
         bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_paginateDuringLayoutEnabled : 1;
