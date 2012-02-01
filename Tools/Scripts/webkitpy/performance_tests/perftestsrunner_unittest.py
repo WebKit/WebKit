@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -104,13 +104,13 @@ max 1120
         def stop(self):
             """do nothing"""
 
-    def create_runner(self, buildbot_output=None, args=[], regular_output=None):
+    def create_runner(self, buildbot_output=None, args=[], regular_output=None, driver_class=TestDriver):
         buildbot_output = buildbot_output or array_stream.ArrayStream()
         regular_output = regular_output or array_stream.ArrayStream()
 
         options, parsed_args = PerfTestsRunner._parse_args(args)
         test_port = TestPort(host=MockHost(), options=options)
-        test_port.create_driver = lambda worker_number=None, no_timeout=False: MainTest.TestDriver()
+        test_port.create_driver = lambda worker_number=None, no_timeout=False: driver_class()
 
         runner = PerfTestsRunner(regular_output, buildbot_output, args=args, port=test_port)
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')
@@ -124,34 +124,22 @@ max 1120
         return runner._run_single_test(test_name, driver, is_chromium_style=True)
 
     def test_run_passing_test(self):
-        test_failed, driver_need_restart = self.run_test('pass.html')
-        self.assertFalse(test_failed)
-        self.assertFalse(driver_need_restart)
+        self.assertTrue(self.run_test('pass.html'))
 
     def test_run_silent_test(self):
-        test_failed, driver_need_restart = self.run_test('silent.html')
-        self.assertTrue(test_failed)
-        self.assertFalse(driver_need_restart)
+        self.assertFalse(self.run_test('silent.html'))
 
     def test_run_failed_test(self):
-        test_failed, driver_need_restart = self.run_test('failed.html')
-        self.assertTrue(test_failed)
-        self.assertFalse(driver_need_restart)
+        self.assertFalse(self.run_test('failed.html'))
 
     def test_run_tonguey_test(self):
-        test_failed, driver_need_restart = self.run_test('tonguey.html')
-        self.assertTrue(test_failed)
-        self.assertFalse(driver_need_restart)
+        self.assertFalse(self.run_test('tonguey.html'))
 
     def test_run_timeout_test(self):
-        test_failed, driver_need_restart = self.run_test('timeout.html')
-        self.assertTrue(test_failed)
-        self.assertTrue(driver_need_restart)
+        self.assertFalse(self.run_test('timeout.html'))
 
     def test_run_crash_test(self):
-        test_failed, driver_need_restart = self.run_test('crash.html')
-        self.assertTrue(test_failed)
-        self.assertTrue(driver_need_restart)
+        self.assertFalse(self.run_test('crash.html'))
 
     def test_run_test_set(self):
         buildbot_output = array_stream.ArrayStream()
@@ -163,6 +151,27 @@ max 1120
         self.assertEqual(unexpected_result_count, len(tests) - 1)
         self.assertEqual(len(buildbot_output.get()), 1)
         self.assertEqual(buildbot_output.get()[0], 'RESULT group_name: test_name= 42 ms\n')
+
+    def test_run_test_set_kills_drt_per_run(self):
+
+        class TestDriverWithStopCount(MainTest.TestDriver):
+            stop_count = 0
+
+            def __init__(self):
+                TestDriverWithStopCount.sotp_count = 0
+
+            def stop(self):
+                TestDriverWithStopCount.stop_count += 1
+
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output, driver_class=TestDriverWithStopCount)
+
+        dirname = runner._base_path + '/inspector/'
+        tests = [dirname + 'pass.html', dirname + 'silent.html', dirname + 'failed.html',
+            dirname + 'tonguey.html', dirname + 'timeout.html', dirname + 'crash.html']
+
+        unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        self.assertEqual(TestDriverWithStopCount.stop_count, 6)
 
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = array_stream.ArrayStream()

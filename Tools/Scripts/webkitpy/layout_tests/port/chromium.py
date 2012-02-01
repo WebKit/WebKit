@@ -603,7 +603,8 @@ class ChromiumDriver(Driver):
         if self._proc.stderr:
             self._proc.stderr.close()
         time_out_ms = self._port.get_option('time_out_ms')
-        if time_out_ms:
+        if time_out_ms and not self._no_timeout:
+            # FIXME: Port object shouldn't be dependent on layout test manager.
             kill_timeout_seconds = 3.0 * int(time_out_ms) / Manager.DEFAULT_TEST_TIMEOUT_MS
         else:
             kill_timeout_seconds = 3.0
