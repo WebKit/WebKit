@@ -4057,3 +4057,5 @@ BUGWK77521 LINUX : fast/repaint/textarea-set-disabled.html = IMAGE
 BUGWK77521 LINUX : fast/repaint/search-field-cancel.html = IMAGE
 
 BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
+
+BUGWK77531 WIN LINUX : media/controls-drag-timebar.html = PASS TIMEOUT
