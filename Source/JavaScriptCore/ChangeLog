@@ -1,3 +1,44 @@
+2012-02-01  Andy Wingo  <wingo@igalia.com>
+
+        Refactor identifier resolution in BytecodeGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=76285
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ResolveResult): New class, to describe the storage
+        location corresponding to an identifier in a program.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve): New function, replacing
+        findScopedProperty.
+        (JSC::BytecodeGenerator::resolveConstDecl): New function,
+        encapsulating what ConstDeclNode::emitBytecode used to do.
+        (JSC::BytecodeGenerator::emitGetStaticVar):
+        (JSC::BytecodeGenerator::emitPutStaticVar): New functions,
+        corresponding to the old emitGetScopedVar and emitPutScopedVar.
+        (JSC::BytecodeGenerator::registerFor): Remove version that took an
+        Identifier&; replaced by ResolveResult::local().
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitResolveWithThis): Change to accept a
+        "resolveResult" argument.  This is more clear, and reduces the
+        amount of double analysis happening at compile-time.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ForInNode::emitBytecode): Refactor to use the new
+        ResolveResult structure.
+
 2012-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Implement Error.stack

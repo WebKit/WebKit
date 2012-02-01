@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
+ * Copyright (C) 2012 Igalia, S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +86,144 @@ namespace JSC {
         RefPtr<RegisterID> propertyRegister;
     };
 
+    class ResolveResult {
+    public:
+        enum Flags {
+            // The property is locally bound, in a register.
+            RegisterFlag = 0x1,
+            // We need to traverse the scope chain at runtime, checking for
+            // non-strict eval and/or `with' nodes.
+            DynamicFlag = 0x2,
+            // The property was resolved to a definite location, and the
+            // identifier is not needed any more.
+            StaticFlag = 0x4,
+            // Once we have the base object, the property will be located at a
+            // known index.
+            IndexedFlag = 0x8,
+            // Skip some number of objects in the scope chain, given by "depth".
+            ScopedFlag = 0x10,
+            // The resolved binding is immutable.
+            ReadOnlyFlag = 0x20,
+            // The base object is the global object.
+            GlobalFlag = 0x40
+        };
+        enum Type {
+            // The property is local, and stored in a register.
+            Register = RegisterFlag | StaticFlag,
+            // A read-only local, created by "const".
+            ReadOnlyRegister = RegisterFlag | ReadOnlyFlag | StaticFlag,
+            // The property is statically scoped free variable. Its coordinates
+            // are in "index" and "depth".
+            Lexical = IndexedFlag | ScopedFlag | StaticFlag,
+            // A read-only Lexical, created by "const".
+            ReadOnlyLexical = IndexedFlag | ScopedFlag | ReadOnlyFlag | StaticFlag,
+            // The property was not bound lexically, so at runtime we should
+            // look directly in the global object.
+            Global = GlobalFlag,
+            // Like Global, but we could actually resolve the property to a
+            // DontDelete property in the global object, for instance, any
+            // binding created with "var" at the top level. At runtime we'll
+            // just index into the global object.
+            IndexedGlobal = IndexedFlag | GlobalFlag | StaticFlag,
+            // Like IndexedGlobal, but the property is also read-only, like NaN,
+            // Infinity, or undefined.
+            ReadOnlyIndexedGlobal = IndexedFlag | ReadOnlyFlag | GlobalFlag | StaticFlag,
+            // The property could not be resolved statically, due to the
+            // presence of `with' blocks. At runtime we'll have to walk the
+            // scope chain. ScopedFlag is set to indicate that "depth" will
+            // hold some number of nodes to skip in the scope chain, before
+            // beginning the search.
+            Dynamic = DynamicFlag | ScopedFlag,
+            // The property was located as a statically scoped free variable,
+            // but while traversing the scope chain, there was an intermediate
+            // activation that used non-strict `eval'. At runtime we'll have to
+            // check for the absence of this property in those intervening
+            // scopes.
+            DynamicLexical = DynamicFlag | IndexedFlag | ScopedFlag,
+            // Like ReadOnlyLexical, but with intervening non-strict `eval'.
+            DynamicReadOnlyLexical = DynamicFlag | IndexedFlag | ScopedFlag | ReadOnlyFlag,
+            // Like Global, but with intervening non-strict `eval'. As with 
+            // Dynamic, ScopeFlag is set to indicate that "depth" does indeed
+            // store a number of frames to skip before doing the dynamic checks.
+            DynamicGlobal = DynamicFlag | GlobalFlag | ScopedFlag,
+            // Like IndexedGlobal, but with intervening non-strict `eval'.
+            DynamicIndexedGlobal = DynamicFlag | IndexedFlag | GlobalFlag | ScopedFlag,
+            // Like ReadOnlyIndexedGlobal, but with intervening non-strict
+            // `eval'.
+            DynamicReadOnlyIndexedGlobal = DynamicFlag | IndexedFlag | ReadOnlyFlag | GlobalFlag | ScopedFlag,
+        };
+
+        static ResolveResult registerResolve(RegisterID *local, unsigned flags)
+        {
+            return ResolveResult(Register | flags, local, missingSymbolMarker(), 0, 0);
+        }
+        static ResolveResult dynamicResolve(size_t depth)
+        {
+            return ResolveResult(Dynamic, 0, missingSymbolMarker(), depth, 0);
+        }
+        static ResolveResult lexicalResolve(int index, size_t depth, unsigned flags)
+        {
+            unsigned type = (flags & DynamicFlag) ? DynamicLexical : Lexical;
+            return ResolveResult(type | flags, 0, index, depth, 0);
+        }
+        static ResolveResult indexedGlobalResolve(int index, JSObject *globalObject, unsigned flags)
+        {
+            return ResolveResult(IndexedGlobal | flags, 0, index, 0, globalObject);
+        }
+        static ResolveResult dynamicIndexedGlobalResolve(int index, size_t depth, JSObject *globalObject, unsigned flags)
+        {
+            return ResolveResult(DynamicIndexedGlobal | flags, 0, index, depth, globalObject);
+        }
+        static ResolveResult globalResolve(JSObject *globalObject)
+        {
+            return ResolveResult(Global, 0, missingSymbolMarker(), 0, globalObject);
+        }
+        static ResolveResult dynamicGlobalResolve(size_t dynamicDepth, JSObject *globalObject)
+        {
+            return ResolveResult(DynamicGlobal, 0, missingSymbolMarker(), dynamicDepth, globalObject);
+        }
+
+        unsigned type() const { return m_type; }
+        // Returns the register corresponding to a local variable, or 0 if no
+        // such register exists. Registers returned by ResolveResult::local() do
+        // not require explicit reference counting.
+        RegisterID* local() const { return m_local; }
+        int index() const { ASSERT (isIndexed() || isRegister()); return m_index; }
+        size_t depth() const { ASSERT(isScoped()); return m_depth; }
+        JSObject* globalObject() const { ASSERT(isGlobal()); ASSERT(m_globalObject); return m_globalObject; }
+
+        bool isRegister() const { return m_type & RegisterFlag; }
+        bool isDynamic() const { return m_type & DynamicFlag; }
+        bool isStatic() const { return m_type & StaticFlag; }
+        bool isIndexed() const { return m_type & IndexedFlag; }
+        bool isScoped() const { return m_type & ScopedFlag; }
+        bool isReadOnly() const { return (m_type & ReadOnlyFlag) && !isDynamic(); }
+        bool isGlobal() const { return m_type & GlobalFlag; }
+
+    private:
+        ResolveResult(unsigned type, RegisterID* local, int index, size_t depth, JSObject* globalObject)
+            : m_type(type)
+            , m_index(index)
+            , m_local(local)
+            , m_depth(depth)
+            , m_globalObject(globalObject)
+        {
+#ifndef NDEBUG
+            checkValidity();
+#endif
+        }
+
+#ifndef NDEBUG
+        void checkValidity();
+#endif
+
+        unsigned m_type;
+        int m_index; // Index in scope, if IndexedFlag is set
+        RegisterID* m_local; // Local register, if RegisterFlag is set
+        size_t m_depth; // Depth in scope chain, if ScopedFlag is set
+        JSObject* m_globalObject; // If GlobalFlag is set.
+    };
+
     class BytecodeGenerator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -107,11 +246,6 @@ namespace JSC {
 
         JSObject* generate();
 
-        // Returns the register corresponding to a local variable, or 0 if no
-        // such register exists. Registers returned by registerFor do not
-        // require explicit reference counting.
-        RegisterID* registerFor(const Identifier&);
-
         bool isArgumentNumber(const Identifier&, int);
 
         void setIsNumericCompareFunction(bool isNumericCompareFunction);
@@ -119,17 +253,11 @@ namespace JSC {
         bool willResolveToArguments(const Identifier&);
         RegisterID* uncheckedRegisterForArguments();
 
-        // Behaves as registerFor does, but ignores dynamic scope as
+        // Resolve an identifier, given the current compile-time scope chain.
+        ResolveResult resolve(const Identifier&);
+        // Behaves as resolve does, but ignores dynamic scope as
         // dynamic scope should not interfere with const initialisation
-        RegisterID* constRegisterFor(const Identifier&);
-
-        // Searches the scope chain in an attempt to  statically locate the requested
-        // property.  Returns false if for any reason the property cannot be safely
-        // optimised at all.  Otherwise it will return the index and depth of the
-        // VariableObject that defines the property.  If the property cannot be found
-        // statically, depth will contain the depth of the scope chain where dynamic
-        // lookup must begin.
-        bool findScopedProperty(const Identifier&, int& index, size_t& depth, bool forWriting, bool& includesDynamicScopes, JSObject*& globalObject);
+        ResolveResult resolveConstDecl(const Identifier&);
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
@@ -309,14 +437,14 @@ namespace JSC {
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }
 
-        RegisterID* emitResolve(RegisterID* dst, const Identifier& property);
-        RegisterID* emitGetScopedVar(RegisterID* dst, size_t skip, int index, JSValue globalObject);
-        RegisterID* emitPutScopedVar(size_t skip, int index, RegisterID* value, JSValue globalObject);
+        RegisterID* emitGetStaticVar(RegisterID* dst, const ResolveResult&);
+        RegisterID* emitPutStaticVar(const ResolveResult&, RegisterID* value);
 
-        RegisterID* emitResolveBase(RegisterID* dst, const Identifier& property);
-        RegisterID* emitResolveBaseForPut(RegisterID* dst, const Identifier& property);
-        RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
-        RegisterID* emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
+        RegisterID* emitResolve(RegisterID* dst, const ResolveResult&, const Identifier& property);
+        RegisterID* emitResolveBase(RegisterID* dst, const ResolveResult&, const Identifier& property);
+        RegisterID* emitResolveBaseForPut(RegisterID* dst, const ResolveResult&, const Identifier& property);
+        RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const ResolveResult&, const Identifier& property);
+        RegisterID* emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const ResolveResult&, const Identifier& property);
 
         void emitMethodCheck();
 
