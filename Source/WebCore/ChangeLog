@@ -1,3 +1,13 @@
+2012-02-01  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Set all PlatformTouchPoint values possible from a QTouch event.
+        https://bugs.webkit.org/show_bug.cgi?id=77442
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt/PlatformTouchPointQt.cpp:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+
 2012-02-01  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: move type builder code to dedicated InspectorTypeBuilder .h/.cpp

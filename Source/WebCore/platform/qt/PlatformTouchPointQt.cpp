@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2009,2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,17 +28,29 @@
 namespace WebCore {
 
 PlatformTouchPoint::PlatformTouchPoint(const QTouchEvent::TouchPoint& point)
-{
     // The QTouchEvent::TouchPoint API states that ids will be >= 0.
-    m_id = static_cast<unsigned>(point.id());
+    : m_id(point.id())
+    , m_screenPos(point.screenPos().toPoint())
+    , m_pos(point.pos().toPoint())
+{
     switch (point.state()) {
     case Qt::TouchPointReleased: m_state = TouchReleased; break;
     case Qt::TouchPointMoved: m_state = TouchMoved; break;
     case Qt::TouchPointPressed: m_state = TouchPressed; break;
     case Qt::TouchPointStationary: m_state = TouchStationary; break;
     }
-    m_screenPos = point.screenPos().toPoint();
-    m_pos = point.pos().toPoint();
+    // Qt reports touch point size as rectangles, but we will pretend it is an oval.
+    QRect touchRect = point.rect().toAlignedRect();
+    if (touchRect.isValid()) {
+        m_radiusX = point.rect().width() / 2;
+        m_radiusY = point.rect().height() / 2;
+    } else {
+        // http://www.w3.org/TR/2011/WD-touch-events-20110505: 1 if no value is known.
+        m_radiusX = 1;
+        m_radiusY = 1;
+    }
+    m_force = point.pressure();
+    // FIXME: Support m_rotationAngle if QTouchEvent at some point supports it.
 }
 
 }
