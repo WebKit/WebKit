@@ -72,6 +72,10 @@ public:
     // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
     void updateRenderingState();
 
+    // updateInternalBus() updates m_internalSummingBus appropriately for the number of channels.
+    // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
+    void updateInternalBus();
+
     // Rendering code accesses its version of the current connections here.
     unsigned numberOfRenderingConnections() const { return m_renderingOutputs.size(); }
     AudioNodeOutput* renderingOutput(unsigned i) { return m_renderingOutputs[i]; }
@@ -116,8 +120,7 @@ private:
     AudioBus* internalSummingBus();
     void sumAllConnections(AudioBus* summingBus, size_t framesToProcess);
 
-    OwnPtr<AudioBus> m_monoSummingBus;
-    OwnPtr<AudioBus> m_stereoSummingBus;
+    OwnPtr<AudioBus> m_internalSummingBus;
 };
 
 } // namespace WebCore

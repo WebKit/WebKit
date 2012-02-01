@@ -127,6 +127,8 @@ void AudioBasicProcessorNode::checkNumberOfChannelsForInput(AudioNodeInput* inpu
         processor()->setNumberOfChannels(numberOfChannels);
         initialize();
     }
+
+    AudioNode::checkNumberOfChannelsForInput(input);
 }
 
 unsigned AudioBasicProcessorNode::numberOfChannels()

@@ -1,3 +1,27 @@
+2012-01-31  Raymond Liu  <raymond.liu@intel.com>
+
+        Dynamic allocate AudioBus with required number of channels for AudioNodeInput
+        https://bugs.webkit.org/show_bug.cgi?id=76516
+
+        Reviewed by Kenneth Russell.
+
+        No new tests required.
+
+        * webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioChannelMerger.cpp:
+        (WebCore::AudioChannelMerger::checkNumberOfChannelsForInput):
+        * webaudio/AudioGainNode.cpp:
+        (WebCore::AudioGainNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioNode.h:
+        * webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::AudioNodeInput):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        (WebCore::AudioNodeInput::internalSummingBus):
+        * webaudio/AudioNodeInput.h:
+
 2012-01-31  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (WebKit2): event.keyCode is always zero when typing in Russian

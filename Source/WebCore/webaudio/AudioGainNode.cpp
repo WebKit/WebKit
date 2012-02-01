@@ -110,6 +110,8 @@ void AudioGainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
         output(0)->setNumberOfChannels(numberOfChannels);
         initialize();
     }
+
+    AudioNode::checkNumberOfChannelsForInput(input);
 }
 
 } // namespace WebCore

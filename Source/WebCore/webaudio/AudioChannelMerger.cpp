@@ -89,7 +89,7 @@ void AudioChannelMerger::reset()
 
 // Any time a connection or disconnection happens on any of our inputs, we potentially need to change the
 // number of channels of our output.
-void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput*)
+void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context()->isAudioThread() && context()->isGraphOwner());
 
@@ -105,6 +105,8 @@ void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput*)
     AudioNodeOutput* output = this->output(0);
     ASSERT(output);
     output->setNumberOfChannels(numberOfOutputChannels);
+
+    AudioNode::checkNumberOfChannelsForInput(input);
 }
 
 } // namespace WebCore

@@ -182,6 +182,17 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
     }
 }
 
+void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
+{
+    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+
+    ASSERT(m_inputs.contains(input));
+    if (!m_inputs.contains(input))
+        return;
+
+    input->updateInternalBus();
+}
+
 void AudioNode::pullInputs(size_t framesToProcess)
 {
     ASSERT(context()->isAudioThread());
