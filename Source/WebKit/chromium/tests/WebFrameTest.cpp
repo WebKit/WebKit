@@ -381,7 +381,7 @@ TEST_F(WebFrameTest, ContextNotificationsIsolatedWorlds)
     EXPECT_EQ(1, matchCount);
 }
 
-TEST_F(WebFrameTest, FindInPage)
+TEST_F(WebFrameTest, DISABLED_FindInPage)
 {
     registerMockedHttpURLLoad("find.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find.html");
