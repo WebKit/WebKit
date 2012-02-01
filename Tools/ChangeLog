@@ -1,3 +1,14 @@
+2012-02-01  Dirk Pranke  <dpranke@chromium.org>
+
+        TestWebKitAPI isn't being built on chromium bots any more
+        https://bugs.webkit.org/show_bug.cgi?id=77563
+
+        Reviewed by Dimitri Glazkov.
+
+        I accidentally dropped it in the refactoring in r105449.
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp: Added.
+
 2012-02-01  Hans Wennborg  <hans@chromium.org>
 
         Rename WebSpeechInputResult::set() to assign()

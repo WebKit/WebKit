@@ -65,6 +65,13 @@ Tools/DumpRenderTree/DumpRenderTree.gyp/*.ninja
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.sln
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.vcproj*
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.xcodeproj*
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.Makefile
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.mk
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.ninja
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.sln
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.vcproj*
+Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.xcodeproj*
+
 
 # Ignore status files that manage Chromium dependencies.
 Source/WebKit/chromium/.gclient
