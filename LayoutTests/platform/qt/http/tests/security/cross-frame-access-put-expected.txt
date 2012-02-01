@@ -372,8 +372,6 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://local
 
 CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
-
 ALERT: PASS: window.Attr should be '[object AttrConstructor]' and is.
 ALERT: PASS: window.CDATASection should be '[object CDATASectionConstructor]' and is.
 ALERT: PASS: window.CharacterData should be '[object CharacterDataConstructor]' and is.
@@ -419,7 +417,7 @@ ALERT: PASS: window.HTMLHtmlElement should be '[object HTMLHtmlElementConstructo
 ALERT: PASS: window.HTMLIFrameElement should be '[object HTMLIFrameElementConstructor]' and is.
 ALERT: PASS: window.HTMLImageElement should be '[object HTMLImageElementConstructor]' and is.
 ALERT: PASS: window.HTMLInputElement should be '[object HTMLInputElementConstructor]' and is.
-ALERT: PASS: window.HTMLIsIndexElement should be '[object HTMLIsIndexElementConstructor]' and is.
+ALERT: PASS: window.HTMLIsIndexElement should be 'undefined' and is.
 ALERT: PASS: window.HTMLLabelElement should be '[object HTMLLabelElementConstructor]' and is.
 ALERT: PASS: window.HTMLLegendElement should be '[object HTMLLegendElementConstructor]' and is.
 ALERT: PASS: window.HTMLLIElement should be '[object HTMLLIElementConstructor]' and is.
