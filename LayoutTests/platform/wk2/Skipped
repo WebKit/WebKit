@@ -484,6 +484,8 @@ storage/quota-tracking.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42543>
 fast/dom/HTMLScriptElement/dont-load-unknown-type.html
 fast/preloader/document-write-noscript.html
+fast/preloader/first-base-tag-scanned-wins.html
+fast/preloader/first-base-tag-wins.html
 fast/preloader/image.html
 fast/preloader/input.html
 fast/preloader/link.html
@@ -492,6 +494,7 @@ fast/preloader/scan-body-from-head-import.html
 fast/preloader/scan-body-from-head-script.html
 fast/preloader/script.html
 fast/preloader/style.html
+fast/preloader/understands-base-tag.html
 http/tests/loading/preload-slow-loading.php
 http/tests/loading/preload-append-scan.php
 http/tests/mime/uppercase-mime-type.html
