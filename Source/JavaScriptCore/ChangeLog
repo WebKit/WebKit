@@ -1,5 +1,19 @@
 2012-01-31  Oliver Hunt  <oliver@apple.com>
 
+        Remove unneeded sourceId property
+        https://bugs.webkit.org/show_bug.cgi?id=77495
+
+        Reviewed by Filip Pizlo.
+
+        sourceId isn't used anymore, so we'll just remove it.
+
+        * runtime/Error.cpp:
+        (JSC):
+        (JSC::addErrorInfo):
+        (JSC::hasErrorInfo):
+
+2012-01-31  Oliver Hunt  <oliver@apple.com>
+
         Implement Error.stack
         https://bugs.webkit.org/show_bug.cgi?id=66994
 
