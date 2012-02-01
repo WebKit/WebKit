@@ -1,3 +1,16 @@
+2012-02-01  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] run-webkit-tests --qt  crashes if WEBKIT_TESTFONTS is not set
+        https://bugs.webkit.org/show_bug.cgi?id=77466
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replicate the behavior of old-run-webkit-tests and check if WEBKIT_TESTFONTS
+        is set or if we should raise an error.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.setup_environ_for_server):
+
 2012-02-01  Philippe Normand  <pnormand@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
