@@ -1461,7 +1461,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     m_frame->selection()->setCaretBlinkingSuspended(true);
 
     bool swallowEvent = dispatchMouseEvent(eventNames().mousedownEvent, targetNode(mev), true, m_clickCount, mouseEvent, true);
-    m_capturesDragging = !swallowEvent;
+    m_capturesDragging = !swallowEvent || mev.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
     // in case the scrollbar widget was destroyed when the mouse event was handled.
