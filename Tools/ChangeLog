@@ -1,3 +1,13 @@
+2012-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] API documentation is not installed even when building with --enable-gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=77094
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add install-data-local and uninstall-local rules
+        to install/uninstall WebKit1 and WebKit2 API documentation.
+
 2012-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106460.

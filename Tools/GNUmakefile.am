@@ -282,6 +282,68 @@ doc-maintainer-clean-local: clean
 	@rm -rf Documentation/webkitgtk Documentation/webkit2gtk
 	-@rmdir Documentation
 
+install-data-local:
+	@installfiles=`echo ./Documentation/webkitgtk/html/*`; \
+	if test "$$installfiles" = './Documentation/webkitgtk/html/*'; \
+	then echo 1>&2 'No documentation to install' ; \
+	else \
+	  DOC_MODULE_VERSION=`cat ./Documentation/webkitgtk/version.xml`; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk-$(DOC_MODULE_VERSION)"; \
+	  else \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk"; \
+	  fi; \
+	  $(mkinstalldirs) $${installdir} ; \
+	  for i in $$installfiles; do \
+	    echo ' $(INSTALL_DATA) '$$i ; \
+	    $(INSTALL_DATA) $$i $${installdir}; \
+	  done; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    mv -f $${installdir}/webkitgtk.devhelp2 \
+	      $${installdir}/webkitgtk-$(DOC_MODULE_VERSION).devhelp2; \
+	  fi; \
+	fi
+if ENABLE_WEBKIT2
+	@installfiles=`echo ./Documentation/webkit2gtk/html/*`; \
+	if test "$$installfiles" = './Documentation/webkit2gtk/html/*'; \
+	then echo 1>&2 'No documentation to install' ; \
+	else \
+	  DOC_MODULE_VERSION=`cat ./Documentation/webkit2gtk/version.xml`; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkit2gtk-$(DOC_MODULE_VERSION)"; \
+	  else \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkit2gtk"; \
+	  fi; \
+	  $(mkinstalldirs) $${installdir} ; \
+	  for i in $$installfiles; do \
+	    echo ' $(INSTALL_DATA) '$$i ; \
+	    $(INSTALL_DATA) $$i $${installdir}; \
+	  done; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    mv -f $${installdir}/webkit2gtk.devhelp2 \
+	      $${installdir}/webkit2gtk-$(DOC_MODULE_VERSION).devhelp2; \
+	  fi; \
+	fi
+endif
+
+uninstall-local:
+	@DOC_MODULE_VERSION=`cat ./Documentation/webkitgtk/version.xml`; \
+	if test -n "$(DOC_MODULE_VERSION)"; then \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk-$(DOC_MODULE_VERSION)"; \
+	else \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk"; \
+	fi; \
+	rm -rf $${installdir}
+if ENABLE_WEBKIT2
+	@DOC_MODULE_VERSION=`cat ./Documentation/webkit2gtk/version.xml`; \
+	if test -n "$(DOC_MODULE_VERSION)"; then \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkit2gtk-$(DOC_MODULE_VERSION)"; \
+	else \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkit2gtk"; \
+	fi; \
+	rm -rf $${installdir}
+endif
+
 if ENABLE_GTK_DOC
 all: docs-build.stamp
 endif
