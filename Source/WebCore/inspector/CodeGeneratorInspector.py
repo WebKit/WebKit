@@ -1643,80 +1643,6 @@ typedef String ErrorString;
 
 #if ENABLE(INSPECTOR)
 
-namespace TypeBuilder {
-
-// This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
-// technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
-template<typename T>
-struct ArrayItemHelper {
-    typedef typename T::ItemTraits Traits;
-};
-
-template<typename T>
-class Array : public InspectorArray {
-private:
-    Array() { }
-
-public:
-    void addItem(PassRefPtr<T> value)
-    {
-        ArrayItemHelper<T>::Traits::pushRefPtr(this, value);
-    }
-
-    void addItem(T value)
-    {
-        ArrayItemHelper<T>::Traits::pushRaw(this, value);
-    }
-
-    static PassRefPtr<Array<T> > create()
-    {
-        return adoptRef(new Array<T>());
-    }
-
-#if """ + VALIDATOR_IFDEF_NAME + """
-    static void assertCorrectValue(InspectorValue* value);
-#endif // """ + VALIDATOR_IFDEF_NAME + """
-};
-
-struct StructItemTraits {
-    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
-    {
-        array->pushObject(value);
-    }
-
-    template<typename T>
-    static void assertCorrectValue(InspectorValue* value) {
-        T::assertCorrectValue(value);
-    }
-};
-
-template<>
-struct ArrayItemHelper<String> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, const String& value)
-        {
-            array->pushString(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorObject> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
-        {
-            array->pushObject(value);
-        }
-    };
-};
-
-${forwards}
-
-String getEnumConstantValue(int code);
-
-${typeBuilders}
-} // namespace TypeBuilder
-
 class InspectorFrontend {
 public:
     InspectorFrontend(InspectorFrontendChannel*);
@@ -2179,14 +2105,123 @@ $constructorInit{
 
 $methods
 
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
+""")
+
+    typebuilder_h = string.Template(file_header_ +
+"""
+#ifndef InspectorTypeBuilder_h
+#define InspectorTypeBuilder_h
+
+#if ENABLE(INSPECTOR)
+
+#include "InspectorValues.h"
+#include <PlatformString.h>
+#include <wtf/PassRefPtr.h>
+
+namespace WebCore {
+
+namespace TypeBuilder {
+
+// This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
+// technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
+template<typename T>
+struct ArrayItemHelper {
+    typedef typename T::ItemTraits Traits;
+};
+
+template<typename T>
+class Array : public InspectorArray {
+private:
+    Array() { }
+
+public:
+    void addItem(PassRefPtr<T> value)
+    {
+        ArrayItemHelper<T>::Traits::pushRefPtr(this, value);
+    }
+
+    void addItem(T value)
+    {
+        ArrayItemHelper<T>::Traits::pushRaw(this, value);
+    }
+
+    static PassRefPtr<Array<T> > create()
+    {
+        return adoptRef(new Array<T>());
+    }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+    static void assertCorrectValue(InspectorValue* value);
+#endif // """ + VALIDATOR_IFDEF_NAME + """
+};
+
+struct StructItemTraits {
+    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+    {
+        array->pushObject(value);
+    }
+
+    template<typename T>
+    static void assertCorrectValue(InspectorValue* value) {
+        T::assertCorrectValue(value);
+    }
+};
+
+template<>
+struct ArrayItemHelper<String> {
+    struct Traits {
+        static void pushRaw(InspectorArray* array, const String& value)
+        {
+            array->pushString(value);
+        }
+    };
+};
+
+template<>
+struct ArrayItemHelper<InspectorObject> {
+    struct Traits {
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorObject> value)
+        {
+            array->pushObject(value);
+        }
+    };
+};
+
+${forwards}
+
+String getEnumConstantValue(int code);
+
+${typeBuilders}
+} // namespace TypeBuilder
+
+
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(InspectorTypeBuilder_h)
+
+""")
+
+    typebuilder_cpp = string.Template(file_header_ +
+"""
+
+#include "config.h"
+#if ENABLE(INSPECTOR)
+
+#include "InspectorTypeBuilder.h"
+
+namespace WebCore {
+
 namespace TypeBuilder {
 
 const char* const enum_constant_values[] = {
 $enumConstantValues};
 
 String getEnumConstantValue(int code) {
-    // Test variable from generated sources, declared in InspectorTypeBuilder.h and defined in InspectorTypeBuilder.cpp
-    ASSERT(typeBuilderTestVariable);
     return enum_constant_values[code];
 }
 
@@ -2207,43 +2242,6 @@ void TypeBuilder::Array<T>::assertCorrectValue(InspectorValue* value)
 $validatorCode
 
 #endif // """ + VALIDATOR_IFDEF_NAME + """
-
-} // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
-""")
-
-    typebuilder_h = string.Template(file_header_ +
-"""
-#ifndef InspectorTypeBuilder_h
-#define InspectorTypeBuilder_h
-
-namespace WebCore {
-
-// FIXME: move here TypeBuilder namespace from InspectorFrontend.h
-
-// FIXME: Used to test that we don't miss .cpp file. Remove once tested.
-extern bool typeBuilderTestVariable;
-
-} // namespace WebCore
-#endif // !defined(InspectorTypeBuilder_h)
-
-""")
-
-    typebuilder_cpp = string.Template(file_header_ +
-"""
-
-#include "config.h"
-#if ENABLE(INSPECTOR)
-
-#include "InspectorTypeBuilder.h"
-
-namespace WebCore {
-
-// FIXME: move here TypeBuilder namespace from InspectorFrontend.cpp
-
-// FIXME: Used to test that we don't miss .cpp file. Remove once tested.
-bool typeBuilderTestVariable = true;
 
 } // namespace WebCore
 
@@ -2818,20 +2816,20 @@ backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     messageHandlers=join(Generator.method_handler_list, "\n")))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
-         fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
-         domainClassList=join(Generator.frontend_domain_class_lines, ""),
-         typeBuilders=join(flatten_list(Generator.type_builder_fragments), ""),
-         forwards=join(Generator.type_builder_forwards, "")))
+    fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
+    domainClassList=join(Generator.frontend_domain_class_lines, "")))
 
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
     constructorInit=join(Generator.frontend_constructor_init_list, ""),
-    methods=join(Generator.frontend_method_list, "\n"),
+    methods=join(Generator.frontend_method_list, "\n")))
+
+typebuilder_h_file.write(Templates.typebuilder_h.substitute(None,
+    typeBuilders=join(flatten_list(Generator.type_builder_fragments), ""),
+    forwards=join(Generator.type_builder_forwards, "")))
+
+typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None,
     enumConstantValues=EnumConstants.get_enum_constant_code(),
     validatorCode=join(flatten_list(Generator.validator_impl_list), "")))
-
-typebuilder_h_file.write(Templates.typebuilder_h.substitute(None))
-
-typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None))
 
 backend_js_file.write(Templates.backend_js.substitute(None,
     domainInitializers=join(Generator.backend_js_domain_initializer_list, "")))

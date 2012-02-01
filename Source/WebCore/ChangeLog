@@ -1,3 +1,18 @@
+2012-02-01  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: move type builder code to dedicated InspectorTypeBuilder .h/.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=77471
+
+        Reviewed by Yury Semikhatsky.
+
+        Code is moved physically to other file -- generator is changed accrodingly.
+
+        * inspector/CodeGeneratorInspector.py:
+        (String):
+        (provides):
+        (typename):
+        (Array):
+
 2012-02-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: debugger reports wrong sources when paused in inline script on page reload
