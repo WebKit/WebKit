@@ -108,6 +108,7 @@ public:
     void setMockGeolocationError(int code, JSStringRef message);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language);
+    void setMockSpeechInputDumpRect(bool flag);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPluginsEnabled(bool flag);
     void setPopupBlockingEnabled(bool flag);

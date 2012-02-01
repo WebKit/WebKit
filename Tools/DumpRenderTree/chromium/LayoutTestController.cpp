@@ -91,6 +91,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     // by CppBoundClass, the parent to LayoutTestController).
     bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
     bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
+    bindMethod("setMockSpeechInputDumpRect", &LayoutTestController::setMockSpeechInputDumpRect);
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
     bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
@@ -1936,6 +1937,16 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
 
     if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
         controller->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
+}
+
+void LayoutTestController::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isBool())
+        return;
+
+    if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
+        controller->setDumpRect(arguments[0].value.boolValue);
 }
 
 void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)

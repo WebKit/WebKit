@@ -29,6 +29,7 @@
 #if ENABLE(INPUT_SPEECH)
 
 #include "Task.h"
+#include "platform/WebRect.h"
 #include "WebSpeechInputController.h"
 #include "WebSpeechInputResult.h"
 #include <wtf/Compiler.h>
@@ -39,7 +40,6 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
-struct WebRect;
 class WebSecurityOrigin;
 class WebSpeechInputListener;
 class WebString;
@@ -50,6 +50,7 @@ public:
     static PassOwnPtr<MockWebSpeechInputController> create(WebKit::WebSpeechInputListener*);
 
     void addMockRecognitionResult(const WebKit::WebString& result, double confidence, const WebKit::WebString& language);
+    void setDumpRect(bool);
     void clearResults();
 
     // WebSpeechInputController implementation:
@@ -79,10 +80,12 @@ private:
 
     bool m_recording;
     int m_requestId;
+    WebKit::WebRect m_requestRect;
     String m_language;
 
     HashMap<String, Vector<WebKit::WebSpeechInputResult> > m_recognitionResults;
     Vector<WebKit::WebSpeechInputResult> m_resultsForEmptyLanguage;
+    bool m_dumpRect;
 };
 
 #endif // ENABLE(INPUT_SPEECH)

@@ -28,7 +28,9 @@
 
 #include "WebSpeechInputListener.h"
 #include "platform/WebCString.h"
+#include "platform/WebVector.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebKit;
 
@@ -52,10 +54,16 @@ void MockWebSpeechInputController::addMockRecognitionResult(const WebString& res
     }
 }
 
+void MockWebSpeechInputController::setDumpRect(bool dumpRect)
+{
+    m_dumpRect = dumpRect;
+}
+
 void MockWebSpeechInputController::clearResults()
 {
     m_resultsForEmptyLanguage.clear();
     m_recognitionResults.clear();
+    m_dumpRect = false;
 }
 
 bool MockWebSpeechInputController::startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin& origin)
@@ -64,6 +72,7 @@ bool MockWebSpeechInputController::startRecognition(int requestId, const WebRect
         return false;
 
     m_requestId = requestId;
+    m_requestRect = elementRect;
     m_recording = true;
     m_language = String::fromUTF8(language.utf8().data());
 
@@ -99,7 +108,27 @@ MockWebSpeechInputController::MockWebSpeechInputController(WebSpeechInputListene
     , m_speechTask(0)
     , m_recording(false)
     , m_requestId(-1)
+    , m_dumpRect(false)
 {
+}
+
+static WebSpeechInputResultArray makeRectResult(const WebRect& rect)
+{
+    StringBuilder sb;
+    sb.append(String::number(rect.x));
+    sb.append(",");
+    sb.append(String::number(rect.y));
+    sb.append(",");
+    sb.append(String::number(rect.width));
+    sb.append(",");
+    sb.append(String::number(rect.height));
+
+    WebSpeechInputResult res;
+    res.set(WebString(sb.characters(), sb.length()), 1.0);
+
+    WebSpeechInputResultArray results;
+    results.assign(&res, 1);
+    return results;
 }
 
 void MockWebSpeechInputController::speechTaskFired()
@@ -117,8 +146,10 @@ void MockWebSpeechInputController::speechTaskFired()
         int requestId = m_requestId;
         m_requestId = 0;
 
-        // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
-        if (m_language.isEmpty()) {
+        if (m_dumpRect) {
+            m_listener->setRecognitionResult(requestId, makeRectResult(m_requestRect));
+        } else if (m_language.isEmpty()) {
+            // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
             if (!m_resultsForEmptyLanguage.isEmpty())
                 m_listener->setRecognitionResult(requestId, m_resultsForEmptyLanguage);
             else

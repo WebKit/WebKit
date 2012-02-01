@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests for speech button click with &lt;input type="text" speech>.');
+
+function onSpeechChange() {
+    debug("onSpeechChange()");
+
+    // Since we requested dumpRect, the rect comes back as the speech result.
+    window.expectedString = expectedX + "," + expectedY + "," + expectedWidth + "," + expectedHeight;
+    shouldBeTrue("input.value === expectedString");
+    finishJSTest();
+}
+
+function run() {
+    window.iframe = document.getElementById('iframe');
+    window.input = iframe.contentDocument.createElement('input');
+    input.setAttribute('x-webkit-speech');
+    input.onwebkitspeechchange = onSpeechChange;
+    iframe.contentDocument.getElementsByTagName('body')[0].appendChild(input);
+
+    window.expectedWidth = input.scrollHeight;
+    window.expectedHeight = input.scrollHeight;
+    window.expectedX = iframe.offsetLeft + input.offsetLeft + input.offsetWidth - expectedWidth;
+    window.expectedY = iframe.offsetTop + input.offsetTop + input.offsetHeight - 1;
+
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.setMockSpeechInputDumpRect(true);
+
+        debug('Clicking the speech button.');
+        var x = input.offsetLeft + input.offsetWidth - 4;
+        var y = input.offsetTop + input.offsetHeight / 2;
+        x += iframe.offsetLeft;
+        y += iframe.offsetTop;
+
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<iframe id="iframe">
+</body>
+</html>
+

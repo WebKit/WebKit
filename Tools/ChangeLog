@@ -1,3 +1,50 @@
+2012-01-31  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: Report speech element rect relative to window rather than frame
+        https://bugs.webkit.org/show_bug.cgi?id=76443
+
+        Reviewed by Darin Fisher.
+
+        Update LayoutTestController to allow for retrieving the speech
+        element's position used in a request.
+
+        In Chromium this is handled by the MockWebSpeechInputController;
+        adding stubs for the other implementations.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setMockSpeechInputDumpRectCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        (MockWebSpeechInputController::setDumpRect):
+        (MockWebSpeechInputController::clearResults):
+        (MockWebSpeechInputController::startRecognition):
+        (MockWebSpeechInputController::MockWebSpeechInputController):
+        (makeRectResult):
+        (MockWebSpeechInputController::speechTaskFired):
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h:
+        (MockWebSpeechInputController):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect):
+
 2012-01-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add basic DRT/Efl implementation to support viewport test.

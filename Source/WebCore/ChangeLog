@@ -1,3 +1,20 @@
+2012-01-31  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: Report speech element rect relative to window rather than frame
+        https://bugs.webkit.org/show_bug.cgi?id=76443
+
+        Reviewed by Darin Fisher.
+
+        When requesting speech input, report the speech element rect relative
+        to the window rather than the frame. The embedder will typically use
+        this position to show a bubble indicating that speech recognition is
+        in progress.
+
+        Test: fast/speech/bubble-position.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+
 2012-01-31  Andreas Kling  <awesomekling@apple.com>
 
         Make elements that don't have attributes smaller.

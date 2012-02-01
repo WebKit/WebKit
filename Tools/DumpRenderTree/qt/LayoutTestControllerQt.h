@@ -234,6 +234,7 @@ public slots:
     bool geolocationPermission() const { return m_geolocationPermission; }
 
     void addMockSpeechInputResult(const QString& result, double confidence, const QString& language);
+    void setMockSpeechInputDumpRect(bool flag);
     void startSpeechInput(const QString& inputElement);
 
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.

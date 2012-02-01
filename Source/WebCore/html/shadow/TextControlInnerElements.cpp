@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
+#include "RenderView.h"
 #include "ScriptController.h"
 #include "ScrollbarTheme.h"
 #include "SpeechInput.h"
@@ -549,7 +550,7 @@ void InputFieldSpeechButtonElement::startSpeechInput()
     AtomicString language = input->computeInheritedLanguage();
     String grammar = input->getAttribute(webkitgrammarAttr);
     // FIXME: this should probably respect transforms
-    IntRect rect = renderer()->absoluteBoundingBoxRectIgnoringTransforms();
+    IntRect rect = renderer()->view()->frameView()->contentsToWindow(renderer()->absoluteBoundingBoxRectIgnoringTransforms());
     if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
         setState(Recording);
 }
