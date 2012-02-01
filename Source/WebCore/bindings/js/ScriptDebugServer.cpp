@@ -242,7 +242,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     int sourceLength = script.source.length();
     int lineCount = 1;
     int lastLineStart = 0;
-    for (int i = 0; i < sourceLength - 1; ++i) {
+    for (int i = 0; i < sourceLength; ++i) {
         if (script.source[i] == '\n') {
             lineCount += 1;
             lastLineStart = i + 1;

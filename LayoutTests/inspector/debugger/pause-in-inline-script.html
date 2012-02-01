@@ -1,0 +1,89 @@
+<html>
+<head>
+<script>function foo() { };
+</script>
+<script>
+function bar() { };
+</script><script>function f1() { debugger; }</script>
+<script>
+function f2() { return f1(); }
+</script>
+
+<script>
+function f3()
+{
+    return f2();
+}
+f3();
+</script>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+var test = function()
+{
+    var testName = WebInspector.inspectedPageURL;
+    testName = testName.substring(testName.lastIndexOf('/') + 1);
+
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.addResult("Did load front-end");
+        InspectorTest.addResult("Paused: " + !!WebInspector.debuggerModel.debuggerPausedDetails);
+        InspectorTest.reloadPage(didReload.bind(this));
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, didPauseAfterReload, this); 
+
+    }
+
+    function didReload()
+    {
+        InspectorTest.addResult("didReload");
+        InspectorTest.completeDebuggerTest();
+    }
+
+    function didPauseAfterReload(details)
+    {
+        InspectorTest.addResult("didPauseAfterReload");
+        InspectorTest.showScriptSource(testName, didShowScript.bind(this));
+    }
+
+    function didShowScript(sourceFrame)
+    {
+        InspectorTest.addResult("didShowScript");
+        var resourceText = sourceFrame._textModel.text;
+        var lines = resourceText.split("\n");
+        var callFrames = WebInspector.debuggerModel.callFrames;
+        InspectorTest.addResult("Source strings corresponding to the call stack:");
+        for (var i = 0; i < callFrames.length; i++) {
+            var frame = callFrames[i];
+            var lineNumber = frame.location.lineNumber;
+            InspectorTest.addResult("Frame " + i + ") line " + lineNumber + ", content: " + lines[lineNumber] + " (must be part of function '" + frame.functionName + "')");
+        }
+        InspectorTest.resumeExecution(didResume);
+    }
+
+    function uiSourceCodeAdded(uiSourceCode)
+    {
+        InspectorTest.addResult("uiSourceCodeAdded");
+    }
+
+    function didResume()
+    {
+        InspectorTest.addResult("didResume");
+    }
+};
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that main resource script text is correct when paused in inline script on reload.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=77548">Bug 77548.</a>
+</p>
+
+</body>
+</html>

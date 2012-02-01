@@ -1,3 +1,20 @@
+2012-02-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: debugger reports wrong sources when paused in inline script on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=77548
+
+        V8 returns treats each script source as ending with \n, now we take
+        this into account when reporting script line count to the inspector
+        front-end.
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: inspector/debugger/pause-in-inline-script.html
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/v8/DebuggerScript.js:
+
 2012-02-01  Shinya Kawanaka  <shinyak@google.com>
 
         Content element should be able to be dynamically added/removed/replaced in a shadow tree.

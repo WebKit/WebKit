@@ -90,10 +90,16 @@ DebuggerScript._formatScript = function(script)
     var lineCount = lineEnds.length;
     var endLine = script.line_offset + lineCount - 1;
     var endColumn;
-    if (lineCount === 1)
-        endColumn = script.source.length + script.column_offset;
-    else
-        endColumn = script.source.length - (script.line_ends[lineCount - 2] + 1);
+    // V8 will not count last line if script source ends with \n.
+    if (script.source[script.source.length - 1] === '\n') {
+        endLine += 1;
+        endColumn = 0;
+    } else {
+        if (lineCount === 1)
+            endColumn = script.source.length + script.column_offset;
+        else
+            endColumn = script.source.length - (lineEnds[lineCount - 2] + 1);
+    }
 
     return {
         id: script.id,
