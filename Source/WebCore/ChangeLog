@@ -1,3 +1,16 @@
+2012-02-01  Timothy Hatcher  <timothy@apple.com>
+
+        Consolidate duplicate "willHide" functions in DetailedHeapshotView.js to fix
+        a syntax error in JSC and make the Inspector open again in Release builds.
+
+        https://webkit.org/b/77424
+
+        Reviewed by Brian Weinstein.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.willHide): Consolidated.
+        (WebInspector.DetailedHeapshotView.prototype.willHide): Removed.
+
 2012-02-01  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Enable deferred canvas rendering in the skia port

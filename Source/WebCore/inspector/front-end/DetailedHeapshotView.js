@@ -593,6 +593,7 @@ WebInspector.DetailedHeapshotView.prototype = {
     willHide: function()
     {
         this._currentSearchResultIndex = -1;
+        this._popoverHelper.hidePopover();
     },
 
     onResize: function()
@@ -958,11 +959,6 @@ WebInspector.DetailedHeapshotView.prototype = {
     _showObjectPopover: function(element, showCallback)
     {
         element.node.queryObjectContent(showCallback);
-    },
-
-    willHide: function()
-    {
-        this._popoverHelper.hidePopover();
     },
 
     _helpClicked: function(event)
