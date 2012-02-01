@@ -31,7 +31,6 @@
 import logging
 import re
 import sys
-import os
 
 import webkit
 
@@ -133,11 +132,6 @@ class QtPort(WebKitPort):
         return None
 
     def setup_environ_for_server(self, server_name=None):
-        if not 'WEBKIT_TESTFONTS' in os.environ:
-            print "\n\nThe WEBKIT_TESTFONTS environment variable is not defined or not set properly"
-            print "You must set it before running the tests."
-            print "Use git to grab the actual fonts from http://gitorious.org/qtwebkit/testfonts\n"
-            sys.exit(1)
         clean_env = WebKitPort.setup_environ_for_server(self, server_name)
         clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
         self._copy_value_from_environ_if_set(clean_env, 'QT_DRT_WEBVIEW_MODE')
