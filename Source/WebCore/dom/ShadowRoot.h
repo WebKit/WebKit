@@ -43,16 +43,11 @@ public:
 
     void recalcShadowTreeStyle(StyleChange);
 
-    void setNeedsShadowTreeStyleRecalc();
-    void clearNeedsShadowTreeStyleRecalc();
-    bool needsShadowTreeStyleRecalc();
-
     HTMLContentElement* includerFor(Node*) const;
     void hostChildrenChanged();
     bool isInclusionSelectorActive() const;
 
     virtual void attach();
-    void reattachHostChildrenAndShadow();
 
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
@@ -73,29 +68,13 @@ private:
 
     bool hasContentElement() const;
 
-    bool m_applyAuthorSheets : 1;
-    bool m_needsShadowTreeStyleRecalc : 1;
+    bool m_applyAuthorSheets;
     OwnPtr<ContentInclusionSelector> m_inclusions;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
 {
     return adoptRef(new ShadowRoot(document));
-}
-
-inline void ShadowRoot::setNeedsShadowTreeStyleRecalc()
-{
-    m_needsShadowTreeStyleRecalc = true;
-}
-
-inline void ShadowRoot::clearNeedsShadowTreeStyleRecalc()
-{
-    m_needsShadowTreeStyleRecalc = false;
-}
-
-inline bool ShadowRoot::needsShadowTreeStyleRecalc()
-{
-    return m_needsShadowTreeStyleRecalc;
 }
 
 inline ShadowRoot* toShadowRoot(Node* node)

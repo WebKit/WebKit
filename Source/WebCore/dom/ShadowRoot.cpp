@@ -99,8 +99,8 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 
 void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
 {
-    if (needsShadowTreeStyleRecalc() || hasContentElement())
-        reattachHostChildrenAndShadow();
+    if (hasContentElement())
+        reattach();
     else {
         for (Node* n = firstChild(); n; n = n->nextSibling()) {
             if (n->isElementNode())
@@ -110,7 +110,6 @@ void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
         }
     }
 
-    clearNeedsShadowTreeStyleRecalc();
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
 }
@@ -167,24 +166,6 @@ void ShadowRoot::attach()
     TreeScope::attach();
     if (m_inclusions)
         m_inclusions->didSelect();
-}
-
-void ShadowRoot::reattachHostChildrenAndShadow()
-{
-    if (!host())
-        return;
-
-    for (Node* child = host()->firstChild(); child; child = child->nextSibling()) {
-        if (child->attached())
-            child->detach();
-    }
-
-    reattach();
-
-    for (Node* child = host()->firstChild(); child; child = child->nextSibling()) {
-        if (!child->attached())
-            child->attach();
-    }
 }
 
 ContentInclusionSelector* ShadowRoot::inclusions() const
