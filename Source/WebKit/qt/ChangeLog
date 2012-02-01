@@ -1,3 +1,15 @@
+2012-02-01  Alexis Menard  <alexis.menard@openbossa.org>
+
+        CSSStyleDeclaration.getPropertyPriority() fails for CSS shorthand properties with 'important' priority
+        https://bugs.webkit.org/show_bug.cgi?id=49058
+
+        Reviewed by Andreas Kling.
+
+        Update the code as getPropertyPriority has been renamed to propertyIsImportant.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2012-01-31  Antti Koivisto  <antti@apple.com>
 
         Try to fix Qt build.

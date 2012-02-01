@@ -521,9 +521,9 @@ PassRefPtr<EditingStyle> EditingStyle::extractAndRemoveTextDirection()
 {
     RefPtr<EditingStyle> textDirection = EditingStyle::create();
     textDirection->m_mutableStyle = CSSMutableStyleDeclaration::create();
-    textDirection->m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed, m_mutableStyle->getPropertyPriority(CSSPropertyUnicodeBidi));
+    textDirection->m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed, m_mutableStyle->propertyIsImportant(CSSPropertyUnicodeBidi));
     textDirection->m_mutableStyle->setProperty(CSSPropertyDirection, m_mutableStyle->getPropertyValue(CSSPropertyDirection),
-        m_mutableStyle->getPropertyPriority(CSSPropertyDirection));
+        m_mutableStyle->propertyIsImportant(CSSPropertyDirection));
 
     m_mutableStyle->removeProperty(CSSPropertyUnicodeBidi);
     m_mutableStyle->removeProperty(CSSPropertyDirection);
@@ -579,7 +579,7 @@ void EditingStyle::collapseTextDecorationProperties()
         return;
 
     if (textDecorationsInEffect->isValueList())
-        m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
+        m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->propertyIsImportant(CSSPropertyTextDecoration));
     else
         m_mutableStyle->removeProperty(CSSPropertyTextDecoration);
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
@@ -665,7 +665,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
                 return true;
             conflictingProperties->append(CSSPropertyTextDecoration);
             if (extractedStyle)
-                extractedStyle->setProperty(CSSPropertyTextDecoration, inlineStyle->getPropertyValue(CSSPropertyTextDecoration), inlineStyle->getPropertyPriority(CSSPropertyTextDecoration));
+                extractedStyle->setProperty(CSSPropertyTextDecoration, inlineStyle->getPropertyValue(CSSPropertyTextDecoration), inlineStyle->propertyIsImportant(CSSPropertyTextDecoration));
             continue;
         }
 
@@ -677,7 +677,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
                 return true;
             conflictingProperties->append(CSSPropertyDirection);
             if (extractedStyle)
-                extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
+                extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->propertyIsImportant(propertyID));
         }
 
         if (!conflictingProperties)
@@ -686,7 +686,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
         conflictingProperties->append(propertyID);
 
         if (extractedStyle)
-            extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
+            extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->propertyIsImportant(propertyID));
     }
 
     return conflictingProperties && !conflictingProperties->isEmpty();
@@ -1221,10 +1221,10 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
 static void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const CSSValueList* newTextDecoration, int propertyID)
 {
     if (newTextDecoration->length())
-        style->setProperty(propertyID, newTextDecoration->cssText(), style->getPropertyPriority(propertyID));
+        style->setProperty(propertyID, newTextDecoration->cssText(), style->propertyIsImportant(propertyID));
     else {
         // text-decoration: none is redundant since it does not remove any text decorations.
-        ASSERT(!style->getPropertyPriority(propertyID));
+        ASSERT(!style->propertyIsImportant(propertyID));
         style->removeProperty(propertyID);
     }
 }

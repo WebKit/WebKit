@@ -44,7 +44,7 @@ void RemoveCSSPropertyCommand::doApply()
 {
     CSSMutableStyleDeclaration* style = m_element->inlineStyleDecl();
     m_oldValue = style->getPropertyValue(m_property);
-    m_important = style->getPropertyPriority(m_property);
+    m_important = style->propertyIsImportant(m_property);
     style->removeProperty(m_property);
 }
 

@@ -658,10 +658,21 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
     }
 }
 
-bool CSSMutableStyleDeclaration::getPropertyPriority(int propertyID) const
+bool CSSMutableStyleDeclaration::propertyIsImportant(int propertyID) const
 {
     const CSSProperty* property = findPropertyWithId(propertyID);
-    return property ? property->isImportant() : false;
+    if (property)
+        return property->isImportant();
+
+    CSSPropertyLonghand longhands = longhandForProperty(propertyID);
+    if (!longhands.length())
+        return false;
+
+    for (unsigned i = 0; i < longhands.length(); ++i) {
+        if (!propertyIsImportant(longhands.properties()[i]))
+            return false;
+    }
+    return true;
 }
 
 int CSSMutableStyleDeclaration::getPropertyShorthand(int propertyID) const
@@ -788,7 +799,7 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 #endif
 
     // Only add properties that have no !important counterpart present
-    if (!getPropertyPriority(property.id()) || property.isImportant()) {
+    if (!propertyIsImportant(property.id()) || property.isImportant()) {
         removeProperty(property.id(), false, false);
         m_properties.append(property);
     }
@@ -1046,7 +1057,7 @@ String CSSMutableStyleDeclaration::getPropertyPriority(const String& propertyNam
     int propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
-    return getPropertyPriority(propertyID) ? "important" : "";
+    return propertyIsImportant(propertyID) ? "important" : "";
 }
 
 String CSSMutableStyleDeclaration::getPropertyShorthand(const String& propertyName)

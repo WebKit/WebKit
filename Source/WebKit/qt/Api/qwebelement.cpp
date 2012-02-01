@@ -850,7 +850,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
         return style->getPropertyValue(propID);
 
     if (strategy == CascadedStyle) {
-        if (style->getPropertyPriority(propID))
+        if (style->propertyIsImportant(propID))
             return style->getPropertyValue(propID);
 
         // We are going to resolve the style property by walking through the
@@ -866,7 +866,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
             for (int i = rules->length(); i > 0; --i) {
                 CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
 
-                if (rule->declaration()->getPropertyPriority(propID))
+                if (rule->declaration()->propertyIsImportant(propID))
                     return rule->declaration()->getPropertyValue(propID);
 
                 if (style->getPropertyValue(propID).isEmpty())

@@ -1,3 +1,31 @@
+2012-02-01  Alexis Menard  <alexis.menard@openbossa.org>
+
+        CSSStyleDeclaration.getPropertyPriority() fails for CSS shorthand properties with 'important' priority
+        https://bugs.webkit.org/show_bug.cgi?id=49058
+
+        Reviewed by Andreas Kling.
+
+        CSSMutableStyleDeclaration::getPropertyPriority was not handling shorthands properly. Shorthands are
+        not part of the property list of the style so we need to query the longhands which are the one added
+        in the list. Only if the longhands have equal priority the shorthand priority is known. I also renamed
+        getPropertyPriority (not the CSSOM exposed method) to something more consistent with WebKit naming guidelines.
+
+        Test: fast/css/shorthand-priority.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::propertyIsImportant):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyPriority):
+        * css/CSSMutableStyleDeclaration.h:
+        (CSSMutableStyleDeclaration):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::extractAndRemoveTextDirection):
+        (WebCore::EditingStyle::collapseTextDecorationProperties):
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement):
+        (WebCore::setTextDecorationProperty):
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::doApply):
+
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in EventHandler::updateDragAndDrop

@@ -64,7 +64,7 @@ public:
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
     String getPropertyValue(int propertyID) const;
-    bool getPropertyPriority(int propertyID) const;
+    bool propertyIsImportant(int propertyID) const;
     int getPropertyShorthand(int propertyID) const;
     bool isPropertyImplicit(int propertyID) const;
 
