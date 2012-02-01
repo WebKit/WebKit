@@ -74,6 +74,8 @@ public:
     static bool isTargetItem(const Ewk_History_Item*);
 
     static void setMockScrollbarsEnabled(bool);
+
+    static void dumpConfigurationForViewport(Evas_Object* ewkView, int deviceDPI, const WebCore::IntSize& deviceSize, const WebCore::IntSize& availableSize);
 };
 
 #endif // DumpRenderTreeSupportEfl_h

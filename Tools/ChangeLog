@@ -1,3 +1,13 @@
+2012-01-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add basic DRT/Efl implementation to support viewport test.
+        https://bugs.webkit.org/show_bug.cgi?id=77320
+
+        Reviewed by Andreas Kling.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::dumpConfigurationForViewport): call dumpConfigurationForViewport().
+
 2012-01-31  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (WebKit2): event.keyCode is always zero when typing in Russian

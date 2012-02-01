@@ -734,9 +734,12 @@ bool LayoutTestController::hasGrammarMarker(int, int)
     return false;
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int, int, int, int, int)
+void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::dumpConfigurationForViewport(browser->mainView(),
+            deviceDPI,
+            WebCore::IntSize(deviceWidth, deviceHeight),
+            WebCore::IntSize(availableWidth, availableHeight));
 }
 
 void LayoutTestController::setSerializeHTTPLoads(bool)

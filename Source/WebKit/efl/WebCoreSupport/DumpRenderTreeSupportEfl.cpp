@@ -385,3 +385,20 @@ void DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(bool enable)
 {
     WebCore::Settings::setMockScrollbarsEnabled(enable);
 }
+
+void DumpRenderTreeSupportEfl::dumpConfigurationForViewport(Evas_Object* ewkView, int deviceDPI, const WebCore::IntSize& deviceSize, const WebCore::IntSize& availableSize)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+
+    if (!page)
+        return;
+    WebCore::ViewportArguments arguments = page->mainFrame()->document()->viewportArguments();
+    WebCore::ViewportAttributes attributes = computeViewportAttributes(arguments,
+            /* default layout width for non-mobile pages */ 980,
+            deviceSize.width(), deviceSize.height(),
+            deviceDPI,
+            availableSize);
+    restrictMinimumScaleFactorToViewportSize(attributes, availableSize);
+    restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
+    fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", attributes.layoutSize.width(), attributes.layoutSize.height(), attributes.initialScale, attributes.minimumScale, attributes.maximumScale, attributes.userScalable);
+}

@@ -1,3 +1,16 @@
+2012-01-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add basic DRT/Efl implementation to support viewport test.
+        https://bugs.webkit.org/show_bug.cgi?id=77320
+
+        Reviewed by Andreas Kling.
+
+        Add dumpConfigurationForViewport.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::dumpConfigurationForViewport):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-01-31  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Set content hint information for ewk_view_single.
