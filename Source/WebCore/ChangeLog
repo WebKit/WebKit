@@ -1,3 +1,18 @@
+2012-02-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] editing/inserting/4960120-2.html flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=76815
+
+        Reviewed by Martin Robinson.
+
+        Check if the node for the first parent object not ignoring
+        accessibility is null before using it. This might happen with
+        certain kind of accessibility objects, such as the root one (the
+        scroller containing the webArea object as its only child).
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (objectFocusedAndCaretOffsetUnignored): Add missing null check.
+
 2012-02-01  Antti Koivisto  <antti@apple.com>
 
         Make CSSMappedAttributeDeclaration have CSSMutableStyleDeclaration instead of being one

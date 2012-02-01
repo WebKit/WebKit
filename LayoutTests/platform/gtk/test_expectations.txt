@@ -10,8 +10,6 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
-BUGWK76815 DEBUG : editing/inserting/4960120-2.html = CRASH
-BUGWK76815 DEBUG : editing/execCommand/19455.html = CRASH
 
 // Flaky tests
 

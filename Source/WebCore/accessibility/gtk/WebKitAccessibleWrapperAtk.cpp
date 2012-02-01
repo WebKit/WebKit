@@ -1035,6 +1035,13 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
     if (!startNode)
         startNode = firstUnignoredParent->node();
 
+    // Check if the node for the first parent object not ignoring
+    // accessibility is null again before using it. This might happen
+    // with certain kind of accessibility objects, such as the root
+    // one (the scroller containing the webArea object).
+    if (!startNode)
+        return 0;
+
     VisiblePosition startPosition = VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
     VisiblePosition endPosition = firstUnignoredParent->selection().visibleEnd();
 
