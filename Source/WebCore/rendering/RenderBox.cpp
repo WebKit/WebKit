@@ -947,9 +947,11 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
 {
     if (isRoot())
         paintRootBoxFillLayers(paintInfo);
-    else if (!isBody() || (document()->documentElement()->renderer() && document()->documentElement()->renderer()->hasBackground())) {
-        // The <body> only paints its background if the root element has defined a background
-        // independent of the body.
+    else if (!isBody()
+            || (document()->documentElement()->renderer() && document()->documentElement()->renderer()->hasBackground())
+            || (document()->documentElement()->renderer() != parent())) {
+        // The <body> only paints its background if the root element has defined a background independent of the body,
+        // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
         if (!backgroundIsObscured())
             paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
     }

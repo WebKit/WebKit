@@ -1,3 +1,17 @@
+2012-02-01  Florin Malita  <fmalita@google.com>
+
+        Backgrounds in HTML inside foreignObject don't draw
+        https://bugs.webkit.org/show_bug.cgi?id=23111
+
+        Reviewed by Eric Seidel.
+
+        Test: svg/foreignObject/body-background.svg
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackground):
+        Tweak the <body> background inhibiting logic to allow drawing when the element is embedded in FOs.
+
+
 2012-02-01  Gustavo Lima Chaves  <glima@profusion.mobi>
 
         Make one able to set the local storage (tracker) database dir's path
