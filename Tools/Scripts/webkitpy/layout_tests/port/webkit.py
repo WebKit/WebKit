@@ -377,9 +377,12 @@ class WebKitPort(Port):
 
     def _build_path(self, *comps):
         # --root is used for running with a pre-built root (like from a nightly zip).
-        build_directory = self.get_option('root')
+        build_directory = self.get_option('root') or self.get_option('build_directory')
         if not build_directory:
             build_directory = self._config.build_directory(self.get_option('configuration'))
+            # Set --build-directory here Since this modifies the options object used by the worker subprocesses,
+            # it avoids the slow call out to build_directory in each subprocess.
+            self.set_option_default('build_directory', build_directory)
         return self._filesystem.join(build_directory, *comps)
 
     def _path_to_driver(self):

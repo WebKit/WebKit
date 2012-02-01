@@ -74,12 +74,19 @@ class Config(object):
             flags = ["--configuration", self.flag_for_configuration(configuration)]
         else:
             configuration = ""
-            flags = ["--top-level"]
+            flags = []
 
         if not self._build_directories.get(configuration):
             args = ["perl", self.script_path("webkit-build-directory")] + flags
-            self._build_directories[configuration] = (
-                self._executive.run_command(args, cwd=self.webkit_base_dir()).rstrip())
+            output = self._executive.run_command(args, cwd=self.webkit_base_dir()).rstrip()
+            parts = output.split("\n")
+            self._build_directories[configuration] = parts[0]
+
+            if len(parts) == 2:
+                default_configuration = parts[1][len(parts[0]):]
+                if default_configuration.startswith("/"):
+                    default_configuration = default_configuration[1:]
+                self._build_directories[default_configuration] = parts[1]
 
         return self._build_directories[configuration]
 

@@ -57,7 +57,7 @@ def main(argv=None):
         argv = sys.argv
 
     if len(argv) == 3 and argv[1] == '--mock':
-        e = executive_mock.MockExecutive2(output='foo')
+        e = executive_mock.MockExecutive2(output='foo\nfoo/%s' % argv[2])
         fs = filesystem_mock.MockFileSystem({'foo/Configuration': argv[2]})
     else:
         e = executive.Executive()
