@@ -1,3 +1,9 @@
+2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another fix after r106379.
+
+        * Parser/html5-full-render.html:
+
 2012-01-31  Hajime Morrita  <morrita@chromium.org>
 
         Import Dromaeo to WebKit repository.
