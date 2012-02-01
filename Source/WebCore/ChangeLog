@@ -1,5 +1,12 @@
 2012-02-01  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, another GTK build fix after r106446.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        Restore webKitWebSrcGetProtocols as it was before r106446.
+
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK build fix after r106446.
 
         * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
