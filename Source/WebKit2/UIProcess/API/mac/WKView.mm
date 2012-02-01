@@ -1776,9 +1776,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
                                                      name:NSWindowDidMiniaturizeNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidDeminiaturize:)
                                                      name:NSWindowDidDeminiaturizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidMove:)
                                                      name:NSWindowDidMoveNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResize:) 
                                                      name:NSWindowDidResizeNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOffScreen:) 
                                                      name:@"NSWindowDidOrderOffScreenNotification" object:window];
@@ -1906,8 +1906,15 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [self _updateWindowVisibility];
 }
 
-- (void)_windowFrameDidChange:(NSNotification *)notification
+- (void)_windowDidMove:(NSNotification *)notification
 {
+    [self _updateWindowAndViewFrames];    
+}
+
+- (void)_windowDidResize:(NSNotification *)notification
+{
+    _data->_windowHasValidBackingStore = NO;
+
     [self _updateWindowAndViewFrames];
 }
 
