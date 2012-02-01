@@ -1,3 +1,40 @@
+2012-01-31  Adam Barth  <abarth@webkit.org>
+
+        HTMLPreloadScanner should understand the <base> element
+        https://bugs.webkit.org/show_bug.cgi?id=77231
+
+        Reviewed by Eric Seidel.
+
+        Previously, the HTMLPreloadScanner would ignore the <base> element when
+        preloading resources.  If there was a <base> tag, this could cause the
+        preload scanner to make a bunch of useless requests.
+
+        This patch teaches the preload scanner to use <base> tags to better
+        predict which URLs will be used by the document.
+
+        Tests: fast/preloader/first-base-tag-scanned-wins.html
+               fast/preloader/first-base-tag-wins.html
+               fast/preloader/understands-base-tag.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL):
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+        (WebCore::Document::baseElementURL):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::PreloadTask):
+        (WebCore::HTMLNames::PreloadTask::processAttributes):
+        (WebCore::HTMLNames::PreloadTask::preload):
+        (WebCore::HTMLNames::PreloadTask::baseElementHref):
+        (PreloadTask):
+        (WebCore::HTMLPreloadScanner::scan):
+        (WebCore::HTMLPreloadScanner::processToken):
+        (WebCore::HTMLPreloadScanner::updatePredictedBaseElementURL):
+        (WebCore):
+        * html/parser/HTMLPreloadScanner.h:
+        (HTMLPreloadScanner):
+
 2012-01-31  Raymond Liu  <raymond.liu@intel.com>
 
         Dynamic allocate AudioBus with required number of channels for AudioNodeInput

@@ -1,0 +1,13 @@
+<body>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+}
+</script>
+<base href="resources/foo.html">
+This test requires DumpRenderTree to see the log of what resources are loaded.
+<script src=resources/non-existant.js></script>
+<script>document.write("<plaintext>");</script>
+<base href="bogus/foo.html">
+<img src="base-image2.png">

@@ -600,13 +600,17 @@ public:
     const KURL& url() const { return m_url; }
     void setURL(const KURL&);
 
+    // To understand how these concepts relate to one another, please see the
+    // comments surrounding their declaration.
     const KURL& baseURL() const { return m_baseURL; }
     void setBaseURLOverride(const KURL&);
     const KURL& baseURLOverride() const { return m_baseURLOverride; }
+    const KURL& baseElementURL() const { return m_baseElementURL; }
     const String& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
     KURL completeURL(const String&) const;
+    KURL completeURL(const String&, const KURL& baseURLOverride) const;
 
     virtual String userAgent(const KURL&) const;
 
@@ -1201,7 +1205,7 @@ private:
     // Document URLs.
     KURL m_url; // Document.URL: The URL from which this document was retrieved.
     KURL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
-    KURL m_baseURLOverride; // An alternative base URL that takes precedence ove m_baseURL (but not m_baseElementURL).
+    KURL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
     KURL m_baseElementURL; // The URL set by the <base> element.
     KURL m_cookieURL; // The URL to use for cookie access.
     KURL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.

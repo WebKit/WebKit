@@ -4018,17 +4018,22 @@ void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)
     m_decoder = decoder;
 }
 
-KURL Document::completeURL(const String& url) const
+KURL Document::completeURL(const String& url, const KURL& baseURLOverride) const
 {
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the KURL constructor to have this behavior?
     // See also [CSS]StyleSheet::completeURL(const String&)
     if (url.isNull())
         return KURL();
-    const KURL& baseURL = ((m_baseURL.isEmpty() || m_baseURL == blankURL()) && parentDocument()) ? parentDocument()->baseURL() : m_baseURL;
+    const KURL& baseURL = ((baseURLOverride.isEmpty() || baseURLOverride == blankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
     if (!m_decoder)
         return KURL(baseURL, url);
     return KURL(baseURL, url, m_decoder->encoding());
+}
+
+KURL Document::completeURL(const String& url) const
+{
+    return completeURL(url, m_baseURL);
 }
 
 void Document::setInPageCache(bool flag)

@@ -41,7 +41,7 @@ class SegmentedString;
 class HTMLPreloadScanner {
     WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLPreloadScanner(Document*);
+    explicit HTMLPreloadScanner(Document*);
 
     void appendToEnd(const SegmentedString&);
     void scan();
@@ -49,6 +49,7 @@ public:
 private:
     void processToken();
     bool scanningBody() const;
+    void updatePredictedBaseElementURL(const KURL& baseElementURL);
 
     Document* m_document;
     SegmentedString m_source;
@@ -57,6 +58,7 @@ private:
     HTMLToken m_token;
     bool m_bodySeen;
     bool m_inStyle;
+    KURL m_predictedBaseElementURL;
 };
 
 }
