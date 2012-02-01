@@ -72,6 +72,7 @@ const UChar rightToLeftEmbed = 0x202B;
 const UChar rightToLeftMark = 0x200F;
 const UChar rightToLeftOverride = 0x202E;
 const UChar sesameDot = 0xFE45;
+const UChar smallLetterSharpS = 0x00DF;
 const UChar softHyphen = 0x00AD;
 const UChar space = 0x0020;
 const UChar tibetanMarkIntersyllabicTsheg = 0x0F0B;

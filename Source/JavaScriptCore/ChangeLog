@@ -1,3 +1,23 @@
+2012-01-31  Michael Saboff  <msaboff@apple.com>
+
+        StringProtoFuncToUpperCase should call StringImpl::upper similar to StringProtoToLowerCase
+        https://bugs.webkit.org/show_bug.cgi?id=76647
+
+        Reviewed by Darin Adler.
+
+        Changed stringProtoFuncToUpperCase to call StringImpl::upper() in a manor similar
+        to stringProtoFuncToLowerCase().  Fixed StringImpl::upper() to handle to special
+        cases.  One case is s-sharp (0xdf) which converts to "SS".  The other case is 
+        for characters which become 16 bit values when converted to upper case.  For
+        those, we up convert the the source string and use the 16 bit path.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToUpperCase):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::upper):
+        * wtf/unicode/CharacterNames.h:
+        (smallLetterSharpS): New constant
+
 2012-01-31  Oliver Hunt  <oliver@apple.com>
 
         Remove unneeded sourceId property
