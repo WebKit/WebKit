@@ -295,16 +295,15 @@ void TileCache::revalidateTiles()
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
             TileIndex tileIndex(x, y);
 
-            pair<TileMap::iterator, bool> result = m_tiles.add(tileIndex, 0);
-            if (result.first->second) {
+            RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).first->second;
+            if (tileLayer) {
                 // We already have a layer for this tile.
                 continue;
             }
 
             didCreateNewTiles = true;
 
-            RetainPtr<WebTileLayer> tileLayer = createTileLayer();
-            result.first->second = tileLayer.get();
+            tileLayer = createTileLayer();
 
             [tileLayer.get() setNeedsDisplay];
             [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
