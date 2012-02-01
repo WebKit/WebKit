@@ -1,5 +1,25 @@
 2012-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebKit1 API documentation is not generated when building with gtk-2.0
+        https://bugs.webkit.org/show_bug.cgi?id=77542
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc: Check first whether there's
+        webkitgtk-3.0.pc and if it doesn't exist use webkitgtk-1.0.pc
+        instead.
+        (get_webkit2_options): Return just the options since the
+        pkg_config_path doesn't depend on options
+        (get_webkit1_options): Ditto.
+        (generate_doc): Helper function to create a generator and generate
+        documentation for the given pkg-config file with the given options.
+        * gtk/gtkdoc.py:
+        (GTKDoc.__init__): Don't use ** for args parameter, since it's
+        used as a dict and never expanded.
+        (PkgConfigGTKDoc.__init__): Ditto.
+
+2012-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] API documentation is not installed even when building with --enable-gtk-doc
         https://bugs.webkit.org/show_bug.cgi?id=77094
 

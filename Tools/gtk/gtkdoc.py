@@ -76,7 +76,7 @@ class GTKDoc(object):
                           will continue despite warnings. (default False)
     """
 
-    def __init__(self, **args):
+    def __init__(self, args):
 
         # Parameters specific to scanning.
         self.module_name = ''
@@ -360,8 +360,8 @@ class PkgConfigGTKDoc(GTKDoc):
       pkg_config_path -- Path to the pkgconfig file for the library. Required.
     """
 
-    def __init__(self, pkg_config_path, **args):
-        super(PkgConfigGTKDoc, self).__init__(**args)
+    def __init__(self, pkg_config_path, args):
+        super(PkgConfigGTKDoc, self).__init__(args)
 
         if not os.path.exists(pkg_config_path):
             raise Exception('Could not find pkg-config file at: %s'

@@ -63,7 +63,7 @@ def get_webkit2_options():
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('tests/*.h'))
     })
-    return (common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc'), options)
+    return options
 
 def get_webkit1_options():
     def src_path(*args):
@@ -82,7 +82,12 @@ def get_webkit1_options():
                    ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
         'ignored_files': glob.glob(src_path('webkit', '*private.*'))
     })
-    return (common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc'), options)
+    return options
+
+def generate_doc(pkg_config_path, options):
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
+    generator.generate(html='--skip-html' not in sys.argv)
+    return generator.saw_warnings
 
 configure_logging()
 
@@ -93,17 +98,19 @@ os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
 if pkg_config_path:
     os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
 
-print "Generating WebKit1 documentation..."
-pkg_config_path, options = get_webkit1_options()
-generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, **options)
-generator.generate(html='--skip-html' not in sys.argv)
-saw_webkit1_warnings = generator.saw_warnings
+saw_webkit1_warnings = saw_webkit2_warnings = False
+
+pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
+if not os.path.exists(pkg_config_path):
+    pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-1.0.pc')
+if os.path.exists(pkg_config_path):
+    print "Generating WebKit1 documentation..."
+    saw_webkit1_warnings = generate_doc(pkg_config_path, get_webkit1_options())
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
-if os.path.exists(common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')):
+pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
+if os.path.exists(pkg_config_path):
     print "\nGenerating WebKit2 documentation..."
-    pkg_config_path, options = get_webkit2_options()
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, **options)
-    generator.generate(html='--skip-html' not in sys.argv)
+    saw_webkit2_warnings = generate_doc(pkg_config_path, get_webkit2_options())
 
-sys.exit(generator.saw_warnings or saw_webkit1_warnings)
+sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
