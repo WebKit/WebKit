@@ -1,5 +1,14 @@
 2012-02-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Manually pull in the gthread library, as it seems that
+        with gold it doesn't happen automatically.
+
+        Reviewed by Xan Lopez.
+
+        * Source/autotools/webkit.m4:
+
+2012-02-01  Martin Robinson  <mrobinson@igalia.com>
+
         Restore Source/WebKit/gtk/webkit/webkitversion.h to the list of files
         processed by autoconfig.
 

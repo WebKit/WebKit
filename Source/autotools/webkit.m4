@@ -109,7 +109,7 @@ AC_DEFUN_ONCE([_WEBKIT_CHECK_GLIB],
 dnl check for glib
 # Version requirements
 GLIB_REQUIRED_VERSION=2.27.90
-AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION)
+AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION, :, :, gmodule gobject gthread gio)
 if test -z "$GLIB_GENMARSHAL" || test -z "$GLIB_MKENUMS"; then
    AC_MSG_ERROR([You need the GLib dev tools in your path])
 fi
