@@ -1179,6 +1179,7 @@ AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = 
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
 
 AC_CONFIG_FILES([
+Source/WebKit/gtk/webkit/webkitversion.h
 GNUmakefile
 ])
  

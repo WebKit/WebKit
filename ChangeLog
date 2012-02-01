@@ -1,3 +1,10 @@
+2012-02-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Restore Source/WebKit/gtk/webkit/webkitversion.h to the list of files
+        processed by autoconfig.
+
+        * configure.ac: Re-add the file.
+
 2012-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         Small build fixes.
