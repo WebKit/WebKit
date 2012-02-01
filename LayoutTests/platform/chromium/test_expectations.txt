@@ -4050,3 +4050,6 @@ BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
+
+// Started failing at WK r106432.
+BUGWK77519 WIN LINUX : fast/forms/textfield-overflow.html = IMAGE+TEXT
