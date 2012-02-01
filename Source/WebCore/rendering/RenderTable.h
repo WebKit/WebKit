@@ -240,6 +240,8 @@ private:
 
     virtual void computeLogicalWidth();
 
+    LayoutUnit convertStyleLogicalWidthToComputedWidth(const Length& styleLogicalWidth, LayoutUnit availableWidth);
+
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
 
     virtual void addOverflowFromChildren();

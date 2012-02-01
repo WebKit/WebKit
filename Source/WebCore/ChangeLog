@@ -1,3 +1,56 @@
+2012-02-01  Max Vujovic  <mvujovic@adobe.com>
+
+        Add support for fixed and percent min-width on the table element for table-layout: auto to
+        match Firefox and Opera's behavior.
+
+        In FixedTableLayout.cpp, the computePreferredLogicalWidths method looks like it has
+        issues based on the comment: "FIXME: This entire calculation is incorrect for both
+        minwidth and maxwidth." (minwidth and maxwidth refer to the preferred widths, not the
+        min-width and max-width styles). I have not implemented min-width for FixedTableLayout
+        in this patch since it requires some more research around that comment.
+
+        min-width and max-width on the table element was discussed on the www-style list:
+        http://lists.w3.org/Archives/Public/www-style/2012Jan/0684.html
+
+        min-width is not implemented on <table> for table-layout: auto
+        https://bugs.webkit.org/show_bug.cgi?id=76553
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/table/min-width.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+
+            If the min or max preferred logical width is less than a fixed min width style, it is
+            set to the fixed min width style. Like a percent width style, a percent min-width style
+            does not affect the min or max preferred logical widths computed by the table layout
+            algorithm. RenderTable's computeLogicalWidth method handles percent min-width styles.
+
+            min-width for the table-layout: fixed case has been split out into this bug:
+            https://bugs.webkit.org/show_bug.cgi?id=76948
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+
+            If the RenderStyle's logical min width is defined and greater than the logical width
+            calculation, this method sets the logical width to the logical min width.
+
+        (WebCore::RenderTable::convertStyleWidthToComputedWidth):
+
+            This new method generalizes and factors out logic from RenderTable::computeLogicalWidth
+            that converted the width style to a computed value in the fixed and percent case.
+            RenderTable::computeLogicalWidth now calls this method to determine the computed values
+            for both the width style and the min-width style. In the future, it can also be used for
+            the max-width style.
+
+            Note that this method handles the special CSS table case, which requires borders and
+            paddings to be included in the computed width calculation. This applies to all width
+            styles, including width, min-width, and max-width. Before, this special case was handled
+            in RenderTable::computeLogicalWidth.
+
+        * rendering/RenderTable.h:
+
 2012-02-01  Brian Salomon  <bsalomon@google.com>
 
         [SKIA/CHROMIUM] Perform getImageData format conversions using Skia

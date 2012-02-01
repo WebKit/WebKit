@@ -262,12 +262,18 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
     maxWidth += bordersPaddingAndSpacing;
 
     Length tableLogicalWidth = m_table->style()->logicalWidth();
-    if (tableLogicalWidth.isFixed() && tableLogicalWidth.value() > 0) {
+    if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive()) {
         minWidth = max<int>(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
     } else if (!remainingPercent && maxNonPercent) {
         // if there was no remaining percent, maxWidth is invalid.
         maxWidth = intMaxForLength;        
+    }
+
+    Length tableLogicalMinWidth = m_table->style()->logicalMinWidth();
+    if (tableLogicalMinWidth.isFixed() && tableLogicalMinWidth.isPositive()) {
+        minWidth = max<int>(minWidth, tableLogicalMinWidth.value());
+        maxWidth = max<int>(minWidth, maxWidth);
     }
 }
 

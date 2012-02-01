@@ -227,33 +227,31 @@ void RenderTable::computeLogicalWidth()
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
-    LengthType logicalWidthType = style()->logicalWidth().type();
-    if (logicalWidthType > Relative && style()->logicalWidth().isPositive()) {
-        // Percent or fixed table
-        // HTML tables size as though CSS width includes border/padding, CSS tables do not.
-        LayoutUnit borders = 0;
-        if (logicalWidthType != Percent && (!node() || !node()->hasTagName(tableTag))) {
-            recalcBordersInRowDirection();
-            borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
-         }
-        setLogicalWidth(style()->logicalWidth().calcMinValue(containerWidthInInlineDirection) + borders);
-        setLogicalWidth(max(minPreferredLogicalWidth(), logicalWidth()));
-    } else {
+    Length styleLogicalWidth = style()->logicalWidth();
+    if (styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive())
+        setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
+    else {
         // Subtract out any fixed margins from our available width for auto width tables.
         LayoutUnit marginTotal = 0;
         if (!style()->marginStart().isAuto())
             marginTotal += style()->marginStart().calcValue(availableLogicalWidth);
         if (!style()->marginEnd().isAuto())
             marginTotal += style()->marginEnd().calcValue(availableLogicalWidth);
-            
+
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
-        
-        // Ensure we aren't bigger than our max width or smaller than our min width.
+
+        // Ensure we aren't bigger than our available width.
         setLogicalWidth(min(availableContentLogicalWidth, maxPreferredLogicalWidth()));
     }
 
+    // Ensure we aren't smaller than our min preferred width.
     setLogicalWidth(max(logicalWidth(), minPreferredLogicalWidth()));
+
+    // Ensure we aren't smaller than our min-width style.
+    Length styleMinLogicalWidth = style()->logicalMinWidth();
+    if (styleMinLogicalWidth.isSpecified() && styleMinLogicalWidth.isPositive())
+        setLogicalWidth(max(logicalWidth(), convertStyleLogicalWidthToComputedWidth(styleMinLogicalWidth, availableLogicalWidth)));
 
     // Finally, with our true width determined, compute our margins for real.
     setMarginStart(0);
@@ -264,6 +262,19 @@ void RenderTable::computeLogicalWidth()
         setMarginStart(style()->marginStart().calcMinValue(availableLogicalWidth));
         setMarginEnd(style()->marginEnd().calcMinValue(availableLogicalWidth));
     }
+}
+
+// This method takes a RenderStyle's logical width, min-width, or max-width length and computes its actual value.
+LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& styleLogicalWidth, LayoutUnit availableWidth)
+{
+    // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
+    LayoutUnit borders = 0;
+    bool isCSSTable = !node() || !node()->hasTagName(tableTag);
+    if (isCSSTable && styleLogicalWidth.isFixed() && styleLogicalWidth.isPositive()) {
+        recalcBordersInRowDirection();
+        borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
+    }
+    return styleLogicalWidth.calcMinValue(availableWidth) + borders;
 }
 
 void RenderTable::layoutCaption(RenderTableCaption* caption)
