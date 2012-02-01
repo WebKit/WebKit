@@ -496,6 +496,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         // When only painting the selection, don't bother to paint if there is none.
         return;
 
+    if (Frame* frame = renderer()->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(renderer(), paintInfo.rect);
+    }
+
     if (m_truncation != cNoTruncation) {
         if (renderer()->containingBlock()->style()->isLeftToRightDirection() != isLeftToRightDirection()) {
             // Make the visible fragment of text hug the edge closest to the rest of the run by moving the origin

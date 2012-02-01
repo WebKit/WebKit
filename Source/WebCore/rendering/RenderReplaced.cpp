@@ -23,8 +23,10 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "LayoutRepainter.h"
+#include "Page.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
@@ -133,6 +135,11 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
+    }
+
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
     }
 
     bool completelyClippedOut = false;

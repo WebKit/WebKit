@@ -2399,6 +2399,11 @@ void FrameLoader::didFirstVisuallyNonEmptyLayout()
     m_client->dispatchDidFirstVisuallyNonEmptyLayout();
 }
 
+void FrameLoader::didNewFirstVisuallyNonEmptyLayout()
+{
+    m_client->dispatchDidNewFirstVisuallyNonEmptyLayout();
+}
+
 void FrameLoader::frameLoadCompleted()
 {
     // Note: Can be called multiple times.

@@ -167,6 +167,11 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     float textWidth;
     if (!getReplacementTextGeometry(paintOffset, contentRect, path, replacementTextRect, font, run, textWidth))
         return;
+
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
     
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(contentRect);

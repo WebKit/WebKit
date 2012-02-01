@@ -328,6 +328,11 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (!img || img->isNull())
             return;
 
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
+
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(toPoint(paintOffset - location()), style()->highlight(), true);

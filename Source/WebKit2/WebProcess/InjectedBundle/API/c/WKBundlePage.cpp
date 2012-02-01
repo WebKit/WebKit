@@ -328,6 +328,11 @@ uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
     return toImpl(pageRef)->renderTreeSize();
 }
 
+void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold)
+{
+    toImpl(page)->setPaintedObjectsCounterThreshold(threshold);
+}
+
 void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)
 {
     toImpl(pageRef)->setTracksRepaints(trackRepaints);

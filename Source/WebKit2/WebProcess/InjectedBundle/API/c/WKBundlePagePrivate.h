@@ -55,6 +55,9 @@ WK_EXPORT void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint pos
 
 WK_EXPORT uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef page);
 
+// FIXME: This is temporary. Ultimately WebKit should choose the threshold itself.
+WK_EXPORT void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold);
+
 WK_EXPORT void WKBundlePageSetTracksRepaints(WKBundlePageRef page, bool trackRepaints);
 WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);

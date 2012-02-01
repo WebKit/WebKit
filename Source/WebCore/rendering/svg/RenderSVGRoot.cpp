@@ -245,6 +245,11 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& adjus
             return;
     }
 
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
+
     // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
     PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();

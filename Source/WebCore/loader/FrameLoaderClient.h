@@ -161,6 +161,7 @@ namespace WebCore {
 
         virtual void dispatchDidFirstLayout() = 0;
         virtual void dispatchDidFirstVisuallyNonEmptyLayout() = 0;
+        virtual void dispatchDidNewFirstVisuallyNonEmptyLayout() { }
         virtual void dispatchDidLayout() { }
 
         virtual Frame* dispatchCreatePage(const NavigationAction&) = 0;

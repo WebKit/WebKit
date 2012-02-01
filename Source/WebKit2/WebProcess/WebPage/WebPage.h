@@ -252,6 +252,7 @@ public:
 
     String renderTreeExternalRepresentation() const;
     uint64_t renderTreeSize() const;
+    void setPaintedObjectsCounterThreshold(uint64_t);
 
     void setTracksRepaints(bool);
     bool isTrackingRepaints() const;

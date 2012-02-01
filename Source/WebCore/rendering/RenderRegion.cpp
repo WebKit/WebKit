@@ -140,6 +140,11 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!m_flowThread || !isValid())
         return;
 
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
+
 #ifndef NDEBUG
     m_insideRegionPaint = true;
 #endif

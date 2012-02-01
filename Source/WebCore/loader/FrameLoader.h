@@ -178,7 +178,11 @@ public:
     CachePolicy subresourceCachePolicy() const;
 
     void didFirstLayout();
+
+    // FIXME: didFirstVisuallyNonEmptyLayout() and didNewFirstVisuallyNonEmptyLayout() should be merged.
+    // The only reason for both to exist is to experiment with different heuristics for the time being.
     void didFirstVisuallyNonEmptyLayout();
+    void didNewFirstVisuallyNonEmptyLayout();
 
     void loadedResourceFromMemoryCache(CachedResource*);
     void tellClientAboutPastMemoryCacheLoads();

@@ -70,6 +70,7 @@ typedef void (*WKPageDidReceiveAuthenticationChallengeInFrameCallback)(WKPageRef
 typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo);
 typedef bool (*WKPageShouldGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, const void *clientInfo);
 typedef void (*WKPageDidFailToInitializePluginCallback)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
+typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 
 struct WKPageLoaderClient {
     int                                                                 version;
@@ -106,6 +107,9 @@ struct WKPageLoaderClient {
 
     // Version 1
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
+
+    // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.
+    WKPageDidNewFirstVisuallyNonEmptyLayoutCallback                     didNewFirstVisuallyNonEmptyLayout;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

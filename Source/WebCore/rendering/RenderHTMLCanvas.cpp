@@ -28,10 +28,12 @@
 
 #include "CanvasRenderingContext.h"
 #include "Document.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
 
@@ -56,6 +58,11 @@ bool RenderHTMLCanvas::requiresLayer() const
 
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
+
     LayoutRect rect = contentBoxRect();
     rect.moveBy(paintOffset);
     bool useLowQualityScale = style()->imageRendering() == ImageRenderingOptimizeContrast;

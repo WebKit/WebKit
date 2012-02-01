@@ -20,8 +20,10 @@
 #include "config.h"
 #include "InlineBox.h"
 
+#include "Frame.h"
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
@@ -210,6 +212,11 @@ void InlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Layo
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
         return;
+
+    if (Frame* frame = renderer()->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(renderer(), paintInfo.rect);
+    }
 
     LayoutPoint childPoint = paintOffset;
     if (parent()->renderer()->style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().

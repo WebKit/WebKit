@@ -186,6 +186,7 @@ Page::Page(PageClients& pageClients)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
     , m_displayID(0)
+    , m_isCountingRelevantRepaintedObjects(false)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -1079,6 +1080,46 @@ PageVisibilityState Page::visibilityState() const
     return m_visibilityState;
 }
 #endif
+
+static uint64_t gPaintedObjectCounterThreshold = 0;
+
+void Page::setRelevantRepaintedObjectsCounterThreshold(uint64_t threshold)
+{
+    gPaintedObjectCounterThreshold = threshold;
+}
+
+void Page::startCountingRelevantRepaintedObjects()
+{
+    m_isCountingRelevantRepaintedObjects = true;
+
+    // Clear the HashSet in case we didn't hit the threshold last time.
+    m_relevantPaintedRenderObjects.clear();
+}
+
+void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objectPaintRect)
+{
+    if (!m_isCountingRelevantRepaintedObjects)
+        return;
+
+    // We don't need to do anything if there is no counter threshold.
+    if (!gPaintedObjectCounterThreshold)
+        return;
+
+    // The objects are only relevant if they are being painted within the viewRect().
+    if (RenderView* view = object->view()) {
+        if (!objectPaintRect.intersects(view->viewRect()))
+            return;
+    }
+
+    m_relevantPaintedRenderObjects.add(object);
+
+    if (m_relevantPaintedRenderObjects.size() == static_cast<int>(gPaintedObjectCounterThreshold)) {
+        m_isCountingRelevantRepaintedObjects = false;
+        m_relevantPaintedRenderObjects.clear();
+        if (Frame* frame = mainFrame())
+            frame->loader()->didNewFirstVisuallyNonEmptyLayout();
+    }
+}
 
 Page::PageClients::PageClients()
     : chromeClient(0)

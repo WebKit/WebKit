@@ -1,3 +1,66 @@
+2012-02-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77383
+        Add a different didFirstVisuallNonEmptyLayout heuristic to experiment with
+        -and corresponding-
+        <rdar://problem/10709560>
+
+        Reviewed by Sam Weinig.
+
+        The goal is to re-vamp didFirstVisuallyNonEmptyLayout to be more accurate. 
+        This patch adds a new heuristic called didNewFirstVisuallNonEmptyLayout and 
+        leaves the old one for the time being. That is temporary.
+
+        The heuristic for didNewFirstVisuallNonEmptyLayout is to count relevant 
+        painted RenderObjects on Page.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setPaintedObjectsCounterThreshold):
+        (WebCore::Page::addRelevantRepaintedObject):
+        * page/Page.h:
+        (WebCore):
+        (Page):
+        (WebCore::Page::startCountingRepaintedObjects):
+        * WebCore.exp.in:
+
+        Start counting relevant painted RenderObjects on the page once the first 
+        layout is complete.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
+        Machinery for firing didNewFirstVisuallNonEmptyLayout.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidNewFirstVisuallyNonEmptyLayout):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didNewFirstVisuallyNonEmptyLayout):
+        (WebCore):
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchDidNewFirstVisuallyNonEmptyLayout):
+
+        These RenderObjects are the ones that this api currently consider to be 
+        relevant. If their repaint rects intersect with the viewRect, then they are 
+        added to the relevant objects set on the Page.
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::paintReplaced):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+
 2012-02-01  Alexis Menard  <alexis.menard@openbossa.org>
 
         CSSStyleDeclaration.getPropertyPriority() fails for CSS shorthand properties with 'important' priority

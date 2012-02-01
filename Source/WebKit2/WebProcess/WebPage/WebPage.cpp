@@ -487,6 +487,13 @@ uint64_t WebPage::renderTreeSize() const
     return size;
 }
 
+void WebPage::setPaintedObjectsCounterThreshold(uint64_t threshold)
+{
+    if (!m_page)
+        return;
+    m_page->setRelevantRepaintedObjectsCounterThreshold(threshold);
+}
+
 void WebPage::setTracksRepaints(bool trackRepaints)
 {
     if (FrameView* view = mainFrameView())

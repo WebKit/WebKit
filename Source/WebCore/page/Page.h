@@ -79,6 +79,7 @@ namespace WebCore {
     class PointerLockController;
     class ProgressTracker;
     class Range;
+    class RenderObject;
     class RenderTheme;
     class VisibleSelection;
     class ScrollableArea;
@@ -352,6 +353,10 @@ namespace WebCore {
 #endif
 
         PlatformDisplayID displayID() const { return m_displayID; }
+
+        void setRelevantRepaintedObjectsCounterThreshold(uint64_t);
+        void startCountingRelevantRepaintedObjects();
+        void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
         
     private:
         void initGroup();
@@ -469,6 +474,9 @@ namespace WebCore {
         PageVisibilityState m_visibilityState;
 #endif
         PlatformDisplayID m_displayID;
+
+        HashSet<RenderObject*> m_relevantPaintedRenderObjects;
+        bool m_isCountingRelevantRepaintedObjects;
     };
 
 } // namespace WebCore

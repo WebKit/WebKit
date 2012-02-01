@@ -93,6 +93,7 @@ private:
 
     virtual void dispatchDidFirstLayout() OVERRIDE;
     virtual void dispatchDidFirstVisuallyNonEmptyLayout() OVERRIDE;
+    virtual void dispatchDidNewFirstVisuallyNonEmptyLayout() OVERRIDE;
     virtual void dispatchDidLayout() OVERRIDE;
 
     virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) OVERRIDE;

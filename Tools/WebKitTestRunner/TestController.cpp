@@ -389,7 +389,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didChangeBackForwardList
         0, // shouldGoToBackForwardListItem
         0, // didRunInsecureContentForFrame
-        0  // didDetectXSSForFrame
+        0, // didDetectXSSForFrame 
+        0  // didNewFirstVisuallyNonEmptyLayout 
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }

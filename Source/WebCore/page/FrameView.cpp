@@ -2280,6 +2280,8 @@ void FrameView::performPostLayoutTasks()
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
             m_frame->loader()->didFirstLayout();
+            if (Page* page = m_frame->page())
+                page->startCountingRelevantRepaintedObjects();
         }
 
         // Ensure that we always send this eventually.

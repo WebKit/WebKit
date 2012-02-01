@@ -123,6 +123,14 @@ void WebLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy* page,
     m_client.didFirstVisuallyNonEmptyLayoutForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
 }
 
+void WebLoaderClient::didNewFirstVisuallyNonEmptyLayout(WebPageProxy* page, APIObject* userData)
+{
+    if (!m_client.didNewFirstVisuallyNonEmptyLayout)
+        return;
+
+    m_client.didNewFirstVisuallyNonEmptyLayout(toAPI(page), toAPI(userData), m_client.clientInfo);
+}
+
 void WebLoaderClient::didRemoveFrameFromHierarchy(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
 {
     if (!m_client.didRemoveFrameFromHierarchy)

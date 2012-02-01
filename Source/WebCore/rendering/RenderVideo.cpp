@@ -29,11 +29,13 @@
 #include "RenderVideo.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "MediaPlayer.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
 
@@ -206,6 +208,11 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (rect.isEmpty())
         return;
     rect.moveBy(paintOffset);
+
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page())
+            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    }
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);
