@@ -215,6 +215,7 @@ WebInspector.ScriptsNavigator.prototype = {
         this._navigatorContentScriptsTree.stopSearch();
         this._navigatorContentScriptsTree.removeChildren();
         this._folderTreeElements = {};
+        this._scriptTreeElementsByUISourceCode.clear();
     },
 
     /**

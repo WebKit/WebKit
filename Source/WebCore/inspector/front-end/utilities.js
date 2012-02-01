@@ -1202,4 +1202,9 @@ Map.prototype = {
     {
         return this._map[key.__identifier];
     },
+    
+    clear: function()
+    {
+        this._map = {};
+    }
 }
