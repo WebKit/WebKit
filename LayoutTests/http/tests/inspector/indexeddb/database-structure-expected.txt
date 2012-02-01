@@ -1,0 +1,111 @@
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback1
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback2
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback3
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback4
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback5
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback6
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback7
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback8
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback9
+CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback10
+Tests that database names are correctly loaded and saved in IndexedDBModel.
+
+Dumping database:
+Dumping database:
+testDatabase1
+    version: 
+    objectStores:
+
+Dumping database:
+testDatabase1
+    version: 1
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+
+Dumping database:
+testDatabase1
+    version: 2
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+    testObjectStore2
+        keyPath: 
+        indexes: 
+
+Dumping database:
+testDatabase1
+    version: 3
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+    testObjectStore2
+        keyPath: 
+        indexes: 
+        testIndexName1
+            keyPath: key.path1
+            unique: false
+            multiEntry: true
+
+Dumping database:
+testDatabase1
+    version: 4
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+    testObjectStore2
+        keyPath: 
+        indexes: 
+        testIndexName1
+            keyPath: key.path1
+            unique: false
+            multiEntry: true
+        testIndexName2
+            keyPath: key.path2
+            unique: true
+            multiEntry: false
+
+Dumping database:
+testDatabase1
+    version: 5
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+    testObjectStore2
+        keyPath: 
+        indexes: 
+        testIndexName1
+            keyPath: key.path1
+            unique: false
+            multiEntry: true
+
+Dumping database:
+testDatabase1
+    version: 6
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+    testObjectStore2
+        keyPath: 
+        indexes: 
+
+Dumping database:
+testDatabase1
+    version: 7
+    objectStores:
+    testObjectStore1
+        keyPath: test.key.path
+        indexes: 
+
+Dumping database:
+testDatabase1
+    version: 8
+    objectStores:
+
+

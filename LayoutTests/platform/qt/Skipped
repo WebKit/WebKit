@@ -97,6 +97,7 @@ fast/forms/file/input-file-directory-upload.html
 
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
+http/tests/inspector/indexeddb
 
 inspector/timeline/timeline-animation-frame.html
 

@@ -169,6 +169,7 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+http/tests/inspector/indexeddb
 
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion

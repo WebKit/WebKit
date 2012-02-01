@@ -1,3 +1,16 @@
+2012-02-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Add tests for database names and database structure requests.
+        https://bugs.webkit.org/show_bug.cgi?id=77439
+
+        Reviewed by Pavel Feldman.
+
+        Tests: http/tests/inspector/indexeddb/database-names.html
+               http/tests/inspector/indexeddb/database-structure.html
+
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.prototype.refreshDatabase):
+
 2012-01-31  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts navigator becomes empty after "show folders" settings change.

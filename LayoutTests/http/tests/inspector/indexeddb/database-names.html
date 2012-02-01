@@ -1,0 +1,86 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="indexeddb-test.js"></script>
+<script>
+function test()
+{
+    var indexedDBModel = new WebInspector.IndexedDBModel();
+    var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+
+    function dumpDatabaseNames()
+    {
+        InspectorTest.addResult("Dumping database names:");
+        var frame = indexedDBModel._frames[mainFrameId];
+        if (!frame)
+            return;
+
+        var securityOrigin = frame.securityOrigin;
+        var names = indexedDBModel._databaseNamesBySecurityOrigin[securityOrigin];
+        for (var i = 0; i < names.length; ++i)
+            InspectorTest.addResult("    " + names[i]);
+        InspectorTest.addResult("");
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step2, false);
+
+    function step2()
+    {
+        dumpDatabaseNames();
+        InspectorTest.createDatabase(mainFrameId, "testDatabase1", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step4, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function step4()
+    {
+        dumpDatabaseNames();
+        InspectorTest.createDatabase(mainFrameId, "testDatabase2", step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step6, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function step6()
+    {
+        dumpDatabaseNames();
+        InspectorTest.deleteDatabase(mainFrameId, "testDatabase2", step7);
+    }
+
+    function step7()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step8, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function step8()
+    {
+        dumpDatabaseNames();
+        InspectorTest.deleteDatabase(mainFrameId, "testDatabase1", step9);
+    }
+
+    function step9()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step10, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function step10()
+    {
+        dumpDatabaseNames();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that database names are correctly loaded and saved in IndexedDBModel.</p>
+</body>
+</html>

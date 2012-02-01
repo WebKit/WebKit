@@ -53,6 +53,11 @@ WebInspector.IndexedDBModel.prototype = {
         this._framesNavigatedRecursively(WebInspector.resourceTreeModel.mainFrame);
     },
     
+    refreshDatabase: function(frameId, databaseName)
+    {
+        this._loadDatabase(frameId, databaseName);
+    },
+    
     /**
      * @param {WebInspector.ResourceTreeFrame} resourceTreeFrame
      */

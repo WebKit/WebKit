@@ -130,6 +130,7 @@ fast/repaint/fixed-move-after-keyboard-scroll.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+http/tests/inspector/indexeddb
 
 # Philip's canvas tests that fail on SnowLeopard only
 canvas/philip/tests/2d.gradient.interpolate.overlap.html

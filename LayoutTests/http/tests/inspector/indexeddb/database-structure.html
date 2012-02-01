@@ -1,0 +1,189 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="indexeddb-test.js"></script>
+<script>
+function test()
+{
+    var indexedDBModel = new WebInspector.IndexedDBModel();
+    var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+    var databaseName = "testDatabase1";
+
+    function dumpDatabase()
+    {
+        InspectorTest.addResult("Dumping database:");
+        var frame = indexedDBModel._frames[mainFrameId];
+        if (!frame)
+            return;
+        var database = frame.databases[databaseName];
+        if (!database)
+            return;
+        InspectorTest.addResult(database.name);
+        InspectorTest.addResult("    version: " + database.version);
+        InspectorTest.addResult("    objectStores:");
+        var objectStoreNames = [];
+        for (var objectStoreName in database.objectStores)
+            objectStoreNames.push(objectStoreName);
+        objectStoreNames.sort();
+        for (var i = 0; i < objectStoreNames.length; ++i) {
+            var objectStore = database.objectStores[objectStoreNames[i]];
+            InspectorTest.addResult("    " + objectStore.name);
+            InspectorTest.addResult("        keyPath: " + objectStore.keyPath);
+            InspectorTest.addResult("        indexes: ");
+            var indexNames = [];
+            for (var indexName in objectStore.indexes)
+                indexNames.push(indexName);
+            indexNames.sort();
+            for (var j = 0; j < indexNames.length; ++j) {
+                var index = objectStore.indexes[indexNames[j]];
+                InspectorTest.addResult("        " + index.name);
+                InspectorTest.addResult("            keyPath: " + index.keyPath);
+                InspectorTest.addResult("            unique: " + index.unique);
+                InspectorTest.addResult("            multiEntry: " + index.multiEntry);
+            }
+        }
+        InspectorTest.addResult("");
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step2, false);
+
+    function step2()
+    {
+        InspectorTest.createDatabase(mainFrameId, databaseName, step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step4, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function step4()
+    {
+        dumpDatabase();
+
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step5, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step5()
+    {
+        dumpDatabase();
+
+        InspectorTest.createObjectStore(mainFrameId, databaseName, "testObjectStore1", "test.key.path", true, step6);
+    }
+
+    function step6()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step7, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step7()
+    {
+        dumpDatabase();
+
+        InspectorTest.createObjectStore(mainFrameId, databaseName, "testObjectStore2", "", false, step8);
+    }
+
+    function step8()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step9, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step9()
+    {
+        dumpDatabase();
+
+        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName1", "key.path1", false, true, step10);
+    }
+
+    function step10()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step11, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step11()
+    {
+        dumpDatabase();
+
+        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName2", "key.path2", true, false, step12);
+    }
+
+    function step12()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step13, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step13()
+    {
+        dumpDatabase();
+
+        InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName2", step14);
+    }
+
+    function step14()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step15, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step15()
+    {
+        dumpDatabase();
+
+        InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName1", step16);
+    }
+
+    function step16()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step17, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step17()
+    {
+        dumpDatabase();
+
+        InspectorTest.deleteObjectStore(mainFrameId, databaseName, "testObjectStore2", step18);
+    }
+
+    function step18()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step19, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step19()
+    {
+        dumpDatabase();
+
+        InspectorTest.deleteObjectStore(mainFrameId, databaseName, "testObjectStore1", step20);
+    }
+
+    function step20()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step21, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function step21()
+    {
+        dumpDatabase();
+        InspectorTest.deleteDatabase(mainFrameId, databaseName, step22);
+    }
+
+    function step22()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that database names are correctly loaded and saved in IndexedDBModel.</p>
+</body>
+</html>

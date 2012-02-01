@@ -232,6 +232,7 @@ fast/events/touch
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+http/tests/inspector/indexeddb
 
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker

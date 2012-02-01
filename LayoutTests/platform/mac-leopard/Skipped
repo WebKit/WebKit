@@ -80,6 +80,7 @@ http/tests/media/video-play-stall-seek.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
+http/tests/inspector/indexeddb
 
 # Disable the tests until the mesa renderer is integrated.
 # https://bugs.webkit.org/show_bug.cgi?id=41545
