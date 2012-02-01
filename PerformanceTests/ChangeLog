@@ -1,5 +1,11 @@
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix after r106386. The empty anchor element was generating an erroneous whitespace.
+
+        * Bindings/event-target-wrapper.html:
+
+2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another fix after r106379.
 
         * Parser/html5-full-render.html:
