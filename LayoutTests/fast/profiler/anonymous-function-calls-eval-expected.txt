@@ -5,7 +5,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 Profile title: Anonymous function calles eval
 Thread_1 (no file) (line 0)
    startTest anonymous-function-calls-eval.html (line 11)
-      (anonymous function) anonymous-function-calls-eval.html (line 14)
+      variableThatPointsToAnAnonymousFunction anonymous-function-calls-eval.html (line 14)
          eval (no file) (line 0)
             (program) (no file) (line 1)
                insertNewText profiler-test-JS-resources.js (line 17)

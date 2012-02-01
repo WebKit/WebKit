@@ -136,7 +136,11 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
     if (!explicitName.isEmpty())
         return explicitName;
     
-    return name(exec);
+    const UString actualName = name(exec);
+    if (!actualName.isEmpty() || isHostFunction())
+        return actualName;
+    
+    return jsExecutable()->inferredName().ustring();
 }
 
 const SourceCode* JSFunction::sourceCode() const
@@ -356,6 +360,16 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
     constructData.js.functionExecutable = thisObject->jsExecutable();
     constructData.js.scopeChain = thisObject->scope();
     return ConstructTypeJS;
+}
+    
+
+UString getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
+{
+    if (JSFunction* function = jsDynamicCast<JSFunction*>(object))
+        return function->calculatedDisplayName(callFrame);
+    if (InternalFunction* function = jsDynamicCast<InternalFunction*>(object))
+        return function->calculatedDisplayName(callFrame);
+    return UString();
 }
 
 } // namespace JSC

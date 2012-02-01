@@ -42,6 +42,8 @@ namespace JSC {
 
     JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
+    JS_EXPORT_PRIVATE UString getCalculatedDisplayName(CallFrame*, JSObject*);
+    
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
         friend class DFG::SpeculativeJIT;

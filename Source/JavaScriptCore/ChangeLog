@@ -1,3 +1,46 @@
+2012-02-01  Oliver Hunt  <oliver@apple.com>
+
+        Add support for inferred function names
+        https://bugs.webkit.org/show_bug.cgi?id=77579
+
+        Reviewed by Gavin Barraclough.
+
+        Add new "inferred" names to function expressions, getters, and setters.
+        This property is not exposed to JS, so is only visible in the debugger
+        and profiler.
+
+        * JavaScriptCore.exp:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::calculatedFunctionName):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::setInferredName):
+        (JSC::FunctionBodyNode::inferredName):
+        (FunctionBodyNode):
+        * profiler/Profiler.cpp:
+        (JSC):
+        (JSC::Profiler::createCallIdentifier):
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::inferredName):
+        (FunctionExecutable):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::calculatedDisplayName):
+        (JSC):
+        (JSC::getCalculatedDisplayName):
+        * runtime/JSFunction.h:
+        (JSC):
+
 2012-02-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should fold double-to-int conversions

@@ -48,7 +48,7 @@ static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
 static unsigned ProfilesUID = 0;
 
-static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSFunction*);
+static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSObject*, const UString& defaultSourceURL, int defaultLineNumber);
 
 Profiler* Profiler::s_sharedProfiler = 0;
 Profiler* Profiler::s_sharedEnabledProfilerReference = 0;
@@ -163,23 +163,18 @@ CallIdentifier Profiler::createCallIdentifier(ExecState* exec, JSValue functionV
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
     if (!functionValue.isObject())
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
-    if (asObject(functionValue)->inherits(&JSFunction::s_info)) {
-        JSFunction* function = asFunction(functionValue);
-        if (!function->executable()->isHostFunction())
-            return createCallIdentifierFromFunctionImp(exec, function);
-    }
-    if (asObject(functionValue)->inherits(&JSFunction::s_info))
-        return CallIdentifier(static_cast<JSFunction*>(asObject(functionValue))->name(exec), defaultSourceURL, defaultLineNumber);
-    if (asObject(functionValue)->inherits(&InternalFunction::s_info))
-        return CallIdentifier(static_cast<InternalFunction*>(asObject(functionValue))->name(exec), defaultSourceURL, defaultLineNumber);
+    if (asObject(functionValue)->inherits(&JSFunction::s_info) || asObject(functionValue)->inherits(&InternalFunction::s_info))
+        return createCallIdentifierFromFunctionImp(exec, asObject(functionValue), defaultSourceURL, defaultLineNumber);
     return CallIdentifier(makeUString("(", asObject(functionValue)->methodTable()->className(asObject(functionValue)), " object)"), defaultSourceURL, defaultLineNumber);
 }
 
-CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSFunction* function)
+CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSObject* function, const UString& defaultSourceURL, int defaultLineNumber)
 {
-    ASSERT(!function->isHostFunction());
-    const UString& name = function->calculatedDisplayName(exec);
-    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->jsExecutable()->sourceURL(), function->jsExecutable()->lineNo());
+    const UString& name = getCalculatedDisplayName(exec, function);
+    JSFunction* jsFunction = jsDynamicCast<JSFunction*>(function);
+    if (jsFunction && !jsFunction->isHostFunction())
+        return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, jsFunction->jsExecutable()->sourceURL(), jsFunction->jsExecutable()->lineNo());
+    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, defaultSourceURL, defaultLineNumber);
 }
 
 } // namespace JSC

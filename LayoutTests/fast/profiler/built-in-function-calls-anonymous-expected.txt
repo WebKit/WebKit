@@ -7,7 +7,7 @@ Thread_1 (no file) (line 0)
    startTest built-in-function-calls-anonymous.html (line 11)
       Array (no file) (line 0)
       map (no file) (line 0)
-         (anonymous function) built-in-function-calls-anonymous.html (line 14)
+         myFunction built-in-function-calls-anonymous.html (line 14)
             arrayOperatorFunction profiler-test-JS-resources.js (line 25)
       endTest profiler-test-JS-resources.js (line 1)
 

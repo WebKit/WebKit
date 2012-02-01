@@ -249,6 +249,8 @@ public:
 
     ExpressionNode* createAssignResolve(int lineNumber, const Identifier& ident, ExpressionNode* rhs, bool rhsHasAssignment, int start, int divot, int end)
     {
+        if (rhs->isFuncExprNode())
+            static_cast<FuncExprNode*>(rhs)->body()->setInferredName(ident);
         AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, ident, rhs, rhsHasAssignment);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -271,6 +273,7 @@ public:
     {
         ASSERT(name);
         body->setLoc(bodyStartLine, bodyEndLine);
+        body->setInferredName(*name);
         return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(lineNumber, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
     
@@ -280,7 +283,12 @@ public:
     ArgumentListNode* createArgumentsList(int lineNumber, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(lineNumber, arg); }
     ArgumentListNode* createArgumentsList(int lineNumber, ArgumentListNode* args, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(lineNumber, args, arg); }
 
-    template <bool> PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, *propertyName, node, type); }
+    template <bool> PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type)
+    {
+        if (node->isFuncExprNode())
+            static_cast<FuncExprNode*>(node)->body()->setInferredName(*propertyName);
+        return new (m_globalData) PropertyNode(m_globalData, *propertyName, node, type);
+    }
     template <bool> PropertyNode* createProperty(JSGlobalData*, double propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, propertyName, node, type); }
     PropertyListNode* createPropertyList(int lineNumber, PropertyNode* property) { return new (m_globalData) PropertyListNode(lineNumber, property); }
     PropertyListNode* createPropertyList(int lineNumber, PropertyNode* property, PropertyListNode* tail) { return new (m_globalData) PropertyListNode(lineNumber, property, tail); }
@@ -903,6 +911,8 @@ ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
+            if (expr->isFuncExprNode())
+                static_cast<FuncExprNode*>(expr)->body()->setInferredName(resolve->identifier());
             AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, resolve->identifier(), expr, exprHasAssignments);
             setExceptionLocation(node, start, divot, end);
             return node;
@@ -919,8 +929,11 @@ ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, 
     }
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
-    if (op == OpEqual)
+    if (op == OpEqual) {
+        if (expr->isFuncExprNode())
+            static_cast<FuncExprNode*>(expr)->body()->setInferredName(dot->identifier());
         return new (m_globalData) AssignDotNode(lineNumber, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
+    }
 
     ReadModifyDotNode* node = new (m_globalData) ReadModifyDotNode(lineNumber, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
