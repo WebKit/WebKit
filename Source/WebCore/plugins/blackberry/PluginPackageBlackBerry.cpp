@@ -79,8 +79,7 @@ bool PluginPackage::fetchInfo()
     // We are fetching the info. Technically we have not loaded the plugin. PluginView::Init will load the plugin so decrement the counter
     m_loadCount--;
 
-    typedef char *(*NPP_GetMIMEDescriptionProcPtr)();
-    NPP_GetMIMEDescriptionProcPtr getDescription = (NPP_GetMIMEDescriptionProcPtr) dlsym(m_module, "NP_GetMIMEDescription");
+    NP_GetMIMEDescriptionFuncPtr getDescription = (NP_GetMIMEDescriptionFuncPtr) dlsym(m_module, "NP_GetMIMEDescription");
     NPP_GetValueProcPtr getValue = (NPP_GetValueProcPtr) dlsym(m_module, "NP_GetValue");
 
     if (!getDescription || !getValue)

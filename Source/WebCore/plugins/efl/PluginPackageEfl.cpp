@@ -43,8 +43,6 @@
 
 namespace WebCore {
 
-typedef char* (*NPP_GetMIMEDescriptionProcPtr)();
-
 bool PluginPackage::fetchInfo()
 {
     const char *errmsg;
@@ -53,7 +51,7 @@ bool PluginPackage::fetchInfo()
         return false;
 
     NPP_GetValueProcPtr getValue = 0;
-    NPP_GetMIMEDescriptionProcPtr getMIMEDescription = 0;
+    NP_GetMIMEDescriptionFuncPtr getMIMEDescription = 0;
 
     getValue = reinterpret_cast<NPP_GetValueProcPtr>(dlsym(m_module, "NP_GetValue"));
     if ((errmsg = dlerror())) {
@@ -61,7 +59,7 @@ bool PluginPackage::fetchInfo()
         return false;
     }
 
-    getMIMEDescription = reinterpret_cast<NPP_GetMIMEDescriptionProcPtr>(dlsym(m_module, "NP_GetMIMEDescription"));
+    getMIMEDescription = reinterpret_cast<NP_GetMIMEDescriptionFuncPtr>(dlsym(m_module, "NP_GetMIMEDescription"));
     if ((errmsg = dlerror())) {
         EINA_LOG_ERR("Could not get symbol NP_GetMIMEDescription: %s", errmsg);
         return false;

@@ -211,7 +211,7 @@ typedef NPError (*MainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownPro
 
 #if defined(XP_UNIX)
 typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*);
-typedef EXPORTED_CALLBACK(char*, NP_GetMIMEDescriptionFuncPtr)(void);
+typedef EXPORTED_CALLBACK(const char*, NP_GetMIMEDescriptionFuncPtr)(void);
 #else
 typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*);
 #endif

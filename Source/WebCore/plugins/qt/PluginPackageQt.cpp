@@ -41,9 +41,8 @@ bool PluginPackage::fetchInfo()
         return false;
 
     NPP_GetValueProcPtr gv = (NPP_GetValueProcPtr)m_module->resolve("NP_GetValue");
-    typedef char *(*NPP_GetMIMEDescriptionProcPtr)();
-    NPP_GetMIMEDescriptionProcPtr gm =
-        (NPP_GetMIMEDescriptionProcPtr)m_module->resolve("NP_GetMIMEDescription");
+    NP_GetMIMEDescriptionFuncPtr gm =
+        (NP_GetMIMEDescriptionFuncPtr)m_module->resolve("NP_GetMIMEDescription");
     if (!gm || !gv)
         return false;
 

@@ -1,3 +1,22 @@
+2012-02-01  John Yani  <vanuan@gmail.com>
+
+        GetMIMEDescription should return const char *
+        https://bugs.webkit.org/show_bug.cgi?id=77297
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. No change in behaviour.
+
+        * plugins/blackberry/PluginPackageBlackBerry.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        * plugins/efl/PluginPackageEfl.cpp:
+        (WebCore):
+        (WebCore::PluginPackage::fetchInfo):
+        * plugins/npapi.h:
+        * plugins/npfunctions.h:
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2012-02-01  Timothy Hatcher  <timothy@apple.com>
 
         Consolidate duplicate "willHide" functions in DetailedHeapshotView.js to fix
