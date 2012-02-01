@@ -1,3 +1,37 @@
+2012-02-01  Shinya Kawanaka  <shinyak@google.com>
+
+        Content element should be able to be dynamically added/removed/replaced in a shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=76611
+
+        Reviewed by Hajime Morita
+
+        When a content element is added/removed/replaced in a shadow tree, we have to recreate
+        the shadow tree to recalculate inclusions of content elements. Currently we didn't recalculate it
+        when content element is removed. (When added, it is recalculated.)
+        This patch enables us to recalcurate the shadow tree when content element is removed.
+
+        Test: fast/dom/shadow/content-element-move.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+          If a shadow root exists, attaches shadow tree before attaching child elements.
+        * dom/ShadowRoot.cpp:
+          Added a flag to recalculate shadow tree.
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::recalcShadowTreeStyle):
+          Recalculates light children and shadow tree.
+        (WebCore::ShadowRoot::setNeedsReattachHostChildrenAndShadow):
+        (WebCore::ShadowRoot::reattachHostChildrenAndShadow):
+          Detaches shadow tree and host light children, and attaches them again.
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::clearNeedsReattachHostChildrenAndShadow):
+        (WebCore::ShadowRoot::needsReattachHostChildrenAndShadow):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+          Does not need to detach included elements, because they are not attached in ContainerNode anymore.
+        (WebCore::HTMLContentElement::detach):
+          When a content element detached, reattaches a shadow tree.
+
 2012-02-01  Peter Beverloo  <peter@chromium.org>
 
         getIntersectionList causes transforms to be recalculated in SVG

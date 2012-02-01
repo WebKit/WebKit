@@ -39,6 +39,7 @@ namespace WebCore {
 ShadowRoot::ShadowRoot(Document* document)
     : TreeScope(document, CreateShadowRoot)
     , m_applyAuthorSheets(false)
+    , m_needsRecalculateContent(false)
 {
     ASSERT(document);
     
@@ -99,8 +100,8 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 
 void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
 {
-    if (hasContentElement())
-        reattach();
+    if (needsReattachHostChildrenAndShadow())
+        reattachHostChildrenAndShadow();
     else {
         for (Node* n = firstChild(); n; n = n->nextSibling()) {
             if (n->isElementNode())
@@ -110,8 +111,16 @@ void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
         }
     }
 
+    clearNeedsReattachHostChildrenAndShadow();
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
+}
+
+void ShadowRoot::setNeedsReattachHostChildrenAndShadow()
+{
+    m_needsRecalculateContent = true;
+    if (shadowHost())
+        shadowHost()->setNeedsStyleRecalc();
 }
 
 HTMLContentElement* ShadowRoot::includerFor(Node* node) const
@@ -166,6 +175,25 @@ void ShadowRoot::attach()
     TreeScope::attach();
     if (m_inclusions)
         m_inclusions->didSelect();
+}
+
+void ShadowRoot::reattachHostChildrenAndShadow()
+{
+    Node* hostNode = host();
+    if (!hostNode)
+        return;
+
+    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
+        if (child->attached())
+            child->detach();
+    }
+
+    reattach();
+
+    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
+        if (!child->attached())
+            child->attach();
+    }
 }
 
 ContentInclusionSelector* ShadowRoot::inclusions() const
