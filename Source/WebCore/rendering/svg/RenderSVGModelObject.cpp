@@ -125,12 +125,15 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
     SVGElement* stopAtElement = SVGLocatable::nearestViewportElement(element);
     ASSERT(stopAtElement);
 
+    AffineTransform localTransform;
     Node* current = element;
+
     while (current && current->isSVGElement()) {
         SVGElement* currentElement = static_cast<SVGElement*>(current);
-        if (currentElement->isStyled())
-            transform = const_cast<AffineTransform&>(currentElement->renderer()->localToParentTransform()).multiply(transform);
-
+        if (currentElement->isStyled()) {
+            localTransform = currentElement->renderer()->localToParentTransform();
+            transform = localTransform.multiply(transform);
+        }
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)
             break;

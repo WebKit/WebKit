@@ -1,3 +1,19 @@
+2012-02-01  Peter Beverloo  <peter@chromium.org>
+
+        getIntersectionList causes transforms to be recalculated in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=77179
+
+        Reviewed by Nikolas Zimmermann.
+
+        Introduce a local variable to store the element's local-to-parent
+        transformation matrix in, removing the need for the const_cast and
+        stopping us from modifying any matrices elsewhere.
+
+        Test: svg/custom/intersection-list-transforms.svg
+
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::getElementCTM):
+
 2012-02-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Add tests for database names and database structure requests.
