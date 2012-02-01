@@ -68,9 +68,11 @@ public:
     bool isEmpty() const { return m_value.isEmpty(); }
     
     PassRefPtr<Attribute> clone() const;
+    
+    CSSMutableStyleDeclaration* decl() const { return m_mappedAttributeDeclaration ? m_mappedAttributeDeclaration->declaration() : 0; }
 
-    CSSMappedAttributeDeclaration* decl() const { return m_styleDecl.get(); }
-    void setDecl(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_styleDecl = decl; }
+    CSSMappedAttributeDeclaration* mappedAttributeDeclaration() const { return m_mappedAttributeDeclaration.get(); }
+    void setMappedAttributeDeclaration(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_mappedAttributeDeclaration = decl; }
 
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
@@ -88,7 +90,7 @@ private:
         , m_hasAttr(false)
         , m_name(name)
         , m_value(value)
-        , m_styleDecl(styleDecl)
+        , m_mappedAttributeDeclaration(styleDecl)
     {
     }
 
@@ -97,7 +99,7 @@ private:
         , m_hasAttr(false)
         , m_name(nullAtom, name, nullAtom)
         , m_value(value)
-        , m_styleDecl(styleDecl)
+        , m_mappedAttributeDeclaration(styleDecl)
     {
     }
 
@@ -110,7 +112,7 @@ private:
     
     QualifiedName m_name;
     AtomicString m_value;
-    RefPtr<CSSMappedAttributeDeclaration> m_styleDecl;
+    RefPtr<CSSMappedAttributeDeclaration> m_mappedAttributeDeclaration;
 };
 
 } // namespace WebCore

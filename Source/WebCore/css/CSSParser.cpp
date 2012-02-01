@@ -484,18 +484,18 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
     return true;
 }
 
-bool CSSParser::parseMappedAttributeValue(CSSMappedAttributeDeclaration* declaration, StyledElement* element, int propertyId, const String& value)
+bool CSSParser::parseMappedAttributeValue(CSSMappedAttributeDeclaration* mappedAttribute, StyledElement* element, int propertyId, const String& value)
 {
-    ASSERT(declaration);
+    ASSERT(mappedAttribute);
     ASSERT(element);
     ASSERT(element->document());
     CSSStyleSheet* elementSheet = element->document()->elementSheet();
-    if (parseSimpleLengthValue(declaration, propertyId, value, false, false, elementSheet))
+    if (parseSimpleLengthValue(mappedAttribute->declaration(), propertyId, value, false, false, elementSheet))
         return true;
-    if (parseColorValue(declaration, propertyId, value, false, false, elementSheet))
+    if (parseColorValue(mappedAttribute->declaration(), propertyId, value, false, false, elementSheet))
         return true;
     CSSParser parser(false);
-    return parser.parseValue(declaration, propertyId, value, false, elementSheet);
+    return parser.parseValue(mappedAttribute->declaration(), propertyId, value, false, elementSheet);
 }
 
 bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)

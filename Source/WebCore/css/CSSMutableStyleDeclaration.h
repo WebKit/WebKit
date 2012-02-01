@@ -73,8 +73,10 @@ public:
     bool setProperty(int propertyID, int value, bool important = false) { return setProperty(propertyID, value, important, true); }
     bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false) { return setProperty(propertyId, value, unit, important, true); }
     bool setProperty(int propertyID, const String& value, bool important = false) { return setProperty(propertyID, value, important, true); }
-
+    void setProperty(const CSSProperty&, CSSProperty* slot = 0);
+    
     void removeProperty(int propertyID) { removeProperty(propertyID, true, false); }
+    String removeProperty(int propertyID, bool notifyChanged, bool returnText);
 
     // The following parses an entire new style declaration.
     void parseDeclaration(const String& styleDeclaration);
@@ -105,13 +107,8 @@ public:
 
     String asText() const;
 
-protected:
-    CSSMutableStyleDeclaration();
-
-    void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
-    String removeProperty(int propertyID, bool notifyChanged, bool returnText);
-
 private:
+    CSSMutableStyleDeclaration();
     CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>&);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);

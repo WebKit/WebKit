@@ -33,14 +33,14 @@ namespace WebCore {
 
 class StyledElement;
 
-class CSSMappedAttributeDeclaration : public CSSMutableStyleDeclaration {
+class CSSMappedAttributeDeclaration : public RefCounted<CSSMappedAttributeDeclaration> {
 public:
     static PassRefPtr<CSSMappedAttributeDeclaration> create()
     {
         return adoptRef(new CSSMappedAttributeDeclaration);
     }
 
-    virtual ~CSSMappedAttributeDeclaration();
+    ~CSSMappedAttributeDeclaration();
 
     void setMappedState(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& val)
     {
@@ -57,10 +57,12 @@ public:
     void setMappedLengthProperty(StyledElement*, int propertyId, const String& value);
 
     void removeMappedProperty(StyledElement*, int propertyId);
+    
+    CSSMutableStyleDeclaration* declaration() const { return m_declaration.get(); }
 
 private:
     CSSMappedAttributeDeclaration()
-        : CSSMutableStyleDeclaration()
+        : m_declaration(CSSMutableStyleDeclaration::create())
         , m_entryType(eNone)
         , m_attrName(anyQName())
     {
@@ -68,6 +70,7 @@ private:
 
     void setNeedsStyleRecalc(StyledElement*);
 
+    RefPtr<CSSMutableStyleDeclaration> m_declaration;
     MappedAttributeEntry m_entryType;
     QualifiedName m_attrName;
     AtomicString m_attrValue;

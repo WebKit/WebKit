@@ -1,3 +1,60 @@
+2012-02-01  Antti Koivisto  <antti@apple.com>
+
+        Make CSSMappedAttributeDeclaration have CSSMutableStyleDeclaration instead of being one
+        https://bugs.webkit.org/show_bug.cgi?id=77545
+
+        Reviewed by Andreas Kling.
+
+        This is the easiest path for eliminating the last remaining subclass of CSSMutableStyleDeclaration.
+        
+        On negative side this increases memory use of CSSMappedAttributeDeclaration by one ptr and refcount
+        (it loses the vptr) in total.
+        
+        This is not meant to be the end state, just an intermediate refactoring step. CSSMappedAttributeDeclaration
+        should clearly be renamed too but this patch doesn't do that. It might not exist in its current form
+        much longer.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        * css/CSSMutableStyleDeclaration.h:
+
+            Remove protected section. No subclasses remain.        
+            Rename setPropertyInternal() to setProperty(). All public methods here are internal.
+        
+        (CSSMutableStyleDeclaration):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseMappedAttributeValue):
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::clone):
+        * dom/Attribute.h:
+        (Attribute):
+        (WebCore::Attribute::decl):
+        (WebCore::Attribute::mappedAttributeDeclaration):
+        (WebCore::Attribute::setMappedAttributeDeclaration):
+        (WebCore::Attribute::Attribute):
+        * dom/CSSMappedAttributeDeclaration.cpp:
+        (WebCore::CSSMappedAttributeDeclaration::setMappedImageProperty):
+        (WebCore::CSSMappedAttributeDeclaration::setMappedProperty):
+        (WebCore::CSSMappedAttributeDeclaration::removeMappedProperty):
+        * dom/CSSMappedAttributeDeclaration.h:
+        (CSSMappedAttributeDeclaration):
+        (WebCore::CSSMappedAttributeDeclaration::declaration):
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+        
+            Make CSSMutableStyleDeclaration a member instead of the base class.
+        
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::removeCSSProperty):
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+        (WebCore::StyledElement::addCSSLength):
+        (WebCore::StyledElement::addCSSColor):
+        (WebCore::StyledElement::createMappedDecl):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2012-02-01  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Set all PlatformTouchPoint values possible from a QTouch event.

@@ -708,7 +708,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
     return true;
 }
 
-void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property, CSSProperty* slot)
+void CSSMutableStyleDeclaration::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
@@ -731,7 +731,7 @@ void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property
 bool CSSMutableStyleDeclaration::setProperty(int propertyID, int value, bool important, bool notifyChanged)
 {
     CSSProperty property(propertyID, CSSPrimitiveValue::createIdentifier(value), important);
-    setPropertyInternal(property);
+    setProperty(property);
     if (notifyChanged)
         setNeedsStyleRecalc();
     return true;
@@ -740,7 +740,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, int value, bool imp
 bool CSSMutableStyleDeclaration::setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important, bool notifyChanged)
 {
     CSSProperty property(propertyID, CSSPrimitiveValue::create(value, unit), important);
-    setPropertyInternal(property);
+    setProperty(property);
     if (notifyChanged)
         setNeedsStyleRecalc();
     return true;
@@ -892,7 +892,7 @@ void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, 
         if (old) {
             if (!argOverridesOnConflict && old->value())
                 continue;
-            setPropertyInternal(toMerge, old);
+            setProperty(toMerge, old);
         } else
             m_properties.append(toMerge);
     }
