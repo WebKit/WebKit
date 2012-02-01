@@ -1,3 +1,12 @@
+2012-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Fix Window build.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::LayerClient::platformCALayerDidCreateTiles):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerDidCreateTiles):
+
 2012-02-01  John Yani  <vanuan@gmail.com>
 
         GetMIMEDescription should return const char *
