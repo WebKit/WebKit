@@ -58,9 +58,9 @@ public:
     virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
-    CSSMutableStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
-    CSSMutableStyleDeclaration* ensureInlineStyleDecl();
-    virtual CSSStyleDeclaration* style() OVERRIDE;
+    CSSMutableStyleDeclaration* inlineStyleDecl() const { return attributeMap() ? attributeMap()->inlineStyleDecl() : 0; }
+    CSSMutableStyleDeclaration* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
+    virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl(); }
 
     const SpaceSplitString& classNames() const;
 
@@ -88,11 +88,13 @@ protected:
 private:
     void createMappedDecl(Attribute*);
 
-    void createInlineStyleDecl();
-    void destroyInlineStyleDecl();
     virtual void updateStyleAttribute() const;
 
-    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
+    void destroyInlineStyleDecl()
+    {
+        if (attributeMap())
+            attributeMap()->destroyInlineStyleDecl();
+    }
 };
 
 inline const SpaceSplitString& StyledElement::classNames() const

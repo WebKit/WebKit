@@ -26,6 +26,7 @@
 #ifndef ElementAttributeData_h
 #define ElementAttributeData_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "SpaceSplitString.h"
 
 namespace WebCore {
@@ -48,6 +49,7 @@ private:
     {
     }
 
+    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
     SpaceSplitString m_classNames;
     AtomicString m_idForStyleResolution;
 };

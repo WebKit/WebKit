@@ -1,3 +1,42 @@
+2012-01-31  Andreas Kling  <awesomekling@apple.com>
+
+        Make elements that don't have attributes smaller.
+        <http://webkit.org/b/76876>
+
+        Reviewed by Sam Weinig and Antti Koivisto.
+
+        Move the inline style declaration from StyledElement to ElementAttributeData, since having
+        an inline style declaration also implies having a style attribute on the element.
+        This saves one CPU word per element that has no attributes.
+
+        This reduces memory consumption by 412 kB (on 64-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>.
+
+        This was rolled out once because of a performance regression which has been averted this
+        time around by adding an Element::ensureAttributeMap() so we can force creation of the
+        NamedNodeMap without also serializing the inline style for the "style" attribute.
+
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::ensureAttributeMap):
+        (WebCore):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::ensureInlineStyleDecl):
+        (WebCore):
+        (WebCore::NamedNodeMap::destroyInlineStyleDecl):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::inlineStyleDecl):
+        (NamedNodeMap):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (StyledElement):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+
 2012-01-31  Hayato Ito  <hayato@chromium.org>
 
         Add APIs, getElementsByXXX family, to ShadowRoot IDL.

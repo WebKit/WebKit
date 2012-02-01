@@ -223,6 +223,7 @@ public:
     void parserSetAttributeMap(PassOwnPtr<NamedNodeMap>, FragmentScriptingPermission);
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
+    NamedNodeMap* ensureAttributeMap();
 
     ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
     ElementAttributeData* ensureAttributeData() const { return attributes()->attributeData(); }
@@ -595,6 +596,13 @@ inline const AtomicString& Element::getIdAttribute() const
 inline void Element::setIdAttribute(const AtomicString& value)
 {
     setAttribute(document()->idAttributeName(), value);
+}
+
+inline NamedNodeMap* Element::ensureAttributeMap()
+{
+    if (!m_attributeMap)
+        createAttributeMap();
+    return m_attributeMap.get();
 }
 
 inline Element* firstElementChild(const ContainerNode* container)

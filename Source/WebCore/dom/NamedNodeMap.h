@@ -99,6 +99,10 @@ public:
     ElementAttributeData* attributeData() { return &m_attributeData; }
     const ElementAttributeData* attributeData() const { return &m_attributeData; }
 
+    CSSMutableStyleDeclaration* inlineStyleDecl() { return attributeData()->m_inlineStyleDecl.get(); }
+    CSSMutableStyleDeclaration* ensureInlineStyleDecl();
+    void destroyInlineStyleDecl();
+
 private:
     NamedNodeMap(Element* element)
         : m_element(element)
