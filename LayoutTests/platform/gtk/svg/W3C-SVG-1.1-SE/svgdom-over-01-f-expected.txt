@@ -1,5 +1,4 @@
 Blocked access to external URL http://example.org/image.jpg
-Blocked access to external URL http://www.iana.org/domains/example/
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
