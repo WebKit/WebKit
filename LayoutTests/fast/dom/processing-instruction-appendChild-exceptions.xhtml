@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+<![CDATA[
+description("Test that appropriate exceptions are thrown when adding children to a ProcessingInstruction.");
+var pi = document.createProcessingInstruction('target', 'data');
+shouldThrow("pi.appendChild(null)", "'Error: HIERARCHY_REQUEST_ERR: DOM Exception 3'");
+var div = document.createElement('div');
+shouldThrow("pi.appendChild(div)", "'Error: HIERARCHY_REQUEST_ERR: DOM Exception 3'");
+var textNode = document.createTextNode('sometext');
+shouldThrow("pi.appendChild(textNode)", "'Error: HIERARCHY_REQUEST_ERR: DOM Exception 3'");
+]]>
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,32 @@
+2012-01-31  Adam Klein  <adamk@chromium.org>
+
+        ProcessingInstruction should not be a ContainerNode
+        https://bugs.webkit.org/show_bug.cgi?id=75141
+
+        Reviewed by Darin Adler.
+
+        Per the DOM spec, ProcessingInstruction can't have any children.
+        And the WebCore behavior already matches the spec by always returning
+        false for childTypeAllowed(). This change simplifies
+        ProcessingInstruction's implementation by making it subclass Node
+        instead of ContainerNode.
+
+        Test: fast/dom/processing-instruction-appendChild-exceptions.xhtml
+
+        * dom/ContainerNode.cpp: Moved dispatchBeforeLoadEvent up to Node.
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchBeforeLoadEvent): Moved up from ContainerNode
+        since it's used both by ProcessingInstruction and various Element
+        subclasses.
+        * dom/Node.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction): Call Node constructor.
+        (WebCore::ProcessingInstruction::insertedIntoDocument): Call Node impl.
+        (WebCore::ProcessingInstruction::removedFromDocument): ditto.
+        (WebCore::ProcessingInstruction::finishParsingChildren): ditto.
+        * dom/ProcessingInstruction.h:
+
 2012-01-31  Matthew Delaney  <mdelaney@apple.com>
 
         Failing 2d.shadow.enable.off.2.html on Lion

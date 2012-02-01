@@ -69,9 +69,7 @@ public:
     void takeAllChildrenFrom(ContainerNode*);
 
     void cloneChildNodes(ContainerNode* clone);
-    
-    bool dispatchBeforeLoadEvent(const String& sourceURL);
-    
+
     virtual void attach() OVERRIDE;
     virtual void detach() OVERRIDE;
     virtual void willRemove() OVERRIDE;

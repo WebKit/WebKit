@@ -1,0 +1,12 @@
+Test that appropriate exceptions are thrown when adding children to a ProcessingInstruction.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pi.appendChild(null) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+PASS pi.appendChild(div) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+PASS pi.appendChild(textNode) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

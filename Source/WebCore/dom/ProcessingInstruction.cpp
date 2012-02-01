@@ -36,7 +36,7 @@
 namespace WebCore {
 
 inline ProcessingInstruction::ProcessingInstruction(Document* document, const String& target, const String& data)
-    : ContainerNode(document)
+    : Node(document, CreateOther)
     , m_target(target)
     , m_data(data)
     , m_cachedSheet(0)
@@ -101,12 +101,6 @@ PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
     return create(document(), m_target, m_data);
-}
-
-// DOM Section 1.1.1
-bool ProcessingInstruction::childTypeAllowed(NodeType) const
-{
-    return false;
 }
 
 void ProcessingInstruction::checkStyleSheet()
@@ -280,14 +274,14 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls)
 
 void ProcessingInstruction::insertedIntoDocument()
 {
-    ContainerNode::insertedIntoDocument();
+    Node::insertedIntoDocument();
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
     checkStyleSheet();
 }
 
 void ProcessingInstruction::removedFromDocument()
 {
-    ContainerNode::removedFromDocument();
+    Node::removedFromDocument();
 
     document()->removeStyleSheetCandidateNode(this);
 
@@ -304,7 +298,7 @@ void ProcessingInstruction::removedFromDocument()
 void ProcessingInstruction::finishParsingChildren()
 {
     m_createdByParser = false;
-    ContainerNode::finishParsingChildren();
+    Node::finishParsingChildren();
 }
 
 } // namespace

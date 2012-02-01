@@ -23,7 +23,6 @@
 #include "config.h"
 #include "ContainerNode.h"
 
-#include "BeforeLoadEvent.h"
 #include "ChildListMutationScope.h"
 #include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
@@ -1158,17 +1157,6 @@ static void dispatchChildRemovalEvents(Node* child)
         for (; c; c = c->traverseNextNode(child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false));
     }
-}
-
-bool ContainerNode::dispatchBeforeLoadEvent(const String& sourceURL)
-{
-    if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))
-        return true;
-
-    RefPtr<ContainerNode> protector(this);
-    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
-    dispatchEvent(beforeLoadEvent.get());
-    return !beforeLoadEvent->defaultPrevented();
 }
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "Attribute.h"
+#include "BeforeLoadEvent.h"
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -2807,6 +2808,17 @@ bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicStrin
 void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
 {
     EventDispatcher::dispatchSimulatedClick(this, event, sendMouseEvents, showPressedLook);
+}
+
+bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
+{
+    if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+        return true;
+
+    RefPtr<Node> protector(this);
+    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
+    dispatchEvent(beforeLoadEvent.get());
+    return !beforeLoadEvent->defaultPrevented();
 }
 
 bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
