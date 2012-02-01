@@ -71,10 +71,6 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 static V8Extensions& staticExtensionsList()
@@ -339,7 +335,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         // Compile the script.
         v8::Local<v8::String> code = v8ExternalString(source.source());
 #if PLATFORM(CHROMIUM)
-        TRACE_EVENT_BEGIN0("v8", "v8.compile");
+        PlatformSupport::traceEventBegin("v8.compile", node, "");
 #endif
         OwnPtr<v8::ScriptData> scriptData = precompileScript(code, source.cachedScript());
 
@@ -347,11 +343,15 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         // 1, whereas v8 starts at 0.
         v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startPosition(), scriptData.get());
 #if PLATFORM(CHROMIUM)
-        TRACE_EVENT_END0("v8", "v8.compile");
-        TRACE_EVENT0("v8", "v8.run");
+        PlatformSupport::traceEventEnd("v8.compile", node, "");
+
+        PlatformSupport::traceEventBegin("v8.run", node, "");
 #endif
         result = runScript(script);
     }
+#if PLATFORM(CHROMIUM)
+    PlatformSupport::traceEventEnd("v8.run", node, "");
+#endif
 
     InspectorInstrumentation::didEvaluateScript(cookie);
 

@@ -947,24 +947,19 @@ void PlatformSupport::paintThemePart(
 
 // Trace Event ----------------------------------------------------------------
 
-const unsigned char* PlatformSupport::getTraceCategoryEnabledFlag(const char* categoryName)
+bool PlatformSupport::isTraceEventEnabled()
 {
-    return webKitPlatformSupport()->getTraceCategoryEnabledFlag(categoryName);
+    return webKitPlatformSupport()->isTraceEventEnabled();
 }
-int PlatformSupport::addTraceEvent(char phase,
-                                   const unsigned char* categoryEnabledFlag,
-                                   const char* name,
-                                   unsigned long long id,
-                                   int numArgs,
-                                   const char** argNames,
-                                   const unsigned char* argTypes,
-                                   const unsigned long long* argValues,
-                                   int thresholdBeginId,
-                                   long long threshold,
-                                   unsigned char flags)
+
+void PlatformSupport::traceEventBegin(const char* name, void* id, const char* extra)
 {
-    return webKitPlatformSupport()->addTraceEvent(
-        phase, categoryEnabledFlag, name, id, numArgs, argNames, argTypes, argValues,  thresholdBeginId, threshold, flags);
+    webKitPlatformSupport()->traceEventBegin(name, id, extra);
+}
+
+void PlatformSupport::traceEventEnd(const char* name, void* id, const char* extra)
+{
+    webKitPlatformSupport()->traceEventEnd(name, id, extra);
 }
 
 // Visited Links --------------------------------------------------------------

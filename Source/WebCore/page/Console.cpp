@@ -299,14 +299,16 @@ void Console::time(const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(page(), title);
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_BEGIN0("webkit", title.utf8().data());
+    if (PlatformSupport::isTraceEventEnabled())
+        PlatformSupport::traceEventBegin(title.utf8().data(), 0, 0);
 #endif
 }
 
 void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_END0("webkit", title.utf8().data());
+    if (PlatformSupport::isTraceEventEnabled())
+        PlatformSupport::traceEventEnd(title.utf8().data(), 0, 0);
 #endif
     InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
 }
