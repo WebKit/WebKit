@@ -111,15 +111,19 @@ haveQt(4):unix:!mac:!embedded {
 }
 
 # Netscape plugins support for WebKit2
-!no_webkit2:!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED): {
-    # Disable xlib plugins while they're in-process, because they crash
-    # as soon as an installed npapi plugin uses Qt 4.
-    false:contains(QT_CONFIG, xcb-xlib) {
-        CONFIG += plugin_backend_xlib
-        DEFINES += PLUGIN_ARCHITECTURE_X11=1 \
-                   PLUGIN_ARCHITECTURE_UNSUPPORTED=0
-    } else {
+!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED) {
+    no_webkit2 {
         DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
+    } else {
+        # Disable xlib plugins while they're in-process, because they crash
+        # as soon as an installed npapi plugin uses Qt 4.
+        false:contains(QT_CONFIG, xcb-xlib) {
+            CONFIG += plugin_backend_xlib
+            DEFINES += PLUGIN_ARCHITECTURE_X11=1 \
+                       PLUGIN_ARCHITECTURE_UNSUPPORTED=0
+        } else {
+            DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
+        }
     }
 }
 

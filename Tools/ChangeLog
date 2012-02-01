@@ -1,3 +1,14 @@
+2012-02-01  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
+
+        [Qt] Automatic clean build feature always do clean build with --no-webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=74519
+
+        Reviewed by Tor Arne Vestbø.
+
+        Set the PLUGIN_ARCHITECTURE_UNSUPPORTED define always.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-02-01  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] run-webkit-tests --qt  crashes if WEBKIT_TESTFONTS is not set
