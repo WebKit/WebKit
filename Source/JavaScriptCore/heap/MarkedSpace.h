@@ -87,7 +87,7 @@ public:
     void freeBlocks(MarkedBlock* head);
 
 private:
-    void* allocateSlowCase(SizeClass&);
+    JS_EXPORT_PRIVATE void* allocateSlowCase(SizeClass&);
     void* tryAllocateHelper(MarkedSpace::SizeClass&);
     void* tryAllocate(MarkedSpace::SizeClass&);
     MarkedBlock* allocateBlock(size_t, AllocationEffort);

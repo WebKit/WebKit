@@ -84,7 +84,7 @@ uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trai
 intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
-double charactersToDouble(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 float charactersToFloat(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);

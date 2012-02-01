@@ -127,7 +127,7 @@ private:
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const char*>(s), length); };
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const UChar*);
-    static PassRefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(StringImpl* r)
     {
         if (!r || r->isAtomic())

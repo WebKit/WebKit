@@ -206,7 +206,7 @@ namespace JSC {
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
         static const UString getTraceLine(CallFrame*, StackFrameCodeType, const UString&, int);
-        static void getStackTrace(JSGlobalData*, int line, Vector<StackFrame>& results);
+        JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, int line, Vector<StackFrame>& results);
 
         void dumpSampleData(ExecState* exec);
         void startSampling();
