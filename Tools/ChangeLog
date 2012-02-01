@@ -1,3 +1,17 @@
+2012-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (WebKit2): event.keyCode is always zero when typing in Russian
+        https://bugs.webkit.org/show_bug.cgi?id=77473
+        <rdar://problem/10751357>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::keyDown):
+        Added a new special keyDown value to test this.
+
 2012-01-31  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: fix the mock port to work with DriverProxy, reftests

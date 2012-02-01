@@ -242,7 +242,7 @@ static inline String unmodifiedTextFromEvent(NSEvent* event)
     return String([event charactersIgnoringModifiers]);
 }
 
-static String keyIdentifierForKeyEvent(NSEvent* event)
+String keyIdentifierForKeyEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged) 
         switch ([event keyCode]) {
@@ -318,7 +318,7 @@ static bool isKeypadEvent(NSEvent* event)
      return false;
 }
 
-static int windowsKeyCodeForKeyEvent(NSEvent* event)
+int windowsKeyCodeForKeyEvent(NSEvent* event)
 {
     int code = 0;
     // There are several kinds of characters for which we produce key code from char code:

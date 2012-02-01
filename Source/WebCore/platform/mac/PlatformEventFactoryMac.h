@@ -46,10 +46,14 @@ public:
 #endif
 };
 
-// FIXME: This doesn't really belong here.
-
 #if PLATFORM(MAC) && defined(__OBJC__)
+// FIXME: This doesn't really belong here.
 IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
+
+// FIXME: WebKit2 has a lot of code copy/pasted from PlatformEventFactoryMac in WebEventFactory. It should be carefully shared with WebCore.
+int windowsKeyCodeForKeyEvent(NSEvent*);
+String keyIdentifierForKeyEvent(NSEvent*);
+
 #endif
 
 } // namespace WebCore

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that non-Roman keys get proper non-null key codes.");
+window.jsTestIsAsync = true;
+
+document.onkeydown = function(event) {
+    shouldBe("event.charCode", "0");
+    shouldBe("event.keyCode", "70");
+    finishJSTest()
+}
+
+if (window.eventSender) {
+    eventSender.keyDown("cyrillicSmallLetterA");
+}
+
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

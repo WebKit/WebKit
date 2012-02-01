@@ -1,3 +1,20 @@
+2012-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (WebKit2): event.keyCode is always zero when typing in Russian
+        https://bugs.webkit.org/show_bug.cgi?id=77473
+        <rdar://problem/10751357>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/fast/events/non-roman-key-code.html
+
+        * WebCore.exp.in:
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        Export functions for reuse in WebKit2. I did not attempt any larger refactoring at this time.
+
 2012-01-31  Gregg Tavares  <gman@google.com>
 
         Make WebGL put synthesized errors in the JS console
