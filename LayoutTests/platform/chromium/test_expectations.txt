@@ -4047,3 +4047,6 @@ BUGWK77416 LINUX : inspector/timeline/timeline-receive-response-event.html = PAS
 
 // Started failing at WK r106383 or r106384.
 BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
+
+// Started crashing at WK r106422.
+BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
