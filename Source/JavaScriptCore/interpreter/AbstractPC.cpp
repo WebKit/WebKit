@@ -46,7 +46,6 @@ AbstractPC::AbstractPC(JSGlobalData& globalData, ExecState* exec)
 #endif
     
 #if ENABLE(INTERPRETER)
-    UNUSED_PARAM(globalData);
     m_pointer = exec->returnVPC();
     m_mode = Interpreter;
 #endif

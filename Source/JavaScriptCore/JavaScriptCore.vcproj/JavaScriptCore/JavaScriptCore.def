@@ -209,7 +209,6 @@ EXPORTS
     ?getPropertyDescriptor@JSObject@JSC@@QAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getPropertyNames@JSObject@JSC@@SAXPAV12@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z
-    ?getStackTrace@Interpreter@JSC@@SAXPAVJSGlobalData@2@HAAV?$Vector@UStackFrame@JSC@@$0A@@WTF@@@Z
     ?getString@JSCell@JSC@@QBE?AVUString@2@PAVExecState@2@@Z
     ?getString@JSCell@JSC@@QBE_NPAVExecState@2@AAVUString@2@@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ

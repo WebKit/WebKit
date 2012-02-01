@@ -27,7 +27,6 @@
 #include "CurrentTime.h"
 #include "ExceptionHelpers.h"
 #include "InitializeThreading.h"
-#include "Interpreter.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSLock.h"
@@ -79,7 +78,6 @@ static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& 
 
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGC(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
@@ -186,7 +184,6 @@ protected:
         addFunction(globalData, "run", functionRun, 1);
         addFunction(globalData, "load", functionLoad, 1);
         addFunction(globalData, "checkSyntax", functionCheckSyntax, 1);
-        addFunction(globalData, "jscStack", functionJSCStack, 1);
         addFunction(globalData, "readline", functionReadline, 0);
         addFunction(globalData, "preciseTime", functionPreciseTime, 0);
 #if ENABLE(SAMPLING_FLAGS)
@@ -252,22 +249,6 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {
     fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec)->value(exec).utf8().data());
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
-{
-    String trace = "--> Stack trace:\n";
-    Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->globalData(), -1, stackTrace);
-    int i = 0;
-
-    for (Vector<StackFrame>::iterator iter = stackTrace.begin(); iter < stackTrace.end(); iter++) {
-        StackFrame level = *iter;
-        trace += String::format("    %i   %s\n", i, level.toString(exec).utf8().data());
-        i++;
-    }
-    fprintf(stderr, "%s", trace.utf8().data());
     return JSValue::encode(jsUndefined());
 }
 

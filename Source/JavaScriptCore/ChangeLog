@@ -1,3 +1,29 @@
+2012-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Implement Error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=66994
+
+        Unreviewed, rolling out r106407.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (Interpreter):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+        (JSC):
+
 2012-01-31  Hajime Morrita  <morrita@chromium.org>
 
         Add missing JS_PRIVATE_EXPORTs
