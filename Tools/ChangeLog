@@ -1,3 +1,33 @@
+2012-01-31  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: fix the mock port to work with DriverProxy, reftests
+        https://bugs.webkit.org/show_bug.cgi?id=77170
+
+        Reviewed by Eric Seidel.
+
+        The DryrunPort used for benchmarking and testing NRWT has been
+        broken since we added the DriverProxy code. It isn't really
+        needed any more, so I've removed it.
+
+        The MockDRT port was also broken by DriverProxy, and moreover,
+        never worked w/ reftests. Since we don't exercise this module in
+        the unit tests, the code had also bitrotted some. I have cleaned
+        it up and made it use DriverInput and DriverOutput for
+        consistency.
+
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        (DryRunPort.__init__):
+        (DryRunPort):
+        (DryRunPort.real_name):
+        (DryRunPort.create_driver):
+        (DryRunPort.driver_cmd_line):
+        (DryRunPort._driver_class):
+        (DryrunDriver):
+        (DryrunDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort.create_driver):
+        (MockChromiumDRT.run_one_test):
+
 2012-01-31  Ojan Vafai  <ojan@chromium.org>
 
         run-webkit-tests calls out to webkit-build-directory twice

@@ -163,7 +163,7 @@ class MockDRTTest(unittest.TestCase):
         # We use the StringIO.buflist here instead of getvalue() because
         # the StringIO might be a mix of unicode/ascii and 8-bit strings.
         self.assertEqual(stdout.buflist, drt_output)
-        self.assertEqual(stderr.getvalue(), '')
+        self.assertEqual(stderr.getvalue(), '' if options.chromium else '#EOF\n')
 
     def test_main(self):
         host = MockSystemHost()

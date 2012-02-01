@@ -923,21 +923,5 @@ class RebaselineTest(unittest.TestCase):
             "/platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"], err)
 
 
-class DryrunTest(unittest.TestCase):
-    # FIXME: it's hard to know which platforms are safe to test; the
-    # chromium platforms require a chromium checkout, and the mac platform
-    # requires fcntl, so it can't be tested on win32, etc. There is
-    # probably a better way of handling this.
-    def disabled_test_darwin(self):
-        if sys.platform != "darwin":
-            return
-
-        self.assertTrue(passing_run(['--platform', 'dryrun', 'fast/html'], tests_included=True))
-        self.assertTrue(passing_run(['--platform', 'dryrun-mac', 'fast/html'], tests_included=True))
-
-    def test_test(self):
-        self.assertTrue(passing_run(['--platform', 'dryrun-test', '--pixel-tests']))
-
-
 if __name__ == '__main__':
     unittest.main()

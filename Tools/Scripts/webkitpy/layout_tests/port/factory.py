@@ -48,7 +48,6 @@ class PortFactory(object):
         'chromium_linux.ChromiumLinuxPort',
         'chromium_mac.ChromiumMacPort',
         'chromium_win.ChromiumWinPort',
-        'dryrun.DryRunPort',
         'efl.EflPort',
         'google_chrome.GoogleChromeLinux32Port',
         'google_chrome.GoogleChromeLinux64Port',

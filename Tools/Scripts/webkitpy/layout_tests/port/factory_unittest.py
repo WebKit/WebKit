@@ -35,7 +35,6 @@ from webkitpy.layout_tests.port import chromium_gpu
 from webkitpy.layout_tests.port import chromium_linux
 from webkitpy.layout_tests.port import chromium_mac
 from webkitpy.layout_tests.port import chromium_win
-from webkitpy.layout_tests.port import dryrun
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import google_chrome
 from webkitpy.layout_tests.port import gtk
