@@ -4053,3 +4053,6 @@ BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
 BUGWK77531 WIN LINUX : media/controls-drag-timebar.html = PASS TIMEOUT
 
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
+
+// This can be removed once Chromium r120068 has been deps-rolled into Skia.
+BUGWK77565 WIN LINUX : fast/box-shadow/box-shadow-clipped-slices.html = PASS IMAGE
