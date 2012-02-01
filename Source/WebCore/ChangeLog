@@ -1,3 +1,17 @@
+2012-02-01  Shawn Singh  <shawnsingh@chromium.org>
+
+        Fix the semantics of passing contentsVisible flag to GraphicsLayers
+        https://bugs.webkit.org/show_bug.cgi?id=76975
+
+        Reviewed by Simon Fraser.
+
+        This patch is covered by existing tests, in particular
+        compositing/visibility/layer-visible-content.html; its
+        expectations are rebaselined.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2012-02-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, another GTK build fix after r106446.

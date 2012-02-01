@@ -4014,8 +4014,6 @@ BUGWK76015 WIN MAC : fast/repaint/block-selection-gap-in-composited-layer.html =
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
 
-BUGWK76716 : compositing/visibility/layer-visible-content.html = IMAGE+TEXT
-
 BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
 BUGABARTH : media/audio-garbage-collect.html = PASS TIMEOUT
