@@ -1,3 +1,10 @@
+2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Gcc build fix after r106482.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+
 2012-02-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77383
