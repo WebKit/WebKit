@@ -1,3 +1,58 @@
+2012-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Tile cache doesn't have an upper limit
+        https://bugs.webkit.org/show_bug.cgi?id=77564
+        <rdar://problem/10710744>
+
+        Reviewed by Darin Adler.
+
+        Cache enough tiles to cover 3x the visible height and 2x the visible width of the page,
+        and drop tiles that are outside that area.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerDidCreateTiles):
+        Call GraphicsLayerClient::notifySyncRequired here, which will schedule a layer flush and ensure that
+        the page layout is up to date before the new tiles are painted.
+
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        Add platformCALayerDidCreateTiles member function.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        Update for new/removed member functions and member variables.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache):
+        Initialize the tile revalidation timer.
+
+        (WebCore::TileCache::tileCacheLayerBoundsChanged):
+        If we don't have any tiles at all right now, revalidate the tiles immediately. Otherwise,
+        schedule the revalidation timer.
+
+        (WebCore::TileCache::setNeedsDisplayInRect):
+        Return early if we have no tiles.
+
+        (WebCore::TileCache::visibleRectChanged):
+        Schedule tile revalidation.
+
+        (WebCore::TileCache::rectForTileIndex):
+        New helper function that returns the bounds rect of a tile given its tile index.
+
+        (WebCore::TileCache::getTileIndexRangeForRect):
+        Clamp the rect to the bounds of the tile cache layer.
+
+        (WebCore::TileCache::scheduleTileRevalidation):
+        Schedule the revalidation timer if it hasn't already been scheduled.
+
+        (WebCore::TileCache::tileRevalidationTimerFired):
+        Call revalidateTiles.
+
+        (WebCore::TileCache::revalidateTiles):
+        Compute the tile coverage rect and remove all tiles that are outside. Create new tiles for any
+        parts of the tile coverage rect that don't have tiles already.
+
+        (WebCore::TileCache::tileLayerAtIndex):
+        Remove invalid assertions.
+
 2012-02-01  Max Vujovic  <mvujovic@adobe.com>
 
         Add support for fixed and percent min-width on the table element for table-layout: auto to

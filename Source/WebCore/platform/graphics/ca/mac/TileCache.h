@@ -28,6 +28,7 @@
 
 #include "IntPointHash.h"
 #include "IntSize.h"
+#include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -73,12 +74,14 @@ private:
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
 
     FloatRect visibleRect() const;
-
     IntRect bounds() const;
+
+    IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
 
-    IntSize numTilesForGridSize(const IntSize&) const;
-    void resizeTileGrid(const IntSize& numTiles);
+    void scheduleTileRevalidation();
+    void tileRevalidationTimerFired(Timer<TileCache>*);
+    void revalidateTiles();
 
     WebTileLayer* tileLayerAtIndex(const TileIndex&) const;
     RetainPtr<WebTileLayer> createTileLayer();
@@ -89,11 +92,9 @@ private:
     RetainPtr<CALayer> m_tileContainerLayer;
     const IntSize m_tileSize;
 
-    // Number of tiles in each dimension.
-    IntSize m_numTilesInGrid;
-
     typedef HashMap<TileIndex, RetainPtr<WebTileLayer> > TileMap;
     TileMap m_tiles;
+    Timer<TileCache> m_tileRevalidationTimer;
 
     bool m_acceleratesDrawing;
 

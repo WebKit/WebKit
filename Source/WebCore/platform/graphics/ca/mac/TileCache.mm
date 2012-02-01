@@ -52,6 +52,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     : m_tileCacheLayer(tileCacheLayer)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
     , m_tileSize(tileSize)
+    , m_tileRevalidationTimer(this, &TileCache::tileRevalidationTimerFired)
     , m_acceleratesDrawing(false)
     , m_tileDebugBorderWidth(0)
 {
@@ -63,11 +64,14 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
 
 void TileCache::tileCacheLayerBoundsChanged()
 {
-    IntSize numTilesInGrid = numTilesForGridSize(bounds().size());
-    if (numTilesInGrid == m_numTilesInGrid)
+    if (m_tiles.isEmpty()) {
+        // We must revalidate immediately instead of using a timer when there are
+        // no tiles to avoid a flash when transitioning from one page to another.
+        revalidateTiles();
         return;
+    }
 
-    resizeTileGrid(numTilesInGrid);
+    scheduleTileRevalidation();
 }
 
 void TileCache::setNeedsDisplay()
@@ -77,7 +81,7 @@ void TileCache::setNeedsDisplay()
 
 void TileCache::setNeedsDisplayInRect(const IntRect& rect)
 {
-    if (m_numTilesInGrid.isZero())
+    if (m_tiles.isEmpty())
         return;
 
     // Find the tiles that need to be invalidated.
@@ -169,7 +173,7 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 
 void TileCache::visibleRectChanged()
 {
-    // FIXME: Implement.
+    scheduleTileRevalidation();
 }
 
 void TileCache::setTileDebugBorderWidth(float borderWidth)
@@ -219,60 +223,104 @@ IntRect TileCache::bounds() const
     return IntRect(IntPoint(), IntSize([m_tileCacheLayer bounds].size));
 }
 
+IntRect TileCache::rectForTileIndex(const TileIndex& tileIndex) const
+{
+    return IntRect(IntPoint(tileIndex.x() * m_tileSize.width(), tileIndex.y() * m_tileSize.height()), m_tileSize);
+}
+
 void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight)
 {
-    topLeft.setX(max(rect.x() / m_tileSize.width(), 0));
-    topLeft.setY(max(rect.y() / m_tileSize.height(), 0));
-    bottomRight.setX(min(rect.maxX() / m_tileSize.width(), m_numTilesInGrid.width() - 1));
-    bottomRight.setY(min(rect.maxY() / m_tileSize.height(), m_numTilesInGrid.height() - 1));
+    IntRect clampedRect = intersection(rect, bounds());
+
+    topLeft.setX(max(clampedRect.x() / m_tileSize.width(), 0));
+    topLeft.setY(max(clampedRect.y() / m_tileSize.height(), 0));
+    bottomRight.setX(max(clampedRect.maxX() / m_tileSize.width(), 0));
+    bottomRight.setY(max(clampedRect.maxY() / m_tileSize.height(), 0));
 }
 
-IntSize TileCache::numTilesForGridSize(const IntSize& gridSize) const
+void TileCache::scheduleTileRevalidation()
 {
-    int numXTiles = ceil(static_cast<double>(gridSize.width()) / m_tileSize.width());
-    int numYTiles = ceil(static_cast<double>(gridSize.height()) / m_tileSize.height());
+    if (m_tileRevalidationTimer.isActive())
+        return;
 
-    return IntSize(numXTiles, numYTiles);
+    m_tileRevalidationTimer.startOneShot(0);
 }
 
-void TileCache::resizeTileGrid(const IntSize& numTilesInGrid)
+void TileCache::tileRevalidationTimerFired(Timer<TileCache>*)
 {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+    revalidateTiles();
+}
 
-    RetainPtr<NSMutableArray> newSublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:numTilesInGrid.width() * numTilesInGrid.height()]);
+void TileCache::revalidateTiles()
+{
+    IntRect tileCoverageRect = enclosingIntRect(visibleRect());
+    if (tileCoverageRect.isEmpty())
+        return;
 
-    for (int y = 0; y < numTilesInGrid.height(); ++y) {
-        for (int x = 0; x < numTilesInGrid.width(); ++x) {
-            RetainPtr<WebTileLayer> tileLayer;
+    // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
+    // These values were chosen because it's more common to have tall pages and to scroll vertically,
+    // so we keep more tiles above and below the current area.
+    tileCoverageRect.inflateX(tileCoverageRect.width() / 2);
+    tileCoverageRect.inflateY(tileCoverageRect.height());
 
-            if (x < m_numTilesInGrid.width() && y < m_numTilesInGrid.height()) {
-                // We can reuse the tile layer at this index.
-                tileLayer = tileLayerAtIndex(TileIndex(x, y));
-            } else {
-                tileLayer = createTileLayer();
-                m_tiles.set(TileIndex(x, y), tileLayer.get());
-            }
+    Vector<TileIndex> tilesToRemove;
 
-            [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
-            [newSublayers.get() addObject:tileLayer.get()];
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        const TileIndex& tileIndex = it->first;
+
+        WebTileLayer* tileLayer = it->second.get();
+
+        if (!rectForTileIndex(tileIndex).intersects(tileCoverageRect)) {
+            // Remove this layer.
+            [tileLayer removeFromSuperlayer];
+            [tileLayer setTileCache:0];
+
+            tilesToRemove.append(tileIndex);
         }
     }
 
-    // FIXME: Make sure to call setTileCache:0 on the layers that get thrown away here.
-    [m_tileContainerLayer.get() setSublayers:newSublayers.get()];
-    m_numTilesInGrid = numTilesInGrid;
+    // FIXME: Be more clever about which tiles to remove. We might not want to remove all
+    // the tiles that are outside the coverage rect. When we know that we're going to be scrolling up,
+    // we might want to remove the ones below the coverage rect but keep the ones above.
+    for (size_t i = 0; i < tilesToRemove.size(); ++i)
+        m_tiles.remove(tilesToRemove[i]);
 
-    [CATransaction commit];
+    TileIndex topLeft;
+    TileIndex bottomRight;
+    getTileIndexRangeForRect(tileCoverageRect, topLeft, bottomRight);
+
+    bool didCreateNewTiles = false;
+
+    for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
+        for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
+            TileIndex tileIndex(x, y);
+
+            pair<TileMap::iterator, bool> result = m_tiles.add(tileIndex, 0);
+            if (result.first->second) {
+                // We already have a layer for this tile.
+                continue;
+            }
+
+            didCreateNewTiles = true;
+
+            RetainPtr<WebTileLayer> tileLayer = createTileLayer();
+            result.first->second = tileLayer.get();
+
+            [tileLayer.get() setNeedsDisplay];
+            [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
+            [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
+        }
+    }
+
+    if (!didCreateNewTiles)
+        return;
+
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    platformLayer->owner()->platformCALayerDidCreateTiles();
 }
 
 WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
 {
-    ASSERT(index.x() >= 0);
-    ASSERT(index.x() <= m_numTilesInGrid.width());
-    ASSERT(index.y() >= 0);
-    ASSERT(index.y() <= m_numTilesInGrid.height());
-
     return m_tiles.get(index).get();
 }
 

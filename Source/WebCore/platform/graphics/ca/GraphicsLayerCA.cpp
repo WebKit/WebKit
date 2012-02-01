@@ -933,6 +933,15 @@ void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, con
     paintGraphicsLayerContents(context, clip);
 }
 
+void GraphicsLayerCA::platformCALayerDidCreateTiles()
+{
+    ASSERT(m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer);
+
+    // Ensure that the layout is up to date before any individual tiles are painted by telling the client
+    // that it needs to sync its layer state, which will end up scheduling the layer flusher.
+    client()->notifySyncRequired(this);
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     if (!m_uncommittedChanges)
