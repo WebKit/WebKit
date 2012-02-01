@@ -42,7 +42,7 @@ PassOwnPtr<MockWebSpeechInputController> MockWebSpeechInputController::create(We
 void MockWebSpeechInputController::addMockRecognitionResult(const WebString& result, double confidence, const WebString& language)
 {
     WebSpeechInputResult res;
-    res.set(result, confidence);
+    res.assign(result, confidence);
 
     if (language.isEmpty())
         m_resultsForEmptyLanguage.append(res);
@@ -169,7 +169,7 @@ void MockWebSpeechInputController::speechTaskFired()
             error.append("'");
 
             WebSpeechInputResult res;
-            res.set(WebString::fromUTF8(error.utf8().data()), 1.0);
+            res.assign(WebString::fromUTF8(error.utf8().data()), 1.0);
 
             Vector<WebSpeechInputResult> results;
             results.append(res);

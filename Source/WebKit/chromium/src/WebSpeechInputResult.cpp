@@ -43,7 +43,7 @@ WebSpeechInputResult::WebSpeechInputResult(const PassRefPtr<WebCore::SpeechInput
 {
 }
 
-void WebSpeechInputResult::set(const WebString& utterance, double confidence)
+void WebSpeechInputResult::assign(const WebString& utterance, double confidence)
 {
     m_private = WebCore::SpeechInputResult::create(utterance, confidence);
 }

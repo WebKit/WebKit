@@ -1,3 +1,20 @@
+2012-02-01  Hans Wennborg  <hans@chromium.org>
+
+        Rename WebSpeechInputResult::set() to assign()
+        https://bugs.webkit.org/show_bug.cgi?id=77540
+
+        Reviewed by Darin Fisher.
+
+        It was suggested in a previous code review
+        (https://bugs.webkit.org/show_bug.cgi?id=77083#c5)
+        that this function should be called assign().
+
+        * public/WebSpeechInputResult.h:
+        (WebSpeechInputResult):
+        (WebKit::WebSpeechInputResult::set):
+        * src/WebSpeechInputResult.cpp:
+        (WebKit::WebSpeechInputResult::assign):
+
 2012-02-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Disable WebFrameTest.FindInPage

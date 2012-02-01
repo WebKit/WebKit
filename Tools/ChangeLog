@@ -1,3 +1,14 @@
+2012-02-01  Hans Wennborg  <hans@chromium.org>
+
+        Rename WebSpeechInputResult::set() to assign()
+        https://bugs.webkit.org/show_bug.cgi?id=77540
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        (MockWebSpeechInputController::addMockRecognitionResult):
+        (MockWebSpeechInputController::speechTaskFired):
+
 2012-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKit1 API documentation is not generated when building with gtk-2.0
