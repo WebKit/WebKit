@@ -71,24 +71,16 @@ void AudioBasicProcessorNode::process(size_t framesToProcess)
 {
     AudioBus* destinationBus = output(0)->bus();
     
-    // The realtime thread can't block on this lock, so we call tryLock() instead.
-    if (m_processLock.tryLock()) {
-        if (!isInitialized() || !processor())
-            destinationBus->zero();
-        else {
-            AudioBus* sourceBus = input(0)->bus();
-
-            // FIXME: if we take "tail time" into account, then we can avoid calling processor()->process() once the tail dies down.
-            if (!input(0)->isConnected())
-                sourceBus->zero();
-            
-            processor()->process(sourceBus, destinationBus, framesToProcess);  
-        }
-
-        m_processLock.unlock();
-    } else {
-        // Too bad - the tryLock() failed.  We must be in the middle of re-connecting and were already outputting silence anyway...
+    if (!isInitialized() || !processor())
         destinationBus->zero();
+    else {
+        AudioBus* sourceBus = input(0)->bus();
+
+        // FIXME: if we take "tail time" into account, then we can avoid calling processor()->process() once the tail dies down.
+        if (!input(0)->isConnected())
+            sourceBus->zero();
+
+        processor()->process(sourceBus, destinationBus, framesToProcess);  
     }
 }
 
@@ -124,8 +116,6 @@ void AudioBasicProcessorNode::checkNumberOfChannelsForInput(AudioNodeInput* inpu
     
     if (isInitialized() && numberOfChannels != output(0)->numberOfChannels()) {
         // We're already initialized but the channel count has changed.
-        // We need to be careful since we may be actively processing right now, so synchronize with process().
-        MutexLocker locker(m_processLock);
         uninitialize();
     }
     

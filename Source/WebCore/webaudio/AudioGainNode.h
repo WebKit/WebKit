@@ -61,10 +61,6 @@ private:
     RefPtr<AudioGain> m_gain;
 
     AudioFloatArray m_sampleAccurateGainValues;
-    
-    // This synchronizes live channel count changes which require an uninitialization / re-initialization.
-    // FIXME: this can go away when we implement optimization for mixing with gain directly in summing junction of AudioNodeInput.
-    mutable Mutex m_processLock;
 };
 
 } // namespace WebCore

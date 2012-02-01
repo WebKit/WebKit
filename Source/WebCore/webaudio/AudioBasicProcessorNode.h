@@ -57,10 +57,6 @@ public:
 protected:
     AudioProcessor* processor() { return m_processor.get(); }
     OwnPtr<AudioProcessor> m_processor;
-
-private:
-    // This synchronizes live channel count changes which require an uninitialization / re-initialization.
-    mutable Mutex m_processLock;
 };
 
 } // namespace WebCore

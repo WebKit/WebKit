@@ -1,3 +1,22 @@
+2012-01-31  Raymond Liu  <raymond.liu@intel.com>
+
+        Clean up m_processLock logic in AudioBasicProcessorNode and AudioGainNode
+        https://bugs.webkit.org/show_bug.cgi?id=76772
+
+        Reviewed by Kenneth Russell.
+
+        No new tests required.
+
+        * webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::process):
+        (WebCore::AudioBasicProcessorNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioBasicProcessorNode.h:
+        * webaudio/AudioGainNode.cpp:
+        (WebCore::AudioGainNode::process):
+        (WebCore::AudioGainNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioGainNode.h:
+        (AudioGainNode):
+
 2012-01-31  Adam Klein  <adamk@chromium.org>
 
         ProcessingInstruction should not be a ContainerNode

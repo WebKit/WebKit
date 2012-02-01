@@ -59,31 +59,23 @@ void AudioGainNode::process(size_t framesToProcess)
     AudioBus* outputBus = output(0)->bus();
     ASSERT(outputBus);
 
-    // The realtime thread can't block on this lock, so we call tryLock() instead.
-    if (m_processLock.tryLock()) {
-        if (!isInitialized() || !input(0)->isConnected())
-            outputBus->zero();
-        else {
-            AudioBus* inputBus = input(0)->bus();
-
-            if (gain()->hasTimelineValues()) {
-                // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
-                ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
-                if (framesToProcess <= m_sampleAccurateGainValues.size()) {
-                    float* gainValues = m_sampleAccurateGainValues.data();
-                    gain()->calculateSampleAccurateValues(gainValues, framesToProcess);
-                    outputBus->copyWithSampleAccurateGainValuesFrom(*inputBus, gainValues, framesToProcess);
-                }
-            } else {
-                // Apply the gain with de-zippering into the output bus.
-                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain()->value());
-            }
-        }
-
-        m_processLock.unlock();
-    } else {
-        // Too bad - the tryLock() failed.  We must be in the middle of re-connecting and were already outputting silence anyway...
+    if (!isInitialized() || !input(0)->isConnected())
         outputBus->zero();
+    else {
+        AudioBus* inputBus = input(0)->bus();
+
+        if (gain()->hasTimelineValues()) {
+            // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
+            ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
+            if (framesToProcess <= m_sampleAccurateGainValues.size()) {
+                float* gainValues = m_sampleAccurateGainValues.data();
+                gain()->calculateSampleAccurateValues(gainValues, framesToProcess);
+                outputBus->copyWithSampleAccurateGainValuesFrom(*inputBus, gainValues, framesToProcess);
+            }
+        } else {
+            // Apply the gain with de-zippering into the output bus.
+            outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain()->value());
+        }
     }
 }
 
@@ -100,6 +92,8 @@ void AudioGainNode::reset()
 // uninitialize and then re-initialize with the new channel count.
 void AudioGainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
+    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+
     ASSERT(input && input == this->input(0));
     if (input != this->input(0))
         return;
@@ -108,8 +102,6 @@ void AudioGainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 
     if (isInitialized() && numberOfChannels != output(0)->numberOfChannels()) {
         // We're already initialized but the channel count has changed.
-        // We need to be careful since we may be actively processing right now, so synchronize with process().
-        MutexLocker locker(m_processLock);
         uninitialize();
     }
 
