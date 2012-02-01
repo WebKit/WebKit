@@ -1,0 +1,54 @@
+<!DOCTYPE>
+<html>
+<body onload="test()">
+<select id="myList" size="10" multiple></select>
+<script>
+function populateList()
+{
+    var myList = document.getElementById("myList");
+    var item;
+
+    for (var ii = 0; ii < 20; ii++) {
+        item = document.createElement("option");
+        item.value = ii;
+        item.appendChild(document.createTextNode("Item #" + ii));
+        myList.appendChild(item);
+    }
+}
+
+function clearList()
+{
+    var myList = document.getElementById("myList");
+    var items = myList.getElementsByTagName("option");
+
+    for (var ii = items.length-1; ii >= 0; ii--) {
+        myList.removeChild(items[ii]);
+    }
+}
+
+function populateListTimeout()
+{
+    populateList();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function clearListTimeout()
+{
+    clearList();
+    setTimeout(populateListTimeout, 0);
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    populateList();
+    document.getElementById("myList").selectedIndex = 19;
+    window.setTimeout(clearListTimeout, 0);
+}
+
+</script>
+</body>
+</html>
