@@ -137,6 +137,26 @@ public:
         return predictionFromValue(node.valueOfJSConstant(codeBlock));
     }
     
+    bool addShouldSpeculateInteger(Node& add, CodeBlock* codeBlock)
+    {
+        ASSERT(add.op == ValueAdd || add.op == ArithAdd || add.op == ArithSub);
+        
+        Node& left = at(add.child1());
+        Node& right = at(add.child2());
+        
+        if (left.hasConstant())
+            return addImmediateShouldSpeculateInteger(codeBlock, add, right, left);
+        if (right.hasConstant())
+            return addImmediateShouldSpeculateInteger(codeBlock, add, left, right);
+        
+        return Node::shouldSpeculateInteger(left, right) && add.canSpeculateInteger();
+    }
+    
+    bool addShouldSpeculateInteger(NodeIndex nodeIndex, CodeBlock* codeBlock)
+    {
+        return addShouldSpeculateInteger(at(nodeIndex), codeBlock);
+    }
+    
     // Helper methods to check nodes for constants.
     bool isConstant(NodeIndex nodeIndex)
     {
@@ -250,6 +270,28 @@ public:
     unsigned m_localVars;
     unsigned m_parameterSlots;
 private:
+    
+    bool addImmediateShouldSpeculateInteger(CodeBlock* codeBlock, Node& add, Node& variable, Node& immediate)
+    {
+        ASSERT(immediate.hasConstant());
+        
+        JSValue immediateValue = immediate.valueOfJSConstant(codeBlock);
+        if (!immediateValue.isNumber())
+            return false;
+        
+        if (!variable.shouldSpeculateInteger())
+            return false;
+        
+        if (immediateValue.isInt32())
+            return add.canSpeculateInteger();
+        
+        double doubleImmediate = immediateValue.asDouble();
+        const double twoToThe48 = 281474976710656.0;
+        if (doubleImmediate < -twoToThe48 || doubleImmediate > twoToThe48)
+            return false;
+        
+        return nodeCanTruncateInteger(add.arithNodeFlags());
+    }
     
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);

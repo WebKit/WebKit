@@ -2062,6 +2062,16 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
 }
+
+unsigned CodeBlock::addOrFindConstant(JSValue v)
+{
+    unsigned numberOfConstants = numberOfConstantRegisters();
+    for (unsigned i = 0; i < numberOfConstants; ++i) {
+        if (getConstant(FirstConstantRegisterIndex + i) == v)
+            return i;
+    }
+    return addConstant(v);
+}
     
 #if ENABLE(JIT)
 void CodeBlock::unlinkCalls()

@@ -730,6 +730,12 @@ private:
     bool isFunctionConstant(NodeIndex nodeIndex) { return m_jit.isFunctionConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.valueOfNumberConstant(nodeIndex); }
+    int32_t valueOfNumberConstantAsInt32(NodeIndex nodeIndex)
+    {
+        if (isInt32Constant(nodeIndex))
+            return valueOfInt32Constant(nodeIndex);
+        return JSC::toInt32(valueOfNumberConstant(nodeIndex));
+    }
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.addressOfDoubleConstant(nodeIndex); }
 #endif
@@ -1516,6 +1522,8 @@ private:
     void compileUInt32ToNumber(Node&);
     void compileGetByValOnByteArray(Node&);
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
+    void compileAdd(Node&);
+    void compileArithSub(Node&);
     void compileArithMul(Node&);
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);

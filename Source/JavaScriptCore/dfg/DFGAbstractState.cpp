@@ -280,7 +280,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case ValueAdd:
     case ArithAdd: {
-        if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()]) && node.canSpeculateInteger()) {
+        if (m_graph.addShouldSpeculateInteger(node, m_codeBlock)) {
             forNode(node.child1()).filter(PredictInt32);
             forNode(node.child2()).filter(PredictInt32);
             forNode(nodeIndex).set(PredictInt32);
@@ -298,7 +298,19 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
     }
             
-    case ArithSub:
+    case ArithSub: {
+        if (m_graph.addShouldSpeculateInteger(node, m_codeBlock)) {
+            forNode(node.child1()).filter(PredictInt32);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        forNode(node.child1()).filter(PredictNumber);
+        forNode(node.child2()).filter(PredictNumber);
+        forNode(nodeIndex).set(PredictDouble);
+        break;
+    }
+        
     case ArithMul:
     case ArithDiv:
     case ArithMin:

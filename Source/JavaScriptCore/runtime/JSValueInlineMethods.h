@@ -477,6 +477,7 @@ namespace JSC {
 
     inline double JSValue::asDouble() const
     {
+        ASSERT(isDouble());
         return reinterpretIntptrToDouble(u.asInt64 - DoubleEncodeOffset);
     }
 

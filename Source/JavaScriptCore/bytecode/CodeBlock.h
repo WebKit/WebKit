@@ -718,11 +718,14 @@ namespace JSC {
         Identifier& identifier(int index) { return m_identifiers[index]; }
 
         size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
-        void addConstant(JSValue v)
+        unsigned addConstant(JSValue v)
         {
+            unsigned result = m_constantRegisters.size();
             m_constantRegisters.append(WriteBarrier<Unknown>());
             m_constantRegisters.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), v);
+            return result;
         }
+        unsigned addOrFindConstant(JSValue);
         WriteBarrier<Unknown>& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
         ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
         ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }

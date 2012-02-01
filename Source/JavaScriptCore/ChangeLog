@@ -1,5 +1,50 @@
 2012-02-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should fold double-to-int conversions
+        https://bugs.webkit.org/show_bug.cgi?id=77532
+
+        Reviewed by Oliver Hunt.
+        
+        Performance neutral on major benchmarks. But it makes calling V8's
+        Math.random() 4x faster.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::addOrFindConstant):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addConstant):
+        (CodeBlock):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getJSConstantForValue):
+        (JSC::DFG::ByteCodeParser::isInt32Constant):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateInteger):
+        (Graph):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInteger):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::doRoundOfDoubleVoting):
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::valueOfNumberConstantAsInt32):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSValueInlineMethods.h:
+        (JSC::JSValue::asDouble):
+
+2012-02-01  Filip Pizlo  <fpizlo@apple.com>
+
         DFG graph dump for GetScopedVar should show the correct prediction
         https://bugs.webkit.org/show_bug.cgi?id=77530
 

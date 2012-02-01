@@ -1965,133 +1965,17 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueAdd:
-    case ArithAdd: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-            if (isInt32Constant(node.child1())) {
-                int32_t imm1 = valueOfInt32Constant(node.child1());
-                SpeculateIntegerOperand op2(this, node.child2());
-                GPRTemporary result(this);
-
-                if (nodeCanTruncateInteger(node.arithNodeFlags())) {
-                    m_jit.move(op2.gpr(), result.gpr());
-                    m_jit.add32(Imm32(imm1), result.gpr());
-                } else
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchAdd32(MacroAssembler::Overflow, op2.gpr(), Imm32(imm1), result.gpr()));
-
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-                
-            if (isInt32Constant(node.child2())) {
-                SpeculateIntegerOperand op1(this, node.child1());
-                int32_t imm2 = valueOfInt32Constant(node.child2());
-                GPRTemporary result(this);
-                
-                if (nodeCanTruncateInteger(node.arithNodeFlags())) {
-                    m_jit.move(op1.gpr(), result.gpr());
-                    m_jit.add32(Imm32(imm2), result.gpr());
-                } else
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
-
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-                
-            SpeculateIntegerOperand op1(this, node.child1());
-            SpeculateIntegerOperand op2(this, node.child2());
-            GPRTemporary result(this, op1, op2);
-
-            GPRReg gpr1 = op1.gpr();
-            GPRReg gpr2 = op2.gpr();
-            GPRReg gprResult = result.gpr();
-
-            if (nodeCanTruncateInteger(node.arithNodeFlags())) {
-                if (gpr1 == gprResult)
-                    m_jit.add32(gpr2, gprResult);
-                else {
-                    m_jit.move(gpr2, gprResult);
-                    m_jit.add32(gpr1, gprResult);
-                }
-            } else {
-                MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, gpr1, gpr2, gprResult);
-                
-                if (gpr1 == gprResult)
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr2));
-                else if (gpr2 == gprResult)
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr1));
-                else
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, check);
-            }
-
-            integerResult(gprResult, m_compileIndex);
-            break;
-        }
-        
-        if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
-            SpeculateDoubleOperand op1(this, node.child1());
-            SpeculateDoubleOperand op2(this, node.child2());
-            FPRTemporary result(this, op1, op2);
-
-            FPRReg reg1 = op1.fpr();
-            FPRReg reg2 = op2.fpr();
-            m_jit.addDouble(reg1, reg2, result.fpr());
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        ASSERT(op == ValueAdd);
-        compileValueAdd(node);
+    case ArithAdd:
+        compileAdd(node);
         break;
-    }
 
-    case ArithSub: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-            if (isInt32Constant(node.child2())) {
-                SpeculateIntegerOperand op1(this, node.child1());
-                int32_t imm2 = valueOfInt32Constant(node.child2());
-                GPRTemporary result(this);
-
-                if (nodeCanTruncateInteger(node.arithNodeFlags())) {
-                    m_jit.move(op1.gpr(), result.gpr());
-                    m_jit.sub32(Imm32(imm2), result.gpr());
-                } else
-                    speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
-
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-                
-            SpeculateIntegerOperand op1(this, node.child1());
-            SpeculateIntegerOperand op2(this, node.child2());
-            GPRTemporary result(this);
-
-            if (nodeCanTruncateInteger(node.arithNodeFlags())) {
-                m_jit.move(op1.gpr(), result.gpr());
-                m_jit.sub32(op2.gpr(), result.gpr());
-            } else
-                speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), op2.gpr(), result.gpr()));
-
-            integerResult(result.gpr(), m_compileIndex);
-            break;
-        }
-        
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        FPRTemporary result(this, op1);
-
-        FPRReg reg1 = op1.fpr();
-        FPRReg reg2 = op2.fpr();
-        m_jit.subDouble(reg1, reg2, result.fpr());
-
-        doubleResult(result.fpr(), m_compileIndex);
+    case ArithSub:
+        compileArithSub(node);
         break;
-    }
 
-    case ArithMul: {
+    case ArithMul:
         compileArithMul(node);
         break;
-    }
 
     case ArithDiv: {
         if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {

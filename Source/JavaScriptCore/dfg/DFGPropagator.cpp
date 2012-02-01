@@ -382,7 +382,7 @@ private:
             
             if (left && right) {
                 if (isNumberPrediction(left) && isNumberPrediction(right)) {
-                    if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    if (m_graph.addShouldSpeculateInteger(node, m_codeBlock))
                         changed |= mergePrediction(PredictInt32);
                     else
                         changed |= mergePrediction(PredictDouble);
@@ -396,7 +396,19 @@ private:
         }
             
         case ArithAdd:
-        case ArithSub:
+        case ArithSub: {
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
+            
+            if (left && right) {
+                if (m_graph.addShouldSpeculateInteger(node, m_codeBlock))
+                    changed |= mergePrediction(PredictInt32);
+                else
+                    changed |= mergePrediction(PredictDouble);
+            }
+            break;
+        }
+            
         case ArithMul:
         case ArithMin:
         case ArithMax:
@@ -712,7 +724,23 @@ private:
             switch (node.op) {
             case ValueAdd:
             case ArithAdd:
-            case ArithSub:
+            case ArithSub: {
+                PredictedType left = m_graph[node.child1()].prediction();
+                PredictedType right = m_graph[node.child2()].prediction();
+                
+                VariableAccessData::Ballot ballot;
+                
+                if (isNumberPrediction(left) && isNumberPrediction(right)
+                    && !m_graph.addShouldSpeculateInteger(node, m_codeBlock))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                vote(node.child2(), ballot);
+                break;
+            }
+                
             case ArithMul:
             case ArithMin:
             case ArithMax:
@@ -829,27 +857,21 @@ private:
 #endif
         
         switch (op) {
-        case ValueAdd: {
-            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
-                toDouble(node.child1());
-                toDouble(node.child2());
-                break;
-            }
-            
+        case ValueAdd:
+        case ArithAdd:
+        case ArithSub: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right
                 && isNumberPrediction(left) && isNumberPrediction(right)
-                && ((left & PredictDouble) || (right & PredictDouble))) {
+                && !m_graph.addShouldSpeculateInteger(node, m_codeBlock)) {
                 toDouble(node.child1());
                 toDouble(node.child2());
             }
             break;
         }
             
-        case ArithAdd:
-        case ArithSub:
         case ArithMul:
         case ArithMin:
         case ArithMax:

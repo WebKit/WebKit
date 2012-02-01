@@ -334,7 +334,8 @@ private:
             JSValue v = valueOfJSConstant(index);
             if (v.isInt32())
                 return getJSConstant(node.constantNumber());
-            // FIXME: We could convert the double ToInteger at this point.
+            if (v.isNumber())
+                return getJSConstantForValue(JSValue(JSC::toInt32(v.asNumber())));
         }
 
         return addToGraph(ValueToInt32, index);
@@ -355,6 +356,17 @@ private:
         }
 
         return addToGraph(ValueToNumber, OpInfo(NodeUseBottom), index);
+    }
+    
+    NodeIndex getJSConstantForValue(JSValue constantValue)
+    {
+        unsigned constantIndex = m_codeBlock->addOrFindConstant(constantValue);
+        if (constantIndex >= m_constants.size())
+            m_constants.append(ConstantRecord());
+        
+        ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
+        
+        return getJSConstant(constantIndex);
     }
 
     NodeIndex getJSConstant(unsigned constant)
@@ -387,16 +399,6 @@ private:
     {
         return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
     }
-    bool isSmallInt32Constant(NodeIndex nodeIndex)
-    {
-        if (!isJSConstant(nodeIndex))
-            return false;
-        JSValue value = valueOfJSConstant(nodeIndex);
-        if (!value.isInt32())
-            return false;
-        int32_t intValue = value.asInt32();
-        return intValue >= -5 && intValue <= 5;
-    }
     // Convenience methods for getting constant values.
     JSValue valueOfJSConstant(NodeIndex index)
     {
@@ -408,7 +410,7 @@ private:
         ASSERT(isInt32Constant(nodeIndex));
         return valueOfJSConstant(nodeIndex).asInt32();
     }
-
+    
     // This method returns a JSConstant with the value 'undefined'.
     NodeIndex constantUndefined()
     {
