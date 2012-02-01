@@ -6,8 +6,6 @@ Layout
 PageLoad
 SunSpider
 XSSAuditor
-# Blocked by http://webkit.org/b/77328
-Dromaeo
 
 # Bug 77024 - Web Inspector: tests in PerformanceTests/inspector/ are timing out
 inspector

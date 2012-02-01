@@ -1,3 +1,112 @@
+2012-01-31  Hajime Morrita  <morrita@chromium.org>
+
+        Import Dromaeo to WebKit repository.
+        https://bugs.webkit.org/show_bug.cgi?id=77328
+
+        Reviewed by Ryosuke Niwa.
+
+        Imported a modified version of Dromaeo which is able to
+        run on the DRT.
+
+        The imported version originally came from:
+        https://github.com/omo/dromaeo/commit/c942a1452109cdd5f759b3c4aee8d68d490d44a2
+
+        * Dromaeo/resources/dromaeo/web/application.css: Added.
+        * Dromaeo/resources/dromaeo/web/favicon.ico: Added.
+        * Dromaeo/resources/dromaeo/web/favicon.png: Added.
+        * Dromaeo/resources/dromaeo/web/htmlrunner.js: Added.
+        * Dromaeo/resources/dromaeo/web/ie.css: Added.
+        * Dromaeo/resources/dromaeo/web/images/bg.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/clouds.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/clouds2.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/comets.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino1.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino2.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino3.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino4.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino5.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino6.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino7.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/dino8.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/left.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/logo.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/logo2.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/logo3.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/right.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/top.png: Added.
+        * Dromaeo/resources/dromaeo/web/images/water.png: Added.
+        * Dromaeo/resources/dromaeo/web/index.html: Added.
+        * Dromaeo/resources/dromaeo/web/jquery.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/dojo.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/jquery.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/mootools.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/prototype.js: Added.
+        * Dromaeo/resources/dromaeo/web/pngfix.js: Added.
+        * Dromaeo/resources/dromaeo/web/reset.css: Added.
+        * Dromaeo/resources/dromaeo/web/test-head.html: Added.
+        * Dromaeo/resources/dromaeo/web/test-head.js: Added.
+        * Dromaeo/resources/dromaeo/web/test-tail.html: Added.
+        * Dromaeo/resources/dromaeo/web/test-tail.js: Added.
+        * Dromaeo/resources/dromaeo/web/tests/MANIFEST.json: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-dojo.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-mootools.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-yui.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dom-attr.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dom-modify.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dom-query.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dom-traverse.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-3d-cube.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-core-eval.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-object-array.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-object-regexp.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-object-string.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/dromaeo-string-base64.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-attr-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-attr-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-event-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-event-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-modify-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-modify-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-style-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-style-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-traverse-jquery.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/jslib-traverse-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-3d-morph.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-3d-raytrace.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-access-binary-trees.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-access-fannkuch.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-access-nbody.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-access-nsieve.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-bitops-3bit-bits-in-byte.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-bitops-bits-in-byte.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-bitops-bitwise-and.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-bitops-nsieve-bits.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-controlflow-recursive.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-crypto-aes.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-crypto-md5.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-crypto-sha1.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-date-format-tofte.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-date-format-xparb.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-math-cordic.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-math-partial-sums.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-math-spectral-norm.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-regexp-dna.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-string-fasta.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-string-tagcloud.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-string-unpack-code.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-string-validate-input.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/v8-crypto.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/v8-deltablue.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/v8-earley-boyer.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/v8-raytrace.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/v8-richards.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/72px.png: Added.
+        * Dromaeo/resources/dromaeo/web/web-style.css: Added.
+        * Dromaeo/resources/dromaeo/web/webrunner.js: Added.
+        * Skipped: Unskip the dromaeo driver.
+
 2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Parser/html5-full-render.html after r106379.
