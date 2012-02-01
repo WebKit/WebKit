@@ -595,7 +595,7 @@ static GstURIType webKitWebSrcUriGetType(void)
 
 static gchar** webKitWebSrcGetProtocols(void)
 {
-    static const char* protocols[] = {"http", "https", 0 };
+    static gchar* protocols[] = {static_cast<gchar*>("http"), static_cast<gchar*>("https"), 0 };
     return protocols;
 }
 

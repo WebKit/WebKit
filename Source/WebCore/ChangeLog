@@ -1,3 +1,9 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r106446.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+
 2012-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106432.
