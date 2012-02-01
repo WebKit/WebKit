@@ -33,6 +33,11 @@ module core {
         ConstructorRaisesException
     ] ShadowRoot : Node {
         readonly attribute Element host;
+        Element getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
+        NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString className);
+        NodeList getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString tagName);
+        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                                       in [Optional=CallWithDefaultValue] DOMString localName);
     };
 
 }

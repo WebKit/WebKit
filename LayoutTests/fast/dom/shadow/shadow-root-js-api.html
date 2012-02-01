@@ -15,11 +15,37 @@ shouldThrow("new WebKitShadowRoot(undefined)");
 shouldThrow("new WebKitShadowRoot(null)");
 shouldThrow("new WebKitShadowRoot(1)");
 var shadowHost = document.createElement('div');
+document.body.appendChild(shadowHost);
 var shadowRoot = new WebKitShadowRoot(shadowHost);
 shouldBe("shadowHost", "shadowRoot.host");
 shouldThrow("new WebKitShadowRoot(shadowHost)");
 debug('The previous test should not have side effects.');
 shouldBe("shadowHost", "shadowRoot.host");
+
+var div1 = document.createElement("div");
+div1.setAttribute("id", "div1");
+shadowRoot.appendChild(div1);
+
+var div2 = document.createElement("div");
+div2.setAttribute("id", "div2");
+div2.classList.add("class2");
+shadowRoot.appendChild(div2);
+
+// Tests for Document should cover most cases for the following APIs.
+// We have basic tests here. More tests are welcome, but we should avoid unnecssary duplications.
+shouldBe("shadowRoot.getElementById('div1')", "div1");
+shouldBeNull("shadowRoot.getElementById('foo')");
+
+shouldBe("shadowRoot.getElementsByClassName('class2')", "[div2]");
+shouldBe("shadowRoot.getElementsByClassName('foo')", "[]");
+
+shouldBe("shadowRoot.getElementsByTagName('div')", "[div1, div2]");
+shouldBe("shadowRoot.getElementsByTagName('foo')", "[]");
+
+// FIXME: Add more tests using XML documents.
+shouldBe("shadowRoot.getElementsByTagNameNS('*', 'div')", "[div1, div2]");
+shouldBe("shadowRoot.getElementsByTagNameNS('', 'div')", "[]");
+shouldBe("shadowRoot.getElementsByTagNameNS('*', 'foo')", "[]");
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

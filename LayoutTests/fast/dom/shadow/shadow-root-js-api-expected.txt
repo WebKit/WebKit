@@ -11,6 +11,15 @@ PASS shadowHost is shadowRoot.host
 PASS new WebKitShadowRoot(shadowHost) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 The previous test should not have side effects.
 PASS shadowHost is shadowRoot.host
+PASS shadowRoot.getElementById('div1') is div1
+PASS shadowRoot.getElementById('foo') is null
+PASS shadowRoot.getElementsByClassName('class2') is [div2]
+PASS shadowRoot.getElementsByClassName('foo') is []
+PASS shadowRoot.getElementsByTagName('div') is [div1, div2]
+PASS shadowRoot.getElementsByTagName('foo') is []
+PASS shadowRoot.getElementsByTagNameNS('*', 'div') is [div1, div2]
+PASS shadowRoot.getElementsByTagNameNS('', 'div') is []
+PASS shadowRoot.getElementsByTagNameNS('*', 'foo') is []
 PASS successfullyParsed is true
 
 TEST COMPLETE
