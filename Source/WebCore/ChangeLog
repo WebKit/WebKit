@@ -1,3 +1,15 @@
+2012-02-01  Brian Salomon  <bsalomon@google.com>
+
+        [SKIA/CHROMIUM] Perform getImageData format conversions using Skia
+        https://bugs.webkit.org/show_bug.cgi?id=77553
+
+        Reviewed by Stephen White.
+
+        Many existing canvas tests exercise this functionality.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+
 2012-02-01  Nate Chapin  <japhet@chromium.org>
 
         preventDefault() in a mousedown in a subframe should not

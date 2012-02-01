@@ -2379,7 +2379,7 @@ BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT 
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 LINUX WIN : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGWK52509 LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
-BUGCR63921 LINUX WIN CPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
@@ -2591,11 +2591,9 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 // GPU
 //
 
-// This test expects that putImageData followed by getImageData at the same location
-// will return the exact same pixel values. However, the spec allows some fuzziness
-// due to conversion to/from premultiplied-alpha. When we do the conversions on the
-// GPU we may be off by one in r, g, and/or b.
-BUGWK73952 GPU : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
+// Combination of unpremul plus gradient computation at half-integer coords causes
+// this to fail.
+BUGWK77550 GPU : canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
 BUGBSALOMON GPU : fast/canvas/arc360.html = IMAGE

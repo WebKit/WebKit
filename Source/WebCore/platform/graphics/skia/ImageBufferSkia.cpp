@@ -226,65 +226,18 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkCanvas* canvas,
         || rect.maxY() > size.height())
         memset(data, 0, result->length());
 
-    int originX = rect.x();
-    int destX = 0;
-    if (originX < 0) {
-        destX = -originX;
-        originX = 0;
-    }
-    int endX = rect.maxX();
-    if (endX > size.width())
-        endX = size.width();
-    int numColumns = endX - originX;
-
-    if (numColumns <= 0)
-        return result.release();
-
-    int originY = rect.y();
-    int destY = 0;
-    if (originY < 0) {
-        destY = -originY;
-        originY = 0;
-    }
-    int endY = rect.maxY();
-    if (endY > size.height())
-        endY = size.height();
-    int numRows = endY - originY;
-
-    if (numRows <= 0)
-        return result.release();
-
-    SkBitmap srcBitmap;
-    if (!canvas->readPixels(SkIRect::MakeXYWH(originX, originY, numColumns, numRows), &srcBitmap))
-        return result.release();
-
     unsigned destBytesPerRow = 4 * rect.width();
-    unsigned char* destRow = data + destY * destBytesPerRow + destX * 4;
+    SkBitmap destBitmap;
+    destBitmap.setConfig(SkBitmap::kARGB_8888_Config, rect.width(), rect.height(), destBytesPerRow);
+    destBitmap.setPixels(data);
 
-    // Do conversion of byte order and alpha divide (if necessary)
-    for (int y = 0; y < numRows; ++y) {
-        SkPMColor* srcBitmapRow = srcBitmap.getAddr32(0, y);
-        for (int x = 0; x < numColumns; ++x) {
-            SkPMColor srcPMColor = srcBitmapRow[x];
-            unsigned char* destPixel = &destRow[x * 4];
-            if (multiplied == Unmultiplied) {
-                unsigned char a = SkGetPackedA32(srcPMColor);
-                destPixel[0] = a ? SkGetPackedR32(srcPMColor) * 255 / a : 0;
-                destPixel[1] = a ? SkGetPackedG32(srcPMColor) * 255 / a : 0;
-                destPixel[2] = a ? SkGetPackedB32(srcPMColor) * 255 / a : 0;
-                destPixel[3] = a;
-            } else {
-                // Input and output are both pre-multiplied, we just need to re-arrange the
-                // bytes from the bitmap format to RGBA.
-                destPixel[0] = SkGetPackedR32(srcPMColor);
-                destPixel[1] = SkGetPackedG32(srcPMColor);
-                destPixel[2] = SkGetPackedB32(srcPMColor);
-                destPixel[3] = SkGetPackedA32(srcPMColor);
-            }
-        }
-        destRow += destBytesPerRow;
-    }
+    SkCanvas::Config8888 config8888;
+    if (multiplied == Premultiplied)
+        config8888 = SkCanvas::kRGBA_Premul_Config8888;
+    else
+        config8888 = SkCanvas::kRGBA_Unpremul_Config8888;
 
+    canvas->readPixels(&destBitmap, rect.x(), rect.y(), config8888);
     return result.release();
 }
 
