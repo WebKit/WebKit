@@ -4053,3 +4053,4 @@ BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
 // Started failing at WK r106432.
 BUGWK77519 WIN LINUX : fast/forms/textfield-overflow.html = IMAGE+TEXT
+BUGWK77521 LINUX : fast/repaint/textarea-set-disabled.html = IMAGE
