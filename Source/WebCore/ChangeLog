@@ -1,3 +1,14 @@
+2012-02-01  Hayato Ito  <hayato@chromium.org>
+
+        Remove unnecessary [OldStyleObjC] from ShadowRoot.idl.
+        https://bugs.webkit.org/show_bug.cgi?id=77516
+
+        Reviewed by Kentaro Hara.
+
+        No new tests. No change in behavior.
+
+        * dom/ShadowRoot.idl:
+
 2012-01-26  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 webkitwebsrc
