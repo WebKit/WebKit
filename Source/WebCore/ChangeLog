@@ -1,3 +1,25 @@
+2012-01-31  Matthew Delaney  <mdelaney@apple.com>
+
+        Failing 2d.shadow.enable.off.2.html on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=77489
+
+        Reviewed by Dan Bernstein.
+
+        The canvas spec requires that shadows not be drawn under certain
+        circumstances outlined here: http://www.whatwg.org/specs/web-apps/current-work/#shadows
+        This patch adds in those checks which allows us to pass now (on Lion)
+        the philip canvas test that was checking that constraint.
+
+        No new tests. Unskipping the test on Lion that this patch fixes.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setAllAttributesToDefault):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        (WebCore::CanvasRenderingContext2D::shouldDrawShadows):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (CanvasRenderingContext2D):
+
 2012-01-31  Anders Carlsson  <andersca@apple.com>
 
         TileCache::setNeedsDisplayInRect cleanup

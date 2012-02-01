@@ -1,8 +1,5 @@
 # --- Canvas ---
 
-# <rdar://problem/9121810>
-canvas/philip/tests/2d.shadow.enable.off.2.html
-
 # This test incorrectly checks the shadow blur's distance and needs to be fixed
 # <rdar://problem/9326220>
 fast/canvas/canvas-scale-shadowBlur.html

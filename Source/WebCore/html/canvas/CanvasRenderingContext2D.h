@@ -278,6 +278,7 @@ private:
     const State& state() const { return m_stateStack.last(); }
 
     void applyShadow();
+    bool shouldDrawShadows() const;
 
     void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
     void didDrawEntireCanvas();
