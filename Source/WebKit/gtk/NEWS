@@ -1,8 +1,17 @@
 ================
+WebKitGTK+ 1.6.3
+================
+
+What's new in WebKitGTK+ 1.6.3?
+
+ - Bug 77524: [GTK] WebKitGtk+ 1.6.2 doesn't build
+ - Manually depend on gthread to fix the build on systems with gold
+
+================
 WebKitGTK+ 1.6.2
 ================
 
-What's new in WebKitGTK+ 1.6.1?
+What's new in WebKitGTK+ 1.6.2?
 
  Bug 69099 - [Freetype] Some text in Planet GNOME renders in the wrong place
  Bug 69840 -  Fix build with GLib 2.31
