@@ -1049,6 +1049,12 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
     WebKitWebView* webView = getViewFromFrame(m_frame);
     GOwnPtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
+
+    // A NULL WebResource means the load has been interrupted, and
+    // replaced by another one while this resource was being loaded.
+    if (!webResource)
+        return;
+
     GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
                                                  error.errorCode(),
                                                  error.localizedDescription().utf8().data()));

@@ -1,3 +1,15 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] unittests/testloading crashes
+        https://bugs.webkit.org/show_bug.cgi?id=77544
+
+        Reviewed by Xan Lopez.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoading): Bail out
+        early from dispatchDidFailLoading if the error is the result of an
+        interrupted load.
+
 2012-02-01  Philippe Normand  <pnormand@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
