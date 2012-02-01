@@ -125,16 +125,16 @@ bool WebGLCompressedTextures::validateCompressedTexFormat(GC3Denum format)
     return false;
 }
 
-bool WebGLCompressedTextures::validateCompressedTexFuncData(GC3Dsizei width, GC3Dsizei height,
-                                                                        GC3Denum format, ArrayBufferView* pixels)
+bool WebGLCompressedTextures::validateCompressedTexFuncData(const char* functionName,
+                                                            GC3Dsizei width, GC3Dsizei height,
+                                                            GC3Denum format, ArrayBufferView* pixels)
 {
-    GraphicsContext3D* context = m_context->graphicsContext3D();
     if (!pixels) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no pixels");
         return false;
     }
     if (width < 0 || height < 0) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height < 0");
         return false;
     }
 
@@ -172,12 +172,12 @@ bool WebGLCompressedTextures::validateCompressedTexFuncData(GC3Dsizei width, GC3
         }
         break;
     default:
-        context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format");
         return false;
     }
 
     if (pixels->byteLength() != bytesRequired) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "length of ArrayBufferView is not correct for dimensions");
         return false;
     }
 
@@ -229,30 +229,29 @@ bool WebGLCompressedTextures::validateCompressedTexSubDimensions(GC3Denum target
 void WebGLCompressedTextures::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width,
                                                                GC3Dsizei height, GC3Dint border, ArrayBufferView* data)
 {
-    GraphicsContext3D* context = m_context->graphicsContext3D();
     if (m_context->isContextLost())
         return;
     if (!validateCompressedTexFormat(internalformat)) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexImage2D", "invalid internalformat");
         return;
     }
     if (border) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexImage2D", "border not 0");
         return;
     }
-    if (!validateCompressedTexFuncData(width, height, internalformat, data))
+    if (!validateCompressedTexFuncData("compressedTexImage2D", width, height, internalformat, data))
         return;
-    WebGLTexture* tex = m_context->validateTextureBinding(target, true);
+    WebGLTexture* tex = m_context->validateTextureBinding("compressedTexImage2D", target, true);
     if (!tex)
         return;
     if (!m_context->isGLES2NPOTStrict()) {
         if (level && WebGLTexture::isNPOT(width, height)) {
-            context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexImage2D", "level > 0 not power of 2");
             return;
         }
     }
-    context->compressedTexImage2D(target, level, internalformat, width, height,
-                                  border, data->byteLength(), data->baseAddress());
+    m_context->graphicsContext3D()->compressedTexImage2D(target, level, internalformat, width, height,
+                                                         border, data->byteLength(), data->baseAddress());
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
     m_context->cleanupAfterGraphicsCall(false);
 }
@@ -260,32 +259,31 @@ void WebGLCompressedTextures::compressedTexImage2D(GC3Denum target, GC3Dint leve
 void WebGLCompressedTextures::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                                                                   GC3Dsizei width, GC3Dsizei height, GC3Denum format, ArrayBufferView* data)
 {
-    GraphicsContext3D* context = m_context->graphicsContext3D();
     if (m_context->isContextLost())
         return;
     if (!validateCompressedTexFormat(format)) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexSubImage2D", "invalid format");
         return;
     }
-    if (!validateCompressedTexFuncData(width, height, format, data))
+    if (!validateCompressedTexFuncData("compressedTexSubImage2D", width, height, format, data))
         return;
 
-    WebGLTexture* tex = m_context->validateTextureBinding(target, true);
+    WebGLTexture* tex = m_context->validateTextureBinding("compressedTexSubImage2D", target, true);
     if (!tex)
         return;
 
     if (format != tex->getInternalFormat(target, level)) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexSubImage2D", "format does not match texture format");
         return;
     }
 
     if (!validateCompressedTexSubDimensions(target, level, xoffset, yoffset, width, height, format, tex)) {
-        context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "compressedTexSubImage2D", "dimensions invalid for format");
         return;
     }
 
-    context->compressedTexSubImage2D(target, level, xoffset, yoffset,
-                                     width, height, format, data->byteLength(), data->baseAddress());
+    m_context->graphicsContext3D()->compressedTexSubImage2D(target, level, xoffset, yoffset,
+                                                            width, height, format, data->byteLength(), data->baseAddress());
     m_context->cleanupAfterGraphicsCall(false);
 }
 

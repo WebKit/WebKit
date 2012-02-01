@@ -365,7 +365,7 @@ public:
     // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
     bool validateRenderingState(int numElements);
 
-    bool validateWebGLObject(WebGLObject*);
+    bool validateWebGLObject(const char*, WebGLObject*);
 
 #if ENABLE(VIDEO)
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, ExceptionCode&);
@@ -491,6 +491,8 @@ public:
     bool m_isResourceSafe;
     bool m_isDepthStencilSupported;
 
+    bool m_synthesizedErrorsToConsole;
+
     // Enabled extension objects.
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
@@ -547,32 +549,33 @@ public:
     int getBoundFramebufferHeight();
 
     // Helper function to verify limits on the length of uniform and attribute locations.
-    bool validateLocationLength(const String&);
+    bool validateLocationLength(const char* functionName, const String&);
 
     // Helper function to check if size is non-negative.
     // Generate GL error and return false for negative inputs; otherwise, return true.
-    bool validateSize(GC3Dint x, GC3Dint y);
+    bool validateSize(const char* functionName, GC3Dint x, GC3Dint y);
 
     // Helper function to check if all characters in the string belong to the
     // ASCII subset as defined in GLSL ES 1.0 spec section 3.1.
-    bool validateString(const String&);
+    bool validateString(const char* functionName, const String&);
 
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null.  Otherwise, return the texture bound to the target.
-    WebGLTexture* validateTextureBinding(GC3Denum target, bool useSixEnumsForCubeMap);
+    WebGLTexture* validateTextureBinding(const char* functionName, GC3Denum target, bool useSixEnumsForCubeMap);
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncFormatAndType(GC3Denum format, GC3Denum type);
+    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type);
 
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
-    bool validateTexFuncLevel(GC3Denum target, GC3Dint level);
+    bool validateTexFuncLevel(const char* functionName, GC3Denum target, GC3Dint level);
 
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncParameters(GC3Denum target, GC3Dint level,
+    bool validateTexFuncParameters(const char* functionName,
+                                   GC3Denum target, GC3Dint level,
                                    GC3Denum internalformat,
                                    GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                                    GC3Denum format, GC3Denum type);
@@ -580,18 +583,19 @@ public:
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncData(GC3Dsizei width, GC3Dsizei height,
+    bool validateTexFuncData(const char* functionName,
+                             GC3Dsizei width, GC3Dsizei height,
                              GC3Denum format, GC3Denum type,
                              ArrayBufferView* pixels);
 
     // Helper function to validate mode for draw{Arrays/Elements}.
-    bool validateDrawMode(GC3Denum);
+    bool validateDrawMode(const char* functionName, GC3Denum);
 
     // Helper function to validate if front/back stencilMask and stencilFunc settings are the same.
-    bool validateStencilSettings();
+    bool validateStencilSettings(const char* functionName);
 
     // Helper function to validate stencil func.
-    bool validateStencilFunc(GC3Denum);
+    bool validateStencilFunc(const char* functionName, GC3Denum);
 
     // Helper function for texParameterf and texParameteri.
     void texParameter(GC3Denum target, GC3Denum pname, GC3Dfloat parami, GC3Dint paramf, bool isFloat);
@@ -602,35 +606,35 @@ public:
 
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.
-    bool validateFramebufferFuncParameters(GC3Denum target, GC3Denum attachment);
+    bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment);
 
     // Helper function to validate blend equation mode.
-    bool validateBlendEquation(GC3Denum);
+    bool validateBlendEquation(const char* functionName, GC3Denum);
 
     // Helper function to validate blend func factors.
-    bool validateBlendFuncFactors(GC3Denum src, GC3Denum dst);
+    bool validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst);
 
     // Helper function to validate a GL capability.
-    bool validateCapability(GC3Denum);
+    bool validateCapability(const char* functionName, GC3Denum);
 
     // Helper function to validate input parameters for uniform functions.
-    bool validateUniformParameters(const WebGLUniformLocation*, Float32Array*, GC3Dsizei mod);
-    bool validateUniformParameters(const WebGLUniformLocation*, Int32Array*, GC3Dsizei mod);
-    bool validateUniformParameters(const WebGLUniformLocation*, void*, GC3Dsizei size, GC3Dsizei mod);
-    bool validateUniformMatrixParameters(const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array*, GC3Dsizei mod);
-    bool validateUniformMatrixParameters(const WebGLUniformLocation*, GC3Dboolean transpose, void*, GC3Dsizei size, GC3Dsizei mod);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, Float32Array*, GC3Dsizei mod);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, Int32Array*, GC3Dsizei mod);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GC3Dsizei, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array*, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, void*, GC3Dsizei, GC3Dsizei mod);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.
-    WebGLBuffer* validateBufferDataParameters(GC3Denum target, GC3Denum usage);
+    WebGLBuffer* validateBufferDataParameters(const char* functionName, GC3Denum target, GC3Denum usage);
 
     // Helper function for tex{Sub}Image2D to make sure image is ready.
-    bool validateHTMLImageElement(HTMLImageElement*);
+    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*);
 
     // Helper functions for vertexAttribNf{v}.
-    void vertexAttribfImpl(GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat);
-    void vertexAttribfvImpl(GC3Duint index, Float32Array*, GC3Dsizei expectedSize);
-    void vertexAttribfvImpl(GC3Duint index, GC3Dfloat*, GC3Dsizei size, GC3Dsizei expectedSize);
+    void vertexAttribfImpl(const char* functionName, GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat);
+    void vertexAttribfvImpl(const char* functionName, GC3Duint index, Float32Array*, GC3Dsizei expectedSize);
+    void vertexAttribfvImpl(const char* functionName, GC3Duint index, GC3Dfloat*, GC3Dsizei, GC3Dsizei expectedSize);
 
     // Helper function for delete* (deleteBuffer, deleteProgram, etc) functions.
     // Return false if caller should return without further processing.
@@ -639,7 +643,7 @@ public:
     // Helper function for bind* (bindBuffer, bindTexture, etc) and useProgram.
     // If the object has already been deleted, set deleted to true upon return.
     // Return false if caller should return without further processing.
-    bool checkObjectToBeBound(WebGLObject*, bool& deleted);
+    bool checkObjectToBeBound(const char* functionName, WebGLObject*, bool& deleted);
 
     // Helpers for simulating vertexAttrib0
     void initVertexAttrib0();
@@ -653,6 +657,10 @@ public:
     // Determine if we are running privileged code in the browser, for example,
     // a Safari or Chrome extension.
     bool allowPrivilegedExtensions() const;
+
+    // Wrapper for GraphicsContext3D::synthesizeGLError that sends a message
+    // to the JavaScript console.
+    void synthesizeGLError(GC3Denum, const char* functionName, const char* description);
 
     friend class WebGLStateRestorer;
 };

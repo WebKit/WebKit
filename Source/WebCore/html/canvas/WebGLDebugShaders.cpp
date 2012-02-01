@@ -61,7 +61,7 @@ String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader* shader, Excepti
     UNUSED_PARAM(ec);
     if (m_context->isContextLost())
         return String();
-    if (!m_context->validateWebGLObject(shader))
+    if (!m_context->validateWebGLObject("getTranslatedShaderSource", shader))
         return "";
     return m_context->graphicsContext3D()->getExtensions()->getTranslatedShaderSourceANGLE(shader->object());
 }

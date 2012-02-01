@@ -54,7 +54,8 @@ public:
 private:
     WebGLCompressedTextures(WebGLRenderingContext*);
 
-    bool validateCompressedTexFuncData(GC3Dsizei width, GC3Dsizei height,
+    bool validateCompressedTexFuncData(const char* functionName,
+                                       GC3Dsizei width, GC3Dsizei height,
                                        GC3Denum format, ArrayBufferView* pixels);
 
     bool validateCompressedTexFormat(GC3Denum format);

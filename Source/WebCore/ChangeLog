@@ -1,3 +1,153 @@
+2012-01-31  Gregg Tavares  <gman@google.com>
+
+        Make WebGL put synthesized errors in the JS console
+        https://bugs.webkit.org/show_bug.cgi?id=77267
+
+        Reviewed by Kenneth Russell.
+
+        No new functionality so no new tests.
+
+        * html/canvas/WebGLCompressedTextures.cpp:
+        (WebCore::WebGLCompressedTextures::validateCompressedTexFuncData):
+        (WebCore::WebGLCompressedTextures::compressedTexImage2D):
+        (WebCore::WebGLCompressedTextures::compressedTexSubImage2D):
+        * html/canvas/WebGLCompressedTextures.h:
+        (WebGLCompressedTextures):
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::activeTexture):
+        (WebCore::WebGLRenderingContext::attachShader):
+        (WebCore::WebGLRenderingContext::bindAttribLocation):
+        (WebCore::WebGLRenderingContext::checkObjectToBeBound):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::bindRenderbuffer):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::blendEquation):
+        (WebCore::WebGLRenderingContext::blendEquationSeparate):
+        (WebCore::WebGLRenderingContext::blendFunc):
+        (WebCore::WebGLRenderingContext::blendFuncSeparate):
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+        (WebCore::WebGLRenderingContext::checkFramebufferStatus):
+        (WebCore::WebGLRenderingContext::clear):
+        (WebCore::WebGLRenderingContext::compileShader):
+        (WebCore::WebGLRenderingContext::compressedTexImage2D):
+        (WebCore::WebGLRenderingContext::compressedTexSubImage2D):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::createShader):
+        (WebCore::WebGLRenderingContext::deleteObject):
+        (WebCore::WebGLRenderingContext::depthRange):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::disable):
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::validateWebGLObject):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enable):
+        (WebCore::WebGLRenderingContext::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::generateMipmap):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getAttachedShaders):
+        (WebCore::WebGLRenderingContext::getAttribLocation):
+        (WebCore::WebGLRenderingContext::getBufferParameter):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getTexParameter):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::hint):
+        (WebCore::WebGLRenderingContext::isEnabled):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::pixelStorei):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::renderbufferStorage):
+        (WebCore::WebGLRenderingContext::scissor):
+        (WebCore::WebGLRenderingContext::shaderSource):
+        (WebCore::WebGLRenderingContext::stencilFunc):
+        (WebCore::WebGLRenderingContext::stencilFuncSeparate):
+        (WebCore::WebGLRenderingContext::stencilMaskSeparate):
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        (WebCore::WebGLRenderingContext::texImage2DImpl):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::videoFrameToImage):
+        (WebCore::WebGLRenderingContext::texParameter):
+        (WebCore::WebGLRenderingContext::texSubImage2DBase):
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::uniform1f):
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform1i):
+        (WebCore::WebGLRenderingContext::uniform1iv):
+        (WebCore::WebGLRenderingContext::uniform2f):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform2i):
+        (WebCore::WebGLRenderingContext::uniform2iv):
+        (WebCore::WebGLRenderingContext::uniform3f):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform3i):
+        (WebCore::WebGLRenderingContext::uniform3iv):
+        (WebCore::WebGLRenderingContext::uniform4f):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniform4i):
+        (WebCore::WebGLRenderingContext::uniform4iv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::validateProgram):
+        (WebCore::WebGLRenderingContext::vertexAttrib1f):
+        (WebCore::WebGLRenderingContext::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib2f):
+        (WebCore::WebGLRenderingContext::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib3f):
+        (WebCore::WebGLRenderingContext::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContext::vertexAttrib4f):
+        (WebCore::WebGLRenderingContext::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+        (WebCore::WebGLRenderingContext::viewport):
+        (WebCore::WebGLRenderingContext::forceLostContext):
+        (WebCore::WebGLRenderingContext::loseContextImpl):
+        (WebCore::WebGLRenderingContext::forceRestoreContext):
+        (WebCore::WebGLRenderingContext::validateTextureBinding):
+        (WebCore::WebGLRenderingContext::validateLocationLength):
+        (WebCore::WebGLRenderingContext::validateSize):
+        (WebCore::WebGLRenderingContext::validateString):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+        (WebCore::WebGLRenderingContext::validateTexFuncLevel):
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+        (WebCore::WebGLRenderingContext::validateTexFuncData):
+        (WebCore::WebGLRenderingContext::validateDrawMode):
+        (WebCore::WebGLRenderingContext::validateStencilSettings):
+        (WebCore::WebGLRenderingContext::validateStencilFunc):
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters):
+        (WebCore::WebGLRenderingContext::validateBlendEquation):
+        (WebCore::WebGLRenderingContext::validateBlendFuncFactors):
+        (WebCore::WebGLRenderingContext::validateCapability):
+        (WebCore::WebGLRenderingContext::validateUniformParameters):
+        (WebCore::WebGLRenderingContext::validateUniformMatrixParameters):
+        (WebCore::WebGLRenderingContext::validateBufferDataParameters):
+        (WebCore::WebGLRenderingContext::validateHTMLImageElement):
+        (WebCore::WebGLRenderingContext::vertexAttribfImpl):
+        (WebCore::WebGLRenderingContext::vertexAttribfvImpl):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        (WebCore):
+        (WebCore::WebGLRenderingContext::synthesizeGLError):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-01-31  Raymond Liu  <raymond.liu@intel.com>
 
         Clean up m_processLock logic in AudioBasicProcessorNode and AudioGainNode
