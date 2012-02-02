@@ -478,7 +478,8 @@ namespace WTF {
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
         AlignedBuffer<sizeof(ValueType), WTF_ALIGN_OF(ValueType)> deletedValueBuffer;
-        ValueType& deletedValue = *reinterpret_cast_ptr<ValueType*>(deletedValueBuffer.buffer);
+        ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(deletedValueBuffer.buffer);
+        ValueType& deletedValue = *deletedValuePtr;
         Traits::constructDeletedValue(deletedValue);
         ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
     }

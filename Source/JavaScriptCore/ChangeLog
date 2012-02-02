@@ -1,3 +1,13 @@
+2012-02-02  Andy Wingo  <wingo@igalia.com>
+
+        Fix type punning warning in HashTable.h debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=77422
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/HashTable.h (WTF::HashTable::checkKey): Fix type punning
+        warning appearing in debug builds with gcc-4.6.2 on GNU/Linux.
+
 2012-02-01  Michael Saboff  <msaboff@apple.com>
 
         Yarr crash with regexp replace
