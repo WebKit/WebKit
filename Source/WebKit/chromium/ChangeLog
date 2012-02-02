@@ -1,3 +1,13 @@
+2012-02-02  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Update enum name for HitTestRequest::RequestType
+        https://bugs.webkit.org/show_bug.cgi?id=77620
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::visiblePositionForWindowPoint):
+
 2012-02-02  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory (re-landing r105395)

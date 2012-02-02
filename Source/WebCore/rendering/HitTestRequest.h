@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,10 +30,11 @@ public:
     enum RequestType {
         ReadOnly = 1 << 1,
         Active = 1 << 2,
-        MouseMove = 1 << 3,
-        MouseUp = 1 << 4,
+        Move = 1 << 3,
+        Release = 1 << 4,
         IgnoreClipping = 1 << 5,
-        SVGClipContent = 1 << 6
+        SVGClipContent = 1 << 6,
+        TouchEvent = 1 << 7
     };
 
     typedef unsigned HitTestRequestType;
@@ -44,10 +46,16 @@ public:
 
     bool readOnly() const { return m_requestType & ReadOnly; }
     bool active() const { return m_requestType & Active; }
-    bool mouseMove() const { return m_requestType & MouseMove; }
-    bool mouseUp() const { return m_requestType & MouseUp; }
+    bool move() const { return m_requestType & Move; }
+    bool release() const { return m_requestType & Release; }
     bool ignoreClipping() const { return m_requestType & IgnoreClipping; }
     bool svgClipContent() const { return m_requestType & SVGClipContent; }
+    bool touchEvent() const { return m_requestType & TouchEvent; }
+    bool mouseEvent() const { return !touchEvent(); }
+
+    // Convenience functions
+    bool touchMove() const { return move() && touchEvent(); }
+    bool touchRelease() const { return release() && touchEvent(); }
 
     HitTestRequestType type() const { return m_requestType; }
 
