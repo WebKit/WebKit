@@ -22,3 +22,21 @@ try {
     thirdEvalResult = "Threw exception!";
 }
 shouldBeTrue("thirdEvalResult");
+
+// Check that the correct this value is passed to a function called having been caught from a throw, where the catch block contains an eval (bug#).
+function checkThis()
+{
+    "use strict";
+    return this === undefined;
+}
+function testEvalInCatch()
+{
+    try {
+        throw checkThis;
+    } catch(e) {
+        eval('');
+        return e();
+    }
+    return false;
+}
+shouldBeTrue("testEvalInCatch()");

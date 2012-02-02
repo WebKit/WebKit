@@ -1,3 +1,31 @@
+2012-02-01  Gavin Barraclough  <barraclough@apple.com>
+
+        calling function on catch block scope containing an eval result in wrong this value being passed
+        https://bugs.webkit.org/show_bug.cgi?id=77581
+
+        Reviewed by Oliver Hunt.
+
+        javascript:function F(){ return 'F' in this; }; try { throw F; } catch (e) { eval(""); alert(e()); }
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTryStatement):
+        * parser/NodeConstructors.h:
+        (JSC::TryNode::TryNode):
+        * parser/Nodes.h:
+        (TryNode):
+        * parser/Parser.cpp:
+        (JSC::::parseTryStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createTryStatement):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::isStaticScopeObject):
+        (JSC):
+
 2012-02-01  Oliver Hunt  <oliver@apple.com>
 
         Add support for inferred function names

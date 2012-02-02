@@ -781,13 +781,12 @@ namespace JSC {
     {
     }
 
-    inline TryNode::TryNode(int lineNumber, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock)
+    inline TryNode::TryNode(int lineNumber, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock)
         : StatementNode(lineNumber)
         , m_tryBlock(tryBlock)
         , m_exceptionIdent(exceptionIdent)
         , m_catchBlock(catchBlock)
         , m_finallyBlock(finallyBlock)
-        , m_catchHasEval(catchHasEval)
     {
     }
 

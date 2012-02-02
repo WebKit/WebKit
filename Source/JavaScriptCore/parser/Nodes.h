@@ -1348,7 +1348,7 @@ namespace JSC {
 
     class TryNode : public StatementNode {
     public:
-        TryNode(int, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock);
+        TryNode(int, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1357,7 +1357,6 @@ namespace JSC {
         const Identifier& m_exceptionIdent;
         StatementNode* m_catchBlock;
         StatementNode* m_finallyBlock;
-        bool m_catchHasEval;
     };
 
     class ParameterNode : public ParserArenaFreeable {

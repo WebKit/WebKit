@@ -203,6 +203,7 @@ namespace JSC {
 
         bool isGlobalObject() const;
         bool isVariableObject() const;
+        bool isStaticScopeObject() const;
         bool isActivationObject() const;
         bool isErrorInstance() const;
         bool isGlobalThis() const;
@@ -426,6 +427,11 @@ inline bool JSObject::isGlobalObject() const
 inline bool JSObject::isVariableObject() const
 {
     return structure()->typeInfo().type() >= VariableObjectType;
+}
+
+inline bool JSObject::isStaticScopeObject() const
+{
+    return structure()->typeInfo().type() == StaticScopeObjectType;
 }
 
 inline bool JSObject::isActivationObject() const

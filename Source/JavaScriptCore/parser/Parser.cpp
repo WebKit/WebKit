@@ -603,7 +603,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     ASSERT(match(TRY));
     TreeStatement tryBlock = 0;
     const Identifier* ident = &m_globalData->propertyNames->nullIdentifier;
-    bool catchHasEval = false;
     TreeStatement catchBlock = 0;
     TreeStatement finallyBlock = 0;
     int firstLine = tokenLine();
@@ -626,10 +625,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
-        int initialEvalCount = context.evalCount();
         catchBlock = parseBlockStatement(context);
         failIfFalseWithMessage(catchBlock, "'try' must have a catch or finally block");
-        catchHasEval = initialEvalCount != context.evalCount();
         failIfFalse(popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo));
     }
     
@@ -640,7 +637,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         failIfFalse(finallyBlock);
     }
     failIfFalse(catchBlock || finallyBlock);
-    return context.createTryStatement(m_lexer->lastLineNumber(), tryBlock, ident, catchHasEval, catchBlock, finallyBlock, firstLine, lastLine);
+    return context.createTryStatement(m_lexer->lastLineNumber(), tryBlock, ident, catchBlock, finallyBlock, firstLine, lastLine);
 }
 
 template <typename LexerType>

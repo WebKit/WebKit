@@ -1969,13 +1969,7 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         // Uncaught exception path: the catch block.
         RefPtr<Label> here = generator.emitLabel(generator.newLabel().get());
         RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), here.get());
-        if (m_catchHasEval) {
-            RefPtr<RegisterID> dynamicScopeObject = generator.emitNewObject(generator.newTemporary());
-            generator.emitPutById(dynamicScopeObject.get(), m_exceptionIdent, exceptionRegister.get());
-            generator.emitMove(exceptionRegister.get(), dynamicScopeObject.get());
-            generator.emitPushScope(exceptionRegister.get());
-        } else
-            generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
+        generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
         generator.emitNode(dst, m_catchBlock);
         generator.emitPopScope();
         generator.emitLabel(catchEndLabel.get());

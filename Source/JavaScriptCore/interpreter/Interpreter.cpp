@@ -1324,7 +1324,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next.get()) {
         ASSERT(node);
-        if (node->object->isVariableObject()) {
+        if (node->object->isVariableObject() && !node->object->isStaticScopeObject()) {
             variableObject = static_cast<JSVariableObject*>(node->object.get());
             break;
         }

@@ -419,9 +419,9 @@ public:
         return result;
     }
 
-    StatementNode* createTryStatement(int lineNumber, StatementNode* tryBlock, const Identifier* ident, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine)
+    StatementNode* createTryStatement(int lineNumber, StatementNode* tryBlock, const Identifier* ident, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine)
     {
-        TryNode* result = new (m_globalData) TryNode(lineNumber, tryBlock, *ident, catchHasEval, catchBlock, finallyBlock);
+        TryNode* result = new (m_globalData) TryNode(lineNumber, tryBlock, *ident, catchBlock, finallyBlock);
         if (catchBlock)
             usesCatch();
         result->setLoc(startLine, endLine);
