@@ -31,12 +31,6 @@
 #include "TextRun.h"
 #include "WidthIterator.h"
 #include "XMLNames.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/CharacterNames.h>
-#include <wtf/unicode/Unicode.h>
-
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
 
@@ -136,8 +130,6 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     // Associate text with arabic forms, if needed.
     String remainingTextInRun(run.data(currentCharacter), run.charactersLength() - currentCharacter);
     remainingTextInRun = Font::normalizeSpaces(remainingTextInRun.characters(), remainingTextInRun.length());
-    if (mirror)
-        remainingTextInRun = createStringWithMirroredCharacters(remainingTextInRun.characters(), remainingTextInRun.length());
     if (!currentCharacter && arabicForms.isEmpty())
         arabicForms = charactersWithArabicForm(remainingTextInRun, mirror);
 
@@ -268,27 +260,6 @@ bool SVGFontData::fillNonBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageT
     return haveGlyphs;
 }
 
-String SVGFontData::createStringWithMirroredCharacters(const UChar* characters, unsigned length) const
-{
-    StringBuilder mirroredCharacters;
-    mirroredCharacters.reserveCapacity(length);
-
-    UChar32 character;
-    unsigned i = 0;
-    while (i < length) {
-        U16_NEXT(characters, i, length, character);
-        character = mirroredChar(character);
-
-        if (U16_LENGTH(character) == 1)
-            mirroredCharacters.append(static_cast<UChar>(character));
-        else {
-            mirroredCharacters.append(U16_LEAD(character));
-            mirroredCharacters.append(U16_TRAIL(character));
-        }
-    }
-
-    return mirroredCharacters.toString();
-}
 
 } // namespace WebCore
 
