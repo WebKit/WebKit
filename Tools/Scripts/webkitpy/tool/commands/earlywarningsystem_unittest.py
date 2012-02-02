@@ -86,10 +86,10 @@ class EarlyWarningSytemTest(QueuesTest):
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
 
     def test_committer_only_ewses(self):
-        self._test_committer_only_ews(MacEWS())
         self._test_committer_only_ews(ChromiumMacEWS())
 
     def test_builder_ewses(self):
+        self._test_builder_ews(MacEWS())
         self._test_builder_ews(ChromiumWindowsEWS())
         self._test_builder_ews(QtEWS())
         self._test_builder_ews(GtkEWS())

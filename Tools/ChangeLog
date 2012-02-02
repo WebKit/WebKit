@@ -1,5 +1,14 @@
 2012-02-01  Adam Barth  <abarth@webkit.org>
 
+        Update the tests to show that the mac-ews processes patches from
+        non-committers.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest.test_committer_only_ewses):
+        (EarlyWarningSytemTest.test_builder_ewses):
+
+2012-02-01  Adam Barth  <abarth@webkit.org>
+
         Mac-ews logs are huge
         https://bugs.webkit.org/show_bug.cgi?id=77045
 
