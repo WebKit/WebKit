@@ -43,7 +43,7 @@ module window {
         OmitConstructor
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-                 attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;
+                 attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
         [Custom, V8OnInstance] void assign(in [Optional=CallWithDefaultValue] DOMString url);

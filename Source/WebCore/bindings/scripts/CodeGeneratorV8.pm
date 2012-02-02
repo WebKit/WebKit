@@ -829,7 +829,7 @@ END
 END
             }
         }
-    } elsif ($attrExt->{"v8OnProto"} || $attrExt->{"V8DisallowShadowing"}) {
+    } elsif ($attrExt->{"v8OnProto"} || $attrExt->{"V8Unforgeable"}) {
         if ($interfaceName eq "DOMWindow") {
             push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
@@ -1948,7 +1948,7 @@ sub GenerateSingleBatchedAttribute
             $accessControl .= " | v8::ALL_CAN_WRITE";
         }
     }
-    if ($attrExt->{"V8DisallowShadowing"}) {
+    if ($attrExt->{"V8Unforgeable"}) {
         $accessControl .= " | v8::PROHIBITS_OVERWRITING";
     }
     $accessControl = "static_cast<v8::AccessControl>(" . $accessControl . ")";
@@ -1975,7 +1975,7 @@ sub GenerateSingleBatchedAttribute
     if ($attrExt->{"DontEnum"}) {
         $propAttr .= " | v8::DontEnum";
     }
-    if ($attrExt->{"V8DisallowShadowing"}) {
+    if ($attrExt->{"V8Unforgeable"}) {
         $propAttr .= " | v8::DontDelete";
     }
 
@@ -2366,7 +2366,7 @@ sub GenerateImplementation
     my @normal;
     foreach my $attribute (@$attributes) {
 
-        if ($interfaceName eq "DOMWindow" && $attribute->signature->extendedAttributes->{"V8DisallowShadowing"}) {
+        if ($interfaceName eq "DOMWindow" && $attribute->signature->extendedAttributes->{"V8Unforgeable"}) {
             push(@disallowsShadowing, $attribute);
         } elsif ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);

@@ -54,7 +54,7 @@ module window {
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
         readonly attribute Crypto crypto;
-        attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8DisallowShadowing, CPPCustom] Location location;
+        attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8Unforgeable, CPPCustom] Location location;
 
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
@@ -129,12 +129,12 @@ module window {
 
         // Self referential attributes
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow self;
-        readonly attribute [DoNotCheckDomainSecurity, V8DisallowShadowing] DOMWindow window;
+        readonly attribute [DoNotCheckDomainSecurity, V8Unforgeable] DOMWindow window;
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow frames;
 
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8CustomSetter] DOMWindow opener;
         attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow parent;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8DisallowShadowing, V8ReadOnly] DOMWindow top;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8Unforgeable, V8ReadOnly] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;

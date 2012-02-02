@@ -1,5 +1,24 @@
 2012-02-01  Kentaro Hara  <haraken@chromium.org>
 
+        Rename [V8DisallowShadowing] to [V8Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=77599
+
+        Reviewed by Adam Barth.
+
+        This patch renames [V8DisallowShadowing] to [V8Unforgeable], following the Web IDL
+        spec (http://dev.w3.org/2006/webapi/WebIDL/#Unforgeable).
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateSingleBatchedAttribute):
+        (GenerateImplementation):
+        * page/DOMWindow.idl:
+        * page/Location.idl:
+
+2012-02-01  Kentaro Hara  <haraken@chromium.org>
+
         Rename [ConvertNullToNullString] to [TreatNullAs=EmptyString]
         https://bugs.webkit.org/show_bug.cgi?id=77602
 
