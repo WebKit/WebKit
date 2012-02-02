@@ -1,3 +1,19 @@
+2012-02-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Running a Web Worker on about:blank crashes the interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=77593
+
+        Reviewed by Michael Saboff.
+
+        The method Interpreter::execute() was crashing on empty programs because
+        the assumption is made the source is not null.
+
+        This patch shortcut the execution when the String is null to avoid invalid
+        memory access.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2012-02-02  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Use win32 native threading

@@ -1,0 +1,11 @@
+<html>
+<script>
+var worker = new Worker('about:blank');
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+setTimeout('window.layoutTestController.notifyDone()', 20);
+</script>
+<p>PASS</p>
+</html>
