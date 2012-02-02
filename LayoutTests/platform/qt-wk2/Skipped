@@ -423,7 +423,3 @@ http/tests/navigation/anchor-frames-gbk.html
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
-
-# REGRESSION (r106488): fast/events/remove-target-with-shadow-in-drag.html fails
-# fast/events/remove-target-with-shadow-in-drag.html made fast/events/resize-subframe.html timeout
-fast/events/remove-target-with-shadow-in-drag.html

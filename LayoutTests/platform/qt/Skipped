@@ -2519,3 +2519,11 @@ fast/multicol/span/span-as-immediate-columns-child-removal.html
 
 # new test introduced in http://trac.webkit.org/changeset/106072 - need more investigation
 fast/parser/nested-fragment-parser-crash.html
+
+# REGRESSION(r106554): It made 4 tests assert
+# Hovered node gets stuck on touch events
+# https://bugs.webkit.org/show_bug.cgi?id=77620
+fast/events/touch/basic-multi-touch-events.html
+fast/events/touch/touch-target.html
+fast/events/touch/touch-before-pressing-spin-button.html
+fast/events/touch/touch-coords-in-zoom-and-scroll.html

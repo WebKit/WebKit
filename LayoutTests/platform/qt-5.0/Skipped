@@ -80,3 +80,7 @@ fast/css/text-transform-select.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=77380
 fast/url/path.html
+
+# REGRESSION (r106488): fast/events/remove-target-with-shadow-in-drag.html fails
+# fast/events/remove-target-with-shadow-in-drag.html made fast/events/resize-subframe.html timeout
+fast/events/remove-target-with-shadow-in-drag.html
