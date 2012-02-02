@@ -20,8 +20,13 @@
 #include "config.h"
 #include "GlibUtilities.h"
 
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wtf/text/WTFString.h>
+#else
 #include <limits.h>
 #include <unistd.h>
+#endif
 
 #if OS(LINUX)
 CString getCurrentExecutablePath()
@@ -40,5 +45,16 @@ CString getCurrentExecutablePath()
     if (result == -1)
         return CString();
     return CString(readLinkBuffer, result);
+}
+#elif OS(WINDOWS)
+CString getCurrentExecutablePath()
+{
+    static WCHAR buffer[MAX_PATH];
+    DWORD length = GetModuleFileNameW(0, buffer, MAX_PATH);
+    if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
+        return CString();
+
+    String path(buffer, length);
+    return path.utf8();
 }
 #endif

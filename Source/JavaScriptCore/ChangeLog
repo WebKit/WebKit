@@ -1,3 +1,16 @@
+2012-02-02  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Implement current executable path finding for win32
+        https://bugs.webkit.org/show_bug.cgi?id=77677
+
+        Reviewed by Martin Robinson.
+
+        The WTF helper for getting the binary path that was added in r101710
+        left out the win32 implementation. Fix this.
+
+        * wtf/gobject/GlibUtilities.cpp:
+        (getCurrentExecutablePath):
+
 2012-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         Throwing away bytecode and then reparsing during DFG optimization is just
