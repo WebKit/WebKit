@@ -27,7 +27,7 @@ module svg {
         Conditional=SVG
     ] SVGElement : Element {
         attribute [Reflect] DOMString id;
-        attribute [ConvertNullToNullString] DOMString xmlbase setter raises(DOMException);
+        attribute [TreatNullAs=EmptyString] DOMString xmlbase setter raises(DOMException);
         readonly attribute SVGSVGElement ownerSVGElement;
         readonly attribute SVGElement viewportElement;
     };

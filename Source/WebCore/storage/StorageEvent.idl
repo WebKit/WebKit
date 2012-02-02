@@ -38,8 +38,8 @@ module storage {
                               in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
                               in [Optional=CallWithDefaultValue] boolean cancelableArg, 
                               in [Optional=CallWithDefaultValue] DOMString keyArg, 
-                              in [Optional=CallWithDefaultValue,ConvertNullToNullString] DOMString oldValueArg, 
-                              in [Optional=CallWithDefaultValue,ConvertNullToNullString] DOMString newValueArg, 
+                              in [Optional=CallWithDefaultValue,TreatNullAs=EmptyString] DOMString oldValueArg, 
+                              in [Optional=CallWithDefaultValue,TreatNullAs=EmptyString] DOMString newValueArg, 
                               in [Optional=CallWithDefaultValue] DOMString urlArg, 
                               in [Optional=CallWithDefaultValue] Storage storageAreaArg);
 

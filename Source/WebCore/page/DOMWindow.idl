@@ -228,9 +228,9 @@ module window {
 #endif
 
         // Base64
-        DOMString atob(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString string)
+        DOMString atob(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString string)
             raises(DOMException);
-        DOMString btoa(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString string)
+        DOMString btoa(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString string)
             raises(DOMException);
 
         // Events

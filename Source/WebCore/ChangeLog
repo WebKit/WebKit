@@ -1,5 +1,62 @@
 2012-02-01  Kentaro Hara  <haraken@chromium.org>
 
+        Rename [ConvertNullToNullString] to [TreatNullAs=EmptyString]
+        https://bugs.webkit.org/show_bug.cgi?id=77602
+
+        Reviewed by Adam Barth.
+
+        This patch renames [ConvertNullToNullString] to [TreatNullAs=EmptyString],
+        according to the spec (http://dev.w3.org/2006/webapi/WebIDL/#TreatNullAs).
+
+        No tests. No changes in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetNativeTypeFromSignature):
+
+        * css/CSSCharsetRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/ShadowRoot.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTitleElement.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * page/DOMWindow.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGScriptElement.idl:
+
+        * bindings/scripts/test/TestObj.idl: No change in the run-bindings-tests results.
+
+2012-02-01  Kentaro Hara  <haraken@chromium.org>
+
         Remove [GenerateConstructor] from IDL files
         https://bugs.webkit.org/show_bug.cgi?id=77598
 

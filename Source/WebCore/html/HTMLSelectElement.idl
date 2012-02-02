@@ -26,7 +26,7 @@ module html {
     ] HTMLSelectElement : HTMLElement {
         readonly attribute DOMString type;
         attribute long selectedIndex;
-        attribute [ConvertNullToNullString] DOMString value;
+        attribute [TreatNullAs=EmptyString] DOMString value;
         
         // Modified in DOM Level 2:
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -48,7 +48,7 @@ module html {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute boolean multiple;
-        attribute [ConvertNullToNullString] DOMString name;
+        attribute [TreatNullAs=EmptyString] DOMString name;
         attribute [Reflect] boolean required;
         attribute long size;
         

@@ -49,7 +49,7 @@ module html {
                           in [Optional=CallWithDefaultValue] float dy);
 
         attribute float globalAlpha;
-        attribute [ConvertNullToNullString] DOMString globalCompositeOperation;
+        attribute [TreatNullAs=EmptyString] DOMString globalCompositeOperation;
 
         CanvasGradient createLinearGradient(in [Optional=CallWithDefaultValue] float x0,
                                             in [Optional=CallWithDefaultValue] float y0,
@@ -65,14 +65,14 @@ module html {
             raises (DOMException);
 
         attribute float lineWidth;
-        attribute [ConvertNullToNullString] DOMString lineCap;
-        attribute [ConvertNullToNullString] DOMString lineJoin;
+        attribute [TreatNullAs=EmptyString] DOMString lineCap;
+        attribute [TreatNullAs=EmptyString] DOMString lineJoin;
         attribute float miterLimit;
 
         attribute float shadowOffsetX;
         attribute float shadowOffsetY;
         attribute float shadowBlur;
-        attribute [ConvertNullToNullString] DOMString shadowColor;
+        attribute [TreatNullAs=EmptyString] DOMString shadowColor;
 
         // FIXME: These attributes should also be implemented for V8.
 #if !(defined(V8_BINDING) && V8_BINDING)
@@ -204,9 +204,9 @@ module html {
         void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
 
-        CanvasPattern createPattern(in HTMLCanvasElement canvas, in [ConvertNullToNullString] DOMString repetitionType)
+        CanvasPattern createPattern(in HTMLCanvasElement canvas, in [TreatNullAs=EmptyString] DOMString repetitionType)
             raises (DOMException);
-        CanvasPattern createPattern(in HTMLImageElement image, in [ConvertNullToNullString] DOMString repetitionType)
+        CanvasPattern createPattern(in HTMLImageElement image, in [TreatNullAs=EmptyString] DOMString repetitionType)
             raises (DOMException);
         ImageData createImageData(in ImageData imagedata)
             raises (DOMException);

@@ -33,7 +33,7 @@ module css {
         HasIndexGetter
     ] WebKitCSSKeyframesRule : CSSRule {
 
-        attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString name;
+        attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString name;
         readonly attribute CSSRuleList cssRules;
         
         void insertRule(in [Optional=CallWithDefaultValue] DOMString rule);

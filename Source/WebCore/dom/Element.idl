@@ -43,22 +43,22 @@ module core {
 
         // DOM Level 2 Core
 
-        [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [OldStyleObjC] DOMString getAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                 in [Optional=CallWithDefaultValue] DOMString localName);
-        [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [OldStyleObjC] void setAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                            in [Optional=CallWithDefaultValue] DOMString qualifiedName, 
                                            in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
-        [OldStyleObjC] void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+        [OldStyleObjC] void removeAttributeNS(in [TreatNullAs=EmptyString] DOMString namespaceURI,
                                               in DOMString localName);
-        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [OldStyleObjC] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
-        [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [OldStyleObjC] Attr getAttributeNodeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                in [Optional=CallWithDefaultValue] DOMString localName);
         Attr setAttributeNodeNS(in [Optional=CallWithDefaultValue] Attr newAttr)
             raises(DOMException);
         boolean hasAttribute(in DOMString name);
-        [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [OldStyleObjC] boolean hasAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                               in [Optional=CallWithDefaultValue] DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;

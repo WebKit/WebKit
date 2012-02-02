@@ -54,7 +54,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString        nodeName;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        nodeValue
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString        nodeValue
                      setter raises(DOMException);
 
         readonly attribute unsigned short   nodeType;
@@ -85,10 +85,10 @@ module core {
         // Introduced in DOM Level 2:
 
         [OldStyleObjC] boolean isSupported(in [Optional=CallWithDefaultValue] DOMString feature, 
-                                           in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString version);
+                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString version);
 
         readonly attribute [ConvertNullStringTo=Null] DOMString        namespaceURI;
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        prefix
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString        prefix
                      setter raises(DOMException);
         readonly attribute [ConvertNullStringTo=Null] DOMString        localName;
 
@@ -99,14 +99,14 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString       baseURI;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString       textContent
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString       textContent
                      setter raises(DOMException);
 
         boolean            isSameNode(in [Optional=CallWithDefaultValue] Node other);
         boolean            isEqualNode(in [Optional=CallWithDefaultValue] Node other);
-        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
-        boolean            isDefaultNamespace(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
-        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString prefix);
+        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        boolean            isDefaultNamespace(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString prefix);
 
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;

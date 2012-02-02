@@ -22,7 +22,7 @@
 module html {
 
     interface HTMLTextAreaElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString defaultValue;
+        attribute [TreatNullAs=EmptyString] DOMString defaultValue;
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState validity;
         attribute long cols;
@@ -30,14 +30,14 @@ module html {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute long maxLength setter raises(DOMException);
-        attribute [ConvertNullToNullString] DOMString name;
+        attribute [TreatNullAs=EmptyString] DOMString name;
         attribute [Reflect] DOMString placeholder;
         attribute [Reflect] boolean readOnly;
         attribute [Reflect] boolean required;
         attribute long rows;
         attribute [Reflect] DOMString wrap;
         readonly attribute DOMString type;
-        attribute [ConvertNullToNullString] DOMString value;
+        attribute [TreatNullAs=EmptyString] DOMString value;
         readonly attribute unsigned long textLength;
 
         void select();

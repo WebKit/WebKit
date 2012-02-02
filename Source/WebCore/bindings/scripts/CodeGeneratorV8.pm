@@ -3336,7 +3336,7 @@ sub GetNativeTypeFromSignature
         my $mode = "";
         if ($signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"}) {
             $mode = "WithUndefinedOrNullCheck";
-        } elsif ($signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"}) {
+        } elsif (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString") or $signature->extendedAttributes->{"Reflect"}) {
             $mode = "WithNullCheck";
         }
         $type .= "<$mode>";

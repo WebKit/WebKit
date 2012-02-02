@@ -43,7 +43,7 @@ module css {
 
         readonly attribute unsigned short   type;
 
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString        cssText
                      setter raises (DOMException);
 
         readonly attribute CSSStyleSheet    parentStyleSheet;

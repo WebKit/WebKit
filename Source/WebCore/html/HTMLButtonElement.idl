@@ -24,8 +24,8 @@ module html {
         readonly attribute HTMLFormElement form;
 
         attribute [Reflect, URL] DOMString formAction;
-        attribute [ConvertNullToNullString] DOMString formEnctype;
-        attribute [ConvertNullToNullString] DOMString formMethod;
+        attribute [TreatNullAs=EmptyString] DOMString formEnctype;
+        attribute [TreatNullAs=EmptyString] DOMString formMethod;
         attribute [Reflect] boolean formNoValidate;
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;

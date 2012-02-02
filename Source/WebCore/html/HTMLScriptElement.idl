@@ -20,7 +20,7 @@
 module html {
 
     interface HTMLScriptElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString text;
+        attribute [TreatNullAs=EmptyString] DOMString text;
         attribute [Reflect=for] DOMString htmlFor;
         attribute [Reflect] DOMString event;
         attribute [Reflect] DOMString charset;

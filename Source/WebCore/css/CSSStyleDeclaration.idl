@@ -30,7 +30,7 @@ module css {
         CustomGetPropertyNames,
         V8DependentLifetime
     ] CSSStyleDeclaration {
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString        cssText
                      setter raises(DOMException);
 
         [ConvertNullStringTo=Null] DOMString          getPropertyValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
@@ -39,7 +39,7 @@ module css {
             raises(DOMException);
         [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=CallWithDefaultValue] DOMString propertyName);
         [OldStyleObjC] void setProperty(in [Optional=CallWithDefaultValue] DOMString propertyName, 
-                                        in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString value, 
+                                        in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString value, 
                                         in [Optional=CallWithDefaultValue] DOMString priority)
             raises(DOMException);
 

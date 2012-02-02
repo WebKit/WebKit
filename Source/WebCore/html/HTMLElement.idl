@@ -40,13 +40,13 @@ module html {
                  attribute [Reflect] DOMString accessKey;
 
         // Extensions
-                 attribute [ConvertNullToNullString] DOMString innerHTML
+                 attribute [TreatNullAs=EmptyString] DOMString innerHTML
                      setter raises(DOMException);
-                 attribute [ConvertNullToNullString] DOMString innerText
+                 attribute [TreatNullAs=EmptyString] DOMString innerText
                      setter raises(DOMException);
-                 attribute [ConvertNullToNullString] DOMString outerHTML
+                 attribute [TreatNullAs=EmptyString] DOMString outerHTML
                      setter raises(DOMException);
-                 attribute [ConvertNullToNullString] DOMString outerText
+                 attribute [TreatNullAs=EmptyString] DOMString outerText
                      setter raises(DOMException);
 
         Element insertAdjacentElement(in [Optional=CallWithDefaultValue] DOMString where,
@@ -61,7 +61,7 @@ module html {
 
         readonly attribute HTMLCollection children;
 
-                 attribute [ConvertNullToNullString] DOMString contentEditable
+                 attribute [TreatNullAs=EmptyString] DOMString contentEditable
                      setter raises(DOMException);
         readonly attribute boolean isContentEditable;
 

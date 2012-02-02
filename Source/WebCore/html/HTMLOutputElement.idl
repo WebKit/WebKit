@@ -29,8 +29,8 @@ module html {
         attribute [Reflect] DOMString name;
 
         readonly attribute DOMString type;
-        attribute [ConvertNullToNullString] DOMString defaultValue;
-        attribute [ConvertNullToNullString] DOMString value;
+        attribute [TreatNullAs=EmptyString] DOMString defaultValue;
+        attribute [TreatNullAs=EmptyString] DOMString value;
 
         readonly attribute boolean willValidate;
         readonly attribute ValidityState validity;

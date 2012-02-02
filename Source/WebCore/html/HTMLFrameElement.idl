@@ -44,7 +44,7 @@ module html {
 #endif
 #endif
 
-        attribute [ConvertNullToNullString, CustomSetter] DOMString location;
+        attribute [TreatNullAs=EmptyString, CustomSetter] DOMString location;
 
         readonly attribute long width;
         readonly attribute long height;

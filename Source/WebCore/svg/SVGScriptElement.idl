@@ -30,7 +30,7 @@ module svg {
     ] SVGScriptElement : SVGElement,
                                                    SVGURIReference,
                                                    SVGExternalResourcesRequired {
-                 attribute [ConvertNullToNullString] DOMString type
+                 attribute [TreatNullAs=EmptyString] DOMString type
                      /*setter raises(DOMException)*/;
     };
 

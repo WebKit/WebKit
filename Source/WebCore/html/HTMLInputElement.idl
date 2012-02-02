@@ -21,13 +21,13 @@
 module html {
 
     interface HTMLInputElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString defaultValue;
+        attribute [TreatNullAs=EmptyString] DOMString defaultValue;
         attribute [Reflect=checked] boolean defaultChecked;
         attribute [Reflect] DOMString dirName;
         readonly attribute HTMLFormElement form;
         attribute [Reflect, URL] DOMString formAction;
-        attribute [ConvertNullToNullString] DOMString formEnctype;
-        attribute [ConvertNullToNullString] DOMString formMethod;
+        attribute [TreatNullAs=EmptyString] DOMString formEnctype;
+        attribute [TreatNullAs=EmptyString] DOMString formMethod;
         attribute [Reflect] boolean formNoValidate;
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
@@ -57,9 +57,9 @@ module html {
 #endif
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString step;
-        attribute [ConvertNullToNullString] DOMString type; // readonly dropped as part of DOM level 2
+        attribute [TreatNullAs=EmptyString] DOMString type; // readonly dropped as part of DOM level 2
         attribute [Reflect] DOMString useMap;
-        attribute [ConvertNullToNullString] DOMString value;
+        attribute [TreatNullAs=EmptyString] DOMString value;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
         attribute Date valueAsDate setter raises(DOMException);
 #endif
@@ -78,7 +78,7 @@ module html {
         void click();
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        void setValueForUser(in [ConvertNullToNullString] DOMString value);
+        void setValueForUser(in [TreatNullAs=EmptyString] DOMString value);
 #endif
 
         // WinIE extension:

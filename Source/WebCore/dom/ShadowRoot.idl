@@ -36,7 +36,7 @@ module core {
         Element getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
         NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString className);
         NodeList getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString tagName);
-        NodeList getElementsByTagNameNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                         in [Optional=CallWithDefaultValue] DOMString localName);
     };
 

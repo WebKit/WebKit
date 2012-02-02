@@ -20,7 +20,7 @@
 module html {
 
     interface HTMLTitleElement : HTMLElement {
-        attribute  [ConvertNullToNullString] DOMString            text;
+        attribute  [TreatNullAs=EmptyString] DOMString            text;
     };
 
 }

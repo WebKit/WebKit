@@ -28,7 +28,7 @@ module core {
         // DOM Level 1
 
         [OldStyleObjC] boolean hasFeature(in [Optional=CallWithDefaultValue] DOMString feature, 
-                                          in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString version);
+                                          in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString version);
 
         // DOM Level 2
 
@@ -36,9 +36,9 @@ module core {
                                                        in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString publicId,
                                                        in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString systemId)
             raises(DOMException);
-        [OldStyleObjC] Document createDocument(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
-                                               in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
-                                               in [ConvertNullToNullString,Optional=CallWithDefaultValue] DocumentType doctype)
+        [OldStyleObjC] Document createDocument(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+                                               in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
+                                               in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
