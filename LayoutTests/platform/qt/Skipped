@@ -1240,7 +1240,10 @@ svg/custom/acid3-test-77.html
 svg/custom/altglyph.svg
 svg/custom/font-face-simple.svg
 svg/custom/global-constructors.html
+svg/custom/glyph-selection-arabic-forms.svg
+svg/custom/glyph-selection-bidi-mirror.svg
 svg/custom/glyph-selection-lang-attribute.svg
+svg/custom/glyph-selection-non-bmp.svg
 svg/custom/glyph-setting-d-attribute.svg
 svg/custom/insertItemBefore-from-non-list-origin.svg
 svg/custom/svg-fonts-in-text-controls.html
