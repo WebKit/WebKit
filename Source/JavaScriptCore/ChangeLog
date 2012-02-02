@@ -1,5 +1,25 @@
 2012-02-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Throwing away bytecode and then reparsing during DFG optimization is just
+        plain wrong and makes things crash
+        https://bugs.webkit.org/show_bug.cgi?id=77680
+        <rdar://problem/10798490>
+
+        Reviewed by Oliver Hunt.
+
+        This is the minimal surgical fix: it removes the code that triggered bytecode
+        throw-away. Once we're confident that this is a good idea, we can kill all of
+        the code that implements the feature.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::discardBytecodeLater):
+        (JSC::CodeBlock::addValueProfile):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+
+2012-02-02  Filip Pizlo  <fpizlo@apple.com>
+
         Release build debugging should be easier
         https://bugs.webkit.org/show_bug.cgi?id=77669
 

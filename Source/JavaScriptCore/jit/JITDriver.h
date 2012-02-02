@@ -55,10 +55,6 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
         }
         jitCode = JIT::compile(&globalData, codeBlock.get());
     }
-#if !ENABLE(OPCODE_SAMPLING)
-    if (!BytecodeGenerator::dumpsGeneratedCode())
-        codeBlock->handleBytecodeDiscardingOpportunity();
-#endif
     codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
     
     return true;
@@ -83,10 +79,6 @@ inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<Fun
         }
         jitCode = JIT::compile(&globalData, codeBlock.get(), &jitCodeWithArityCheck);
     }
-#if !ENABLE(OPCODE_SAMPLING)
-    if (!BytecodeGenerator::dumpsGeneratedCode())
-        codeBlock->handleBytecodeDiscardingOpportunity();
-#endif
     
     codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
     

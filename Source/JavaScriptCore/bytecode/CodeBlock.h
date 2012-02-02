@@ -352,13 +352,6 @@ namespace JSC {
         {
             m_shouldDiscardBytecode = true;
         }
-        void handleBytecodeDiscardingOpportunity()
-        {
-            if (!!alternative())
-                discardBytecode();
-            else
-                discardBytecodeLater();
-        }
         
         bool usesOpcode(OpcodeID);
 
@@ -518,6 +511,7 @@ namespace JSC {
         ValueProfile* addValueProfile(int bytecodeOffset)
         {
             ASSERT(bytecodeOffset != -1);
+            ASSERT(m_valueProfiles.isEmpty() || m_valueProfiles.last().m_bytecodeOffset < bytecodeOffset);
             m_valueProfiles.append(ValueProfile(bytecodeOffset));
             return &m_valueProfiles.last();
         }
