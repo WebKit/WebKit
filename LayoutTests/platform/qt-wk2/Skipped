@@ -251,13 +251,6 @@ http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 # new failing tests
 fast/events/mouseover-button.html
 
-# New failing tests
-# https://bugs.webkit.org/show_bug.cgi?id=67485
-fast/dom/Window/window-properties.html
-fast/text/complex-preferred-logical-widths.html
-http/tests/loading/empty-urls.html
-http/tests/loading/progress-finished-callback.html
-
 # [Qt][WK2] fast/inline/absolute-positioned-inline-in-centred-block.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=67607
 fast/inline/absolute-positioned-inline-in-centred-block.html
@@ -423,3 +416,6 @@ http/tests/navigation/anchor-frames-gbk.html
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
+
+# CONSOLE MESSAGE: line 4: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.dumpProgressFinishedCallback()')
+http/tests/loading/progress-finished-callback.html
