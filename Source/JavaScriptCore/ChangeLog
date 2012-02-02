@@ -1,3 +1,101 @@
+2012-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Release build debugging should be easier
+        https://bugs.webkit.org/show_bug.cgi?id=77669
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/ARMAssembler.h:
+        (ARMAssembler):
+        (JSC::ARMAssembler::debugOffset):
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::debugOffset):
+        (ARMInstructionFormatter):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::debugOffset):
+        * assembler/AbstractMacroAssembler.h:
+        (AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::debugOffset):
+        * assembler/AssemblerBuffer.h:
+        (AssemblerBuffer):
+        (JSC::AssemblerBuffer::debugOffset):
+        * assembler/LinkBuffer.h:
+        (LinkBuffer):
+        (JSC::LinkBuffer::debugSize):
+        * assembler/MIPSAssembler.h:
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::debugOffset):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::debugOffset):
+        (X86InstructionFormatter):
+        (JSC::X86Assembler::X86InstructionFormatter::debugOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (JSC):
+        (JSC::CodeOrigin::inlineStack):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        * bytecode/DataFormat.h:
+        (JSC::dataFormatToString):
+        * bytecode/PredictedType.cpp:
+        (JSC):
+        (JSC::predictionToString):
+        * bytecode/PredictedType.h:
+        (JSC):
+        * bytecode/ValueRecovery.h:
+        (ValueRecovery):
+        (JSC::ValueRecovery::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC):
+        (JSC::BytecodeGenerator::setDumpsGeneratedCode):
+        (JSC::BytecodeGenerator::dumpsGeneratedCode):
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGAbstractValue.h:
+        (StructureAbstractValue):
+        (JSC::DFG::StructureAbstractValue::dump):
+        (AbstractValue):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGAssemblyHelpers.h:
+        (DFG):
+        (AssemblyHelpers):
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        * dfg/DFGFPRInfo.h:
+        (FPRInfo):
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        (JSC::DFG::GPRInfo::debugName):
+        * dfg/DFGGraph.cpp:
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::arithNodeFlagsAsString):
+        (Node):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::dumpChildren):
+        * dfg/DFGOSRExit.cpp:
+        (DFG):
+        (JSC::DFG::OSRExit::dump):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * runtime/JSValue.cpp:
+        (JSC):
+        (JSC::JSValue::description):
+        * runtime/JSValue.h:
+        (JSValue):
+        * wtf/BitVector.cpp:
+        (WTF):
+        (WTF::BitVector::dump):
+        * wtf/BitVector.h:
+        (BitVector):
+
 2012-02-02  Oliver Hunt  <oliver@apple.com>
 
         Getters and setters cause line numbers in errors/console.log to be offset for the whole file

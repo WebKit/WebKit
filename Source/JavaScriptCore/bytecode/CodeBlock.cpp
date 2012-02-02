@@ -59,8 +59,6 @@ namespace JSC {
 using namespace DFG;
 #endif
 
-#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
-
 static UString escapeQuotes(const UString& str)
 {
     UString result = str;
@@ -1285,8 +1283,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
     }
 }
-
-#endif // !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
 #if DUMP_CODE_BLOCK_STATISTICS
 static HashSet<CodeBlock*> liveCodeBlockSet;

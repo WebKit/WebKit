@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-#ifndef NDEBUG
 const char* predictionToString(PredictedType value)
 {
     if (value == PredictNone)
@@ -160,7 +159,6 @@ const char* predictionToString(PredictedType value)
     
     return description;
 }
-#endif
 
 PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
 {

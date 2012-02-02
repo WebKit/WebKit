@@ -50,7 +50,6 @@ enum DataFormat {
     DataFormatJSBoolean = DataFormatJS | DataFormatBoolean
 };
 
-#ifndef NDEBUG
 inline const char* dataFormatToString(DataFormat dataFormat)
 {
     switch (dataFormat) {
@@ -80,7 +79,6 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "Unknown";
     }
 }
-#endif
 
 #if USE(JSVALUE64)
 inline bool needDataFormatConversion(DataFormat from, DataFormat to)

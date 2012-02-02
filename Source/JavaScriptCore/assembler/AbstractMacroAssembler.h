@@ -538,9 +538,7 @@ public:
     void beginUninterruptedSequence() { }
     void endUninterruptedSequence() { }
 
-#ifndef NDEBUG
     unsigned debugOffset() { return m_assembler.debugOffset(); }
-#endif
 
 protected:
     AssemblerType m_assembler;

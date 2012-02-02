@@ -30,11 +30,8 @@
 #include "JSValue.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
-#include <wtf/Platform.h>
-
-#ifndef NDEBUG
 #include <stdio.h>
-#endif
+#include <wtf/Platform.h>
 
 namespace JSC {
 
@@ -249,7 +246,6 @@ public:
         return JSValue::decode(m_source.constant);
     }
     
-#ifndef NDEBUG
     void dump(FILE* out) const
     {
         switch (technique()) {
@@ -314,7 +310,6 @@ public:
             break;
         }
     }
-#endif
     
 private:
     ValueRecoveryTechnique m_technique;

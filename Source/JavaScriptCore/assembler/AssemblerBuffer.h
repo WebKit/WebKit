@@ -146,9 +146,7 @@ namespace JSC {
             return result.release();
         }
 
-#ifndef NDEBUG
         unsigned debugOffset() { return m_index; }
-#endif
 
     protected:
         void append(const char* data, int size)

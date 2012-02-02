@@ -150,26 +150,16 @@ void ResolveResult::checkValidity()
 }
 #endif
 
-#ifndef NDEBUG
 static bool s_dumpsGeneratedCode = false;
-#endif
 
 void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
 {
-#ifndef NDEBUG
     s_dumpsGeneratedCode = dumpsGeneratedCode;
-#else
-    UNUSED_PARAM(dumpsGeneratedCode);
-#endif
 }
 
 bool BytecodeGenerator::dumpsGeneratedCode()
 {
-#ifndef NDEBUG
     return s_dumpsGeneratedCode;
-#else
-    return false;
-#endif
 }
 
 JSObject* BytecodeGenerator::generate()
@@ -182,10 +172,8 @@ JSObject* BytecodeGenerator::generate()
 
     m_codeBlock->setInstructionCount(m_codeBlock->instructions().size());
 
-#ifndef NDEBUG
     if (s_dumpsGeneratedCode)
         m_codeBlock->dump(m_scopeChain->globalObject->globalExec());
-#endif
 
     if ((m_codeType == FunctionCode && !m_codeBlock->needsFullScopeChain() && !m_codeBlock->usesArguments()) || m_codeType == EvalCode)
         symbolTable().clear();

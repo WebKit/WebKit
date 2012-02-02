@@ -83,10 +83,8 @@ struct CodeOrigin {
     
     bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
     
-#ifndef NDEBUG
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
-#endif
 };
 
 struct InlineCallFrame {
@@ -122,7 +120,6 @@ inline bool CodeOrigin::operator==(const CodeOrigin& other) const
         && inlineCallFrame == other.inlineCallFrame;
 }
     
-#ifndef NDEBUG
 // Get the inline stack. This is slow, and is intended for debugging only.
 inline Vector<CodeOrigin> CodeOrigin::inlineStack() const
 {
@@ -133,7 +130,6 @@ inline Vector<CodeOrigin> CodeOrigin::inlineStack() const
         result[index--] = current->caller;
     return result;
 }
-#endif
 
 inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* data)
 {

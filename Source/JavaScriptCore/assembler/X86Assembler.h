@@ -1787,9 +1787,7 @@ public:
         return m_formatter.executableCopy(globalData, ownerUID);
     }
 
-#ifndef NDEBUG
     unsigned debugOffset() { return m_formatter.debugOffset(); }
-#endif
 
     void nop()
     {
@@ -2137,9 +2135,7 @@ private:
             return m_buffer.executableCopy(globalData, ownerUID);
         }
 
-#ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }
-#endif
 
     private:
 

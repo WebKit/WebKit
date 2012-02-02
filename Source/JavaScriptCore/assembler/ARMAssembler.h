@@ -681,9 +681,7 @@ namespace JSC {
 
         PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData&, void* ownerUID);
 
-#ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }
-#endif
 
         // Patching helpers
 

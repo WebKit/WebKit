@@ -217,9 +217,7 @@ inline bool isOtherPrediction(PredictedType value)
     return value == PredictOther;
 }
 
-#ifndef NDEBUG
 const char* predictionToString(PredictedType value);
-#endif
 
 // Merge two predictions. Note that currently this just does left | right. It may
 // seem tempting to do so directly, but you would be doing so at your own peril,

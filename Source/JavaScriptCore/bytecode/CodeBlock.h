@@ -134,11 +134,9 @@ namespace JSC {
 
         static void dumpStatistics();
 
-#if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
         void dump(ExecState*) const;
         void printStructures(const Instruction*) const;
         void printStructure(const char* name, const Instruction*, int operand) const;
-#endif
 
         bool isStrictMode() const { return m_isStrictMode; }
 
@@ -362,9 +360,7 @@ namespace JSC {
                 discardBytecodeLater();
         }
         
-#ifndef NDEBUG
         bool usesOpcode(OpcodeID);
-#endif
 
         unsigned instructionCount() { return m_instructionCount; }
         void setInstructionCount(unsigned instructionCount) { m_instructionCount = instructionCount; }
@@ -1016,7 +1012,6 @@ namespace JSC {
         void tallyFrequentExitSites() { }
 #endif
         
-#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 
         CString registerName(ExecState*, int r) const;
@@ -1026,7 +1021,6 @@ namespace JSC {
         void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-#endif
         void visitStructures(SlotVisitor&, Instruction* vPC) const;
         
 #if ENABLE(DFG_JIT)

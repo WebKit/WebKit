@@ -655,9 +655,7 @@ public:
         return result.release();
     }
 
-#ifndef NDEBUG
     unsigned debugOffset() { return m_buffer.debugOffset(); }
-#endif
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {

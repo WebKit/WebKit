@@ -78,7 +78,6 @@ public:
         return (unsigned)reg;
     }
 
-#ifndef NDEBUG
     static const char* debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
@@ -99,7 +98,6 @@ public:
 #endif
         return nameForRegister[reg];
     }
-#endif
 };
 
 #endif
@@ -141,7 +139,6 @@ public:
         return (unsigned)reg;
     }
 
-#ifndef NDEBUG
     static const char* debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
@@ -158,7 +155,6 @@ public:
         };
         return nameForRegister[reg];
     }
-#endif
 };
 
 #endif

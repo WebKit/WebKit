@@ -26,12 +26,9 @@
 #ifndef BitVector_h
 #define BitVector_h
 
+#include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
-
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
 
 namespace WTF {
 
@@ -165,9 +162,7 @@ public:
             clear(bit);
     }
     
-#ifndef NDEBUG
     void dump(FILE* out);
-#endif
     
 private:
     static unsigned bitsInPointer()

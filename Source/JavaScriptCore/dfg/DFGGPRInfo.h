@@ -292,7 +292,6 @@ public:
         return result;
     }
 
-#ifndef NDEBUG
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -303,7 +302,6 @@ public:
         };
         return nameForRegister[reg];
     }
-#endif
 private:
 
     static const unsigned InvalidIndex = 0xffffffff;
@@ -363,7 +361,6 @@ public:
         return result;
     }
 
-#ifndef NDEBUG
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -376,7 +373,6 @@ public:
         };
         return nameForRegister[reg];
     }
-#endif
 private:
 
     static const unsigned InvalidIndex = 0xffffffff;
@@ -436,7 +432,6 @@ public:
         return result;
     }
 
-#ifndef NDEBUG
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -449,7 +444,6 @@ public:
         };
         return nameForRegister[reg];
     }
-#endif
 private:
 
     static const unsigned InvalidIndex = 0xffffffff;

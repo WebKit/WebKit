@@ -116,7 +116,6 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
     return JSNotAnObject::create(exec);
 }
 
-#ifndef NDEBUG
 char* JSValue::description()
 {
     static const size_t size = 64;
@@ -152,7 +151,6 @@ char* JSValue::description()
 
     return description;
 }
-#endif
 
 // This in the ToInt32 operation is defined in section 9.5 of the ECMA-262 spec.
 // Note that this operation is identical to ToUInt32 other than to interpretation

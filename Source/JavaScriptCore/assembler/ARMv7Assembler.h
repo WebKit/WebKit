@@ -1991,9 +1991,7 @@ public:
         return reinterpret_cast<void*>(readInt32(where));
     }
 
-#ifndef NDEBUG
     unsigned debugOffset() { return m_formatter.debugOffset(); }
-#endif
 
 private:
     // VFP operations commonly take one or more 5-bit operands, typically representing a
@@ -2490,9 +2488,7 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 
-#ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }
-#endif
 
     private:
         AssemblerBuffer m_buffer;

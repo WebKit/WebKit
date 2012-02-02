@@ -232,9 +232,7 @@ namespace JSC {
         JSCell* asCell() const;
         JS_EXPORT_PRIVATE bool isValidCallee();
 
-#ifndef NDEBUG
         char* description();
-#endif
 
     private:
         template <class T> JSValue(WriteBarrierBase<T>);

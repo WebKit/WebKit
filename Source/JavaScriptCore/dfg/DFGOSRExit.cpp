@@ -53,7 +53,6 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, ValueProfile* value
         m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
 }
 
-#ifndef NDEBUG
 void OSRExit::dump(FILE* out) const
 {
     for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
@@ -62,7 +61,6 @@ void OSRExit::dump(FILE* out) const
     for (unsigned variable = 0; variable < m_variables.size(); ++variable)
         m_variables[variable].dump(out);
 }
-#endif
 
 bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)
 {

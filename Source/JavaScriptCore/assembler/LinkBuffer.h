@@ -189,7 +189,6 @@ public:
         return CodePtr(MacroAssembler::AssemblerType_T::getRelocatedAddress(code(), applyOffset(label.m_label)));
     }
 
-#ifndef NDEBUG
     void* debugAddress()
     {
         return m_code;
@@ -199,7 +198,6 @@ public:
     {
         return m_size;
     }
-#endif
 
 private:
     template <typename T> T applyOffset(T src)

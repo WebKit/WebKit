@@ -137,9 +137,7 @@ struct OSRExit {
         return considerAddingAsFrequentExitSiteSlow(dfgCodeBlock, profiledCodeBlock);
     }
     
-#ifndef NDEBUG
     void dump(FILE* out) const;
-#endif
     
     Vector<ValueRecovery, 0> m_arguments;
     Vector<ValueRecovery, 0> m_variables;

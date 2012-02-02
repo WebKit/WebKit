@@ -105,7 +105,6 @@ void BitVector::resizeOutOfLine(size_t numBits)
     m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
 }
 
-#ifndef NDEBUG
 void BitVector::dump(FILE* out)
 {
     for (size_t i = 0; i < size(); ++i) {
@@ -115,6 +114,5 @@ void BitVector::dump(FILE* out)
             fprintf(out, "-");
     }
 }
-#endif
 
 } // namespace WTF

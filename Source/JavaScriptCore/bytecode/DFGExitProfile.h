@@ -41,7 +41,6 @@ enum ExitKind {
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
 };
 
-#ifndef NDEBUG
 inline const char* exitKindToString(ExitKind kind)
 {
     switch (kind) {
@@ -59,7 +58,6 @@ inline const char* exitKindToString(ExitKind kind)
         return "Unknown";
     }
 }
-#endif
 
 inline bool exitKindIsCountable(ExitKind kind)
 {

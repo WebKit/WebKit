@@ -32,8 +32,6 @@
 
 namespace JSC { namespace DFG {
 
-#ifndef NDEBUG
-
 // Creates an array of stringized names.
 static const char* dfgOpNames[] = {
 #define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ,
@@ -297,8 +295,6 @@ void Graph::dump(CodeBlock* codeBlock)
     for (size_t i = m_blocks.last()->end; i < size(); ++i)
         dump(i, codeBlock);
 }
-
-#endif
 
 // FIXME: Convert this to be iterative, not recursive.
 #define DO_TO_CHILDREN(node, thingToDo) do {                            \

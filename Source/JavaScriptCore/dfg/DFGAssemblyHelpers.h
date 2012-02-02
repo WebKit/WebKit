@@ -39,9 +39,7 @@
 
 namespace JSC { namespace DFG {
 
-#ifndef NDEBUG
 typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
-#endif
 
 class AssemblyHelpers : public MacroAssembler {
 public:
@@ -152,7 +150,6 @@ public:
         return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
 
-#ifndef NDEBUG
     // Add a debug call. This call has no effect on JIT code execution state.
     void debugCall(V_DFGDebugOperation_EP function, void* argument)
     {
@@ -182,7 +179,6 @@ public:
         for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
             loadPtr(buffer + i, GPRInfo::toRegister(i));
     }
-#endif
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if DFG_ENABLE(JIT_ASSERT)

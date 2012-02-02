@@ -96,7 +96,6 @@ static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
     return true;
 }
 
-#ifndef NDEBUG
 static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
 {
     if (!flags)
@@ -138,7 +137,6 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     
     return description;
 }
-#endif
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
@@ -499,7 +497,6 @@ struct Node {
         return variableAccessData()->local();
     }
 
-#ifndef NDEBUG
     bool hasIdentifier()
     {
         switch (op) {
@@ -515,7 +512,6 @@ struct Node {
             return false;
         }
     }
-#endif
 
     unsigned identifierNumber()
     {
@@ -1036,7 +1032,6 @@ struct Node {
         return nodeCanSpeculateInteger(arithNodeFlags());
     }
     
-#ifndef NDEBUG
     void dumpChildren(FILE* out)
     {
         if (child1() == NoNode)
@@ -1049,7 +1044,6 @@ struct Node {
             return;
         fprintf(out, ", @%u", child3());
     }
-#endif
     
     // This enum value describes the type of the node.
     NodeType op;

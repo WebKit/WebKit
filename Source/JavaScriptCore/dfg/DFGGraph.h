@@ -110,7 +110,6 @@ public:
         node.children.fixed.child3 = NoNode;
     }
 
-#ifndef NDEBUG
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(CodeBlock* = 0);
     void dump(NodeIndex, CodeBlock* = 0);
@@ -118,7 +117,6 @@ public:
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node.
     void dumpCodeOrigin(NodeIndex);
-#endif
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
@@ -214,12 +212,10 @@ public:
         return asFunction(function);
     }
 
-#ifndef NDEBUG
     static const char *opName(NodeType);
     
     // This is O(n), and should only be used for verbose dumps.
     const char* nameOfVariableAccessData(VariableAccessData*);
-#endif
 
     void predictArgumentTypes(CodeBlock*);
     
