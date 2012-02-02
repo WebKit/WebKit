@@ -70,7 +70,7 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(ChromiumPort.update_webkit_command(), WebKitPort.script_shell_command("update-webkit") + ["--chromium"])
 
     def test_chromium_xvfb_port(self):
-        self.assertEquals(ChromiumXVFBPort.run_webkit_tests_command(), ['xvfb-run'] + WebKitPort.script_shell_command('new-run-webkit-tests') + ['--chromium', '--skip-failing-tests', '--results-directory=/tmp/layout-test-results', '--skip-failing-tests', '--print=actual,config,expected,misc,slowest,unexpected,unexpected-results'])
+        self.assertEquals(ChromiumXVFBPort.run_webkit_tests_command(), ['xvfb-run'] + WebKitPort.script_shell_command('new-run-webkit-tests') + ['--chromium', '--skip-failing-tests'])
 
 if __name__ == '__main__':
     unittest.main()

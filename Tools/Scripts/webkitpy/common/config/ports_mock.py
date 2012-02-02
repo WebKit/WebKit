@@ -28,11 +28,13 @@
 
 
 class MockPort(object):
+    results_directory = "/mock-results"
+
     def name(self):
         return "MockPort"
 
     def layout_tests_results_path(self):
-        return "/mock-results/results.html"
+        return "/mock-results/full_results.json"
 
     def check_webkit_style_command(self):
         return ["mock-check-webkit-style"]

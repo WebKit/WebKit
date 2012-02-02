@@ -34,12 +34,11 @@ from webkitpy.tool.steps.runtests import RunTests
 
 class RunTestsTest(unittest.TestCase):
     def test_no_unit_tests(self):
-        tool = MockTool()
+        tool = MockTool(log_executive=True)
         tool._deprecated_port.run_python_unittests_command = lambda: None
         tool._deprecated_port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
-        expected_stderr = """Running JavaScriptCore tests
-Running WebKit unit tests
-Running run-webkit-tests
+        expected_stderr = """Running run-webkit-tests
+MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-launch-safari', '--skip-failing-tests', '--exit-after-n-failures=30', '--results-directory=/mock-results', '--print=actual,config,expected,misc,slowest,unexpected,unexpected-results'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)

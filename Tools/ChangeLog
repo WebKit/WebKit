@@ -1,3 +1,40 @@
+2012-02-01  Adam Barth  <abarth@webkit.org>
+
+        Mac-ews logs are huge
+        https://bugs.webkit.org/show_bug.cgi?id=77045
+
+        Reviewed by Eric Seidel.
+
+        In order to get the cr-linux-ews bot to run tests on EC2, we created
+        the chromium-xvfb port, which contained a number of tweaks to the
+        Chromium port's behavior.  This patch refactors those tweaks so they
+        can be shared with the mac-ews, mostly by moving them into the
+        non-interactive mode of RunTests.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (WebKitPort):
+        (WebKitPort.layout_tests_results_path):
+        (ChromiumPort.run_javascriptcore_tests_command):
+        (ChromiumXVFBPort):
+        (ChromiumXVFBPort.run_webkit_tests_command):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort):
+        (MockPort.layout_tests_results_path):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (WebKitPortTest.test_chromium_xvfb_port):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_missing_layout_test_results):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest.test_commit_queue):
+        (test_rollout):
+        (test_manual_reject_during_processing):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_no_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll out r106442. It made some tests more stable but others less stable.
