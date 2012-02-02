@@ -1619,3 +1619,10 @@ fast/dom/shadow/content-element-outside-shadow.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=77413
 fast/parser/nested-fragment-parser-crash.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=77631
+fast/multicol/span/span-as-immediate-child-property-removal.html
+fast/multicol/span/span-as-immediate-columns-child-removal.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=77633
+fast/forms/listbox-clear-restore.html
