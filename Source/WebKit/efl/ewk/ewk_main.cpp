@@ -44,11 +44,6 @@
 #if ENABLE(GLIB_SUPPORT)
 #include <glib-object.h>
 #include <glib.h>
-
-#ifdef ENABLE_GTK_PLUGINS_SUPPORT
-#include <gtk/gtk.h>
-#endif
-
 #endif
 
 #if USE(SOUP)
@@ -148,12 +143,6 @@ Eina_Bool _ewk_init_body(void)
 
     if (!g_thread_supported())
         g_thread_init(0);
-
-#ifdef ENABLE_GTK_PLUGINS_SUPPORT
-    gdk_threads_init();
-    if (!gtk_init_check(0, 0))
-        WRN("Could not initialize GTK support.");
-#endif
 
     if (!ecore_main_loop_glib_integrate())
         WRN("Ecore was not compiled with GLib support, some plugins will not "

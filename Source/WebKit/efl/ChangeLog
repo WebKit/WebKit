@@ -1,3 +1,18 @@
+2012-02-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Remove check for ENABLE_GTK_PLUGINS_SUPPORT
+        https://bugs.webkit.org/show_bug.cgi?id=77647
+
+        Reviewed by Martin Robinson.
+
+        There is no clear reason why this check was in place (it came with the
+        upstreaming of the port), but ENABLE_GTK_PLUGINS_SUPPORT is not set
+        anywhere, and the build system does not even check for the presence of
+        GTK+ when building.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2012-01-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add basic DRT/Efl implementation to support viewport test.
