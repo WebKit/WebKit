@@ -1,3 +1,11 @@
+2012-02-02  Michael Saboff  <msaboff@apple.com>
+
+        Add Michael Saboff to reviewers list.
+
+        Rubber-stamped by Gavin Barraclough.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-02  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         Add myself as a committer
