@@ -13,6 +13,8 @@ PASS /\2(...)$/.test('abcabc') is false
 PASS /\2(...)$/.test('abc') is false
 PASS /\1?(...)$/.test('abc') is true
 PASS /\1?(...)$/.test('abc') is true
+PASS re.test('axabcd') is false
+PASS re.test('axabcsz') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

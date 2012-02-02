@@ -10,3 +10,8 @@ shouldBeFalse("/\\2(...)$/.test('abcabc')");
 shouldBeFalse("/\\2(...)$/.test('abc')");
 shouldBeTrue("/\\1?(...)$/.test('abc')");
 shouldBeTrue("/\\1?(...)$/.test('abc')");
+
+re = new RegExp("[^b]*((..)|(\\2))+Sz", "i");
+
+shouldBeFalse("re.test('axabcd')");
+shouldBeTrue("re.test('axabcsz')");

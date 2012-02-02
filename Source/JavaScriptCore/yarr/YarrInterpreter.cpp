@@ -565,7 +565,10 @@ public:
         if (matchEnd == -1)
             return true;
 
-        ASSERT((matchBegin == -1) || (matchBegin <= matchEnd));
+        if (matchBegin == -1)
+            return true;
+
+        ASSERT(matchBegin <= matchEnd);
 
         if (matchBegin == matchEnd)
             return true;
@@ -607,7 +610,11 @@ public:
 
         int matchBegin = output[(term.atom.subpatternId << 1)];
         int matchEnd = output[(term.atom.subpatternId << 1) + 1];
-        ASSERT((matchBegin == -1) || (matchBegin <= matchEnd));
+
+        if (matchBegin == -1)
+            return false;
+
+        ASSERT(matchBegin <= matchEnd);
 
         if (matchBegin == matchEnd)
             return false;

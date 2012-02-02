@@ -1,3 +1,17 @@
+2012-02-01  Michael Saboff  <msaboff@apple.com>
+
+        Yarr crash with regexp replace
+        https://bugs.webkit.org/show_bug.cgi?id=67454
+
+        Reviewed by Gavin Barraclough.
+
+        Properly handle the case of a back reference to an unmatched
+        subpattern by always matching without consuming any characters.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackBackReference):
+
 2012-02-01  Gavin Barraclough  <barraclough@apple.com>
 
         calling function on catch block scope containing an eval result in wrong this value being passed
