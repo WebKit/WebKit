@@ -1,3 +1,10 @@
+2012-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Another attempt to fix the Windows build.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerDidCreateTiles):
+
 2012-01-26  Andy Estes  <aestes@apple.com>
 
         [Windows] Optionally invert colors when drawing to a WebView's backing store.
