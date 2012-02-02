@@ -2484,10 +2484,6 @@ fast/forms/select/listbox-in-multi-column.html
 # https://bugs.webkit.org/show_bug.cgi?id=73802
 editing/style/iframe-onload-crash-mac.html
 
-# [Qt] REGRESSION(103045): It made fast/forms/select-script-onchange.html fail
-# https://bugs.webkit.org/show_bug.cgi?id=74700
-fast/forms/select-script-onchange.html
-
 # [Qt] fails fast/inline/nested-text-descendants.html
 # https://bugs.webkit.org/show_bug.cgi?id=75321
 fast/inline/nested-text-descendants.html
