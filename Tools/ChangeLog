@@ -1,5 +1,25 @@
 2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [PerformanceTests] tests have dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=77506
+
+        Reviewed by Hajime Morita.
+
+        Load an initialization page before each test after starting a DRT so that
+        warming up DRT won't affect the performance test results.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.TestDriver.run_test):
+        (test_initial_page_loaded):
+        (test_initial_page_loaded.run_test):
+
+2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Re-land r106442 per Adam's suggestion. We'll do both restarting DRT and loading a fake test first.
 
         * Scripts/webkitpy/performance_tests/perftestsrunner.py:

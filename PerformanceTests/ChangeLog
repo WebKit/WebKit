@@ -1,3 +1,12 @@
+2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [PerformanceTests] tests have dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=77506
+
+        Reviewed by Hajime Morita.
+
+        * resources/init.html: Added.
+
 2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix after r106386. The empty anchor element was generating an erroneous whitespace.

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This file is used by run-perf-tests between each test to marginalize the dependency between tests.
+This file is not intended to be opened on a browser.</p>
+<script>
+
+if (window.layoutTestController) {
+    GCController.collect();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    // Give 5 seconds to cleanup the mess the last page left.
+    setTimeout(function () { layoutTestController.notifyDone(); }, 5000);
+    document.querySelector('p').innerHTML = 'PASS';
+}
+
+
+</script>
+</body>
+</html>
