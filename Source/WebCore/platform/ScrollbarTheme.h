@@ -36,6 +36,10 @@ class PlatformMouseEvent;
 class Scrollbar;
 class ScrollView;
 
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+class GraphicsLayer;
+#endif
+
 class ScrollbarTheme {
     WTF_MAKE_NONCOPYABLE(ScrollbarTheme); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -83,6 +87,10 @@ public:
     static void defaultPaintScrollCorner(GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB); }
 
     virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect&, const IntRect&, const IntRect&) { }
+
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+    virtual void setUpOverhangAreasLayerContents(GraphicsLayer*) { }
+#endif
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&) { return false; }

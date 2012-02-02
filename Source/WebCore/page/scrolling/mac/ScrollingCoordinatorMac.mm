@@ -77,6 +77,8 @@ void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, c
     // FIXME: Inform the scrolling thread?
 }
 
+#define ENABLE_FREE_SCROLLING 0
+
 void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
 {
     ASSERT(ScrollingThread::isCurrentThread());
@@ -88,10 +90,13 @@ void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
     scrollPosition = -scrollPosition;
 
     scrollPosition += offset;
+
+#if !ENABLE_FREE_SCROLLING
     scrollPosition.clampNegativeToZero();
 
     IntPoint maximumScrollPosition = IntPoint(m_mainFrameContentsSize.width() - m_mainFrameVisibleContentRect.width(), m_mainFrameContentsSize.height() - m_mainFrameVisibleContentRect.height());
     scrollPosition = scrollPosition.shrunkTo(maximumScrollPosition);
+#endif
 
     updateMainFrameScrollLayerPositionOnScrollingThread(-scrollPosition);
 

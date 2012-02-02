@@ -1,3 +1,33 @@
+2012-02-02  Anders Carlsson  <andersca@apple.com>
+
+        The overhang area layer should have a linen background
+        https://bugs.webkit.org/show_bug.cgi?id=77670
+        <rdar://problem/10797727>
+
+        Reviewed by Andreas Kling.
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::scrollByOnScrollingThread):
+        Add an #ifdef so that scroll position clamping can be disabled. This will be
+        removed once rubber-banding works properly.
+
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::setUpOverhangAreasLayerContents):
+        Add new empty function.
+
+        * platform/mac/ScrollbarThemeMac.h:
+        (ScrollbarThemeMac):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::linenBackgroundColor):
+        Helper function for getting the CGColorRef that represents the linen background color.
+
+        (WebCore::ScrollbarThemeMac::setUpOverhangAreasLayerContents):
+        Set the linen background color as the overhang areas layer background color.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        Call ScrollbarTheme::setUpOverhangAreasLayerContents.
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106566.
