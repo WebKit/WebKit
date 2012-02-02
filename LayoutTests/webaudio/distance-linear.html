@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/distance-model-testing.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test linear distance model of AudioPannerNode.");
+
+      function runTest() {
+          if (window.layoutTestController) {
+              layoutTestController.dumpAsText();
+              layoutTestController.waitUntilDone();
+          }
+
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+
+          // Create temp panner to get LINEAR_DISTANCE value for testing.
+          var pannerModel = context.createPanner();
+          createTestAndRun(context, pannerModel.LINEAR_DISTANCE, 0);
+      }
+
+      runTest();
+      successfullyParsed = true;
+
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

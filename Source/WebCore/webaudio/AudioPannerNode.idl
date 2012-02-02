@@ -32,6 +32,11 @@ module audio {
         const unsigned short HRTF = 1;
         const unsigned short SOUNDFIELD = 2;
 
+        // Distance model
+        const unsigned short LINEAR_DISTANCE = 0;
+        const unsigned short INVERSE_DISTANCE = 1;
+        const unsigned short EXPONENTIAL_DISTANCE = 2;
+
         // Default model for stereo is HRTF 
         // FIXME: use unsigned short when glue generation supports it
         attribute unsigned long panningModel

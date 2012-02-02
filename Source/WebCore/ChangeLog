@@ -1,5 +1,21 @@
 2012-02-02  Raymond Toy  <rtoy@google.com>
 
+        Constant values to set "distanceModel" are undefined
+        https://bugs.webkit.org/show_bug.cgi?id=74273
+
+        Reviewed by Kenneth Russell.
+
+        Tests: webaudio/distance-exponential.html
+               webaudio/distance-inverse.html
+               webaudio/distance-linear.html
+
+        * webaudio/AudioPannerNode.h: Define enum for the new constants
+        for the distance models.
+        * webaudio/AudioPannerNode.idl: Define matching constants for the
+        distance models.
+
+2012-02-02  Raymond Toy  <rtoy@google.com>
+
         Illegal panner model values should throw an exception
         https://bugs.webkit.org/show_bug.cgi?id=77235
 
