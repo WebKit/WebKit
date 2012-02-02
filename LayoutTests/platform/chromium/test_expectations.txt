@@ -2379,7 +2379,7 @@ BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT 
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 LINUX WIN : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGWK52509 LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
-BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR63921 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
