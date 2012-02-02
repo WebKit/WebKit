@@ -85,11 +85,6 @@ public:
 private:
     explicit ScrollingCoordinator(Page*);
 
-    // FIXME: Once we have a proper thread/run loop abstraction we should get rid of these
-    // functions and just use something like scrollingRunLoop()->dispatch(function);
-    static bool isScrollingThread();
-    static void dispatchOnScrollingThread(const Function<void()>&);
-
     // The following functions can only be called from the main thread.
     void didUpdateMainFrameScrollPosition();
 

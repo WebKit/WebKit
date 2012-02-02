@@ -1,3 +1,40 @@
+2012-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Move ScrollingThread to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=77652
+
+        Reviewed by Sam Weinig.
+
+        This just shuffles some classes around and makes ScrollingCoordinator call into ScrollingThread.
+        Hopefully we'll be able to make ScrollingThread use the new WebCore::RunLoop class eventually.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+        * page/scrolling/ScrollingThread.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollingThread::ScrollingThread):
+        (WebCore::ScrollingThread::isCurrentThread):
+        (WebCore::ScrollingThread::dispatch):
+        (WebCore::ScrollingThread::shared):
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        (WebCore::ScrollingThread::threadCallback):
+        (WebCore::ScrollingThread::threadBody):
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h: Added.
+        (WebCore):
+        (ScrollingThread):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::scrollByOnScrollingThread):
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread):
+        * page/scrolling/mac/ScrollingThreadMac.mm: Added.
+        (WebCore):
+        (WebCore::ScrollingThread::initializeRunLoop):
+        (WebCore::ScrollingThread::wakeUpRunLoop):
+        (WebCore::ScrollingThread::threadRunLoopSourceCallback):
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106551.

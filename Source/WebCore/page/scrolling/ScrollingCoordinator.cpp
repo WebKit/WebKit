@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollingThread.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -113,7 +114,7 @@ bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent& wheelEvent
         deltaY = 0;
 
     IntSize scrollOffset = IntSize(-deltaX, -deltaY);
-    dispatchOnScrollingThread(bind(&ScrollingCoordinator::scrollByOnScrollingThread, this, scrollOffset));
+    ScrollingThread::dispatch(bind(&ScrollingCoordinator::scrollByOnScrollingThread, this, scrollOffset));
     return true;
 }
 

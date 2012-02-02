@@ -31,6 +31,7 @@
 
 #import "FrameView.h"
 #import "Page.h"
+#import "ScrollingThread.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
@@ -39,127 +40,6 @@
 #import <wtf/Vector.h>
 
 namespace WebCore {
-
-class ScrollingThread {
-public:
-    ScrollingThread()
-        : m_threadIdentifier(0)
-    {
-    }
-
-    bool isCurrentThread() const;
-    void dispatch(const Function<void()>&);
-
-private:
-    void createThreadIfNeeded();
-
-    static void* threadCallback(void* scrollingThread);
-    void threadBody();
-
-    static void threadRunLoopSourceCallback(void* scrollingThread);
-    void threadRunLoopSourceCallback();
-
-    ThreadIdentifier m_threadIdentifier;
-
-    ThreadCondition m_initializeRunLoopCondition;
-    Mutex m_initializeRunLoopConditionMutex;
-    
-    RetainPtr<CFRunLoopRef> m_threadRunLoop;
-    RetainPtr<CFRunLoopSourceRef> m_threadRunLoopSource;
-
-    Mutex m_functionsMutex;
-    Vector<Function<void()> > m_functions;
-};
-
-bool ScrollingThread::isCurrentThread() const
-{
-    if (!m_threadIdentifier)
-        return false;
-
-    return currentThread() == m_threadIdentifier;
-}
-
-void ScrollingThread::createThreadIfNeeded()
-{
-    if (m_threadIdentifier)
-        return;
-
-    m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
-
-    // Wait for the thread to initialize the run loop.
-    {
-        MutexLocker locker(m_initializeRunLoopConditionMutex);
-
-        while (!m_threadRunLoop)
-            m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
-    }
-}
-
-void* ScrollingThread::threadCallback(void* scrollingThread)
-{
-    static_cast<ScrollingThread*>(scrollingThread)->threadBody();
-
-    return 0;
-}
-
-void ScrollingThread::threadBody()
-{
-    ASSERT(isCurrentThread());
-
-    // Initialize the run loop.
-    {
-        MutexLocker locker(m_initializeRunLoopConditionMutex);
-
-        m_threadRunLoop = CFRunLoopGetCurrent();
-
-        CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, threadRunLoopSourceCallback };
-        m_threadRunLoopSource = adoptCF(CFRunLoopSourceCreate(0, 0, &context));
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), m_threadRunLoopSource.get(), kCFRunLoopDefaultMode);
-
-        m_initializeRunLoopCondition.broadcast();
-    }
-
-    CFRunLoopRun();
-}
-
-void ScrollingThread::threadRunLoopSourceCallback(void* scrollingThread)
-{
-    static_cast<ScrollingThread*>(scrollingThread)->threadRunLoopSourceCallback();
-}
-
-void ScrollingThread::threadRunLoopSourceCallback()
-{
-    ASSERT(isCurrentThread());
-
-    Vector<Function<void ()> > functions;
-
-    {
-        MutexLocker locker(m_functionsMutex);
-        m_functions.swap(functions);
-    }
-
-    for (size_t i = 0; i < functions.size(); ++i)
-        functions[i]();
-}
-
-void ScrollingThread::dispatch(const Function<void()>& function)
-{
-    createThreadIfNeeded();
-
-    {
-        MutexLocker locker(m_functionsMutex);
-        m_functions.append(function);
-    }
-
-    CFRunLoopSourceSignal(m_threadRunLoopSource.get());
-    CFRunLoopWakeUp(m_threadRunLoop.get());
-}
-
-static ScrollingThread& scrollingThread()
-{
-    DEFINE_STATIC_LOCAL(ScrollingThread, scrollingThread, ());
-    return scrollingThread;
-}
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
 {
@@ -197,19 +77,9 @@ void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, c
     // FIXME: Inform the scrolling thread?
 }
 
-bool ScrollingCoordinator::isScrollingThread()
-{
-    return scrollingThread().isCurrentThread();
-}
-
-void ScrollingCoordinator::dispatchOnScrollingThread(const Function<void()>& function)
-{
-    return scrollingThread().dispatch(function);
-}
-
 void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
 {
-    ASSERT(isScrollingThread());
+    ASSERT(ScrollingThread::isCurrentThread());
 
     MutexLocker locker(m_mainFrameGeometryMutex);
 
@@ -234,7 +104,7 @@ void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
 
 void ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint& scrollLayerPosition)
 {
-    ASSERT(isScrollingThread());
+    ASSERT(ScrollingThread::isCurrentThread());
     ASSERT(!m_mainFrameGeometryMutex.tryLock());
 
     [CATransaction begin];
