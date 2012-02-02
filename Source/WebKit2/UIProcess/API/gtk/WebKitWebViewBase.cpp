@@ -142,7 +142,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gtk_im_context_set_client_window(priv->imContext.get(), window);
 
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
-    if (gtk_widget_is_toplevel(toplevel) && GTK_IS_WINDOW(toplevel)) {
+    if (widgetIsOnscreenToplevelWindow(toplevel)) {
         webkitWebViewBaseNotifyResizerSizeForWindow(webView, GTK_WINDOW(toplevel));
         g_signal_connect(toplevel, "notify::resize-grip-visible",
                          G_CALLBACK(toplevelWindowResizeGripVisibilityChanged), webView);
@@ -214,7 +214,7 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
 
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
-    if (gtk_widget_is_toplevel(toplevel) && GTK_IS_WINDOW(toplevel))
+    if (widgetIsOnscreenToplevelWindow(toplevel))
         webkitWebViewBaseNotifyResizerSizeForWindow(webViewBase, GTK_WINDOW(toplevel));
 }
 
@@ -224,7 +224,7 @@ static gboolean webkitWebViewBaseFocusInEvent(GtkWidget* widget, GdkEventFocus* 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
-    if (gtk_widget_is_toplevel(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
+    if (widgetIsOnscreenToplevelWindow(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
         gtk_im_context_focus_in(priv->imContext.get());
         if (!priv->isPageActive) {
             priv->isPageActive = TRUE;

@@ -1,3 +1,25 @@
+2012-02-02  Claudio Saavedra  <csaavedra@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] WebKitWebView won't work in a GtkOffscreenWindow
+        https://bugs.webkit.org/show_bug.cgi?id=76911
+
+        Reviewed by Philippe Normand.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::windowRect): Use the new widgetIsOnscreenToplevelWindow helper.
+        (WebKit::ChromeClient::setWindowRect): Ditto.
+        (WebKit::ChromeClient::unfocus): Ditto.
+        (WebKit::ChromeClient::runOpenPanel): Ditto.
+        * tests/testwebview.c: Added a test to ensure that loading a page in an offscreen window does not crash.
+        * webkit/webkitglobals.cpp:
+        (currentToplevelCallback):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_print_full):
+        (webkit_web_frame_print):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_focus_in_event):
+        (webkit_web_view_script_dialog):
+
 2012-02-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] atk_text_get_text_at_offset() sometimes fails to provide the correct line

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2012 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
+#include <WebCore/GtkUtilities.h>
 
 using namespace WebKit;
 
@@ -111,7 +112,7 @@ static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 {
     GdkRectangle geometry = { 0, 0, 0, 0 };
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(clientInfo));
-    if (gtk_widget_is_toplevel(window) && gtk_widget_get_visible(window)) {
+    if (WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
         gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
         gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
     }

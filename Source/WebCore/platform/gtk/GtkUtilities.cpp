@@ -42,4 +42,9 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& poin
     return IntPoint(windowOriginX + xInWindow, windowOriginY + yInWindow);
 }
 
+bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
+{
+    return gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
+}
+
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Holger Hans Peter Freyther
  * Copyright (C) 2009, 2010 Collabora Ltd.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -363,6 +364,24 @@ static void test_webkit_web_view_window_features()
     gtk_widget_destroy(window);
 }    
 
+static void test_webkit_web_view_in_offscreen_window_does_not_crash()
+{
+    loop = g_main_loop_new(NULL, TRUE);
+
+    GtkWidget *window = gtk_offscreen_window_new();
+    GtkWidget *web_view = webkit_web_view_new();
+
+    gtk_container_add(GTK_CONTAINER(window), web_view);
+    gtk_widget_show_all(window);
+    g_signal_connect(web_view, "notify::load-status", G_CALLBACK(idle_quit_loop_cb), NULL);
+    webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), base_uri);
+
+    g_main_loop_run(loop);
+
+    gtk_widget_destroy(window);
+    g_main_loop_unref(loop);
+}
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -390,6 +409,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/destroy", test_webkit_web_view_destroy);
     g_test_add_func("/webkit/webview/grab_focus", test_webkit_web_view_grab_focus);
     g_test_add_func("/webkit/webview/window-features", test_webkit_web_view_window_features);
+    g_test_add_func("/webkit/webview/webview-in-offscreen-window-does-not-crash", test_webkit_web_view_in_offscreen_window_does_not_crash);
 
     return g_test_run ();
 }

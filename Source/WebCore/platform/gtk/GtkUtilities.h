@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Igalia S.L.
+ * Copyright (C) 2011, 2012 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ namespace WebCore {
 class IntPoint;
 
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
+bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 
 } // namespace WebCore
 

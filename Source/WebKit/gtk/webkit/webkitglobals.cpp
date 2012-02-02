@@ -24,6 +24,7 @@
 #include "ApplicationCacheStorage.h"
 #include "Chrome.h"
 #include "FrameNetworkingContextGtk.h"
+#include "GtkUtilities.h"
 #include "GOwnPtr.h"
 #include "GRefPtr.h"
 #include "IconDatabase.h"
@@ -225,10 +226,7 @@ static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMes
         return NULL;
 
     GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(context->coreFrame()->page()->chrome()->platformPageClient()));
-    if (gtk_widget_is_toplevel(toplevel))
-        return toplevel;
-    else
-        return NULL;
+    return widgetIsOnscreenToplevelWindow(toplevel) ? toplevel : 0;
 }
 
 /**

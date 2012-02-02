@@ -40,6 +40,7 @@
 #include "FrameView.h"
 #include "GCController.h"
 #include "GraphicsContext.h"
+#include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMBinding.h"
@@ -940,8 +941,7 @@ GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPr
     g_return_val_if_fail(GTK_IS_PRINT_OPERATION(operation), GTK_PRINT_OPERATION_RESULT_ERROR);
 
     GtkWidget* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(frame)));
-
-    if (!gtk_widget_is_toplevel(topLevel))
+    if (!widgetIsOnscreenToplevelWindow(topLevel))
         topLevel = 0;
 
     Frame* coreFrame = core(frame);
@@ -980,7 +980,7 @@ void webkit_web_frame_print(WebKitWebFrame* frame)
 
     if (error) {
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(priv->webView));
-        GtkWidget* dialog = gtk_message_dialog_new(gtk_widget_is_toplevel(window) ? GTK_WINDOW(window) : 0,
+        GtkWidget* dialog = gtk_message_dialog_new(widgetIsOnscreenToplevelWindow(window) ? GTK_WINDOW(window) : 0,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_MESSAGE_ERROR,
                                                    GTK_BUTTONS_CLOSE,
