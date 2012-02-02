@@ -3333,11 +3333,12 @@ sub GetNativeTypeFromSignature
 
     if ($parameterIndex >= 0 && $type eq "V8Parameter") {
         my $mode = "";
-        if ($signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"}) {
+        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "EmptyString")) {
             $mode = "WithUndefinedOrNullCheck";
         } elsif (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString") or $signature->extendedAttributes->{"Reflect"}) {
             $mode = "WithNullCheck";
         }
+        # FIXME: Add the case for 'elsif ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "EmptyString"))'.
         $type .= "<$mode>";
     }
 

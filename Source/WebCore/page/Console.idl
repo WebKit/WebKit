@@ -51,8 +51,8 @@ module window {
         [Custom] void profileEnd(in DOMString title);
 #endif
 
-        void time(in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString title);
-        [CustomArgumentHandling] void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        void time(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString title);
+        [CustomArgumentHandling] void timeEnd(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString title);
         [CustomArgumentHandling] void timeStamp();
         [CustomArgumentHandling] void group();
         [CustomArgumentHandling] void groupCollapsed();

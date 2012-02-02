@@ -81,7 +81,7 @@ module window {
         void alert(in [Optional=CallWithDefaultValue] DOMString message);
         boolean confirm(in [Optional=CallWithDefaultValue] DOMString message);
         [ConvertNullStringTo=Null] DOMString prompt(in [Optional=CallWithDefaultValue] DOMString message,
-                                                    in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString defaultValue);
+                                                    in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString defaultValue);
 
         boolean find(in [Optional=CallWithDefaultValue] DOMString string,
                      in [Optional=CallWithDefaultValue] boolean caseSensitive,
@@ -147,7 +147,7 @@ module window {
 
         // DOM Level 2 Style Interface
         CSSStyleDeclaration getComputedStyle(in [Optional=CallWithDefaultValue] Element element,
-                                             in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString pseudoElement);
+                                             in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString pseudoElement);
 
         // WebKit extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

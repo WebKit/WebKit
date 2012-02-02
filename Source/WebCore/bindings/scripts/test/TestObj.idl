@@ -192,7 +192,7 @@ module test {
         void convert2(in [ConvertNullStringTo=Undefined] b);
         void convert3(in [ConvertNullStringTo=False] c);
         void convert4(in [TreatNullAs=EmptyString] d);
-        void convert5(in [ConvertUndefinedOrNullToNullString] e);
+        void convert5(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] e);
 
         attribute SVGPoint mutablePoint;
         attribute [Immutable] SVGPoint immutablePoint;

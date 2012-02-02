@@ -44,7 +44,7 @@ module html {
         readonly attribute ValidityState validity;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
-        void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
+        void setCustomValidity(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString error);
 
         readonly attribute NodeList labels;
     };

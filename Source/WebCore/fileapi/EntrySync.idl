@@ -41,8 +41,8 @@ module storage {
         readonly attribute DOMFileSystemSync filesystem;
 
         Metadata getMetadata() raises (FileException);
-        EntrySync moveTo(in DirectoryEntrySync parent, in [ConvertUndefinedOrNullToNullString] DOMString name) raises (FileException);
-        EntrySync copyTo(in DirectoryEntrySync parent, in [ConvertUndefinedOrNullToNullString] DOMString name) raises (FileException);
+        EntrySync moveTo(in DirectoryEntrySync parent, in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString name) raises (FileException);
+        EntrySync copyTo(in DirectoryEntrySync parent, in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString name) raises (FileException);
         DOMString toURL();
         void remove() raises (FileException);
         DirectoryEntrySync getParent();

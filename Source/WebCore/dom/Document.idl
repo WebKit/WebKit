@@ -128,7 +128,7 @@ module core {
 
         boolean            execCommand(in [Optional=CallWithDefaultValue] DOMString command,
                                        in [Optional=CallWithDefaultValue] boolean userInterface,
-                                       in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString value);
+                                       in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString value);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // FIXME: remove the these two versions once [Optional] is implemented for Objective-C.
@@ -175,7 +175,7 @@ module core {
         NodeList getElementsByName(in [Optional=CallWithDefaultValue] DOMString elementName);
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-        NodeList getItems(in [ConvertUndefinedOrNullToNullString, Optional=CallWithDefaultValue] DOMString typeNames);
+        NodeList getItems(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString, Optional=CallWithDefaultValue] DOMString typeNames);
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

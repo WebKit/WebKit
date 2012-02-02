@@ -36,8 +36,8 @@ module storage {
         NoStaticTables
     ] DirectoryEntrySync : EntrySync {
         DirectoryReaderSync createReader() raises (FileException);
-        [Custom] FileEntrySync getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in WebKitFlags flags) raises (FileException);
-        [Custom] DirectoryEntrySync getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in WebKitFlags flags) raises (FileException);
+        [Custom] FileEntrySync getFile(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString path, in WebKitFlags flags) raises (FileException);
+        [Custom] DirectoryEntrySync getDirectory(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString path, in WebKitFlags flags) raises (FileException);
         void removeRecursively() raises (FileException);
     };
 }

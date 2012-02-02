@@ -45,7 +45,7 @@ module html {
         readonly attribute boolean willValidate;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
-        void setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
+        void setCustomValidity(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString error);
 
         // WinIE & FireFox extension:
         attribute long selectionStart;

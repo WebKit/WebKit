@@ -35,13 +35,13 @@ module html {
         NoStaticTables
     ] WebKitBlobBuilder {
 #if !defined(LANGUAGE_OBJECTIVE_C)
-        Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
+        Blob getBlob(in [Optional, TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString contentType);
 #endif
         void append(in Blob blob);
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
         void append(in ArrayBuffer arrayBuffer);
 #endif
-        void append(in DOMString value, in [Optional, ConvertUndefinedOrNullToNullString] DOMString endings) raises (DOMException);
+        void append(in DOMString value, in [Optional, TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString endings) raises (DOMException);
     };
 
 }
