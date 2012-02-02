@@ -1,3 +1,16 @@
+2012-02-01  Pablo Flouret  <pablof@motorola.com>
+
+        Support targetOrigin = "/" in postMessage for sending messages to same origin as source document.
+        https://bugs.webkit.org/show_bug.cgi?id=77580
+
+        Reviewed by Adam Barth.
+
+        No new tests. Modified http/tests/security/postMessage/target-origin.html
+        to test this case as well.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+
 2012-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Avoid creating NamedNodeMap unnecessarily

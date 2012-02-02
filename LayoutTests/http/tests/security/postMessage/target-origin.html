@@ -19,37 +19,41 @@ function tryPostMessage(win, origin) {
 }
 
 function test() {
-    var iframe = document.getElementById('child');
-    var win = iframe.contentWindow;
+    var winLocalhost = document.getElementById('iframe-localhost').contentWindow;
+    var win127= document.getElementById('iframe-127').contentWindow;
 
     // Should succeed:
-    tryPostMessage(win, "http://localhost:8000");
-    tryPostMessage(win, "http://localhost:8000/");
-    tryPostMessage(win, "http://localhost:8000/foo");
-    tryPostMessage(win, "http://localhost:8000/foo?bar");
-    tryPostMessage(win, "http://localhost:8000/foo?bar#baz");
-    tryPostMessage(win, "http://user:pass@localhost:8000/foo?bar#baz");
-    tryPostMessage(win, "*");
+    tryPostMessage(winLocalhost, "http://localhost:8000");
+    tryPostMessage(winLocalhost, "http://localhost:8000/");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo?bar");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo?bar#baz");
+    tryPostMessage(winLocalhost, "http://user:pass@localhost:8000/foo?bar#baz");
+    tryPostMessage(winLocalhost, "*");
+    tryPostMessage(win127, "/");
 
     // Should fail:
-    tryPostMessage(win, "http://localhost:9090");
-    tryPostMessage(win, "http://localhost");
-    tryPostMessage(win, "https://localhost");
-    tryPostMessage(win, "https://localhost:8000");
-    tryPostMessage(win, "http://www.example.com");
+    tryPostMessage(winLocalhost, "/");
+    tryPostMessage(winLocalhost, "http://localhost:9090");
+    tryPostMessage(winLocalhost, "http://localhost");
+    tryPostMessage(winLocalhost, "https://localhost");
+    tryPostMessage(winLocalhost, "https://localhost:8000");
+    tryPostMessage(winLocalhost, "http://www.example.com");
 
     // Should throw syntax error:
-    tryPostMessage(win, null);
-    tryPostMessage(win, undefined);
+    tryPostMessage(winLocalhost, null);
+    tryPostMessage(winLocalhost, undefined);
+    tryPostMessage(win127, "//");
 
-    win.postMessage('done', '*');
+    winLocalhost.postMessage('done', '*');
 }
 </script>
 <body onload="test()">
 <div>window.location.href = <script>document.write(window.location.href);</script></div>
 <div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html"
-  id="child" width="800" height="300" style="border: 1px solid black;">
-</iframe></div>
+  id="iframe-localhost" width="800" height="300" style="border: 1px solid black;">
+</iframe><iframe src="http://127.0.0.1:8000/security/postMessage/resources/post-message-listener.html"
+  id="iframe-127" width="800" height="300" style="border: 1px solid black;"></iframe>
 <div id="result">waiting...</div>
 </body>
 </html>

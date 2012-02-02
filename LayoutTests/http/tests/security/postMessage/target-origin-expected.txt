@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unable to post message to http://127.0.0.1:8000. Recipient has origin http://localhost:8000.
+
 CONSOLE MESSAGE: Unable to post message to http://localhost:9090. Recipient has origin http://localhost:8000.
 
 CONSOLE MESSAGE: Unable to post message to http://localhost. Recipient has origin http://localhost:8000.
@@ -13,6 +15,7 @@ window.location.href = http://127.0.0.1:8000/security/postMessage/target-origin.
 waiting...
 Error sending message to null. Error: SYNTAX_ERR: DOM Exception 12
 Error sending message to undefined. Error: SYNTAX_ERR: DOM Exception 12
+Error sending message to //. Error: SYNTAX_ERR: DOM Exception 12
 Received message: data="Received message: data="Trying origin=http://localhost:8000" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/foo" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
@@ -20,4 +23,5 @@ Received message: data="Received message: data="Trying origin=http://localhost:8
 Received message: data="Received message: data="Trying origin=http://localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://user:pass@localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=*" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=/" origin="http://127.0.0.1:8000"" origin="http://127.0.0.1:8000"
 Received message: data="Received message: data="done" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
