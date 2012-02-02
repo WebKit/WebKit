@@ -28,9 +28,7 @@ module html {
     interface [
         CustomMarkFunction,
         GenerateIsReachable,
-        CustomToJS,
-        InterfaceUUID=98fb48ae-7216-489c-862b-8e1217fc4443,
-        ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54
+        CustomToJS
     ] CanvasRenderingContext {
 
         readonly attribute HTMLCanvasElement canvas;

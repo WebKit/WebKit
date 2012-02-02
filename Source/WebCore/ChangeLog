@@ -1,3 +1,22 @@
+2012-02-01  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [ImplementationUUID] and [InterfaceUUID] from html/canvas/*.idl
+        https://bugs.webkit.org/show_bug.cgi?id=77589
+
+        Reviewed by Adam Barth.
+
+        [ImplementationUUID] and [InterfaceUUID] are used in html/canvas/*.idl,
+        but they are not implemented in code generators and thus have no meaning.
+        This patch removes them.
+
+        No tests. No change in behavior.
+
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasPattern.idl: The file is now empty though.
+        * html/canvas/CanvasRenderingContext.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2012-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106408.
