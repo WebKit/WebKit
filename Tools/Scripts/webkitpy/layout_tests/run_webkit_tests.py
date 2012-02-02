@@ -70,8 +70,8 @@ def lint(port, options, expectations_class):
         except test_expectations.ParseError, e:
             lint_failed = True
             _log.error('')
-            for error in e.errors:
-                _log.error(error)
+            for warning in e.warnings:
+                _log.error(warning)
             _log.error('')
         files_linted.add(expectations_file)
 

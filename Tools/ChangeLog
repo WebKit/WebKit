@@ -1,3 +1,66 @@
+2012-02-02  Dirk Pranke  <dpranke@chromium.org>
+
+       nrwt shouldn't blow up when there are errors in test_expectations.txt
+       https://bugs.webkit.org/show_bug.cgi?id=73603
+
+       Reviewed by Ojan Vafai.
+
+       This change removes the distinction between 'errors' and 'warnings'
+       in the test expectations parser. Now, any problem is a
+       'warning', and if we are linting the file, warnings become fatal (errors).
+
+        This will allow a normal run-webkit-tests run to proceed even if
+        there are bad lines.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (ParseError.__init__):
+        (ParseError.__str__):
+        (ParseError.__repr__):
+        (TestExpectationSerializer.to_string):
+        (TestExpectationParser._parse_modifiers):
+        (TestExpectationParser._parse_expectations):
+        (TestExpectationParser._check_modifiers_against_expectations):
+        (TestExpectationParser._tokenize):
+        (TestExpectationLine.__init__):
+        (TestExpectationLine.is_invalid):
+        (TestExpectationsModel.add_expectation_line):
+        (TestExpectationsModel._already_seen_better_match):
+        (TestExpectations.__init__):
+        (TestExpectations._report_warnings):
+        (TestExpectations.remove_rebaselined_tests.without_rebaseline_modifier):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (assert_bad_expectations):
+        (test_parse_warning):
+        (test_overrides__duplicate):
+        (ExpectationSyntaxTests.test_missing_expectation):
+        (ExpectationSyntaxTests.test_missing_colon):
+        (ExpectationSyntaxTests.test_too_many_colons):
+        (ExpectationSyntaxTests.test_too_many_equals_signs):
+        (ExpectationSyntaxTests.test_unrecognized_expectation):
+        (SemanticTests.test_bug_format):
+        (SemanticTests.test_bad_bugid):
+        (SemanticTests.test_slow_and_timeout):
+        (test_ambiguous):
+        (test_more_modifiers):
+        (test_order_in_file):
+        (test_macro_overrides):
+        (RebaseliningTest.assertRemove):
+        (TestExpectationParserTests.test_tokenize_blank):
+        (TestExpectationParserTests.test_tokenize_missing_colon):
+        (TestExpectationParserTests.test_tokenize_extra_colon):
+        (TestExpectationParserTests.test_tokenize_empty_comment):
+        (TestExpectationParserTests.test_tokenize_comment):
+        (TestExpectationParserTests.test_tokenize_missing_equal):
+        (TestExpectationParserTests.test_tokenize_extra_equal):
+        (TestExpectationParserTests.test_tokenize_valid):
+        (TestExpectationParserTests.test_tokenize_valid_with_comment):
+        (TestExpectationParserTests.test_tokenize_valid_with_multiple_modifiers):
+        (TestExpectationSerializerTests.test_unparsed_to_string):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (lint):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.check_test_expectations):
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106543.

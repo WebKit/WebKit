@@ -98,11 +98,9 @@ class TestExpectationsChecker(object):
             err = error
 
         if err:
-            level = 2
-            if err.fatal:
-                level = 5
-            for error in err.errors:
-                matched = self._output_regex.match(error)
+            level = 5
+            for warning in err.warnings:
+                matched = self._output_regex.match(warning)
                 if matched:
                     lineno, message = matched.group('line', 'message')
                     self._handle_style_error(int(lineno), 'test/expectations', level, message)
