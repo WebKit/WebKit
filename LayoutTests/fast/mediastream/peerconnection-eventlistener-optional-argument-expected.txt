@@ -1,0 +1,15 @@
+This test confirms if the third argument of addEventListener() and removeEventListener() is optional.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.addEventListener("foo", function() {}) is undefined
+PASS pc.addEventListener("foo", function() {}, false) is undefined
+PASS pc.addEventListener("foo", function() {}, true) is undefined
+PASS pc.removeEventListener("foo", function() {}) is undefined
+PASS pc.removeEventListener("foo", function() {}, false) is undefined
+PASS pc.removeEventListener("foo", function() {}, true) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+<script>
+description("This test confirms if the third argument of addEventListener() and removeEventListener() is optional.");
+
+var pc = new webkitPeerConnection("some.server.com", function() {});
+shouldBe('pc.addEventListener("foo", function() {})', 'undefined');
+shouldBe('pc.addEventListener("foo", function() {}, false)', 'undefined');
+shouldBe('pc.addEventListener("foo", function() {}, true)', 'undefined');
+shouldBe('pc.removeEventListener("foo", function() {})', 'undefined');
+shouldBe('pc.removeEventListener("foo", function() {}, false)', 'undefined');
+shouldBe('pc.removeEventListener("foo", function() {}, true)', 'undefined');
+
+window.successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</html>

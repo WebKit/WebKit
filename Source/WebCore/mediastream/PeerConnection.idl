@@ -64,10 +64,10 @@ module p2p {
         // EventTarget interface
         void addEventListener(in DOMString type,
                               in EventListener listener,
-                              in [optional] boolean useCapture);
+                              in [Optional] boolean useCapture);
         void removeEventListener(in DOMString type,
                                  in EventListener listener,
-                                 in [optional] boolean useCapture);
+                                 in [Optional] boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
     };

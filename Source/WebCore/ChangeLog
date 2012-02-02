@@ -1,3 +1,16 @@
+2012-02-02  Kentaro Hara  <haraken@chromium.org>
+
+        The third argument of addEventListener/removeEventListener of PeerConnection should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=77606
+
+        Reviewed by Adam Barth.
+
+        This patch corrects a typo in PeerConnection.idl, i.e. [optional] => [Optional].
+
+        Test: fast/mediastream/peerconnection-eventlistener-optional-argument.html
+
+        * mediastream/PeerConnection.idl:
+
 2012-02-02  Rakesh KN  <rakesh.kn@motorola.com>
 
         hidden attribute on <input type=file /> suppresses the file selection dialog
