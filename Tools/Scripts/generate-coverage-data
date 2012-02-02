@@ -60,7 +60,7 @@ system("if [ -d WebKitBuild ]; then find WebKitBuild -name '*.gcda' -delete; fi;
 
 print "Building and testing\n";
 system("Tools/Scripts/build-webkit", "--coverage", @ARGV) == 0 or die;
-system "Tools/Scripts/run-webkit-tests", "--no-launch-safari";
+system "Tools/Scripts/new-run-webkit-tests", "--no-launch-safari";
 system "Tools/Scripts/run-javascriptcore-tests", "--coverage", @ARGV;
 
 # Collect the data and generate a report

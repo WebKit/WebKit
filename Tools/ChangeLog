@@ -1,3 +1,12 @@
+2012-02-01  Jacob Goldstein  <jacobg@adobe.com>
+
+        Webkit generate-coverage-data script needs update to use new test script
+        https://bugs.webkit.org/show_bug.cgi?id=77597
+
+        Reviewed by Dirk Schulze.
+
+        * Scripts/generate-coverage-data:
+
 2012-02-01  Adam Barth  <abarth@webkit.org>
 
         Update the tests to show that the mac-ews processes patches from
