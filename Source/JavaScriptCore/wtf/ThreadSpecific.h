@@ -46,8 +46,6 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
-#elif PLATFORM(GTK)
-#include <glib.h>
 #elif OS(WINDOWS)
 #include <windows.h>
 #endif
@@ -100,8 +98,6 @@ private:
 
 #if USE(PTHREADS)
     pthread_key_t m_key;
-#elif PLATFORM(GTK)
-    GStaticPrivate m_key;
 #elif OS(WINDOWS)
     int m_index;
 #endif
@@ -128,29 +124,6 @@ inline void ThreadSpecific<T>::set(T* ptr)
 {
     ASSERT(!get());
     pthread_setspecific(m_key, new Data(ptr, this));
-}
-
-#elif PLATFORM(GTK)
-
-template<typename T>
-inline ThreadSpecific<T>::ThreadSpecific()
-{
-    g_static_private_init(&m_key);
-}
-
-template<typename T>
-inline T* ThreadSpecific<T>::get()
-{
-    Data* data = static_cast<Data*>(g_static_private_get(&m_key));
-    return data ? data->value : 0;
-}
-
-template<typename T>
-inline void ThreadSpecific<T>::set(T* ptr)
-{
-    ASSERT(!get());
-    Data* data = new Data(ptr, this);
-    g_static_private_set(&m_key, data, destroy);
 }
 
 #elif OS(WINDOWS)
@@ -218,9 +191,6 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
     // We want get() to keep working while data destructor works, because it can be called indirectly by the destructor.
     // Some pthreads implementations zero out the pointer before calling destroy(), so we temporarily reset it.
     pthread_setspecific(data->owner->m_key, ptr);
-#elif PLATFORM(GTK)
-    // See comment as above
-    g_static_private_set(&data->owner->m_key, data, 0);
 #endif
 
     data->value->~T();
@@ -228,8 +198,6 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 
 #if USE(PTHREADS)
     pthread_setspecific(data->owner->m_key, 0);
-#elif PLATFORM(GTK)
-    g_static_private_set(&data->owner->m_key, 0, 0);
 #elif OS(WINDOWS)
     TlsSetValue(tlsKeys()[data->owner->m_index], 0);
 #else

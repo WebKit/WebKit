@@ -1,3 +1,19 @@
+2012-02-02  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Use win32 native threading
+        https://bugs.webkit.org/show_bug.cgi?id=77676
+
+        Reviewed by Martin Robinson.
+
+        r97269 switched from glib threading to pthreads, breaking win32 GTK+.
+        This is a follow up, removing some leftovers in ThreadSpecific.h and
+        switching win32 to use the native threading in ThreadingWin.cpp.
+
+        * GNUmakefile.list.am: Compile in win32 native threading support
+        * wtf/ThreadSpecific.h: Remove GTK+-specific definitions
+        (ThreadSpecific):
+        (WTF::::destroy):
+
 2012-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         retrieveCallerFromVMCode should call trueCallerFrame

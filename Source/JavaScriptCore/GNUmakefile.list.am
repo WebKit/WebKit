@@ -756,7 +756,10 @@ javascriptcore_sources += \
 
 if TARGET_WIN32
 javascriptcore_sources += \
-	Source/JavaScriptCore/wtf/OSAllocatorWin.cpp
+	Source/JavaScriptCore/wtf/OSAllocatorWin.cpp \
+	Source/JavaScriptCore/wtf/ThreadFunctionInvocation.h \
+	Source/JavaScriptCore/wtf/ThreadingWin.cpp \
+	Source/JavaScriptCore/wtf/ThreadSpecificWin.cpp
 else
 javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp \
