@@ -1,3 +1,20 @@
+2012-02-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add experiment for single click styles editing.
+        https://bugs.webkit.org/show_bug.cgi?id=77624
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertyTreeElement.prototype.onattach):
+        (WebInspector.StylePropertyTreeElement.prototype._mouseDown):
+        (WebInspector.StylePropertyTreeElement.prototype._resetMouseDownElement):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.selectElement.context):
+
 2012-02-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make the tap highlighting work for all test cases
