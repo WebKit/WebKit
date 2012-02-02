@@ -37,6 +37,15 @@ css3/filters/effect-opacity-hw.html
 css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
 
+# Custom filters not yet supported on Windows
+css3/filters/custom-filter-property-computed-style.html
+css3/filters/custom-filter-property-parsing.html
+css3/filters/custom-filter-property-parsing-invalid.html
+css3/filters/custom-filter-shader-cache.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=77645
+css3/filters/filtered-compositing-descendant.html
+
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
 

@@ -40,6 +40,7 @@ xcopy /y /d "%ProjectDir%..\platform\cf\*.h" "%CONFIGURATIONBUILDDIR%\include\We
 xcopy /y /d "%ProjectDir%..\platform\cf\win\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\%1\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\platform\graphics\filters\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\transforms\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\ca\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\graphics\ca\win\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

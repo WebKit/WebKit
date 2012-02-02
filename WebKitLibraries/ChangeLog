@@ -1,3 +1,14 @@
+2012-02-02  Chris Marrin  <cmarrin@apple.com>
+
+        Turn on CSS Filters on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=76667
+
+        Turned on CSS_FILTERS for Windows
+
+        Reviewed by Adele Peterson.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106566.
