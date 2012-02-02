@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x200
+  RenderSVGRoot {svg} at (10,6) size 463x61
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (10,6) size 340x18
+      RenderSVGText {text} at (10,6) size 340x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 340x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 56 width 335.00 RTL: "\x{62E}] [\x{62E}][\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}\x{62E}] | [\x{62E} \x{62E}\x{62E}\x{62E}] | \x{62E} \x{62E}\x{62E}\x{62E}"
+          chunk 1 text run 1 at (345.00,20.00) startOffset 0 endOffset 1 width 5.00: "]"
+    RenderSVGContainer {g} at (10,43) size 463x24
+      RenderSVGText {text} at (10,43) size 463x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 463x23
+          chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 56 width 453.57 RTL: "\x{62E}] [\x{62E}][\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}\x{62E}] | [\x{62E} \x{62E}\x{62E}\x{62E}] | \x{62E} \x{62E}\x{62E}\x{62E}"
+          chunk 1 text run 1 at (463.57,60.00) startOffset 0 endOffset 1 width 9.17: "]"
