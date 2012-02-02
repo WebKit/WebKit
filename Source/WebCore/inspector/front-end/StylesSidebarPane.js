@@ -231,7 +231,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
         function stylesCallback(matchedResult)
         {
-            if (matchedResult) {
+            if (matchedResult && this.node === node) {
                 resultStyles.matchedCSSRules = matchedResult.matchedCSSRules;
                 resultStyles.pseudoElements = matchedResult.pseudoElements;
                 resultStyles.inherited = matchedResult.inherited;

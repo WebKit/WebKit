@@ -1,3 +1,15 @@
+2012-02-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Slow continuous DOM traversal with Up/Down keys
+        https://bugs.webkit.org/show_bug.cgi?id=77643
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/styles/updates-during-dom-traversal.html
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._executeRebuildUpdate):
+
 2012-02-02  Claudio Saavedra  <csaavedra@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] WebKitWebView won't work in a GtkOffscreenWindow
