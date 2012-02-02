@@ -33,6 +33,8 @@ static const char* contents = "<html><body><p>This is a test. This is the second
 
 static const char* contentsWithNewlines = "<html><body><p>This is a test. \n\nThis\n is the second sentence. And this the third.</p></body></html>";
 
+static const char* contentsWithPreformattedText = "<html><body><pre>\n\t\n\tfirst line\n\tsecond line\n</pre></body></html>";
+
 static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p></body></html>";
 
 static const char* contentsInTextarea = "<html><body><textarea cols='80'>This is a test. This is the second sentence. And this the third.</textarea></body></html>";
@@ -766,6 +768,34 @@ static void testWebkitAtkGetTextAtOffsetTextInput()
 
     runGetTextTests(textObject);
 
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkGetTextAtOffsetWithPreformattedText()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contentsWithPreformattedText, 0, 0, 0);
+
+    AtkObject* object = getWebAreaObject(webView);
+    g_assert(object);
+
+    AtkObject* preformattedText = atk_object_ref_accessible_child(object, 0);
+    g_assert(ATK_IS_OBJECT(preformattedText));
+    g_assert(atk_object_get_role(preformattedText) == ATK_ROLE_PANEL);
+    g_assert(ATK_IS_TEXT(preformattedText));
+    char* text = atk_text_get_text(ATK_TEXT(preformattedText), 0, -1);
+    g_assert_cmpstr(text, ==, "\t\n\tfirst line\n\tsecond line\n");
+    g_free(text);
+
+    /* Try retrieving all the lines indicating the position of the offsets at the beginning of each of them. */
+    testGetTextFunction(ATK_TEXT(preformattedText), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 0, "\t\n", 0, 2);
+    testGetTextFunction(ATK_TEXT(preformattedText), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 2, "\tfirst line\n", 2, 14);
+    testGetTextFunction(ATK_TEXT(preformattedText), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 14, "\tsecond line\n", 14, 27);
+
+    g_object_unref(preformattedText);
     g_object_unref(webView);
 }
 
@@ -1831,6 +1861,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextAtOffsetNewlines", testWebkitAtkGetTextAtOffsetNewlines);
     g_test_add_func("/webkit/atk/getTextAtOffsetTextarea", testWebkitAtkGetTextAtOffsetTextarea);
     g_test_add_func("/webkit/atk/getTextAtOffsetTextInput", testWebkitAtkGetTextAtOffsetTextInput);
+    g_test_add_func("/webkit/atk/getTextAtOffsetWithPreformattedText", testWebkitAtkGetTextAtOffsetWithPreformattedText);
     g_test_add_func("/webkit/atk/getTextAtOffsetWithSpecialCharacters", testWebkitAtkGetTextAtOffsetWithSpecialCharacters);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);

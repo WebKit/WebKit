@@ -100,8 +100,15 @@ static gchar* textForRenderer(RenderObject* renderer)
             // Newline chars in the source result in separate text boxes, so check
             // before adding a newline in the layout. See bug 25415 comment #78.
             // If the next sibling is a BR, we'll add the newline when we examine that child.
-            if (!box->nextOnLineExists() && (!object->nextSibling() || !object->nextSibling()->isBR()))
+            if (!box->nextOnLineExists() && !(object->nextSibling() && object->nextSibling()->isBR())) {
+                // If there was a '\n' in the last position of the
+                // current text box, it would have been converted to a
+                // space in String::replace(), so remove it first.
+                if (renderText->characters()[box->end()] == '\n')
+                    g_string_erase(resultText, resultText->len - 1, -1);
+
                 g_string_append(resultText, "\n");
+            }
             box = box->nextTextBox();
         }
     }

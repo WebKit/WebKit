@@ -1,3 +1,16 @@
+2012-02-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] atk_text_get_text_at_offset() sometimes fails to provide the correct line
+        https://bugs.webkit.org/show_bug.cgi?id=72382
+
+        Reviewed by Martin Robinson.
+
+        Do not add unnecesary blanks at the end of a line of text.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp:
+        (textForRenderer): Do not just append a '\n' at the end of a line
+        if the linebreak for that line was already considered.
+
 2012-02-02  Raul Hudea  <rhudea@adobe.com>
 
         Regions should ignore the saved currentRenderFlowThread during repainting

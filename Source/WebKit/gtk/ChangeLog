@@ -1,3 +1,17 @@
+2012-02-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] atk_text_get_text_at_offset() sometimes fails to provide the correct line
+        https://bugs.webkit.org/show_bug.cgi?id=72382
+
+        Reviewed by Martin Robinson.
+
+        New unit test to ensure the right line is retrieved for the first
+        position of each line in a multiline preformatted portion of text.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetTextAtOffsetWithPreformattedText): New unit test.
+        (main): Add the new unit test.
+
 2012-02-01  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] FFTFrame implementation
