@@ -89,6 +89,8 @@ BUGWK76831 : svg/custom/missing-xlink.svg = PASS TEXT
 BUGWK76831 : svg/custom/use-font-face-crash.svg = PASS TEXT
 BUGWK76831 : svg/hixie/error/012.xml = PASS TEXT
 
+BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
