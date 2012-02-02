@@ -213,7 +213,7 @@ void NodeSet::traversalSort() const
         if (!containsAttributeNodes || !n->isElementNode())
             continue;
 
-        NamedNodeMap* attributes = toElement(n)->attributes(true /* read-only */);
+        NamedNodeMap* attributes = toElement(n)->updatedAttributes();
         if (!attributes)
             continue;
 

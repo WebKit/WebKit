@@ -616,14 +616,14 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
-    size_t index = attributes(false)->getAttributeItemIndex(localName, false);
+    size_t index = ensureUpdatedAttributes()->getAttributeItemIndex(localName, false);
     const QualifiedName& qName = index != notFound ? m_attributeMap->attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
     setAttributeInternal(index, qName, value);
 }
 
 void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    setAttributeInternal(attributes(false)->getAttributeItemIndex(name), name, value);
+    setAttributeInternal(ensureUpdatedAttributes()->getAttributeItemIndex(name), name, value);
 }
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
@@ -775,14 +775,7 @@ void Element::parserSetAttributeMap(PassOwnPtr<NamedNodeMap> list, FragmentScrip
 
 bool Element::hasAttributes() const
 {
-    if (!isStyleAttributeValid())
-        updateStyleAttribute();
-
-#if ENABLE(SVG)
-    if (!areSVGAttributesValid())
-        updateAnimatedSVGAttribute(anyQName());
-#endif
-
+    updateInvalidAttributes();
     return m_attributeMap && m_attributeMap->length();
 }
 
@@ -1422,7 +1415,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
-    return static_pointer_cast<Attr>(attributes(false)->setNamedItem(attr, ec));
+    return static_pointer_cast<Attr>(ensureUpdatedAttributes()->setNamedItem(attr, ec));
 }
 
 PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
@@ -1431,7 +1424,7 @@ PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
-    return static_pointer_cast<Attr>(attributes(false)->setNamedItem(attr, ec));
+    return static_pointer_cast<Attr>(ensureUpdatedAttributes()->setNamedItem(attr, ec));
 }
 
 PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
@@ -1447,7 +1440,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 
     ASSERT(document() == attr->document());
 
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return 0;
 
@@ -1493,7 +1486,7 @@ void Element::removeAttributeNS(const String& namespaceURI, const String& localN
 
 PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 {
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return 0;
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
@@ -1502,7 +1495,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 
 PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
 {
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return 0;
     return static_pointer_cast<Attr>(attrs->getNamedItem(QualifiedName(nullAtom, localName, namespaceURI)));
@@ -1510,7 +1503,7 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const S
 
 bool Element::hasAttribute(const String& name) const
 {
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return false;
 
@@ -1522,7 +1515,7 @@ bool Element::hasAttribute(const String& name) const
 
 bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const
 {
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return false;
     return attrs->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
@@ -1712,8 +1705,7 @@ void Element::cancelFocusAppearanceUpdate()
 
 void Element::normalizeAttributes()
 {
-    // Normalize attributes.
-    NamedNodeMap* attrs = attributes(true);
+    NamedNodeMap* attrs = updatedAttributes();
     if (!attrs)
         return;
 

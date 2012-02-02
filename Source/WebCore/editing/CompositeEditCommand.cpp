@@ -308,10 +308,9 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
     if ((parentNode && parentNode->firstChild() != parentNode->lastChild()) || !node->hasTagName(divTag))
         return false;
 
-    const NamedNodeMap* attributeMap = node->attributes();
-    if (!attributeMap || attributeMap->isEmpty())
+    if (!node->isElementNode() || !toElement(node)->hasAttributes())
         return true;
-    
+
     return false;
 }
 

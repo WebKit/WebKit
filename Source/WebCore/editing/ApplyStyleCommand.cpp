@@ -73,8 +73,7 @@ bool isLegacyAppleStyleSpan(const Node *node)
 enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    const bool readonly = true;
-    NamedNodeMap* map = element->attributes(readonly);
+    NamedNodeMap* map = element->updatedAttributes();
     if (!map || map->isEmpty())
         return true;
 
@@ -109,7 +108,7 @@ static bool isEmptyFontTag(const Node *node)
         return false;
 
     const Element *elem = static_cast<const Element *>(node);
-    NamedNodeMap *map = elem->attributes(true); // true for read-only
+    NamedNodeMap* map = elem->updatedAttributes();
     if (!map)
         return true;
     return map->isEmpty() || (map->length() == 1 && elem->getAttribute(classAttr) == styleSpanClassString());

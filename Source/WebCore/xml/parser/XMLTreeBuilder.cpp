@@ -80,7 +80,7 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, DocumentFragment* f
 
     for (Element* element; !nodeStack.isEmpty(); nodeStack.removeLast()) {
         element = nodeStack.last();
-        if (NamedNodeMap* attrs = element->attributes()) {
+        if (NamedNodeMap* attrs = element->updatedAttributes()) {
             for (size_t i = 0; i < attrs->length(); ++i) {
                 Attribute* attr = attrs->attributeItem(i);
                 if (attr->localName() == xmlnsAtom)

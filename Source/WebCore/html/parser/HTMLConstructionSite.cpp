@@ -208,7 +208,7 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken& 
     if (!token.attributes())
         return;
 
-    NamedNodeMap* attributes = element->attributes(false);
+    NamedNodeMap* attributes = element->ensureUpdatedAttributes();
     for (unsigned i = 0; i < token.attributes()->length(); ++i) {
         Attribute* attribute = token.attributes()->attributeItem(i);
         if (!attributes->getAttributeItem(attribute->name()))
@@ -425,7 +425,7 @@ namespace {
 // FIXME: Move this function to the top of the file.
 inline PassOwnPtr<NamedNodeMap> cloneAttributes(Element* element)
 {
-    NamedNodeMap* attributes = element->attributes(true);
+    NamedNodeMap* attributes = element->updatedAttributes();
     if (!attributes)
         return nullptr;
 

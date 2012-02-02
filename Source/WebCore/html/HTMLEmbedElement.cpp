@@ -117,7 +117,7 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
 
 void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)
 {
-    NamedNodeMap* attributes = this->attributes(true);
+    NamedNodeMap* attributes = updatedAttributes();
     if (!attributes)
         return;
 

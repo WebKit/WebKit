@@ -1,3 +1,13 @@
+2012-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Avoid creating NamedNodeMap unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=77574
+
+        Reviewed by Ryosuke Niwa.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::attributeNames): use updateAttributes().
+
 2012-02-01  Alexis Menard  <alexis.menard@openbossa.org>
 
         CSSStyleDeclaration.getPropertyPriority() fails for CSS shorthand properties with 'important' priority

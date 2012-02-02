@@ -503,7 +503,7 @@ QStringList QWebElement::attributeNames(const QString& namespaceUri) const
         return QStringList();
 
     QStringList attributeNameList;
-    const NamedNodeMap* const attrs = m_element->attributes(/* read only = */ true);
+    const NamedNodeMap* const attrs = m_element->updatedAttributes();
     if (attrs) {
         const String namespaceUriString(namespaceUri); // convert QString -> String once
         const unsigned attrsCount = attrs->length();

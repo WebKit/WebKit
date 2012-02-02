@@ -591,9 +591,10 @@ Value FunLang::evaluate() const
     Attribute* languageAttribute = 0;
     Node* node = evaluationContext().node.get();
     while (node) {
-        NamedNodeMap* attrs = node->attributes();
-        if (attrs)
-            languageAttribute = attrs->getAttributeItem(XMLNames::langAttr);
+        if (node->isElementNode()) {
+            if (NamedNodeMap* attributes = toElement(node)->updatedAttributes())
+                languageAttribute = attributes->getAttributeItem(XMLNames::langAttr);
+        }
         if (languageAttribute)
             break;
         node = node->parentNode();

@@ -214,7 +214,11 @@ public:
 
     void setBooleanAttribute(const QualifiedName& name, bool);
 
-    NamedNodeMap* attributes(bool readonly = false) const;
+    // For exposing to DOM only.
+    NamedNodeMap* attributes() const { return ensureUpdatedAttributes(); }
+
+    NamedNodeMap* ensureUpdatedAttributes() const;
+    NamedNodeMap* updatedAttributes() const;
 
     // This method is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
@@ -223,10 +227,10 @@ public:
     void parserSetAttributeMap(PassOwnPtr<NamedNodeMap>, FragmentScriptingPermission);
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    NamedNodeMap* ensureAttributeMap();
+    NamedNodeMap* ensureAttributeMap() const;
 
     ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
-    ElementAttributeData* ensureAttributeData() const { return attributes()->attributeData(); }
+    ElementAttributeData* ensureAttributeData() const { return ensureUpdatedAttributes()->attributeData(); }
 
     void setAttributesFromElement(const Element&);
 
@@ -409,6 +413,8 @@ protected:
     HTMLCollection* ensureCachedHTMLCollection(CollectionType);
 
 private:
+    void updateInvalidAttributes() const;
+
     void scrollByUnits(int units, ScrollGranularity);
 
     virtual void setPrefix(const AtomicString&, ExceptionCode&);
@@ -500,25 +506,22 @@ inline Element* Node::parentElement() const
     return parent && parent->isElementNode() ? toElement(parent) : 0;
 }
 
-inline NamedNodeMap* Element::attributes(bool readonly) const
+inline NamedNodeMap* Element::ensureUpdatedAttributes() const
 {
-    if (!isStyleAttributeValid())
-        updateStyleAttribute();
+    updateInvalidAttributes();
+    return ensureAttributeMap();
+}
 
-#if ENABLE(SVG)
-    if (!areSVGAttributesValid())
-        updateAnimatedSVGAttribute(anyQName());
-#endif
-
-    if (!readonly && !m_attributeMap)
-        createAttributeMap();
+inline NamedNodeMap* Element::updatedAttributes() const
+{
+    updateInvalidAttributes();
     return m_attributeMap.get();
 }
 
 inline void Element::setAttributesFromElement(const Element& other)
 {
-    if (NamedNodeMap* attributeMap = other.attributes(true))
-        attributes(false)->setAttributes(*attributeMap);
+    if (NamedNodeMap* attributeMap = other.updatedAttributes())
+        ensureUpdatedAttributes()->setAttributes(*attributeMap);
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
@@ -598,11 +601,22 @@ inline void Element::setIdAttribute(const AtomicString& value)
     setAttribute(document()->idAttributeName(), value);
 }
 
-inline NamedNodeMap* Element::ensureAttributeMap()
+inline NamedNodeMap* Element::ensureAttributeMap() const
 {
     if (!m_attributeMap)
         createAttributeMap();
     return m_attributeMap.get();
+}
+
+inline void Element::updateInvalidAttributes() const
+{
+    if (!isStyleAttributeValid())
+        updateStyleAttribute();
+
+#if ENABLE(SVG)
+    if (!areSVGAttributesValid())
+        updateAnimatedSVGAttribute(anyQName());
+#endif
 }
 
 inline Element* firstElementChild(const ContainerNode* container)

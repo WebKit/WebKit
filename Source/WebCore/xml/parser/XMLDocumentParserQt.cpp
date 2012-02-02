@@ -138,7 +138,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
 
     QXmlStreamNamespaceDeclarations namespaces;
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
-        if (NamedNodeMap* attrs = element->attributes()) {
+        if (NamedNodeMap* attrs = element->updatedAttributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
                 Attribute* attr = attrs->attributeItem(i);
                 if (attr->localName() == "xmlns")

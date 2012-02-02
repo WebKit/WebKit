@@ -717,7 +717,10 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForRuleList(CSSRuleList*
 PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Element* element)
 {
     RefPtr<InspectorArray> attrStyles = InspectorArray::create();
-    NamedNodeMap* attributes = element->attributes();
+    NamedNodeMap* attributes = element->updatedAttributes();
+    if (!attributes)
+        return attrStyles.release();
+
     for (unsigned i = 0; attributes && i < attributes->length(); ++i) {
         Attribute* attribute = attributes->attributeItem(i);
         if (!attribute->decl())

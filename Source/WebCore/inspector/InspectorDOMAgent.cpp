@@ -530,7 +530,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         return;
     }
 
-    const NamedNodeMap* attrMap = toHTMLElement(child)->attributes(true);
+    const NamedNodeMap* attrMap = toHTMLElement(child)->updatedAttributes();
     if (!attrMap && name) {
         element->removeAttribute(*name);
         return;
@@ -781,7 +781,7 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                     break;
                 }
                 // Go through all attributes and serialize them.
-                const NamedNodeMap* attrMap = static_cast<Element*>(node)->attributes(true);
+                const NamedNodeMap* attrMap = static_cast<Element*>(node)->updatedAttributes();
                 if (!attrMap)
                     break;
 
@@ -1159,7 +1159,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForElementAttributes(Ele
 {
     RefPtr<InspectorArray> attributesValue = InspectorArray::create();
     // Go through all attributes and serialize them.
-    const NamedNodeMap* attrMap = element->attributes(true);
+    const NamedNodeMap* attrMap = element->updatedAttributes();
     if (!attrMap)
         return attributesValue.release();
     unsigned numAttrs = attrMap->length();

@@ -1,3 +1,13 @@
+2012-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Avoid creating NamedNodeMap unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=77574
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::openTagToString): use updatedAttributes().
+
 2012-02-01  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Enable deferred canvas rendering in the skia port

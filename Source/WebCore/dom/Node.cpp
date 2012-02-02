@@ -1764,14 +1764,16 @@ bool Node::isEqualNode(Node* other) const
     if (nodeValue() != other->nodeValue())
         return false;
     
-    NamedNodeMap* attributes = this->attributes();
-    NamedNodeMap* otherAttributes = other->attributes();
-    
-    if (!attributes && otherAttributes)
-        return false;
-    
-    if (attributes && !attributes->mapsEquivalent(otherAttributes))
-        return false;
+    if (isElementNode()) {
+        NamedNodeMap* attributes = toElement(this)->updatedAttributes();
+        NamedNodeMap* otherAttributes = toElement(other)->updatedAttributes();
+
+        if (attributes && !attributes->mapsEquivalent(otherAttributes))
+            return false;
+
+        if (otherAttributes && !otherAttributes->mapsEquivalent(attributes))
+            return false;
+    }
     
     Node* child = firstChild();
     Node* otherChild = other->firstChild();
@@ -1829,9 +1831,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
             if (elem->prefix().isNull())
                 return elem->namespaceURI() == namespaceURI;
 
-            if (elem->hasAttributes()) {
-                NamedNodeMap* attrs = elem->attributes();
-                
+            if (NamedNodeMap* attrs = elem->updatedAttributes()) {
                 for (unsigned i = 0; i < attrs->length(); i++) {
                     Attribute* attr = attrs->attributeItem(i);
                     
@@ -1917,9 +1917,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
             if (!elem->namespaceURI().isNull() && elem->prefix() == prefix)
                 return elem->namespaceURI();
             
-            if (elem->hasAttributes()) {
-                NamedNodeMap *attrs = elem->attributes();
-                
+            if (NamedNodeMap* attrs = elem->updatedAttributes()) {
                 for (unsigned i = 0; i < attrs->length(); i++) {
                     Attribute *attr = attrs->attributeItem(i);
                     
@@ -1973,15 +1971,12 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     if (originalElement->lookupNamespaceURI(prefix()) == _namespaceURI)
         return prefix();
     
-    if (hasAttributes()) {
-        NamedNodeMap *attrs = attributes();
-        
+    if (NamedNodeMap* attrs = toElement(this)->updatedAttributes()) {
         for (unsigned i = 0; i < attrs->length(); i++) {
-            Attribute *attr = attrs->attributeItem(i);
+            Attribute* attr = attrs->attributeItem(i);
             
-            if (attr->prefix() == xmlnsAtom &&
-                attr->value() == _namespaceURI &&
-                originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
+            if (attr->prefix() == xmlnsAtom && attr->value() == _namespaceURI
+                    && originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
                 return attr->localName();
         }
     }
@@ -2121,7 +2116,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (attr1 && attr2 && start1 == start2 && start1) {
         // We are comparing two attributes on the same node.  Crawl our attribute map
         // and see which one we hit first.
-        NamedNodeMap* map = attr1->ownerElement()->attributes(true);
+        NamedNodeMap* map = attr1->ownerElement()->updatedAttributes();
         unsigned length = map->length();
         for (unsigned i = 0; i < length; ++i) {
             // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 

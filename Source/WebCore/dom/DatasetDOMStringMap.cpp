@@ -142,7 +142,7 @@ void DatasetDOMStringMap::deref()
 
 void DatasetDOMStringMap::getNames(Vector<String>& names)
 {
-    NamedNodeMap* attributeMap = m_element->attributes(true);
+    NamedNodeMap* attributeMap = m_element->updatedAttributes();
     if (attributeMap) {
         unsigned length = attributeMap->length();
         for (unsigned i = 0; i < length; i++) {
@@ -155,7 +155,7 @@ void DatasetDOMStringMap::getNames(Vector<String>& names)
 
 String DatasetDOMStringMap::item(const String& name)
 {
-    NamedNodeMap* attributeMap = m_element->attributes(true);
+    NamedNodeMap* attributeMap = m_element->updatedAttributes();
     if (attributeMap) {
         unsigned length = attributeMap->length();
         for (unsigned i = 0; i < length; i++) {
@@ -170,7 +170,7 @@ String DatasetDOMStringMap::item(const String& name)
 
 bool DatasetDOMStringMap::contains(const String& name)
 {
-    NamedNodeMap* attributeMap = m_element->attributes(true);
+    NamedNodeMap* attributeMap = m_element->updatedAttributes();
     if (attributeMap) {
         unsigned length = attributeMap->length();
         for (unsigned i = 0; i < length; i++) {

@@ -65,10 +65,10 @@ void HTMLParamElement::parseMappedAttribute(Attribute* attr)
 
 bool HTMLParamElement::isURLAttribute(Attribute* attr) const
 {
-    if (attr->name() == valueAttr) {
-        Attribute* attr = attributes()->getAttributeItem(nameAttr);
-        if (attr) {
-            const AtomicString& value = attr->value();
+    if (attr->name() == valueAttr && hasAttributes()) {
+        Attribute* nameAttribute = attributeMap()->getAttributeItem(nameAttr);
+        if (nameAttribute) {
+            const AtomicString& value = nameAttribute->value();
             if (isURLParameter(value))
                 return true;
         }

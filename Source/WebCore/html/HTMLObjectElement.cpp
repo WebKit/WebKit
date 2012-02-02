@@ -177,7 +177,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     }
     
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
-    NamedNodeMap* attributes = this->attributes(true);
+    NamedNodeMap* attributes = updatedAttributes();
     if (attributes) {
         for (unsigned i = 0; i < attributes->length(); ++i) {
             Attribute* it = attributes->attributeItem(i);

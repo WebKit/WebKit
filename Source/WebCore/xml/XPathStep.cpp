@@ -328,12 +328,14 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
             return;
         }
         case AttributeAxis: {
-            if (context->nodeType() != Node::ELEMENT_NODE)
+            if (!context->isElementNode())
                 return;
+
+            Element* contextElement = toElement(context);
 
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
             if (m_nodeTest.kind() == NodeTest::NameTest && m_nodeTest.data() != starAtom) {
-                RefPtr<Node> n = static_cast<Element*>(context)->getAttributeNodeNS(m_nodeTest.namespaceURI(), m_nodeTest.data());
+                RefPtr<Node> n = contextElement->getAttributeNodeNS(m_nodeTest.namespaceURI(), m_nodeTest.data());
                 if (n && n->namespaceURI() != XMLNSNames::xmlnsNamespaceURI) { // In XPath land, namespace nodes are not accessible on the attribute axis.
                     if (nodeMatches(n.get(), AttributeAxis, m_nodeTest)) // Still need to check merged predicates.
                         nodes.append(n.release());
@@ -341,7 +343,7 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 return;
             }
             
-            NamedNodeMap* attrs = context->attributes();
+            NamedNodeMap* attrs = contextElement->updatedAttributes();
             if (!attrs)
                 return;
 

@@ -305,7 +305,7 @@ void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> prpAttri
 bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 {
     if (!otherMap)
-        return false;
+        return isEmpty();
     
     unsigned len = length();
     if (len != otherMap->length())

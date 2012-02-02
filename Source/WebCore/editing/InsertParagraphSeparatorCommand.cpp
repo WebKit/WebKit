@@ -51,7 +51,7 @@ static Element* highestVisuallyEquivalentDivBelowRoot(Element* startBlock)
     // We don't want to return a root node (if it happens to be a div, e.g., in a document fragment) because there are no
     // siblings for us to append to.
     while (!curBlock->nextSibling() && curBlock->parentElement()->hasTagName(divTag) && curBlock->parentElement()->parentElement()) {
-        NamedNodeMap* attributes = curBlock->parentElement()->attributes(true);
+        NamedNodeMap* attributes = curBlock->parentElement()->updatedAttributes();
         if (attributes && !attributes->isEmpty())
             break;
         curBlock = curBlock->parentElement();

@@ -69,11 +69,12 @@ static bool isCharsetSpecifyingNode(Node* node)
     if (!element->hasTagName(HTMLNames::metaTag))
         return false;
     HTMLMetaCharsetParser::AttributeList attributes;
-    const NamedNodeMap* attributesMap = element->attributes(true);
-    for (unsigned i = 0; i < attributesMap->length(); ++i) {
-        Attribute* item = attributesMap->attributeItem(i);
-        // FIXME: We should deal appropriately with the attribute if they have a namespace.
-        attributes.append(make_pair(item->name().toString(), item->value().string()));
+    if (const NamedNodeMap* attributesMap = element->updatedAttributes()) {
+        for (unsigned i = 0; i < attributesMap->length(); ++i) {
+            Attribute* item = attributesMap->attributeItem(i);
+            // FIXME: We should deal appropriately with the attribute if they have a namespace.
+            attributes.append(make_pair(item->name().toString(), item->value().string()));
+        }
     }
     TextEncoding textEncoding = HTMLMetaCharsetParser::encodingFromMetaAttributes(attributes);
     return textEncoding.isValid();

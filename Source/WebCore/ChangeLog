@@ -1,3 +1,133 @@
+2012-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Avoid creating NamedNodeMap unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=77574
+
+        Reviewed by Ryosuke Niwa.
+
+        The method Element::attributes() was being used for multiple things in our
+        codebase: (1) as the getter for NamedNodeMap exposed to DOM, (2) as a way to other WebCore
+        code get the "attribute storage" (currently inside NamedNodeMap), and (3) as a way to
+        get the attribute storage creating one if necessary.
+
+        This commit separate the jobs in different functions:
+
+        1) attributes() keeps being the DOM getter, and loses its boolean parameter.
+
+        2) updatedAttributes() updates the invalid attributes and returns the attribute
+        storage. If we don't have one, return 0.
+
+        3) ensureUpdatedAttributes() updates the invalid attributes and forces the
+        creation of attribute storage to return.
+
+        There is also another way to get to the attribute storage currently, via
+        attributeMap(), which doesn't update the attributes for possible changes in Style
+        or SVG attributes.
+
+        Note that the new functions are not available in Node class, so C++ code manipulating
+        attributes should cast to Element.
+
+        This separation also made easier to spot and fix some places where we do not
+        need to create the attribute storage if it doesn't exist.
+
+        No new tests, this commit shouldn't change the behavior of existing code.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::getNames):
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::contains):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::hasAttributes):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::setAttributeNodeNS):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::normalizeAttributes):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::attributes):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore::Element::ensureUpdatedAttributes):
+        (WebCore::Element::updatedAttributes):
+        (WebCore::Element::setAttributesFromElement):
+        (WebCore::Element::ensureAttributeMap): Made const to be reused by ensureUpdatedAttributes().
+        (WebCore::Element::updateInvalidAttributes):
+        (WebCore):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::mapsEquivalent): Having no attributes is equivalent to
+        not having an attribute storage because the attribute storage is lazily created.
+        * dom/Node.cpp:
+        (WebCore::Node::isEqualNode): Do not force the creation of attribute storage to
+        compare two nodes.
+        (WebCore::Node::isDefaultNamespace): Use updatedAttributes(). Since we iterate
+        using length, it's OK if the attribute storage is empty.
+        (WebCore::Node::lookupNamespaceURI): Ditto.
+        (WebCore::Node::lookupNamespacePrefix): Ditto.
+        (WebCore::Node::compareDocumentPosition): Ditto.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::hasNoAttributeOrOnlyStyleAttribute):
+        (WebCore::isEmptyFontTag):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::isRemovableBlock): Use isElementNode() explicitly
+        to identify non-Element nodes, then use hasAttributes() if is Element.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::highestVisuallyEquivalentDivBelowRoot):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendElement): Do not create the attribute storage
+        unnecessarily.
+        * editing/htmlediting.cpp:
+        (WebCore::areIdenticalElements): Do not create the attribute storage
+        unnecessarily. Use mapsEquivalent() for comparing the attributes.
+        * editing/markup.cpp:
+        (WebCore::completeURLs): Do not create the attribute storage unnecessarily.
+        (WebCore::StyledMarkupAccumulator::appendElement): Ditto.
+        (WebCore::isPlainTextMarkup): hasAttributes() will avoid creating the attribute
+        storage unnecessarily.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLAttribute): Do not create the attribute storage
+        unnecessarily.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement): Use
+        ensureUpdatedAttributes() since we will add new attributes.
+        (WebCore):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForAttributeStyles):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        * page/PageSerializer.cpp:
+        (WebCore::isCharsetSpecifyingNode): Do not assume attributeMap will exist.
+        * svg/properties/SVGAnimatedPropertySynchronizer.h: Use ensureUpdatedAttributes()
+        since we will add new attributes.
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Do not create the attribute storage
+        unnecessarily.
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Use isElementNode() instead of comparing
+        nodeType() manually. Do not create the attribute storage unnecessarily.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Do not create the attribute
+        storage unnecessarily.
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Ditto.
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::XMLTreeBuilder): Ditto.
+
 2012-02-01  Adam Barth  <abarth@webkit.org>
 
         contentDispositionType misparses the Content-Disposition header in some obscure corner cases

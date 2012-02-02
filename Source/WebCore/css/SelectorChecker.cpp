@@ -707,7 +707,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
     if (sel->isAttributeSelector()) {
         const QualifiedName& attr = sel->attribute();
 
-        NamedNodeMap* attributes = e->attributes(true);
+        NamedNodeMap* attributes = e->updatedAttributes();
         if (!attributes)
             return false;
 
