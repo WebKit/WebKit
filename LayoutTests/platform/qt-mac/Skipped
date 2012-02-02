@@ -5359,3 +5359,8 @@ svg/zoom/page/zoom-svg-through-object-with-auto-size.html
 svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
 svg/zoom/page/zoom-svg-through-object-with-override-size.html
 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+
+#+CONSOLE MESSAGE: Refused to load object from 'data:application/x-webkit-test-netscape,alertwhenloaded' because of Content-Security-Policy.
+#+
+# Tests that inspect element action works for iframe children (https://bugs.webkit.org/show_bug.cgi?id=76808).
+http/tests/inspector/inspect-element.html
