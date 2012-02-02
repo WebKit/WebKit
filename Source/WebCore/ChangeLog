@@ -1,3 +1,24 @@
+2012-02-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: pause on uncaugh exceptions state is not properly restored
+        https://bugs.webkit.org/show_bug.cgi?id=77558
+
+        'Pause on exceptions' state is now stored in InspectorState object so that it is
+        properly restored on inspected process change.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (DebuggerAgentState):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::restore):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptions):
+        (WebCore):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsImpl):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+
 2012-02-02  Kentaro Hara  <haraken@chromium.org>
 
         The third argument of addEventListener/removeEventListener of PeerConnection should be optional

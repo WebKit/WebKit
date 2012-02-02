@@ -49,6 +49,7 @@ namespace WebCore {
 namespace DebuggerAgentState {
 static const char debuggerEnabled[] = "debuggerEnabled";
 static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
+static const char pauseOnExceptionsState[] = "pauseOnExceptionsState";
 };
 
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
@@ -63,6 +64,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentin
 {
     // FIXME: make breakReason optional so that there was no need to init it with "other".
     clearBreakDetails();
+    m_state->setLong(DebuggerAgentState::pauseOnExceptionsState, ScriptDebugServer::DontPauseOnExceptions);
 }
 
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
@@ -85,6 +87,7 @@ void InspectorDebuggerAgent::enable()
 void InspectorDebuggerAgent::disable()
 {
     m_state->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
+    m_state->setLong(DebuggerAgentState::pauseOnExceptionsState, ScriptDebugServer::DontPauseOnExceptions);
     m_instrumentingAgents->setInspectorDebuggerAgent(0);
 
     stopListeningScriptDebugServer();
@@ -140,6 +143,9 @@ void InspectorDebuggerAgent::restore()
     if (enabled()) {
         m_frontend->globalObjectCleared();
         enable();
+        long pauseState = m_state->getLong(DebuggerAgentState::pauseOnExceptionsState);
+        String error;
+        setPauseOnExceptionsImpl(&error, pauseState);
     }
 }
 
@@ -447,9 +453,16 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString* errorString, cons
         *errorString = "Unknown pause on exceptions mode: " + stringPauseState;
         return;
     }
+    setPauseOnExceptionsImpl(errorString, pauseState);
+}
+
+void InspectorDebuggerAgent::setPauseOnExceptionsImpl(ErrorString* errorString, int pauseState)
+{
     scriptDebugServer().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
     if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
         *errorString = "Internal error. Could not change pause on exceptions state";
+    else
+        m_state->setLong(DebuggerAgentState::pauseOnExceptionsState, pauseState);
 }
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const returnByValue, RefPtr<InspectorObject>& result, bool* wasThrown)

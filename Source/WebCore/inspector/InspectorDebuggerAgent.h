@@ -136,6 +136,8 @@ private:
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
 
+    void setPauseOnExceptionsImpl(ErrorString*, int);
+
     PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& scriptId, const ScriptBreakpoint&);
     void clear();
     bool assertPaused(ErrorString*);
