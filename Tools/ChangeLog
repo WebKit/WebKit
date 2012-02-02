@@ -1,3 +1,35 @@
+2012-02-02  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77664
+        Add API tests for didNewFirstVisuallyNonEmptyLayout
+
+        Reviewed by Darin Adler.
+
+        Two new tests.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didNewFirstVisuallyNonEmptyLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didForceRepaint):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didNewFirstVisuallyNonEmptyLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (NewFirstVisuallyNonEmptyLayoutFailsTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFailsTest::NewFirstVisuallyNonEmptyLayoutFailsTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFailsTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (NewFirstVisuallyNonEmptyLayoutTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutTest::NewFirstVisuallyNonEmptyLayoutTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutTest::didCreatePage):
+
 2012-02-02  Michael Saboff  <msaboff@apple.com>
 
         Add Michael Saboff to reviewers list.
