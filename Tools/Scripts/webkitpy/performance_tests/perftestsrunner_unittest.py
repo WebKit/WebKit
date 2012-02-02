@@ -49,9 +49,7 @@ class MainTest(unittest.TestCase):
             text = ''
             timeout = False
             crash = False
-            if driver_input.test_name.endswith('init.html'):
-                text = 'PASS\n'
-            elif driver_input.test_name.endswith('pass.html'):
+            if driver_input.test_name.endswith('pass.html'):
                 text = 'RESULT group_name: test_name= 42 ms'
             elif driver_input.test_name.endswith('timeout.html'):
                 timeout = True
@@ -124,24 +122,6 @@ max 1120
         runner = self.create_runner()
         driver = MainTest.TestDriver()
         return runner._run_single_test(test_name, driver, is_chromium_style=True)
-
-    def test_initial_page_loaded(self):
-        runner = self.create_runner()
-        driver = MainTest.TestDriver()
-        inputs = []
-
-        def run_test(input):
-            inputs.append(input)
-            if input.test_name.endswith('init.html'):
-                return DriverOutput('PASS\n', 'image output', 'some hash', None)
-            else:
-                return DriverOutput('RESULT group_name: test_name= 42 ms\n', 'image output', 'some hash', None)
-
-        driver.run_test = run_test
-        self.assertTrue(runner._run_single_test('pass.html', driver, is_chromium_style=True))
-        self.assertEqual(len(inputs), 2)
-        self.assertEqual(inputs[0].test_name, runner._base_path + '/resources/init.html')
-        self.assertEqual(inputs[1].test_name, 'pass.html')
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))

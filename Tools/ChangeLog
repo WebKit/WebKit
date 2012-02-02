@@ -1,3 +1,20 @@
+2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106543.
+        http://trac.webkit.org/changeset/106543
+        https://bugs.webkit.org/show_bug.cgi?id=77671
+
+        Made tests less stable (Requested by rniwa on #webkit).
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.TestDriver.run_test):
+        (run_test):
+
 2012-02-02  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77664

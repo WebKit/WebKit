@@ -1,3 +1,13 @@
+2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106543.
+        http://trac.webkit.org/changeset/106543
+        https://bugs.webkit.org/show_bug.cgi?id=77671
+
+        Made tests less stable (Requested by rniwa on #webkit).
+
+        * resources/init.html: Removed.
+
 2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         [PerformanceTests] tests have dependencies
