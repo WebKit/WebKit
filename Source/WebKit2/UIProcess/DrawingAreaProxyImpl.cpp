@@ -366,10 +366,10 @@ void DrawingAreaProxyImpl::paintLayerTree(BackingStore::PlatformGraphicsContext 
         m_layerTreeHostProxy->paintToGraphicsContext(context);
 }
 
-void DrawingAreaProxyImpl::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity)
+void DrawingAreaProxyImpl::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect)
 {
     if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->paintToCurrentGLContext(matrix, opacity);
+        m_layerTreeHostProxy->paintToCurrentGLContext(matrix, opacity, clipRect);
 }
 #endif
 

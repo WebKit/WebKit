@@ -80,7 +80,7 @@ private:
 #if USE(TILED_BACKING_STORE)
     virtual void setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale);
     virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&);
-    virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity);
+    virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity, const WebCore::FloatRect&);
     virtual void paintLayerTree(BackingStore::PlatformGraphicsContext);
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif

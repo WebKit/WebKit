@@ -52,7 +52,7 @@ public:
     void deleteCompositingLayer(WebLayerID);
     void setRootCompositingLayer(WebLayerID);
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void purgeGLResources();
     void setVisibleContentsRectAndScale(const WebCore::IntRect&, float);

@@ -168,7 +168,7 @@ LayerTreeHostProxy::~LayerTreeHostProxy()
 }
 
 // This function needs to be reentrant.
-void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity)
+void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapperGL::create();
@@ -190,6 +190,7 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     node->setTextureMapper(m_textureMapper.get());
     m_textureMapper->beginPainting();
     m_textureMapper->bindSurface(0);
+    m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
         currentRootLayer->setOpacity(opacity);
@@ -198,6 +199,7 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     }
 
     node->paint();
+    m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
     if (node->descendantsOrSelfHaveRunningAnimations()) {

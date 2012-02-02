@@ -1,3 +1,27 @@
+2012-02-01  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Use glScissors for clipping in TextureMapperGL when possible
+        https://bugs.webkit.org/show_bug.cgi?id=77575
+
+        Reviewed by Martin Robinson.
+
+        Instead of applying the scissor clip in QQuickWebPage, we trickle it down to
+        TextureMapperGL, and apply it there as part of beginClip(). All direct GL operations are
+        now cleaned out of QQuickWebPage.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::paintToCurrentGLContext):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paintToCurrentGLContext):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+
 2012-02-01  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of <rdar://problem/10442663> Paginated display does not respect page-break-{before,after}

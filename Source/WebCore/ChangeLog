@@ -1,3 +1,29 @@
+2012-02-01  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Use glScissors for clipping in TextureMapperGL when possible
+        https://bugs.webkit.org/show_bug.cgi?id=77575
+
+        Reviewed by Martin Robinson.
+
+        Maintain a clipping stack, that helps us use stencils in conjunction with scissors.
+        We apply scissors when the clip region is rectalinear, and stencil when it's not.
+
+        No behavior changes so no new tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (SharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::SharedGLData):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore):
+        (WebCore::scissorClip):
+        (WebCore::TextureMapperGL::beginScissorClip):
+        (WebCore::TextureMapperGL::endScissorClip):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGL::endClip):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        (TextureMapperGL):
+
 2012-02-01  Anders Carlsson  <andersca@apple.com>
 
         Move the scrolling coordinator to page/scrolling
