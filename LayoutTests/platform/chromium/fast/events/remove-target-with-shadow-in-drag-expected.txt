@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 34: Uncaught Error: NOT_FOUND_ERR: DOM Exception 8
+CONSOLE MESSAGE: line 34: Uncaught Error: NOT_FOUND_ERR: DOM Exception 8
+PASS. DRT didn't crash.
