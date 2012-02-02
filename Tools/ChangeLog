@@ -1,3 +1,11 @@
+2012-02-02  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        Add myself as a committer
+
+        Unreviewed
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         [PerformanceTests] tests have dependencies
