@@ -1,3 +1,32 @@
+2012-02-02  Philip Rogers  <pdr@google.com>
+
+        Fix mirroring with SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=77067
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG fonts were incorrectly handling mirrored characters in bidi text.
+        In this change I added the function createStringWithMirroredCharacters
+        which handles mirroring the characters when selecting glyphs for SVG
+        fonts. I also made a small cosmetic change in the function
+        charactersWithArabicForm, changing the bool parameter "mirror" to "rtl"
+        which better reflects what it actually does.
+
+        Several new tests were added to test mirroring with SVG fonts in the
+        presence of Arabic forms and non-BMP characters.
+
+        Tests: svg/custom/glyph-selection-arabic-forms.svg
+               svg/custom/glyph-selection-bidi-mirror.svg
+               svg/custom/glyph-selection-non-bmp.svg
+
+        * platform/graphics/SVGGlyph.cpp:
+        (WebCore::charactersWithArabicForm):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+        (WebCore::SVGFontData::createStringWithMirroredCharacters):
+        * svg/SVGFontData.h:
+        (SVGFontData):
+
 2012-02-02  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add experiment for single click styles editing.

@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGRoot {svg} at (20,4) size 80x91
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (20,4) size 80x91
+      RenderSVGText {text} at (20,4) size 60x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 60x20
+          chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 7 width 60.00 LTR override: "[hello]"
+      RenderSVGText {text} at (20,23) size 54x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 54x22
+          chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 7 width 54.00 LTR override: "[hello]"
+      RenderSVGText {text} at (43,54) size 57x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 57x20
+          chunk 1 text run 1 at (43.00,70.00) startOffset 0 endOffset 6 width 57.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
+      RenderSVGText {text} at (49,73) size 51x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 51x22
+          chunk 1 text run 1 at (49.00,90.00) startOffset 0 endOffset 6 width 51.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
