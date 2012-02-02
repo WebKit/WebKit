@@ -1,3 +1,16 @@
+2012-02-02  Anders Carlsson  <andersca@apple.com>
+
+        NPAPI will not send mouse up events when mouse is outside plugin area
+        https://bugs.webkit.org/show_bug.cgi?id=77657
+        <rdar://problem/10160674>
+
+        Reviewed by Andreas Kling.
+
+        Use EventHandler::setCapturingMouseEventsNode to ensure we get all the mouse events when the mouse is down.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+
 2012-02-02  Claudio Saavedra  <csaavedra@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] WebKitWebView won't work in a GtkOffscreenWindow
