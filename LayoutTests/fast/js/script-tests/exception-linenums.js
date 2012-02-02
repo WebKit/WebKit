@@ -69,3 +69,46 @@ delete eval;
 eval = realEval;
 shouldBe("typeof e.sourceURL", '"string"');
 shouldBe("e.line", '64');
+
+var firstPropIsGetter = {
+    get getter() { throw {} }
+};
+var secondPropIsGetter = {
+    prop: 1,
+    get getter() { throw {} }
+};
+var firstPropIsSetter = {
+    set setter(a) { throw {} }
+};
+var secondPropIsSetter = {
+    prop: 1,
+    set setter(a) { throw {} }
+};
+
+try {
+    firstPropIsGetter.getter;
+} catch(ex) {
+    e = ex;
+    shouldBe("e.line", "74");
+}
+
+try {
+    secondPropIsGetter.getter;
+} catch(ex) {
+    e = ex;
+    shouldBe("e.line", "78");
+}
+
+try {
+    firstPropIsSetter.setter = '';
+} catch(ex) {
+    e = ex;
+    shouldBe("e.line", "81");
+}
+
+try {
+    secondPropIsSetter.setter = '';
+} catch(ex) {
+    e = ex;
+    shouldBe("e.line", "85");
+}

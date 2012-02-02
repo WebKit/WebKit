@@ -1,3 +1,21 @@
+2012-02-02  Oliver Hunt  <oliver@apple.com>
+
+        Getters and setters cause line numbers in errors/console.log to be offset for the whole file
+        https://bugs.webkit.org/show_bug.cgi?id=77675
+
+        Reviewed by Timothy Hatcher.
+
+        Our default literal parsing logic doesn't handle the extra work required for
+        getters and setters.  When it encounters one, it rolls back the lexer and 
+        then switches to a more complete parsing function.  Unfortunately it was only
+        winding back the character position, and was ignoring the line number and
+        other lexer data.  This led to every getter and setter causing the line number
+        to be incorrectly incremented leading to increasingly incorrect numbers for
+        the rest of the file.
+
+        * parser/Parser.cpp:
+        (JSC::::parseObjectLiteral):
+
 2012-02-02  Andy Wingo  <wingo@igalia.com>
 
         Fix type punning warning in HashTable.h debug builds

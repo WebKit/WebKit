@@ -1240,6 +1240,8 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
     int startOffset = m_token.m_data.intValue;
+    unsigned oldLastLineNumber = m_lexer->lastLineNumber();
+    unsigned oldLineNumber = m_lexer->lineNumber();
     consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
     
     if (match(CLOSEBRACE)) {
@@ -1252,6 +1254,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
         m_lexer->setOffset(startOffset);
         next();
+        m_lexer->setLastLineNumber(oldLastLineNumber);
+        m_lexer->setLineNumber(oldLineNumber);
         return parseStrictObjectLiteral(context);
     }
     TreePropertyList propertyList = context.createPropertyList(m_lexer->lastLineNumber(), property);
@@ -1266,6 +1270,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
             m_lexer->setOffset(startOffset);
             next();
+            m_lexer->setLastLineNumber(oldLastLineNumber);
+            m_lexer->setLineNumber(oldLineNumber);
             return parseStrictObjectLiteral(context);
         }
         tail = context.createPropertyList(m_lexer->lastLineNumber(), property, tail);

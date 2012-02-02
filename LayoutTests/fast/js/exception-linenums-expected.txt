@@ -15,6 +15,10 @@ PASS typeof e.sourceURL is "string"
 PASS e.line is 5
 PASS typeof e.sourceURL is "string"
 PASS e.line is 64
+PASS e.line is 74
+PASS e.line is 78
+PASS e.line is 81
+PASS e.line is 85
 PASS successfullyParsed is true
 
 TEST COMPLETE
