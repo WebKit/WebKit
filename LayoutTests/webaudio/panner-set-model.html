@@ -44,23 +44,24 @@
               testFailed("Panner model set to HRTF (1) but returned " + panner.panningModel);
               success = false;
           }
-      
-          panner.panningModel = panner.SOUNDFIELD;
-          if (panner.panningModel == 2) {
-              testPassed("Panner set to SOUNDFIELD model and read correctly.");
-          } else {
-              testFailed("Panner model set to SOUNDFIELD (2) but returned " + panner.panningModel);
+
+          // SOUNDFIELD should throw exception because it is not
+          // currently implemented.  (See https://bugs.webkit.org/show_bug.cgi?id=77367)
+          try {
+              panner.panningModel = panner.SOUNDFIELD;
+              testFailed("Setting panner model to SOUNDFIELD should throw exception because it is not implemented.");
               success = false;
+          } catch(e) {
+              testPassed("Setting panner model to SOUNDFIELD correctly throws exception because it is not implemented.");
           }
 
-          // Set to invalid value and make sure it didn't change from
-          // it's previous setting (of 2).
-          panner.panningModel = 99;
-          if (panner.panningModel == 2) {
-              testPassed("Panner set to invalid model and panningModel did not change.");
-          } else {
-              testFailed("Panner set to invalid model, but the panningModel changed from 2 to " + panner.panningModel);
+          // Other invalid models should throw an exception.
+          try {
+              panner.panningModel = 99;
+              testFailed("Illegal panner model should throw exception.");
               success = false;
+          } catch(e) {
+              testPassed("Illegal panner model correctly throws exception.");
           }
           
           if (success) {

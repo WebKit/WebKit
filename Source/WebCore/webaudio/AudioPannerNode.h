@@ -72,7 +72,7 @@ public:
 
     // Panning model
     unsigned short panningModel() const { return m_panningModel; }
-    void setPanningModel(unsigned short);
+    void setPanningModel(unsigned short, ExceptionCode&);
 
     // Position
     FloatPoint3D position() const { return m_position; }

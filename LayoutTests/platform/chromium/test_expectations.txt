@@ -3819,8 +3819,6 @@ BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMA
 // Started failing at http://trac.webkit.org/changeset/105007
 BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
 
-BUGWK77283 DEBUG : webaudio/panner-set-model.html = CRASH
-
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
 BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE

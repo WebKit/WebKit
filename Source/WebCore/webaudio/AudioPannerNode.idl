@@ -33,7 +33,9 @@ module audio {
         const unsigned short SOUNDFIELD = 2;
 
         // Default model for stereo is HRTF 
-        attribute unsigned long panningModel; // FIXME: use unsigned short when glue generation supports it
+        // FIXME: use unsigned short when glue generation supports it
+        attribute unsigned long panningModel
+            setter raises(DOMException);
 
         // Uses a 3D cartesian coordinate system 
         void setPosition(in float x, in float y, in float z);

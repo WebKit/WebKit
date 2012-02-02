@@ -1,3 +1,21 @@
+2012-02-02  Raymond Toy  <rtoy@google.com>
+
+        Illegal panner model values should throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=77235
+
+        Reviewed by Kenneth Russell.
+
+        Modified existing panner-set-model test to catch exceptions.
+        Debug build should not crash anymore.
+
+        * webaudio/AudioPannerNode.cpp:
+        (WebCore::AudioPannerNode::setPanningModel):  Throw exception for
+        invalid model values.
+        * webaudio/AudioPannerNode.h:
+        (AudioPannerNode): Update declaration
+        * webaudio/AudioPannerNode.idl: Setting panner model can throw
+        exception. 
+
 2012-02-02  Kentaro Hara  <haraken@chromium.org>
 
         Rename [ConvertUndefinedOrNullToNullString] to

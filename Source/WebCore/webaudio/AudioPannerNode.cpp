@@ -33,6 +33,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "ExceptionCode.h"
 #include "HRTFPanner.h"
 #include <wtf/MathExtras.h>
 
@@ -150,20 +151,22 @@ AudioListener* AudioPannerNode::listener()
     return context()->listener();
 }
 
-void AudioPannerNode::setPanningModel(unsigned short model)
+void AudioPannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
 {
     switch (model) {
     case EQUALPOWER:
     case HRTF:
-    case SOUNDFIELD:
         if (!m_panner.get() || model != m_panningModel) {
             OwnPtr<Panner> newPanner = Panner::create(model, sampleRate());
             m_panner = newPanner.release();
             m_panningModel = model;
         }
         break;
+    case SOUNDFIELD:
+        // FIXME: Implement sound field model. See // https://bugs.webkit.org/show_bug.cgi?id=77367.
+        // For now, fall through to throw an exception.
     default:
-        // FIXME: consider throwing an exception for illegal model values.
+        ec = NOT_SUPPORTED_ERR;
         break;
     }
 }
