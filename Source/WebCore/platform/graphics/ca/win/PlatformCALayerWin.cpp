@@ -566,15 +566,6 @@ void PlatformCALayer::setOpacity(float value)
     setNeedsCommit();
 }
 
-void PlatformCALayer::setFilters(const FilterOperations&)
-{
-}
-
-bool PlatformCALayer::filtersCanBeComposited(const FilterOperations&)
-{
-    return false;
-}
-
 String PlatformCALayer::name() const
 {
     return CACFLayerGetName(m_layer.get());
