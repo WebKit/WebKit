@@ -758,27 +758,6 @@ WEBKIT_API void
 webkit_dom_test_obj_set_reflected_url_attr(WebKitDOMTestObj* self, const gchar* value);
 
 /**
- * webkit_dom_test_obj_get_reflected_non_empty_url_attr:
- * @self: A #WebKitDOMTestObj
- *
- * Returns:
- *
-**/
-WEBKIT_API gchar*
-webkit_dom_test_obj_get_reflected_non_empty_url_attr(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_reflected_non_empty_url_attr:
- * @self: A #WebKitDOMTestObj
- * @value: A #gchar
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_reflected_non_empty_url_attr(WebKitDOMTestObj* self, const gchar* value);
-
-/**
  * webkit_dom_test_obj_get_reflected_string_attr:
  * @self: A #WebKitDOMTestObj
  *
@@ -861,27 +840,6 @@ webkit_dom_test_obj_get_reflected_custom_url_attr(WebKitDOMTestObj* self);
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, const gchar* value);
-
-/**
- * webkit_dom_test_obj_get_reflected_custom_non_empty_url_attr:
- * @self: A #WebKitDOMTestObj
- *
- * Returns:
- *
-**/
-WEBKIT_API gchar*
-webkit_dom_test_obj_get_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_reflected_custom_non_empty_url_attr:
- * @self: A #WebKitDOMTestObj
- * @value: A #gchar
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self, const gchar* value);
 
 /**
  * webkit_dom_test_obj_get_attr_with_getter_exception:

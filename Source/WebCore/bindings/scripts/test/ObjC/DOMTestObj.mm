@@ -290,18 +290,6 @@
     IMPL->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
 }
 
-- (NSString *)reflectedNonEmptyURLAttr
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr);
-}
-
-- (void)setReflectedNonEmptyURLAttr:(NSString *)newReflectedNonEmptyURLAttr
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, newReflectedNonEmptyURLAttr);
-}
-
 - (NSString *)reflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -348,18 +336,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedCustomURLAttr);
-}
-
-- (NSString *)reflectedCustomNonEmptyURLAttr
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr);
-}
-
-- (void)setReflectedCustomNonEmptyURLAttr:(NSString *)newReflectedCustomNonEmptyURLAttr
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, newReflectedCustomNonEmptyURLAttr);
 }
 
 - (int)attrWithGetterException

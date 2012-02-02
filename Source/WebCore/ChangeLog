@@ -1,3 +1,44 @@
+2012-02-01  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [DelegatingPrototypeGetOwnPropertySlot], [HasCustomIndexGetter],
+        [HasIndexSetter], [JSConstructorTemplate] and [NonEmpty] from code generators
+        https://bugs.webkit.org/show_bug.cgi?id=77585
+
+        Reviewed by Adam Barth.
+
+        This patch removes [DelegatingPrototypeGetOwnPropertySlot], [HasCustomIndexGetter],
+        [HasIndexSetter], [JSConstructorTemplate] and [NonEmpty] from code generators,
+        since they are not used by no IDL files.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetterExpression):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (IsConstructable):
+        (IsConstructorTemplate):
+
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated the run-bindings-tests results.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Ditto.
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Ditto.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+        (WebCore):
+
 2012-02-01  Shinya Kawanaka  <shinyak@google.com>
 
         Select attribute of HTMLContentElement should be able be changed dynamically.

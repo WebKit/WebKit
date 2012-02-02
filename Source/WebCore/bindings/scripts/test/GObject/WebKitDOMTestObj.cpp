@@ -855,27 +855,6 @@ webkit_dom_test_obj_set_reflected_url_attr(WebKitDOMTestObj* self, const gchar* 
 }
 
 gchar*
-webkit_dom_test_obj_get_reflected_non_empty_url_attr(WebKitDOMTestObj* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
-    return res;
-}
-
-void
-webkit_dom_test_obj_set_reflected_non_empty_url_attr(WebKitDOMTestObj* self, const gchar* value)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    g_return_if_fail(value);
-    WTF::String converted_value = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, converted_value);
-}
-
-gchar*
 webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
 {
     g_return_val_if_fail(self, 0);
@@ -953,27 +932,6 @@ webkit_dom_test_obj_set_reflected_custom_url_attr(WebKitDOMTestObj* self, const 
     g_return_if_fail(value);
     WTF::String converted_value = WTF::String::fromUTF8(value);
     item->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, converted_value);
-}
-
-gchar*
-webkit_dom_test_obj_get_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
-    return res;
-}
-
-void
-webkit_dom_test_obj_set_reflected_custom_non_empty_url_attr(WebKitDOMTestObj* self, const gchar* value)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    g_return_if_fail(value);
-    WTF::String converted_value = WTF::String::fromUTF8(value);
-    item->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, converted_value);
 }
 
 glong
@@ -1440,12 +1398,10 @@ enum {
     PROP_REFLECTED_UNSIGNED_INTEGRAL_ATTR,
     PROP_REFLECTED_BOOLEAN_ATTR,
     PROP_REFLECTED_URL_ATTR,
-    PROP_REFLECTED_NON_EMPTY_URL_ATTR,
     PROP_REFLECTED_STRING_ATTR,
     PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR,
     PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
     PROP_REFLECTED_CUSTOM_URL_ATTR,
-    PROP_REFLECTED_CUSTOM_NON_EMPTY_URL_ATTR,
     PROP_ATTR_WITH_GETTER_EXCEPTION,
     PROP_ATTR_WITH_SETTER_EXCEPTION,
     PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
@@ -1547,11 +1503,6 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
         coreSelf->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
-    case PROP_REFLECTED_NON_EMPTY_URL_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
     case PROP_REFLECTED_STRING_ATTR:
     {
         coreSelf->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
@@ -1570,11 +1521,6 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
     case PROP_REFLECTED_CUSTOM_URL_ATTR:
     {
         coreSelf->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_NON_EMPTY_URL_ATTR:
-    {
-        coreSelf->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
@@ -1738,11 +1684,6 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr)));
         break;
     }
-    case PROP_REFLECTED_NON_EMPTY_URL_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr)));
-        break;
-    }
     case PROP_REFLECTED_STRING_ATTR:
     {
         g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
@@ -1761,11 +1702,6 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
     case PROP_REFLECTED_CUSTOM_URL_ATTR:
     {
         g_value_take_string(value, convertToUTF8String(coreSelf->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr)));
-        break;
-    }
-    case PROP_REFLECTED_CUSTOM_NON_EMPTY_URL_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr)));
         break;
     }
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
@@ -2037,13 +1973,6 @@ G_MAXULONG, /* max */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_NON_EMPTY_URL_ATTR,
-                                    g_param_spec_string("reflected-non-empty-url-attr", /* name */
-                                                           "test_obj_reflected-non-empty-url-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-non-empty-url-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
                                     PROP_REFLECTED_STRING_ATTR,
                                     g_param_spec_string("reflected-string-attr", /* name */
                                                            "test_obj_reflected-string-attr", /* short description */
@@ -2071,13 +2000,6 @@ G_MAXLONG, /* max */
                                     g_param_spec_string("reflected-custom-url-attr", /* name */
                                                            "test_obj_reflected-custom-url-attr", /* short description */
                                                            "read-write  gchar* TestObj.reflected-custom-url-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_REFLECTED_CUSTOM_NON_EMPTY_URL_ATTR,
-                                    g_param_spec_string("reflected-custom-non-empty-url-attr", /* name */
-                                                           "test_obj_reflected-custom-non-empty-url-attr", /* short description */
-                                                           "read-write  gchar* TestObj.reflected-custom-non-empty-url-attr", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,

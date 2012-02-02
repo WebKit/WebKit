@@ -104,8 +104,6 @@ public:
     void setReflectedBooleanAttr(bool);
     WebDOMString reflectedURLAttr() const;
     void setReflectedURLAttr(const WebDOMString&);
-    WebDOMString reflectedNonEmptyURLAttr() const;
-    void setReflectedNonEmptyURLAttr(const WebDOMString&);
     WebDOMString reflectedStringAttr() const;
     void setReflectedStringAttr(const WebDOMString&);
     int reflectedCustomIntegralAttr() const;
@@ -114,8 +112,6 @@ public:
     void setReflectedCustomBooleanAttr(bool);
     WebDOMString reflectedCustomURLAttr() const;
     void setReflectedCustomURLAttr(const WebDOMString&);
-    WebDOMString reflectedCustomNonEmptyURLAttr() const;
-    void setReflectedCustomNonEmptyURLAttr(const WebDOMString&);
     int attrWithGetterException() const;
     void setAttrWithGetterException(int);
     int attrWithSetterException() const;

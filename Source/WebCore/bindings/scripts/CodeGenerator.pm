@@ -548,11 +548,7 @@ sub GetterExpression
 
     my $functionName;
     if ($attribute->signature->extendedAttributes->{"URL"}) {
-        if ($attribute->signature->extendedAttributes->{"NonEmpty"}) {
-            $functionName = "getNonEmptyURLAttribute";
-        } else {
-            $functionName = "getURLAttribute";
-        }
+        $functionName = "getURLAttribute";
     } elsif ($attribute->signature->type eq "boolean") {
         $functionName = "hasAttribute";
     } elsif ($attribute->signature->type eq "long") {

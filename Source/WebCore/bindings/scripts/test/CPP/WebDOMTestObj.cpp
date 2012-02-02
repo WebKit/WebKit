@@ -345,22 +345,6 @@ void WebDOMTestObj::setReflectedURLAttr(const WebDOMString& newReflectedURLAttr)
     impl()->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, newReflectedURLAttr);
 }
 
-WebDOMString WebDOMTestObj::reflectedNonEmptyURLAttr() const
-{
-    if (!impl())
-        return WebDOMString();
-
-    return static_cast<const WTF::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
-}
-
-void WebDOMTestObj::setReflectedNonEmptyURLAttr(const WebDOMString& newReflectedNonEmptyURLAttr)
-{
-    if (!impl())
-        return;
-
-    impl()->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, newReflectedNonEmptyURLAttr);
-}
-
 WebDOMString WebDOMTestObj::reflectedStringAttr() const
 {
     if (!impl())
@@ -423,22 +407,6 @@ void WebDOMTestObj::setReflectedCustomURLAttr(const WebDOMString& newReflectedCu
         return;
 
     impl()->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, newReflectedCustomURLAttr);
-}
-
-WebDOMString WebDOMTestObj::reflectedCustomNonEmptyURLAttr() const
-{
-    if (!impl())
-        return WebDOMString();
-
-    return static_cast<const WTF::String&>(impl()->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
-}
-
-void WebDOMTestObj::setReflectedCustomNonEmptyURLAttr(const WebDOMString& newReflectedCustomNonEmptyURLAttr)
-{
-    if (!impl())
-        return;
-
-    impl()->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, newReflectedCustomNonEmptyURLAttr);
 }
 
 int WebDOMTestObj::attrWithGetterException() const

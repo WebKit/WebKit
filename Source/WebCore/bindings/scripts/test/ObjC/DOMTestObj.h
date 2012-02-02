@@ -97,8 +97,6 @@ enum {
 - (void)setReflectedBooleanAttr:(BOOL)newReflectedBooleanAttr;
 - (NSString *)reflectedURLAttr;
 - (void)setReflectedURLAttr:(NSString *)newReflectedURLAttr;
-- (NSString *)reflectedNonEmptyURLAttr;
-- (void)setReflectedNonEmptyURLAttr:(NSString *)newReflectedNonEmptyURLAttr;
 - (NSString *)reflectedStringAttr;
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr;
 - (int)reflectedCustomIntegralAttr;
@@ -107,8 +105,6 @@ enum {
 - (void)setReflectedCustomBooleanAttr:(BOOL)newReflectedCustomBooleanAttr;
 - (NSString *)reflectedCustomURLAttr;
 - (void)setReflectedCustomURLAttr:(NSString *)newReflectedCustomURLAttr;
-- (NSString *)reflectedCustomNonEmptyURLAttr;
-- (void)setReflectedCustomNonEmptyURLAttr:(NSString *)newReflectedCustomNonEmptyURLAttr;
 - (int)attrWithGetterException;
 - (void)setAttrWithGetterException:(int)newAttrWithGetterException;
 - (int)attrWithSetterException;

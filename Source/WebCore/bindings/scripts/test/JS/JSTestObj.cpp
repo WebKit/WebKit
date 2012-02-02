@@ -96,12 +96,10 @@ static const HashTableValue JSTestObjTableValues[] =
     { "reflectedUnsignedIntegralAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedUnsignedIntegralAttr), (intptr_t)setJSTestObjReflectedUnsignedIntegralAttr, NoIntrinsic },
     { "reflectedBooleanAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedBooleanAttr), (intptr_t)setJSTestObjReflectedBooleanAttr, NoIntrinsic },
     { "reflectedURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedURLAttr), (intptr_t)setJSTestObjReflectedURLAttr, NoIntrinsic },
-    { "reflectedNonEmptyURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedNonEmptyURLAttr), (intptr_t)setJSTestObjReflectedNonEmptyURLAttr, NoIntrinsic },
     { "reflectedStringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedStringAttr), (intptr_t)setJSTestObjReflectedStringAttr, NoIntrinsic },
     { "reflectedCustomIntegralAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomIntegralAttr), (intptr_t)setJSTestObjReflectedCustomIntegralAttr, NoIntrinsic },
     { "reflectedCustomBooleanAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomBooleanAttr), (intptr_t)setJSTestObjReflectedCustomBooleanAttr, NoIntrinsic },
     { "reflectedCustomURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomURLAttr), (intptr_t)setJSTestObjReflectedCustomURLAttr, NoIntrinsic },
-    { "reflectedCustomNonEmptyURLAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedCustomNonEmptyURLAttr), (intptr_t)setJSTestObjReflectedCustomNonEmptyURLAttr, NoIntrinsic },
     { "attrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterException), (intptr_t)setJSTestObjAttrWithGetterException, NoIntrinsic },
     { "attrWithSetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithSetterException), (intptr_t)setJSTestObjAttrWithSetterException, NoIntrinsic },
     { "stringAttrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t)setJSTestObjStringAttrWithGetterException, NoIntrinsic },
@@ -526,16 +524,6 @@ JSValue jsTestObjReflectedURLAttr(ExecState* exec, JSValue slotBase, const Ident
 }
 
 
-JSValue jsTestObjReflectedNonEmptyURLAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, impl->getNonEmptyURLAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr));
-    return result;
-}
-
-
 JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
@@ -572,16 +560,6 @@ JSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, JSValue slotBase, const
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = jsString(exec, impl->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
-    return result;
-}
-
-
-JSValue jsTestObjReflectedCustomNonEmptyURLAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsString(exec, impl->getNonEmptyURLAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr));
     return result;
 }
 
@@ -973,14 +951,6 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue
 }
 
 
-void setJSTestObjReflectedNonEmptyURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::reflectednonemptyurlattrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-
 void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
@@ -1010,14 +980,6 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* thisObject, J
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     impl->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, valueToStringWithNullCheck(exec, value));
-}
-
-
-void setJSTestObjReflectedCustomNonEmptyURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::customContentNonEmptyURLAttrAttr, valueToStringWithNullCheck(exec, value));
 }
 
 
