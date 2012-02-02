@@ -65,11 +65,6 @@ Vector<IntRect> Region::rects() const
     return rects;
 }
 
-bool Region::contains(const Region& region) const
-{
-    return WebCore::intersect(region, *this) == region;
-}
-
 Region::Shape::Shape()
 {
 }
