@@ -37,7 +37,8 @@
 namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
-    : TreeScope(document, CreateShadowRoot)
+    : DocumentFragment(document, CreateShadowRoot)
+    , TreeScope(this)
     , m_applyAuthorSheets(false)
     , m_needsRecalculateContent(false)
 {
@@ -52,6 +53,10 @@ ShadowRoot::ShadowRoot(Document* document)
 
 ShadowRoot::~ShadowRoot()
 {
+    // We must call clearRareData() here since a ShadowRoot class inherits TreeScope
+    // as well as Node. See a comment on TreeScope.h for the reason.
+    if (hasRareData())
+        clearRareData();
 }
 
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
@@ -172,7 +177,7 @@ void ShadowRoot::attach()
     // ensureInclusions(), and here we just ensure that
     // it is in clean state.
     ASSERT(!m_inclusions || !m_inclusions->hasCandidates());
-    TreeScope::attach();
+    DocumentFragment::attach();
     if (m_inclusions)
         m_inclusions->didSelect();
 }

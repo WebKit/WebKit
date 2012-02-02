@@ -319,10 +319,10 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 static inline Node* ownerOfTreeScope(TreeScope* scope)
 {
     ASSERT(scope);
-    if (scope->isShadowRoot())
-        return scope->shadowHost();
-    if (scope->document()->frame())
-        return scope->document()->frame()->ownerElement();
+    if (scope->rootNode()->isShadowRoot())
+        return scope->rootNode()->shadowHost();
+    if (scope->rootNode()->document()->frame())
+        return scope->rootNode()->document()->frame()->ownerElement();
     return 0;
 }
 
@@ -419,18 +419,18 @@ Node* FocusController::nextFocusableNode(TreeScope* scope, Node* start, Keyboard
     // Look for the first node in the scope that:
     // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
     // 2) comes first in the scope, if there's a tie.
-    if (Node* winner = nextNodeWithGreaterTabIndex(scope, start ? start->tabIndex() : 0, event))
+    if (Node* winner = nextNodeWithGreaterTabIndex(scope->rootNode(), start ? start->tabIndex() : 0, event))
         return winner;
 
     // There are no nodes with a tabindex greater than start's tabindex,
     // so find the first node with a tabindex of 0.
-    return nextNodeWithExactTabIndex(scope, 0, event);
+    return nextNodeWithExactTabIndex(scope->rootNode(), 0, event);
 }
 
 Node* FocusController::previousFocusableNode(TreeScope* scope, Node* start, KeyboardEvent* event)
 {
     Node* last;
-    for (last = scope; last->lastChild(); last = last->lastChild()) { }
+    for (last = scope->rootNode(); last->lastChild(); last = last->lastChild()) { }
 
     // First try to find the last node in the scope that comes before start and has the same tabindex as start.
     // If start is null, find the last node in the scope with a tabindex of 0.

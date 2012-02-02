@@ -270,8 +270,8 @@ static HTMLInputElement* asFileInput(Node* node)
     HTMLInputElement* inputElement = node->toInputElement();
 
     // If this is a button inside of the a file input, move up to the file input.
-    if (inputElement && inputElement->isTextButton() && inputElement->treeScope()->isShadowRoot())
-        inputElement = inputElement->treeScope()->shadowHost()->toInputElement();
+    if (inputElement && inputElement->isTextButton() && inputElement->treeScope()->rootNode()->isShadowRoot())
+        inputElement = inputElement->treeScope()->rootNode()->shadowHost()->toInputElement();
 
     return inputElement && inputElement->isFileUpload() ? inputElement : 0;
 }

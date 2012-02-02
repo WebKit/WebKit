@@ -44,8 +44,8 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
     // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
     // we ensure that the collection cache will be invalidated as needed when the element is moved back.
-    Document* oldDocument = m_oldScope ? m_oldScope->document() : 0;
-    Document* newDocument = m_newScope->document();
+    Document* oldDocument = m_oldScope ? m_oldScope->rootNode()->document() : 0;
+    Document* newDocument = m_newScope->rootNode()->document();
     bool willMoveToNewDocument = oldDocument != newDocument;
     if (oldDocument && willMoveToNewDocument)
         oldDocument->incDOMTreeVersion();

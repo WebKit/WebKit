@@ -373,7 +373,8 @@ private:
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
-    : TreeScope(0)
+    : ContainerNode(0)
+    , TreeScope(this)
     , m_guardRefCount(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
@@ -571,6 +572,11 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
+
+    // We must call clearRareData() here since a Document class inherits TreeScope
+    // as well as Node. See a comment on TreeScope.h for the reason.
+    if (hasRareData())
+        clearRareData();
 }
 
 void Document::removedLastRef()
@@ -642,16 +648,19 @@ Element* Document::getElementByAccessKey(const String& key)
     return m_elementsByAccessKey.get(key.impl());
 }
 
-void Document::buildAccessKeyMap(TreeScope* root)
+void Document::buildAccessKeyMap(TreeScope* scope)
 {
-     for (Node* n = root; n; n = n->traverseNextNode(root)) {
-        if (!n->isElementNode())
+    ASSERT(scope);
+    Node* rootNode = scope->rootNode();
+    for (Node* node = rootNode; node; node = node->traverseNextNode(rootNode)) {
+        if (!node->isElementNode())
             continue;
-        Element* element = static_cast<Element*>(n);
+        Element* element = static_cast<Element*>(node);
         const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), element);
-        buildAccessKeyMap(element->shadowRoot());
+        if (ShadowRoot* shadowRoot = element->shadowRoot())
+            buildAccessKeyMap(shadowRoot);
     }
 }
 
@@ -722,7 +731,7 @@ DOMImplementation* Document::implementation()
 
 void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    TreeScope::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
     Element* newDocumentElement = firstElementChild(this);
     if (newDocumentElement == m_documentElement)
@@ -1840,7 +1849,7 @@ void Document::attach()
     RenderObject* render = renderer();
     setRenderer(0);
 
-    TreeScope::attach();
+    ContainerNode::attach();
 
     setRenderer(render);
 }
@@ -1894,7 +1903,7 @@ void Document::detach()
     m_focusedNode = 0;
     m_activeNode = 0;
 
-    TreeScope::detach();
+    ContainerNode::detach();
 
     unscheduleStyleRecalc();
 

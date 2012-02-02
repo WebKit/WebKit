@@ -1,3 +1,55 @@
+2012-02-01  Hayato Ito  <hayato@chromium.org>
+
+        Change class hierarycy so that ShadowRoot can inherit DocumentFragment.
+        https://bugs.webkit.org/show_bug.cgi?id=76693
+
+        Reviewed by Darin Adler.
+
+        Make ShadowRoot inherit DocumentFragment so that it matches the class hierarchy of IDL in the spec.
+        TreeScope becomes a separated class, which is now inherited by Document and ShadowRoot using multiple-inheritance.
+        This patch is pre-requirement for coming IDL change.
+
+        No tests. No change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        (Document):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::DocumentFragment):
+        * dom/DocumentFragment.h:
+        (DocumentFragment):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::get):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        (WebCore::ShadowRoot::attach):
+        * dom/ShadowRoot.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::~TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        (WebCore::TreeScope::getImageMap):
+        (WebCore::TreeScope::findAnchor):
+        * dom/TreeScope.h:
+        (WebCore):
+        (WebCore::TreeScope::rootNode):
+        (TreeScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * page/FocusController.cpp:
+        (WebCore::ownerOfTreeScope):
+        (WebCore::FocusController::nextFocusableNode):
+        (WebCore::FocusController::previousFocusableNode):
+
 2012-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
         WorkerScriptController::evaluate() should not return anything

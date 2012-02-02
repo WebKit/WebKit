@@ -26,28 +26,30 @@
 #include "config.h"
 #include "TreeScope.h"
 
+#include "ContainerNode.h"
+#include "Document.h"
 #include "Element.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
-#include "NodeRareData.h"
 #include "TreeScopeAdopter.h"
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(Document* document, ConstructionType constructionType)
-    : ContainerNode(document, constructionType)
+TreeScope::TreeScope(ContainerNode* rootNode)
+    : m_rootNode(rootNode)
     , m_parentTreeScope(0)
     , m_numNodeListCaches(0)
 {
+    ASSERT(rootNode);
 }
 
 TreeScope::~TreeScope()
 {
-    if (hasRareData())
-        clearRareData();
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -59,7 +61,7 @@ void TreeScope::destroyTreeScopeData()
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 {
     // A document node cannot be re-parented.
-    ASSERT(!isDocumentNode());
+    ASSERT(!rootNode()->isDocumentNode());
     // Every scope other than document needs a parent scope.
     ASSERT(newParentScope);
 
@@ -105,7 +107,7 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
         return 0;
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
-    if (document()->isHTMLDocument())
+    if (rootNode()->document()->isHTMLDocument())
         return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
     return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
 }
@@ -116,10 +118,10 @@ Element* TreeScope::findAnchor(const String& name)
         return 0;
     if (Element* element = getElementById(name))
         return element;
-    for (Node* node = this; node; node = node->traverseNextNode()) {
+    for (Node* node = rootNode(); node; node = node->traverseNextNode()) {
         if (node->hasTagName(aTag)) {
             HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
-            if (document()->inQuirksMode()) {
+            if (rootNode()->document()->inQuirksMode()) {
                 // Quirks mode, case insensitive comparison of names.
                 if (equalIgnoringCase(anchor->name(), name))
                     return anchor;

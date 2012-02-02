@@ -39,7 +39,7 @@ public:
     virtual bool canContainRangeEndPoint() const { return true; }
 
 protected:
-    DocumentFragment(Document*);
+    DocumentFragment(Document*, ConstructionType = CreateContainer);
     virtual String nodeName() const;
 
 private:

@@ -27,6 +27,7 @@
 #ifndef ShadowRoot_h
 #define ShadowRoot_h
 
+#include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "TreeScope.h"
 
@@ -36,7 +37,7 @@ class ContentInclusionSelector;
 class Document;
 class HTMLContentElement;
 
-class ShadowRoot : public TreeScope {
+class ShadowRoot : public DocumentFragment, public TreeScope {
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
     static PassRefPtr<ShadowRoot> create(Element*, ExceptionCode&);

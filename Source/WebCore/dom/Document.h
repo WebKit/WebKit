@@ -31,6 +31,7 @@
 #include "CheckedRadioButtons.h"
 #include "CollectionType.h"
 #include "Color.h"
+#include "ContainerNode.h"
 #include "DOMTimeStamp.h"
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
@@ -213,7 +214,7 @@ enum PageshowEventPersistence {
 
 enum StyleSelectorUpdateFlag { RecalcStyleImmediately, DeferRecalcStyle, RecalcStyleIfNeeded };
 
-class Document : public TreeScope, public ScriptExecutionContext {
+class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame, const KURL& url)
     {
@@ -227,8 +228,8 @@ public:
 
     MediaQueryMatcher* mediaQueryMatcher();
 
-    using TreeScope::ref;
-    using TreeScope::deref;
+    using ContainerNode::ref;
+    using ContainerNode::deref;
 
     // Nodes belonging to this document hold guard references -
     // these are enough to keep the document from being destroyed, but

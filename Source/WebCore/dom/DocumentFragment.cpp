@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-DocumentFragment::DocumentFragment(Document* document)
-    : ContainerNode(document)
+DocumentFragment::DocumentFragment(Document* document, ConstructionType constructionType)
+    : ContainerNode(document, constructionType)
 {
     ASSERT(document);
 }
