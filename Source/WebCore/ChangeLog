@@ -1,3 +1,18 @@
+2012-02-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: enable editing of selected rows on single click in elements panel.
+        https://bugs.webkit.org/show_bug.cgi?id=77627
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.onattach):
+        (WebInspector.ElementsTreeElement.prototype.onselect):
+        (WebInspector.ElementsTreeElement.prototype._mouseDown):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.selectOnMouseDown):
+        (TreeElement.prototype.select):
+
 2012-02-02  Philip Rogers  <pdr@google.com>
 
         Fix mirroring with SVG fonts

@@ -721,6 +721,8 @@ WebInspector.ElementsTreeElement.prototype = {
         this.updateTitle();
         this._preventFollowingLinksOnDoubleClick();
         this.listItemElement.draggable = true;
+        this.listItemElement.addEventListener("click", this._mouseClick.bind(this));
+        this.listItemElement.addEventListener("mousedown", this._mouseDown.bind(this));
     },
 
     _preventFollowingLinksOnDoubleClick: function()
@@ -943,6 +945,7 @@ WebInspector.ElementsTreeElement.prototype = {
             WebInspector.domAgent.highlightDOMNode(this.representedObject.id);
         this.updateSelection();
         this.treeOutline.suppressRevealAndSelect = false;
+        return true;
     },
 
     ondelete: function()
@@ -992,6 +995,20 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (this.hasChildren && !this.expanded)
             this.expand();
+    },
+
+    _mouseClick: function(event)
+    {
+        if (this._isSingleClickCandidate)
+            this._startEditingTarget(event.target);
+        this._isSingleClickCandidate = false;
+    },
+
+    _mouseDown: function(event)
+    {
+        if (event.handled || event.which !== 1 || this._editing || this._elementCloseTag || !this.selected)
+            return;
+        this._isSingleClickCandidate = true;
     },
 
     _insertInLastAttributePosition: function(tag, node)

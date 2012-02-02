@@ -997,17 +997,22 @@ TreeElement.prototype.revealed = function()
 
 TreeElement.prototype.selectOnMouseDown = function(event)
 {
-    this.select(false, true);
+    if (this.select(false, true)) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.handled = true;
+    }
 }
 
 /**
  * @param {boolean=} omitFocus
  * @param {boolean=} selectedByUser
+ * @return {boolean}
  */
 TreeElement.prototype.select = function(omitFocus, selectedByUser)
 {
     if (!this.treeOutline || !this.selectable || this.selected)
-        return;
+        return false;
 
     if (this.treeOutline.selectedTreeElement)
         this.treeOutline.selectedTreeElement.deselect();
@@ -1019,13 +1024,14 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser)
 
     // Focusing on another node may detach "this" from tree.
     if (!this.treeOutline)
-        return;
+        return false;
     this.treeOutline.selectedTreeElement = this;
     if (this._listItemNode)
         this._listItemNode.classList.add("selected");
 
     if (this.onselect)
-        this.onselect(this, selectedByUser);
+        return this.onselect(this, selectedByUser);
+    return false;
 }
 
 /**
