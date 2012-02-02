@@ -3695,8 +3695,6 @@ BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
 BUGWK73643 WIN MAC : svg/as-background-image/svg-as-background-2.html = IMAGE
 BUGWK73643 WIN MAC : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 
-BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
-
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
