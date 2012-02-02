@@ -1,3 +1,41 @@
+2012-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Consider user's preferred language when choosing text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=74121
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: media/track/track-language-preference.html
+               media/track/track-prefer-captions.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTimerFired): configureTextTracks -> configureNewTextTracks.
+        (WebCore::HTMLMediaElement::textTracksAreReady): Add more comments.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLMediaElement::showingTrackWithSameKind): Minor restructuring.
+        (WebCore::HTMLMediaElement::userIsInterestedInThisTrackKind): Renamed from userIsInterestedInThisTrack,
+            don't consider user's language preference.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): New, configure all tracks in a group, 
+            considering user's kind and language preferences.
+        (WebCore::HTMLMediaElement::configureNewTextTracks): New, configure all newly added tracks.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::TrackGroup::TrackGroup):
+        (TrackGroup):
+
+        * platform/Language.cpp:
+        (WebCore::canonicalLanguageIdentifier): New, create a canonicalized version of a language string.
+        (WebCore::bestMatchingLanguage): New, return the language from the list that best matches the 
+            specified language.
+        (WebCore::preferredLanguageFromList): New, return the language in the specified list that best
+            matches the user's language preference.
+        * platform/Language.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setShouldDisplayTrackType): New, allow DRT to set the track type preference.
+        (WebCore::Internals::shouldDisplayTrackType): New, allow DRT to read the track type preference.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-02-01  Hayato Ito  <hayato@chromium.org>
 
         Change class hierarycy so that ShadowRoot can inherit DocumentFragment.

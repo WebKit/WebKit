@@ -1,0 +1,32 @@
+Tests that the user's preferred languages are honored.
+
+**Set track preferences and user preferred languages
+RUN(internals.setShouldDisplayTrackKind(document, 'Captions', true))
+RUN(internals.userPreferredLanguages = ['jp', 'es-ES', 'en', 'fr'])
+
+Test: a track language matches one of the user's preferred languages exactly.
+- creating tracks for: [fr,en,jp].
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.srclang == 'jp') OK
+
+Test: a track language without locale exactly matches one of the user's preferred languages.
+- creating tracks for: [fr-CH,da].
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.srclang == 'fr-CH') OK
+
+Test: a track language without locale matches one of the user's preferred languages without locale.
+- creating tracks for: [fr,es-MX].
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.srclang == 'es-MX') OK
+
+Test: no track language matches any of the user's preferred languages.
+- creating tracks for: [fa,ru,no].
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.srclang == 'fa') OK
+
+END OF TEST
+

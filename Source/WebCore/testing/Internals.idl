@@ -73,6 +73,10 @@ module window {
         long lastSpellCheckRequestSequence(in Document document) raises (DOMException);
         long lastSpellCheckProcessedSequence(in Document document) raises (DOMException);
 
+#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
+        void setShouldDisplayTrackKind(in Document document, in DOMString kind, in boolean enabled) raises (DOMException);
+        boolean shouldDisplayTrackKind(in Document document, in DOMString trackKind) raises (DOMException);
+#endif
         attribute [Custom] Array userPreferredLanguages;
 
         readonly attribute InternalSettings settings;

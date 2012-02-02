@@ -34,6 +34,7 @@ namespace WebCore {
 String defaultLanguage();
 Vector<String> userPreferredLanguages();
 void overrideUserPreferredLanguages(const Vector<String>&);
+String preferredLanguageFromList(const Vector<String>&);
 
 // The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);

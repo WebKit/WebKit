@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;}
+        </style>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var timer = null;
+            var counter = 0;
+
+            function trackLoaded()
+            {
+                consoleWrite("EVENT(load)");
+                
+                // Don't log the track type because the load order is not predictable.
+                track = event.target;
+                testExpected("track.readyState", HTMLTrackElement.LOADED);
+                testExpected("track.kind", "captions", "!=");
+
+                // End the test after a brief pause so we allow the third track to load if it will.
+                if (++counter == 2)
+                    timer = setTimeout(endTest, 200);
+
+                consoleWrite("");
+            }
+
+            function setTextTrackPreferences(type, flag)
+            {
+                if (!window.internals) {
+                    consoleWrite("<b>**This test only works in DRT<" + "/b>");
+                    return;
+                }
+
+                run("internals.setShouldDisplayTrackKind(document, '" + type + "', " + flag + ")");
+                testExpected("internals.shouldDisplayTrackKind(document, '" + type + "')", flag);
+            }
+            
+            function createTrackElement(kind, src)
+            {
+                consoleWrite("<i>- creating '" + kind + "' track.<" + "/i>");
+                var track = document.createElement('track');
+                track.setAttribute('kind', kind);
+                track.setAttribute('onload', 'trackLoaded()');
+                track.setAttribute('src', src);
+                video.appendChild(track);
+            }
+
+            function createTrackElements()
+            {
+                var tracks = document.querySelectorAll('track');
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.removeChild(tracks[ndx]);
+
+               createTrackElement("subtitles", "captions-webvtt/tc004-webvtt-file.vtt")
+               createTrackElement("captions", "captions-webvtt/tc004-webvtt-file.vtt")
+               createTrackElement("descriptions", "captions-webvtt/tc004-webvtt-file.vtt")
+            }
+
+            function setup()
+            {
+                findMediaElement();
+
+                consoleWrite("<i>**Set preferences so subtitles and descriptions load, but captions do not<" + "/i>");
+                setTextTrackPreferences("Subtitles", true);
+                setTextTrackPreferences("Captions", false);
+                setTextTrackPreferences("TextDescriptions", true);
+
+                // Create track elements dynamically so they aren't processed by the media element
+                // until after we have configured preferences.
+                consoleWrite("<br><i>**Create track elements dynamically so they aren't processed by the media element until after preferences have been configured.<" + "/i>");
+                createTrackElements();
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <p>Tests that the user preferences for track kind are honored.</p>
+        <video>
+        </video>
+    </body>
+</html>

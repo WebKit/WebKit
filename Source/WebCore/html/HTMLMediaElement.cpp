@@ -51,6 +51,7 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
+#include "Language.h"
 #include "Logging.h"
 #include "MediaController.h"
 #include "MediaControls.h"
@@ -557,7 +558,7 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 
 #if ENABLE(VIDEO_TRACK)
     if (m_pendingLoadFlags & TextTrackResource)
-        configureTextTracks();
+        configureNewTextTracks();
 #endif
 
     m_pendingLoadFlags = 0;
@@ -965,6 +966,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
 
 bool HTMLMediaElement::textTracksAreReady() const
 {
+    // 4.8.10.12.1 Text track model
+    // ...
     // The text tracks of a media element are ready if all the text tracks whose mode was not 
     // in the disabled state when the element's resource selection algorithm last started now
     // have a text track readiness state of loaded or failed to load.
@@ -1000,7 +1003,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
             if (trackElement->track() != track)
                 continue;
             
-            // Mark this track as "configured" so configureTextTrack won't change the mode again.
+            // Mark this track as "configured" so configureNewTextTracks won't change the mode again.
             trackElement->setHasBeenConfigured(true);
             if (track->mode() != TextTrack::DISABLED && trackElement->readyState() == HTMLTrackElement::NONE)
                 trackElement->scheduleLoad();
@@ -2240,15 +2243,13 @@ TextTrackList* HTMLMediaElement::textTracks()
 
 HTMLTrackElement* HTMLMediaElement::showingTrackWithSameKind(HTMLTrackElement* trackElement) const
 {
-    HTMLTrackElement* showingTrack = 0;
-    
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (trackElement == node)
             continue;
         if (!node->hasTagName(trackTag))
             continue;
 
-        showingTrack = static_cast<HTMLTrackElement*>(node);
+        HTMLTrackElement* showingTrack = static_cast<HTMLTrackElement*>(node);
         if (showingTrack->kind() == trackElement->kind() && showingTrack->track()->mode() == TextTrack::SHOWING)
             return showingTrack;
     }
@@ -2315,131 +2316,176 @@ bool HTMLMediaElement::userIsInterestedInThisLanguage(const String&) const
     return true;
 }
 
-bool HTMLMediaElement::userIsInterestedInThisTrack(HTMLTrackElement* trackElement) const
+bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
 {
-    RefPtr<TextTrack> textTrack = trackElement->track();
-    if (!textTrack)
-        return false;
-
-    String kind = textTrack->kind();
-    if (!TextTrack::isValidKindKeyword(kind))
-        return false;
-
     // If ... the user has indicated an interest in having a track with this text track kind, text track language, ... 
     Settings* settings = document()->settings();
     if (!settings)
         return false;
 
-    if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword()) {
-        if (kind == TextTrack::subtitlesKeyword() && !settings->shouldDisplaySubtitles())
-            return false;
-        if (kind == TextTrack::captionsKeyword() && !settings->shouldDisplayCaptions())
-            return false;
-        return userIsInterestedInThisLanguage(trackElement->srclang());
-    }
+    if (kind == TextTrack::subtitlesKeyword())
+        return settings->shouldDisplaySubtitles();
+    if (kind == TextTrack::captionsKeyword())
+        return settings->shouldDisplayCaptions();
+    if (kind == TextTrack::descriptionsKeyword())
+        return settings->shouldDisplayTextDescriptions();
 
-    if (kind == TextTrack::descriptionsKeyword()) {
-        if (!settings->shouldDisplayTextDescriptions())
-            return false;
-        return userIsInterestedInThisLanguage(trackElement->srclang());
-    }
-    
     return false;
 }
 
-void HTMLMediaElement::configureTextTrack(HTMLTrackElement* trackElement)
+void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
 {
-#if !LOG_DISABLED
-    if (trackElement->hasTagName(trackTag)) {
-        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::configureTextTrack - 'src' is %s", urlForLogging(url).utf8().data());
+    ASSERT(group.tracks.size());
+
+    String bestMatchingLanguage;
+    if (group.hasSrcLang) {
+        Vector<String> languages;
+        languages.reserveInitialCapacity(group.tracks.size());
+        for (size_t i = 0; i < group.tracks.size(); ++i) {
+            String srcLanguage = group.tracks[i]->track()->language();
+            if (srcLanguage.length())
+                languages.append(srcLanguage);
+        }
+        bestMatchingLanguage = preferredLanguageFromList(languages);
     }
-#endif
 
-    // 4.8.10.12.3 Sourcing out-of-band text tracks
-    
-    // When a text track corresponding to a track element is added to a media element's list of text tracks,
-    // the user agent must set the text track mode appropriately, as determined by the following conditions:
-    RefPtr<TextTrack> textTrack = trackElement->track();
-    if (!textTrack)
-        return;
-    
-    TextTrack::Mode mode = TextTrack::HIDDEN;
-    HTMLTrackElement* trackElementCurrentlyShowing = showingTrackWithSameKind(trackElement);
-    String kind = textTrack->kind();
-    bool hideDefaultTrack = false;
+    // First, find the track in the group that should be enabled (if any).
+    HTMLTrackElement* trackElementToEnable = 0;
+    HTMLTrackElement* defaultTrack = 0;
+    HTMLTrackElement* fallbackTrack = 0;
+    for (size_t i = 0; !trackElementToEnable && i < group.tracks.size(); ++i) {
+        HTMLTrackElement* trackElement = group.tracks[i];
+        RefPtr<TextTrack> textTrack = trackElement->track();
 
-    if (userIsInterestedInThisTrack(trackElement)) {
-        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword()) {
-            // * If the text track kind is subtitles or captions and the user has indicated an interest in having a
+        if (userIsInterestedInThisTrackKind(textTrack->kind())) {
+            // * If the text track kind is { [subtitles or captions] [descriptions] } and the user has indicated an interest in having a
             // track with this text track kind, text track language, and text track label enabled, and there is no
             // other text track in the media element's list of text tracks with a text track kind of either subtitles
             // or captions whose text track mode is showing
-            hideDefaultTrack = trackElementCurrentlyShowing && trackElementCurrentlyShowing->track()->showingByDefault();
-            if (!trackElementCurrentlyShowing || hideDefaultTrack) {
-                //    Let the text track mode be showing.
-                //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
-                //    by default, the user agent must furthermore change that text track's text track mode to hidden.
-                mode = TextTrack::SHOWING;
-            }
-        } else if (kind == TextTrack::descriptionsKeyword()) {
-            // * If the text track kind is descriptions and the user has indicated an interest in having text 
-            // descriptions with this text track language and text track label enabled, and there is no other text 
-            // track in the media element's list of text tracks with a text track kind of descriptions whose text 
-            // track mode is showing
-            hideDefaultTrack = trackElementCurrentlyShowing && trackElementCurrentlyShowing->track()->showingByDefault();
-            if (!trackElementCurrentlyShowing || hideDefaultTrack) {
-                //    Let the text track mode be showing.
-                //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
-                //    by default, the user agent must furthermore change that text track's text track mode to hidden.
-                mode = TextTrack::SHOWING;
-            }
-        } else if (kind == TextTrack::chaptersKeyword()) {
+            // ...
             // * If the text track kind is chapters and the text track language is one that the user agent has reason
             // to believe is appropriate for the user, and there is no other text track in the media element's list of
             // text tracks with a text track kind of chapters whose text track mode is showing
             //    Let the text track mode be showing.
-            if (!trackElementCurrentlyShowing)
-                mode = TextTrack::SHOWING;
+            if (bestMatchingLanguage.length()) {
+                if (textTrack->language() == bestMatchingLanguage)
+                    trackElementToEnable = trackElement;
+            } else if (trackElement->isDefault()) {
+                // The user is interested in this type of track, but their language preference doesn't match any track so we will
+                // enable the 'default' track.
+                defaultTrack = trackElement;
+            }
+
+            // Remember the first track that doesn't match language or have 'default' to potentially use as fallback.
+            if (!fallbackTrack)
+                fallbackTrack = trackElement;
+        } else if (!group.visibleTrack && !defaultTrack && trackElement->isDefault()) {
+            // * If the track element has a default attribute specified, and there is no other text track in the media
+            // element's list of text tracks whose text track mode is showing or showing by default
+            //    Let the text track mode be showing by default.
+            defaultTrack = trackElement;
         }
-    } else if (!trackElementCurrentlyShowing && trackElement->isDefault()) {
-        // * If the track element has a default attribute specified, and there is no other text track in the media
-        // element's list of text tracks whose text track mode is showing or showing by default
-        //    Let the text track mode be showing by default.
-        mode = TextTrack::SHOWING;
-        textTrack->setShowingByDefault(false);
-    } else {
-        // Otherwise
-        //    Let the text track mode be disabled.
-        mode = TextTrack::DISABLED;
     }
 
-    ExceptionCode unusedException;
-    if (hideDefaultTrack) {
-        trackElementCurrentlyShowing->track()->setMode(TextTrack::HIDDEN, unusedException);
-        trackElementCurrentlyShowing->track()->setShowingByDefault(false);
+    if (!trackElementToEnable && defaultTrack)
+        trackElementToEnable = defaultTrack;
+
+    // If no track matches the user's preferred language and non was marked 'default', enable the first track
+    // because the user has explicitly stated a preference for this kind of track.
+    if (!trackElementToEnable && fallbackTrack)
+        trackElementToEnable = fallbackTrack;
+
+    for (size_t i = 0; i < group.tracks.size(); ++i) {
+        HTMLTrackElement* trackElement = group.tracks[i];
+        RefPtr<TextTrack> textTrack = trackElement->track();
+        ExceptionCode unusedException;
+        
+        if (trackElementToEnable == trackElement) {
+            textTrack->setMode(TextTrack::SHOWING, unusedException);
+            if (defaultTrack == trackElement)
+                textTrack->setShowingByDefault(true);
+        } else {
+            if (textTrack->showingByDefault()) {
+                // If there is a text track in the media element's list of text tracks whose text track
+                // mode is showing by default, the user agent must furthermore change that text track's
+                // text track mode to hidden.
+                textTrack->setShowingByDefault(false);
+                textTrack->setMode(TextTrack::HIDDEN, unusedException);
+            } else
+                textTrack->setMode(TextTrack::DISABLED, unusedException);
+        }
     }
 
-    textTrack->setMode(mode, unusedException);
+    if (trackElementToEnable && group.defaultTrack && group.defaultTrack != trackElementToEnable) {
+        RefPtr<TextTrack> textTrack = group.defaultTrack->track();
+        if (textTrack && textTrack->showingByDefault()) {
+            ExceptionCode unusedException;
+            textTrack->setShowingByDefault(false);
+            textTrack->setMode(TextTrack::HIDDEN, unusedException);
+        }
+    }
 }
- 
-void HTMLMediaElement::configureTextTracks()
+
+void HTMLMediaElement::configureNewTextTracks()
 {
+    TrackGroup captionAndSubtitleTracks(TrackGroup::CaptionsAndSubtitles);
+    TrackGroup descriptionTracks(TrackGroup::Description);
+    TrackGroup chapterTracks(TrackGroup::Chapter);
+    TrackGroup metadataTracks(TrackGroup::Metadata);
+    TrackGroup otherTracks(TrackGroup::Other);
+
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (!node->hasTagName(trackTag))
             continue;
-        HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
-        
-        // Only call configureTextTrack once per track so that adding another track after
-        // the initial configuration doesn't reconfigure every track, only those that should
-        // be changed by the new addition. For example all metadata tracks are disabled by 
-        // default, and we don't want a track that has been enabled by script to be disabled
-        // automatically when a new track element is added later.
-        if (!trackElement->hasBeenConfigured())
-            configureTextTrack(trackElement);
-    }
-}
 
+        HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
+        RefPtr<TextTrack> textTrack = trackElement->track();
+        if (!textTrack)
+            continue;
+
+        String kind = textTrack->kind();
+        TrackGroup* currentGroup;
+        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword())
+            currentGroup = &captionAndSubtitleTracks;
+        else if (kind == TextTrack::descriptionsKeyword())
+            currentGroup = &descriptionTracks;
+        else if (kind == TextTrack::chaptersKeyword())
+            currentGroup = &chapterTracks;
+        else if (kind == TextTrack::metadataKeyword())
+            currentGroup = &metadataTracks;
+        else
+            currentGroup = &otherTracks;
+
+        if (!currentGroup->visibleTrack && textTrack->mode() == TextTrack::SHOWING)
+            currentGroup->visibleTrack = trackElement;
+        if (!currentGroup->defaultTrack && trackElement->isDefault())
+            currentGroup->defaultTrack = trackElement;
+
+        // Do not add this track to the group if it has already been automatically configured
+        // as we only want to call configureTextTrack once per track so that adding another 
+        // track after the initial configuration doesn't reconfigure every track - only those 
+        // that should be changed by the new addition. For example all metadata tracks are 
+        // disabled by default, and we don't want a track that has been enabled by script 
+        // to be disabled automatically when a new metadata track is added later.
+        if (trackElement->hasBeenConfigured())
+            continue;
+        
+        if (textTrack->language().length())
+            currentGroup->hasSrcLang = true;
+        currentGroup->tracks.append(trackElement);
+    }
+    
+    if (captionAndSubtitleTracks.tracks.size())
+        configureTextTrackGroup(captionAndSubtitleTracks);
+    if (descriptionTracks.tracks.size())
+        configureTextTrackGroup(descriptionTracks);
+    if (chapterTracks.tracks.size())
+        configureTextTrackGroup(chapterTracks);
+    if (metadataTracks.tracks.size())
+        configureTextTrackGroup(metadataTracks);
+    if (otherTracks.tracks.size())
+        configureTextTrackGroup(otherTracks);
+}
 #endif
 
 bool HTMLMediaElement::havePotentialSourceChild()

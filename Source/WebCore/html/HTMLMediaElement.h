@@ -207,8 +207,29 @@ public:
     virtual void trackWasAdded(HTMLTrackElement*);
     virtual void trackWasRemoved(HTMLTrackElement*);
 
-    void configureTextTrack(HTMLTrackElement*);
-    void configureTextTracks();
+    struct TrackGroup {
+        enum GroupKind { CaptionsAndSubtitles, Description, Chapter, Metadata, Other };
+
+        TrackGroup(GroupKind kind)
+            : visibleTrack(0)
+            , defaultTrack(0)
+            , kind(kind)
+            , hasSrcLang(false)
+        {
+        }
+
+        Vector<HTMLTrackElement*> tracks;
+        HTMLTrackElement* visibleTrack;
+        HTMLTrackElement* defaultTrack;
+        GroupKind kind;
+        bool hasSrcLang;
+    };
+
+    void configureTextTrackGroupForLanguage(const TrackGroup&) const;
+    void configureNewTextTracks();
+    void configureTextTrackGroup(const TrackGroup&) const;
+
+    bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
 
@@ -401,7 +422,6 @@ private:
 #if ENABLE(VIDEO_TRACK)
     void updateActiveTextTrackCues(float);
     bool userIsInterestedInThisLanguage(const String&) const;
-    bool userIsInterestedInThisTrack(HTMLTrackElement*) const;
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0; }

@@ -102,6 +102,9 @@ public:
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 
+    void setShouldDisplayTrackKind(Document*, const String& kind, bool, ExceptionCode&);
+    bool shouldDisplayTrackKind(Document*, const String& kind, ExceptionCode&);
+
     static const char* internalsId;
 
     InternalSettings* settings() const { return m_settings.get(); }

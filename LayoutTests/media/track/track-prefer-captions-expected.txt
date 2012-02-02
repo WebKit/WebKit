@@ -1,0 +1,25 @@
+Tests that the user preferences for track kind are honored.
+
+**Set preferences so subtitles and descriptions load, but captions do not
+RUN(internals.setShouldDisplayTrackKind(document, 'Subtitles', true))
+EXPECTED (internals.shouldDisplayTrackKind(document, 'Subtitles') == 'true') OK
+RUN(internals.setShouldDisplayTrackKind(document, 'Captions', false))
+EXPECTED (internals.shouldDisplayTrackKind(document, 'Captions') == 'false') OK
+RUN(internals.setShouldDisplayTrackKind(document, 'TextDescriptions', true))
+EXPECTED (internals.shouldDisplayTrackKind(document, 'TextDescriptions') == 'true') OK
+
+**Create track elements dynamically so they aren't processed by the media element until after preferences have been configured.
+- creating 'subtitles' track.
+- creating 'captions' track.
+- creating 'descriptions' track.
+
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.kind != 'captions') OK
+
+EVENT(load)
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.kind != 'captions') OK
+
+END OF TEST
+

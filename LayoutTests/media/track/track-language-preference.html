@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;}
+        </style>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var timer = null;
+            var expectedLanguage;
+            var testList = 
+            {
+                current : -1,
+                tests : 
+                [ 
+                    {
+                        description: "a track language matches one of the user's preferred languages exactly", 
+                        languages : ['fr', 'en', 'jp'], 
+                        expectedLanguage : "jp", 
+                    },
+                    {
+                        description: "a track language without locale exactly matches one of the user's preferred languages", 
+                        languages : ['fr-CH', 'da'], 
+                        expectedLanguage : "fr-CH", 
+                    },
+                    {
+                        description: "a track language without locale matches one of the user's preferred languages without locale", 
+                        languages : ['fr', 'es-MX'], 
+                        expectedLanguage : "es-MX", 
+                    },
+                    {
+                        description: "no track language matches any of the user's preferred languages", 
+                        languages : ['fa', 'ru', 'no'], 
+                        expectedLanguage : "fa", 
+                    },
+                ]
+            };
+
+            function runNextTest()
+            {
+                consoleWrite("");
+                testList.current++;
+                if (testList.current >= testList.tests.length) {
+                    endTest();
+                    return;
+                }
+
+                consoleWrite("<b>Test: </b> <em>"+ testList.tests[testList.current].description + ".</em>");
+                createTrackElements(testList.tests[testList.current].languages);
+            }
+
+            function trackLoaded()
+            {
+                consoleWrite("EVENT(load)");
+                
+                // Don't log the event name because the order of the two events in not predictable.
+                track = event.target;
+                testExpected("track.readyState", HTMLTrackElement.LOADED);
+                testExpected("track.srclang", testList.tests[testList.current].expectedLanguage);
+
+                timer = setTimeout(runNextTest, 200);
+            }
+
+            function setPreferences()
+            {
+                if (!window.internals) {
+                    consoleWrite("<b>** This test only works in DRT! **<" + "/b>");
+                    return;
+                }
+
+                consoleWrite("<i>**Set track preferences and user preferred languages<" + "/i>");
+                run("internals.setShouldDisplayTrackKind(document, 'Captions', true)");
+                run("internals.userPreferredLanguages = ['jp', 'es-ES', 'en', 'fr']");
+            }
+            
+            function createTrackElement(language, src)
+            {
+                var track = document.createElement('track');
+                track.setAttribute('kind', "captions");
+                track.setAttribute('src', src);
+                track.setAttribute('srclang', language);
+                track.setAttribute('onload', 'trackLoaded()');
+                video.appendChild(track);
+            }
+
+            function createTrackElements(languages)
+            {
+                var tracks = document.querySelectorAll('track');
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.removeChild(tracks[ndx]);
+
+                consoleWrite("<i>- creating tracks for: [" + languages + "].<" + "/i>");
+                for (var ndx = 0; ndx < languages.length; ++ndx)
+                    createTrackElement(languages[ndx], "captions-webvtt/tc004-webvtt-file.vtt");
+            }
+
+            function setup()
+            {
+                findMediaElement();
+
+                setPreferences("Subtitles", true);
+
+                runNextTest();
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <p>Tests that the user's preferred languages are honored.</p>
+        <video>
+        </video>
+    </body>
+</html>

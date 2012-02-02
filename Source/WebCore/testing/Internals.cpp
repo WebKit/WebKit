@@ -491,4 +491,53 @@ void Internals::setUserPreferredLanguages(const Vector<String>& languages)
     WebCore::overrideUserPreferredLanguages(languages);
 }
 
+void Internals::setShouldDisplayTrackKind(Document* document, const String& kind, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->frame() || !document->frame()->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    
+#if ENABLE(VIDEO_TRACK)
+    Settings* settings = document->frame()->settings();
+    
+    if (equalIgnoringCase(kind, "Subtitles"))
+        settings->setShouldDisplaySubtitles(enabled);
+    else if (equalIgnoringCase(kind, "Captions"))
+        settings->setShouldDisplayCaptions(enabled);
+    else if (equalIgnoringCase(kind, "TextDescriptions"))
+        settings->setShouldDisplayTextDescriptions(enabled);
+    else
+        ec = SYNTAX_ERR;
+#else
+    UNUSED_PARAM(kind);
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+bool Internals::shouldDisplayTrackKind(Document* document, const String& kind, ExceptionCode& ec)
+{
+    if (!document || !document->frame() || !document->frame()->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+    
+#if ENABLE(VIDEO_TRACK)
+    Settings* settings = document->frame()->settings();
+    
+    if (equalIgnoringCase(kind, "Subtitles"))
+        return settings->shouldDisplaySubtitles();
+    if (equalIgnoringCase(kind, "Captions"))
+        return settings->shouldDisplayCaptions();
+    if (equalIgnoringCase(kind, "TextDescriptions"))
+        return settings->shouldDisplayTextDescriptions();
+
+    ec = SYNTAX_ERR;
+    return false;
+#else
+    UNUSED_PARAM(kind);
+    return false;
+#endif
+}
+    
 }
