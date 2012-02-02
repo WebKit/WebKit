@@ -165,11 +165,19 @@ void WebDesktopNotificationsDelegate::notificationObjectDestroyed(Notification* 
         notificationDelegate()->notificationDestroyed(NotificationCOMWrapper::create(object));
 }
 
+void WebDesktopNotificationsDelegate::notificationControllerDestroyed()
+{
+}
+
 void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
     BString org(origin->toString());
     if (hasNotificationDelegate())
         notificationDelegate()->requestNotificationPermission(org);
+}
+
+void WebDesktopNotificationsDelegate::cancelRequestsForPermission(ScriptExecutionContext* context)
+{
 }
 
 NotificationPresenter::Permission WebDesktopNotificationsDelegate::checkPermission(const KURL& url)

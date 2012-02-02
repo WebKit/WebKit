@@ -1,3 +1,21 @@
+2012-02-02  Jon Lee  <jonlee@apple.com>
+
+        Clear shown notifications when context is no longer active
+        https://bugs.webkit.org/show_bug.cgi?id=77363
+        <rdar://problem/10568907>
+
+        Reviewed by Darin Adler.
+
+        * notifications/NotificationPresenter.h: Add new virtual function to clear notifications
+        associated with a given execution context. By default the notifications are left alone, as
+        before. Individual implementations can override to allow notifications to clear them.
+
+        * notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::disconnectFrame): When disconnecting the page from the frame, we
+        call clearNotifications().
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed): When the page is destroyed, tell the DOM window to reset notifications.
+
 2012-02-02  Anders Carlsson  <andersca@apple.com>
 
         The overhang area layer should have a linen background

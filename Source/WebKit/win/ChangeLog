@@ -1,3 +1,17 @@
+2012-02-02  Jon Lee  <jonlee@apple.com>
+
+        Clear shown notifications when context is no longer active
+        https://bugs.webkit.org/show_bug.cgi?id=77363
+        <rdar://problem/10568907>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+        (WebDesktopNotificationsDelegate): Add previously missing virtual functions.
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::notificationControllerDestroyed):
+        (WebDesktopNotificationsDelegate::cancelRequestsForPermission):
+
 2012-02-01  Anders Carlsson  <andersca@apple.com>
 
         Another attempt to fix the Windows build.

@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "WKNotificationProvider.h"
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -43,6 +44,7 @@ public:
     void show(WebPageProxy*, WebNotification*);
     void cancel(WebNotification*);
     void didDestroyNotification(WebNotification*);
+    void clearNotifications(const Vector<uint64_t>& notificationIDs);
 
     void addNotificationManager(WebNotificationManagerProxy*);
     void removeNotificationManager(WebNotificationManagerProxy*);

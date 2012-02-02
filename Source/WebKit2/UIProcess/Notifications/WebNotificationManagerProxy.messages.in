@@ -23,4 +23,5 @@
 messages -> WebNotificationManagerProxy {
     Cancel(uint64_t notificationID);
     DidDestroyNotification(uint64_t notificationID);
+    ClearNotifications(Vector<uint64_t> notificationIDs);
 }

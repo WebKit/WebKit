@@ -66,6 +66,7 @@ void NotificationCenter::disconnectFrame()
     if (!m_notificationPresenter)
         return;
     m_notificationPresenter->cancelRequestsForPermission(scriptExecutionContext());
+    m_notificationPresenter->clearNotifications(scriptExecutionContext());
     m_notificationPresenter = 0;
 }
 

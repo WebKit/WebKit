@@ -111,6 +111,14 @@ void WebNotificationManagerProxy::didDestroyNotification(uint64_t notificationID
     m_provider.didDestroyNotification(notification.get());
 }
 
+void WebNotificationManagerProxy::clearNotifications(const Vector<uint64_t>& notificationIDs)
+{
+    m_provider.clearNotifications(notificationIDs);
+    size_t count = notificationIDs.size();
+    for (size_t i = 0; i < count; ++i)
+        m_notifications.remove(notificationIDs[i]);
+}
+
 void WebNotificationManagerProxy::providerDidShowNotification(uint64_t notificationID)
 {
     if (!m_context)

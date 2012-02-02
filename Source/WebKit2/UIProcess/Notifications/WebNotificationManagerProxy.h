@@ -80,6 +80,7 @@ private:
     // Message handlers
     void cancel(uint64_t notificationID);
     void didDestroyNotification(uint64_t notificationID);
+    void clearNotifications(const Vector<uint64_t>& notificationIDs);
 
     typedef HashMap<uint64_t, RefPtr<WebNotification> > WebNotificationMap;
     

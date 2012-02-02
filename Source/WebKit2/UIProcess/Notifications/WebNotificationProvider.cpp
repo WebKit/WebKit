@@ -27,9 +27,11 @@
 #include "WebNotificationProvider.h"
 
 #include "ImmutableDictionary.h"
+#include "MutableArray.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebNumber.h"
 #include "WebSecurityOrigin.h"
 
 namespace WebKit {
@@ -56,6 +58,20 @@ void WebNotificationProvider::didDestroyNotification(WebNotification* notificati
         return;
     
     m_client.didDestroyNotification(toAPI(notification), m_client.clientInfo);
+}
+
+void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notificationIDs)
+{
+    if (!m_client.clearNotifications)
+        return;
+
+    RefPtr<MutableArray> arrayIDs = MutableArray::create();
+    size_t count = notificationIDs.size();
+    arrayIDs->reserveCapacity(count);
+    for (size_t i = 0; i < count; ++i)
+        arrayIDs->append(WebUInt64::create(notificationIDs[i]).leakRef());
+
+    m_client.clearNotifications(toAPI(arrayIDs.get()), m_client.clientInfo);
 }
 
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)

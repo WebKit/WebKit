@@ -668,6 +668,9 @@ void Frame::pageDestroyed()
 
     if (m_domWindow) {
         m_domWindow->resetGeolocation();
+#if ENABLE(NOTIFICATIONS)
+        m_domWindow->resetNotifications();
+#endif
         m_domWindow->pageDestroyed();
     }
 

@@ -1,3 +1,50 @@
+2012-02-02  Jon Lee  <jonlee@apple.com>
+
+        Clear shown notifications when context is no longer active
+        https://bugs.webkit.org/show_bug.cgi?id=77363
+        <rdar://problem/10568907>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::clearNotifications): Forward the call to
+        WebNotificationManager.
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+        (WebNotificationClient):
+
+        * WebProcess/Notifications/WebNotificationManager.h: Add an additional map that maps
+        all notifications associated with a given ScriptExecutionContext instance.
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Create a map entry for the notification's
+        context if it doesn't exist already, and note that notification's ID. Also, correct
+        the return value of show() if notifications are not enabled, to return false.
+        (WebKit::WebNotificationManager::didCloseNotifications): When the notification is closed,
+        we remove that notification from the map.
+        (WebKit::WebNotificationManager::clearNotifications): Use the map entry for the given
+        context, and pass that along to the proxy so that all of the notifications with those IDs
+        can be cleared. In the meantime, we remove that context's map entry.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: New ClearNotifications()
+        message.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::clearNotifications): Forward the call to the provider.
+        Then remove this proxy's entries for the given notification IDs.
+
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::clearNotifications): Convert the vector of IDs to a mutable
+        array.
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        (WebNotificationProvider):
+
+        * UIProcess/API/C/WKNotificationProvider.h: Add WK API to tell the platform to clear the notifications.
+
+        Remove the #if guard since they already exist in WebNotificationManager functions:
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::show):
+        (WebKit::WebNotificationClient::cancel):
+        (WebKit::WebNotificationClient::notificationObjectDestroyed):
+
 2012-02-02  Anders Carlsson  <andersca@apple.com>
 
         NPAPI will not send mouse up events when mouse is outside plugin area

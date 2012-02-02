@@ -47,6 +47,7 @@ public:
 private:
     virtual bool show(WebCore::Notification*) OVERRIDE;
     virtual void cancel(WebCore::Notification*) OVERRIDE;
+    virtual void clearNotifications(WebCore::ScriptExecutionContext*) OVERRIDE;
     virtual void notificationObjectDestroyed(WebCore::Notification*) OVERRIDE;
     virtual void notificationControllerDestroyed() OVERRIDE;
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) OVERRIDE;

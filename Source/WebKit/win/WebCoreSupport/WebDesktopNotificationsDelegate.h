@@ -49,7 +49,9 @@ public:
     virtual bool show(WebCore::Notification* object);
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
+    virtual void notificationControllerDestroyed();
     virtual void requestPermission(WebCore::SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback);
+    virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
     virtual WebCore::NotificationPresenter::Permission checkPermission(const KURL& url);
 
 private:

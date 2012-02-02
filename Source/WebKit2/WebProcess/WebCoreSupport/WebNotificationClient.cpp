@@ -32,7 +32,6 @@
 #include "WebNotificationManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/NotImplemented.h>
 #include <WebCore/ScriptExecutionContext.h>
 
 using namespace WebCore;
@@ -50,31 +49,22 @@ WebNotificationClient::~WebNotificationClient()
 
 bool WebNotificationClient::show(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
     return WebProcess::shared().notificationManager().show(notification, m_page);
-#else
-    notImplemented();
-    return false;
-#endif
 }
 
 void WebNotificationClient::cancel(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
     WebProcess::shared().notificationManager().cancel(notification, m_page);
-#else
-    notImplemented();
-#endif
+}
+
+void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
+{
+    WebProcess::shared().notificationManager().clearNotifications(context, m_page);
 }
 
 void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
     WebProcess::shared().notificationManager().didDestroyNotification(notification, m_page);
-#else
-    UNUSED_PARAM(notification);
-    notImplemented();
-#endif
 }
 
 void WebNotificationClient::notificationControllerDestroyed()

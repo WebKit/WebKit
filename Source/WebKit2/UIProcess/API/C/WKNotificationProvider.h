@@ -38,6 +38,7 @@ typedef void (*WKNotificationProviderDidDestroyNotificationCallback)(WKNotificat
 typedef void (*WKNotificationProviderAddNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
 typedef void (*WKNotificationProviderRemoveNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
 typedef WKDictionaryRef (*WKNotificationProviderNotificationPermissionsCallback)(const void* clientInfo);
+typedef void (*WKNotificationProviderClearNotificationsCallback)(WKArrayRef notificationIDs, const void* clientInfo);
 
 struct WKNotificationProvider {
     int                                                                   version;
@@ -48,6 +49,7 @@ struct WKNotificationProvider {
     WKNotificationProviderAddNotificationManagerCallback                  addNotificationManager;
     WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
     WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
+    WKNotificationProviderClearNotificationsCallback                      clearNotifications;
 };
 typedef struct WKNotificationProvider WKNotificationProvider;
 

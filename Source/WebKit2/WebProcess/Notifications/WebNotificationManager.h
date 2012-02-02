@@ -59,6 +59,7 @@ public:
     
     bool show(WebCore::Notification*, WebPage*);
     void cancel(WebCore::Notification*, WebPage*);
+    void clearNotifications(WebCore::ScriptExecutionContext*, WebPage*);
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::Notification*, WebPage*);
 
@@ -85,6 +86,9 @@ private:
     
     typedef HashMap<uint64_t, RefPtr<WebCore::Notification> > NotificationIDMap;
     NotificationIDMap m_notificationIDMap;
+    
+    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<uint64_t> > NotificationContextMap;
+    NotificationContextMap m_notificationContextMap;
     
     HashMap<String, bool> m_permissionsMap;
 #endif
