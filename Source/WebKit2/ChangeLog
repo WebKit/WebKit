@@ -1,3 +1,37 @@
+2012-02-01  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/10442663> Paginated display does not respect page-break-{before,after}
+        https://bugs.webkit.org/show_bug.cgi?id=77505
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Encode paginationBehavesLikeColumns.
+        (WebKit::WebPageCreationParameters::decode): Decode paginationBehavesLikeColumns.
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters): Added paginationBehavesLikeColumns boolean.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPaginationBehavesLikeColumns): Added this setter.
+        (WKPageGetPaginationBehavesLikeColumns): Added this getter.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController setPaginationBehavesLikeColumns:]): Added this Objective-C
+        wrapper around WKPageSetPaginationBehavesLikeColumns.
+        (-[WKBrowsingContextController paginationBehavesLikeColumns]): Added this Objective-C wrapper
+        around WKPageGetPaginationBehavesLikeColumns.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Added call to setPaginationBehavesLikeColumns() with
+        the value from the creation parameters.
+        (WebKit::WebPageProxy::setPaginationBehavesLikeColumns): Added this setter.
+        (WebKit::WebPageProxy::creationParameters): Populate paginationBehavesLikeColumns.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::paginationBehavesLikeColumns): Added this getter.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setPaginationBehavesLikeColumns): Added this setter.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added SetPaginationBehavesLikeColumns message.
+
 2012-02-01  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r104727): Strange graphics corruption opening a new tab in Safari

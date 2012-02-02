@@ -243,6 +243,16 @@ static inline NSURL *autoreleased(WKURLRef url)
     return WKPaginationModeUnpaginated;
 }
 
+- (void)setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
+{
+    WKPageSetPaginationBehavesLikeColumns(self._pageRef, behavesLikeColumns);
+}
+
+- (BOOL)paginationBehavesLikeColumns
+{
+    return WKPageGetPaginationBehavesLikeColumns(self._pageRef);
+}
+
 - (void)setPageLength:(CGFloat)pageLength
 {
     WKPageSetPageLength(self._pageRef, pageLength);

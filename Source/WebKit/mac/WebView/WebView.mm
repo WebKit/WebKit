@@ -2791,6 +2791,25 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return WebPaginationModeUnpaginated;
 }
 
+- (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+
+    Page::Pagination pagination = page->pagination();
+    pagination.behavesLikeColumns = behavesLikeColumns;
+}
+
+- (BOOL)_paginationBehavesLikeColumns
+{
+    Page* page = core(self);
+    if (!page)
+        return NO;
+
+    return page->pagination().behavesLikeColumns;
+}
+
 - (void)_setPageLength:(CGFloat)pageLength
 {
     Page* page = core(self);

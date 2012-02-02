@@ -1261,6 +1261,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         
         if (!hasSpecifiedPageLogicalHeight && !pageLogicalHeight)
             colInfo->clearForcedBreaks();
+
+        colInfo->setPaginationUnit(paginationUnit());
     }
 
     RenderView* renderView = view();
@@ -6388,6 +6390,11 @@ static bool inNormalFlow(RenderBox* child)
         curr = curr->containingBlock();
     }
     return true;
+}
+
+ColumnInfo::PaginationUnit RenderBlock::paginationUnit() const
+{
+    return ColumnInfo::Column;
 }
 
 LayoutUnit RenderBlock::applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset)

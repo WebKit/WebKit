@@ -44,6 +44,7 @@ public:
         , m_forcedBreaks(0)
         , m_maximumDistanceBetweenForcedBreaks(0)
         , m_forcedBreakOffset(0)
+        , m_paginationUnit(Column)
     {
     }
 
@@ -93,6 +94,10 @@ public:
         m_forcedBreakOffset = offsetFromFirstPage;
     }
 
+    enum PaginationUnit { Column, Page };
+    PaginationUnit paginationUnit() const { return m_paginationUnit; }
+    void setPaginationUnit(PaginationUnit paginationUnit) { m_paginationUnit = paginationUnit; }
+
 private:
     LayoutUnit m_desiredColumnWidth;
     unsigned m_desiredColumnCount;
@@ -104,6 +109,7 @@ private:
     int m_forcedBreaks; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
     int m_maximumDistanceBetweenForcedBreaks;
     int m_forcedBreakOffset;
+    PaginationUnit m_paginationUnit;
 };
 
 }

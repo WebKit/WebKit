@@ -1,3 +1,33 @@
+2012-02-01  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/10442663> Paginated display does not respect page-break-{before,after}
+        https://bugs.webkit.org/show_bug.cgi?id=77505
+
+        Reviewed by Darin Adler.
+
+        * page/Page.h:
+        (WebCore::Page::Pagination::Pagination): Added initializer for the behavesLikeColumns member
+        variable.
+        (WebCore::Page::Pagination::operator==): Added comparison of behavesLikeColumns values.
+        (Pagination): Added behavesLikeColumns member variable. When set to false (the default),
+        paginated display respects the page-break-{before,after} properties rather than the
+        column-break-{before,after} ones.
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::ColumnInfo): Added initializer for the m_paginationUnit member.
+        (WebCore::ColumnInfo::paginationUnit): Added this getter.
+        (WebCore::ColumnInfo::setPaginationUnit): Added this setter.
+        (ColumnInfo): Added m_paginationUnit member. It defaults to Column.
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::isPaginatingColumns): Changed to check the pagination unit.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Added code to set the pagination unit in the ColumnInfo.
+        (WebCore::RenderBlock::paginationUnit): Added. The base class implementation returns Column.
+        * rendering/RenderBlock.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paginationUnit): Added this override that returns Page, unless
+        this is the RenderView for the main frame and pagination is set to behave like columns.
+        * rendering/RenderView.h:
+
 2012-02-01  Florin Malita  <fmalita@google.com>
 
         Backgrounds in HTML inside foreignObject don't draw

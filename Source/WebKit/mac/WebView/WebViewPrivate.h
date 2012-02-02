@@ -557,6 +557,12 @@ Could be worth adding to the API.
 
 - (void)_setPaginationMode:(WebPaginationMode)paginationMode;
 - (WebPaginationMode)_paginationMode;
+
+// Whether the column-break-{before,after} properties are respected instead of the
+// page-break-{before,after} properties.
+- (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns;
+- (BOOL)_paginationBehavesLikeColumns;
+
 // Set to 0 to have the page length equal the view length.
 - (void)_setPageLength:(CGFloat)pageLength;
 - (CGFloat)_pageLength;

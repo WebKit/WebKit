@@ -47,6 +47,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(useFixedLayout);
     encoder->encode(fixedLayoutSize);
     encoder->encodeEnum(paginationMode);
+    encoder->encode(paginationBehavesLikeColumns);
     encoder->encode(pageLength);
     encoder->encode(gapBetweenPages);
     encoder->encode(userAgent);
@@ -95,6 +96,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.fixedLayoutSize))
         return false;
     if (!decoder->decodeEnum(parameters.paginationMode))
+        return false;
+    if (!decoder->decode(parameters.paginationBehavesLikeColumns))
         return false;
     if (!decoder->decode(parameters.pageLength))
         return false;

@@ -26,13 +26,13 @@
 #ifndef LayoutState_h
 #define LayoutState_h
 
+#include "ColumnInfo.h"
 #include "LayoutTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class ColumnInfo;
 class RenderArena;
 class RenderBlock;
 class RenderBox;
@@ -69,7 +69,7 @@ public:
     void operator delete(void*, size_t);
 
     void clearPaginationInformation();
-    bool isPaginatingColumns() const { return m_columnInfo; }
+    bool isPaginatingColumns() const { return m_columnInfo && m_columnInfo->paginationUnit() == ColumnInfo::Column; }
     bool isPaginated() const { return m_isPaginated; }
     
     // The page logical offset is the object's offset from the top of the page in the page progression

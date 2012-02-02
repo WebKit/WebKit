@@ -198,6 +198,7 @@ protected:
 
 private:
     virtual void calcColumnWidth() OVERRIDE;
+    virtual ColumnInfo::PaginationUnit paginationUnit() const OVERRIDE;
 
     bool shouldRepaint(const IntRect& r) const;
 

@@ -271,6 +271,7 @@ namespace WebCore {
 
             Pagination()
                 : mode(Unpaginated)
+                , behavesLikeColumns(false)
                 , pageLength(0)
                 , gap(0)
             {
@@ -278,10 +279,11 @@ namespace WebCore {
 
             bool operator==(const Pagination& other) const
             {
-                return mode == other.mode && pageLength == other.pageLength && gap == other.gap;
+                return mode == other.mode && behavesLikeColumns == other.behavesLikeColumns && pageLength == other.pageLength && gap == other.gap;
             }
 
             Mode mode;
+            bool behavesLikeColumns;
             unsigned pageLength;
             unsigned gap;
         };

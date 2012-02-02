@@ -261,6 +261,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
     setPaginationMode(parameters.paginationMode);
+    setPaginationBehavesLikeColumns(parameters.paginationBehavesLikeColumns);
     setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
 
@@ -1020,6 +1021,13 @@ void WebPage::setPaginationMode(uint32_t mode)
 {
     Page::Pagination pagination = m_page->pagination();
     pagination.mode = static_cast<Page::Pagination::Mode>(mode);
+    m_page->setPagination(pagination);
+}
+
+void WebPage::setPaginationBehavesLikeColumns(bool behavesLikeColumns)
+{
+    Page::Pagination pagination = m_page->pagination();
+    pagination.behavesLikeColumns = behavesLikeColumns;
     m_page->setPagination(pagination);
 }
 

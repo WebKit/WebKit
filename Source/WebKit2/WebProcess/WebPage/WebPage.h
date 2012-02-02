@@ -279,6 +279,7 @@ public:
     void setFixedLayoutSize(const WebCore::IntSize&);
 
     void setPaginationMode(uint32_t /* WebCore::Page::Pagination::Mode */);
+    void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);
     void setGapBetweenPages(double);
 

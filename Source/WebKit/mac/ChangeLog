@@ -1,3 +1,15 @@
+2012-02-01  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of <rdar://problem/10442663> Paginated display does not respect page-break-{before,after}
+        https://bugs.webkit.org/show_bug.cgi?id=77505
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _setPaginationBehavesLikeColumns:]): Added this setter.
+        (-[WebView _paginationBehavesLikeColumns]): Added this getter.
+        * WebView/WebViewPrivate.h:
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         HTMLIsIndexElement should not expose HTMLInputElement properties

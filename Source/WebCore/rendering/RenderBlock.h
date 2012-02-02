@@ -23,6 +23,7 @@
 #ifndef RenderBlock_h
 #define RenderBlock_h
 
+#include "ColumnInfo.h"
 #include "GapRects.h"
 #include "PODIntervalTree.h"
 #include "RenderBox.h"
@@ -35,7 +36,6 @@
 namespace WebCore {
 
 class BidiContext;
-class ColumnInfo;
 class InlineIterator;
 class LayoutStateMaintainer;
 class LazyLineBreakIterator;
@@ -904,6 +904,8 @@ protected:
     enum PageBoundaryRule { ExcludePageBoundary, IncludePageBoundary };
     LayoutUnit nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
+
+    virtual ColumnInfo::PaginationUnit paginationUnit() const;
 
     LayoutUnit applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     LayoutUnit applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.

@@ -199,6 +199,17 @@ void RenderView::calcColumnWidth()
     setDesiredColumnCountAndWidth(1, columnWidth);
 }
 
+ColumnInfo::PaginationUnit RenderView::paginationUnit() const
+{
+    if (m_frameView) {
+        if (Frame* frame = m_frameView->frame()) {
+            if (Page* page = frame->page())
+                return (frame == page->mainFrame() && page->pagination().behavesLikeColumns) ? ColumnInfo::Column : ColumnInfo::Page;
+        }
+    }
+    return ColumnInfo::Page;
+}
+
 void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.

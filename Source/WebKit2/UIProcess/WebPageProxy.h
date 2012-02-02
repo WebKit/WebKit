@@ -441,6 +441,8 @@ public:
 
     void setPaginationMode(WebCore::Page::Pagination::Mode);
     WebCore::Page::Pagination::Mode paginationMode() const { return m_paginationMode; }
+    void setPaginationBehavesLikeColumns(bool);
+    bool paginationBehavesLikeColumns() const { return m_paginationBehavesLikeColumns; }
     void setPageLength(double);
     double pageLength() const { return m_pageLength; }
     void setGapBetweenPages(double);
@@ -947,6 +949,7 @@ private:
     WebCore::IntSize m_fixedLayoutSize;
 
     WebCore::Page::Pagination::Mode m_paginationMode;
+    bool m_paginationBehavesLikeColumns;
     double m_pageLength;
     double m_gapBetweenPages;
 
