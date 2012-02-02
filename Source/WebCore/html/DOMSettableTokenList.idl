@@ -25,7 +25,6 @@
 module core {
 
     interface [
-        GenerateConstructor,
         HasIndexGetter,
         GenerateToJS
     ] DOMSettableTokenList : DOMTokenList {

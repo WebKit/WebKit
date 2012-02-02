@@ -25,7 +25,6 @@
 module audio {
     interface [
         Conditional=WEB_AUDIO,
-        GenerateConstructor,
         GenerateToJS
     ] AudioPannerNode : AudioNode {
         // Panning model

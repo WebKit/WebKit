@@ -1,3 +1,26 @@
+2012-02-01  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [GenerateConstructor] from IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=77598
+
+        Reviewed by Adam Barth.
+
+        [GenerateConstructor] is used in some IDL files but it is not implemented
+        in code generators. I could not find any history about [GenerateConstructor]
+        in code generators. This patch removes them from IDL files.
+
+        Maybe we want to replace [GenerateConstructor] with [Constructor] eventually,
+        but currently no tests are written for their constructors (e.g. "new DOMTokenList()").
+        So simply removing them would make sense.
+
+        No new tests. No change in behavior.
+
+        * dom/DOMStringList.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * svg/SVGFEConvolveMatrixElement.idl:
+        * webaudio/AudioPannerNode.idl:
+
 2012-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         Consider user's preferred language when choosing text tracks

@@ -27,7 +27,6 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        GenerateConstructor,
         DontCheckEnums
     ] SVGFEConvolveMatrixElement : SVGElement,
                                    SVGFilterPrimitiveStandardAttributes {

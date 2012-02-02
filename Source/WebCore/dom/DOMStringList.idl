@@ -26,7 +26,6 @@
 module core {
 
     interface [
-        GenerateConstructor,
         HasIndexGetter
     ] DOMStringList {
         readonly attribute unsigned long length;
