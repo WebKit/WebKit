@@ -118,4 +118,13 @@ void HTMLContentElement::setSelect(const AtomicString& selectValue)
     setAttribute(selectAttr, selectValue);
 }
 
+void HTMLContentElement::parseMappedAttribute(Attribute* attr)
+{
+    if (attr->name() == selectAttr) {
+        if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
+            root->setNeedsReattachHostChildrenAndShadow();
+    } else
+        HTMLElement::parseMappedAttribute(attr);
+}
+
 }

@@ -1,3 +1,20 @@
+2012-02-01  Shinya Kawanaka  <shinyak@google.com>
+
+        Select attribute of HTMLContentElement should be able be changed dynamically.
+        https://bugs.webkit.org/show_bug.cgi?id=76261
+
+        Reviewed by Hajime Morita.
+
+        When select attribute is changed, the flag to recalc style is set.
+
+        Test: fast/dom/shadow/content-element-select-dynamic.html
+
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::parseMappedAttribute):
+          Sets recalc style when select is changed.
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+
 2012-02-01  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ImplementationUUID] and [InterfaceUUID] from html/canvas/*.idl
