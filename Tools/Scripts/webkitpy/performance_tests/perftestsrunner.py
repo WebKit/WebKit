@@ -202,21 +202,30 @@ class PerfTestsRunner(object):
         result_count = len(tests)
         expected = 0
         unexpected = 0
+        driver_need_restart = False
+        driver = None
 
         for test in tests:
-            driver = port.create_driver(worker_number=1, no_timeout=True)
+            if driver_need_restart:
+                _log.error("%s killing driver" % test)
+                driver.stop()
+                driver = None
+            if not driver:
+                driver = port.create_driver(worker_number=1, no_timeout=True)
 
             relative_test_path = self._host.filesystem.relpath(test, self._base_path)
             self._printer.write('Running %s (%d of %d)' % (relative_test_path, expected + unexpected + 1, len(tests)))
 
             is_chromium_style = self._host.filesystem.split(relative_test_path)[0] in self._test_directories_for_chromium_style_tests
-            if self._run_single_test(test, driver, is_chromium_style):
-                expected = expected + 1
-            else:
+            test_failed, driver_need_restart = self._run_single_test(test, driver, is_chromium_style)
+            if test_failed:
                 unexpected = unexpected + 1
+            else:
+                expected = expected + 1
 
             self._printer.write('')
 
+        if driver:
             driver.stop()
 
         return unexpected
@@ -281,6 +290,7 @@ class PerfTestsRunner(object):
 
     def _run_single_test(self, test, driver, is_chromium_style):
         test_failed = False
+        driver_need_restart = False
         output = driver.run_test(DriverInput(test, self._options.time_out_ms, None, False))
 
         if output.text == None:
@@ -288,8 +298,10 @@ class PerfTestsRunner(object):
         elif output.timeout:
             self._printer.write('timeout: %s' % test[self._webkit_base_dir_len + 1:])
             test_failed = True
+            driver_need_restart = True
         elif output.crash:
             self._printer.write('crash: %s' % test[self._webkit_base_dir_len + 1:])
+            driver_need_restart = True
             test_failed = True
         else:
             if is_chromium_style:
@@ -304,4 +316,4 @@ class PerfTestsRunner(object):
         if test_failed:
             self._printer.write('FAILED')
 
-        return not test_failed
+        return test_failed, driver_need_restart

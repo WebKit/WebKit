@@ -1,3 +1,20 @@
+2012-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll out r106442. It made some tests more stable but others less stable.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner):
+        (test_run_passing_test):
+        (test_run_silent_test):
+        (test_run_failed_test):
+        (test_run_tonguey_test):
+        (test_run_timeout_test):
+        (test_run_crash_test):
+        (test_run_test_set):
+
 2012-02-01  Lucas Forschler  <lforschler@apple.com>
 
         Enable EWS for non-contributers.
