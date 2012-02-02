@@ -105,7 +105,6 @@
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystem.h"
 #include "DOMFileSystem.h"
-#include "DOMFileSystemBase.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
 #include "FileError.h"
@@ -772,7 +771,7 @@ void DOMWindow::webkitRequestFileSystem(int type, long long size, PassRefPtr<Fil
     }
 
     AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
-    if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent && fileSystemType != AsyncFileSystem::External) {
+    if (!AsyncFileSystem::isValidType(fileSystemType)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
     }
@@ -798,15 +797,13 @@ void DOMWindow::webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<En
 
     AsyncFileSystem::Type type;
     String filePath;
-    if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
+    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::ENCODING_ERR));
         return;
     }
 
     LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
 }
-
-COMPILE_ASSERT(static_cast<int>(DOMWindow::EXTERNAL) == static_cast<int>(AsyncFileSystem::External), enum_mismatch);
 
 COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
 COMPILE_ASSERT(static_cast<int>(DOMWindow::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);

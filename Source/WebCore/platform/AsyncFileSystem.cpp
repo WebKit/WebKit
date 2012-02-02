@@ -39,11 +39,21 @@
 
 namespace WebCore {
 
+const char AsyncFileSystem::persistentPathPrefix[] = "persistent";
+const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSystem::persistentPathPrefix) - 1;
+const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
+const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
+
 #if !PLATFORM(CHROMIUM)
 bool AsyncFileSystem::isAvailable()
 {
     notImplemented();
     return false;
+}
+
+bool AsyncFileSystem::isValidType(Type type)
+{
+    return type == Temporary || type == Persistent;
 }
 
 PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type, const String&)

@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
-#include "AsyncFileSystem.h"
+#include "AsyncFileSystemChromium.h"
 #include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -51,7 +51,7 @@ class AsyncFileSystemCallbacks;
 class ScriptExecutionContext;
 class WorkerContext;
 
-class WorkerAsyncFileSystemChromium : public AsyncFileSystem {
+class WorkerAsyncFileSystemChromium : public AsyncFileSystemChromium {
 public:
     static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, AsyncFileSystem::Type type, const WebKit::WebURL& rootURL, bool synchronous)
     {
@@ -80,17 +80,12 @@ private:
 
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
 
-    // Converts a given absolute virtual path to a full origin-qualified FileSystem URL.
-    KURL virtualPathToFileSystemURL(const String& virtualPath) const;
-
     ScriptExecutionContext* m_scriptExecutionContext;
-    WebKit::WebFileSystem* m_webFileSystem;
     WebKit::WebWorkerBase* m_worker;
     WorkerContext* m_workerContext;
     RefPtr<WebKit::WorkerFileSystemCallbacksBridge> m_bridgeForCurrentOperation;
     String m_modeForCurrentOperation;
     bool m_synchronous;
-    KURL m_filesystemRootURL;
 };
 
 } // namespace WebCore

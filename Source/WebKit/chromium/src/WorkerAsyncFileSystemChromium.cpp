@@ -57,14 +57,11 @@ namespace WebCore {
 static const char fileSystemOperationsMode[] = "fileSystemOperationsMode";
 
 WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, AsyncFileSystem::Type type, const WebKit::WebURL& rootURL, bool synchronous)
-    : AsyncFileSystem(type)
+    : AsyncFileSystemChromium(type, rootURL)
     , m_scriptExecutionContext(context)
-    , m_webFileSystem(webKitPlatformSupport()->fileSystem())
     , m_workerContext(static_cast<WorkerContext*>(context))
     , m_synchronous(synchronous)
-    , m_filesystemRootURL(rootURL)
 {
-    ASSERT(m_webFileSystem);
     ASSERT(m_scriptExecutionContext->isWorkerContext());
 
     WorkerLoaderProxy* workerLoaderProxy = &m_workerContext->thread()->workerLoaderProxy();
@@ -220,15 +217,6 @@ PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::creat
 
     m_bridgeForCurrentOperation = WorkerFileSystemCallbacksBridge::create(m_worker, m_scriptExecutionContext, new WebKit::WebFileSystemCallbacksImpl(callbacks));
     return m_bridgeForCurrentOperation;
-}
-
-KURL WorkerAsyncFileSystemChromium::virtualPathToFileSystemURL(const String& virtualPath) const
-{
-    ASSERT(!m_filesystemRootURL.isEmpty());
-    KURL url = m_filesystemRootURL;
-    // Remove the extra leading slash.
-    url.setPath(url.path() + encodeWithURLEscapeSequences(virtualPath.substring(1)));
-    return url;
 }
 
 } // namespace WebCore

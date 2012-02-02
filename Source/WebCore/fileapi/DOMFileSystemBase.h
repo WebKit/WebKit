@@ -62,14 +62,6 @@ public:
     }
     virtual ~DOMFileSystemBase();
 
-    static const char kPersistentPathPrefix[];
-    static const size_t kPersistentPathPrefixLength;
-    static const char kTemporaryPathPrefix[];
-    static const size_t kTemporaryPathPrefixLength;
-    static const char kExternalPathPrefix[];
-    static const size_t kExternalPathPrefixLength;
-    static bool crackFileSystemURL(const KURL&, AsyncFileSystem::Type&, String& filePath);
-
     const String& name() const { return m_name; }
     AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }
     SecurityOrigin* securityOrigin() const;

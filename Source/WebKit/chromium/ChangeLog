@@ -1,3 +1,20 @@
+2012-02-02  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory (re-landing r105395)
+        https://bugs.webkit.org/show_bug.cgi?id=76551
+
+        * src/AssertMatchingEnums.cpp: Removed the matching assertion for AsyncFileSystem::External (as now we directly use WebFileSystem::TypeExternal).
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystem::crackFileSystemURL): Added.
+        (WebCore::AsyncFileSystem::isValidType): Added.
+        (WebCore::AsyncFileSystemChromium::toURL): Added.
+        * src/AsyncFileSystemChromium.h:
+        (AsyncFileSystemChromium):
+        * src/WorkerAsyncFileSystemChromium.cpp: Made this subclass of AsyncFileSystemChromium (rather than that of AsyncFileSystem)
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WorkerAsyncFileSystemChromium):
+
 2012-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Avoid creating NamedNodeMap unnecessarily

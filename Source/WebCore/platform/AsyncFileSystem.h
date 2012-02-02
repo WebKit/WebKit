@@ -54,13 +54,25 @@ public:
     enum Type {
         Temporary,
         Persistent,
-        External,
     };
+
+    // Path prefixes that are used in the filesystem URLs (that can be obtained by toURL()).
+    // http://www.w3.org/TR/file-system-api/#widl-Entry-toURL
+    static const char persistentPathPrefix[];
+    static const size_t persistentPathPrefixLength;
+    static const char temporaryPathPrefix[];
+    static const size_t temporaryPathPrefixLength;
 
     virtual void stop() { }
     virtual bool hasPendingActivity() { return false; }
 
     static bool isAvailable();
+
+    static bool isValidType(Type);
+
+    static bool crackFileSystemURL(const KURL&, Type&, String& filePath);
+
+    virtual String toURL(const String& originString, const String& fullPath) = 0;
 
     // Subclass must implement this if it supports synchronous operations.
     // This should return false if there are no pending operations.

@@ -1,3 +1,36 @@
+2012-02-02  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory (re-landing r105395)
+        https://bugs.webkit.org/show_bug.cgi?id=76551
+
+        Reviewed by David Levin.
+
+        Moved the implementation of crackFileSystemURL() and toURL() from
+        WebCore/fileapi/DOMFileSystemBase into WebCore/platform/AsyncFileSystem
+        so that each platform can extend/implement their behavior if necessary.
+
+        No new tests as it has no functional changes.
+
+        * fileapi/DOMFileSystemBase.cpp: Moved crackFileSystemURL() to AsyncFileSystem.
+        * fileapi/DOMFileSystemBase.h:
+        (DOMFileSystemBase):
+        * fileapi/EntryBase.cpp: Moved toURL() to AsyncFileSystem.
+        (WebCore::EntryBase::toURL):
+        * page/DOMWindow.cpp: Made corresponding callsite changes.
+        (WebCore::DOMWindow::webkitRequestFileSystem):
+        (WebCore::DOMWindow::webkitResolveLocalFileSystemURL):
+        * page/DOMWindow.h:
+        * platform/AsyncFileSystem.cpp:
+        (WebCore::AsyncFileSystem::isValidType): Added.
+        * platform/AsyncFileSystem.h:
+        (AsyncFileSystem):
+        * workers/WorkerContext.cpp: Made corresponding callsite changes.
+        (WebCore::WorkerContext::webkitRequestFileSystem):
+        (WebCore::WorkerContext::webkitRequestFileSystemSync):
+        (WebCore::WorkerContext::webkitResolveLocalFileSystemURL):
+        (WebCore::WorkerContext::webkitResolveLocalFileSystemSyncURL):
+        * workers/WorkerContext.h:
+
 2012-02-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: pause on uncaugh exceptions state is not properly restored

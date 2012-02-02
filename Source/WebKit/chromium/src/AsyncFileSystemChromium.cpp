@@ -34,6 +34,7 @@
 
 #include "AsyncFileSystemCallbacks.h"
 #include "AsyncFileWriterChromium.h"
+#include "SecurityOrigin.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
@@ -41,12 +42,56 @@
 #include "platform/WebFileSystem.h"
 #include "platform/WebKitPlatformSupport.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
+// ChromeOS-specific filesystem type.
+const AsyncFileSystem::Type externalType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeExternal);
+const char externalPathPrefix[] = "external";
+const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
+
+// static
 bool AsyncFileSystem::isAvailable()
 {
     return true;
+}
+
+// static
+bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
+{
+    if (!url.protocolIs("filesystem"))
+        return false;
+
+    KURL originURL(ParsedURLString, url.path());
+    String path = decodeURLEscapeSequences(originURL.path());
+    if (path.isEmpty() || path[0] != '/')
+        return false;
+    path = path.substring(1);
+
+    if (path.startsWith(temporaryPathPrefix)) {
+        type = Temporary;
+        path = path.substring(temporaryPathPrefixLength);
+    } else if (path.startsWith(persistentPathPrefix)) {
+        type = Persistent;
+        path = path.substring(persistentPathPrefixLength);
+    } else if (path.startsWith(externalPathPrefix)) {
+        type = externalType;
+        path = path.substring(externalPathPrefixLength);
+    } else
+        return false;
+
+    if (path.isEmpty() || path[0] != '/')
+        return false;
+
+    filePath.swap(path);
+    return true;
+}
+
+// static
+bool AsyncFileSystem::isValidType(Type type)
+{
+    return type == Temporary || type == Persistent || type == static_cast<Type>(WebKit::WebFileSystem::TypeExternal);
 }
 
 AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const KURL& rootURL)
@@ -59,6 +104,28 @@ AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, con
 
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
+}
+
+String AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath)
+{
+    ASSERT(!originString.isEmpty());
+    if (originString == "null")
+        return String();
+
+    if (type() == externalType) {
+        // For external filesystem originString could be different from what we have in m_filesystemRootURL.
+        StringBuilder result;
+        result.append("filesystem:");
+        result.append(originString);
+        result.append("/");
+        result.append(externalPathPrefix);
+        result.append(encodeWithURLEscapeSequences(fullPath));
+        return result.toString();
+    }
+
+    // For regular types we can just call virtualPathToFileSystemURL which appends the fullPath to the m_filesystemRootURL that should look like 'filesystem:<origin>/<typePrefix>'.
+    ASSERT(SecurityOrigin::create(m_filesystemRootURL)->toString() == originString);
+    return virtualPathToFileSystemURL(fullPath);
 }
 
 void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
