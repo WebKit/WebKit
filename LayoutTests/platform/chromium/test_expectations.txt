@@ -4056,3 +4056,5 @@ BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSI
 
 // This can be removed once Chromium r120068 has been deps-rolled into Skia.
 BUGWK77565 WIN LINUX : fast/box-shadow/box-shadow-clipped-slices.html = PASS IMAGE
+
+BUGWK77641 MAC : fast/speech/bubble-position.html = TEXT
