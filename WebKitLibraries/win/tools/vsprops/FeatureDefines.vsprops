@@ -48,7 +48,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS_FILTERS"
-		Value=""
+		Value="ENABLE_CSS_FILTERS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
