@@ -32,14 +32,14 @@ module html {
         attribute [Reflect, URL] DOMString src;
 
         // Introduced in DOM Level 2:
-        readonly attribute [CheckFrameSecurity] Document contentDocument;
+        readonly attribute [CheckAccessToNode] Document contentDocument;
 
         // Extensions
         readonly attribute DOMWindow contentWindow;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
-        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+        [CheckAccessToNode] SVGDocument getSVGDocument()
             raises(DOMException);
 #endif
 #endif

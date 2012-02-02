@@ -184,8 +184,8 @@ module test {
         attribute double[]                  doubleArray;
 #endif
 
-        readonly attribute [CheckFrameSecurity] Document contentDocument;
-        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+        readonly attribute [CheckAccessToNode] Document contentDocument;
+        [CheckAccessToNode] SVGDocument getSVGDocument()
             raises(DOMException);
 
         void convert1(in [ConvertNullStringTo=Null] a);

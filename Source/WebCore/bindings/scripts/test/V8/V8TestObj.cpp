@@ -1640,7 +1640,7 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"floatArray", TestObjInternal::floatArrayAttrGetter, TestObjInternal::floatArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'doubleArray' (Type: 'attribute' ExtAttr: '')
     {"doubleArray", TestObjInternal::doubleArrayAttrGetter, TestObjInternal::doubleArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'contentDocument' (Type: 'readonly attribute' ExtAttr: 'CheckFrameSecurity')
+    // Attribute 'contentDocument' (Type: 'readonly attribute' ExtAttr: 'CheckAccessToNode')
     {"contentDocument", TestObjInternal::contentDocumentAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'mutablePoint' (Type: 'attribute' ExtAttr: '')
     {"mutablePoint", TestObjInternal::mutablePointAttrGetter, TestObjInternal::mutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},

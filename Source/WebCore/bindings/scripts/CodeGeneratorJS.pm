@@ -1697,11 +1697,10 @@ sub GenerateImplementation
 
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
                     push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
-                } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
-                    $implIncludes{"Document.h"} = 1;
+                } elsif ($attribute->signature->extendedAttributes->{"CheckAccessToNode"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
-                    push(@implContent, "    return allowAccessToNode(exec, impl->contentDocument()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
+                    push(@implContent, "    return allowAccessToNode(exec, impl->" . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
                 } elsif ($type eq "EventListener") {
                     $implIncludes{"EventListener.h"} = 1;
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
@@ -2131,8 +2130,8 @@ sub GenerateImplementation
                     push(@implContent, "    ExceptionCode ec = 0;\n");
                 }
 
-                if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"} and !$function->isStatic) {
-                    push(@implContent, "    if (!allowAccessToNode(exec, impl->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                if ($function->signature->extendedAttributes->{"CheckAccessToNode"} and !$function->isStatic) {
+                    push(@implContent, "    if (!allowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     $implIncludes{"JSDOMBinding.h"} = 1;
                 }
