@@ -1,3 +1,38 @@
+2012-02-01  Adam Barth  <abarth@webkit.org>
+
+        contentDispositionType misparses the Content-Disposition header in some obscure corner cases
+        https://bugs.webkit.org/show_bug.cgi?id=77577
+
+        Reviewed by Eric Seidel.
+
+        The contentDispositionType extracts the disposition-type from the
+        Content-Disposition header.  According to RFC 6266 (and previous RFCs),
+        the disposition-type must be an RFC 2616 token.  Rather than enforce
+        this general rule, we had special-cased some examples (including
+        name=foo and filename=bar).  This patch generalizes our check to
+        properly validate that the disposition-type is an RFC 2616 token.
+
+        In conjunction with some other work in the Chromium network stack, this
+        causes Chromium to pass the following tests:
+
+          http://greenbytes.de/tech/tc2231/#inlonlyquoted
+          http://greenbytes.de/tech/tc2231/#attonlyquoted
+
+        Without this patch, these test cases neither trigger a navigation nor a
+        download in Chromium.  This patch does not appear to cause any visible
+        change in Safari.  (Safari passes these tests both before and after
+        this patch.)
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isRFC2616Token):
+        (WebCore::contentDispositionType):
+            - This patch also adds a comment to
+              filenameFromHTTPContentDisposition, which explains some of the
+              was this function incorrectly implements the requirements in
+              RFC 6266.  Resolving these issues is a subject for a future
+              patch.
+        * platform/network/HTTPParsers.h:
+
 2012-02-01  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/10442663> Paginated display does not respect page-break-{before,after}

@@ -73,28 +73,45 @@ static inline bool skipToken(const String& str, unsigned& pos, const char* token
     return true;
 }
 
+// See RFC 2616, Section 2.2.
+bool isRFC2616Token(const String& characters)
+{
+    if (characters.isEmpty())
+        return false;
+    for (unsigned i = 0; i < characters.length(); ++i) {
+        UChar c = characters[i];
+        if (c >= 0x80 || c <= 0x1F || c == 0x7F
+            || c == '(' || c == ')' || c == '<' || c == '>' || c == '@'
+            || c == ',' || c == ';' || c == ':' || c == '\\' || c == '"'
+            || c == '/' || c == '[' || c == ']' || c == '?' || c == '='
+            || c == '{' || c == '}' || c == ' ' || c == '\t')
+        return false;
+    }
+    return true;
+}
+
 ContentDispositionType contentDispositionType(const String& contentDisposition)
-{   
+{
     if (contentDisposition.isEmpty())
         return ContentDispositionNone;
 
-    // Some broken sites just send
-    // Content-Disposition: ; filename="file"
-    // screen those out here.
-    if (contentDisposition.startsWith(";"))
-        return ContentDispositionNone;
+    Vector<String> parameters;
+    contentDisposition.split(';', parameters);
 
-    if (contentDisposition.startsWith("inline", false))
+    String dispositionType = parameters[0];
+    dispositionType.stripWhiteSpace();
+
+    if (equalIgnoringCase(dispositionType, "inline"))
         return ContentDispositionInline;
 
-    // Some broken sites just send
-    // Content-Disposition: filename="file"
+    // Some broken sites just send bogus headers like
+    //
+    //   Content-Disposition: ; filename="file"
+    //   Content-Disposition: filename="file"
+    //   Content-Disposition: name="file"
+    //
     // without a disposition token... screen those out.
-    if (contentDisposition.startsWith("filename", false))
-        return ContentDispositionNone;
-
-    // Also in use is Content-Disposition: name="file"
-    if (contentDisposition.startsWith("name", false))
+    if (!isRFC2616Token(dispositionType))
         return ContentDispositionNone;
 
     // We have a content-disposition of "attachment" or unknown.
@@ -167,6 +184,11 @@ double parseDate(const String& value)
     return parseDateFromNullTerminatedCharacters(value.utf8().data());
 }
 
+// FIXME: This function doesn't comply with RFC 6266.
+// For example, this function doesn't handle the interaction between " and ;
+// that arises from quoted-string, nor does this function properly unquote
+// attribute values. Further this function appears to process parameter names
+// in a case-sensitive manner. (There are likely other bugs as well.)
 String filenameFromHTTPContentDisposition(const String& value)
 {
     Vector<String> keyValuePairs;
