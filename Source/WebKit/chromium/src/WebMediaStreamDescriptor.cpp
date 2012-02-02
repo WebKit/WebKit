@@ -37,6 +37,7 @@
 #include "MediaStreamComponent.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
+#include "platform/WebMediaStreamComponent.h"
 #include "platform/WebMediaStreamSource.h"
 #include "platform/WebString.h"
 #include <wtf/Vector.h>
@@ -46,6 +47,11 @@ using namespace WebCore;
 namespace WebKit {
 
 WebMediaStreamDescriptor::WebMediaStreamDescriptor(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
+    : m_private(mediaStreamDescriptor)
+{
+}
+
+WebMediaStreamDescriptor::WebMediaStreamDescriptor(WebCore::MediaStreamDescriptor* mediaStreamDescriptor)
     : m_private(mediaStreamDescriptor)
 {
 }
@@ -74,21 +80,21 @@ void WebMediaStreamDescriptor::sources(WebVector<WebMediaStreamSource>& webSourc
     webSources.swap(result);
 }
 
-void WebMediaStreamDescriptor::audioSources(WebVector<WebMediaStreamSource>& webSources) const
+void WebMediaStreamDescriptor::audioSources(WebVector<WebMediaStreamComponent>& webSources) const
 {
     size_t numberOfSources = m_private->numberOfAudioComponents();
-    WebVector<WebMediaStreamSource> result(numberOfSources);
+    WebVector<WebMediaStreamComponent> result(numberOfSources);
     for (size_t i = 0; i < numberOfSources; ++i)
-        result[i] = m_private->audioComponent(i)->source();
+        result[i] = m_private->audioComponent(i);
     webSources.swap(result);
 }
 
-void WebMediaStreamDescriptor::videoSources(WebVector<WebMediaStreamSource>& webSources) const
+void WebMediaStreamDescriptor::videoSources(WebVector<WebMediaStreamComponent>& webSources) const
 {
     size_t numberOfSources = m_private->numberOfVideoComponents();
-    WebVector<WebMediaStreamSource> result(numberOfSources);
+    WebVector<WebMediaStreamComponent> result(numberOfSources);
     for (size_t i = 0; i < numberOfSources; ++i)
-        result[i] = m_private->videoComponent(i)->source();
+        result[i] = m_private->videoComponent(i);
     webSources.swap(result);
 }
 

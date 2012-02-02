@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
-
-#include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class UserMediaRequest;
-}
+#ifndef WebMediaStreamCenter_h
+#define WebMediaStreamCenter_h
 
 namespace WebKit {
 
-class WebUserMediaClient;
-class WebViewImpl;
+class WebMediaStreamComponent;
+class WebMediaStreamDescriptor;
+class WebMediaStreamSourcesRequest;
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
+class WebMediaStreamCenter {
 public:
-    UserMediaClientImpl(WebViewImpl*);
+    virtual ~WebMediaStreamCenter() { }
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
-
-private:
-    UserMediaClientImpl();
-
-    WebUserMediaClient* m_client;
+    virtual void queryMediaStreamSources(const WebMediaStreamSourcesRequest&) = 0;
+    virtual void didEnableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
+    virtual void didDisableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
+    virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void didConstructMediaStream(const WebMediaStreamDescriptor&) = 0;
 };
 
 } // namespace WebKit
 
-#endif // UserMediaClientImpl_h
+#endif // WebMediaStreamCenter_h
+

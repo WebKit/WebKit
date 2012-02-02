@@ -51,20 +51,20 @@ public:
     static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaClient*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
     ~UserMediaRequest();
 
-    bool audio() const { return m_audio; }
-    bool video() const { return m_video; }
-
-    bool cameraPreferenceUser() const { return m_cameraPreferenceUser; }
-    bool cameraPreferenceEnvironment() const { return m_cameraPreferenceEnvironment; }
-
     NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
     NavigatorUserMediaErrorCallback* errorCallback() const { return m_errorCallback.get(); }
 
     void start();
-    void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
     void succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     void fail();
+
+    // MediaStreamSourcesQueryClient
+    virtual bool audio() const { return m_audio; }
+    virtual bool video() const { return m_video; }
+    virtual bool cameraPreferenceUser() const { return m_cameraPreferenceUser; }
+    virtual bool cameraPreferenceEnvironment() const { return m_cameraPreferenceEnvironment; }
+    virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
     // ContextDestructionObserver
     virtual void contextDestroyed();

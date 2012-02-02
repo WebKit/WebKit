@@ -1,3 +1,30 @@
+2012-02-02  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Adding the embedding code for MediaStreamCenter
+        https://bugs.webkit.org/show_bug.cgi?id=73130
+
+        Reviewed by Darin Fisher.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
+        * mediastream/UserMediaClient.h:
+        (UserMediaClient):
+        * mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::didCompleteQuery):
+        * mediastream/UserMediaRequest.h:
+        (UserMediaRequest):
+        (WebCore::UserMediaRequest::audio):
+        (WebCore::UserMediaRequest::video):
+        (WebCore::UserMediaRequest::cameraPreferenceUser):
+        (WebCore::UserMediaRequest::cameraPreferenceEnvironment):
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore):
+        (WebCore::MediaStreamCenter::queryMediaStreamSources):
+        * platform/mediastream/MediaStreamCenter.h:
+        (WebCore):
+        (MediaStreamSourcesQueryClient):
+        (MediaStreamCenter):
+
 2012-02-02  Raymond Toy  <rtoy@google.com>
 
         Constant values to set "distanceModel" are undefined

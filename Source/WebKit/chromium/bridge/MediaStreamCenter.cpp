@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
+#include "config.h"
 
-#include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
+#if ENABLE(MEDIA_STREAM)
+
+#include "MediaStreamCenter.h"
+
+#include "MediaStreamCenterInternal.h"
+#include "MediaStreamDescriptor.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-class UserMediaRequest;
+
+MediaStreamCenter::MediaStreamCenter()
+    : m_private(adoptPtr(new MediaStreamCenterInternal(this)))
+{
 }
 
-namespace WebKit {
+MediaStreamCenter::~MediaStreamCenter()
+{
+}
 
-class WebUserMediaClient;
-class WebViewImpl;
+void MediaStreamCenter::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
+{
+    m_private->queryMediaStreamSources(client);
+}
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
-public:
-    UserMediaClientImpl(WebViewImpl*);
+void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor* stream,  MediaStreamComponent* component)
+{
+    m_private->didSetMediaStreamTrackEnabled(stream, component);
+}
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
+void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor* stream)
+{
+    m_private->didStopLocalMediaStream(stream);
+}
 
-private:
-    UserMediaClientImpl();
+void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor* stream)
+{
+    m_private->didConstructMediaStream(stream);
+}
 
-    WebUserMediaClient* m_client;
-};
+} // namespace WebCore
 
-} // namespace WebKit
-
-#endif // UserMediaClientImpl_h
+#endif // ENABLE(MEDIA_STREAM)

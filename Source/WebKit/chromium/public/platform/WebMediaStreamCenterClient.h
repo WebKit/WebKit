@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
-
-#include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class UserMediaRequest;
-}
+#ifndef WebMediaStreamCenterClient_h
+#define WebMediaStreamCenterClient_h
 
 namespace WebKit {
 
-class WebUserMediaClient;
-class WebViewImpl;
+class WebMediaStreamDescriptor;
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
+class WebMediaStreamCenterClient {
 public:
-    UserMediaClientImpl(WebViewImpl*);
+    virtual ~WebMediaStreamCenterClient() { }
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
-
-private:
-    UserMediaClientImpl();
-
-    WebUserMediaClient* m_client;
+    virtual void stopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
 };
 
 } // namespace WebKit
 
-#endif // UserMediaClientImpl_h
+#endif // WebMediaStreamCenterClient_h

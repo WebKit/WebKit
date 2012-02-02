@@ -61,6 +61,8 @@ class WebFileUtilities;
 class WebGraphicsContext3D;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
+class WebMediaStreamCenter;
+class WebMediaStreamCenterClient;
 class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebMimeRegistry;
 class WebPeerConnectionHandler;
@@ -337,6 +339,7 @@ public:
 
     // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
+    virtual WebMediaStreamCenter* createMediaStreamCenter(WebMediaStreamCenterClient*) { return 0; }
 
     virtual void didStartWorkerRunLoop(const WebWorkerRunLoop&) { }
     virtual void didStopWorkerRunLoop(const WebWorkerRunLoop&) { }

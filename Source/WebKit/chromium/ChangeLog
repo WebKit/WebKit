@@ -1,3 +1,84 @@
+2012-02-02  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Adding the embedding code for MediaStreamCenter
+        https://bugs.webkit.org/show_bug.cgi?id=73130
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * bridge/MediaStreamCenter.cpp: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebCore):
+        (WebCore::MediaStreamCenter::MediaStreamCenter):
+        (WebCore::MediaStreamCenter::~MediaStreamCenter):
+        (WebCore::MediaStreamCenter::queryMediaStreamSources):
+        (WebCore::MediaStreamCenter::didSetMediaStreamTrackEnabled):
+        (WebCore::MediaStreamCenter::didStopLocalMediaStream):
+        (WebCore::MediaStreamCenter::didConstructMediaStream):
+        * bridge/MediaStreamCenterInternal.cpp: Added.
+        (WebCore):
+        (WebCore::MediaStreamCenterInternal::MediaStreamCenterInternal):
+        (WebCore::MediaStreamCenterInternal::~MediaStreamCenterInternal):
+        (WebCore::MediaStreamCenterInternal::queryMediaStreamSources):
+        (WebCore::MediaStreamCenterInternal::didSetMediaStreamTrackEnabled):
+        (WebCore::MediaStreamCenterInternal::didStopLocalMediaStream):
+        (WebCore::MediaStreamCenterInternal::didConstructMediaStream):
+        (WebCore::MediaStreamCenterInternal::stopLocalMediaStream):
+        * bridge/MediaStreamCenterInternal.h: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebKit):
+        (WebCore):
+        (MediaStreamCenterInternal):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKit::WebKitPlatformSupport::createMediaStreamCenter):
+        * public/platform/WebMediaStreamCenter.h: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebKit):
+        (WebMediaStreamCenter):
+        (WebKit::WebMediaStreamCenter::~WebMediaStreamCenter):
+        * public/platform/WebMediaStreamCenterClient.h: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebKit):
+        (WebMediaStreamCenterClient):
+        (WebKit::WebMediaStreamCenterClient::~WebMediaStreamCenterClient):
+        * public/platform/WebMediaStreamComponent.h: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebCore):
+        (WebKit):
+        (WebMediaStreamComponent):
+        (WebKit::WebMediaStreamComponent::WebMediaStreamComponent):
+        (WebKit::WebMediaStreamComponent::~WebMediaStreamComponent):
+        (WebKit::WebMediaStreamComponent::isNull):
+        * public/platform/WebMediaStreamDescriptor.h:
+        (WebKit):
+        (WebMediaStreamDescriptor):
+        * public/platform/WebMediaStreamSourcesRequest.h: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebCore):
+        (WebKit):
+        (WebMediaStreamSourcesRequest):
+        (WebKit::WebMediaStreamSourcesRequest::WebMediaStreamSourcesRequest):
+        (WebKit::WebMediaStreamSourcesRequest::~WebMediaStreamSourcesRequest):
+        (WebKit::WebMediaStreamSourcesRequest::isNull):
+        * src/UserMediaClientImpl.h:
+        (UserMediaClientImpl):
+        * src/WebMediaStreamComponent.cpp: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebKit):
+        (WebKit::WebMediaStreamComponent::WebMediaStreamComponent):
+        (WebKit::WebMediaStreamComponent::operator=):
+        (WebKit::WebMediaStreamComponent::reset):
+        (WebKit::WebMediaStreamComponent::operator PassRefPtr<MediaStreamComponent>):
+        (WebKit::WebMediaStreamComponent::operator MediaStreamComponent*):
+        (WebKit::WebMediaStreamComponent::isEnabled):
+        (WebKit::WebMediaStreamComponent::source):
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::WebMediaStreamDescriptor):
+        (WebKit):
+        (WebKit::WebMediaStreamDescriptor::audioSources):
+        (WebKit::WebMediaStreamDescriptor::videoSources):
+        * src/WebMediaStreamSourcesRequest.cpp: Copied from Source/WebKit/chromium/src/UserMediaClientImpl.h.
+        (WebKit):
+        (WebKit::WebMediaStreamSourcesRequest::WebMediaStreamSourcesRequest):
+        (WebKit::WebMediaStreamSourcesRequest::reset):
+        (WebKit::WebMediaStreamSourcesRequest::audio):
+        (WebKit::WebMediaStreamSourcesRequest::video):
+        (WebKit::WebMediaStreamSourcesRequest::didCompleteQuery):
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

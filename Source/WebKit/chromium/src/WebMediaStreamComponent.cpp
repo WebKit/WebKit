@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
+#include "config.h"
 
-#include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
+#if ENABLE(MEDIA_STREAM)
 
-namespace WebCore {
-class UserMediaRequest;
-}
+#include "platform/WebMediaStreamComponent.h"
+
+#include "MediaStreamComponent.h"
+#include "platform/WebMediaStreamSource.h"
+#include "platform/WebString.h"
+#include <wtf/Vector.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebUserMediaClient;
-class WebViewImpl;
+WebMediaStreamComponent::WebMediaStreamComponent(WebCore::MediaStreamComponent* mediaStreamComponent)
+    : m_private(mediaStreamComponent)
+{
+}
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
-public:
-    UserMediaClientImpl(WebViewImpl*);
+WebMediaStreamComponent& WebMediaStreamComponent::operator=(WebCore::MediaStreamComponent* mediaStreamComponent)
+{
+    m_private = mediaStreamComponent;
+    return *this;
+}
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
+void WebMediaStreamComponent::reset()
+{
+    m_private.reset();
+}
 
-private:
-    UserMediaClientImpl();
+WebMediaStreamComponent::operator PassRefPtr<MediaStreamComponent>() const
+{
+    return m_private.get();
+}
 
-    WebUserMediaClient* m_client;
-};
+WebMediaStreamComponent::operator MediaStreamComponent*() const
+{
+    return m_private.get();
+}
+
+bool WebMediaStreamComponent::isEnabled() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private.get()->enabled();
+}
+
+WebMediaStreamSource WebMediaStreamComponent::source() const
+{
+    ASSERT(!m_private.isNull());
+    return WebMediaStreamSource(m_private.get()->source());
+}
 
 } // namespace WebKit
 
-#endif // UserMediaClientImpl_h
+#endif // ENABLE(MEDIA_STREAM)
+

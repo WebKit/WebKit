@@ -36,6 +36,7 @@ class MediaStreamDescriptor;
 
 namespace WebKit {
 
+class WebMediaStreamComponent;
 class WebMediaStreamSource;
 class WebString;
 
@@ -65,10 +66,11 @@ public:
     // DEPRECATED
     WEBKIT_EXPORT void sources(WebVector<WebMediaStreamSource>&) const;
 
-    WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamSource>&) const;
-    WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamSource>&) const;
+    WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamComponent>&) const;
+    WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamComponent>&) const;
 
 #if WEBKIT_IMPLEMENTATION
+    WebMediaStreamDescriptor(WebCore::MediaStreamDescriptor*);
     WebMediaStreamDescriptor(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);
     operator WTF::PassRefPtr<WebCore::MediaStreamDescriptor>() const;
     operator WebCore::MediaStreamDescriptor*() const;

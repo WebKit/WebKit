@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
+#include "config.h"
 
+#if ENABLE(MEDIA_STREAM)
+
+#include "platform/WebMediaStreamSourcesRequest.h"
+
+#include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
+#include "platform/WebMediaStreamSource.h"
+#include "platform/WebVector.h"
+#include <wtf/Vector.h>
 
-namespace WebCore {
-class UserMediaRequest;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebUserMediaClient;
-class WebViewImpl;
+WebMediaStreamSourcesRequest::WebMediaStreamSourcesRequest(const PassRefPtr<WebCore::MediaStreamSourcesQueryClient>& queryClient)
+    : m_private(queryClient)
+{
+}
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
-public:
-    UserMediaClientImpl(WebViewImpl*);
+void WebMediaStreamSourcesRequest::reset()
+{
+    m_private.reset();
+}
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
+bool WebMediaStreamSourcesRequest::audio() const
+{
+    ASSERT(!isNull());
+    return m_private->audio();
+}
 
-private:
-    UserMediaClientImpl();
+bool WebMediaStreamSourcesRequest::video() const
+{
+    ASSERT(!isNull());
+    return m_private->video();
+}
 
-    WebUserMediaClient* m_client;
-};
+void WebMediaStreamSourcesRequest::didCompleteQuery(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources) const
+{
+    ASSERT(!isNull());
+    MediaStreamSourceVector audio;
+    for (size_t i = 0; i < audioSources.size(); ++i) {
+        MediaStreamSource* curr = audioSources[i];
+        audio.append(curr);
+    }
+    MediaStreamSourceVector video;
+    for (size_t i = 0; i < videoSources.size(); ++i) {
+        MediaStreamSource* curr = videoSources[i];
+        video.append(curr);
+    }
+    m_private->didCompleteQuery(audio, video);
+}
 
 } // namespace WebKit
 
-#endif // UserMediaClientImpl_h
+#endif // ENABLE(MEDIA_STREAM)
+

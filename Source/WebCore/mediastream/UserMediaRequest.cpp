@@ -71,7 +71,7 @@ void UserMediaRequest::start()
     MediaStreamCenter::instance().queryMediaStreamSources(this);
 }
 
-void UserMediaRequest::mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+void UserMediaRequest::didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
     if (m_client)
         m_client->requestUserMedia(this, audioSources, videoSources);

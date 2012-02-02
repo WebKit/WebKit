@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserMediaClientImpl_h
-#define UserMediaClientImpl_h
+#ifndef WebMediaStreamComponent_h
+#define WebMediaStreamComponent_h
 
-#include "MediaStreamSource.h"
-#include "UserMediaClient.h"
-#include <wtf/PassRefPtr.h>
+#include "WebCommon.h"
+#include "WebNonCopyable.h"
+#include "WebPrivatePtr.h"
 
 namespace WebCore {
-class UserMediaRequest;
+class MediaStreamComponent;
 }
 
 namespace WebKit {
 
-class WebUserMediaClient;
-class WebViewImpl;
+class WebMediaStreamSource;
+class WebString;
 
-class UserMediaClientImpl : public WebCore::UserMediaClient {
+class WebMediaStreamComponent {
 public:
-    UserMediaClientImpl(WebViewImpl*);
+    WebMediaStreamComponent() { }
+    ~WebMediaStreamComponent() { reset(); }
 
-    // WebCore::UserMediaClient ----------------------------------------------
-    virtual void pageDestroyed();
-    virtual void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
+    WEBKIT_EXPORT void reset();
+    bool isNull() const { return m_private.isNull(); }
+
+    WEBKIT_EXPORT WebMediaStreamSource source() const;
+    WEBKIT_EXPORT bool isEnabled() const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebMediaStreamComponent(WebCore::MediaStreamComponent*);
+    WebMediaStreamComponent& operator=(WebCore::MediaStreamComponent*);
+    operator WTF::PassRefPtr<WebCore::MediaStreamComponent>() const;
+    operator WebCore::MediaStreamComponent*() const;
+#endif
 
 private:
-    UserMediaClientImpl();
-
-    WebUserMediaClient* m_client;
+    WebPrivatePtr<WebCore::MediaStreamComponent> m_private;
 };
 
 } // namespace WebKit
 
-#endif // UserMediaClientImpl_h
+#endif // WebMediaStreamComponent_h
