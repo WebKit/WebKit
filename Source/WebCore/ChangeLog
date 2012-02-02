@@ -1,3 +1,22 @@
+2012-02-02  Raul Hudea  <rhudea@adobe.com>
+
+        Regions should ignore the saved currentRenderFlowThread during repainting
+        because if there are imbricated flow threads, it might end using the wrong one.
+
+        [CSSRegions] Assert failure in RenderView::computeRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=77430
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/imbricated-flow-threads-crash.html
+
+        * rendering/RenderFlowThread.cpp:
+        (CurrentRenderFlowThreadDisabler):
+        (WebCore::CurrentRenderFlowThreadDisabler::CurrentRenderFlowThreadDisabler):
+        (WebCore::CurrentRenderFlowThreadDisabler::~CurrentRenderFlowThreadDisabler):
+        (WebCore):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+
 2012-02-02  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory (re-landing r105395)

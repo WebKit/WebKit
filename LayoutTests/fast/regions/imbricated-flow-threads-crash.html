@@ -1,0 +1,69 @@
+<html>
+<head>
+    <style type="text/css">
+    article{
+        -webkit-flow-into: article;
+    }
+    .region{
+        -webkit-flow-from: article;
+    }
+    #layout{
+        -webkit-flow-into: pages;
+    }
+    .page{
+        -webkit-flow-from: pages;
+    } 
+    #layout .region{
+        width: 50%;
+        background-color: lightgreen;
+        height: 100%;
+    }
+    #layout,
+    #paginator{
+        width: 200px;
+        height: 500px;
+    }
+    #paginator .page{
+        width: 100%;
+        height: 100%;
+        background: #ddd;
+    }
+    .description{
+        color: blue;
+    }
+    </style>
+</head>
+<body>
+    <div><p class="description">Text should be rendered in the green region. The test passes if there is no crash</p></div>
+
+    <div id="layout">
+        <div id="r1" class="region"></div>
+    </div> 
+    <div id="paginator">
+        <div class="page"></div>
+    </div>
+    <article>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+    </article>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        function addNewRegion() {
+            var oldRegion = document.getElementById("r1");
+            var newRegion = oldRegion.cloneNode(true);
+            oldRegion.parentNode.appendChild(newRegion);
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+        function test() {
+            setTimeout(addNewRegion, 0);
+        }
+
+        window.addEventListener("load", test, false);
+    </script>
+</body>
+</html>

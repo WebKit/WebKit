@@ -299,6 +299,27 @@ private:
     RenderFlowThread* m_renderFlowThread;
 };
 
+class CurrentRenderFlowThreadDisabler {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadDisabler);
+public:
+    CurrentRenderFlowThreadDisabler(RenderView* view)
+        : m_view(view)
+        , m_renderFlowThread(0)
+    {
+        m_renderFlowThread = m_view->currentRenderFlowThread();
+        if (m_renderFlowThread)
+            view->setCurrentRenderFlowThread(0);
+    }
+    ~CurrentRenderFlowThreadDisabler()
+    {
+        if (m_renderFlowThread)
+            m_view->setCurrentRenderFlowThread(m_renderFlowThread);
+    }
+private:
+    RenderView* m_view;
+    RenderFlowThread* m_renderFlowThread;
+};
+
 void RenderFlowThread::layout()
 {
     bool regionsChanged = m_regionsInvalidated && everHadLayout();
@@ -520,6 +541,10 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         // Now switch to the region's writing mode coordinate space and let it repaint itself.
         region->flipForWritingMode(clippedRect);
         LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the region is somewhere else.
+
+        // Can't use currentFlowThread as it possible to have imbricated flow threads and the wrong one could be used,
+        // so, we let each region figure out the proper enclosing flow thread
+        CurrentRenderFlowThreadDisabler disabler(view());
         region->repaintRectangle(clippedRect, immediate);
     }
 }
