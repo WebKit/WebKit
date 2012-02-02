@@ -5126,10 +5126,11 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
     if (!functionCallFrame)
         return jsNull();
-
-    CallFrame* callerFrame = functionCallFrame->callerFrame();
-    if (callerFrame->hasHostCallFrameFlag())
+    
+    if (functionCallFrame->callerFrame()->hasHostCallFrameFlag())
         return jsNull();
+
+    CallFrame* callerFrame = functionCallFrame->trueCallerFrame();
 
     JSValue caller = callerFrame->callee();
     if (!caller)

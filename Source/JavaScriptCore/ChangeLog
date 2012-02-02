@@ -1,3 +1,13 @@
+2012-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        retrieveCallerFromVMCode should call trueCallerFrame
+        https://bugs.webkit.org/show_bug.cgi?id=77684
+
+        Reviewed by Oliver Hunt.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+
 2012-02-02  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Implement current executable path finding for win32
