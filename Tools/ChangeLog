@@ -1,3 +1,23 @@
+2012-02-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-land r106442 per Adam's suggestion. We'll do both restarting DRT and loading a fake test first.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner):
+        (test_run_passing_test):
+        (test_run_silent_test):
+        (test_run_failed_test):
+        (test_run_tonguey_test):
+        (test_run_timeout_test):
+        (test_run_crash_test):
+        (test_run_test_set_kills_drt_per_run):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStopCount):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStopCount.__init__):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStopCount.stop):
+
 2012-02-01  Jacob Goldstein  <jacobg@adobe.com>
 
         Webkit generate-coverage-data script needs update to use new test script
