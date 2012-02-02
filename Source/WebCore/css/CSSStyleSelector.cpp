@@ -2437,7 +2437,7 @@ static inline bool isInsideRegionRule(CSSMutableStyleDeclaration* styleDeclarati
 {
     ASSERT(styleDeclaration);
 
-    CSSRule* parentRule = styleDeclaration->parentRule();
+    CSSRule* parentRule = styleDeclaration->parentRuleInternal();
     while (parentRule) {
         if (parentRule->isRegionRule())
             return true;
@@ -2449,7 +2449,7 @@ static inline bool isInsideRegionRule(CSSMutableStyleDeclaration* styleDeclarati
 template <bool applyFirst>
 void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRule());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRuleInternal());
     bool styleDeclarationInsideRegionRule = m_regionForStyling ? isInsideRegionRule(styleDeclaration) : false;
 
     unsigned propertyCount = styleDeclaration->propertyCount();

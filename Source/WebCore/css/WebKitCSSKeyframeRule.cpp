@@ -54,7 +54,7 @@ String WebKitCSSKeyframeRule::cssText() const
 
 void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
 {
-    ASSERT(style->parentRule() == this);
+    ASSERT(style->parentRuleInternal() == this);
     m_style = style;
 }
 

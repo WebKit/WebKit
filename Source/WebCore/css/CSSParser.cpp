@@ -346,7 +346,7 @@ static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propert
         validPrimitive = true;
     }
 
-    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->parentStyleSheet();
+    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->contextStyleSheet();
     if (!styleSheet)
         return false;
     Document* document = styleSheet->findDocument();
@@ -473,7 +473,7 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
 
-    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->parentStyleSheet();
+    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->contextStyleSheet();
     if (!styleSheet)
         return false;
     Document* document = styleSheet->findDocument();
@@ -513,7 +513,7 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int property
     if (contextStyleSheet)
         setStyleSheet(contextStyleSheet);
     else
-        setStyleSheet(declaration->parentStyleSheet());
+        setStyleSheet(declaration->contextStyleSheet());
 
     setupParser("@-webkit-value{", string, "} ");
 
@@ -616,7 +616,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const 
     if (contextStyleSheet)
         setStyleSheet(contextStyleSheet);
     else
-        setStyleSheet(declaration->parentStyleSheet());
+        setStyleSheet(declaration->contextStyleSheet());
     if (styleSourceData) {
         m_currentRuleData = CSSRuleSourceData::create();
         m_currentRuleData->styleSourceData = CSSStyleSourceData::create();

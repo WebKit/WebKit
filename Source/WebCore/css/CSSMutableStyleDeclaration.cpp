@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -134,26 +134,33 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 } // namespace
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
-{
-    // This constructor is used for various inline style declarations, so disable strict parsing.
-    m_strictParsing = false;
-}
-
-CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
-    : CSSStyleDeclaration(parent)
+    : m_strictParsing(false)
+    , m_isInlineStyleDeclaration(false)
+    , m_parent(static_cast<CSSRule*>(0))
 {
 }
 
-CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Vector<CSSProperty>& properties)
-    : CSSStyleDeclaration(parent)
-    , m_properties(properties)
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parentRule)
+    : m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_isInlineStyleDeclaration(false)
+    , m_parent(parentRule)
+{
+}
+
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>& properties)
+    : m_properties(properties)
+    , m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_isInlineStyleDeclaration(false)
+    , m_parent(parentRule)
 {
     m_properties.shrinkToFit();
     // FIXME: This allows duplicate properties.
 }
 
-CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CSSProperty* const * properties, int numProperties)
-    : CSSStyleDeclaration(parent)
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const * properties, int numProperties)
+    : m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_isInlineStyleDeclaration(false)
+    , m_parent(parentRule)
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
@@ -174,13 +181,24 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
     }
 }
 
-CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(StyledElement* element) 
-    : CSSStyleDeclaration(element)
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(StyledElement* parentElement) 
+    : m_strictParsing(false)
+    , m_isInlineStyleDeclaration(true)
+    , m_parent(parentElement)
 { 
 }
 
 CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
 {
+}
+
+CSSStyleSheet* CSSMutableStyleDeclaration::contextStyleSheet() const
+{
+    if (m_isInlineStyleDeclaration) {
+        Document* document = m_parent.element ? m_parent.element->document() : 0;
+        return document ? document->elementSheet() : 0;
+    }
+    return m_parent.rule ? m_parent.rule->parentStyleSheet() : 0;
 }
 
 void CSSMutableStyleDeclaration::copyPropertiesFrom(const CSSMutableStyleDeclaration& other)
@@ -1029,6 +1047,11 @@ CSSProperty* CSSMutableStyleDeclaration::findPropertyWithId(int propertyID)
             return &m_properties[n];
     }
     return 0;
+}
+
+CSSRule* CSSMutableStyleDeclaration::parentRule() const
+{
+    return parentRuleInternal();
 }
 
 String CSSMutableStyleDeclaration::cssText() const

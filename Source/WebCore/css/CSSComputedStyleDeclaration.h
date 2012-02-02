@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,7 @@ private:
     CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
 
     // CSSOM functions. Don't make these public.
+    virtual CSSRule* parentRule() const;
     virtual unsigned length() const;
     virtual String item(unsigned index) const;
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName);

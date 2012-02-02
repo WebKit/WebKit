@@ -227,7 +227,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         Element* element = toElement(node);
         // We have to process in-line style as it might contain some resources (typically background images).
         if (element->isStyledElement())
-            retrieveResourcesForCSSDeclaration(static_cast<StyledElement*>(element)->inlineStyleDecl());
+            retrieveResourcesForCSSDeclaration(static_cast<StyledElement*>(element)->inlineStyleDecl(), document);
 
         if (element->hasTagName(HTMLNames::imgTag)) {
             HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(element);
@@ -263,10 +263,10 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
             if (i < styleSheet->length() - 1)
                 cssText.append("\n\n");
         }
+        Document* document = styleSheet->findDocument();
         // Some rules have resources associated with them that we need to retrieve.
         if (rule->isImportRule()) {
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
-            Document* document = styleSheet->findDocument();
+            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);            
             KURL importURL = document->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
@@ -275,7 +275,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
             // FIXME: Add support for font face rule. It is not clear to me at this point if the actual otf/eot file can
             // be retrieved from the CSSFontFaceRule object.
         } else if (rule->isStyleRule())
-            retrieveResourcesForCSSRule(static_cast<CSSStyleRule*>(rule));
+            retrieveResourcesForCSSRule(static_cast<CSSStyleRule*>(rule), document);
     }
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {
@@ -302,18 +302,15 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderObject* image
     m_resourceURLs.add(url);
 }
 
-void PageSerializer::retrieveResourcesForCSSRule(CSSStyleRule* rule)
+void PageSerializer::retrieveResourcesForCSSRule(CSSStyleRule* rule, Document* document)
 {
-    retrieveResourcesForCSSDeclaration(rule->declaration());
+    retrieveResourcesForCSSDeclaration(rule->declaration(), document);
 }
 
-void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration* styleDeclaration)
+void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration* styleDeclaration, Document* document)
 {
     if (!styleDeclaration)
         return;
-
-    CSSStyleSheet* cssStyleSheet = styleDeclaration->parentStyleSheet();
-    ASSERT(cssStyleSheet);
 
     // The background-image and list-style-image (for ul or ol) are the CSS properties
     // that make use of images. We iterate to make sure we include any other
@@ -332,7 +329,6 @@ void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclarati
 
         CachedImage* image = static_cast<StyleCachedImage*>(styleImage)->cachedImage();
 
-        Document* document = cssStyleSheet->findDocument();
         KURL url = document->completeURL(image->url());
         addImageToResources(image, 0, url);
     }

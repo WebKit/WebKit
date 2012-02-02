@@ -44,6 +44,7 @@ class CachedImage;
 class CSSMutableStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
+class Document;
 class Frame;
 class Page;
 class RenderObject;
@@ -77,8 +78,8 @@ private:
     void serializeCSSStyleSheet(CSSStyleSheet*, const KURL&);
 
     void addImageToResources(CachedImage*, RenderObject*, const KURL&);
-    void retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration*);
-    void retrieveResourcesForCSSRule(CSSStyleRule*);
+    void retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration*, Document*);
+    void retrieveResourcesForCSSRule(CSSStyleRule*, Document*);
 
     Vector<Resource>* m_resources;
     ListHashSet<KURL> m_resourceURLs;

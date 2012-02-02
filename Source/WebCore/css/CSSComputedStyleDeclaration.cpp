@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
@@ -2572,6 +2572,11 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyProperti
             list.append(CSSProperty(set[i], value.release(), false));
     }
     return CSSMutableStyleDeclaration::create(list);
+}
+
+CSSRule* CSSComputedStyleDeclaration::parentRule() const
+{
+    return 0;
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)

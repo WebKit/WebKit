@@ -1,3 +1,68 @@
+2012-02-02  Antti Koivisto  <antti@apple.com>
+
+        Move remaining implementation from CSSStyleDeclaration to subclasses 
+        https://bugs.webkit.org/show_bug.cgi?id=77621
+
+        Reviewed by Andreas Kling.
+
+        This leaves CSSStyleDeclaration a near-pure CSSOM interface.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::isCSSPropertyName):
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::parentRule):
+        (WebCore):
+        * css/CSSComputedStyleDeclaration.h:
+        (CSSComputedStyleDeclaration):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::contextStyleSheet):
+        (WebCore):
+        (WebCore::CSSMutableStyleDeclaration::parentRule):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::isInlineStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::parentRuleInternal):
+        (WebCore::CSSMutableStyleDeclaration::clearParentRule):
+        (CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::parentElement):
+        (WebCore::CSSMutableStyleDeclaration::clearParentElement):
+        (WebCore::CSSMutableStyleDeclaration::parentStyleSheet):
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseDeclaration):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore):
+        * css/CSSStyleDeclaration.h:
+        (CSSStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::parentStyleSheet):
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+                            
+            Eliminate unnecessary call to CSSMutableStyleDeclaration::parentStyleSheet()
+
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::setDeclaration):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::isInsideRegionRule):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::setDeclaration):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+        (WebCore::PageSerializer::retrieveResourcesForCSSRule):
+        (WebCore::PageSerializer::retrieveResourcesForCSSDeclaration):
+        * page/PageSerializer.h:
+        
+            Eliminate unnecessary call to CSSMutableStyleDeclaration::parentStyleSheet()
+        
+        (WebCore):
+        (PageSerializer):
+
 2012-02-02  Chris Marrin  <cmarrin@apple.com>
 
         Turn on CSS Filters on Windows

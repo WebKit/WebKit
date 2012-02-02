@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -95,6 +95,7 @@ public:
 
     void setStrictParsing(bool b) { m_strictParsing = b; }
     bool useStrictParsing() const { return m_strictParsing; }
+    bool isInlineStyleDeclaration() const { return m_isInlineStyleDeclaration; }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
@@ -105,6 +106,14 @@ public:
 
     PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;
 
+    CSSRule* parentRuleInternal() const { return m_isInlineStyleDeclaration ? 0 : m_parent.rule; }
+    void clearParentRule() { ASSERT(!m_isInlineStyleDeclaration); m_parent.rule = 0; }
+    
+    StyledElement* parentElement() const { ASSERT(m_isInlineStyleDeclaration); return m_parent.element; }
+    void clearParentElement() { ASSERT(m_isInlineStyleDeclaration); m_parent.element = 0; }
+    
+    CSSStyleSheet* contextStyleSheet() const;
+    
     String asText() const;
 
 private:
@@ -117,6 +126,7 @@ private:
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 
     // CSSOM functions. Don't make these public.
+    virtual CSSRule* parentRule() const;
     virtual unsigned length() const;
     virtual String item(unsigned index) const;
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName);
@@ -153,11 +163,22 @@ private:
     bool removePropertiesInSet(const int* set, unsigned length, bool notifyChanged);
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
+    virtual CSSStyleSheet* parentStyleSheet() const { return contextStyleSheet(); }
 
     const CSSProperty* findPropertyWithId(int propertyId) const;
     CSSProperty* findPropertyWithId(int propertyId);
 
     Vector<CSSProperty, 4> m_properties;
+
+    bool m_strictParsing : 1;
+    bool m_isInlineStyleDeclaration : 1;
+
+    union Parent {
+        Parent(CSSRule* rule) : rule(rule) { }
+        Parent(StyledElement* element) : element(element) { }
+        CSSRule* rule;
+        StyledElement* element;
+    } m_parent;    
 };
 
 } // namespace WebCore

@@ -98,7 +98,7 @@ String CSSStyleRule::selectorText() const
 void CSSStyleRule::setSelectorText(const String& selectorText)
 {
     Document* doc = 0;
-    if (CSSStyleSheet* styleSheet = m_style->parentStyleSheet())
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
         doc = styleSheet->findDocument();
     if (!doc)
         return;

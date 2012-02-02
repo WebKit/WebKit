@@ -27,6 +27,7 @@
 #include "JSCSSStyleDeclarationCustom.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
@@ -193,7 +194,7 @@ static bool isCSSPropertyName(const Identifier& propertyIdentifier)
 {
     // FIXME: This mallocs a string for the property name and then throws it
     // away.  This shows up on peacekeeper's domDynamicCreationCreateElement.
-    return CSSStyleDeclaration::isPropertyName(cssPropertyName(propertyIdentifier));
+    return cssPropertyID(cssPropertyName(propertyIdentifier));
 }
 
 bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*, const Identifier& propertyName)
@@ -229,7 +230,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& prope
 {
     bool pixelOrPos;
     String prop = cssPropertyName(propertyName, &pixelOrPos);
-    if (!CSSStyleDeclaration::isPropertyName(prop))
+    if (!cssPropertyID(prop))
         return false;
 
     String propValue = valueToStringWithNullCheck(exec, value);

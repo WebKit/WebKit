@@ -48,7 +48,7 @@ public:
     String cssText() const;
 
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style) { ASSERT(style->parentRule() == this); m_style = style; }
+    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style) { ASSERT(style->parentRuleInternal() == this); m_style = style; }
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     CSSMutableStyleDeclaration* declaration() const { return m_style.get(); }
