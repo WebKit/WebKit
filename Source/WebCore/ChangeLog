@@ -1,3 +1,18 @@
+2012-02-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Make the tap highlighting work for all test cases
+        https://bugs.webkit.org/show_bug.cgi?id=77626
+
+        Reviewed by Simon Hausmann.
+
+        Clean up of the current code to make it more generic. Now uses
+        addFocusRingRects for finding the areas to highlight.
+
+        Tested by current manual tests.
+
+        * page/GestureTapHighlighter.cpp:
+        (WebCore::GestureTapHighlighter::pathForNodeHighlight):
+
 2012-02-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] atk_text_get_text_at_offset() sometimes fails to provide the correct line

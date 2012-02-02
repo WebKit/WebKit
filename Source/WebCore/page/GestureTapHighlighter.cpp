@@ -81,41 +81,42 @@ AffineTransform localToAbsoluteTransform(const RenderObject* o)
     return transform;
 }
 
-Path pathForRenderBox(RenderBox* o)
+inline bool contains(const LayoutRect& rect, int x)
 {
-    ASSERT(o);
-    const int rounding = 4;
-
-    LayoutRect contentBox;
-    LayoutRect paddingBox;
-    LayoutRect borderBox;
-
-    contentBox = o->contentBoxRect();
-    paddingBox = LayoutRect(
-            contentBox.x() - o->paddingLeft(),
-            contentBox.y() - o->paddingTop(),
-            contentBox.width() + o->paddingLeft() + o->paddingRight(),
-            contentBox.height() + o->paddingTop() + o->paddingBottom());
-    borderBox = LayoutRect(
-            paddingBox.x() - o->borderLeft(),
-            paddingBox.y() - o->borderTop(),
-            paddingBox.width() + o->borderLeft() + o->borderRight(),
-            paddingBox.height() + o->borderTop() + o->borderBottom());
-
-    FloatRect rect(borderBox);
-    rect.inflate(rounding);
-
-    rect.move(toLayoutSize(ownerFrameToMainFrameOffset(o)));
-
-    Path path;
-    FloatSize rounded(rounding * 1.8, rounding * 1.8);
-    path.addRoundedRect(rect, rounded);
-
-    return path;
+    return !rect.isEmpty() && x >= rect.x() && x <= rect.maxX();
 }
 
-void addRectWithRoundedCorners(Path& path, const LayoutRect& rect, bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
+inline bool strikes(const LayoutRect& a, const LayoutRect& b)
 {
+    return !a.isEmpty() && !b.isEmpty()
+        && a.x() <= b.maxX() && b.x() <= a.maxX()
+        && a.y() <= b.maxY() && b.y() <= a.maxY();
+}
+
+inline void shiftXEdgesToContainIfStrikes(LayoutRect& rect, const LayoutRect& other)
+{
+    int leftSide = rect.x();
+    int rightSide = rect.maxX();
+
+    if (!other.isEmpty() && strikes(rect, other)) {
+        leftSide = std::min(leftSide, other.x());
+        rightSide = std::max(rightSide, other.maxX());
+    }
+
+    rect.setX(leftSide);
+    rect.setWidth(rightSide - leftSide);
+}
+
+inline void addHighlightRect(Path& path, const LayoutRect& rect, const LayoutRect& prev, const LayoutRect& next)
+{
+    // The rounding check depends on the rects not intersecting eachother,
+    // or being contained for that matter.
+    ASSERT(!rect.intersects(prev));
+    ASSERT(!rect.intersects(next));
+
+    if (rect.isEmpty())
+        return;
+
     const int rounding = 4;
 
     FloatRect copy(rect);
@@ -126,62 +127,60 @@ void addRectWithRoundedCorners(Path& path, const LayoutRect& rect, bool topLeft,
     FloatSize squared(0, 0);
 
     path.addBeziersForRoundedRect(copy,
-            topLeft ? rounded : squared, topRight ? rounded : squared,
-            bottomLeft ? rounded : squared, bottomRight ? rounded : squared);
+            contains(prev, rect.x()) ? squared : rounded,
+            contains(prev, rect.maxX()) ? squared : rounded,
+            contains(next, rect.x()) ? squared : rounded,
+            contains(next, rect.maxX()) ? squared : rounded);
 }
 
-inline bool contains(LayoutRect rect, int x)
-{
-    return !rect.isEmpty() && x >= rect.x() && x <= rect.maxX();
-}
-
-Path pathForRenderInline(RenderInline* o)
+Path pathForRenderer(RenderObject* o)
 {
     ASSERT(o);
     Path path;
 
     Vector<LayoutRect> rects;
-    o->absoluteRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
+    o->addFocusRingRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
 
-    LayoutRect first = rects.size() ? rects.first() : LayoutRect();
-    LayoutRect last = rects.size() > 1 ? rects.last() : LayoutRect();
-    LayoutRect middle;
+    // The basic idea is to allow up to three different boxes in order to highlight
+    // text with line breaks more nicer than using a bounding box.
+
+    // Merge all center boxes (all but the first and the last).
+    LayoutRect mid;
     for (int i = 1; i < rects.size() - 1; ++i)
-        middle.uniteIfNonZero(rects.at(i));
+        mid.uniteIfNonZero(rects.at(i));
 
-    if (!middle.isEmpty()) {
-        int leftSide = middle.x();
-        int rightSide = middle.maxX();
+    Vector<LayoutRect> drawableRects;
 
-        if (!first.isEmpty()) {
-            leftSide = std::min(leftSide, first.x());
-            rightSide = std::max(rightSide, first.maxX());
-        }
-        if (!last.isEmpty()) {
-            leftSide = std::min(leftSide, last.x());
-            rightSide = std::max(rightSide, last.maxX());
-        }
+    if (!mid.isEmpty())
+        drawableRects.append(mid);
 
-        middle.setX(leftSide);
-        middle.setWidth(rightSide - leftSide);
+    // Add the first box, but merge it with the center boxes if it intersects.
+    if (rects.size() && !rects.first().isEmpty()) {
+        if (drawableRects.size() && drawableRects.last().intersects(rects.first()))
+            drawableRects.last().unite(rects.first());
+        else
+            drawableRects.prepend(rects.first());
     }
 
-    if (!first.isEmpty()) {
-        bool roundBottomLeft = !contains(middle, first.x()) && !contains(last, first.x());
-        bool roundBottomRight = !contains(middle, first.maxX()) && !contains(last, first.maxX());
-        addRectWithRoundedCorners(path, first, /* roundTopLeft */ true, /* roundTopRight */ true, roundBottomLeft, roundBottomRight);
+    // Add the last box, but merge it with the center boxes if it intersects.
+    if (rects.size() > 1 && !rects.last().isEmpty()) {
+        if (drawableRects.size() && drawableRects.last().intersects(rects.last()))
+            drawableRects.last().unite(rects.last());
+        else
+            drawableRects.append(rects.last());
     }
 
-    if (!middle.isEmpty()) {
-        bool roundTopLeft = !contains(first, middle.x());
-        bool roundBottomRight = !contains(last, middle.maxX());
-        addRectWithRoundedCorners(path, middle, roundTopLeft, /* roundTopRight */ false, /* roundBottomLeft */ false, roundBottomRight);
+    // Adjust middle to boundaries of first and last.
+    if (drawableRects.size() == 3) {
+        LayoutRect& middle = drawableRects.at(1);
+        shiftXEdgesToContainIfStrikes(middle, drawableRects.at(0));
+        shiftXEdgesToContainIfStrikes(middle, drawableRects.at(2));
     }
 
-    if (!last.isEmpty()) {
-        bool roundTopLeft = !contains(middle, last.x()) && !contains(first, last.x());
-        bool roundTopRight = !contains(middle, last.maxX()) && !contains(first, last.maxX());
-        addRectWithRoundedCorners(path, last, roundTopLeft, roundTopRight, /* roundBottomLeft */ true, /* roundBottomRight */ true);
+    for (int i = 0; i < drawableRects.size(); ++i) {
+        LayoutRect prev = (i - 1) >= 0 ? drawableRects.at(i - 1) : LayoutRect();
+        LayoutRect next = (i + 1) < drawableRects.size() ? drawableRects.at(i + 1) : LayoutRect();
+        addHighlightRect(path, drawableRects.at(i), prev, next);
     }
 
     return path;
@@ -199,12 +198,9 @@ Path pathForNodeHighlight(const Node* node)
     if (!renderer || (!renderer->isBox() && !renderer->isRenderInline()))
         return path;
 
-    if (renderer->isBox())
-        path = pathForRenderBox(toRenderBox(renderer));
-    else
-        path = pathForRenderInline(toRenderInline(renderer));
-
+    path = pathForRenderer(renderer);
     path.transform(localToAbsoluteTransform(renderer));
+
     return path;
 }
 
