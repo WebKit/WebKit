@@ -1,3 +1,17 @@
+2012-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Move the scrolling coordinator to page/scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=77590
+
+        Reviewed by Dan Bernstein.
+
+        Put scrolling related files in page/scrolling to avoid cluttering the page directory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp: Renamed from Source/WebCore/page/ScrollingCoordinator.cpp.
+        * page/scrolling/ScrollingCoordinator.h: Renamed from Source/WebCore/page/ScrollingCoordinator.h.
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm: Renamed from Source/WebCore/page/mac/ScrollingCoordinatorMac.mm.
+
 2012-02-01  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ObjCPrefix], [V8ConstructorTemplate], [allowAccessToNode],
