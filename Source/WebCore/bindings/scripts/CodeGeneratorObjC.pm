@@ -877,10 +877,8 @@ sub GenerateHeader
                 $typesToForwardDeclare{$param->type} = 1;
 
                 if ($parameterIndex >= 1) {
-                    my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
-                    $paramPrefix = $paramName unless defined($paramPrefix);
-                    $functionSig .= " $paramPrefix";
-                    $methodName .= $paramPrefix;
+                    $functionSig .= " $paramName";
+                    $methodName .= $paramName;
                 }
 
                 $functionSig .= ":($paramType)$paramName";
@@ -1504,9 +1502,7 @@ sub GenerateImplementation
                 }
 
                 if ($parameterIndex >= 1) {
-                    my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
-                    $paramPrefix = $param->name unless defined($paramPrefix);
-                    $functionSig .= " $paramPrefix";
+                    $functionSig .= " " . $param->name;
                 }
 
                 $functionSig .= ":($paramType)$paramName";

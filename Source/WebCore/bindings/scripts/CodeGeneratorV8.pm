@@ -705,7 +705,7 @@ sub IsConstructable
 {
     my $dataNode = shift;
 
-    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"V8ConstructorTemplate"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
+    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
 }
 
 sub IsConstructorTemplate
@@ -713,7 +713,7 @@ sub IsConstructorTemplate
     my $dataNode = shift;
     my $template = shift;
 
-    return ($dataNode->extendedAttributes->{"V8ConstructorTemplate"} && $dataNode->extendedAttributes->{"V8ConstructorTemplate"} eq $template) || ($dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template);
+    return $dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template;
 }
 
 sub GenerateDomainSafeFunctionGetter
@@ -865,9 +865,7 @@ END
     }
 
     # Generate security checks if necessary
-    if ($attribute->signature->extendedAttributes->{"allowAccessToNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->$attrName()))\n    return v8::Handle<v8::Value>();\n\n");
-    } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
+    if ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
         push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->contentDocument()))\n    return v8::Handle<v8::Value>();\n\n");
     }
 
@@ -875,10 +873,6 @@ END
     if ($useExceptions) {
         AddToImplIncludes("ExceptionCode.h");
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
-    }
-
-    if ($attribute->signature->extendedAttributes->{"v8referenceattr"}) {
-        $attrName = $attribute->signature->extendedAttributes->{"v8referenceattr"};
     }
 
     my $returnType = GetTypeFromSignature($attribute->signature);
@@ -3206,10 +3200,6 @@ sub GenerateFunctionCallString()
 
     my $isSVGTearOffType = ($codeGenerator->IsSVGTypeNeedingTearOff($returnType) and not $implClassName =~ /List$/);
     $nativeReturnType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($returnType) if $isSVGTearOffType;
-
-    if ($function->signature->extendedAttributes->{"v8implname"}) {
-        $name = $function->signature->extendedAttributes->{"v8implname"};
-    }
 
     if ($function->signature->extendedAttributes->{"ImplementationFunction"}) {
         $name = $function->signature->extendedAttributes->{"ImplementationFunction"};
