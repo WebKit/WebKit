@@ -1,3 +1,13 @@
+2012-02-02  Rakesh KN  <rakesh.kn@motorola.com>
+
+        hidden attribute on <input type=file /> suppresses the file selection dialog
+        https://bugs.webkit.org/show_bug.cgi?id=58208
+
+        Reviewed by Ryosuke Niwa.
+
+        * ManualTests/input-file-hidden-open-dialog-on-click.html: Added.
+        Adding manual test as the file dialog opens only in User gesture.
+
 2012-02-01  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] FFTFrame implementation

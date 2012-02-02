@@ -139,7 +139,7 @@ String FileInputType::valueMissingText() const
 
 void FileInputType::handleDOMActivateEvent(Event* event)
 {
-    if (element()->disabled() || !element()->renderer())
+    if (element()->disabled())
         return;
 
     if (!ScriptController::processingUserGesture())
