@@ -1,5 +1,14 @@
 2012-02-01  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] FFTFrame implementation
+        https://bugs.webkit.org/show_bug.cgi?id=73545
+
+        Reviewed by Chris Rogers.
+
+        * GNUmakefile.am: Remove libfftw compilation flags.
+
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] unittests/testloading crashes
         https://bugs.webkit.org/show_bug.cgi?id=77544
 

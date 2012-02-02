@@ -1,3 +1,13 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] FFTFrame implementation
+        https://bugs.webkit.org/show_bug.cgi?id=73545
+
+        Reviewed by Chris Rogers.
+
+        * configure.ac: Enable the WebAudio option again and remove
+        libfftw checks.
+
 2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkit-perf.appspot.com should accept test results without medians

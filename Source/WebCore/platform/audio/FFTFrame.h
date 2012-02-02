@@ -47,6 +47,13 @@
 #include "mkl_dfti.h"
 #endif // USE(WEBAUDIO_MKL)
 
+#if USE(WEBAUDIO_GSTREAMER)
+#include <glib.h>
+G_BEGIN_DECLS
+#include <gst/fft/gstfftf32.h>
+G_END_DECLS
+#endif // USE(WEBAUDIO_GSTREAMER)
+
 #if USE(WEBAUDIO_FFMPEG)
 struct RDFTContext;
 #endif // USE(WEBAUDIO_FFMPEG)
@@ -145,6 +152,14 @@ private:
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_FFMPEG)
+
+#if USE(WEBAUDIO_GSTREAMER)
+    GstFFTF32* m_fft;
+    GstFFTF32* m_inverseFft;
+    GstFFTF32Complex* m_complexData;
+    AudioFloatArray m_realData;
+    AudioFloatArray m_imagData;
+#endif // USE(WEBAUDIO_GSTREAMER)
 
 #endif // !USE_ACCELERATE_FFT
 };

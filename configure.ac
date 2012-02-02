@@ -784,7 +784,11 @@ AC_ARG_ENABLE(web_sockets,
 AC_MSG_RESULT([$enable_web_sockets])
 
 # check whether to enable Web Audio support
-enable_web_audio=no
+AC_MSG_CHECKING([whether to enable Web Audio support])
+AC_ARG_ENABLE(web_audio,
+              AC_HELP_STRING([--enable-web-audio],
+                             [enable support for Web Audio [default=no]]),
+              [],[enable_web_audio="no"])
 AC_MSG_RESULT([$enable_web_audio])
 
 # check whether to enable Web Timing support
@@ -1052,6 +1056,7 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
                      [gstreamer-$GST_API_VERSION >= $GSTREAMER_REQUIRED_VERSION
                      gstreamer-app-$GST_API_VERSION
                      gstreamer-audio-$GST_API_VERSION
+                     gstreamer-fft-$GST_API_VERSION
                      gstreamer-base-$GST_API_VERSION
                      gstreamer-interfaces-$GST_API_VERSION
                      gstreamer-pbutils-$GST_API_VERSION
@@ -1063,16 +1068,6 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
    AC_SUBST([GSTREAMER_LIBS])
 fi
 
-# check if libfftw is available
-if test "$enable_web_audio" = "yes"; then
-   PKG_CHECK_MODULES([LIBFFTW],
-                     [fftw3 >= $LIBFFTW_REQUIRED_VERSION
-                     fftw3f >= $LIBFFTW_REQUIRED_VERSION],
-                     [have_fftw=yes])
-
-    AC_SUBST([LIBFFTW_CFLAGS])
-    AC_SUBST([LIBFFTW_LIBS])
-fi
 
 if test "$with_accelerated_compositing" = "clutter"; then
    PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)
@@ -1174,6 +1169,7 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
+AM_CONDITIONAL([USE_WEBAUDIO_GSTREAMER], [test "$enable_web_audio" = "yes"])
 
 # ATSPI2 conditional
 AM_CONDITIONAL([HAVE_ATSPI2], [test "$have_atspi2" = "yes"])

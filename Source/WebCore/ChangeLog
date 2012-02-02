@@ -1,3 +1,30 @@
+2012-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] FFTFrame implementation
+        https://bugs.webkit.org/show_bug.cgi?id=73545
+
+        Reviewed by Chris Rogers.
+
+        FFTFrame implementation based on GStreamer's FFT processing
+        library.
+
+        No new tests, existing WebAudio tests cover this.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp: Added.
+        (WebCore::FFTFrame::FFTFrame):
+        (WebCore::FFTFrame::initialize):
+        (WebCore::FFTFrame::cleanup):
+        (WebCore::FFTFrame::~FFTFrame):
+        (WebCore::FFTFrame::multiply):
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+        (WebCore::FFTFrame::realData):
+        (WebCore::FFTFrame::imagData):
+
 2012-02-02  Kentaro Hara  <haraken@chromium.org>
 
         Rename [CheckFrameSecurity] and [SVGCheckSecurity] to [CheckAccessToNode]

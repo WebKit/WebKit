@@ -127,13 +127,13 @@ function checkTail1(data, reference, breakpoint) {
 
     // This threshold is experimentally determined by examining the
     // value of tail1MaxDecibels.
-    var threshold1 = -146.7;
+    var threshold1 = -129.7;
 
     var tail1MaxDecibels = linearToDecibel(tail1Max/refMax);
     if (tail1MaxDecibels <= threshold1) {
         testPassed("First part of tail of convolution is sufficiently small.");
     } else {
-        testFailed("First part of tail of convolution is not sufficiently small: " + tail1Max + " dB");
+        testFailed("First part of tail of convolution is not sufficiently small: " + tail1MaxDecibels + " dB");
         isZero = false;
     }
 

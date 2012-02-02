@@ -512,6 +512,10 @@ FEATURE_DEFINES += ENABLE_WEB_AUDIO=1
 webcore_cppflags += -DENABLE_WEB_AUDIO=1
 endif
 
+if USE_WEBAUDIO_GSTREAMER
+webcore_cppflags += -DWTF_USE_WEBAUDIO_GSTREAMER=1
+endif
+
 # ----
 # Web Sockets Support
 # ----
@@ -871,7 +875,6 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(HILDON_CFLAGS) \
-	$(LIBFFTW_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
