@@ -56,8 +56,8 @@ namespace WebCore {
             return m_workerContextWrapper.get();
         }
 
-        ScriptValue evaluate(const ScriptSourceCode&);
-        ScriptValue evaluate(const ScriptSourceCode&, ScriptValue* exception);
+        void evaluate(const ScriptSourceCode&);
+        void evaluate(const ScriptSourceCode&, ScriptValue* exception);
 
         void setException(ScriptValue);
 

@@ -70,26 +70,24 @@ WorkerScriptController::~WorkerScriptController()
     m_isolate->Dispose();
 }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
-    return evaluate(sourceCode, 0);
+    evaluate(sourceCode, 0);
 }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
 {
     if (isExecutionForbidden())
-        return ScriptValue();
+        return;
 
     WorkerContextExecutionState state;
-    ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startPosition(), &state);
+    m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startPosition(), &state);
     if (state.hadException) {
         if (exception)
             *exception = state.exception;
         else
             m_workerContext->reportException(state.errorMessage, state.lineNumber, state.sourceURL, 0);
     }
-
-    return result;
 }
 
 void WorkerScriptController::scheduleExecutionTermination()

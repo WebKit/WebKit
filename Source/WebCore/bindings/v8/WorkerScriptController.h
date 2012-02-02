@@ -55,8 +55,8 @@ namespace WebCore {
         WorkerContextExecutionProxy* proxy() { return m_proxy.get(); }
         WorkerContext* workerContext() { return m_workerContext; }
 
-        ScriptValue evaluate(const ScriptSourceCode&);
-        ScriptValue evaluate(const ScriptSourceCode&, ScriptValue* exception);
+        void evaluate(const ScriptSourceCode&);
+        void evaluate(const ScriptSourceCode&, ScriptValue* exception);
 
         void setException(ScriptValue);
 

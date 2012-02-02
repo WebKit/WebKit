@@ -109,24 +109,23 @@ void WorkerScriptController::initScript()
     ASSERT(asObject(m_workerContextWrapper->prototype())->globalObject() == m_workerContextWrapper);
 }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
     if (isExecutionForbidden())
-        return ScriptValue();
+        return;
 
     ScriptValue exception;
-    ScriptValue result(evaluate(sourceCode, &exception));
+    evaluate(sourceCode, &exception);
     if (exception.jsValue()) {
         JSLock lock(SilenceAssertionsOnly);
         reportException(m_workerContextWrapper->globalExec(), exception.jsValue());
     }
-    return result;
 }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
 {
     if (isExecutionForbidden())
-        return ScriptValue();
+        return;
 
     initScriptIfNeeded();
     JSLock lock(SilenceAssertionsOnly);
@@ -136,13 +135,13 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     m_workerContextWrapper->globalData().timeoutChecker.start();
 
     JSValue evaluationException;
-    JSValue returnValue = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
+    JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
 
     m_workerContextWrapper->globalData().timeoutChecker.stop();
 
     if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
         forbidExecution();
-        return ScriptValue();
+        return;
     }
 
     if (evaluationException) {
@@ -154,9 +153,6 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
         else
             *exception = ScriptValue(*m_globalData, evaluationException);
     }
-
-    return ScriptValue(*m_globalData, returnValue);
-
 }
 
 void WorkerScriptController::setException(ScriptValue exception)
