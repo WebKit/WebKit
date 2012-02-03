@@ -1,7 +1,4 @@
 if (this.importScripts) {
-    // FIXME: Change js-test-pre.js to use self in place of window where
-    // possible, so we can remove the next line.  http://webkit.org/b/76762
-    window = self;
     importScripts('../../../fast/js/resources/js-test-pre.js');
     importScripts('idb-worker-common.js');
     importScripts('shared.js');

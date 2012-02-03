@@ -1,6 +1,6 @@
 // svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
-if (window.layoutTestController)
-    layoutTestController.dumpAsText(window.enablePixelTesting);
+if (self.layoutTestController)
+    layoutTestController.dumpAsText(self.enablePixelTesting);
 
 var description, debug, successfullyParsed, errorMessage;
 
@@ -77,7 +77,7 @@ var description, debug, successfullyParsed, errorMessage;
     if (!isWorker())
         insertStyleSheet();
 
-    window.onerror = function(message)
+    self.onerror = function(message)
     {
         errorMessage = message;
     };
@@ -418,9 +418,9 @@ function isSuccessfullyParsed()
 function finishJSTest()
 {
     wasFinishJSTestCalled = true;
-    if (!window.wasPostTestScriptParsed)
+    if (!self.wasPostTestScriptParsed)
         return;
     isSuccessfullyParsed();
-    if (window.jsTestIsAsync && window.layoutTestController)
+    if (self.jsTestIsAsync && self.layoutTestController)
         layoutTestController.notifyDone();
 }
