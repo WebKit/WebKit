@@ -30,7 +30,7 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] PopStateEvent : Event {
-        readonly attribute [InitializedByConstructor, CustomGetter] DOMObject state;
+        readonly attribute [InitializedByEventConstructor, CustomGetter] DOMObject state;
     };
 #endif
 

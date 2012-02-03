@@ -34,9 +34,9 @@ module events {
         NoStaticTables,
         ConstructorTemplate=Event
     ] ErrorEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString message;
-        readonly attribute [InitializedByConstructor] DOMString filename;
-        readonly attribute [InitializedByConstructor] unsigned long lineno;
+        readonly attribute [InitializedByEventConstructor] DOMString message;
+        readonly attribute [InitializedByEventConstructor] DOMString filename;
+        readonly attribute [InitializedByEventConstructor] unsigned long lineno;
     };
 
 }

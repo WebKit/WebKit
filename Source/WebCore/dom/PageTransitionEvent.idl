@@ -28,7 +28,7 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] PageTransitionEvent : Event {
-        readonly attribute [InitializedByConstructor] boolean persisted;
+        readonly attribute [InitializedByEventConstructor] boolean persisted;
     };
 
 }

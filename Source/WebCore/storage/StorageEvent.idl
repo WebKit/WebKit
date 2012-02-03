@@ -28,11 +28,11 @@ module storage {
     interface [
         ConstructorTemplate=Event
     ] StorageEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString key;
-        readonly attribute [InitializedByConstructor, ConvertNullStringTo=Null] DOMString oldValue;
-        readonly attribute [InitializedByConstructor, ConvertNullStringTo=Null] DOMString newValue;
-        readonly attribute [InitializedByConstructor] DOMString url;
-        readonly attribute [InitializedByConstructor] Storage storageArea;
+        readonly attribute [InitializedByEventConstructor] DOMString key;
+        readonly attribute [InitializedByEventConstructor, ConvertNullStringTo=Null] DOMString oldValue;
+        readonly attribute [InitializedByEventConstructor, ConvertNullStringTo=Null] DOMString newValue;
+        readonly attribute [InitializedByEventConstructor] DOMString url;
+        readonly attribute [InitializedByEventConstructor] Storage storageArea;
 
         void initStorageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                               in [Optional=CallWithDefaultValue] boolean canBubbleArg, 

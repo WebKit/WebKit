@@ -29,7 +29,7 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] BeforeLoadEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString url;
+        readonly attribute [InitializedByEventConstructor] DOMString url;
     };
 
 }

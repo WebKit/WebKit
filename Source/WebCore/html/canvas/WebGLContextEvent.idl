@@ -29,7 +29,7 @@ module html {
         Conditional=WEBGL,
         ConstructorTemplate=Event
     ] WebGLContextEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString statusMessage;
+        readonly attribute [InitializedByEventConstructor] DOMString statusMessage;
     };
 
 }

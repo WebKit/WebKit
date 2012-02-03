@@ -3493,7 +3493,7 @@ END
 
             for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
                 my $attribute = @{$dataNode->attributes}[$index];
-                if ($attribute->signature->extendedAttributes->{"InitializedByConstructor"}) {
+                if ($attribute->signature->extendedAttributes->{"InitializedByEventConstructor"}) {
                     my $attributeName = $attribute->signature->name;
                     push(@implContent, <<END);
     if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeName}))

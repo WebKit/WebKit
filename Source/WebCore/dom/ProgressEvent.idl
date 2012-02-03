@@ -28,9 +28,9 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] ProgressEvent : Event {
-        readonly attribute [InitializedByConstructor] boolean lengthComputable;
-        readonly attribute [InitializedByConstructor] unsigned long long loaded;
-        readonly attribute [InitializedByConstructor] unsigned long long total;
+        readonly attribute [InitializedByEventConstructor] boolean lengthComputable;
+        readonly attribute [InitializedByEventConstructor] unsigned long long loaded;
+        readonly attribute [InitializedByEventConstructor] unsigned long long total;
     };
 
 }

@@ -28,8 +28,8 @@ module events {
                                  in [Optional=CallWithDefaultValue] boolean cancelable, 
                                  in [Optional=CallWithDefaultValue] DOMString oldURL, 
                                  in [Optional=CallWithDefaultValue] DOMString newURL); 
-        readonly attribute [InitializedByConstructor] DOMString oldURL;
-        readonly attribute [InitializedByConstructor] DOMString newURL;
+        readonly attribute [InitializedByEventConstructor] DOMString oldURL;
+        readonly attribute [InitializedByEventConstructor] DOMString newURL;
     };
 
 }

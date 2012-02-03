@@ -34,9 +34,9 @@ module events {
         NoStaticTables,
         ConstructorTemplate=Event
     ] CloseEvent : Event {
-        readonly attribute [InitializedByConstructor] boolean wasClean;
-        readonly attribute [InitializedByConstructor] unsigned short code;
-        readonly attribute [InitializedByConstructor, ConvertingNullStringTo=Undefined] DOMString reason;
+        readonly attribute [InitializedByEventConstructor] boolean wasClean;
+        readonly attribute [InitializedByEventConstructor] unsigned short code;
+        readonly attribute [InitializedByEventConstructor, ConvertingNullStringTo=Undefined] DOMString reason;
     };
 
 }

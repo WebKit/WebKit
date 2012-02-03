@@ -32,9 +32,9 @@ module events {
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;
         
-        readonly attribute [InitializedByConstructor] unsigned short orient;
-        readonly attribute [InitializedByConstructor] boolean horizontalOverflow;
-        readonly attribute [InitializedByConstructor] boolean verticalOverflow;
+        readonly attribute [InitializedByEventConstructor] unsigned short orient;
+        readonly attribute [InitializedByEventConstructor] boolean horizontalOverflow;
+        readonly attribute [InitializedByEventConstructor] boolean verticalOverflow;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void initOverflowEvent(in [Optional=CallWithDefaultValue] unsigned short orient,

@@ -28,8 +28,8 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] WebKitAnimationEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString animationName;
-        readonly attribute [InitializedByConstructor] double elapsedTime;
+        readonly attribute [InitializedByEventConstructor] DOMString animationName;
+        readonly attribute [InitializedByEventConstructor] double elapsedTime;
 };
 
 }

@@ -28,8 +28,8 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] WebKitTransitionEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMString propertyName;
-        readonly attribute [InitializedByConstructor] double elapsedTime;
+        readonly attribute [InitializedByEventConstructor] DOMString propertyName;
+        readonly attribute [InitializedByEventConstructor] double elapsedTime;
     };
 
 }

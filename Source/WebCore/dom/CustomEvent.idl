@@ -30,7 +30,7 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] CustomEvent : Event {
-        readonly attribute [InitializedByConstructor] DOMObject detail;
+        readonly attribute [InitializedByEventConstructor] DOMObject detail;
 
         void initCustomEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                              in [Optional=CallWithDefaultValue] boolean canBubbleArg, 

@@ -34,6 +34,6 @@ module test {
     ] TestEventConstructor {
         // Attributes
         readonly attribute DOMString attr1;
-        readonly attribute [InitializedByConstructor] DOMString attr2;
+        readonly attribute [InitializedByEventConstructor] DOMString attr2;
     };
 }
