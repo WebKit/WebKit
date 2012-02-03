@@ -53,6 +53,8 @@ function checkSampleAccuracy(event) {
     var bufferDataR = buffer.getChannelData(1);
 
     var success = true;
+    var impulseCount = 0;
+    var badOffsetCount = false;
     
     // Go through every sample and make sure it's 0, except at positions in sampleOffsets.
     for (var i = 0; i < buffer.length; ++i) {
@@ -72,13 +74,25 @@ function checkSampleAccuracy(event) {
                     break;
                 }
             }
-            
+            ++impulseCount;
             if (!found) {
-                testFailed("Non-zero sample found at wrong sample offset.");
+                testFailed("Non-zero sample found at sample offset " + i);
                 success = false;
-                break;
+                ++badOffsetCount;
             }
         }
+    }
+
+    if (impulseCount == sampleOffsets.length) {
+        if (badOffsetCount == 0) {
+            testPassed("Expected number of events found.");
+        } else {
+            testFailed("Expected number of events found, but " + badOffsetCount + " are at incorrect offsets.");
+            success = false;
+        }
+    } else {
+        testFailed("Expected " + sampleOffsets.length + " impulses but only found " + impulseCount);
+        success = false;
     }
 
     if (success) {
@@ -103,7 +117,7 @@ function runTest() {
     createImpulse();    
 
     for (var i = 0; i < sampleOffsets.length; ++i) {
-        var timeInSeconds = sampleOffsets[i] * sampleRate;
+        var timeInSeconds = sampleOffsets[i] / sampleRate;
         playNote(timeInSeconds);
     }
     
