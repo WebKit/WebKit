@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/note-grain-on-testing.js"></script>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test noteGrainOn offset rendering.");
+
+      // To test noteGrainOn, a single ramp signal is created.
+      // Various sections of the ramp are rendered by noteGrainOn() at
+      // different times, and we verify that the actual output
+      // consists of the correct section of the ramp at the correct
+      // time.
+      
+      var linearRampBuffer;
+
+      // Array of the grain offset used for each ramp played.
+      var grainOffsetTime = [];
+
+      // Verify the received signal is a ramp from the correct section
+      // of our ramp signal.
+      function verifyGrain(renderedData, startFrame, endFrame, grainIndex) {
+          var grainOffsetFrame = timeToSampleFrame(grainOffsetTime[grainIndex], sampleRate);
+          var grainFrameLength = endFrame - startFrame;
+          var ramp = linearRampBuffer.getChannelData(0);
+          var isCorrect = true;
+
+          var expected;
+          var actual;
+          var frame;
+      
+          for (var k = 0; k < grainFrameLength; ++k) {
+              if (renderedData[startFrame + k] != ramp[grainOffsetFrame + k]) {
+                  expected = ramp[grainOffsetFrame + k];
+                  actual = renderedData[startFrame + k];
+                  frame = startFrame + k;
+                  isCorrect = false;
+                  break;
+              }
+          }
+          return { verified: isCorrect,
+                   expected : expected ,
+                   actual : actual,
+                   frame : frame };
+      }
+      
+      function checkResult(event) {
+          var buffer = event.renderedBuffer;
+          renderedData = buffer.getChannelData(0);
+          var nSamples = renderedData.length;
+
+          var success = true;
+
+          // Number of grains that we found that have incorrect data.
+          var invalidGrainDataCount = 0;
+      
+          var startEndFrames = findStartAndEndSamples(renderedData);
+
+          // Verify the start and stop times.  Not strictly needed for
+          // this test, but it's useful to know that if the ramp data
+          // appears to be incorrect.
+          success = success && verifyStartAndEndFrames(startEndFrames);
+
+          // Loop through each of the rendered grains and check that
+          // each grain contains our expected ramp.
+          for (var k = 0; k < startEndFrames.start.length; ++k) {
+              // Verify that the rendered data matches the expected
+              // section of our ramp signal.
+              var result = verifyGrain(renderedData, startEndFrames.start[k], startEndFrames.end[k], k);
+
+              if (!result.verified) {
+                  testFailed("Grain " + k + " incorrect.  Expected " + result.expected + " but received " + result.actual + " at sample frame " + result.frame);
+                  ++invalidGrainDataCount;
+                  success = false;
+              }
+          }
+          
+          if (!invalidGrainDataCount) {
+              testPassed("All " + numberOfTests + " grains contained the correct data.");
+          } else {
+              testFailed(invalidGrainDataCount + " grains out of " + numberOfTests + " did not contain the expected data.");
+              success = false;
+          }
+      
+          if (success) {
+              testPassed("noteGrainOn offset rendering tests passed.");
+          } else {
+              testFailed("noteGrainOn offset rendering tests failed.");
+          }
+
+          finishJSTest();
+      }
+
+      function runTest() {
+          if (window.layoutTestController) {
+              layoutTestController.dumpAsText();
+              layoutTestController.waitUntilDone();
+          }
+
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitAudioContext(2, sampleRate * renderTime, sampleRate);
+
+          // Create a linear ramp for testing noteGrainOn.
+          linearRampBuffer = createSignalBuffer(context,
+                                                function(k) {
+                                                    // Want the ramp to start
+                                                    // with 1, not 0.
+                                                    return k + 1;
+                                                });    
+
+          var grainInfo = playAllGrains(context, linearRampBuffer, numberOfTests);
+
+          grainOffsetTime = grainInfo.grainOffsetTimes;
+
+          context.oncomplete = checkResult;
+          context.startRendering();
+      }
+      
+      runTest();
+      successfullyParsed = true;
+
+    </script>
+
+    <script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

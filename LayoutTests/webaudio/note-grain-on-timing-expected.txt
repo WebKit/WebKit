@@ -2,9 +2,9 @@ Test timing of noteGrainOn.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS Found all 100 pulses.
-PASS All 100 square pulses started at the correct time.
-PASS All 100 square pulses ended at the correct time.
+PASS Found all 100 grains.
+PASS All 100 grains started at the correct time.
+PASS All 100 grains ended at the correct time.
 PASS noteGrainOn timing tests passed.
 PASS successfullyParsed is true
 

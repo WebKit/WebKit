@@ -125,3 +125,11 @@ function timeToSampleFrame(time, sampleRate) {
     return Math.floor(0.5 + time * sampleRate);
 }
 
+// Compute the number of sample frames consumed by noteGrainOn with
+// the specified |grainOffset|, |duration|, and |sampleRate|.
+function grainLengthInSampleFrames(grainOffset, duration, sampleRate) {
+    var startFrame = timeToSampleFrame(grainOffset, sampleRate);
+    var endFrame = timeToSampleFrame(grainOffset + duration, sampleRate);
+
+    return endFrame - startFrame;
+}
