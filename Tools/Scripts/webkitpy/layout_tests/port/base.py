@@ -468,18 +468,15 @@ class Port(object):
 
         reftest_list = self._get_reftest_list(test_name)
         if not reftest_list:
-            expected_filenames = [('==', self.expected_filename(test_name, '.html')), ('!=', self.expected_filename(test_name, '-mismatch.html'))]
-            return [(expectation, filename) for expectation, filename in expected_filenames if self._filesystem.exists(filename)]
+            reftest_list = []
+            for expectation, prefix in (('==', ''), ('!=', '-mismatch')):
+                for extention in Port._supported_file_extensions:
+                    path = self.expected_filename(test_name, prefix + extention)
+                    if self._filesystem.exists(path):
+                        reftest_list.append((expectation, path))
+            return reftest_list
 
         return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
-
-    def is_reftest(self, test_name):
-        reftest_list = self._get_reftest_list(test_name)
-        if not reftest_list:
-            has_expected = self._filesystem.exists(self.expected_filename(test_name, '.html'))
-            return has_expected or self._filesystem.exists(self.expected_filename(test_name, '-mismatch.html'))
-        filename = self._filesystem.join(self.layout_tests_dir(), test_name)
-        return filename in reftest_list
 
     def tests(self, paths):
         """Return the list of tests found."""

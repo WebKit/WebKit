@@ -203,7 +203,7 @@ class MockDRT(object):
         else:
             test_name = self._port.relative_test_filename(uri)
 
-        is_reftest = (self._port.is_reftest(test_name) or
+        is_reftest = (self._port.reference_files(test_name) or
                       test_name.endswith('-expected.html') or
                       test_name.endswith('-mismatch.html'))
         return DriverInput(test_name, 0, checksum, is_reftest)
@@ -267,7 +267,7 @@ class MockChromiumDRT(MockDRT):
             checksum = None
 
         test_name = self._driver.uri_to_test(uri)
-        is_reftest = (self._port.is_reftest(test_name) or
+        is_reftest = (self._port.reference_files(test_name) or
                       test_name.endswith('-expected.html') or
                       test_name.endswith('-mismatch.html'))
 

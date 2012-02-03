@@ -1,5 +1,27 @@
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Ref Tests should support plain SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=77685
+
+        Reviewed by Tony Chang.
+
+        Don't assume reference files always use .html as the extension.
+        Instead, use the list of supported extension to look for -expected.* and -mismatch.*
+
+        Also fix various bugs in MockFileSystem and TestPort.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.isdir):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.reference_files):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_is_test_file):
+        (PortTest.test_reference_files):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestInstance.__init__):
+
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         perf-o-matic should store chromium svn revision
         https://bugs.webkit.org/show_bug.cgi?id=77725
 

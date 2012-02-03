@@ -180,7 +180,7 @@ class MockFileSystem(object):
         # to a different thread and potentially modifying the dict in
         # mid-iteration.
         files = self.files.keys()[:]
-        result = any(f.startswith(path) for f in files)
+        result = any(f.startswith(path) and len(self.split(f)[0]) >= len(path) for f in files)
         if result:
             self.dirs.add(path)
         return result

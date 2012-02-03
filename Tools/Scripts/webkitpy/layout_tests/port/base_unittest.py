@@ -324,10 +324,15 @@ class PortTest(unittest.TestCase):
         filesystem = MockFileSystem()
         self.assertTrue(Port._is_test_file(filesystem, '', 'foo.html'))
         self.assertTrue(Port._is_test_file(filesystem, '', 'foo.shtml'))
+        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.svg'))
         self.assertTrue(Port._is_test_file(filesystem, '', 'test-ref-test.html'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo.png'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.svg'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.xht'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.svg'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.xhtml'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo-ref.html'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.html'))
         self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.xht'))
@@ -349,6 +354,12 @@ class PortTest(unittest.TestCase):
         self.assertEqual(reftest_list, {'bar/test.html': [('==', 'bar/test-ref.html')],
             'bar/test-2.html': [('!=', 'bar/test-notref.html')],
             'bar/test-3.html': [('==', 'bar/test-ref.html'), ('==', 'bar/test-ref2.html'), ('!=', 'bar/test-notref.html')]})
+
+    def test_reference_files(self):
+        port = self.make_port(with_tests=True)
+        self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', '/test.checkout/LayoutTests/passes/svgreftest-expected.svg')])
+        self.assertEqual(port.reference_files('passes/xhtreftest.svg'), [('==', '/test.checkout/LayoutTests/passes/xhtreftest-expected.html')])
+        self.assertEqual(port.reference_files('passes/phpreftest.php'), [('!=', '/test.checkout/LayoutTests/passes/phpreftest-expected-mismatch.svg')])
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())

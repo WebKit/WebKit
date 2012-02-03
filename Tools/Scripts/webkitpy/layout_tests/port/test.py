@@ -44,7 +44,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 class TestInstance(object):
     def __init__(self, name):
         self.name = name
-        self.base = name[(name.rfind("/") + 1):name.rfind(".html")]
+        self.base = name[(name.rfind("/") + 1):name.rfind(".")]
         self.crash = False
         self.web_process_crash = False
         self.exception = False
@@ -182,6 +182,9 @@ layer at (0,0) size 800x34
     # For reftests.
     tests.add_reftest('passes/reftest.html', 'passes/reftest-expected.html', same_image=True)
     tests.add_reftest('passes/mismatch.html', 'passes/mismatch-expected-mismatch.html', same_image=False)
+    tests.add_reftest('passes/svgreftest.svg', 'passes/svgreftest-expected.svg', same_image=True)
+    tests.add_reftest('passes/xhtreftest.xht', 'passes/xhtreftest-expected.html', same_image=True)
+    tests.add_reftest('passes/phpreftest.php', 'passes/phpreftest-expected-mismatch.svg', same_image=False)
     tests.add_reftest('failures/expected/reftest.html', 'failures/expected/reftest-expected.html', same_image=False)
     tests.add_reftest('failures/expected/mismatch.html', 'failures/expected/mismatch-expected-mismatch.html', same_image=True)
     tests.add_reftest('failures/unexpected/reftest.html', 'failures/unexpected/reftest-expected.html', same_image=False)
@@ -292,7 +295,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
     # Add each test and the expected output, if any.
     test_list = unit_test_list()
     for test in test_list.tests.values():
-        add_file(test, '.html', '')
+        add_file(test, test.name[test.name.rfind('.'):], '')
         if test.is_reftest:
             continue
         if test.actual_audio:
