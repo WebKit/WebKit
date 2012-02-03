@@ -89,8 +89,9 @@ HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
 bool HTMLSummaryElement::isMainSummary() const
 {
     if (HTMLDetailsElement* details = detailsElement())
-        return details->mainSummary() == this;
-    return 0;
+        return details->findMainSummary() == this;
+
+    return false;
 }
 
 static bool isClickableControl(Node* node)

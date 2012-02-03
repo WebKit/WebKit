@@ -28,37 +28,20 @@ namespace WebCore {
 class HTMLDetailsElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document* document);
-    Node* mainSummary() const { return m_mainSummary; }
     void toggleOpen();
 
+    Element* findMainSummary() const;
+
 private:
-    enum RefreshRenderer {
-        RefreshRendererAllowed,
-        RefreshRendererSupressed,
-    };
-
-    enum SummaryType {
-        NoSummary,
-        DefaultSummary,
-        ForwardingSummary
-    };
-
     HTMLDetailsElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta);
-    virtual void finishParsingChildren();
 
     void parseMappedAttribute(Attribute*);
     bool childShouldCreateRenderer(Node*) const;
 
-    Node* ensureMainSummary();
-    void refreshMainSummary(RefreshRenderer);
-    void ensureShadowSubtreeOf(SummaryType);
     void createShadowSubtree();
 
-    SummaryType m_summaryType;
-    Node* m_mainSummary;
     bool m_isOpen;
 
 };
