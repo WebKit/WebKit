@@ -56,7 +56,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
     }
 
     ResourceRequest request(url);
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
     request.setTargetType(ResourceRequest::TargetIsImage);
 #endif
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
@@ -75,7 +75,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
 void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destinationURL)
 {
     ResourceRequest request(pingURL);
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
     request.setTargetType(ResourceRequest::TargetIsSubresource);
 #endif
     request.setHTTPMethod("POST");
@@ -106,7 +106,7 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
 void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
     request.setTargetType(ResourceRequest::TargetIsSubresource);
 #endif
     request.setHTTPMethod("POST");

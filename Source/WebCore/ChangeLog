@@ -1,3 +1,23 @@
+2012-02-03  Rob Buis  <rbuis@rim.com>
+
+        Upstream targetType usage on ResourceRequest for BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=77649
+
+        Reviewed by Antonio Gomes.
+
+        Upstream bits that make use of targetType enum.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::reportContentSecurityPolicyViolation):
+        * platform/network/blackberry/ResourceRequest.h:
+        (ResourceRequest):
+        (WebCore::ResourceRequest::targetType):
+        (WebCore::ResourceRequest::setTargetType):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2012-02-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Ensure timers and other active DOM objects do not fire in suspended documents.
