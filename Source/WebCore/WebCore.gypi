@@ -2097,8 +2097,8 @@
             'css/ShadowValue.h',
             'css/StyleMedia.cpp',
             'css/StyleMedia.h',
-            'css/StylePropertySet.cpp'
-            'css/StylePropertySet.h'
+            'css/StylePropertySet.cpp',
+            'css/StylePropertySet.h',
             'css/StyleSheet.cpp',
             'css/StyleSheet.h',
             'css/StyleSheetList.cpp',

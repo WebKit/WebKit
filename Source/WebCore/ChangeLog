@@ -1,3 +1,9 @@
+2012-02-03  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed compile fix for chromium - add commas after entries in list in WebCore.gypi
+
+        * WebCore.gypi:
+
 2012-02-03  Andreas Kling  <awesomekling@apple.com>
 
         Unreviewed build fix attempt after r106695.
