@@ -171,11 +171,11 @@ module test {
         static [Conditional=Condition1] void overloadedMethod1(in DOMString type);
 
 #if defined(TESTING_V8)
-        // 'EnabledAtRuntime' methods and attributes.
-        [EnabledAtRuntime] void enabledAtRuntimeMethod1(in int intArg);
-        [EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in int intArg);
-        attribute [EnabledAtRuntime] long enabledAtRuntimeAttr1;
-        attribute [EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
+        // 'V8EnabledAtRuntime' methods and attributes.
+        [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in int intArg);
+        [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in int intArg);
+        attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
+        attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
 #endif
 
 

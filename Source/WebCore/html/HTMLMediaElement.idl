@@ -93,28 +93,28 @@ module html {
 
 #if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
     // URL passed to src attribute to enable the media source logic.
-    readonly attribute [EnabledAtRuntime=webkitMediaSource, URL] DOMString webkitMediaSourceURL;
+    readonly attribute [V8EnabledAtRuntime=webkitMediaSource, URL] DOMString webkitMediaSourceURL;
 
     // Appends media to to the source.
-    [EnabledAtRuntime=webkitMediaSource] void webkitSourceAppend(in Uint8Array data) raises (DOMException);
+    [V8EnabledAtRuntime=webkitMediaSource] void webkitSourceAppend(in Uint8Array data) raises (DOMException);
 
     // Signals the end of stream.
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NETWORK_ERR = 1; // A network error triggered end of stream.
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short EOS_DECODE_ERR = 2; // A decode error triggered end of stream.
-    [EnabledAtRuntime=webkitMediaSource] void webkitSourceEndOfStream(in unsigned short status) raises (DOMException);
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NETWORK_ERR = 1; // A network error triggered end of stream.
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_DECODE_ERR = 2; // A decode error triggered end of stream.
+    [V8EnabledAtRuntime=webkitMediaSource] void webkitSourceEndOfStream(in unsigned short status) raises (DOMException);
 
     // Indicates the current state of the media source.
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_CLOSED = 0;
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_OPEN = 1;
-    const [EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_ENDED = 2;
-    readonly attribute [EnabledAtRuntime=webkitMediaSource] unsigned short webkitSourceState;
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_CLOSED = 0;
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_OPEN = 1;
+    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_ENDED = 2;
+    readonly attribute [V8EnabledAtRuntime=webkitMediaSource] unsigned short webkitSourceState;
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-    [EnabledAtRuntime=webkitVideoTrack] TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
+    [V8EnabledAtRuntime=webkitVideoTrack] TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
         raises (DOMException);
-    readonly attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
+    readonly attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
 
     attribute [Reflect, TreatNullAs=EmptyString, ConvertNullStringToNull] DOMString mediaGroup;

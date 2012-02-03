@@ -27,7 +27,7 @@
 module html {
     interface [
         Conditional=SHADOW_DOM,
-        EnabledAtRuntime=shadowDOM
+        V8EnabledAtRuntime=shadowDOM
     ] HTMLContentElement : HTMLElement {
         attribute [Reflect] DOMString select;
     };

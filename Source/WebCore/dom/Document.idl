@@ -241,10 +241,10 @@ module core {
             raises(DOMException);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-        readonly attribute [EnabledAtRuntime] boolean webkitIsFullScreen;
-        readonly attribute [EnabledAtRuntime] boolean webkitFullScreenKeyboardInputAllowed;
-        readonly attribute [EnabledAtRuntime] Element webkitCurrentFullScreenElement;
-        [EnabledAtRuntime] void webkitCancelFullScreen();
+        readonly attribute [V8EnabledAtRuntime] boolean webkitIsFullScreen;
+        readonly attribute [V8EnabledAtRuntime] boolean webkitFullScreenKeyboardInputAllowed;
+        readonly attribute [V8EnabledAtRuntime] Element webkitCurrentFullScreenElement;
+        [V8EnabledAtRuntime] void webkitCancelFullScreen();
 #endif
 
         WebKitNamedFlow webkitGetFlowByName(in DOMString name);
@@ -316,16 +316,16 @@ module core {
         attribute [NotEnumerable] EventListener onsearch;
         attribute [NotEnumerable] EventListener onselectstart;
         attribute [NotEnumerable] EventListener onselectionchange;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchstart;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchstart;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchmove;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchend;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchcancel;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-        [ReturnsNew, EnabledAtRuntime] Touch createTouch(in [Optional=CallWithDefaultValue] DOMWindow window,
+        [ReturnsNew, V8EnabledAtRuntime] Touch createTouch(in [Optional=CallWithDefaultValue] DOMWindow window,
                                                          in [Optional=CallWithDefaultValue] EventTarget target,
                                                          in [Optional=CallWithDefaultValue] long identifier,
                                                          in [Optional=CallWithDefaultValue] long pageX,
@@ -337,7 +337,7 @@ module core {
                                                          in [Optional=CallWithDefaultValue] float webkitRotationAngle,
                                                          in [Optional=CallWithDefaultValue] float webkitForce)
             raises (DOMException);
-        [ReturnsNew, EnabledAtRuntime, Custom] TouchList createTouchList()
+        [ReturnsNew, V8EnabledAtRuntime, Custom] TouchList createTouchList()
             raises (DOMException);
 #endif
 

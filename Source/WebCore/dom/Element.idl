@@ -130,7 +130,7 @@ module core {
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         const unsigned short ALLOW_KEYBOARD_INPUT = 1;
-        [EnabledAtRuntime] void webkitRequestFullScreen(in [Optional=CallWithDefaultValue] unsigned short flags);
+        [V8EnabledAtRuntime] void webkitRequestFullScreen(in [Optional=CallWithDefaultValue] unsigned short flags);
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
@@ -199,10 +199,10 @@ module core {
         attribute [NotEnumerable] EventListener onreset;
         attribute [NotEnumerable] EventListener onsearch;
         attribute [NotEnumerable] EventListener onselectstart;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchstart;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
-        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchstart;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchmove;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchend;
+        attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchcancel;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
 #endif

@@ -36,7 +36,7 @@ module window {
     ] DOMWindowWebSocket {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
         attribute CloseEventConstructor CloseEvent;
-        attribute [JSCCustomGetter, EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
+        attribute [JSCCustomGetter, V8EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
     };
 

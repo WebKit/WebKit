@@ -42,7 +42,7 @@ module core {
         [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
             raises(DOMException);
 
-        readonly attribute [Conditional=DATA_TRANSFER_ITEMS, EnabledAtRuntime=DataTransferItems] DataTransferItemList items;
+        readonly attribute [Conditional=DATA_TRANSFER_ITEMS, V8EnabledAtRuntime=DataTransferItems] DataTransferItemList items;
     };
 
 }

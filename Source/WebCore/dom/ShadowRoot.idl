@@ -28,7 +28,7 @@ module core {
 
     interface [
         Conditional=SHADOW_DOM,
-        EnabledAtRuntime=shadowDOM,
+        V8EnabledAtRuntime=shadowDOM,
         Constructor(in Element host),
         ConstructorRaisesException
     ] ShadowRoot : DocumentFragment {

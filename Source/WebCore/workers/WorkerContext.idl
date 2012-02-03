@@ -50,9 +50,9 @@ module threads {
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
                  attribute [Replaceable] WorkerNavigator navigator;
 #if defined(ENABLE_SQL_DATABASE) && ENABLE_SQL_DATABASE
-        [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        [V8EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
-        [EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        [V8EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
 
@@ -77,7 +77,7 @@ module threads {
 
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         // Notification interface
-        readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
+        readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
@@ -91,7 +91,7 @@ module threads {
         attribute [JSCCustomGetter] EventSourceConstructor EventSource;
         attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
 #if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
-        attribute [JSCCustomGetter,EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
+        attribute [JSCCustomGetter,V8EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 #endif
 
@@ -106,13 +106,13 @@ module threads {
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         const unsigned short TEMPORARY = 0;
         const unsigned short PERSISTENT = 1;
-        [EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-        [EnabledAtRuntime=FileSystem] DOMFileSystemSync webkitRequestFileSystemSync(in unsigned short type, in long long size) raises (FileException);
-        [EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-        [EnabledAtRuntime=FileSystem] EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
+        [V8EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+        [V8EnabledAtRuntime=FileSystem] DOMFileSystemSync webkitRequestFileSystemSync(in unsigned short type, in long long size) raises (FileException);
+        [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+        [V8EnabledAtRuntime=FileSystem] EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
 
-                 attribute [EnabledAtRuntime=FileSystem] FileErrorConstructor FileError;
-                 attribute [EnabledAtRuntime=FileSystem] FileExceptionConstructor FileException;
+                 attribute [V8EnabledAtRuntime=FileSystem] FileErrorConstructor FileError;
+                 attribute [V8EnabledAtRuntime=FileSystem] FileExceptionConstructor FileException;
 #endif
 
         attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
@@ -127,18 +127,18 @@ module threads {
         attribute Float64ArrayConstructor Float64Array; // Usable with new operator
         attribute DataViewConstructor DataView; // Usable with new operator
 #if defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE
-        readonly attribute [EnabledAtRuntime] IDBFactory webkitIndexedDB;
+        readonly attribute [V8EnabledAtRuntime] IDBFactory webkitIndexedDB;
 
-        attribute [EnabledAtRuntime] IDBCursorConstructor webkitIDBCursor;
-        attribute [EnabledAtRuntime] IDBDatabaseConstructor webkitIDBDatabase;
-        attribute [EnabledAtRuntime] IDBDatabaseErrorConstructor webkitIDBDatabaseError;
-        attribute [EnabledAtRuntime] IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
-        attribute [EnabledAtRuntime] IDBFactoryConstructor webkitIDBFactory;
-        attribute [EnabledAtRuntime] IDBIndexConstructor webkitIDBIndex;
-        attribute [EnabledAtRuntime] IDBKeyRangeConstructor webkitIDBKeyRange;
-        attribute [EnabledAtRuntime] IDBObjectStoreConstructor webkitIDBObjectStore;
-        attribute [EnabledAtRuntime] IDBRequestConstructor webkitIDBRequest;
-        attribute [EnabledAtRuntime] IDBTransactionConstructor webkitIDBTransaction;
+        attribute [V8EnabledAtRuntime] IDBCursorConstructor webkitIDBCursor;
+        attribute [V8EnabledAtRuntime] IDBDatabaseConstructor webkitIDBDatabase;
+        attribute [V8EnabledAtRuntime] IDBDatabaseErrorConstructor webkitIDBDatabaseError;
+        attribute [V8EnabledAtRuntime] IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
+        attribute [V8EnabledAtRuntime] IDBFactoryConstructor webkitIDBFactory;
+        attribute [V8EnabledAtRuntime] IDBIndexConstructor webkitIDBIndex;
+        attribute [V8EnabledAtRuntime] IDBKeyRangeConstructor webkitIDBKeyRange;
+        attribute [V8EnabledAtRuntime] IDBObjectStoreConstructor webkitIDBObjectStore;
+        attribute [V8EnabledAtRuntime] IDBRequestConstructor webkitIDBRequest;
+        attribute [V8EnabledAtRuntime] IDBTransactionConstructor webkitIDBTransaction;
 #endif
     };
 

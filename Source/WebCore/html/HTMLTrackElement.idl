@@ -26,7 +26,7 @@
 module html {
     interface [
         Conditional=VIDEO_TRACK,
-        EnabledAtRuntime=webkitVideoTrack
+        V8EnabledAtRuntime=webkitVideoTrack
     ] HTMLTrackElement : HTMLElement {
         attribute [Reflect, URL] DOMString src;
         attribute DOMString kind;

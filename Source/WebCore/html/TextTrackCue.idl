@@ -27,7 +27,7 @@ module html {
 
     interface [
         Conditional=VIDEO_TRACK,
-        EnabledAtRuntime=webkitVideoTrack,
+        V8EnabledAtRuntime=webkitVideoTrack,
         GenerateNativeConverter,
         Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=CallWithDefaultValue] DOMString settings, in [Optional=CallWithDefaultValue] boolean pauseOnExit),
         CallWith=ScriptExecutionContext,

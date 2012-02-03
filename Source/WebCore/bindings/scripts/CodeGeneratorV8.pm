@@ -370,7 +370,7 @@ END
 END
         }
 
-        if ($attrExt->{"EnabledAtRuntime"}) {
+        if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $function);
         }
     }
@@ -398,7 +398,7 @@ END
     static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
         }
-        if ($attrExt->{"EnabledAtRuntime"}) {
+        if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);
         }
     }
@@ -2349,7 +2349,7 @@ sub GenerateImplementation
 
         if ($interfaceName eq "DOMWindow" && $attribute->signature->extendedAttributes->{"V8Unforgeable"}) {
             push(@disallowsShadowing, $attribute);
-        } elsif ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+        } elsif ($attribute->signature->extendedAttributes->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);
         } else {
             push(@normal, $attribute);
@@ -2386,7 +2386,7 @@ sub GenerateImplementation
         if ($function->isStatic) {
             next;
         }
-        if ($attrExt->{"EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
+        if ($attrExt->{"V8EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
             next;
         }
         if ($attrExt->{"DoNotCheckDomainSecurity"} &&
@@ -2424,7 +2424,7 @@ END
         my $value = $constant->value;
         my $attrExt = $constant->extendedAttributes;
         my $conditional = $attrExt->{"Conditional"};
-        if ($attrExt->{"EnabledAtRuntime"}) {
+        if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@constantsEnabledAtRuntime, $constant);
         } else {
             # FIXME: we need the static_cast here only because of one constant, NodeFilter.idl
@@ -2488,7 +2488,7 @@ static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Pe
 
     v8::Local<v8::Signature> defaultSignature;
 END
-    if ($dataNode->extendedAttributes->{"EnabledAtRuntime"}) {
+    if ($dataNode->extendedAttributes->{"V8EnabledAtRuntime"}) {
         my $enable_function = GetRuntimeEnableFunctionName($dataNode);
         push(@implContent, <<END);
     if (!${enable_function}())
@@ -2607,7 +2607,7 @@ END
         }
 
         my $conditional = "";
-        if ($attrExt->{"EnabledAtRuntime"}) {
+        if ($attrExt->{"V8EnabledAtRuntime"}) {
             # Only call Set()/SetAccessor() if this method should be enabled
             my $enable_function = GetRuntimeEnableFunctionName($function->signature);
             $conditional = "if (${enable_function}())\n        ";
@@ -3861,8 +3861,8 @@ sub GetRuntimeEnableFunctionName
 {
     my $signature = shift;
 
-    # If a parameter is given (e.g. "EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::{FeatureName}Enabled() method.
-    return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->extendedAttributes->{"EnabledAtRuntime"}) . "Enabled" if ($signature->extendedAttributes->{"EnabledAtRuntime"} && $signature->extendedAttributes->{"EnabledAtRuntime"} ne "1");
+    # If a parameter is given (e.g. "V8EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::{FeatureName}Enabled() method.
+    return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->extendedAttributes->{"V8EnabledAtRuntime"}) . "Enabled" if ($signature->extendedAttributes->{"V8EnabledAtRuntime"} && $signature->extendedAttributes->{"V8EnabledAtRuntime"} ne "1");
 
     # Otherwise return a function named RuntimeEnabledFeatures::{methodName}Enabled().
     return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->name) . "Enabled";

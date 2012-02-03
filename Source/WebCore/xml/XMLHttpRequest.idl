@@ -59,7 +59,7 @@ module xml {
         readonly attribute unsigned short readyState;
 
         // request
-        attribute [Conditional=XHR_RESPONSE_BLOB, EnabledAtRuntime] boolean asBlob
+        attribute [Conditional=XHR_RESPONSE_BLOB, V8EnabledAtRuntime] boolean asBlob
             setter raises(DOMException);
 
         attribute boolean withCredentials
@@ -97,7 +97,7 @@ module xml {
             getter raises(DOMException);
         readonly attribute Document responseXML
             getter raises(DOMException);
-        readonly attribute [Conditional=XHR_RESPONSE_BLOB, EnabledAtRuntime] Blob responseBlob
+        readonly attribute [Conditional=XHR_RESPONSE_BLOB, V8EnabledAtRuntime] Blob responseBlob
             getter raises(DOMException);
 
         attribute DOMString responseType

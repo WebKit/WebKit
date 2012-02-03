@@ -42,9 +42,9 @@ module window {
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=CallWithDefaultValue] long distance);
         
-        [Custom, EnabledAtRuntime] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
+        [Custom, V8EnabledAtRuntime] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
             raises(DOMException);
-        [Custom, EnabledAtRuntime] void replaceState(in any data, in DOMString title, in [Optional] DOMString url)
+        [Custom, V8EnabledAtRuntime] void replaceState(in any data, in DOMString title, in [Optional] DOMString url)
             raises(DOMException);
     };
 

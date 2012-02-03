@@ -105,8 +105,8 @@ module html {
         readonly attribute FileList files;
         readonly attribute NodeList labels;
 
-        attribute [Conditional=INPUT_SPEECH, Reflect, EnabledAtRuntime] boolean webkitSpeech;
-        attribute [Conditional=INPUT_SPEECH, Reflect, EnabledAtRuntime] boolean webkitGrammar;
+        attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
+        attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitGrammar;
         attribute [Conditional=INPUT_SPEECH, NotEnumerable] EventListener onwebkitspeechchange;
     };
 

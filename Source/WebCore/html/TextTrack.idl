@@ -27,7 +27,7 @@ module html {
 
     interface [
         Conditional=VIDEO_TRACK,
-        EnabledAtRuntime=webkitVideoTrack,
+        V8EnabledAtRuntime=webkitVideoTrack,
         EventTarget,
         CustomMarkFunction,
         CustomIsReachable

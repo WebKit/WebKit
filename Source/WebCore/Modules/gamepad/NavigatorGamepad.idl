@@ -23,7 +23,7 @@ module window {
         Conditional=GAMEPAD,
         Supplemental=Navigator
     ] NavigatorGamepad {
-        readonly attribute [EnabledAtRuntime] GamepadList webkitGamepads;
+        readonly attribute [V8EnabledAtRuntime] GamepadList webkitGamepads;
     };
 
 }
