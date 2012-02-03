@@ -1,3 +1,10 @@
+2012-02-02  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, removing an unnecessarily JS_PRIVATE_EXPORT annotation.
+
+        * interpreter/Interpreter.h:
+        (Interpreter):
+
 2012-01-31  Hajime Morrita  <morrita@chromium.org>
 
         [Mac] eliminate JavaScriptCore.exp

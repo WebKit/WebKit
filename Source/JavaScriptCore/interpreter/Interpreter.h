@@ -142,7 +142,7 @@ namespace JSC {
         JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, ScopeChainNode*, int globalRegisterOffset);
 
         JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
-        JS_EXPORT_PRIVATE JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
+        JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
         JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
