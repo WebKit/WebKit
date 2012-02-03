@@ -1,3 +1,28 @@
+2012-02-02  Raymond Toy  <rtoy@google.com>
+
+        Check parameters to biquad filters
+        https://bugs.webkit.org/show_bug.cgi?id=71413
+
+        Reviewed by Kenneth Russell.
+
+        Tests added for each filter type and for the limiting cases for
+        each filter type.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+        (WebCore::Biquad::setLowShelfParams):
+        (WebCore::Biquad::setHighShelfParams):
+        (WebCore::Biquad::setPeakingParams):
+        (WebCore::Biquad::setAllpassParams):
+        (WebCore::Biquad::setNotchParams):
+        (WebCore::Biquad::setBandpassParams):
+        Check for invalid parameters and clip them to something sensible.
+        Also check for the limiting cases and try to use the limiting form
+        of the z-transform for the biquad.  Some issues cannot be
+        consistently handled because the z-transform is not continuous as
+        the parameters approach the limit.
+
 2012-02-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.
