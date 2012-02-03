@@ -13,94 +13,8 @@
     border: solid;
 }
 </style>
+<script src="../resources/shadow-test-driver.js"></script>
 <script>
-function log(message) {
-    document.getElementById('console').innerHTML += (message + "\n");
-}
-
-function removeAllChildren(elem) {
-    while (elem.firstChild)
-        elem.removeChild(elem.firstChild);
-}
-
-function cleanUp() {
-    removeAllChildren(document.getElementById('actual-container'));
-    removeAllChildren(document.getElementById('expect-container'));
-}
-
-function removeContainerLines(text) {
-    var lines = text.split('\n');
-    lines.splice(0, 2);
-    return lines.join('\n');
-}
-
-function check() {
-    var refContainerRenderTree = internals.elementRenderTreeAsText(document.getElementById('expect-container'));
-    var refRenderTree = removeContainerLines(refContainerRenderTree);
-
-    var targetContainerRenderTree = internals.elementRenderTreeAsText(document.getElementById('actual-container'));
-    var targetRenderTree = removeContainerLines(targetContainerRenderTree);
-
-    if (targetRenderTree == refRenderTree)
-        log("PASS");
-    else {
-        log("FAIL");
-        log("Expected: ");
-        log(refRenderTree);
-        log("Actual: ");
-        log(targetRenderTree);
-    }
-}
-
-function createSpanWithText(text) {
-    var span = document.createElement('span');
-    span.appendChild(document.createTextNode(text));
-    return span;
-}
-
-function createContentWithSelect(select, fallback) {
-    var content = internals.createContentElement(document);
-    content.setAttribute('select', select);
-    if (!fallback)
-        content.appendChild(createSpanWithText("FALLBACK"));
-
-    return content;
-}
-
-function appendShadow(target, select) {
-    var root = internals.ensureShadowRoot(target);
-
-    var content = internals.createContentElement(document);
-    content.setAttribute('select', select);
-    content.appendChild(createSpanWithText("FALLBACK"));
-
-    root.appendChild(document.createTextNode("{SHADOW: "));
-    root.appendChild(content);
-    root.appendChild(document.createTextNode("}"));
-}
-
-function appendShadowDeep(target, select) {
-    var root = internals.ensureShadowRoot(target);
-
-    var child = document.createElement("span");
-    {
-        var content = internals.createContentElement(document);
-        content.setAttribute('select', select);
-        content.appendChild(createSpanWithText("FALLBACK"));
-
-        child.appendChild(document.createTextNode("{INNER: "));
-        child.appendChild(content);
-        child.appendChild(document.createTextNode("}"));
-    }
-
-    root.appendChild(document.createTextNode("{SHADOW: "));
-    root.appendChild(child);
-    root.appendChild(document.createTextNode("}"));
-}
-
-// ----------------------------------------------------------------------
-// Test Functions.
-
 function testChangeSelect1(callIfDone) {
     document.getElementById('expect-container').innerHTML =
         "<div><span>BEFORE</span><span>LIGHT 2</span><span>AFTER</span></div>";
@@ -245,9 +159,6 @@ function testChangeSelectFromFallback(callIfDone) {
     setTimeout(f, 0);
 }
 
-// ----------------------------------------------------------------------
-// Test Drivers.
-
 var testFuncs = [
     testChangeSelect1,
     testChangeSelect2,
@@ -256,40 +167,9 @@ var testFuncs = [
     testChangeSelectFromFallback,
 ];
 
-function doTestIfLeft() {
-    var test = testFuncs.shift();
-    if (test == null)
-        return doneTest();
-
-    var callIfDone = function() {
-        setTimeout(function() {
-            check();
-            cleanUp();
-            doTestIfLeft();
-        }, 0);
-    };
-
-    log(test.name);
-    test(callIfDone);
-}
-
-function doneTest() {
-    log("TEST COMPLETED");
-    layoutTestController.notifyDone();
-}
-
-function doTest() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
-    }
-
-    cleanUp();
-    doTestIfLeft();
-}
 </script>
 </head>
-<body onload="doTest()">
+<body onload="doTest(testFuncs)">
 
 <div id="actual-container" class="container"></div>
 <div id="expect-container" class="container"></div>
