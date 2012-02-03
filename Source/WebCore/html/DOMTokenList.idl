@@ -36,7 +36,7 @@ module core {
         boolean toggle(in DOMString token) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
 #endif
     };
 

@@ -32,13 +32,13 @@ module storage {
         CustomGetPropertyNames,
         DelegatingPutFunction,
     ] Storage {
-        readonly attribute [DontEnum] unsigned long length;
-        [DontEnum, ConvertNullStringTo=Null] DOMString key(in unsigned long index);
-        [DontEnum, ConvertNullStringTo=Null] DOMString getItem(in DOMString key);
-        [DontEnum] void setItem(in DOMString key, in DOMString data) 
+        readonly attribute [NotEnumerable] unsigned long length;
+        [NotEnumerable, ConvertNullStringTo=Null] DOMString key(in unsigned long index);
+        [NotEnumerable, ConvertNullStringTo=Null] DOMString getItem(in DOMString key);
+        [NotEnumerable] void setItem(in DOMString key, in DOMString data) 
             raises(DOMException);
-        [DontEnum] void removeItem(in DOMString key);
-        [DontEnum] void clear();
+        [NotEnumerable] void removeItem(in DOMString key);
+        [NotEnumerable] void clear();
     };
 
 }

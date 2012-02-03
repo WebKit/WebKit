@@ -40,7 +40,7 @@ module html {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // Override in a Mozilla compatible format
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
 #endif
 
         const unsigned short NOT_ALLOWED_ERR = 1;

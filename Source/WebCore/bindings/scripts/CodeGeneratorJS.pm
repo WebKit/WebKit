@@ -1169,7 +1169,7 @@ sub GenerateAttributesHashTable($$)
 
         my @specials = ();
         push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
-        push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"DontEnum"};
+        push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"NotEnumerable"};
         push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);
@@ -1396,7 +1396,7 @@ sub GenerateImplementation
 
             my @specials = ();
             push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
-            push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"DontEnum"};
+            push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
             push(@specials, "JSC::Function");
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
             push(@hashSpecials, $special);
@@ -1460,7 +1460,7 @@ sub GenerateImplementation
 
         my @specials = ();
         push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
-        push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"DontEnum"};
+        push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
         push(@specials, "JSC::Function");
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);

@@ -1959,7 +1959,7 @@ sub GenerateSingleBatchedAttribute
     my $hasCustomSetter = 0;
 
     # Check attributes.
-    if ($attrExt->{"DontEnum"}) {
+    if ($attrExt->{"NotEnumerable"}) {
         $propAttr .= " | v8::DontEnum";
     }
     if ($attrExt->{"V8Unforgeable"}) {
@@ -2393,7 +2393,7 @@ sub GenerateImplementation
             ($dataNode->extendedAttributes->{"CheckDomainSecurity"} || $interfaceName eq "DOMWindow")) {
             next;
         }
-        if ($attrExt->{"DontEnum"} || $attrExt->{"V8ReadOnly"}) {
+        if ($attrExt->{"NotEnumerable"} || $attrExt->{"V8ReadOnly"}) {
             next;
         }
         if (!$has_callbacks) {
@@ -2589,7 +2589,7 @@ END
         my $name = $function->signature->name;
 
         my $property_attributes = "v8::DontDelete";
-        if ($attrExt->{"DontEnum"}) {
+        if ($attrExt->{"NotEnumerable"}) {
             $property_attributes .= " | v8::DontEnum";
         }
         if ($attrExt->{"V8ReadOnly"}) {

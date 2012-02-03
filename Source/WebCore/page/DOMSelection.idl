@@ -67,7 +67,7 @@ module window {
         void addRange(in [Optional=CallWithDefaultValue] Range range);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
 #endif
 
         // WebKit extensions

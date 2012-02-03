@@ -101,7 +101,7 @@ module css {
         // Passing a NaN will use a value of 0.
         [Immutable] WebKitCSSMatrix skewY(in [Optional=CallWithDefaultValue] double angle);
 
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
     };
 
 }

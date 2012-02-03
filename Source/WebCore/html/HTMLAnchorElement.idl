@@ -57,7 +57,7 @@ module html {
         readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

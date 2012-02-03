@@ -795,7 +795,7 @@ module window {
 
 #if defined(V8_BINDING) && V8_BINDING
         // window.toString() requires special handling in V8
-        [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
+        [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, NotEnumerable] DOMString toString();
 #endif // defined(V8_BINDING)
     };
 

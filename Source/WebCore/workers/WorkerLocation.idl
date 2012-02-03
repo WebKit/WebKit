@@ -42,7 +42,7 @@ module threads {
         readonly attribute DOMString search;
         readonly attribute DOMString hash;
 
-        [DontEnum] DOMString toString();
+        [NotEnumerable] DOMString toString();
     };
 
 }

@@ -30,29 +30,29 @@ module html {
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler attributes
-        attribute [DontEnum, WindowEventListener] EventListener onbeforeunload;
-        attribute [DontEnum, WindowEventListener] EventListener onhashchange;
-        attribute [DontEnum, WindowEventListener] EventListener onmessage;
-        attribute [DontEnum, WindowEventListener] EventListener onoffline;
-        attribute [DontEnum, WindowEventListener] EventListener ononline;
-        attribute [DontEnum, WindowEventListener] EventListener onpopstate;
-        attribute [DontEnum, WindowEventListener] EventListener onresize;
-        attribute [DontEnum, WindowEventListener] EventListener onstorage;
-        attribute [DontEnum, WindowEventListener] EventListener onunload;
+        attribute [NotEnumerable, WindowEventListener] EventListener onbeforeunload;
+        attribute [NotEnumerable, WindowEventListener] EventListener onhashchange;
+        attribute [NotEnumerable, WindowEventListener] EventListener onmessage;
+        attribute [NotEnumerable, WindowEventListener] EventListener onoffline;
+        attribute [NotEnumerable, WindowEventListener] EventListener ononline;
+        attribute [NotEnumerable, WindowEventListener] EventListener onpopstate;
+        attribute [NotEnumerable, WindowEventListener] EventListener onresize;
+        attribute [NotEnumerable, WindowEventListener] EventListener onstorage;
+        attribute [NotEnumerable, WindowEventListener] EventListener onunload;
 
-        attribute [Conditional=ORIENTATION_EVENTS, DontEnum, WindowEventListener] EventListener onorientationchange;
+        attribute [Conditional=ORIENTATION_EVENTS, NotEnumerable, WindowEventListener] EventListener onorientationchange;
 
         // Overrides of Element attributes (with different implementation in bindings).
-        attribute [DontEnum, WindowEventListener] EventListener onblur;
-        attribute [DontEnum, WindowEventListener] EventListener onerror;
-        attribute [DontEnum, WindowEventListener] EventListener onfocus;
-        attribute [DontEnum, WindowEventListener] EventListener onload;
+        attribute [NotEnumerable, WindowEventListener] EventListener onblur;
+        attribute [NotEnumerable, WindowEventListener] EventListener onerror;
+        attribute [NotEnumerable, WindowEventListener] EventListener onfocus;
+        attribute [NotEnumerable, WindowEventListener] EventListener onload;
 
         // Not implemented yet.
-        // attribute [DontEnum, WindowEventListener] EventListener onafterprint;
-        // attribute [DontEnum, WindowEventListener] EventListener onbeforeprint;
-        // attribute [DontEnum, WindowEventListener] EventListener onredo;
-        // attribute [DontEnum, WindowEventListener] EventListener onundo;
+        // attribute [NotEnumerable, WindowEventListener] EventListener onafterprint;
+        // attribute [NotEnumerable, WindowEventListener] EventListener onbeforeprint;
+        // attribute [NotEnumerable, WindowEventListener] EventListener onredo;
+        // attribute [NotEnumerable, WindowEventListener] EventListener onundo;
 #endif
     };
 

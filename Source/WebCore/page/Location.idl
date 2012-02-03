@@ -64,10 +64,10 @@ module window {
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DontEnum, Custom, V8OnInstance, V8ReadOnly, ImplementationFunction=toStringFunction] DOMString toString();
+        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly, ImplementationFunction=toStringFunction] DOMString toString();
 #endif
 #if defined(V8_BINDING) && V8_BINDING
-        [DontEnum, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
+        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
 #endif
     };
 
