@@ -1,5 +1,36 @@
 2012-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Build fix
+
+        Unreviewed build fix
+
+        Forgot to add a couple files.
+
+        * heap/MarkedAllocator.cpp: Added.
+        (JSC):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::allocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        * heap/MarkedAllocator.h: Added.
+        (JSC):
+        (DFG):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::cellSize):
+        (JSC::MarkedAllocator::heap):
+        (JSC::MarkedAllocator::setHeap):
+        (JSC::MarkedAllocator::setCellSize):
+        (JSC::MarkedAllocator::setMarkedSpace):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::allocate):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::zapFreeList):
+        (JSC::MarkedAllocator::forEachBlock):
+
+2012-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Refactor MarkedBlock::SizeClass into a separate class
         https://bugs.webkit.org/show_bug.cgi?id=77600
 
