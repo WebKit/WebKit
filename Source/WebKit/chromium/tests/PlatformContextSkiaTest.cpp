@@ -58,6 +58,7 @@ TEST(PlatformContextSkiaTest, trackOpaqueTest)
     SkBitmap bitmap;
     bitmap.setConfig(SkBitmap::kARGB_8888_Config, 400, 400);
     bitmap.allocPixels();
+    bitmap.eraseColor(0);
     SkCanvas canvas(bitmap);
 
     PlatformContextSkia platformContext(&canvas);
@@ -259,6 +260,7 @@ TEST(PlatformContextSkiaTest, trackOpaqueLineTest)
     SkBitmap bitmap;
     bitmap.setConfig(SkBitmap::kARGB_8888_Config, 200, 200);
     bitmap.allocPixels();
+    bitmap.eraseColor(0);
     SkCanvas canvas(bitmap);
 
     PlatformContextSkia platformContext(&canvas);
@@ -498,6 +500,7 @@ TEST(PlatformContextSkiaTest, trackOpaqueOvalTest)
     SkBitmap bitmap;
     bitmap.setConfig(SkBitmap::kARGB_8888_Config, 200, 200);
     bitmap.allocPixels();
+    bitmap.eraseColor(0);
     SkCanvas canvas(bitmap);
 
     PlatformContextSkia platformContext(&canvas);

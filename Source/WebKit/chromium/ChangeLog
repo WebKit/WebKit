@@ -1,3 +1,28 @@
+2012-02-03  John Knottenbelt  <jknotten@chromium.org>
+
+        [skia] Fix unit test PlatformContextSkiaTest.trackOpaqueOvalTest
+        https://bugs.webkit.org/show_bug.cgi?id=77738
+
+        We need to clear the bitmap before the test runs, otherwise the
+        contents of the bitmap will be uninitialised. This causes an
+        unpredicatable result as the canvas draw operations blend the
+        destination bitmap with the source colour.
+
+        Similarly, valgrind discovered that
+        PlatformContextSkiaTest.trackOpaqueTest and
+        PlatformContextSkiaTest.trackOpaqueLineTest suffers from the same
+        problem.
+
+        Also, re-enable WebFrameTest.FindInPage which was falsely
+        blamed for making this test fail.
+
+        Reviewed by Stephen White.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+
 2012-02-03  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Use the current clip when marking paints as opaque
