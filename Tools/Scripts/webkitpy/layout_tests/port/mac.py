@@ -87,6 +87,12 @@ class MacPort(ApplePort):
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)
 
+    def default_child_processes(self):
+        if self.is_snowleopard():
+            _log.warn("Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.")
+            return 1
+        return super(MacPort, self).default_child_processes()
+
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
         build_java = ["/usr/bin/make", "-C", java_tests_path]

@@ -1,3 +1,16 @@
+2012-02-02  Eric Seidel  <eric@webkit.org>
+
+        Run tests in serial on SnowLeopard to avoid CFURLCache crashes
+        https://bugs.webkit.org/show_bug.cgi?id=75145
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_operating_system):
+        (test_default_child_processes):
+
 2012-02-02  Dirk Pranke  <dpranke@chromium.org>
 
        nrwt shouldn't blow up when there are errors in test_expectations.txt
