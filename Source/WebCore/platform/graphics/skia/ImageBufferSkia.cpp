@@ -79,11 +79,6 @@ public:
         m_context3D->makeContextCurrent();
     }
 
-    virtual void flush()
-    {
-        m_context3D->flush();
-    }
-
 private:
     GraphicsContext3D* m_context3D;
 };

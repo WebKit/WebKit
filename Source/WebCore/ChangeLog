@@ -1,3 +1,16 @@
+2012-02-03  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] ImageBufferSkia: remove unnecessary overload of flush in
+        AcceleratedDeviceContext
+        https://bugs.webkit.org/show_bug.cgi?id=77741
+
+        Reviewed by Stephen White.
+
+        Removing dead code.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (AcceleratedDeviceContext):
+
 2012-02-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         Speculative unreviewed build fix for Qt-Windows
