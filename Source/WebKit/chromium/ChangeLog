@@ -1,3 +1,16 @@
+2012-02-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77691
+        Fix PlatformScreen layering violation and PlatformScreenMac's incorrect use 
+        of device scale
+
+        Reviewed by Andy Estes.
+
+        These two functions now take a Widget again rather than a FrameView.
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::screenRect):
+        (WebCore::PlatformSupport::screenAvailableRect):
+
 2012-02-03  John Knottenbelt  <jknotten@chromium.org>
 
         [skia] Fix unit test PlatformContextSkiaTest.trackOpaqueOvalTest

@@ -28,8 +28,8 @@
 
 #import "FloatRect.h"
 #import "Frame.h"
-#import "FrameView.h"
 #import "Page.h"
+#import "Widget.h"
 #import "NotImplemented.h"
 
 namespace WebCore {
@@ -64,16 +64,16 @@ bool screenIsMonochrome(Widget*)
 // These functions scale between screen and page coordinates because JavaScript/DOM operations 
 // assume that the screen and the page share the same coordinate system.
 
-FloatRect screenRect(FrameView* frameView)
+FloatRect screenRect(Widget* widget)
 {
-    NSWindow *window = frameView ? [frameView->platformWidget() window] : nil;
-    return toUserSpace([screenForWindow(window) frame], window, WebCore::deviceScaleFactor(frameView->frame()));
+    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
+    return toUserSpace([screenForWindow(window) frame], window);
 }
 
-FloatRect screenAvailableRect(FrameView* frameView)
+FloatRect screenAvailableRect(Widget* widget)
 {
-    NSWindow *window = frameView ? [frameView->platformWidget() window] : nil;
-    return toUserSpace([screenForWindow(window) visibleFrame], window, WebCore::deviceScaleFactor(frameView->frame()));
+    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
+    return toUserSpace([screenForWindow(window) visibleFrame], window);
 }
 
 NSScreen *screenForWindow(NSWindow *window)
@@ -89,18 +89,16 @@ NSScreen *screenForWindow(NSWindow *window)
     return nil;
 }
 
-FloatRect toUserSpace(const NSRect& rect, NSWindow *destination, float deviceScaleFactor)
+FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {
     FloatRect userRect = rect;
     userRect.setY(NSMaxY([screenForWindow(destination) frame]) - (userRect.y() + userRect.height())); // flip
-    userRect.scale(1 / deviceScaleFactor); // scale down
     return userRect;
 }
 
-NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source, float deviceScaleFactor)
+NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)
 {
     FloatRect deviceRect = rect;
-    deviceRect.scale(deviceScaleFactor); // scale up
     deviceRect.setY(NSMaxY([screenForWindow(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
     return deviceRect;
 }

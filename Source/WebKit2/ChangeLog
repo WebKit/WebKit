@@ -1,3 +1,16 @@
+2012-02-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77691
+        Fix PlatformScreen layering violation and PlatformScreenMac's incorrect use 
+        of device scale
+
+        Reviewed by Andy Estes.
+
+        toUserSpace() and toDeviceSpace() don't need to take device scale.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _convertToDeviceSpace:]):
+        (-[WKView _convertToUserSpace:]):
+
 2012-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.

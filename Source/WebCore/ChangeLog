@@ -1,3 +1,49 @@
+2012-02-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77691
+        Fix PlatformScreen layering violation and PlatformScreenMac's incorrect use 
+        of device scale
+
+        Reviewed by Andy Estes.
+
+        Make screenAvailableRect() and screenRect() take a Widget again instead of a 
+        FrameView since taking a FrameView is a layering violation.
+        * WebCore.exp.in:
+        * platform/PlatformScreen.h:
+        (WebCore):
+        * platform/blackberry/PlatformScreenBlackBerry.cpp:
+        (WebCore::screenAvailableRect):
+        (WebCore::screenRect):
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/chromium/PlatformSupport.h:
+        (WebCore):
+        (PlatformSupport):
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/wx/ScreenWx.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
+        It's wrong for the deviceScaleFactor to be taken into consideration here at 
+        all.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::toUserSpace):
+        (WebCore::toDeviceSpace):
+
 2012-02-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10352073> Floating image leaves hole in previous column when wrapped to next column

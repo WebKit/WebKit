@@ -2279,12 +2279,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (NSRect)_convertToDeviceSpace:(NSRect)rect
 {
-    return toDeviceSpace(rect, [self window], _data->_page->deviceScaleFactor());
+    return toDeviceSpace(rect, [self window]);
 }
 
 - (NSRect)_convertToUserSpace:(NSRect)rect
 {
-    return toUserSpace(rect, [self window], _data->_page->deviceScaleFactor());
+    return toUserSpace(rect, [self window]);
 }
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.

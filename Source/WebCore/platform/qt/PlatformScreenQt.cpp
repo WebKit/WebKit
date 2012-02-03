@@ -102,15 +102,15 @@ bool screenIsMonochrome(Widget* w)
     return QApplication::desktop()->screen(screenNumber(w))->colorCount() == 2;
 }
 
-FloatRect screenRect(FrameView* frameView)
+FloatRect screenRect(Widget* widget)
 {
-    QRect r = QApplication::desktop()->screenGeometry(screenNumber(frameView));
+    QRect r = QApplication::desktop()->screenGeometry(screenNumber(widget));
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
-FloatRect screenAvailableRect(FrameView* frameView)
+FloatRect screenAvailableRect(Widget* widget)
 {
-    QRect r = QApplication::desktop()->availableGeometry(screenNumber(frameView));
+    QRect r = QApplication::desktop()->availableGeometry(screenNumber(widget));
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 

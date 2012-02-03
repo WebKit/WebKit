@@ -20,7 +20,6 @@
 #include "PlatformScreen.h"
 
 #include "FloatRect.h"
-#include "FrameView.h"
 #include "Widget.h"
 
 #include <BlackBerryPlatformScreen.h>
@@ -42,12 +41,12 @@ int screenDepth(Widget*)
     return 24;
 }
 
-FloatRect screenAvailableRect(FrameView* frameView)
+FloatRect screenAvailableRect(Widget* widget)
 {
     return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::size())));
 }
 
-FloatRect screenRect(FrameView* frameView)
+FloatRect screenRect(Widget* widget)
 {
     return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::size())));
 }

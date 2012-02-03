@@ -40,7 +40,6 @@ typedef uint32_t PlatformDisplayID;
 namespace WebCore {
 
     class FloatRect;
-    class FrameView;
     class Widget;
 
     int screenHorizontalDPI(Widget*);
@@ -49,14 +48,14 @@ namespace WebCore {
     int screenDepthPerComponent(Widget*);
     bool screenIsMonochrome(Widget*);
 
-    FloatRect screenRect(FrameView*);
-    FloatRect screenAvailableRect(FrameView*);
+    FloatRect screenRect(Widget*);
+    FloatRect screenAvailableRect(Widget*);
 
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);
 
-    FloatRect toUserSpace(const NSRect&, NSWindow *destination, float deviceScaleFactor);
-    NSRect toDeviceSpace(const FloatRect&, NSWindow *source, float deviceScaleFactor);
+    FloatRect toUserSpace(const NSRect&, NSWindow *destination);
+    NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
     NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 #endif
