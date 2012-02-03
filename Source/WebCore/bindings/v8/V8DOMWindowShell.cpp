@@ -32,7 +32,6 @@
 #include "V8DOMWindowShell.h"
 
 #include "PlatformSupport.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -45,6 +44,7 @@
 #include "ScriptProfiler.h"
 #include "SecurityOrigin.h"
 #include "StorageNamespace.h"
+#include "StylePropertySet.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"

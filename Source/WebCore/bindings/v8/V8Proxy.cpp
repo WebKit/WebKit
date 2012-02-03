@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8Proxy.h"
 
-#include "CSSMutableStyleDeclaration.h"
 #include "CachedMetadata.h"
 #include "DateExtension.h"
 #include "Document.h"
@@ -48,6 +47,7 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StylePropertySet.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"

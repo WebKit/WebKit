@@ -172,7 +172,7 @@ sub AddIncludesForType
     }
 
     if ($type eq "CSSStyleDeclaration") {
-        AddToImplIncludes("CSSMutableStyleDeclaration.h");
+        AddToImplIncludes("StylePropertySet.h");
     }
 
     if ($type eq "Plugin" or $type eq "PluginArray" or $type eq "MimeTypeArray") {

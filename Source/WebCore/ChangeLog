@@ -1,3 +1,17 @@
+2012-02-03  Andreas Kling  <awesomekling@apple.com>
+
+        Unreviewed build fix attempt after r106695.
+
+        CSSMutableStyleDeclaration was renamed to StylePropertySet.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (AddIncludesForType):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8Proxy.cpp:
+
 2012-02-03  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Let userIdleTime() return maximum number instead of 0 as

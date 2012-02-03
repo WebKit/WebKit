@@ -32,12 +32,12 @@
 #include "V8DOMWrapper.h"
 
 #include "ArrayBufferView.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "DOMDataStore.h"
 #include "DocumentLoader.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
 #include "FrameLoaderClient.h"
+#include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
