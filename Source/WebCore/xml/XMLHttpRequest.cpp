@@ -154,7 +154,10 @@ static void logConsoleError(ScriptExecutionContext* context, const String& messa
 
 PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    return adoptRef(new XMLHttpRequest(context, securityOrigin));
+    RefPtr<XMLHttpRequest> xmlHttpRequest(adoptRef(new XMLHttpRequest(context, securityOrigin)));
+    xmlHttpRequest->suspendIfNeeded();
+
+    return xmlHttpRequest.release();
 }
 
 XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)

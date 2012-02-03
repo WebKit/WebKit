@@ -45,7 +45,9 @@ namespace WebCore {
 
 PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
 {
-    return adoptRef(new IDBRequest(context, source, transaction));
+    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, transaction)));
+    request->suspendIfNeeded();
+    return request.release();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)

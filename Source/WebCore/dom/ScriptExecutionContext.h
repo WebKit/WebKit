@@ -103,8 +103,14 @@ public:
     virtual void resumeActiveDOMObjects();
     virtual void stopActiveDOMObjects();
 
+    bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
+
+    // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
     void willDestroyActiveDOMObject(ActiveDOMObject*);
+
+    // Called after the construction of an ActiveDOMObject to synchronize suspend state.
+    void suspendActiveDOMObjectIfNeeded(ActiveDOMObject*);
 
     typedef const HashMap<ActiveDOMObject*, void*> ActiveDOMObjectsMap;
     ActiveDOMObjectsMap& activeDOMObjects() const { return m_activeDOMObjects; }
@@ -205,6 +211,9 @@ private:
     bool m_inDispatchErrorEvent;
     class PendingException;
     OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
+
+    bool m_activeDOMObjectsAreSuspended;
+    ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
 
 #if ENABLE(SQL_DATABASE)
     RefPtr<DatabaseThread> m_databaseThread;

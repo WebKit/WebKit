@@ -54,7 +54,9 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 
 PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
-    return adoptRef(new HTMLVideoElement(tagName, document, createdByParser));
+    RefPtr<HTMLVideoElement> videoElement(adoptRef(new HTMLVideoElement(tagName, document, createdByParser)));
+    videoElement->suspendIfNeeded();
+    return videoElement.release();
 }
 
 bool HTMLVideoElement::rendererIsNeeded(const NodeRenderingContext& context) 

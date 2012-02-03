@@ -64,6 +64,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
 
     SharedWorkerRepository::connect(worker.get(), remotePort.release(), scriptURL, name, ec);
 
+    worker->suspendIfNeeded();
     InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), true);
 
     return worker.release();

@@ -164,6 +164,13 @@ WebSocket::~WebSocket()
         m_channel->disconnect();
 }
 
+PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context)
+{
+    RefPtr<WebSocket> webSocket(adoptRef(new WebSocket(context)));
+    webSocket->suspendIfNeeded();
+    return webSocket.release();
+}
+
 void WebSocket::connect(const String& url, ExceptionCode& ec)
 {
     Vector<String> protocols;

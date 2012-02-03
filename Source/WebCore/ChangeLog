@@ -1,5 +1,92 @@
 2012-02-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Ensure timers and other active DOM objects do not fire in suspended documents.
+        https://bugs.webkit.org/show_bug.cgi?id=53733
+
+        ScriptExecutionContext now remembers it has suspended active DOM objects
+        and suspends all newly installed active DOM objects as well.
+
+        All create-calls active DOM objects now calls the post constructor method
+        suspendIfNeeded that updates the suspend state. It is post constructor
+        because the suspend/resume functions are virtual and thus can not be called
+        from constructors.
+
+        Reviewed by Mihai Parparita.
+
+        Test: fast/events/suspend-timers.html
+
+        * Modules/intents/IntentRequest.cpp:
+        (WebCore::IntentRequest::create):
+        * bindings/generic/ActiveDOMCallback.cpp:
+        (WebCore::ActiveDOMCallback::ActiveDOMCallback):
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        (WebCore::ActiveDOMObject::suspendIfNeeded):
+        * dom/ActiveDOMObject.h:
+        (WebCore::ActiveDOMObject::suspendIfNeededCalled):
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::DocumentEventQueue):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjectIfNeeded):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::activeDOMObjectsAreSuspended):
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::create):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::create):
+        * fileapi/FileReader.h:
+        * fileapi/FileWriter.cpp:
+        (WebCore::FileWriter::create):
+        * fileapi/FileWriter.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::create):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::create):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::create):
+        * mediastream/PeerConnection.cpp:
+        (WebCore::PeerConnection::create):
+        * notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        * notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::create):
+        * notifications/NotificationCenter.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create):
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::SuspendableTimer):
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::create):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::create):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::create):
+        * websockets/WebSocket.h:
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::create):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::create):
+
+2012-02-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         Do not ASSERT on TouchStationary TouchPoint state.
         https://bugs.webkit.org/show_bug.cgi?id=77620
 
