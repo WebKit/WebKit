@@ -32,10 +32,6 @@
 #include "cc/CCRenderPass.h"
 #include <wtf/RefPtr.h>
 
-#if USE(SKIA)
-class GrContext;
-#endif
-
 namespace WebCore {
 
 class CCCompletionEvent;

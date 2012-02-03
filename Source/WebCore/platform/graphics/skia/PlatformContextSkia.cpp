@@ -50,9 +50,6 @@
 #include "SkDashPathEffect.h"
 #include "SkShader.h"
 
-#include "GrContext.h"
-#include "SkGpuDevice.h"
-
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 

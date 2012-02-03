@@ -56,10 +56,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if USE(SKIA)
-class GrContext;
-#endif
-
 namespace WebCore {
 
 class CCHeadsUpDisplay;

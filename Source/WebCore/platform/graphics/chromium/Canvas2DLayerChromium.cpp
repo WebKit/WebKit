@@ -41,9 +41,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 
-#include "GrContext.h"
 #include "SkCanvas.h"
-#include "SkDevice.h"
 
 namespace WebCore {
 
@@ -113,15 +111,8 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreen
     bool success = m_context->makeContextCurrent();
     ASSERT_UNUSED(success, success);
 
-    // FIXME: Replace this block of skia code with m_canvas->flush, when that
-    // API becomes available.
-    // https://bugs.webkit.org/show_bug.cgi?id=77463
     if (m_canvas)
-        m_canvas->getDevice()->accessRenderTarget(); // Triggers execution of pending draw operations.
-
-    GrContext* grContext = m_context->grContext();
-    if (grContext)
-        grContext->flush();
+        m_canvas->flush();
 
     m_context->flush();
 }

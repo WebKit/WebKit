@@ -1,3 +1,23 @@
+2012-02-02  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Use SkCanvas::flush in skia port
+        https://bugs.webkit.org/show_bug.cgi?id=77463
+
+        Reviewed by Stephen White.
+
+        Code cleanup in skia port. Using SkCanvas::flush to remove
+        unnecessary dependency on GrContext.  Removed unnecessary inclusions
+        and forward declarations of GrContext in several source files.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+
 2012-02-02  Chris Marrin  <cmarrin@apple.com>
 
         Turn on CSS Filters on Windows

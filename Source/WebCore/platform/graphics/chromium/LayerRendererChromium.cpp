@@ -66,7 +66,6 @@
 #include "cc/CCVideoDrawQuad.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
-#include "GrContext.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #elif USE(CG)

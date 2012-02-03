@@ -31,10 +31,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
-#if USE(SKIA)
-class GrContext;
-#endif
-
 namespace WebCore {
 
 class CCThread;
