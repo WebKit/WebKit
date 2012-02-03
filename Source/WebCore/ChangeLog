@@ -1,3 +1,18 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        ScrollingTreeState should keep track of the scroll layer
+        https://bugs.webkit.org/show_bug.cgi?id=77762
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingTreeState.h:
+        (ScrollingTreeState):
+        * page/scrolling/mac/ScrollingTreeStateMac.mm: Copied from Source/WebCore/page/scrolling/ScrollingTreeState.h.
+        (WebCore):
+        (WebCore::ScrollingTreeState::platformScrollLayer):
+        (WebCore::ScrollingTreeState::setScrollLayer):
+
 2012-02-03  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77740

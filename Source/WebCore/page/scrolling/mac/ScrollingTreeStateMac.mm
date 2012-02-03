@@ -23,61 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeState_h
-#define ScrollingTreeState_h
+#include "config.h"
+#include "ScrollingTreeState.h"
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "GraphicsLayer.h"
-#include "IntRect.h"
-#include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
-// The ScrollingTreeState object keeps track of the current state of scrolling related properties.
-// Whenever any properties change, the scrolling coordinator will be informed and will update the state
-// and schedule a timer that will clone the new state and send it over to the scrolling thread, avoiding locking.
-// FIXME: Once we support fast scrolling in subframes, this will have to become a tree-like structure.
-class ScrollingTreeState {
-public:
-    static PassOwnPtr<ScrollingTreeState> create();
-    ~ScrollingTreeState();
+PlatformLayer* ScrollingTreeState::platformScrollLayer() const
+{
+    return m_platformScrollLayer.get();
+}
 
-    enum ChangedProperty {
-        ViewportRect = 1 << 0,
-        ContentsSize = 1 << 1,
-        ScrollLayer = 1 << 2,
-    };
+void ScrollingTreeState::setScrollLayer(const GraphicsLayer* graphicsLayer)
+{
+    PlatformLayer* platformScrollLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
 
-    const IntRect& viewportRect() const { return m_viewportRect; }
-    void setViewportRect(const IntRect&);
+    if (m_platformScrollLayer == platformScrollLayer)
+        return;
 
-    const IntSize& contentsSize() const { return m_contentsSize; }
-    void setContentsSize(const IntSize&);
-
-    PlatformLayer* platformScrollLayer() const;
-    void setScrollLayer(const GraphicsLayer*);
-
-private:
-    ScrollingTreeState();
-
-    unsigned m_changedProperties;
-
-    IntRect m_viewportRect;
-    IntSize m_contentsSize;
-
-#if PLATFORM(MAC)
-    RetainPtr<PlatformLayer> m_platformScrollLayer;
-#endif
-
-};
+    m_platformScrollLayer = platformScrollLayer;
+    m_changedProperties |= ScrollLayer;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)
-
-#endif // ScrollingTreeState_h
