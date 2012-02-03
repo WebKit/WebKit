@@ -386,31 +386,39 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         event.preventDefault();
         var treeElement = this._treeElementFromEvent(event);
-        if (this._nodeBeingDragged && treeElement) {
-            var parentNode;
-            var anchorNode;
+        if (treeElement)
+            this._doMove(treeElement);
+    },
 
-            if (treeElement._elementCloseTag) {
-                // Drop onto closing tag -> insert as last child.
-                parentNode = treeElement.representedObject;
-            } else {
-                var dragTargetNode = treeElement.representedObject;
-                parentNode = dragTargetNode.parentNode;
-                anchorNode = dragTargetNode;
-            }
+    _doMove: function(treeElement)
+    {
+        if (!this._nodeBeingDragged)
+            return;
 
-            function callback(error, newNodeId)
-            {
-                if (error)
-                    return;
+        var parentNode;
+        var anchorNode;
 
-                this._updateModifiedNodes();
-                var newNode = WebInspector.domAgent.nodeForId(newNodeId);
-                if (newNode)
-                    this.selectDOMNode(newNode, true);
-            }
-            this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
+        if (treeElement._elementCloseTag) {
+            // Drop onto closing tag -> insert as last child.
+            parentNode = treeElement.representedObject;
+        } else {
+            var dragTargetNode = treeElement.representedObject;
+            parentNode = dragTargetNode.parentNode;
+            anchorNode = dragTargetNode;
         }
+
+        function callback(error, newNodeId)
+        {
+            if (error)
+                return;
+
+            this._updateModifiedNodes();
+            var newNode = WebInspector.domAgent.nodeForId(newNodeId);
+            if (newNode)
+                this.selectDOMNode(newNode, true);
+        }
+
+        this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
 
         delete this._nodeBeingDragged;
     },

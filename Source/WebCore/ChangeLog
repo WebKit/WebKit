@@ -1,3 +1,19 @@
+2012-02-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: preserve elements panel selection upon node drag'n'drop
+        https://bugs.webkit.org/show_bug.cgi?id=77722
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: inspector/elements/move-node.html
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._markRevision):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._ondrop):
+        (WebInspector.ElementsTreeOutline.prototype._doMove.callback):
+        (WebInspector.ElementsTreeOutline.prototype._doMove):
+
 2012-02-03  Shinya Kawanaka  <shinyak@google.com>
 
        Reimplement DETAILS and SUMMARY using selector query.

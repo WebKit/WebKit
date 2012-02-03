@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var containerNode;
+
+    InspectorTest.runTestSuite([
+        function testDumpInitial(next)
+        {
+            function callback(node)
+            {
+                containerNode = InspectorTest.expandedNodeWithId("container");
+
+                InspectorTest.addResult("========= Original ========");
+                InspectorTest.dumpElementsTree(containerNode);
+                next();
+            }
+            InspectorTest.expandElementsTree(callback);
+        },
+
+        function testDragAndDrop(next)
+        {
+            var treeOutline = WebInspector.panels.elements.treeOutline;
+            treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, selectionChanged);
+
+            function selectionChanged()
+            {
+                InspectorTest.addResult("===== Moved child2 =====");
+                InspectorTest.dumpElementsTree(containerNode);
+                InspectorTest.addResult("Selection: " + treeOutline.selectedDOMNode().appropriateSelectorFor());
+                next();
+            }
+
+            treeOutline._nodeBeingDragged = InspectorTest.expandedNodeWithId("child2");
+            var treeElementToDropOn = treeOutline.getCachedTreeElement(InspectorTest.expandedNodeWithId("child4"));
+            treeOutline._doMove(treeElementToDropOn);
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests elements drag and drop operation internals, verifies post-move selection.
+</p>
+
+<div id="container">
+    <div id="child1"></div>
+    <div id="child2"></div>
+    <div id="child3"></div>
+    <div id="child4"></div>
+</div>
+
+</body>
+</html>

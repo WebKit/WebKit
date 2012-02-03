@@ -23,7 +23,7 @@ Running: testSetNodeName
   </div>
 ==== after ====
 - <div id="testSetNodeName">
-      <span id="node-to-set-name"></span>
+      <span id="node-to-set-name" ></span>
   </div>
 
 Running: testSetNodeNameInput
@@ -33,7 +33,7 @@ Running: testSetNodeNameInput
   </div>
 ==== after ====
 - <div id="testSetNodeNameInput">
-      <input id="node-to-set-name-input">
+      <input id="node-to-set-name-input" >
   </div>
 
 Running: testSetNodeValue

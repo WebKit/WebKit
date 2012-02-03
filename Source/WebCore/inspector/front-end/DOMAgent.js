@@ -978,7 +978,7 @@ WebInspector.DOMAgent.prototype = {
         function wrapperFunction(error)
         {
             if (callback)
-                callback(error);
+                callback.apply(this, arguments);
             if (error || !WebInspector.experimentsSettings.freeFlowDOMEditing.isEnabled())
                 return;
             if (this._captureDOMTimer)
