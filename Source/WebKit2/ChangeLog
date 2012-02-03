@@ -1,3 +1,14 @@
+2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build when cross-compiling
+        https://bugs.webkit.org/show_bug.cgi?id=77634
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebKit2.pri: Link in -lrt on linux mkspecs, regardless of whether gcc
+        is in use or not. More specifically this fixes the case where the makespace
+        is not linux-g++* but for a cross-compiling one like linux-arm-gnueabi-g++.
+
 2012-02-03  Shinya Kawanaka  <shinyak@google.com>
 
         Stop calling Element::ensureShadowRoot in Internals.
