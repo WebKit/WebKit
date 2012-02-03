@@ -17,7 +17,6 @@ BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl 
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
-BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 BUGCR24182 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
@@ -756,9 +755,55 @@ BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
 // -----------------------------------------------------------------
-// Plugin tests
+// Security tests
 // -----------------------------------------------------------------
 
+// Expectations for this test changed upstream. We should fix this test, but
+// it doesn't need to block the current release
+BUGCR10275 : http/tests/security/cross-frame-access-put.html = FAIL
+
+// Need to update chromium so the web frame delegate is informed when window objects
+// in isolated worlds are cleared.
+BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
+
+// Due to the differences in initialization checks in KURL and googleurl.
+// Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
+BUGCR39423 : security/block-test.html = TIMEOUT
+
+// Flaky: fails about 5% of the time.
+BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
+
+BUGCR9798 WIN : http/tests/security/cross-frame-access-protocol-explicit-domain.html = PASS FAIL
+BUGCR9798 WIN DEBUG : http/tests/security/cross-frame-access-protocol.html = PASS FAIL
+BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
+BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
+BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
+BUGWK65567 LINUX WIN DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
+BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
+BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
+BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
+BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = PASS TEXT
+BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = PASS TEXT
+BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
+BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
+BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
+BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
+BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
+BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH
+BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-blocked.html = PASS CRASH
+BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
+BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
+BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
+BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
+BUGRICOW : http/tests/security/xss-eval.html = TEXT
+BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
+BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
+
+// -----------------------------------------------------------------
+// Plugin tests
+// -----------------------------------------------------------------
 
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 
@@ -780,10 +825,6 @@ BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT TEXT
 // than chromium's old forked copy.
 BUGCR108833 WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = PASS CRASH
-
-// Expectations for this test changed upstream. We should fix this test, but
-// it doesn't need to block the current release
-BUGCR10275 : http/tests/security/cross-frame-access-put.html = FAIL
 
 // Requires layoutTestController.dispatchPendingLoadRequests
 BUGCR33211 WIN RELEASE : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = CRASH TIMEOUT
@@ -1569,9 +1610,6 @@ BUGCR99500 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 BUGCR9798 WIN DEBUG : http/tests/local/style-access-before-stylesheet-loaded.html = PASS FAIL
 BUGCR9798 WIN DEBUG : http/tests/misc/redirect-with-quotes.php = PASS TIMEOUT
 BUGCR9798 SLOW WIN : http/tests/misc/refresh-headers.php = PASS
-BUGCR9798 WIN : http/tests/security/cross-frame-access-protocol-explicit-domain.html = PASS FAIL
-BUGCR9798 WIN DEBUG : http/tests/security/cross-frame-access-protocol.html = PASS FAIL
-BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
 BUGCR9798 WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html = PASS TIMEOUT
 BUGCR9798 WIN : http/tests/xmlhttprequest/basic-auth.html = PASS TIMEOUT
 BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/basic-auth-default.html = PASS TIMEOUT
@@ -1665,8 +1703,6 @@ BUGCR19766 LINUX : fast/replaced/width100percent-menulist.html = FAIL
 // WebKit 47777:47790 - getOwnPropertyDescriptor
 BUGCR20345 : fast/js/getOwnPropertyDescriptor.html = FAIL
 BUGCR20345 : fast/dom/Window/window-property-descriptors.html = TEXT
-// Failures from Webkit merger 51724 -> 51772
-BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
 
 BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 
@@ -1677,7 +1713,6 @@ BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
 BUGCR22526 MAC WIN : fast/js/Object-create.html = FAIL
 BUGCR22526 : fast/js/Object-defineProperties.html = CRASH FAIL
 BUGCR22526 : fast/js/Object-defineProperty.html = CRASH FAIL
-BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 
 // WebKit merge 48500:48585, due to newly added support for MathML.
 BUGCR22554 SKIP : mathml = FAIL
@@ -1700,11 +1735,6 @@ BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
 // WebKit Roll 49640:49684
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
-
-// WebKit Roll 49684:49761
-BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
-
-BUGWK65567 LINUX WIN DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 
 // Incorrect baseline removed.
 BUGCR25433 LINUX WIN : css2.1/t040103-ident-03-c.html = IMAGE
@@ -1749,9 +1779,6 @@ BUGCR22700 LINUX WIN CPU : fast/canvas/canvas-shadow.html = TEXT
 // Failures from merge 50972:51042
 // The test requires DRT/Test Shell to support error page handling.
 BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
-// Need to update chromium so the web frame delegate is informed when window objects
-// in isolated worlds are cleared.
-BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 
 BUGCR28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
 
@@ -1828,7 +1855,6 @@ BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PAS
 
 // WebKit roll 52468->52535
 BUGCR31991 LINUX WIN : fast/text/international/bidi-layout-across-linebreak.html = TEXT
-BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 
 BUGCR31623 WIN : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
 
@@ -1893,10 +1919,6 @@ BUGCR38706 : svg/custom/deep-dynamic-updates.svg = PASS IMAGE+TEXT IMAGE
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT
 
-// Due to the differences in initialization checks in KURL and googleurl.
-// Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
-BUGCR39423 : security/block-test.html = TIMEOUT
-
 // Due to the differences in handling text encodings in KURL and googleurl.
 BUGWK20559 : http/tests/navigation/anchor-frames-gbk.html = TEXT
 
@@ -1929,8 +1951,6 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 // BUGWK38038 : fast/url/file-http-base.html = TEXT
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
-
-BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // might have been flaky
 BUGJAMESR LINUX WIN : svg/filters/filter-clip.svg = IMAGE
@@ -2097,7 +2117,6 @@ BUGWK42598 : http/tests/misc/401-alternative-content.php = TEXT
 BUGWK42598 : http/tests/xmlhttprequest/failed-auth.html = TIMEOUT TEXT
 
 BUGWK42769 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
-BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
 
 // Flaky since at least chromium r52834, WebKit r63615.
 BUGCR49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
@@ -2348,9 +2367,6 @@ BUGCR61406 SNOWLEOPARD RELEASE : svg/dynamic-updates/SVGFETurbulenceElement-svgd
 BUGCR61406 SNOWLEOPARD DEBUG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE PASS
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153AND61406 LINUX WIN : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
-
-// Flaky: fails about 5% of the time.
-BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
 // See also https://webkit.org/b/49045
 BUGCR61978 : svg/animations/animate-path-nested-transforms.html = PASS CRASH TEXT
@@ -2686,8 +2702,6 @@ BUGWK54322 SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = PA
 BUGWK54322 SNOWLEOPARD : http/tests/loading/slow-parsing-subframe.html = PASS CRASH
 BUGWK54322 SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = PASS TEXT
 BUGWK54322 SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = PASS TEXT
-BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = PASS TEXT
-BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = PASS TEXT
 BUGWK54322 SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = PASS TEXT
 BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = PASS TIMEOUT
@@ -2725,8 +2739,6 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = TEXT
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
 BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE IMAGE+TEXT
-
-BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
@@ -2964,7 +2976,6 @@ BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 // flakiness on deps bots (noted ~ r83108)
 BUGDPRANKE WIN DEBUG CPU : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
-BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 
 // These seem to be minor debug-only differences.
 BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
@@ -3344,9 +3355,6 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
@@ -3356,9 +3364,6 @@ BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PA
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 
 BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
-
-BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
-BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
@@ -3418,8 +3423,6 @@ BUGWK68674 : fast/js/function-bind.html = TEXT
 
 
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
-BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH
-BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-blocked.html = PASS CRASH
 
 // Alpha channel differences
 BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-append.html = IMAGE
@@ -3485,7 +3488,6 @@ BUGWK70298 : fast/forms/number/input-number-large-padding.html = TEXT PASS
 BUGWK70298 WIN LINUX : fast/forms/number/input-spinbutton-capturing.html = TEXT PASS
 BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
 BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
-BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 
 // Failing since ~r97700.
@@ -3542,8 +3544,6 @@ BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 
 BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
-BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
-BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
 // Intermittent assertion failures on snowleopard bots.
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
@@ -3556,7 +3556,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-parsing-space-charac
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/loader/opaque-base-url.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
-BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
 BUGWK59552 SLOW SNOWLEOPARD DEBUG : jquery/offset.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
@@ -3567,7 +3566,6 @@ BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/regexp-caching.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
-BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
@@ -3613,8 +3611,6 @@ BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-font-fallback.html = IMAGE
 
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
-
-BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 
 BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT TEXT PASS
 
