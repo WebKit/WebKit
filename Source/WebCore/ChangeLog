@@ -1,3 +1,18 @@
+2012-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Floating image leaves hole in previous column when wrapped to next column
+        https://bugs.webkit.org/show_bug.cgi?id=77694
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/dynamic/float-moved-downwards-for-pagination-expected.html
+               fast/dynamic/float-moved-downwards-for-pagination.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats): When determining which lines to dirty,
+        also check for changes to the top edge of the float, which can happen when
+        float gets pushed down by a pagination strut.
+
 2012-02-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         REGRESSION (r105401-105403): Blue flash on css border transition

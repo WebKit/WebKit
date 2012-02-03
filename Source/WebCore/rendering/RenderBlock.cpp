@@ -3909,9 +3909,17 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
                     if (logicalWidthForFloat(f) != logicalWidthForFloat(oldFloatingObject) || logicalLeftForFloat(f) != logicalLeftForFloat(oldFloatingObject)) {
                         changeLogicalTop = 0;
                         changeLogicalBottom = max(changeLogicalBottom, max(logicalBottom, oldLogicalBottom));
-                    } else if (logicalBottom != oldLogicalBottom) {
-                        changeLogicalTop = min(changeLogicalTop, min(logicalBottom, oldLogicalBottom));
-                        changeLogicalBottom = max(changeLogicalBottom, max(logicalBottom, oldLogicalBottom));
+                    } else {
+                        if (logicalBottom != oldLogicalBottom) {
+                            changeLogicalTop = min(changeLogicalTop, min(logicalBottom, oldLogicalBottom));
+                            changeLogicalBottom = max(changeLogicalBottom, max(logicalBottom, oldLogicalBottom));
+                        }
+                        LayoutUnit logicalTop = logicalTopForFloat(f);
+                        LayoutUnit oldLogicalTop = logicalTopForFloat(oldFloatingObject);
+                        if (logicalTop != oldLogicalTop) {
+                            changeLogicalTop = min(changeLogicalTop, min(logicalTop, oldLogicalTop));
+                            changeLogicalBottom = max(changeLogicalBottom, max(logicalTop, oldLogicalTop));
+                        }
                     }
 
                     floatMap.remove(f->m_renderer);
