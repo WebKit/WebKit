@@ -44,9 +44,11 @@ public:
         TouchStateEnd // Placeholder: must remain the last item.
     };
 
+    // This is necessary for us to be able to build synthetic events.
+    PlatformTouchPoint() { };
+
 #if PLATFORM(QT)
     PlatformTouchPoint(const QTouchEvent::TouchPoint&);
-    PlatformTouchPoint() {};
 #elif PLATFORM(EFL)
     PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State);
 #endif

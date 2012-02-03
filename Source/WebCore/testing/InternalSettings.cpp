@@ -271,4 +271,15 @@ void InternalSettings::setPerTileDrawingEnabled(bool enabled, ExceptionCode& ec)
     settings()->setPerTileDrawingEnabled(enabled);
 }
 
+void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode& ec)
+{
+#if ENABLE(TOUCH_EVENTS)
+    InternalSettingsGuardForSettings();
+    settings()->setTouchEventEmulationEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(ec);
+#endif
+}
+
 }

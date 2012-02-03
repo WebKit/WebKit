@@ -44,6 +44,7 @@ module window {
         boolean unifiedTextCheckingEnabled() raises (DOMException);
         float pageScaleFactor() raises(DOMException);
         void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
+        void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
     };
 }
 

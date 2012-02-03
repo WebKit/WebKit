@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id="touchtarget" style="width: 100px; height: 100px; background-color: blue"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var div = document.getElementById("touchtarget");
+var lastEvent = null;
+var touchEventsReceived = 0;
+var EXPECTED_TOUCH_EVENTS_TOTAL = 3;
+
+function touchEventCallback() {
+    if (window.eventSender) {
+        lastEvent = event;
+        verifyTouch(touchEventsReceived++);
+    } else
+        debug(event.type);
+
+    if (window.layoutTestController && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL)
+        finishJSTest();
+}
+
+div.addEventListener("touchstart", touchEventCallback, false);
+div.addEventListener("touchmove", touchEventCallback, false);
+div.addEventListener("touchend", touchEventCallback, false);
+
+function verifyTouchEvent(type, totalTouchCount, changedTouchCount, targetTouchCount)
+{
+    shouldBeEqualToString("lastEvent.type", type);
+    shouldBe("lastEvent.touches.length", totalTouchCount.toString());
+    shouldBe("lastEvent.changedTouches.length", changedTouchCount.toString());
+    shouldBe("lastEvent.targetTouches.length", targetTouchCount.toString());
+    shouldBe("lastEvent.pageX", "0");
+    shouldBe("lastEvent.pageY", "0");
+}
+
+function verifyTouchPoint(list, point, x, y, id)
+{
+    shouldBe("lastEvent." + list + "[" + point + "].pageX", x.toString());
+    shouldBe("lastEvent." + list + "[" + point + "].pageY", y.toString());
+    shouldBe("lastEvent." + list + "[" + point + "].clientX", x.toString());
+    shouldBe("lastEvent." + list + "[" + point + "].clientY", y.toString());
+    shouldBe("lastEvent." + list + "[" + point + "].identifier", id.toString());
+}
+
+function verifyTouch(which) {
+    switch (which) {
+    case 0:
+        verifyTouchEvent("touchstart", 1, 1, 1);
+        shouldBe("lastEvent.shiftKey", "true");
+        shouldBe("lastEvent.altKey", "true");
+        shouldBe("lastEvent.ctrlKey", "false");
+        shouldBe("lastEvent.metaKey", "false");
+        shouldBeEqualToString("lastEvent.touches[0].target.id", "touchtarget");
+        verifyTouchPoint("touches", 0, 10, 10, 0);
+        verifyTouchPoint("changedTouches", 0, 10, 10, 0);
+        verifyTouchPoint("targetTouches", 0, 10, 10, 0);
+        break;
+    case 1:
+        verifyTouchEvent("touchmove", 1, 1, 1);
+        verifyTouchPoint("touches", 0, 20, 30, 0);
+        break;
+    case 2:
+        verifyTouchEvent("touchend", 0, 1, 0);
+        verifyTouchPoint("changedTouches", 0, 20, 30, 0);
+        shouldBe("lastEvent.shiftKey", "false");
+        shouldBe("lastEvent.altKey", "true");
+        shouldBe("lastEvent.ctrlKey", "true");
+        shouldBe("lastEvent.metaKey", "false");
+        break;
+    default:
+        testFailed("Wrong number of touch events! (" + which + ")");
+    }
+}
+
+function mouseEventSequence()
+{
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseDown(0, ["shiftKey", "altKey"]);
+    eventSender.mouseMoveTo(20, 30);
+    eventSender.mouseUp(0, ["altKey", "ctrlKey"]);
+}
+
+if (window.eventSender && window.internals && window.internals.settings) {
+    description("This tests single touch event emulation using mouse events.");
+
+    window.eventSender.dragMode = false;
+    window.jsTestIsAsync = true;
+    window.internals.settings.setTouchEventEmulationEnabled(true);
+    mouseEventSequence();
+} else
+    debug("This test requires DumpRenderTree. Tap on the blue rect to log.");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

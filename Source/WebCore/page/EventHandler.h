@@ -264,6 +264,10 @@ private:
     void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
     void cancelFakeMouseMoveEvent();
 
+#if ENABLE(TOUCH_EVENTS)
+    bool dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent&);
+#endif
+
     void invalidateClick();
 
     Node* nodeUnderMouse() const;

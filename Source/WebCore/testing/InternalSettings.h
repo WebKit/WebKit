@@ -64,6 +64,7 @@ public:
     float pageScaleFactor(ExceptionCode&);
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
     void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
+    void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
 
 private:
     InternalSettings(Frame*, InternalSettings* old);

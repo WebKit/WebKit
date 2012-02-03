@@ -523,6 +523,11 @@ namespace WebCore {
         void setNotificationsEnabled(bool enabled) { m_notificationsEnabled = enabled; }
         bool notificationsEnabled() const { return m_notificationsEnabled; }
 
+#if ENABLE(TOUCH_EVENTS)
+        void setTouchEventEmulationEnabled(bool enabled) { m_touchEventEmulationEnabled = enabled; }
+        bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
+#endif
+
     private:
         Settings(Page*);
 
@@ -668,6 +673,10 @@ namespace WebCore {
 #endif
 
         bool m_notificationsEnabled : 1;
+
+#if ENABLE(TOUCH_EVENTS)
+        bool m_touchEventEmulationEnabled : 1;
+#endif
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

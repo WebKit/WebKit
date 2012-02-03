@@ -1,3 +1,39 @@
+2012-01-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Implement touch event emulation in the WebCore layer
+        https://bugs.webkit.org/show_bug.cgi?id=77105
+
+        Reviewed by Ryosuke Niwa.
+
+        This change essentially maps mouse events into single-touch events in the following way:
+        - mousedown -> touchstart
+        - mouseup -> touchend
+        - mousemove -> touchmove (between mousedown and mouseup).
+
+        Test: fast/events/touch/emulate-touch-events.html
+
+        * page/EventHandler.cpp:
+        (SyntheticTouchPoint): A synthetic touch point built from PlatformMouseEvent.
+        (WebCore::SyntheticTouchPoint::SyntheticTouchPoint):
+        (SyntheticSingleTouchEvent): A synthetic touch point event built from PlatformMouseEvent.
+        (WebCore::SyntheticSingleTouchEvent::SyntheticSingleTouchEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent): Invoke maybeDispatchSyntheticTouchEvent() and bail out if necessary.
+        (WebCore::EventHandler::handleMousePressEvent): Invoke maybeDispatchSyntheticTouchEvent() and bail out if necessary.
+        (WebCore::EventHandler::mouseMoved): Invoke maybeDispatchSyntheticTouchEvent() and bail out if necessary.
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled): Dispatch a synthetic touch event if necessary.
+        * page/EventHandler.h: Added new method.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Added m_touchEventEmulationEnabled initializer.
+        * page/Settings.h: Added m_touchEventEmulationEnabled, getter, and setter.
+        (WebCore::Settings::setTouchEventEmulationEnabled): Added.
+        (WebCore::Settings::isTouchEventEmulationEnabled): Added.
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint): Unconditionally compile the parameterless ctor.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setTouchEventEmulationEnabled): Added for testing.
+        * testing/InternalSettings.h: Added setTouchEventEmulationEnabled() for testing.
+        * testing/InternalSettings.idl: Added setTouchEventEmulationEnabled() for testing.
+
 2012-02-03  Kentaro Hara  <haraken@chromium.org>
 
         Remove [NoCPPCustom] IDL
