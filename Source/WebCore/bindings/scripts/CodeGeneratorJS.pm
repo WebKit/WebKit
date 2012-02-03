@@ -499,7 +499,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         if ($interfaceName eq "DOMWindow") {
             push(@implContent, "    if (!thisObject->allowsAccessFrom(exec))\n");
         } else {
-            push(@implContent, "    if (!allowAccessToFrame(exec, thisObject->impl()->frame()))\n");
+            push(@implContent, "    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))\n");
         }
         push(@implContent, "        return false;\n");
     }
@@ -1700,7 +1700,7 @@ sub GenerateImplementation
                 } elsif ($attribute->signature->extendedAttributes->{"CheckAccessToNode"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
-                    push(@implContent, "    return allowAccessToNode(exec, impl->" . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
+                    push(@implContent, "    return shouldAllowAccessToNode(exec, impl->" . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
                 } elsif ($type eq "EventListener") {
                     $implIncludes{"EventListener.h"} = 1;
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
@@ -1889,7 +1889,7 @@ sub GenerateImplementation
                             if ($interfaceName eq "DOMWindow") {
                                 push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                             } else {
-                                push(@implContent, "    if (!allowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
                             }
                             push(@implContent, "        return;\n");
                         }
@@ -2017,7 +2017,7 @@ sub GenerateImplementation
                     if ($interfaceName eq "DOMWindow") {
                         push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                     } else {
-                        push(@implContent, "    if (!allowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                        push(@implContent, "    if (!shouldAllowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
                     }
                     push(@implContent, "        return;\n");
                 }
@@ -2131,7 +2131,7 @@ sub GenerateImplementation
                 }
 
                 if ($function->signature->extendedAttributes->{"CheckAccessToNode"} and !$function->isStatic) {
-                    push(@implContent, "    if (!allowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     $implIncludes{"JSDOMBinding.h"} = 1;
                 }

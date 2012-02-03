@@ -144,7 +144,7 @@ bool JSTestActiveDOMObject::getOwnPropertyDescriptor(JSObject* object, ExecState
 {
     JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    if (!allowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
         return false;
     return getStaticValueDescriptor<JSTestActiveDOMObject, Base>(exec, &JSTestActiveDOMObjectTable, thisObject, propertyName, descriptor);
 }

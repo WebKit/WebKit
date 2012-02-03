@@ -247,7 +247,7 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
     ExecState* exec = JSMainThreadExecState::currentState();
     if (exec)
-        return allowAccessToFrame(exec, frame);
+        return shouldAllowAccessToFrame(exec, frame);
     // If the current state is 0 we're in a call path where the DOM security 
     // check doesn't apply (eg. parser).
     return true;

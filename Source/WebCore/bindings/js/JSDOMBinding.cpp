@@ -216,12 +216,12 @@ DOMWindow* firstDOMWindow(ExecState* exec)
     return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
 }
 
-bool allowAccessToNode(ExecState* exec, Node* node)
+bool shouldAllowAccessToNode(ExecState* exec, Node* node)
 {
-    return node && allowAccessToFrame(exec, node->document()->frame());
+    return node && shouldAllowAccessToFrame(exec, node->document()->frame());
 }
 
-bool allowAccessToFrame(ExecState* exec, Frame* frame)
+bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame)
 {
     if (!frame)
         return false;
@@ -229,7 +229,7 @@ bool allowAccessToFrame(ExecState* exec, Frame* frame)
     return window && window->allowsAccessFrom(exec);
 }
 
-bool allowAccessToFrame(ExecState* exec, Frame* frame, String& message)
+bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame, String& message)
 {
     if (!frame)
         return false;

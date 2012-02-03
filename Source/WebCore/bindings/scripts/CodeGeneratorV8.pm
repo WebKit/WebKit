@@ -854,7 +854,7 @@ END
 
     # Generate security checks if necessary
     if ($attribute->signature->extendedAttributes->{"CheckAccessToNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->" . $attribute->signature->name . "()))\n    return v8::Handle<v8::Value>();\n\n");
+        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $attribute->signature->name . "()))\n    return v8::Handle<v8::Value>();\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
@@ -1438,7 +1438,7 @@ END
         AddToImplIncludes("ScriptCallStackFactory.h");
     }
     if ($function->signature->extendedAttributes->{"CheckAccessToNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->" . $function->signature->name . "(ec)))\n");
+        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $function->signature->name . "(ec)))\n");
         push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
 END
     }

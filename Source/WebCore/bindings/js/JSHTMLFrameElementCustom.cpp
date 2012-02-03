@@ -45,7 +45,7 @@ static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* 
 {
     if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Document* contentDocument = imp->contentDocument();
-        if (contentDocument && !allowAccessToNode(exec, contentDocument))
+        if (contentDocument && !shouldAllowAccessToNode(exec, contentDocument))
             return false;
     }
     return true;

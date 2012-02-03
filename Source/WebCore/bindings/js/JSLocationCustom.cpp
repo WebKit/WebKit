@@ -59,7 +59,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& p
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
     String message;
-    if (allowAccessToFrame(exec, frame, message))
+    if (shouldAllowAccessToFrame(exec, frame, message))
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
@@ -95,7 +95,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
     }
     
     // throw out all cross domain access
-    if (!allowAccessToFrame(exec, frame))
+    if (!shouldAllowAccessToFrame(exec, frame))
         return true;
     
     // Check for the few functions that we allow, even when called cross-domain.
@@ -134,7 +134,7 @@ bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JS
     if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
         return true;
 
-    bool sameDomainAccess = allowAccessToFrame(exec, frame);
+    bool sameDomainAccess = shouldAllowAccessToFrame(exec, frame);
 
     const HashEntry* entry = JSLocation::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (!entry) {
@@ -156,7 +156,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!allowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -165,7 +165,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     // Only allow the location object to enumerated by frames in the same origin.
-    if (!allowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -270,7 +270,7 @@ JSValue JSLocation::assign(ExecState* exec)
 JSValue JSLocation::toStringFunction(ExecState* exec)
 {
     Frame* frame = impl()->frame();
-    if (!frame || !allowAccessToFrame(exec, frame))
+    if (!frame || !shouldAllowAccessToFrame(exec, frame))
         return jsUndefined();
 
     return jsString(exec, impl()->toString());

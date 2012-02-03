@@ -769,7 +769,7 @@ static v8::Handle<v8::Value> contentDocumentAttrGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.TestObj.contentDocument._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->contentDocument()))
+    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->contentDocument()))
     return v8::Handle<v8::Value>();
 
     return toV8(imp->contentDocument());
@@ -1433,7 +1433,7 @@ static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->getSVGDocument(ec)))
+    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->getSVGDocument(ec)))
         return v8::Handle<v8::Value>();
     RefPtr<SVGDocument> result = imp->getSVGDocument(ec);
     if (UNLIKELY(ec))

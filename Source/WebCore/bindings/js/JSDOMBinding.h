@@ -281,9 +281,9 @@ enum ParameterMissingPolicy {
     JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned&);
 
     // FIXME: Implement allowAccessToContext(JSC::ExecState*, ScriptExecutionContext*);
-    bool allowAccessToNode(JSC::ExecState*, Node*);
-    bool allowAccessToFrame(JSC::ExecState*, Frame*);
-    bool allowAccessToFrame(JSC::ExecState*, Frame*, String& message);
+    bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
+    bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
+    bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, String& message);
     // FIXME: Implement allowAccessToDOMWindow(JSC::ExecState*, DOMWindow*);
 
     // FIXME: Remove these functions in favor of activeContext and

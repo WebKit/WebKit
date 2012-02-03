@@ -762,7 +762,7 @@ JSValue jsTestObjContentDocument(ExecState* exec, JSValue slotBase, const Identi
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    return allowAccessToNode(exec, impl->contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->contentDocument())) : jsUndefined();
+    return shouldAllowAccessToNode(exec, impl->contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->contentDocument())) : jsUndefined();
 }
 
 
@@ -1939,7 +1939,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    if (!allowAccessToNode(exec, impl->getSVGDocument(ec)))
+    if (!shouldAllowAccessToNode(exec, impl->getSVGDocument(ec)))
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->getSVGDocument(ec)));
