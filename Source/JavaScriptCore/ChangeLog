@@ -1,3 +1,21 @@
+2012-01-31  Hajime Morrita  <morrita@chromium.org>
+
+        [Mac] eliminate JavaScriptCore.exp
+        https://bugs.webkit.org/show_bug.cgi?id=72854
+
+        Reviewed by Darin Adler.
+
+        - Removed exp files and corresponding makefile entries.
+        - Changed the build configuration no to use exp file.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.JSVALUE32_64only.exp: Removed.
+        * JavaScriptCore.JSVALUE64only.exp: Removed.
+        * JavaScriptCore.exp: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Platform.h:
+
 2012-02-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Running a Web Worker on about:blank crashes the interpreter

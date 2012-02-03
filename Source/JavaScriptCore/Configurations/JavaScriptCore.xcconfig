@@ -33,8 +33,9 @@ JSVALUE_MODEL_ppc = 32_64;
 JSVALUE_MODEL_ppc64 = 64;
 JSVALUE_MODEL_x86_64 = 64;
 
-EXPORTED_SYMBOLS_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.JSVALUE$(JSVALUE_MODEL).exp;
-OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3;
+// Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
+OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv;
+OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
@@ -43,6 +44,7 @@ OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction;
 OTHER_LDFLAGS_macosx_1080 = $(OTHER_LDFLAGS_macosx_1070);
 OTHER_LDFLAGS_macosx_1090 = $(OTHER_LDFLAGS_macosx_1070);
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
+GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(JAVASCRIPTCORE_FRAMEWORKS_DIR);

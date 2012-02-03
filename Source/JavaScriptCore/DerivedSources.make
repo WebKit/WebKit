@@ -43,8 +43,6 @@ all : \
     ErrorPrototype.lut.h \
     HeaderDetection.h \
     JSONObject.lut.h \
-    JavaScriptCore.JSVALUE32_64.exp \
-    JavaScriptCore.JSVALUE64.exp \
     JSGlobalObject.lut.h \
     KeywordLookup.h \
     Lexer.lut.h \
@@ -79,15 +77,6 @@ RegExpJitTables.h: create_regex_tables
 
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 	python $^ > $@
-
-# export files
-
-JavaScriptCore.JSVALUE32_64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32_64only.exp
-	cat $^ > $@
-
-JavaScriptCore.JSVALUE64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE64only.exp
-	cat $^ > $@
-
 
 # header detection
 
