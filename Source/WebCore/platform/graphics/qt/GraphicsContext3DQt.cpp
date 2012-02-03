@@ -146,7 +146,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 {
     blitMultisampleFramebufferAndRestoreContext();
 
-    if (textureMapper->accelerationMode() == TextureMapper::OpenGLMode) {
+    if (textureMapper->isOpenGLBacked()) {
         TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
         texmapGL->drawTexture(m_context->m_texture, !m_context->m_attrs.alpha, FloatSize(1, 1), targetRect, matrix, opacity, mask, true /* flip */);
         return;

@@ -1335,32 +1335,6 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     m_data->p()->setWorldTransform(transform);
 }
 
-#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
-TransformationMatrix GraphicsContext::get3DTransform() const
-{
-    if (paintingDisabled())
-        return TransformationMatrix();
-
-    return platformContext()->combinedTransform();
-}
-
-void GraphicsContext::concat3DTransform(const TransformationMatrix& transform)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->p()->setWorldTransform(transform, true);
-}
-
-void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->p()->setWorldTransform(transform, false);
-}
-#endif
-
 void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 {
     notImplemented();

@@ -336,6 +336,7 @@ void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const In
     textureMapper->setGraphicsContext(context);
     textureMapper->setImageInterpolationQuality(context->imageInterpolationQuality());
     textureMapper->setTextDrawingMode(context->textDrawingMode());
+    textureMapper->setViewportSize(frame->view()->frameRect().size());
     QPainter* painter = context->platformContext();
     const QTransform transform = painter->worldTransform();
     const TransformationMatrix matrix(

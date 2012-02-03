@@ -1,3 +1,18 @@
+2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106620.
+        http://trac.webkit.org/changeset/106620
+        https://bugs.webkit.org/show_bug.cgi?id=77716
+
+        It broke non ENABLE(3D_RENDERING) builds (Requested by
+        Ossy_morning on #webkit).
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit::LayerTreeHostProxy::paintToGraphicsContext):
+        (WebKit::LayerTreeHostProxy::createImage):
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+
 2012-02-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.

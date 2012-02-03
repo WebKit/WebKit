@@ -47,31 +47,46 @@ class TextureMapper;
 class BitmapTexture  : public RefCounted<BitmapTexture> {
 public:
     enum PixelFormat { BGRAFormat, RGBAFormat, BGRFormat, RGBFormat };
-    BitmapTexture()
-        : m_isOpaque(true)
-    {
-    }
-
+    BitmapTexture() : m_lockCount(0) {}
     virtual ~BitmapTexture() { }
     virtual void destroy() { }
 
+    virtual bool allowOfflineTextureUpload() const { return false; }
     virtual IntSize size() const = 0;
-    virtual void updateContents(Image*, const IntRect&, const IntRect&, BitmapTexture::PixelFormat) = 0;
-    virtual void updateContents(const void*, const IntRect&) = 0;
-    virtual bool isValid() const = 0;
-
     virtual int bpp() const { return 32; }
+    virtual bool isValid() const = 0;
     virtual void reset(const IntSize& size, bool opaque = false)
     {
         m_isOpaque = opaque;
         m_contentSize = size;
     }
 
+    virtual void pack() { }
+    virtual void unpack() { }
+    virtual bool isPacked() const { return false; }
+
+    virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect) = 0;
+    virtual void endPaint() = 0;
+
+    // For performance reasons, BitmapTexture might modify the bits directly (swizzle).
+    // Thus, this method is only recommended for buffer update, such as used by WebKit2.
+    virtual void updateContents(PixelFormat, const IntRect&, void* bits) = 0;
+    virtual void updateRawContents(const IntRect&, const void* bits) { }
+    virtual PlatformGraphicsContext* beginPaintMedia()
+    {
+        return beginPaint(IntRect(0, 0, size().width(), size().height()));
+    }
+    virtual void setContentsToImage(Image*) = 0;
+    virtual bool save(const String&) { return false; }
+
+    inline void lock() { ++m_lockCount; }
+    inline void unlock() { --m_lockCount; }
+    inline bool isLocked() { return m_lockCount; }
     inline IntSize contentSize() const { return m_contentSize; }
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
-    inline bool isOpaque() const { return m_isOpaque; }
 
 protected:
+    int m_lockCount;
     IntSize m_contentSize;
     bool m_isOpaque;
 };
@@ -82,32 +97,39 @@ class TextureMapper {
     friend class BitmapTexture;
 
 public:
-    enum AccelerationMode { SoftwareMode, OpenGLMode };
-    static PassOwnPtr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
+    static PassOwnPtr<TextureMapper> create(GraphicsContext* graphicsContext = 0);
     virtual ~TextureMapper() { }
 
     virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0) = 0;
 
     // makes a surface the target for the following drawTexture calls.
     virtual void bindSurface(BitmapTexture* surface) = 0;
-    virtual void setGraphicsContext(GraphicsContext* context) { m_context = context; }
-    virtual GraphicsContext* graphicsContext() { return m_context; }
+    virtual void setGraphicsContext(GraphicsContext*) = 0;
+    virtual GraphicsContext* graphicsContext() = 0;
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
     virtual void endClip() = 0;
+    virtual bool allowSurfaceForRoot() const = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
+    IntSize viewportSize() const { return m_viewportSize; }
+    void setViewportSize(const IntSize& s) { m_viewportSize = s; }
 
     void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
     void setTextDrawingMode(TextDrawingModeFlags mode) { m_textDrawingMode = mode; }
 
     InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
     TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
-    virtual AccelerationMode accelerationMode() const = 0;
+    virtual bool allowPartialUpdates() const { return false; }
+    virtual bool isOpenGLBacked() const { return false; }
+
+    void setTransform(const TransformationMatrix& matrix) { m_transform = matrix; }
+    TransformationMatrix transform() const { return m_transform; }
 
     virtual void beginPainting() { }
     virtual void endPainting() { }
 
     // A surface is released implicitly when dereferenced.
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
+
 
 protected:
     TextureMapper()
@@ -116,21 +138,14 @@ protected:
     {}
 
 private:
-#if USE(TEXTURE_MAPPER_GL)
-    static PassOwnPtr<TextureMapper> platformCreateAccelerated();
-#else
-    static PassOwnPtr<TextureMapper> platformCreateAccelerated()
-    {
-        return 0;
-    }
-#endif
     InterpolationQuality m_interpolationQuality;
     TextDrawingModeFlags m_textDrawingMode;
+    TransformationMatrix m_transform;
+    IntSize m_viewportSize;
     Vector<RefPtr<BitmapTexture> > m_texturePool;
-    GraphicsContext* m_context;
 };
 
-}
+};
 
 #endif
 

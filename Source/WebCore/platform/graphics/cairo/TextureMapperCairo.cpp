@@ -115,6 +115,11 @@ void TextureMapperCairo::drawTexture(const BitmapTexture& texture, const FloatRe
     notImplemented();
 }
 
+PassOwnPtr<TextureMapper> TextureMapper::create(GraphicsContext* context)
+{
+    return adoptPtr(new TextureMapperCairo);
+}
+
 PassRefPtr<BitmapTexture> TextureMapperCairo::createTexture()
 {
     return adoptRef(new BitmapTextureCairo());

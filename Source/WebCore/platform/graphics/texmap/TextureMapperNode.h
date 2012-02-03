@@ -148,7 +148,7 @@ public:
     void setTileOwnership(TileOwnership ownership) { m_state.tileOwnership = ownership; }
     int createContentsTile(float scale);
     void removeContentsTile(int id);
-    void setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void*);
+    void setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void* bits);
     void setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture*);
     void clearAllDirectlyCompositedImageTiles();
     void purgeNodeTexturesRecursive();

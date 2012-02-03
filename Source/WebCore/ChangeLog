@@ -1,3 +1,127 @@
+2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106620.
+        http://trac.webkit.org/changeset/106620
+        https://bugs.webkit.org/show_bug.cgi?id=77716
+
+        It broke non ENABLE(3D_RENDERING) builds (Requested by
+        Ossy_morning on #webkit).
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/GraphicsContext.h:
+        (WebCore):
+        (GraphicsContext):
+        * platform/graphics/cairo/TextureMapperCairo.cpp:
+        (WebCore::TextureMapper::create):
+        (WebCore):
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (Entry):
+        (DirectlyCompositedImageRepository):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::findOrCreate):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::deref):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::DirectlyCompositedImageRepository):
+        (WebCore::TextureMapperGLData::DirectlyCompositedImageRepository::~DirectlyCompositedImageRepository):
+        (TextureMapperGLData):
+        (BitmapTextureGL):
+        (WebCore::BitmapTextureGL::isOpaque):
+        (WebCore::BitmapTextureGL::pack):
+        (WebCore::BitmapTextureGL::unpack):
+        (WebCore::BitmapTextureGL::isPacked):
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::BitmapTextureGL::reset):
+        (WebCore::BitmapTextureGL::beginPaint):
+        (WebCore::BitmapTextureGL::endPaint):
+        (WebCore):
+        (WebCore::BitmapTextureGL::updateContents):
+        (WebCore::BitmapTextureGL::updateRawContents):
+        (WebCore::BitmapTextureGL::setContentsToImage):
+        (WebCore::BitmapTextureGL::destroy):
+        (WebCore::TextureMapperGL::bindSurface):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        (TextureMapperGL):
+        (WebCore::TextureMapperGL::allowSurfaceForRoot):
+        (BGRA32PremultimpliedBuffer):
+        (WebCore::BGRA32PremultimpliedBuffer::~BGRA32PremultimpliedBuffer):
+        (WebCore):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/TextureMapperQt.cpp: Added.
+        (WebCore):
+        (WebCore::BitmapTextureQt::destroy):
+        (WebCore::BitmapTextureQt::reset):
+        (WebCore::BitmapTextureQt::beginPaint):
+        (WebCore::BitmapTextureQt::endPaint):
+        (WebCore::BitmapTextureQt::updateContents):
+        (WebCore::BitmapTextureQt::save):
+        (WebCore::BitmapTextureQt::setContentsToImage):
+        (WebCore::BitmapTextureQt::pack):
+        (WebCore::BitmapTextureQt::unpack):
+        (WebCore::TextureMapperQt::beginClip):
+        (WebCore::TextureMapperQt::endClip):
+        (WebCore::TextureMapperQt::viewportSize):
+        (WebCore::TextureMapperQt::TextureMapperQt):
+        (WebCore::TextureMapperQt::setGraphicsContext):
+        (WebCore::TextureMapperQt::graphicsContext):
+        (WebCore::TextureMapperQt::bindSurface):
+        (WebCore::TextureMapperQt::drawTexture):
+        (WebCore::TextureMapper::create):
+        (WebCore::TextureMapperQt::createTexture):
+        (WebCore::BitmapTextureQt::BitmapTextureQt):
+        (WebCore::TextureMapperQt::beginPainting):
+        (WebCore::TextureMapperQt::endPainting):
+        (BGRA32PremultimpliedBufferQt):
+        (WebCore::BGRA32PremultimpliedBufferQt::beginPaint):
+        (WebCore::BGRA32PremultimpliedBufferQt::endPaint):
+        (WebCore::BGRA32PremultimpliedBufferQt::data):
+        (WebCore::BGRA32PremultimpliedBuffer::create):
+        (WebCore::uidForImage):
+        * platform/graphics/qt/TextureMapperQt.h: Added.
+        (WebCore):
+        (BitmapTextureQt):
+        (WebCore::BitmapTextureQt::~BitmapTextureQt):
+        (WebCore::BitmapTextureQt::size):
+        (WebCore::BitmapTextureQt::isValid):
+        (WebCore::BitmapTextureQt::sourceRect):
+        (WebCore::BitmapTextureQt::isPacked):
+        (WebCore::BitmapTextureQt::painter):
+        (TextureMapperQt):
+        (WebCore::TextureMapperQt::allowSurfaceForRoot):
+        (WebCore::TextureMapperQt::initialize):
+        (WebCore::TextureMapperQt::create):
+        (WebCore::TextureMapperQt::currentPainter):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::BitmapTexture):
+        (WebCore::BitmapTexture::allowOfflineTextureUpload):
+        (BitmapTexture):
+        (WebCore::BitmapTexture::pack):
+        (WebCore::BitmapTexture::unpack):
+        (WebCore::BitmapTexture::isPacked):
+        (WebCore::BitmapTexture::updateRawContents):
+        (WebCore::BitmapTexture::beginPaintMedia):
+        (WebCore::BitmapTexture::save):
+        (WebCore::BitmapTexture::lock):
+        (WebCore::BitmapTexture::unlock):
+        (WebCore::BitmapTexture::isLocked):
+        (TextureMapper):
+        (WebCore::TextureMapper::viewportSize):
+        (WebCore::TextureMapper::setViewportSize):
+        (WebCore::TextureMapper::allowPartialUpdates):
+        (WebCore::TextureMapper::isOpenGLBacked):
+        (WebCore::TextureMapper::setTransform):
+        (WebCore::TextureMapper::transform):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp: Removed.
+        * platform/graphics/texmap/TextureMapperImageBuffer.h: Removed.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::setContentsTileBackBuffer):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (TextureMapperNode):
+
 2012-02-02  Keishi Hattori  <keishi@webkit.org>
 
         ColorInputType needs to use ensureInlineStyleDecl

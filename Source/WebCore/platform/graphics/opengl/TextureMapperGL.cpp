@@ -265,6 +265,57 @@ struct TextureMapperGLData {
 
     };
 
+    struct DirectlyCompositedImageRepository {
+        struct Entry {
+            GLuint texture;
+            int refCount;
+        };
+        typedef HashMap<ImageUID, Entry> ImageTextureMap;
+        ImageTextureMap imageToTexture;
+
+        GLuint findOrCreate(ImageUID image, bool& found)
+        {
+            ImageTextureMap::iterator it = imageToTexture.find(image);
+            found = false;
+            if (it != imageToTexture.end()) {
+                it->second.refCount++;
+                found = true;
+                return it->second.texture;
+            }
+            Entry entry;
+            GL_CMD(glGenTextures(1, &entry.texture));
+            entry.refCount = 1;
+            imageToTexture.add(image, entry);
+            return entry.texture;
+        }
+
+        bool deref(ImageUID image)
+        {
+            HashMap<ImageUID, Entry>::iterator it = imageToTexture.find(image);
+            if (it != imageToTexture.end()) {
+                if (it->second.refCount < 2) {
+                    imageToTexture.remove(it);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        DirectlyCompositedImageRepository()
+        {
+        }
+
+        ~DirectlyCompositedImageRepository()
+        {
+            for (ImageTextureMap::iterator it = imageToTexture.begin(); it != imageToTexture.end(); ++it) {
+                GLuint texture = it->second.texture;
+                if (texture)
+                    GL_CMD(glDeleteTextures(1, &texture));
+            }
+
+        }
+    } directlyCompositedImages;
+
     SharedGLData& sharedGLData() const
     {
         return *(m_sharedGLData.get());
@@ -281,7 +332,6 @@ struct TextureMapperGLData {
     int currentProgram;
     GLint previousProgram;
     GLint previousScissorState;
-    GLint viewport[4];
     RefPtr<SharedGLData> m_sharedGLData;
 };
 
@@ -292,25 +342,56 @@ public:
     virtual bool isValid() const;
     virtual void reset(const IntSize&, bool opaque);
     void bind();
+    virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect);
+    virtual void endPaint();
+    virtual void setContentsToImage(Image*);
     ~BitmapTextureGL() { destroy(); }
     virtual uint32_t id() const { return m_id; }
+    inline bool isOpaque() const { return m_opaque; }
     inline FloatSize relativeSize() const { return m_relativeSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
-    void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
-    void updateContents(const void*, const IntRect&);
+
+    void updateContents(PixelFormat, const IntRect&, void*);
+    void updateRawContents(const IntRect&, const void*);
+    void pack()
+    {
+        // This is currently a stub.
+        if (isPacked())
+            return;
+        m_isPacked = true;
+    }
+
+    void unpack()
+    {
+        // This is currently a stub.
+        if (!isPacked())
+            return;
+        m_isPacked = false;
+    }
+
+    bool isPacked() const
+    {
+        return m_isPacked;
+    }
 
 private:
     GLuint m_id;
+    ImageUID m_imageUID;
     FloatSize m_relativeSize;
+    bool m_opaque;
     IntSize m_textureSize;
+    OwnPtr<BGRA32PremultimpliedBuffer> m_buffer;
     IntRect m_dirtyRect;
     GLuint m_fbo;
     GLuint m_rbo;
     IntSize m_actualSize;
     bool m_surfaceNeedsReset;
+    bool m_isPacked;
     TextureMapperGL* m_textureMapper;
     BitmapTextureGL()
         : m_id(0)
+        , m_imageUID(0)
+        , m_opaque(false)
         , m_fbo(0)
         , m_rbo(0)
         , m_surfaceNeedsReset(true)
@@ -463,7 +544,6 @@ void TextureMapperGL::beginPainting()
 #endif
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
-    glGetIntegerv(GL_VIEWPORT, data().viewport);
     bindSurface(0);
 }
 
@@ -583,6 +663,7 @@ static void texImage2DResourceSafe(size_t width, size_t height)
 void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
 {
     BitmapTexture::reset(newSize, opaque);
+    m_imageUID = 0;
     IntSize newTextureSize = nextPowerOfTwo(newSize);
     bool justCreated = false;
     if (!m_id) {
@@ -601,10 +682,28 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
     }
     m_actualSize = newSize;
     m_relativeSize = FloatSize(float(newSize.width()) / m_textureSize.width(), float(newSize.height()) / m_textureSize.height());
+    m_opaque = opaque;
     m_surfaceNeedsReset = true;
 }
 
+PlatformGraphicsContext* BitmapTextureGL::beginPaint(const IntRect& dirtyRect)
+{
+    m_buffer = BGRA32PremultimpliedBuffer::create();
+    m_dirtyRect = dirtyRect;
+    return m_buffer->beginPaint(dirtyRect, m_opaque);
+}
 
+void BitmapTextureGL::endPaint()
+{
+    if (!m_buffer)
+        return;
+    m_buffer->endPaint();
+    updateContents(BGRAFormat, m_dirtyRect, m_buffer->data());
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+    m_buffer.clear();
+}
+
+#ifdef TEXMAP_OPENGL_ES_2
 static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
 {
     int width = size.width();
@@ -615,31 +714,79 @@ static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
 }
+#endif
 
-void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect)
+void BitmapTextureGL::updateContents(PixelFormat pixelFormat, const IntRect& rect, void* bits)
 {
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, data))
+#ifdef TEXMAP_OPENGL_ES_2
+    bool shouldSwizzle = false;
+#endif
+
+    GLint glFormat = GL_RGBA;
+    switch (pixelFormat) {
+    case RGBAFormat:
+        glFormat = GL_RGBA;
+        break;
+    case RGBFormat:
+        glFormat = GL_RGB;
+        break;
+    case BGRAFormat:
+#ifdef TEXMAP_OPENGL_ES_2
+        shouldSwizzle = true;
+        glFormat = GL_RGBA;
+#else
+        glFormat = GL_BGRA;
+#endif
+        break;
+    case BGRFormat:
+#ifdef TEXMAP_OPENGL_ES_2
+        shouldSwizzle = true;
+        glFormat = GL_RGB;
+#else
+        glFormat = GL_BGR;
+#endif
+         break;
+    }
+
+#ifdef TEXMAP_OPENGL_ES_2
+    if (shouldSwizzle)
+        swizzleBGRAToRGBA(static_cast<uint32_t*>(bits), rect.size());
+#endif
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x(), rect.y(), rect.width(), rect.height(), glFormat, GL_UNSIGNED_BYTE, bits))
 }
 
-void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntRect& sourceRect, BitmapTexture::PixelFormat format)
+void BitmapTextureGL::updateRawContents(const IntRect& rect, const void* bits)
 {
-    if (!image)
-        return;
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
     GLuint glFormat = isOpaque() ? GL_RGB : GL_RGBA;
-    NativeImagePtr frameImage = image->nativeImageForCurrentFrame();
-    if (!frameImage)
-        return;
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x(), rect.y(), rect.width(), rect.height(), glFormat, GL_UNSIGNED_BYTE, bits))
+}
 
-#if PLATFORM(QT)
-    QImage qtImage = frameImage->toImage();
-    if (IntSize(qtImage.size()) != sourceRect.size())
-        qtImage = qtImage.copy(sourceRect);
-    if (format == BGRAFormat || format == BGRFormat)
-        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, qtImage.constBits()))
-#endif
+void BitmapTextureGL::setContentsToImage(Image* image)
+{
+    ImageUID uid = image ? uidForImage(image) : 0;
+    if (!image || !uid) {
+        if (m_imageUID)
+            destroy();
+        return;
+    }
+
+    if (uid == m_imageUID)
+        return;
+    bool found = false;
+    GLuint newTextureID = m_textureMapper->data().directlyCompositedImages.findOrCreate(uid, found);
+    if (newTextureID != m_id) {
+        m_imageUID = uid;
+        destroy();
+        m_id = newTextureID;
+        reset(image->size(), false);
+        if (!found) {
+            GraphicsContext context(beginPaint(IntRect(0, 0, m_textureSize.width(), m_textureSize.height())));
+            context.drawImage(image, ColorSpaceDeviceRGB, IntPoint(0, 0), CompositeCopy);
+            endPaint();
+        }
+    }
 }
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool flip)
@@ -690,7 +837,7 @@ void BitmapTextureGL::bind()
 
 void BitmapTextureGL::destroy()
 {
-    if (m_id)
+    if (m_id && (!m_imageUID || !m_textureMapper->data().directlyCompositedImages.deref(m_imageUID)))
         GL_CMD(glDeleteTextures(1, &m_id))
 
     if (m_fbo)
@@ -725,13 +872,12 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
     BitmapTextureGL* surface = static_cast<BitmapTextureGL*>(surfacePointer);
 
     if (!surface) {
-        IntSize viewportSize(data().viewport[2], data().viewport[3]);
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0))
-        data().projectionMatrix = createProjectionMatrix(viewportSize, true);
+        data().projectionMatrix = createProjectionMatrix(viewportSize(), true).multiply(transform());
         GL_CMD(glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1))
         GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
-        GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()))
-        data().sharedGLData().clipStack.append(IntRect(data().viewport[0], data().viewport[1], data().viewport[2], data().viewport[3]));
+        GL_CMD(glViewport(0, 0, viewportSize().width(), viewportSize().height()))
+        data().sharedGLData().clipStack.append(IntRect(IntPoint::zero(), viewportSize()));
         return;
     }
 
@@ -837,11 +983,6 @@ PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
     BitmapTextureGL* texture = new BitmapTextureGL();
     texture->setTextureMapper(this);
     return adoptRef(texture);
-}
-
-PassOwnPtr<TextureMapper> TextureMapper::platformCreateAccelerated()
-{
-    return TextureMapperGL::create();
 }
 
 };
