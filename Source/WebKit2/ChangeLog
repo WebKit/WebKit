@@ -1,3 +1,15 @@
+2012-02-03  Shinya Kawanaka  <shinyak@google.com>
+
+        Stop calling Element::ensureShadowRoot in Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=77612
+
+        Reviewed by Hajime Morita.
+
+        Exports symbols.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106620.

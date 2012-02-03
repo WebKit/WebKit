@@ -1,3 +1,22 @@
+2012-02-03  Shinya Kawanaka  <shinyak@google.com>
+
+        Stop calling Element::ensureShadowRoot in Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=77612
+
+        Reviewed by Hajime Morita.
+
+        We want to check a shadow root is built-in or created by users to support multiple shadow subtrees.
+        But Element::ensureShadowRoot() makes it difficult, because it doesn't care about the returning shadow element
+        is built-in or user generated, so let's remove Element::ensureShadowRoot().
+
+        As a first step, this patch removes ensureShadowRoot() in Internals.
+
+        No new tests, because no changes in behavior.
+
+        * WebCore.exp.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot):
+
 2012-02-02  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Always show percents together with counters in heap inspector.

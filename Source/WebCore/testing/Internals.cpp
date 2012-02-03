@@ -193,7 +193,10 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
         return 0;
     }
 
-    return host->ensureShadowRoot();
+    if (ShadowRoot* root = host->shadowRoot())
+        return root;
+
+    return ShadowRoot::create(host, ec).get();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* host, ExceptionCode& ec)
