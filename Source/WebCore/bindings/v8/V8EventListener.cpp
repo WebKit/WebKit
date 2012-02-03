@@ -85,7 +85,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
 
     if (V8Proxy* proxy = V8Proxy::retrieve(context)) {
         Frame* frame = static_cast<Document*>(context)->frame();
-        if (frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+        if (frame->script()->canExecuteScripts(AboutToExecuteScript))
             return proxy->callFunction(handlerFunction, receiver, 1, parameters);
     }
 

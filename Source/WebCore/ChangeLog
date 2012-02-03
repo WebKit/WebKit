@@ -1,3 +1,22 @@
+2012-02-03  Jochen Eisinger  <jochen@chromium.org>
+
+        Remove unneccesary canExecuteScripts check from v8 bindings, and correctly indeicate when we're about to execute a script
+        https://bugs.webkit.org/show_bug.cgi?id=76704
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/isolatedWorld/sandboxed-iframe.html
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/V8EventListener.cpp:
+        (WebCore::V8EventListener::callListenerFunction):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::callListenerFunction):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::handleOutOfMemory):
+        (WebCore::toV8Context):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollingTreeState class

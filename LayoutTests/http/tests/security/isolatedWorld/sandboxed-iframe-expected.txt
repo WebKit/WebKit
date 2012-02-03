@@ -1,0 +1,4 @@
+ALERT: PASS
+Test that executing scripts in an isolated world works even inside sandboxed iframes. The test passes, if an alert with the text "PASS" is shown.
+
+
