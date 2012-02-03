@@ -199,12 +199,10 @@ void ScrollingCoordinator::commitTreeStateIfNeeded()
 
 void ScrollingCoordinator::commitTreeState()
 {
-    printf("committing!\n");
     ASSERT(m_scrollingTreeState->hasChangedProperties());
 
     OwnPtr<ScrollingTreeState> treeState = m_scrollingTreeState->commit();
-
-    // FIXME: Commit the tree state.
+    ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
 }
 
 } // namespace WebCore

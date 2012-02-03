@@ -23,50 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTree.h"
+#ifndef ScrollingTreeNode_h
+#define ScrollingTreeNode_h
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "ScrollingCoordinator.h"
-#include "ScrollingThread.h"
-#include "ScrollingTreeNode.h"
-#include "ScrollingTreeState.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingCoordinator)
-{
-    return adoptRef(new ScrollingTree(scrollingCoordinator));
-}
+class ScrollingTree;
+class ScrollingTreeState;
 
-ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
-    : m_scrollingCoordinator(scrollingCoordinator)
-    , m_rootNode(ScrollingTreeNode::create(this))
-{
-}
+class ScrollingTreeNode {
+public:
+    static PassOwnPtr<ScrollingTreeNode> create(ScrollingTree*);
+    virtual ~ScrollingTreeNode();
 
-ScrollingTree::~ScrollingTree()
-{
-    ASSERT(!m_scrollingCoordinator);
-}
+    virtual void update(ScrollingTreeState*);
 
-void ScrollingTree::invalidate()
-{
-    // Invalidate is dispatched by the ScrollingCoordinator class on the ScrollingThread
-    // to break the reference cycle between ScrollingTree and ScrollingCoordinator when the
-    // ScrollingCoordinator's page is destroyed.
-    ASSERT(ScrollingThread::isCurrentThread());
-    m_scrollingCoordinator = nullptr;
-}
+protected:
+    explicit ScrollingTreeNode(ScrollingTree*);
 
-void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingTreeState)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-
-    m_rootNode->update(scrollingTreeState.get());
-}
+private:
+    ScrollingTree* m_scrollingTree;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)
+
+#endif // ScrollingTreeNode_h

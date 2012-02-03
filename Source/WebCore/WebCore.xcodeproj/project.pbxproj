@@ -493,6 +493,10 @@
 		1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */; };
 		1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */; };
 		1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */; };
+		1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */; };
+		1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */; };
+		1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */; };
+		1AAADDE914DC8DF800AF64B3 /* ScrollingTreeNodeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDE714DC8DF800AF64B3 /* ScrollingTreeNodeMac.h */; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
 		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
 		1AB33DA512551E320024457A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AB33DA412551E320024457A /* IOKit.framework */; };
@@ -7214,6 +7218,10 @@
 		1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeState.cpp; sourceTree = "<group>"; };
 		1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeState.h; sourceTree = "<group>"; };
 		1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeStateMac.mm; sourceTree = "<group>"; };
+		1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeNode.cpp; sourceTree = "<group>"; };
+		1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeNode.h; sourceTree = "<group>"; };
+		1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeNodeMac.mm; sourceTree = "<group>"; };
+		1AAADDE714DC8DF800AF64B3 /* ScrollingTreeNodeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeNodeMac.h; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
 		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
 		1AB33DA412551E320024457A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -13931,6 +13939,8 @@
 				1AF62F2114DAFE790041556C /* ScrollingThread.h */,
 				1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */,
 				1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */,
+				1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */,
+				1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */,
 				1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */,
 				1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */,
 			);
@@ -13942,6 +13952,8 @@
 			children = (
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
+				1AAADDE714DC8DF800AF64B3 /* ScrollingTreeNodeMac.h */,
+				1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */,
 				1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */,
 			);
 			path = mac;
@@ -24115,6 +24127,8 @@
 				1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */,
 				1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */,
 				1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */,
+				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
+				1AAADDE914DC8DF800AF64B3 /* ScrollingTreeNodeMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27046,6 +27060,8 @@
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,
 				1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */,
 				1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */,
+				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
+				1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

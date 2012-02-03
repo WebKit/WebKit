@@ -32,6 +32,7 @@
 #import "FrameView.h"
 #import "Page.h"
 #import "ScrollingThread.h"
+#import "ScrollingTreeState.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
@@ -70,6 +71,9 @@ void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, c
 
     if (frameView->frame() != m_page->mainFrame())
         return;
+
+    m_scrollingTreeState->setScrollLayer(scrollLayer);
+    scheduleTreeStateCommit();
 
     MutexLocker locker(m_mainFrameGeometryMutex);
     m_mainFrameScrollLayer = scrollLayer->platformLayer();

@@ -1,3 +1,34 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Commit scrolling tree state changes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=77780
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::commitTreeState):
+        Send the new scrolling tree state over to the ScrollingTree on the scrolling thread.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        Create a root node.
+
+        (WebCore::ScrollingTree::commitNewTreeState):
+        Update the root node.
+
+        * page/scrolling/ScrollingTreeNode.cpp: Copied from Source/WebCore/page/scrolling/ScrollingTree.cpp.
+        * page/scrolling/ScrollingTreeNode.h: Copied from Source/WebCore/page/scrolling/ScrollingTree.cpp.
+        Stub out an abstract ScrollingTreeNode class.
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::frameViewScrollLayerDidChange):
+        Update the scroll layer on the tree state.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h: Copied from Source/WebCore/page/scrolling/ScrollingTree.cpp.
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm: Copied from Source/WebCore/page/scrolling/ScrollingTree.cpp.
+        Stub out the concrete ScrollingTreeNodeMac subclass.
+
 2012-02-03  Antti Koivisto  <antti@apple.com>
 
         Rename CSSMutableStyleDeclaration.h/.cpp to StylePropertySet.h/.cpp 

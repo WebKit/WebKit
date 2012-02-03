@@ -28,6 +28,8 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -35,6 +37,8 @@
 namespace WebCore {
 
 class ScrollingCoordinator;
+class ScrollingTreeNode;
+class ScrollingTreeState;
 
 // The ScrollingTree class lives almost exclusively on the scrolling thread and manages the
 // hierarchy of scrollable regions on the page. It's also responsible for dispatching events
@@ -46,11 +50,14 @@ public:
     ~ScrollingTree();
 
     void invalidate();
+    void commitNewTreeState(PassOwnPtr<ScrollingTreeState>);
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
 
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+
+    OwnPtr<ScrollingTreeNode> m_rootNode;
 };
 
 } // namespace WebCore

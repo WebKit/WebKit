@@ -24,47 +24,24 @@
  */
 
 #include "config.h"
-#include "ScrollingTree.h"
+#include "ScrollingTreeNode.h"
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "ScrollingCoordinator.h"
-#include "ScrollingThread.h"
-#include "ScrollingTreeNode.h"
-#include "ScrollingTreeState.h"
-
 namespace WebCore {
 
-PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingCoordinator)
-{
-    return adoptRef(new ScrollingTree(scrollingCoordinator));
-}
-
-ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
-    : m_scrollingCoordinator(scrollingCoordinator)
-    , m_rootNode(ScrollingTreeNode::create(this))
+ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree)
+    : m_scrollingTree(scrollingTree)
 {
 }
 
-ScrollingTree::~ScrollingTree()
+ScrollingTreeNode::~ScrollingTreeNode()
 {
-    ASSERT(!m_scrollingCoordinator);
 }
 
-void ScrollingTree::invalidate()
+void ScrollingTreeNode::update(ScrollingTreeState*)
 {
-    // Invalidate is dispatched by the ScrollingCoordinator class on the ScrollingThread
-    // to break the reference cycle between ScrollingTree and ScrollingCoordinator when the
-    // ScrollingCoordinator's page is destroyed.
-    ASSERT(ScrollingThread::isCurrentThread());
-    m_scrollingCoordinator = nullptr;
-}
-
-void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingTreeState)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-
-    m_rootNode->update(scrollingTreeState.get());
+    // FIXME: Update the tree node properties.
 }
 
 } // namespace WebCore
