@@ -1,3 +1,27 @@
+2012-02-02  Bear Travis  <betravis@adobe.com>
+
+        Support 'disabled' attribute on SVGStyleElement
+        https://bugs.webkit.org/show_bug.cgi?id=52130
+
+        Adding disabled property to SVGStyleElement, which
+        mirrors the functionality added to HTMLStyleElement
+        for DOM1. The disabled property reflects and sets
+        the disabled state of its style sheet.
+
+        Based off of patch for bug 25287
+
+        Reviewed by Dirk Schulze.
+
+        Test: svg/dom/SVGStyleElement/disable-svg-style-element.html
+
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::disabled):
+        (WebCore):
+        (WebCore::SVGStyleElement::setDisabled):
+        * svg/SVGStyleElement.h:
+        (SVGStyleElement):
+        * svg/SVGStyleElement.idl:
+
 2012-02-02  Hayato Ito  <hayato@chromium.org>
 
         Make ShadowRoot interface inherit DocumentFragment interface in IDL.

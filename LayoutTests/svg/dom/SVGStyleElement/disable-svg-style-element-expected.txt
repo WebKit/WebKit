@@ -1,0 +1,17 @@
+Test the disabled property on an svg style element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS styleElement.disabled is false
+PASS window.getComputedStyle(rect).fill is "#0000ff"
+PASS styleElement.disabled is true
+PASS window.getComputedStyle(rect).fill is "#ff0000"
+PASS newStyleElement.disabled is false
+PASS newStyleElement.disabled is false
+PASS otherStyleElement.disabled is false
+PASS otherStyleElement.disabled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

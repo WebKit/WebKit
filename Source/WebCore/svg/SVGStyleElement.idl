@@ -30,6 +30,7 @@ module svg {
         Conditional=SVG
     ] SVGStyleElement : SVGElement,
                                                   SVGLangSpace {
+                 attribute boolean disabled;
                  attribute DOMString type
                      setter raises(DOMException);
                  attribute DOMString media

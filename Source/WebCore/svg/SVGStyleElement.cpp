@@ -51,6 +51,20 @@ PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName
     return adoptRef(new SVGStyleElement(tagName, document, createdByParser));
 }
 
+bool SVGStyleElement::disabled() const
+{
+    if (!m_sheet)
+        return false;
+    
+    return m_sheet->disabled();
+}
+
+void SVGStyleElement::setDisabled(bool setDisabled)
+{
+    if (CSSStyleSheet* styleSheet = sheet())
+        styleSheet->setDisabled(setDisabled);
+}
+
 const AtomicString& SVGStyleElement::type() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
