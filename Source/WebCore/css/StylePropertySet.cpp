@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "CSSMutableStyleDeclaration.h"
+#include "StylePropertySet.h"
 
 #include "CSSImageValue.h"
 #include "CSSParser.h"

@@ -28,7 +28,6 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImage.h"
 #include "CSSLineBoxContainValue.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -58,6 +57,7 @@
 #include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "ShadowValue.h"
+#include "StylePropertySet.h"
 #if ENABLE(CSS_FILTERS)
 #include "StyleCustomFilterProgram.h"
 #include "WebKitCSSFilterValue.h"

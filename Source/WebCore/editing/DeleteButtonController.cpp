@@ -27,7 +27,6 @@
 #include "DeleteButtonController.h"
 
 #include "CachedImage.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -46,6 +45,7 @@
 #include "Range.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

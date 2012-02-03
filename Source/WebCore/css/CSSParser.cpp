@@ -42,7 +42,6 @@
 #include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
@@ -75,6 +74,7 @@
 #include "RenderTheme.h"
 #include "Settings.h"
 #include "ShadowValue.h"
+#include "StylePropertySet.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
 #endif

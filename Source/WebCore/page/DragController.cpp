@@ -27,7 +27,6 @@
 #include "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#include "CSSMutableStyleDeclaration.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
 #include "CachedResourceLoader.h"
@@ -64,6 +63,7 @@
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StylePropertySet.h"
 #include "Text.h"
 #include "TextEvent.h"
 #include "htmlediting.h"

@@ -1,3 +1,64 @@
+2012-02-03  Antti Koivisto  <antti@apple.com>
+
+        Rename CSSMutableStyleDeclaration.h/.cpp to StylePropertySet.h/.cpp 
+        https://bugs.webkit.org/show_bug.cgi?id=77779
+
+        Reviewed by Darin Adler.
+
+        Match the new class name.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (AddIncludesForType):
+        * css/CSSAllInOne.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSFontFaceRule.cpp:
+        * css/CSSFontFaceRule.h:
+        * css/CSSFontSelector.cpp:
+        * css/CSSMutableStyleDeclaration.cpp: Removed.
+        * css/CSSMutableStyleDeclaration.h: Removed.
+        * css/CSSPageRule.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSStyleRule.cpp:
+        * css/CSSStyleRule.h:
+        * css/StylePropertySet.cpp: Copied from Source/WebCore/css/CSSMutableStyleDeclaration.cpp.
+        * css/StylePropertySet.h: Copied from Source/WebCore/css/CSSMutableStyleDeclaration.h.
+        * css/WebKitCSSKeyframeRule.cpp:
+        * css/WebKitCSSKeyframeRule.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        * css/WebKitCSSMatrix.cpp:
+        * dom/CSSMappedAttributeDeclaration.h:
+        * dom/ElementAttributeData.h:
+        * dom/StyledElement.cpp:
+        * dom/StyledElement.h:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/DeleteButtonController.cpp:
+        * editing/EditingStyle.cpp:
+        * editing/Editor.cpp:
+        * editing/EditorCommand.cpp:
+        * editing/RemoveCSSPropertyCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/markup.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/shadow/MeterShadowElement.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * page/DragController.cpp:
+        * page/Frame.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * svg/SVGFontFaceElement.h:
+        (WebCore):
+
 2012-02-03  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Crash in RenderFlowThread::setRegionBoxesRegionStyle

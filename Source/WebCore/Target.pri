@@ -416,7 +416,6 @@ SOURCES += \
     css/CSSInitialValue.cpp \
     css/CSSLineBoxContainValue.cpp \
     css/CSSMediaRule.cpp \
-    css/CSSMutableStyleDeclaration.cpp \
     css/CSSOMUtils.cpp \
     css/CSSPageRule.cpp \
     css/CSSParser.cpp \
@@ -457,6 +456,7 @@ SOURCES += \
     css/SelectorChecker.cpp \
     css/ShadowValue.cpp \
     css/StyleMedia.cpp \
+    css/StylePropertySet.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
     css/WebKitCSSFilterValue.cpp \
@@ -1530,7 +1530,6 @@ HEADERS += \
     css/CSSInheritedValue.h \
     css/CSSInitialValue.h \
     css/CSSMediaRule.h \
-    css/CSSMutableStyleDeclaration.h \
     css/CSSOMUtils.h \
     css/CSSPageRule.h \
     css/CSSParser.h \
@@ -1571,6 +1570,7 @@ HEADERS += \
     css/SelectorChecker.h \
     css/ShadowValue.h \
     css/StyleMedia.h \
+    css/StylePropertySet.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \
     css/WebKitCSSFilterValue.h \

@@ -22,9 +22,9 @@
 #ifndef CSSStyleRule_h
 #define CSSStyleRule_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSSelectorList.h"
+#include "StylePropertySet.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

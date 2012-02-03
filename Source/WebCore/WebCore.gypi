@@ -69,7 +69,6 @@
             'css/CSSImageGeneratorValue.h',
             'css/CSSImageValue.h',
             'css/CSSLineBoxContainValue.h',
-            'css/CSSMutableStyleDeclaration.h',
             'css/CSSParserValues.h',
             'css/CSSPrimitiveValue.h',
             'css/CSSProperty.h',
@@ -2019,7 +2018,6 @@
             'css/CSSLineBoxContainValue.cpp',
             'css/CSSMediaRule.cpp',
             'css/CSSMediaRule.h',
-            'css/CSSMutableStyleDeclaration.cpp',
             'css/CSSNamespace.h',
             'css/CSSOMUtils.cpp',
             'css/CSSOMUtils.h',
@@ -2099,6 +2097,8 @@
             'css/ShadowValue.h',
             'css/StyleMedia.cpp',
             'css/StyleMedia.h',
+            'css/StylePropertySet.cpp'
+            'css/StylePropertySet.h'
             'css/StyleSheet.cpp',
             'css/StyleSheet.h',
             'css/StyleSheetList.cpp',

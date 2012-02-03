@@ -2963,7 +2963,7 @@ sub NativeToJSValue
     my $globalObject = "$thisValue->globalObject()";
 
     if ($type eq "CSSStyleDeclaration") {
-        AddToImplIncludes("CSSMutableStyleDeclaration.h", $conditional);
+        AddToImplIncludes("StylePropertySet.h", $conditional);
     }
 
     if ($type eq "NodeList") {

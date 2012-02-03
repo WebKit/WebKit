@@ -29,7 +29,6 @@
 
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
@@ -44,6 +43,7 @@
 #include "Position.h"
 #include "QualifiedName.h"
 #include "RenderStyle.h"
+#include "StylePropertySet.h"
 #include "StyledElement.h"
 #include "htmlediting.h"
 #include "visible_units.h"

@@ -48,7 +48,6 @@
 #include "CSSInitialValue.cpp"
 #include "CSSLineBoxContainValue.cpp"
 #include "CSSMediaRule.cpp"
-#include "CSSMutableStyleDeclaration.cpp"
 #include "CSSOMUtils.cpp"
 #include "CSSPageRule.cpp"
 #include "CSSParser.cpp"
@@ -72,3 +71,4 @@
 #include "CSSValueList.cpp"
 #include "CSSValuePool.cpp"
 #include "CSSWrapShapes.cpp"
+#include "StylePropertySet.cpp"

@@ -29,7 +29,6 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
@@ -45,6 +44,7 @@
 #include "InstrumentingAgents.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "StylePropertySet.h"
 #include "StyleSheetList.h"
 
 #include <wtf/CurrentTime.h>

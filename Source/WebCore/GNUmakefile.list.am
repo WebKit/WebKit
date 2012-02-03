@@ -1324,8 +1324,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSLineBoxContainValue.h \
 	Source/WebCore/css/CSSMediaRule.cpp \
 	Source/WebCore/css/CSSMediaRule.h \
-	Source/WebCore/css/CSSMutableStyleDeclaration.cpp \
-	Source/WebCore/css/CSSMutableStyleDeclaration.h \
 	Source/WebCore/css/CSSNamespace.h \
 	Source/WebCore/css/CSSOMUtils.cpp \
 	Source/WebCore/css/CSSOMUtils.h \
@@ -1413,6 +1411,8 @@ webcore_sources += \
 	Source/WebCore/css/ShadowValue.h \
 	Source/WebCore/css/StyleMedia.cpp \
 	Source/WebCore/css/StyleMedia.h \
+	Source/WebCore/css/StylePropertySet.cpp \
+	Source/WebCore/css/StylePropertySet.h \
 	Source/WebCore/css/StyleSheet.cpp \
 	Source/WebCore/css/StyleSheet.h \
 	Source/WebCore/css/StyleSheetList.cpp \

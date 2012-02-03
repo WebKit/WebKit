@@ -33886,7 +33886,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSMutableStyleDeclaration.cpp"
+				RelativePath="..\css\StylePropertySet.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -33938,7 +33938,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\css\CSSMutableStyleDeclaration.h"
+				RelativePath="..\css\StylePropertySet.h"
 				>
 			</File>
 			<File

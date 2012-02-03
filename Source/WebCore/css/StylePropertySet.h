@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSMutableStyleDeclaration_h
-#define CSSMutableStyleDeclaration_h
+#ifndef StylePropertySet_h
+#define StylePropertySet_h
 
-#include "CSSStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSStyleDeclaration.h"
 #include "KURLHash.h"
 #include "PlatformString.h"
 #include <wtf/ListHashSet.h>
@@ -171,4 +171,4 @@ private:
 
 } // namespace WebCore
 
-#endif // CSSMutableStyleDeclaration_h
+#endif // StylePropertySet_h

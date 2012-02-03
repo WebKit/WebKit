@@ -25,9 +25,9 @@
 #ifndef CSSMappedAttributeDeclaration_h
 #define CSSMappedAttributeDeclaration_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "MappedAttributeEntry.h"
 #include "QualifiedName.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

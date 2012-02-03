@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebKitCSSKeyframesRule.h"
 
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
+#include "StylePropertySet.h"
 #include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
 

@@ -33,7 +33,6 @@
 
 #include "AffineTransform.h"
 #include "CSSFontSelector.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
@@ -60,6 +59,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StrokeStyleApplier.h"
+#include "StylePropertySet.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
 

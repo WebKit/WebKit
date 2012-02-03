@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKitCSSKeyframeRule.h"
 
-#include "CSSMutableStyleDeclaration.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

@@ -45,7 +45,6 @@
 #include "RenderLayer.h"
 
 #include "ColumnInfo.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
@@ -90,6 +89,7 @@
 #include "ScrollbarTheme.h"
 #include "Settings.h"
 #include "SourceGraphic.h"
+#include "StylePropertySet.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"

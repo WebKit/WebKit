@@ -28,10 +28,10 @@
 
 #include "CSSParser.h"
 #include "CSSStyleSelector.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
+#include "StylePropertySet.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

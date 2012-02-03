@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class CSSFontFaceRule;
-class CSSMutableStyleDeclaration;
 class SVGFontElement;
 
 class SVGFontFaceElement : public SVGElement {

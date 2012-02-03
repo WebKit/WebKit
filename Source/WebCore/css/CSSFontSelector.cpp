@@ -32,7 +32,6 @@
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFaceSrcValue.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
@@ -48,6 +47,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
+#include "StylePropertySet.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/AtomicString.h>
 

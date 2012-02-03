@@ -35,7 +35,6 @@
 
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
@@ -79,6 +78,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
+#include "StylePropertySet.h"
 #include "StyleSheetList.h"
 #include "Text.h"
 #include "XPathResult.h"

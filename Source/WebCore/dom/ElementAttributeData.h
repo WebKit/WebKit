@@ -26,8 +26,8 @@
 #ifndef ElementAttributeData_h
 #define ElementAttributeData_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "SpaceSplitString.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

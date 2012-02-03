@@ -25,7 +25,6 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -36,6 +35,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "StylePropertySet.h"
 #include <wtf/HashFunctions.h>
 
 using namespace std;

@@ -22,7 +22,7 @@
 #include "config.h"
 #include "CSSPageRule.h"
 
-#include "CSSMutableStyleDeclaration.h"
+#include "StylePropertySet.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

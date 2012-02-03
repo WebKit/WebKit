@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoveCSSPropertyCommand.h"
 
-#include "CSSMutableStyleDeclaration.h"
+#include "StylePropertySet.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
