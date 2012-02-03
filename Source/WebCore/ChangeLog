@@ -1,3 +1,18 @@
+2012-02-02  Shinya Kawanaka  <shinyak@google.com>
+
+        StyleRecalc should occur when shadow root exists and light children are changed.
+        https://bugs.webkit.org/show_bug.cgi?id=76262
+
+        Reviewed by Hajime Morita.
+
+        When light children is changed, the element included in HTMLContentElement may also be changed.
+        So we have to recalculate inclusion of content element again.
+
+        Test: fast/dom/shadow/shadow-contents-fallback-dynamic.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+
 2012-02-02  Ami Fischman  <fischman@chromium.org>
 
         Avoid crashing renderer when GPU process dies by not caching textures between video frames.

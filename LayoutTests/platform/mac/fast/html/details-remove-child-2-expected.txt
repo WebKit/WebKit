@@ -9,6 +9,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (16,0) size 58x18
             text run at (16,0) width 58: "summary"
         RenderBlock (anonymous) at (0,18) size 784x18
-          RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 157x18
             text run at (0,0) width 157: "should have no bold test."

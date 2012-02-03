@@ -1359,6 +1359,11 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         checkForEmptyStyleChange(this, renderStyle());
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
+
+    if (hasRareData()) {
+        if (ShadowRoot* root = shadowRoot())
+            root->hostChildrenChanged();
+    }
 }
 
 void Element::beginParsingChildren()

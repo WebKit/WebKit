@@ -142,8 +142,9 @@ void ShadowRoot::hostChildrenChanged()
 {
     if (!hasContentElement())
         return;
+
     // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
-    setNeedsStyleRecalc();
+    setNeedsReattachHostChildrenAndShadow();
 }
 
 bool ShadowRoot::isInclusionSelectorActive() const
