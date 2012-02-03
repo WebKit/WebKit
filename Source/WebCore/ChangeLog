@@ -1,3 +1,15 @@
+2012-02-03  Andreas Kling  <awesomekling@apple.com>
+
+        HTMLElement: Clean up tabindex attribute parsing.
+        <http://webkit.org/b/77763>
+
+        Reviewed by Antti Koivisto.
+
+        Remove an unnecessary getAttribute() call when parsing tabindexAttr.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         ScrollingTreeState should keep track of the scroll layer

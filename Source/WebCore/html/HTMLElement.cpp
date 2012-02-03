@@ -189,7 +189,6 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
         return StyledElement::parseMappedAttribute(attr);
 
-    String indexstring;
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle"))
             addCSSProperty(attr, CSSPropertyTextAlign, "center");
@@ -200,11 +199,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == hiddenAttr) {
         addCSSProperty(attr, CSSPropertyDisplay, CSSValueNone);
     } else if (attr->name() == tabindexAttr) {
-        indexstring = getAttribute(tabindexAttr);
         int tabindex = 0;
-        if (!indexstring.length()) {
+        if (attr->isEmpty())
             clearTabIndexExplicitly();
-        } else if (parseHTMLInteger(indexstring, tabindex)) {
+        else if (parseHTMLInteger(attr->value(), tabindex)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
