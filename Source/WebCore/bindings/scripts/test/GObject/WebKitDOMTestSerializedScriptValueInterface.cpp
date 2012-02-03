@@ -65,6 +65,69 @@ webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSeriali
     return res;
 }
 
+void
+webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SerializedScriptValue * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setValue(converted_value);
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->readonlyValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SerializedScriptValue * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setCachedValue(converted_value);
+}
+
+WebKitDOMSerializedScriptValue*
+webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::SerializedScriptValue> g_res = WTF::getPtr(item->cachedReadonlyValue());
+    WebKitDOMSerializedScriptValue* res = WebKit::kit(g_res.get());
+    return res;
+}
+
 
 G_DEFINE_TYPE(WebKitDOMTestSerializedScriptValueInterface, webkit_dom_test_serialized_script_value_interface, WEBKIT_TYPE_DOM_OBJECT)
 
@@ -84,6 +147,9 @@ WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptV
 enum {
     PROP_0,
     PROP_VALUE,
+    PROP_READONLY_VALUE,
+    PROP_CACHED_VALUE,
+    PROP_CACHED_READONLY_VALUE,
 };
 
 
@@ -126,6 +192,24 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
+    case PROP_READONLY_VALUE:
+    {
+        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->readonlyValue();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_CACHED_VALUE:
+    {
+        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedValue();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_CACHED_READONLY_VALUE:
+    {
+        RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedReadonlyValue();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -152,7 +236,28 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
                                     PROP_VALUE,
                                     g_param_spec_object("value", /* name */
                                                            "test_serialized_script_value_interface_value", /* short description */
-                                                           "read-only  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.value", /* longer - could do with some extra doc stuff here */
+                                                           "read-write  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.value", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_READONLY_VALUE,
+                                    g_param_spec_object("readonly-value", /* name */
+                                                           "test_serialized_script_value_interface_readonly-value", /* short description */
+                                                           "read-only  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.readonly-value", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CACHED_VALUE,
+                                    g_param_spec_object("cached-value", /* name */
+                                                           "test_serialized_script_value_interface_cached-value", /* short description */
+                                                           "read-write  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.cached-value", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CACHED_READONLY_VALUE,
+                                    g_param_spec_object("cached-readonly-value", /* name */
+                                                           "test_serialized_script_value_interface_cached-readonly-value", /* short description */
+                                                           "read-only  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.cached-readonly-value", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
                                                            WEBKIT_PARAM_READABLE));
 

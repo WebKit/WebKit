@@ -83,6 +83,46 @@ WebDOMString WebDOMTestSerializedScriptValueInterface::value() const
     return impl()->value()->toString();
 }
 
+void WebDOMTestSerializedScriptValueInterface::setValue(const WebDOMString& newValue)
+{
+    if (!impl())
+        return;
+
+    impl()->setValue(WebCore::SerializedScriptValue::create(WTF::String(newValue)));
+}
+
+WebDOMString WebDOMTestSerializedScriptValueInterface::readonlyValue() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return impl()->readonlyValue()->toString();
+}
+
+WebDOMString WebDOMTestSerializedScriptValueInterface::cachedValue() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return impl()->cachedValue()->toString();
+}
+
+void WebDOMTestSerializedScriptValueInterface::setCachedValue(const WebDOMString& newCachedValue)
+{
+    if (!impl())
+        return;
+
+    impl()->setCachedValue(WebCore::SerializedScriptValue::create(WTF::String(newCachedValue)));
+}
+
+WebDOMString WebDOMTestSerializedScriptValueInterface::cachedReadonlyValue() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return impl()->cachedReadonlyValue()->toString();
+}
+
 WebCore::TestSerializedScriptValueInterface* toWebCore(const WebDOMTestSerializedScriptValueInterface& wrapper)
 {
     return wrapper.impl();

@@ -42,7 +42,79 @@ namespace TestSerializedScriptValueInterfaceInternal {
 
 template <typename T> void V8_USE(T) { }
 
+static v8::Handle<v8::Value> valueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.value._get");
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    return imp->value() ? imp->value()->deserialize() : v8::Handle<v8::Value>(v8::Null());
+}
+
+static void valueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.value._set");
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value);
+    imp->setValue(WTF::getPtr(v));
+    return;
+}
+
+static v8::Handle<v8::Value> readonlyValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.readonlyValue._get");
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    return imp->readonlyValue() ? imp->readonlyValue()->deserialize() : v8::Handle<v8::Value>(v8::Null());
+}
+
+static v8::Handle<v8::Value> cachedValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.cachedValue._get");
+    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedValue");
+    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
+    if (!value.IsEmpty())
+        return value;
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    SerializedScriptValue* serialized = imp->cachedValue();
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
+    info.Holder()->SetHiddenValue(propertyName, value);
+    return value;
+}
+
+static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.cachedValue._set");
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value);
+    imp->setCachedValue(WTF::getPtr(v));
+    info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("cachedValue")); // Invalidate the cached value.
+    return;
+}
+
+static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.cachedReadonlyValue._get");
+    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedReadonlyValue");
+    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
+    if (!value.IsEmpty())
+        return value;
+    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
+    SerializedScriptValue* serialized = imp->cachedReadonlyValue();
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
+    info.Holder()->SetHiddenValue(propertyName, value);
+    return value;
+}
+
 } // namespace TestSerializedScriptValueInterfaceInternal
+
+static const BatchedAttribute TestSerializedScriptValueInterfaceAttrs[] = {
+    // Attribute 'value' (Type: 'attribute' ExtAttr: '')
+    {"value", TestSerializedScriptValueInterfaceInternal::valueAttrGetter, TestSerializedScriptValueInterfaceInternal::valueAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'readonlyValue' (Type: 'readonly attribute' ExtAttr: '')
+    {"readonlyValue", TestSerializedScriptValueInterfaceInternal::readonlyValueAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'cachedValue' (Type: 'attribute' ExtAttr: 'CachedAttribute')
+    {"cachedValue", TestSerializedScriptValueInterfaceInternal::cachedValueAttrGetter, TestSerializedScriptValueInterfaceInternal::cachedValueAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'cachedReadonlyValue' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
+    {"cachedReadonlyValue", TestSerializedScriptValueInterfaceInternal::cachedReadonlyValueAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+};
 
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)
 {
@@ -66,7 +138,6 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
     impl->ref();
-    SerializedScriptValue::deserializeAndSetProperty(wrapper, "value", static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly), impl->value());
     V8DOMWrapper::setJSWrapperForDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 }
@@ -77,7 +148,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
-        0, 0,
+        TestSerializedScriptValueInterfaceAttrs, WTF_ARRAY_LENGTH(TestSerializedScriptValueInterfaceAttrs),
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestSerializedScriptValueInterface::constructorCallback);
@@ -130,7 +201,6 @@ v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(TestSerial
         return wrapper;
 
     impl->ref();
-    SerializedScriptValue::deserializeAndSetProperty(wrapper, "value", static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly), impl->value());
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 
     if (!hasDependentLifetime)

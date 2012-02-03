@@ -192,26 +192,6 @@ sub GenerateConditionalString
     }
 }
 
-sub GenerateEagerDeserialization
-{
-    my $serializedAttribute = shift;
-
-    # Eagerly deserialize attributes of type SerializedScriptValue while we're
-    # in the right context.
-
-    die "Attribute of type SerializedScriptValue expected" if $serializedAttribute->signature->type ne "SerializedScriptValue";
-    my $attrName = $serializedAttribute->signature->name;
-    my $attrAttr = "v8::DontDelete";
-    if ($serializedAttribute->type =~ /^readonly/) {
-        $attrAttr .= " | v8::ReadOnly";
-    }
-    $attrAttr = "static_cast<v8::PropertyAttribute>($attrAttr)";
-    my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
-    push(@implContent, <<END);
-    SerializedScriptValue::deserializeAndSetProperty(wrapper, "${attrName}", ${attrAttr}, impl->${getterFunc}());
-END
-}
-
 sub GetSVGPropertyTypes
 {
     my $implType = shift;
@@ -859,6 +839,14 @@ END
             return;
             # Skip the rest of the function!
         }
+        if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
+            push(@implContentDecls, <<END);
+    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("${attrName}");
+    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
+    if (!value.IsEmpty())
+        return value;
+END
+        }
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
 END
@@ -998,7 +986,17 @@ END
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)));\n");
         }
     } else {
-        push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
+        if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
+            my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
+            push(@implContentDecls, <<END);
+    SerializedScriptValue* serialized = imp->${getterFunc}();
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
+    info.Holder()->SetHiddenValue(propertyName, value);
+    return value;
+END
+        } else {
+            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
+        }
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
@@ -1181,6 +1179,12 @@ END
         } else {
             push(@implContentDecls, "    wrapper->commitChange();\n");
         }
+    }
+
+    if ($attribute->signature->type eq "SerializedScriptValue" && $attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+        push(@implContentDecls, <<END);
+    info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("${attrName}")); // Invalidate the cached value.
+END
     }
 
     push(@implContentDecls, "    return;\n");
@@ -1610,7 +1614,6 @@ sub GenerateConstructorCallback
     my $function = shift;
     my $dataNode = shift;
     my $implClassName = shift;
-    my $serializedAttribute = shift;
 
     my $raisesExceptions = @{$function->raisesExceptions};
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -1686,11 +1689,6 @@ END
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
     impl->ref();
-END
-    if ($serializedAttribute) {
-        GenerateEagerDeserialization($serializedAttribute);
-    }
-    push(@implContent, <<END);
     V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
@@ -1771,7 +1769,6 @@ sub GenerateNamedConstructorCallback
     my $function = shift;
     my $dataNode = shift;
     my $implClassName = shift;
-    my $serializedAttribute = shift;
 
     my $raisesExceptions = @{$function->raisesExceptions};
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -1870,11 +1867,6 @@ END
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
     impl->ref();
-END
-    if ($serializedAttribute) {
-        GenerateEagerDeserialization($serializedAttribute);
-    }
-    push(@implContent, <<END);
     V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
@@ -1931,10 +1923,6 @@ sub GenerateSingleBatchedAttribute
     my $indent = shift;
     my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
-
-    # Attributes of type SerializedScriptValue are set in the
-    # constructor and don't require callbacks.
-    return if ($attribute->signature->type eq "SerializedScriptValue");
 
     my $accessControl = "v8::DEFAULT";
     if ($attrExt->{"DoNotCheckDomainSecurityOnGet"}) {
@@ -2270,7 +2258,6 @@ sub GenerateImplementation
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;
-    my $serializedAttribute;
     # Generate property accessors for attributes.
     for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
         my $attribute = @{$dataNode->attributes}[$index];
@@ -2289,13 +2276,8 @@ sub GenerateImplementation
             $attribute->signature->extendedAttributes->{"v8OnProto"} = 1;
         }
 
-        # Attributes of type SerializedScriptValue are set in the
-        # constructor and don't require callbacks.
         if ($attrType eq "SerializedScriptValue") {
-            die "Only one attribute of type SerializedScriptValue supported" if $serializedAttribute;
             AddToImplIncludes("SerializedScriptValue.h");
-            $serializedAttribute = $attribute;
-            next;
         }
 
         # Do not generate accessor if this is a custom attribute.  The
@@ -2382,7 +2364,7 @@ sub GenerateImplementation
     }
 
     my $has_attributes = 0;
-    if (@$attributes && (@$attributes > 1 || $$attributes[0]->signature->type ne "SerializedScriptValue")) {
+    if (@$attributes) {
         $has_attributes = 1;
         push(@implContent, "static const BatchedAttribute ${interfaceName}Attrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, $attributes);
@@ -2466,9 +2448,9 @@ END
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
     if ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName, $serializedAttribute);
+        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName, $serializedAttribute);
+        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif (IsConstructorTemplate($dataNode, "Event")) {
         GenerateEventConstructorCallback($dataNode, $interfaceName);
     }
@@ -2797,7 +2779,7 @@ v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate()
 END
     }
 
-    GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType, $serializedAttribute);
+    GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType);
 
     push(@implContent, <<END);
 
@@ -3029,7 +3011,6 @@ sub GenerateToV8Converters
     my $interfaceName = shift;
     my $className = shift;
     my $nativeType = shift;
-    my $serializedAttribute = shift;
 
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
@@ -3100,10 +3081,6 @@ END
         return wrapper;
 END
     push(@implContent, "\n    impl->ref();\n") if IsRefPtrType($interfaceName);
-
-    if ($serializedAttribute) {
-        GenerateEagerDeserialization($serializedAttribute);
-    }
 
     push(@implContent, <<END);
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
@@ -3491,7 +3468,10 @@ sub JSValueToNative
         return $value;
     }
 
-    die "Unexpected SerializedScriptValue" if $type eq "SerializedScriptValue";
+    if ($type eq "SerializedScriptValue") {
+        AddToImplIncludes("SerializedScriptValue.h");
+        return "SerializedScriptValue::create($value)";
+    }
 
     if ($type eq "IDBKey") {
         AddToImplIncludes("IDBBindingUtilities.h");
@@ -3763,7 +3743,7 @@ sub NativeToJSValue
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("$type.h");
-        return "$value->deserialize()";
+        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(v8::Null())";
     }
 
     AddToImplIncludes("wtf/RefCounted.h");

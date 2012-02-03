@@ -32,6 +32,11 @@
 
 @interface DOMTestSerializedScriptValueInterface : DOMObject
 - (NSString *)value;
+- (void)setValue:(NSString *)newValue;
+- (NSString *)readonlyValue;
+- (NSString *)cachedValue;
+- (void)setCachedValue:(NSString *)newCachedValue;
+- (NSString *)cachedReadonlyValue;
 @end
 
 #endif

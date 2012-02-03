@@ -44,6 +44,7 @@ public:
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
+    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
     static void destroy(JSC::JSCell*);
     static const JSC::ClassInfo s_info;
 
@@ -53,6 +54,10 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
+    JSC::WriteBarrier<JSC::Unknown> m_cachedValue;
+    JSC::WriteBarrier<JSC::Unknown> m_cachedReadonlyValue;
+    static void visitChildren(JSCell*, JSC::SlotVisitor&);
+
     TestSerializedScriptValueInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
@@ -63,7 +68,7 @@ private:
 protected:
     JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 
 class JSTestSerializedScriptValueInterfaceOwner : public JSC::WeakHandleOwner {
@@ -105,7 +110,7 @@ public:
 private:
     JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 
 class JSTestSerializedScriptValueInterfaceConstructor : public DOMConstructorObject {
@@ -138,6 +143,11 @@ protected:
 // Attributes
 
 JSC::JSValue jsTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestSerializedScriptValueInterfaceReadonlyValue(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore

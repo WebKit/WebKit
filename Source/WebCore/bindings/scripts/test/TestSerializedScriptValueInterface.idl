@@ -30,8 +30,9 @@ module test {
         Conditional=Condition1|Condition2,
         Constructor(in DOMString hello, in SerializedScriptValue value),
     ] TestSerializedScriptValueInterface {
-        // The case of a single SerializedScriptValue attribute is a bit of a
-        // special case.
-        readonly attribute SerializedScriptValue value;
+        attribute SerializedScriptValue value;
+        readonly attribute SerializedScriptValue readonlyValue;
+        attribute [CachedAttribute] SerializedScriptValue cachedValue;
+        readonly attribute [CachedAttribute] SerializedScriptValue cachedReadonlyValue;
     };
 }

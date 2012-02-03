@@ -43,6 +43,11 @@ public:
     virtual ~WebDOMTestSerializedScriptValueInterface();
 
     WebDOMString value() const;
+    void setValue(const WebDOMString&);
+    WebDOMString readonlyValue() const;
+    WebDOMString cachedValue() const;
+    void setCachedValue(const WebDOMString&);
+    WebDOMString cachedReadonlyValue() const;
 
     WebCore::TestSerializedScriptValueInterface* impl() const;
 

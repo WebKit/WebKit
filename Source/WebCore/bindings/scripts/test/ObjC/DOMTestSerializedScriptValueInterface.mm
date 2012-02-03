@@ -75,6 +75,40 @@
     return IMPL->value()->toString();
 }
 
+- (void)setValue:(NSString *)newValue
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newValue);
+
+    IMPL->setValue(WebCore::SerializedScriptValue::create(WTF::String(newValue)));
+}
+
+- (NSString *)readonlyValue
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->readonlyValue()->toString();
+}
+
+- (NSString *)cachedValue
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->cachedValue()->toString();
+}
+
+- (void)setCachedValue:(NSString *)newCachedValue
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newCachedValue);
+
+    IMPL->setCachedValue(WebCore::SerializedScriptValue::create(WTF::String(newCachedValue)));
+}
+
+- (NSString *)cachedReadonlyValue
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->cachedReadonlyValue()->toString();
+}
+
 @end
 
 WebCore::TestSerializedScriptValueInterface* core(DOMTestSerializedScriptValueInterface *wrapper)
