@@ -1,3 +1,16 @@
+2012-02-02  Keishi Hattori  <keishi@webkit.org>
+
+        ColorInputType needs to use ensureInlineStyleDecl
+        https://bugs.webkit.org/show_bug.cgi?id=77699
+
+        Reviewed by Kent Tamura.
+
+        Because WebCore internally should use the more specific CSSMutableStyleDeclaration
+        http://trac.webkit.org/changeset/105739
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::updateColorSwatch):
+
 2012-02-02  Roland Steiner  <rolandsteiner@chromium.org>
 
         Simplify SelectorChecker::checkSelector and checkOneSelector

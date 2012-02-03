@@ -178,7 +178,7 @@ void ColorInputType::updateColorSwatch()
     if (!colorSwatch)
         return;
 
-    colorSwatch->style()->setProperty(CSSPropertyBackgroundColor, element()->value(), false, ASSERT_NO_EXCEPTION);
+    colorSwatch->ensureInlineStyleDecl()->setProperty(CSSPropertyBackgroundColor, element()->value(), false);
 }
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
