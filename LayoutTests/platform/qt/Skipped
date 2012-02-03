@@ -2523,3 +2523,4 @@ fast/events/touch/basic-multi-touch-events.html
 fast/events/touch/touch-target.html
 fast/events/touch/touch-before-pressing-spin-button.html
 fast/events/touch/touch-coords-in-zoom-and-scroll.html
+fast/events/touch/touch-inside-iframe.html
