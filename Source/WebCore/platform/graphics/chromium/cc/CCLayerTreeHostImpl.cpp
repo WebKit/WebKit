@@ -231,6 +231,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes)
                 continue;
             }
 
+            layer->willDraw(m_layerRenderer.get());
             pass->appendQuadsForLayer(layer);
         }
 

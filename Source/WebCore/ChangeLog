@@ -1,3 +1,49 @@
+2012-02-02  Tim Dresser  <tdresser@chromium.org>
+
+        Refactor plugin drawing to be more data driven
+        https://bugs.webkit.org/show_bug.cgi?id=76715
+
+        Reviewed by James Robinson.
+
+        CCPluginLayerImpl no longer handles drawing itself, but produces a list of CCPluginDrawQuads.
+        These quads are then drawn by LayerRendererChromium.
+
+        CCLayerImpl::willDraw(LayerRendererChromium*) is called directly before appendQuads.
+        This allows for CCLayerImpl objects to allocate textures before appendQuads is called.
+
+        This is a refactor, so no new tests were added.
+        Flash was tested manually on Linux and Mac.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::PluginProgramBinding::set):
+        (PluginProgramBinding):
+        (WebCore):
+        (WebCore::TexStretchPluginProgramBinding::set):
+        (TexStretchPluginProgramBinding):
+        (WebCore::TexTransformPluginProgramBinding::set):
+        (TexTransformPluginProgramBinding):
+        (WebCore::LayerRendererChromium::drawPluginQuad):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        * platform/graphics/chromium/cc/CCPluginDrawQuad.cpp:
+        (WebCore::CCPluginDrawQuad::create):
+        (WebCore::CCPluginDrawQuad::CCPluginDrawQuad):
+        * platform/graphics/chromium/cc/CCPluginDrawQuad.h:
+        (CCPluginDrawQuad):
+        (WebCore::CCPluginDrawQuad::uvRect):
+        (WebCore::CCPluginDrawQuad::textureId):
+        (WebCore::CCPluginDrawQuad::flipped):
+        (WebCore::CCPluginDrawQuad::ioSurfaceWidth):
+        (WebCore::CCPluginDrawQuad::ioSurfaceHeight):
+        (WebCore::CCPluginDrawQuad::ioSurfaceTextureId):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::willDraw):
+        (WebCore::CCPluginLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (CCPluginLayerImpl):
+
 2012-01-29  Pablo Flouret  <pablof@motorola.com>
 
         V8 idl code generator doesn't handle SerializedScriptValue attributes properly.

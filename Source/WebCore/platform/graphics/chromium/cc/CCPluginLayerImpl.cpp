@@ -36,45 +36,6 @@
 #include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
-namespace {
-
-struct PluginProgramBinding {
-    template<class Program> void set(Program* program)
-    {
-        ASSERT(program && program->initialized());
-        programId = program->program();
-        samplerLocation = program->fragmentShader().samplerLocation();
-        matrixLocation = program->vertexShader().matrixLocation();
-        alphaLocation = program->fragmentShader().alphaLocation();
-    }
-    int programId;
-    int samplerLocation;
-    int matrixLocation;
-    int alphaLocation;
-};
-
-struct TexStretchPluginProgramBinding : PluginProgramBinding {
-    template<class Program> void set(Program* program)
-    {
-        PluginProgramBinding::set(program);
-        offsetLocation = program->vertexShader().offsetLocation();
-        scaleLocation = program->vertexShader().scaleLocation();
-    }
-    int offsetLocation;
-    int scaleLocation;
-};
-
-struct TexTransformPluginProgramBinding : PluginProgramBinding {
-    template<class Program> void set(Program* program)
-    {
-        PluginProgramBinding::set(program);
-        texTransformLocation = program->vertexShader().texTransformLocation();
-    }
-    int texTransformLocation;
-};
-
-} // anonymous namespace
-
 namespace WebCore {
 
 CCPluginLayerImpl::CCPluginLayerImpl(int id)
@@ -95,10 +56,8 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
     cleanupResources();
 }
 
-void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
+void CCPluginLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 {
-    ASSERT(CCProxy::isImplThread());
-
     if (m_ioSurfaceChanged) {
         GraphicsContext3D* context = layerRenderer->context();
         Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
@@ -127,60 +86,12 @@ void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
         // allocated.
         m_ioSurfaceChanged = false;
     }
-
-    if (m_ioSurfaceTextureId) {
-        TexTransformPluginProgramBinding binding;
-        if (m_flipped)
-            binding.set(layerRenderer->pluginLayerTexRectProgramFlip());
-        else
-            binding.set(layerRenderer->pluginLayerTexRectProgram());
-
-        GraphicsContext3D* context = layerRenderer->context();
-        GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-        GLC(context, context->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, m_ioSurfaceTextureId));
-
-        GLC(context, context->useProgram(binding.programId));
-        GLC(context, context->uniform1i(binding.samplerLocation, 0));
-        // Note: this code path ignores m_uvRect.
-        GLC(context, context->uniform4f(binding.texTransformLocation, 0, 0, m_ioSurfaceWidth, m_ioSurfaceHeight));
-        layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
-                                        binding.matrixLocation,
-                                        binding.alphaLocation,
-                                        -1);
-        GLC(context, context->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
-    } else {
-        TexStretchPluginProgramBinding binding;
-        if (m_flipped)
-            binding.set(layerRenderer->pluginLayerProgramFlip());
-        else
-            binding.set(layerRenderer->pluginLayerProgram());
-
-        GraphicsContext3D* context = layerRenderer->context();
-        GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-        GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
-
-        // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
-        // where it will only happen once per texture.
-        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-
-        GLC(context, context->useProgram(binding.programId));
-        GLC(context, context->uniform1i(binding.samplerLocation, 0));
-        GLC(context, context->uniform2f(binding.offsetLocation, m_uvRect.x(), m_uvRect.y()));
-        GLC(context, context->uniform2f(binding.scaleLocation, m_uvRect.width(), m_uvRect.height()));
-        layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
-                                        binding.matrixLocation,
-                                        binding.alphaLocation,
-                                        -1);
-    }
 }
 
 void CCPluginLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCPluginDrawQuad::create(sharedQuadState, quadRect, this));
+    quadList.append(CCPluginDrawQuad::create(sharedQuadState, quadRect, m_uvRect, m_textureId, m_flipped, m_ioSurfaceWidth, m_ioSurfaceHeight, m_ioSurfaceTextureId));
 }
 
 void CCPluginLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

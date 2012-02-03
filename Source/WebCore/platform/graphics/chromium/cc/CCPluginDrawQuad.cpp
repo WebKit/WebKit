@@ -29,16 +29,20 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCPluginDrawQuad> CCPluginDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+PassOwnPtr<CCPluginDrawQuad> CCPluginDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned ioSurfaceTextureId)
 {
-    return adoptPtr(new CCPluginDrawQuad(sharedQuadState, quadRect, layer));
+    return adoptPtr(new CCPluginDrawQuad(sharedQuadState, quadRect, uvRect, textureId, flipped, ioSurfaceWidth, ioSurfaceHeight, ioSurfaceTextureId));
 }
 
-CCPluginDrawQuad::CCPluginDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+CCPluginDrawQuad::CCPluginDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned ioSurfaceTextureId)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::PluginContent, quadRect)
-    , m_layer(layer)
+    , m_uvRect(uvRect)
+    , m_textureId(textureId)
+    , m_flipped(flipped)
+    , m_ioSurfaceWidth(ioSurfaceWidth)
+    , m_ioSurfaceHeight(ioSurfaceHeight)
+    , m_ioSurfaceTextureId(ioSurfaceTextureId)
 {
-    ASSERT(m_layer);
 }
 
 }

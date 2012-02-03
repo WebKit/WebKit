@@ -36,14 +36,25 @@ class CCLayerImpl;
 class CCPluginDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCPluginDrawQuad);
 public:
-    static PassOwnPtr<CCPluginDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    static PassOwnPtr<CCPluginDrawQuad> create(const CCSharedQuadState*, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned m_ioSurfaceTextureId);
 
-    CCLayerImpl* layer() const { return m_layer; }
+    FloatRect uvRect() const { return m_uvRect; }
+    unsigned textureId() const { return m_textureId; }
+    bool flipped() const { return m_flipped; }
+    int ioSurfaceWidth() const { return m_ioSurfaceWidth; }
+    int ioSurfaceHeight() const { return m_ioSurfaceHeight; }
 
+    unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
+    
 private:
-    CCPluginDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    CCPluginDrawQuad(const CCSharedQuadState*, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned ioSurfaceTextureId);
 
-    CCLayerImpl* m_layer;
+    FloatRect m_uvRect;
+    unsigned m_textureId;
+    bool m_flipped;
+    int m_ioSurfaceWidth;
+    int m_ioSurfaceHeight;
+    unsigned m_ioSurfaceTextureId;
 };
 
 }

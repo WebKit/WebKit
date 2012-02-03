@@ -72,6 +72,7 @@ public:
 #endif
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
+    virtual void willDraw(LayerRendererChromium*) { }
     virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
     void appendDebugBorderQuad(CCQuadList&, const CCSharedQuadState*) const;
 
