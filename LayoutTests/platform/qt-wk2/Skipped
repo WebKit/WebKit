@@ -237,10 +237,6 @@ platform/qt/view/fixed-layout-size.html
 # WebProcess crashes intermittently: "FAIL: TestControllerRunLoop timed out."
 http/tests/security/contentSecurityPolicy/media-src-blocked.html
 
-# [Qt][WK2] Incorrect line number dumping
-# https://bugs.webkit.org/show_bug.cgi?id=60074
-http/tests/security/contentSecurityPolicy/eval-blocked.html
-
 # unskipped by r86675, but fail on Qt-WK2 platform
 http/tests/uri/css-href.php
 
