@@ -900,12 +900,10 @@ class Port(object):
         sync up the two repos."""
         return None
 
-    def test_repository_paths(self):
-        """Returns a list of (repository_name, repository_path) tuples
-        of its depending code base.  By default it returns a list that only
-        contains a ('webkit', <webkitRepossitoryPath>) tuple.
-        """
-        return [('webkit', self.layout_tests_dir())]
+    def repository_paths(self):
+        """Returns a list of (repository_name, repository_path) tuples of its depending code base.
+        By default it returns a list that only contains a ('webkit', <webkitRepossitoryPath>) tuple."""
+        return [('webkit', self.webkit_base())]
 
 
     _WDIFF_DEL = '##WDIFF_DEL##'

@@ -1,3 +1,39 @@
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic should store chromium svn revision
+        https://bugs.webkit.org/show_bug.cgi?id=77725
+
+        Reviewed by Dirk Pranke.
+
+        Report both WebKit and Chromium revisions to the graph server. Renamed test_repository_paths to
+        repository_paths since it's nothing to do with tests. Also refactored scm so that head_svn_revision
+        is implemented in terms of newly added svn_revision.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.svn_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.head_svn_revision):
+        (SCM):
+        (SCM.svn_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.svn_revision):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.svn_revision):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase._insert_generic_metadata):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.repository_paths):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.repository_paths):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_json):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+        (test_run_test_set_with_multiple_repositories):
+
 2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Split QQuickWebViewPrivate in two classes, for desktop and touch behavior.

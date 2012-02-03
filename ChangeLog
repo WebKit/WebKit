@@ -1,3 +1,20 @@
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic should store chromium svn revision
+        https://bugs.webkit.org/show_bug.cgi?id=77725
+
+        Reviewed by Dirk Pranke.
+
+        Store both WebKit and Chromium revisions when both are reported.
+
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Build):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+        (ReportHandler._create_build_if_possible):
+        (ReportHandler._create_build_if_possible.execute):
+        * Websites/webkit-perf.appspot.com/static/manual-submit.html:
+
 2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace GNU linker script for exports with export macros in WTF/JSC

@@ -145,8 +145,9 @@ class PerfTestsRunner(object):
         return unexpected
 
     def _generate_json(self, timestamp, output_json_path, source_json_path, branch, platform, builder_name, build_number):
-        revision = self._host.scm().head_svn_revision()
-        contents = {'timestamp': int(timestamp), 'revision': revision, 'results': self._results}
+        contents = {'timestamp': int(timestamp), 'results': self._results}
+        for (name, path) in self._port.repository_paths():
+            contents[name + '-revision'] = self._host.scm().svn_revision(path)
 
         for key, value in {'branch': branch, 'platform': platform, 'builder-name': builder_name, 'build-number': build_number}.items():
             if value:

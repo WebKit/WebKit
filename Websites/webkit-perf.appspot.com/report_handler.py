@@ -67,8 +67,9 @@ class ReportHandler(webapp2.RequestHandler):
         branch = self._model_by_key_name_in_body_or_error(Branch, 'branch')
         platform = self._model_by_key_name_in_body_or_error(Platform, 'platform')
         build_number = self._integer_in_body('build-number')
-        revision = self._integer_in_body('revision')
         timestamp = self._timestamp_in_body()
+        revision = self._integer_in_body('webkit-revision')
+        chromium_revision = self._integer_in_body('webkit-revision') if 'chromium-revision' in self._body else None
 
         failed = False
         if builder and not (self.bypass_authentication() or builder.authenticate(self._body.get('password', ''))):
@@ -82,7 +83,7 @@ class ReportHandler(webapp2.RequestHandler):
         if not (builder and branch and platform and build_number and revision and timestamp) or failed:
             return
 
-        build = self._create_build_if_possible(builder, build_number, branch, platform, revision, timestamp)
+        build = self._create_build_if_possible(builder, build_number, branch, platform, timestamp, revision, chromium_revision)
         if not build:
             return
 
@@ -162,7 +163,7 @@ class ReportHandler(webapp2.RequestHandler):
 
         return True
 
-    def _create_build_if_possible(self, builder, build_number, branch, platform, revision, timestamp):
+    def _create_build_if_possible(self, builder, build_number, branch, platform, timestamp, revision, chromium_revision):
         key_name = builder.name + ':' + str(int(time.mktime(timestamp.timetuple())))
 
         def execute():
@@ -171,7 +172,7 @@ class ReportHandler(webapp2.RequestHandler):
                 return self._output('The build at %s already exists for %s' % (str(timestamp), builder.name))
 
             return Build(branch=branch, platform=platform, builder=builder, buildNumber=build_number,
-                timestamp=timestamp, revision=revision, key_name=key_name).put()
+                timestamp=timestamp, revision=revision, chromiumRevision=chromium_revision, key_name=key_name).put()
         return db.run_in_transaction(execute)
 
     def _add_test_if_needed(self, test_name, branch, platform):

@@ -528,6 +528,10 @@ class JSONResultsGeneratorBase(object):
 
         # Include SVN revisions for the given repositories.
         for (name, path) in self._svn_repositories:
+            # Note: for JSON file's backward-compatibility we use 'chrome' rather
+            # than 'chromium' here.
+            if name == 'chromium':
+                name = 'chrome'
             self._insert_item_into_raw_list(results_for_builder,
                 self._get_svn_revision(path),
                 name + 'Revision')

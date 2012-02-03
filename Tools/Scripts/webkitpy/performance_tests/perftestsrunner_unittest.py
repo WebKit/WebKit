@@ -200,7 +200,7 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
-            "revision": 1234})
+            "webkit-revision": 5678})
 
     def test_run_test_set_with_json_source(self):
         buildbot_output = array_stream.ArrayStream()
@@ -220,8 +220,19 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
-            "revision": 1234,
+            "webkit-revision": 5678,
             "key": "value"})
+
+    def test_run_test_set_with_multiple_repositories(self):
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json'])
+        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        runner._timestamp = 123456789
+        runner._port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
+        self.assertEqual(runner.run(), 0)
+
+        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
+            "timestamp": 123456789, "results": {"group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
 
     def test_run_with_upload_json(self):
         runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',

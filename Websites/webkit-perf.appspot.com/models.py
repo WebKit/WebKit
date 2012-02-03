@@ -90,6 +90,7 @@ class Build(db.Model):
     builder = db.ReferenceProperty(Builder, required=True, collection_name='builder_key')
     buildNumber = db.IntegerProperty(required=True)
     revision = db.IntegerProperty(required=True)
+    chromiumRevision = db.IntegerProperty()
     timestamp = db.DateTimeProperty(required=True)
 
 

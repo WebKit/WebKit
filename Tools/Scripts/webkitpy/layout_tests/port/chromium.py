@@ -335,11 +335,9 @@ class ChromiumPort(Port):
             is_lint_mode=False, overrides=overrides_str)
         return expectations.get_tests_with_result_type(test_expectations.SKIP)
 
-    def test_repository_paths(self):
-        # Note: for JSON file's backward-compatibility we use 'chrome' rather
-        # than 'chromium' here.
-        repos = super(ChromiumPort, self).test_repository_paths()
-        repos.append(('chrome', self.path_from_chromium_base()))
+    def repository_paths(self):
+        repos = super(ChromiumPort, self).repository_paths()
+        repos.append(('chromium', self.path_from_chromium_base('build')))
         return repos
 
     #

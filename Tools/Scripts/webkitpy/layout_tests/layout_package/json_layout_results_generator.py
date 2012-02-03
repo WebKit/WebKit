@@ -64,7 +64,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         """
         super(JSONLayoutResultsGenerator, self).__init__(
             port, builder_name, build_name, build_number, results_file_base_path,
-            builder_base_url, {}, port.test_repository_paths(),
+            builder_base_url, {}, port.repository_paths(),
             test_results_server, test_type, master_name)
 
         self._expectations = expectations

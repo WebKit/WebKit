@@ -229,9 +229,9 @@ class Git(SCM, SVNRepository):
     def display_name(self):
         return "git"
 
-    def head_svn_revision(self):
+    def svn_revision(self, path):
         _log.debug('Running git.head_svn_revision... (Temporary logging message)')
-        git_log = self.run(['git', 'log', '-25'])
+        git_log = self.run(['git', 'log', '-25', path])
         match = re.search("^\s*git-svn-id:.*@(?P<svn_revision>\d+)\ ", git_log, re.MULTILINE)
         if not match:
             return ""

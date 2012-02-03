@@ -237,8 +237,8 @@ class SVN(SCM, SVNRepository):
     def display_name(self):
         return "svn"
 
-    def head_svn_revision(self):
-        return self.value_from_svn_info(self.checkout_root, 'Revision')
+    def svn_revision(self, path):
+        return self.value_from_svn_info(path, 'Revision')
 
     # FIXME: This method should be on Checkout.
     def create_patch(self, git_commit=None, changed_files=None):
