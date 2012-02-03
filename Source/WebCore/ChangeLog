@@ -1,3 +1,15 @@
+2012-02-02  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Make gtk+ symbols available to WidgetBackingStoreCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=77679
+
+        WidgetBackingStoreCairo.cpp uses GTK+ symbols, so we need it in
+        webcoregtk_sources instead of webcore_sources.
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: Move WidgetBackingStoreCairo.cpp to webcoregtk.
+
 2012-02-02  Shinya Kawanaka  <shinyak@google.com>
 
         StyleRecalc should occur when shadow root exists and light children are changed.

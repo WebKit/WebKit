@@ -4568,12 +4568,13 @@ if TARGET_WIN32
 webcore_sources += \
 	Source/WebCore/platform/ScrollAnimatorWin.cpp \
 	Source/WebCore/platform/ScrollAnimatorWin.h \
-	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
 	Source/WebCore/platform/win/SystemInfo.cpp \
 	Source/WebCore/platform/win/SystemInfo.h \
 	Source/WebCore/plugins/win/PluginDatabaseWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h
+webcoregtk_sources += \
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 endif
 
 # ----
