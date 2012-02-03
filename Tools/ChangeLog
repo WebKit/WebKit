@@ -1,3 +1,14 @@
+2012-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Extra TestWebKitAPI.gyp/TestWebKitAPI.target.chromium.mk in repository
+        https://bugs.webkit.org/show_bug.cgi?id=77752
+
+        Reviewed by James Robinson.
+
+        Delete unneeded file accidentally checked in in r106481.
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.target.chromium.mk: Removed.
+
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Ref Tests should support plain SVG files
