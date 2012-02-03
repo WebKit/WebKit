@@ -38,7 +38,7 @@ module core {
         [ReturnsNew] Comment createComment(in [Optional=CallWithDefaultValue] DOMString data);
         [ReturnsNew] CDATASection createCDATASection(in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
-        [ObjCLegacyUnamedParameters, ReturnsNew] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
                                                                                      in [Optional=CallWithDefaultValue] DOMString data)
             raises (DOMException);
         [ReturnsNew] Attr createAttribute(in [Optional=CallWithDefaultValue] DOMString name)
@@ -49,16 +49,16 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnamedParameters, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
                                                    in [Optional] boolean deep)
             raises (DOMException);
-        [ObjCLegacyUnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                            in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
         Element            getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
 
@@ -88,12 +88,12 @@ module core {
 
         // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-        [ObjCLegacyUnamedParameters] NodeIterator createNodeIterator(in [Optional=CallWithDefaultValue] Node root,
+        [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(in [Optional=CallWithDefaultValue] Node root,
                                                        in [Optional=CallWithDefaultValue] unsigned long whatToShow,
                                                        in [Optional=CallWithDefaultValue] NodeFilter filter,
                                                        in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
             raises(DOMException);
-        [ObjCLegacyUnamedParameters] TreeWalker createTreeWalker(in [Optional=CallWithDefaultValue] Node root,
+        [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(in [Optional=CallWithDefaultValue] Node root,
                                                    in [Optional=CallWithDefaultValue] unsigned long whatToShow,
                                                    in [Optional=CallWithDefaultValue] NodeFilter filter,
                                                    in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
@@ -109,15 +109,15 @@ module core {
 
         // DOM Level 2 Style (DocumentCSS interface)
 
-        [ObjCLegacyUnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
+        [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
                                                             in [Optional=CallWithDefaultValue] DOMString pseudoElement);
 
         // DOM Level 3 XPath (XPathEvaluator interface)
-        [ObjCLegacyUnamedParameters] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
+        [ObjCLegacyUnnamedParameters] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
                                                         in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
             raises(DOMException);
         XPathNSResolver    createNSResolver(in Node nodeResolver);
-        [ObjCLegacyUnamedParameters, V8Custom] XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
+        [ObjCLegacyUnnamedParameters, V8Custom] XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
                                                       in [Optional=CallWithDefaultValue] Node contextNode,
                                                       in [Optional=CallWithDefaultValue] XPathNSResolver resolver,
                                                       in [Optional=CallWithDefaultValue] unsigned short type,
@@ -210,7 +210,7 @@ module core {
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // DOM Level 2 Style Interface
-        [ObjCLegacyUnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(in Element element,
+        [ObjCLegacyUnnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(in Element element,
                                                                       in DOMString pseudoElement);
 
         // WebKit extension

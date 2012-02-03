@@ -42,7 +42,7 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnamedParameters] Node getNamedItemNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+        [ObjCLegacyUnnamedParameters] Node getNamedItemNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
                                            in [Optional=CallWithDefaultValue] DOMString localName)
             // FIXME: the implementation does take an exceptioncode parameter.
             /*raises(DOMException)*/;
@@ -50,7 +50,7 @@ module core {
         Node setNamedItemNS(in [Optional=CallWithDefaultValue] Node node)
             raises(DOMException);
 
-        [ObjCLegacyUnamedParameters] Node removeNamedItemNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+        [ObjCLegacyUnnamedParameters] Node removeNamedItemNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
                                               in [Optional=CallWithDefaultValue] DOMString localName)
             raises(DOMException);
 

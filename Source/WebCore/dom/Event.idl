@@ -63,7 +63,7 @@ module events {
 
         void               stopPropagation();
         void               preventDefault();
-        [ObjCLegacyUnamedParameters] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
+        [ObjCLegacyUnnamedParameters] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
                                       in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
                                       in [Optional=CallWithDefaultValue] boolean cancelableArg);
 

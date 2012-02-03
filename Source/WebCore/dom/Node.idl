@@ -67,10 +67,10 @@ module core {
         readonly attribute NamedNodeMap     attributes;
         readonly attribute Document         ownerDocument;
 
-        [ObjCLegacyUnamedParameters, Custom] Node insertBefore(in [Return] Node newChild,
+        [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [Return] Node newChild,
                                                  in Node refChild)
             raises(DOMException);
-        [ObjCLegacyUnamedParameters, Custom] Node replaceChild(in Node newChild,
+        [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
                                                  in [Return] Node oldChild)
             raises(DOMExceptionJSC);
         [Custom] Node               removeChild(in [Return] Node oldChild)
@@ -84,7 +84,7 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnamedParameters] boolean isSupported(in [Optional=CallWithDefaultValue] DOMString feature, 
+        [ObjCLegacyUnnamedParameters] boolean isSupported(in [Optional=CallWithDefaultValue] DOMString feature, 
                                            in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString version);
 
         readonly attribute [ConvertNullStringTo=Null] DOMString        namespaceURI;

@@ -21,7 +21,7 @@
 module xpath {
 
     interface XPathExpression {
-        [ObjCLegacyUnamedParameters] XPathResult evaluate(in [Optional=CallWithDefaultValue] Node contextNode, 
+        [ObjCLegacyUnnamedParameters] XPathResult evaluate(in [Optional=CallWithDefaultValue] Node contextNode, 
                                             in [Optional=CallWithDefaultValue] unsigned short type, 
                                             in [Optional=CallWithDefaultValue] XPathResult inResult)
             raises(DOMException);

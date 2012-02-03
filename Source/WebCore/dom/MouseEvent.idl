@@ -34,7 +34,7 @@ module events {
         readonly attribute unsigned short   button;
         readonly attribute EventTarget      relatedTarget;
         
-        [ObjCLegacyUnamedParameters] void initMouseEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+        [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=CallWithDefaultValue] DOMString type, 
                                            in [Optional=CallWithDefaultValue] boolean canBubble, 
                                            in [Optional=CallWithDefaultValue] boolean cancelable, 
                                            in [Optional=CallWithDefaultValue] DOMWindow view, 

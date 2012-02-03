@@ -26,22 +26,22 @@ module core {
 
         readonly attribute unsigned long length;
         
-        [ConvertNullStringTo=Null, ObjCLegacyUnamedParameters] DOMString substringData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+        [ConvertNullStringTo=Null, ObjCLegacyUnnamedParameters] DOMString substringData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
                                                                          in [IsIndex,Optional=CallWithDefaultValue] unsigned long length)
             raises(DOMException);
 
         void appendData(in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
 
-        [ObjCLegacyUnamedParameters] void insertData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+        [ObjCLegacyUnnamedParameters] void insertData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
                                        in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
 
-        [ObjCLegacyUnamedParameters] void deleteData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+        [ObjCLegacyUnnamedParameters] void deleteData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
                                        in [IsIndex,Optional=CallWithDefaultValue] unsigned long length)
             raises(DOMException);
 
-        [ObjCLegacyUnamedParameters] void replaceData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+        [ObjCLegacyUnnamedParameters] void replaceData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
                                         in [IsIndex,Optional=CallWithDefaultValue] unsigned long length,
                                         in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);

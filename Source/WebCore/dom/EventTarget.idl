@@ -26,10 +26,10 @@ module events {
         CPPPureInterface,
         OmitConstructor
     ] EventTarget {
-        [ObjCLegacyUnamedParameters] void addEventListener(in DOMString type, 
+        [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
                                              in EventListener listener, 
                                              in [Optional] boolean useCapture);
-        [ObjCLegacyUnamedParameters] void removeEventListener(in DOMString type, 
+        [ObjCLegacyUnnamedParameters] void removeEventListener(in DOMString type, 
                                                 in EventListener listener, 
                                                 in [Optional] boolean useCapture);
         boolean dispatchEvent(in Event event)

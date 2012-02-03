@@ -51,12 +51,12 @@ module css {
 
         readonly attribute unsigned short primitiveType;
 
-        [ObjCLegacyUnamedParameters] void setFloatValue(in [Optional=CallWithDefaultValue] unsigned short unitType,
+        [ObjCLegacyUnnamedParameters] void setFloatValue(in [Optional=CallWithDefaultValue] unsigned short unitType,
                                           in [Optional=CallWithDefaultValue] float floatValue)
             raises(DOMException);
         float getFloatValue(in [Optional=CallWithDefaultValue] unsigned short unitType)
             raises(DOMException);
-        [ObjCLegacyUnamedParameters] void setStringValue(in [Optional=CallWithDefaultValue] unsigned short stringType, 
+        [ObjCLegacyUnnamedParameters] void setStringValue(in [Optional=CallWithDefaultValue] unsigned short stringType, 
                                            in [Optional=CallWithDefaultValue] DOMString stringValue)
             raises(DOMException);
         DOMString getStringValue()

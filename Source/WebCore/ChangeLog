@@ -1,3 +1,33 @@
+2012-02-03  Kentaro Hara  <haraken@chromium.org>
+
+        Fix typo
+        https://bugs.webkit.org/show_bug.cgi?id=77708
+
+        Reviewed by Adam Roben.
+
+        This patch fixes typos: [ObjCLegacyUnamedParameters] => [ObjCLegacyUnnamedParameters]
+
+        No tests. No change in behavior.
+
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/EventTarget.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/Range.idl:
+        * dom/UIEvent.idl:
+        * html/HTMLSelectElement.idl:
+        * xml/XPathExpression.idl:
+
 2012-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.

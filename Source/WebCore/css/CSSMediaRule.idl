@@ -25,7 +25,7 @@ module css {
         readonly attribute MediaList media;
         readonly attribute CSSRuleList cssRules;
         
-        [ObjCLegacyUnamedParameters] unsigned long      insertRule(in [Optional=CallWithDefaultValue] DOMString rule, 
+        [ObjCLegacyUnnamedParameters] unsigned long      insertRule(in [Optional=CallWithDefaultValue] DOMString rule, 
                                                      in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
         void               deleteRule(in [Optional=CallWithDefaultValue] unsigned long index)
