@@ -1,0 +1,44 @@
+<style>
+.box {
+    display: inline-block;
+    height: 120px;
+    width: 200px;
+    margin: 10px;
+    border: 1px solid black;
+    background-repeat: no-repeat;
+}
+
+.linear1 {
+    background-image: -webkit-linear-gradient(left, red -webkit-calc(25%), green -webkit-calc(50%), blue -webkit-calc(75%));
+    background-image: -moz-linear-gradient(left, red -webkit-calc(25%), green -webkit-calc(50%), blue -webkit-calc(75%));
+}
+
+.linear2 {
+    /* Green should get shifted to -webkit-calc(50%) */
+    background-image: -webkit-linear-gradient(left, red -webkit-calc(50%), green -webkit-calc(30%), blue -webkit-calc(90%));
+    background-image: -moz-linear-gradient(left, red -webkit-calc(50%), green -webkit-calc(30%), blue -webkit-calc(90%));
+}
+
+.linear3 {
+    background-image: -webkit-linear-gradient(red -webkit-calc(-50%), green, blue, green, blue -webkit-calc(150%));
+    background-image: -moz-linear-gradient(red -webkit-calc(-50%), green, blue, green, blue -webkit-calc(150%));
+}
+
+.linear4 {
+    background-image: -webkit-linear-gradient(left, red, green -webkit-calc(100px), blue);
+    background-image: -moz-linear-gradient(left, red, green -webkit-calc(100px), blue);
+}
+
+.linear5 {
+    background-image: -webkit-linear-gradient(left, red, green -webkit-calc(120%), blue);
+    background-image: -moz-linear-gradient(left, red, green -webkit-calc(120%), blue);
+}
+</style>
+<body>
+    <div class="linear1 box"></div>
+    <div class="linear2 box"></div>
+    <div class="linear3 box"></div>
+    <br>
+    <div class="linear4 box"></div>
+    <div class="linear5 box"></div>
+</body>
