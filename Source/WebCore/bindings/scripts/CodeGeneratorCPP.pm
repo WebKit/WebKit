@@ -191,8 +191,7 @@ sub ShouldSkipType
 {
     my $typeInfo = shift;
 
-    return 1 if $typeInfo->signature->extendedAttributes->{"Custom"}
-             and !$typeInfo->signature->extendedAttributes->{"NoCPPCustom"};
+    return 1 if $typeInfo->signature->extendedAttributes->{"Custom"};
 
     return 1 if $typeInfo->signature->extendedAttributes->{"CustomArgumentHandling"}
              or $typeInfo->signature->extendedAttributes->{"CustomGetter"}

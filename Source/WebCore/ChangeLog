@@ -1,5 +1,21 @@
 2012-02-03  Kentaro Hara  <haraken@chromium.org>
 
+        Remove [NoCPPCustom] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=77704
+
+        Reviewed by Adam Barth.
+
+        This patch removes [NoCPPCustom], by replacing [Custom, NoCPPCustom]
+        in HTMLDocument.idl with [JSCCustom, V8Custom].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (ShouldSkipType):
+        * html/HTMLDocument.idl:
+
+2012-02-03  Kentaro Hara  <haraken@chromium.org>
+
         Remove [LegacyParent] from CodeGeneratorGObject.pm, and rename it to [JSLegacyParent]
         https://bugs.webkit.org/show_bug.cgi?id=77706
 
