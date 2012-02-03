@@ -296,15 +296,19 @@ EditAction TypingCommand::editingAction() const
 
 void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
-    if (!document()->frame()->editor()->isContinuousSpellCheckingEnabled()
-     && !document()->frame()->editor()->isAutomaticQuoteSubstitutionEnabled()
-     && !document()->frame()->editor()->isAutomaticLinkDetectionEnabled()
-     && !document()->frame()->editor()->isAutomaticDashSubstitutionEnabled()
-     && !document()->frame()->editor()->isAutomaticTextReplacementEnabled())
+    if (!frame->editor()->isContinuousSpellCheckingEnabled()
+     && !frame->editor()->isAutomaticQuoteSubstitutionEnabled()
+     && !frame->editor()->isAutomaticLinkDetectionEnabled()
+     && !frame->editor()->isAutomaticDashSubstitutionEnabled()
+     && !frame->editor()->isAutomaticTextReplacementEnabled())
         return;
 #else
-    if (!document()->frame()->editor()->isContinuousSpellCheckingEnabled())
+    if (!frame->editor()->isContinuousSpellCheckingEnabled())
         return;
 #endif
     // Take a look at the selection that results after typing and determine whether we need to spellcheck. 
@@ -321,25 +325,29 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
             String strippedPreviousWord;
             if (range && (commandType == TypingCommand::InsertText || commandType == TypingCommand::InsertLineBreak || commandType == TypingCommand::InsertParagraphSeparator || commandType == TypingCommand::InsertParagraphSeparatorInQuotedContent))
                 strippedPreviousWord = plainText(range.get()).stripWhiteSpace();
-            document()->frame()->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
+            frame->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
         } else if (commandType == TypingCommand::InsertText)
-            document()->frame()->editor()->startCorrectionPanelTimer();
+            frame->editor()->startCorrectionPanelTimer();
     }
 }
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
     updatePreservesTypingStyle(commandTypeForAddedTyping);
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
-    document()->frame()->editor()->appliedEditing(this);
+    frame->editor()->appliedEditing(this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
     if (!m_shouldPreventSpellChecking)
         markMisspellingsAfterTyping(commandTypeForAddedTyping);
 #else
     // The old spellchecking code requires that checking be done first, to prevent issues like that in 6864072, where <doesn't> is marked as misspelled.
     markMisspellingsAfterTyping(commandTypeForAddedTyping);
-    document()->frame()->editor()->appliedEditing(this);
+    frame->editor()->appliedEditing(this);
 #endif
 }
 
@@ -431,7 +439,11 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    document()->frame()->editor()->updateMarkersForWordsAffectedByEditing(false);
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    frame->editor()->updateMarkersForWordsAffectedByEditing(false);
 
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
@@ -513,11 +525,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !document()->frame()->selection()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !frame->selection()->shouldDeleteSelection(selectionToDelete))
         return;
     
     if (killRing)
-        document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+        frame->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
     // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
     // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
     // more text than you insert.  In that case all of the text that was around originally should be selected.
@@ -530,7 +542,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    document()->frame()->editor()->updateMarkersForWordsAffectedByEditing(false);
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    frame->editor()->updateMarkersForWordsAffectedByEditing(false);
 
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
@@ -599,11 +615,11 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !document()->frame()->selection()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !frame->selection()->shouldDeleteSelection(selectionToDelete))
         return;
         
     if (killRing)
-        document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+        frame->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
     // make undo select what was deleted
     setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);

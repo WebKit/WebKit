@@ -1,3 +1,20 @@
+2012-02-03  MORITA Hajime  <morrita@google.com>
+
+        TypingCommand should be prepared against detached document.
+        https://bugs.webkit.org/show_bug.cgi?id=77216
+
+        Reviewed by Ryosuke Niwa.
+
+        Added null checks for document()->frame().
+
+        No new tests. Just tighten guards for possible codepaths.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+
 2012-02-03  Kentaro Hara  <haraken@chromium.org>
 
         Rename [DontEnum] IDL to [NotEnumerable] IDL
