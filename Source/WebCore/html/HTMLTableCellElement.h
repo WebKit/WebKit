@@ -56,7 +56,7 @@ private:
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
 
-    virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() OVERRIDE;
+    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
 
     virtual bool isURLAttribute(Attribute*) const;
 

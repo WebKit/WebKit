@@ -205,7 +205,7 @@ void DeleteButtonController::createDeletionUI()
     RefPtr<HTMLDivElement> container = HTMLDivElement::create(m_target->document());
     container->setIdAttribute(containerElementIdentifier);
 
-    CSSMutableStyleDeclaration* style = container->ensureInlineStyleDecl();
+    StylePropertySet* style = container->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadOnly);

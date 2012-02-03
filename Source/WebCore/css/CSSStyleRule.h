@@ -43,15 +43,15 @@ public:
     String selectorText() const;
     void setSelectorText(const String&);
 
-    CSSStyleDeclaration* style() const { return m_style.get(); }
+    CSSStyleDeclaration* style() const { return m_style->ensureCSSStyleDeclaration(); }
 
     String cssText() const;
 
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style) { ASSERT(style->parentRuleInternal() == this); m_style = style; }
+    void setDeclaration(PassRefPtr<StylePropertySet> style) { ASSERT(style->parentRuleInternal() == this); m_style = style; }
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
-    CSSMutableStyleDeclaration* declaration() const { return m_style.get(); }
+    StylePropertySet* declaration() const { return m_style.get(); }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 
@@ -64,7 +64,7 @@ private:
     void cleanup();
     String generateSelectorText() const;
 
-    RefPtr<CSSMutableStyleDeclaration> m_style;
+    RefPtr<StylePropertySet> m_style;
     CSSSelectorList m_selectorList;
 };
 

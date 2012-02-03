@@ -1,3 +1,13 @@
+2012-02-03  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77740
+        Split CSSMutableStyleDeclaration into separate internal and CSSOM types 
+
+        Reviewed by Andreas Kling and Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _typingStyle]):
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77691

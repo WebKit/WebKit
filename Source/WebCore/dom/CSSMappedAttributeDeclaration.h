@@ -58,11 +58,11 @@ public:
 
     void removeMappedProperty(StyledElement*, int propertyId);
     
-    CSSMutableStyleDeclaration* declaration() const { return m_declaration.get(); }
+    StylePropertySet* declaration() const { return m_declaration.get(); }
 
 private:
     CSSMappedAttributeDeclaration()
-        : m_declaration(CSSMutableStyleDeclaration::create())
+        : m_declaration(StylePropertySet::create())
         , m_entryType(eNone)
         , m_attrName(anyQName())
     {
@@ -70,7 +70,7 @@ private:
 
     void setNeedsStyleRecalc(StyledElement*);
 
-    RefPtr<CSSMutableStyleDeclaration> m_declaration;
+    RefPtr<StylePropertySet> m_declaration;
     MappedAttributeEntry m_entryType;
     QualifiedName m_attrName;
     AtomicString m_attrValue;

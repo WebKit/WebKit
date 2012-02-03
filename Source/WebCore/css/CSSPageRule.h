@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-class CSSMutableStyleDeclaration;
 class CSSSelector;
 class CSSSelectorList;
 

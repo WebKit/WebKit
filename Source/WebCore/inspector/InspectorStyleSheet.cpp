@@ -294,7 +294,7 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
     populateAllProperties(&allProperties);
 
     if (propertyText.stripWhiteSpace().length()) {
-        RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
+        RefPtr<StylePropertySet> tempMutableStyle = StylePropertySet::create();
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
         CSSParser p;
         p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet());
@@ -1317,7 +1317,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
         return true;
     }
 
-    RefPtr<CSSMutableStyleDeclaration> tempDeclaration = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> tempDeclaration = StylePropertySet::create();
     CSSParser p;
     p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet());
     return true;

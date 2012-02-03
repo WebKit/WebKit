@@ -28,15 +28,15 @@
 
 namespace WebCore {
 
-class Color;
-class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValueList;
 class CSSValuePool;
+class Color;
 class Node;
 class RenderStyle;
-class ShadowData;
 class SVGPaint;
+class ShadowData;
+class StylePropertySet;
 
 #if ENABLE(CSS_SHADERS)
 class CustomFilterNumberParameter;
@@ -54,8 +54,8 @@ public:
     String getPropertyValue(int propertyID) const;
     bool getPropertyPriority(int propertyID) const;
 
-    virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
-    virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
+    virtual PassRefPtr<StylePropertySet> copy() const;
+    virtual PassRefPtr<StylePropertySet> makeMutable();
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID, EUpdateLayout) const;
     PassRefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;
@@ -64,7 +64,7 @@ public:
     PassRefPtr<CSSValue> getSVGPropertyCSSValue(int propertyID, EUpdateLayout) const;
 #endif
 
-    PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;
+    PassRefPtr<StylePropertySet> copyPropertiesInSet(const int* set, unsigned length) const;
 
 private:
     CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);

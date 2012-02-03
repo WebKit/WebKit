@@ -183,7 +183,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!node->hasChildNodes())
         return true;
 
-    CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
+    StylePropertySet* inlineStyleDecl = elem->inlineStyleDecl();
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 

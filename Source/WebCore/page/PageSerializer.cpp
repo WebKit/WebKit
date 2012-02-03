@@ -307,7 +307,7 @@ void PageSerializer::retrieveResourcesForCSSRule(CSSStyleRule* rule, Document* d
     retrieveResourcesForCSSDeclaration(rule->declaration(), document);
 }
 
-void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration* styleDeclaration, Document* document)
+void PageSerializer::retrieveResourcesForCSSDeclaration(StylePropertySet* styleDeclaration, Document* document)
 {
     if (!styleDeclaration)
         return;

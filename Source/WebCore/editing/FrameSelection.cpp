@@ -1837,7 +1837,7 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const
 #endif
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> FrameSelection::copyTypingStyle() const
+PassRefPtr<StylePropertySet> FrameSelection::copyTypingStyle() const
 {
     if (!m_typingStyle || !m_typingStyle->style())
         return 0;

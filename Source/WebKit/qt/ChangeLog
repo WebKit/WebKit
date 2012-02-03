@@ -1,3 +1,13 @@
+2012-02-03  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77740
+        Split CSSMutableStyleDeclaration into separate internal and CSSOM types 
+
+        Reviewed by Andreas Kling and Darin Adler.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2012-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.

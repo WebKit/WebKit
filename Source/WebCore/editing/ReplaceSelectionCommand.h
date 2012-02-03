@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-class CSSMutableStyleDeclaration;
 class DocumentFragment;
 class EditingStyle;
 class Node;
 class ReplacementFragment;
+class StylePropertySet;
 
 class ReplaceSelectionCommand : public CompositeEditCommand {
 public:

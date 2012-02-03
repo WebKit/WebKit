@@ -445,9 +445,9 @@ void HTMLTableElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
-static CSSMutableStyleDeclaration* leakBorderStyle(int value)
+static StylePropertySet* leakBorderStyle(int value)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyBorderTopStyle, value);
     style->setProperty(CSSPropertyBorderBottomStyle, value);
     style->setProperty(CSSPropertyBorderLeftStyle, value);
@@ -455,16 +455,16 @@ static CSSMutableStyleDeclaration* leakBorderStyle(int value)
     return style.release().leakRef();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableElement::additionalAttributeStyle()
+PassRefPtr<StylePropertySet> HTMLTableElement::additionalAttributeStyle()
 {
     if ((!m_borderAttr && !m_borderColorAttr) || m_frameAttr)
         return 0;
 
     if (m_borderColorAttr) {
-        static CSSMutableStyleDeclaration* solidBorderStyle = leakBorderStyle(CSSValueSolid);
+        static StylePropertySet* solidBorderStyle = leakBorderStyle(CSSValueSolid);
         return solidBorderStyle;
     }
-    static CSSMutableStyleDeclaration* outsetBorderStyle = leakBorderStyle(CSSValueOutset);
+    static StylePropertySet* outsetBorderStyle = leakBorderStyle(CSSValueOutset);
     return outsetBorderStyle;
 }
 
@@ -491,9 +491,9 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return NoBorders;
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableElement::createSharedCellStyle()
+PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
 
     switch (cellBorders()) {
     case SolidBordersColsOnly:
@@ -542,16 +542,16 @@ PassRefPtr<CSSMutableStyleDeclaration> HTMLTableElement::createSharedCellStyle()
     return style.release();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableElement::additionalCellStyle()
+PassRefPtr<StylePropertySet> HTMLTableElement::additionalCellStyle()
 {
     if (!m_sharedCellStyle)
         m_sharedCellStyle = createSharedCellStyle();
     return m_sharedCellStyle;
 }
 
-static CSSMutableStyleDeclaration* leakGroupBorderStyle(int rows)
+static StylePropertySet* leakGroupBorderStyle(int rows)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     if (rows) {
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
@@ -566,16 +566,16 @@ static CSSMutableStyleDeclaration* leakGroupBorderStyle(int rows)
     return style.release().leakRef();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableElement::additionalGroupStyle(bool rows)
+PassRefPtr<StylePropertySet> HTMLTableElement::additionalGroupStyle(bool rows)
 {
     if (m_rulesAttr != GroupsRules)
         return 0;
 
     if (rows) {
-        static CSSMutableStyleDeclaration* rowBorderStyle = leakGroupBorderStyle(true);
+        static StylePropertySet* rowBorderStyle = leakGroupBorderStyle(true);
         return rowBorderStyle;
     }
-    static CSSMutableStyleDeclaration* columnBorderStyle = leakGroupBorderStyle(false);
+    static StylePropertySet* columnBorderStyle = leakGroupBorderStyle(false);
     return columnBorderStyle;
 }
 

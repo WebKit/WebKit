@@ -69,7 +69,7 @@ public:
     
     PassRefPtr<Attribute> clone() const;
     
-    CSSMutableStyleDeclaration* decl() const { return m_mappedAttributeDeclaration ? m_mappedAttributeDeclaration->declaration() : 0; }
+    StylePropertySet* decl() const { return m_mappedAttributeDeclaration ? m_mappedAttributeDeclaration->declaration() : 0; }
 
     CSSMappedAttributeDeclaration* mappedAttributeDeclaration() const { return m_mappedAttributeDeclaration.get(); }
     void setMappedAttributeDeclaration(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_mappedAttributeDeclaration = decl; }

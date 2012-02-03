@@ -98,16 +98,16 @@ static Frame* targetFrame(Frame* frame, Event* event)
     return node->document()->frame();
 }
 
-static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAction action, CSSMutableStyleDeclaration* style)
+static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAction action, StylePropertySet* style)
 {
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame->editor()->applyStyleToSelection(style, action);
+        frame->editor()->applyStyleToSelection(style->ensureCSSStyleDeclaration(), action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame->editor()->applyStyle(style);
+        frame->editor()->applyStyle(style->ensureCSSStyleDeclaration());
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -116,14 +116,14 @@ static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAc
 
 static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
     return applyCommandToFrame(frame, source, action, style.get());
 }
 
 static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, int propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
     return applyCommandToFrame(frame, source, action, style.get());
 }
@@ -151,7 +151,7 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
         newStyle = value->cssText();
 
     // FIXME: We shouldn't be having to convert new style into text.  We should have setPropertyCSSValue.
-    RefPtr<CSSMutableStyleDeclaration> newMutableStyle = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> newMutableStyle = StylePropertySet::create();
     newMutableStyle->setProperty(propertyID, newStyle, ec);
     return applyCommandToFrame(frame, source, action, newMutableStyle.get());
 }
@@ -174,16 +174,16 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
 
 static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(propertyID, propertyValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame->editor()->applyParagraphStyleToSelection(style.get(), action);
+        frame->editor()->applyParagraphStyleToSelection(style->ensureCSSStyleDeclaration(), action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame->editor()->applyParagraphStyle(style.get());
+        frame->editor()->applyParagraphStyle(style->ensureCSSStyleDeclaration());
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -580,27 +580,27 @@ static bool executeJustifyRight(Frame* frame, Event*, EditorCommandSource source
 
 static bool executeMakeTextWritingDirectionLeftToRight(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
     style->setProperty(CSSPropertyDirection, CSSValueLtr);
-    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
     return true;
 }
 
 static bool executeMakeTextWritingDirectionNatural(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
-    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
     return true;
 }
 
 static bool executeMakeTextWritingDirectionRightToLeft(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
     style->setProperty(CSSPropertyDirection, CSSValueRtl);
-    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
     return true;
 }
 

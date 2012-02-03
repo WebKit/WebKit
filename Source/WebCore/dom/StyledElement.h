@@ -55,12 +55,12 @@ public:
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
     static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
 
-    virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() { return 0; }
+    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
-    CSSMutableStyleDeclaration* inlineStyleDecl() const { return attributeMap() ? attributeMap()->inlineStyleDecl() : 0; }
-    CSSMutableStyleDeclaration* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
-    virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl(); }
+    StylePropertySet* inlineStyleDecl() const { return attributeMap() ? attributeMap()->inlineStyleDecl() : 0; }
+    StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
+    virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
     const SpaceSplitString& classNames() const;
 

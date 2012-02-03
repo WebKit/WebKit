@@ -49,7 +49,7 @@ private:
     {
     }
 
-    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
+    RefPtr<StylePropertySet> m_inlineStyleDecl;
     SpaceSplitString m_classNames;
     AtomicString m_idForStyleResolution;
 };

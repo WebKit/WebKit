@@ -727,7 +727,7 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Eleme
             continue;
         RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
         String attributeName = attribute->localName();
-        RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->decl(), 0);
+        RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->decl()->ensureCSSStyleDeclaration(), 0);
         attrStyleObject->setString("name", attributeName.utf8().data());
         attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
         attrStyles->pushObject(attrStyleObject.release());

@@ -38,13 +38,13 @@
 namespace WebCore {
 
 class CharacterData;
-class CSSMutableStyleDeclaration;
 class Frame;
 class GraphicsContext;
 class HTMLFormElement;
 class RenderObject;
 class RenderView;
 class Settings;
+class StylePropertySet;
 class VisiblePosition;
 
 enum EUserTriggered { NotUserTriggered = 0, UserTriggered = 1 };
@@ -235,7 +235,7 @@ public:
     void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     EditingStyle* typingStyle() const;
-    PassRefPtr<CSSMutableStyleDeclaration> copyTypingStyle() const;
+    PassRefPtr<StylePropertySet> copyTypingStyle() const;
     void setTypingStyle(PassRefPtr<EditingStyle>);
     void clearTypingStyle();
 

@@ -481,7 +481,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 
         StyledElement* element = static_cast<StyledElement*>(node.get());
 
-        CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl();
+        StylePropertySet* inlineStyle = element->inlineStyleDecl();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
             ContainerNode* context = element->parentNode();

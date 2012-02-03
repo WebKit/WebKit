@@ -38,7 +38,6 @@ namespace WebCore {
 enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
 
 class CSSFontSelector;
-class CSSMutableStyleDeclaration;
 class CSSPageRule;
 class CSSPrimitiveValue;
 class CSSProperty;
@@ -70,6 +69,7 @@ class RuleSet;
 class Settings;
 class StyleImage;
 class StylePendingImage;
+class StylePropertySet;
 class StyleShader;
 class StyleSheet;
 class StyleSheetList;
@@ -259,7 +259,7 @@ private:
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
+    void addMatchedDeclaration(StylePropertySet*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     struct MatchRanges {
         MatchRanges() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
@@ -294,7 +294,7 @@ private:
     template <bool firstPass>
     void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
-    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool inheritedOnly);
+    void applyDeclaration(StylePropertySet*, bool isImportant, bool inheritedOnly);
 
     static bool isValidRegionStyleProperty(int id);
 
@@ -375,7 +375,7 @@ private:
     struct MatchedStyleDeclaration {
         MatchedStyleDeclaration() : possiblyPaddedMember(0) { }
 
-        RefPtr<CSSMutableStyleDeclaration> styleDeclaration;
+        RefPtr<StylePropertySet> styleDeclaration;
         union {
             unsigned linkMatchType;
             // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.

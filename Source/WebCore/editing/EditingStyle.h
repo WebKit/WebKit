@@ -43,7 +43,6 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
-class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
 class Document;
@@ -53,6 +52,7 @@ class Node;
 class Position;
 class QualifiedName;
 class RenderStyle;
+class StylePropertySet;
 class StyledElement;
 class VisibleSelection;
 
@@ -81,6 +81,11 @@ public:
         return adoptRef(new EditingStyle(position, propertiesToInclude));
     }
 
+    static PassRefPtr<EditingStyle> create(const StylePropertySet* style)
+    {
+        return adoptRef(new EditingStyle(style));
+    }
+
     static PassRefPtr<EditingStyle> create(const CSSStyleDeclaration* style)
     {
         return adoptRef(new EditingStyle(style));
@@ -93,11 +98,11 @@ public:
 
     ~EditingStyle();
 
-    CSSMutableStyleDeclaration* style() { return m_mutableStyle.get(); }
+    StylePropertySet* style() { return m_mutableStyle.get(); }
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
-    void setStyle(PassRefPtr<CSSMutableStyleDeclaration>);
-    void overrideWithStyle(const CSSMutableStyleDeclaration*);
+    void setStyle(PassRefPtr<StylePropertySet>);
+    void overrideWithStyle(const StylePropertySet*);
     void clear();
     PassRefPtr<EditingStyle> copy() const;
     PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
@@ -144,6 +149,7 @@ private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&, PropertiesToInclude);
+    EditingStyle(const StylePropertySet*);
     EditingStyle(const CSSStyleDeclaration*);
     EditingStyle(int propertyID, const String& value);
     void init(Node*, PropertiesToInclude);
@@ -154,9 +160,9 @@ private:
     TriState triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
     void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
-    void mergeStyle(CSSMutableStyleDeclaration*, CSSPropertyOverrideMode);
+    void mergeStyle(StylePropertySet*, CSSPropertyOverrideMode);
 
-    RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
+    RefPtr<StylePropertySet> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;
     float m_fontSizeDelta;
 
@@ -201,7 +207,7 @@ public:
         return !(*this == other);
     }
 private:
-    void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefaultSize);
+    void extractTextStyles(Document*, StylePropertySet*, bool shouldUseFixedFontDefaultSize);
 
     String m_cssStyle;
     bool m_applyBold;
@@ -217,6 +223,7 @@ private:
 
 // FIXME: Remove these functions or make them non-global to discourage using CSSStyleDeclaration directly.
 int getIdentifierValue(CSSStyleDeclaration*, CSSPropertyID);
+int getIdentifierValue(StylePropertySet*, CSSPropertyID);
 
 } // namespace WebCore
 

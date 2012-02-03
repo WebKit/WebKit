@@ -1707,7 +1707,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     LayoutSize difference = (currentSize + newOffset - adjustedOldOffset).expandedTo(minimumSize) - currentSize;
 
     ASSERT(element->isStyledElement());
-    CSSMutableStyleDeclaration* styleDeclaration = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
+    StylePropertySet* styleDeclaration = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
     bool isBoxSizingBorder = renderer->style()->boxSizing() == BORDER_BOX;
 
     if (resize != RESIZE_VERTICAL && difference.width()) {

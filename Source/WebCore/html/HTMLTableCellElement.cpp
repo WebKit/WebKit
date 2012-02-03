@@ -118,7 +118,7 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
         HTMLTablePartElement::parseMappedAttribute(attr);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableCellElement::additionalAttributeStyle()
+PassRefPtr<StylePropertySet> HTMLTableCellElement::additionalAttributeStyle()
 {
     ContainerNode* p = parentNode();
     while (p && !p->hasTagName(tableTag))

@@ -52,7 +52,7 @@ String WebKitCSSKeyframeRule::cssText() const
     return result;
 }
 
-void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
+void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<StylePropertySet> style)
 {
     ASSERT(style->parentRuleInternal() == this);
     m_style = style;

@@ -99,8 +99,8 @@ public:
     ElementAttributeData* attributeData() { return &m_attributeData; }
     const ElementAttributeData* attributeData() const { return &m_attributeData; }
 
-    CSSMutableStyleDeclaration* inlineStyleDecl() { return attributeData()->m_inlineStyleDecl.get(); }
-    CSSMutableStyleDeclaration* ensureInlineStyleDecl();
+    StylePropertySet* inlineStyleDecl() { return attributeData()->m_inlineStyleDecl.get(); }
+    StylePropertySet* ensureInlineStyleDecl();
     void destroyInlineStyleDecl();
 
 private:

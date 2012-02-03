@@ -52,7 +52,7 @@ WebKitCSSMatrix::~WebKitCSSMatrix()
 
 void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 {
-    RefPtr<CSSMutableStyleDeclaration> styleDeclaration = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> styleDeclaration = StylePropertySet::create();
     if (CSSParser::parseValue(styleDeclaration.get(), CSSPropertyWebkitTransform, string, true, true)) {
         // Convert to TransformOperations. This can fail if a property
         // requires style (i.e., param uses 'ems' or 'exs')

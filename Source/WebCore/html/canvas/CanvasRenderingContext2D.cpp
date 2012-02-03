@@ -1989,7 +1989,7 @@ String CanvasRenderingContext2D::font() const
 
 void CanvasRenderingContext2D::setFont(const String& newFont)
 {
-    RefPtr<CSSMutableStyleDeclaration> tempDecl = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> tempDecl = StylePropertySet::create();
     CSSParser parser(!m_usesCSSCompatibilityParseMode);
 
     String declarationText("font: ");

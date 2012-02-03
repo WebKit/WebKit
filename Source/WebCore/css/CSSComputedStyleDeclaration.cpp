@@ -2514,12 +2514,12 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property
     return value && value->cssText() == property->value()->cssText();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copy() const
+PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copy() const
 {
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::makeMutable()
+PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::makeMutable()
 {
     return copy();
 }
@@ -2562,7 +2562,7 @@ PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSid
     return list.release();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
+PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
 {
     Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);
@@ -2571,7 +2571,7 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyProperti
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return CSSMutableStyleDeclaration::create(list);
+    return StylePropertySet::create(list);
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

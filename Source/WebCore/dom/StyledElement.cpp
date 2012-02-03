@@ -112,7 +112,7 @@ void StyledElement::updateStyleAttribute() const
     ASSERT(!isStyleAttributeValid());
     setIsStyleAttributeValid();
     setIsSynchronizingStyleAttribute();
-    if (CSSMutableStyleDeclaration* inlineStyle = inlineStyleDecl())
+    if (StylePropertySet* inlineStyle = inlineStyleDecl())
         const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText());
     clearIsSynchronizingStyleAttribute();
 }
@@ -405,7 +405,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
     if (!source->inlineStyleDecl())
         return;
 
-    CSSMutableStyleDeclaration* inlineStyle = ensureInlineStyleDecl();
+    StylePropertySet* inlineStyle = ensureInlineStyleDecl();
     inlineStyle->copyPropertiesFrom(*source->inlineStyleDecl());
     inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
 
@@ -417,7 +417,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (CSSMutableStyleDeclaration* inlineStyle = inlineStyleDecl())
+    if (StylePropertySet* inlineStyle = inlineStyleDecl())
         inlineStyle->addSubresourceStyleURLs(urls);
 }
 

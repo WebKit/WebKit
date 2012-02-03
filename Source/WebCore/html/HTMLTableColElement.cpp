@@ -77,7 +77,7 @@ void HTMLTableColElement::parseMappedAttribute(Attribute* attr)
         HTMLTablePartElement::parseMappedAttribute(attr);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> HTMLTableColElement::additionalAttributeStyle()
+PassRefPtr<StylePropertySet> HTMLTableColElement::additionalAttributeStyle()
 {
     if (!hasLocalName(colgroupTag))
         return 0;

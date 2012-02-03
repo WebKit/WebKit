@@ -1346,9 +1346,9 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         return;
     }
 
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyDirection, direction == LeftToRightWritingDirection ? "ltr" : direction == RightToLeftWritingDirection ? "rtl" : "inherit", false);
-    applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
+    applyParagraphStyleToSelection(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
 }
 
 void Editor::selectComposition()
@@ -2745,7 +2745,7 @@ void Editor::applyEditingStyleToElement(Element* element) const
     ASSERT(element->isStyledElement());
     if (!element->isStyledElement())
         return;
-    CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
+    StylePropertySet* style = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyWordWrap, "break-word", false);
     style->setProperty(CSSPropertyWebkitNbspMode, "space", false);
     style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false);

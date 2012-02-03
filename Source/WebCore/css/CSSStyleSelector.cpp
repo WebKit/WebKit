@@ -297,17 +297,17 @@ static const MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-static CSSMutableStyleDeclaration* leftToRightDeclaration()
+static StylePropertySet* leftToRightDeclaration()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, leftToRightDecl, (CSSMutableStyleDeclaration::create()));
+    DEFINE_STATIC_LOCAL(RefPtr<StylePropertySet>, leftToRightDecl, (StylePropertySet::create()));
     if (leftToRightDecl->isEmpty())
         leftToRightDecl->setProperty(CSSPropertyDirection, CSSValueLtr);
     return leftToRightDecl.get();
 }
 
-static CSSMutableStyleDeclaration* rightToLeftDeclaration()
+static StylePropertySet* rightToLeftDeclaration()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, rightToLeftDecl, (CSSMutableStyleDeclaration::create()));
+    DEFINE_STATIC_LOCAL(RefPtr<StylePropertySet>, rightToLeftDecl, (StylePropertySet::create()));
     if (rightToLeftDecl->isEmpty())
         rightToLeftDecl->setProperty(CSSPropertyDirection, CSSValueRtl);
     return rightToLeftDecl.get();
@@ -747,7 +747,7 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
     ASSERT_UNUSED(loadedMathMLUserAgentSheet, loadedMathMLUserAgentSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType)
+void CSSStyleSelector::addMatchedDeclaration(StylePropertySet* styleDeclaration, unsigned linkMatchType)
 {
     m_matchedDecls.grow(m_matchedDecls.size() + 1);
     MatchedStyleDeclaration& newDeclaration = m_matchedDecls.last();
@@ -940,7 +940,7 @@ void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules
                 continue;
             }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            CSSMutableStyleDeclaration* decl = rule->declaration();
+            StylePropertySet* decl = rule->declaration();
             if (!decl || (decl->isEmpty() && !includeEmptyRules)) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
@@ -1013,7 +1013,7 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        if (RefPtr<CSSMutableStyleDeclaration> additionalStyle = m_styledElement->additionalAttributeStyle()) {
+        if (RefPtr<StylePropertySet> additionalStyle = m_styledElement->additionalAttributeStyle()) {
             if (result.ranges.firstAuthorRule == -1)
                 result.ranges.firstAuthorRule = m_matchedDecls.size();
             result.ranges.lastAuthorRule = m_matchedDecls.size();
@@ -1035,7 +1035,7 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
 
     // Now check our inline style attribute.
     if (m_matchAuthorAndUserStyles && m_styledElement) {
-        CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
+        StylePropertySet* inlineDecl = m_styledElement->inlineStyleDecl();
         if (inlineDecl) {
             result.ranges.lastAuthorRule = m_matchedDecls.size();
             if (result.ranges.firstAuthorRule == -1)
@@ -1530,7 +1530,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 
 PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* elementStyle, const WebKitCSSKeyframeRule* keyframeRule, KeyframeValue& keyframe)
 {
-    if (keyframeRule->style())
+    if (keyframeRule->declaration())
         addMatchedDeclaration(keyframeRule->declaration());
 
     ASSERT(!m_style);
@@ -1570,7 +1570,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 #endif
 
     // Add all the animating properties to the keyframe.
-    if (CSSMutableStyleDeclaration* styleDeclaration = keyframeRule->declaration()) {
+    if (StylePropertySet* styleDeclaration = keyframeRule->declaration()) {
         unsigned propertyCount = styleDeclaration->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
             int property = styleDeclaration->propertyAt(i).id();
@@ -2435,7 +2435,7 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
     return convertToLength(primitiveValue, style, rootStyle, true, multiplier, ok);
 }
 
-static inline bool isInsideRegionRule(CSSMutableStyleDeclaration* styleDeclaration)
+static inline bool isInsideRegionRule(StylePropertySet* styleDeclaration)
 {
     ASSERT(styleDeclaration);
 
@@ -2449,7 +2449,7 @@ static inline bool isInsideRegionRule(CSSMutableStyleDeclaration* styleDeclarati
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
+void CSSStyleSelector::applyDeclaration(StylePropertySet* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRuleInternal());
     bool styleDeclarationInsideRegionRule = m_regionForStyling ? isInsideRegionRule(styleDeclaration) : false;
@@ -2501,7 +2501,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
     if (m_style->insideLink() != NotInsideLink) {
         for (int i = startIndex; i <= endIndex; ++i) {
-            CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration.get();
+            StylePropertySet* styleDeclaration = m_matchedDecls[i].styleDeclaration.get();
             unsigned linkMatchType = m_matchedDecls[i].linkMatchType;
             // FIXME: It would be nicer to pass these as arguments but that requires changes in many places.
             m_applyPropertyToRegularStyle = linkMatchType & SelectorChecker::MatchLink;
@@ -2720,7 +2720,7 @@ void CSSStyleSelector::matchPageRulesForList(const Vector<RuleData>* rules, bool
             continue;
 
         // If the rule has no properties to apply, then ignore it.
-        CSSMutableStyleDeclaration* decl = rule->declaration();
+        StylePropertySet* decl = rule->declaration();
         if (!decl || decl->isEmpty())
             continue;
 
