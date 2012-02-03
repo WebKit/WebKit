@@ -721,6 +721,8 @@
 		C22C531413FAF6EF00B7DC0D /* strtod.h in Headers */ = {isa = PBXBuildFile; fileRef = C22C52BA13FAF6EF00B7DC0D /* strtod.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C22C531513FAF6EF00B7DC0D /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = C22C52BB13FAF6EF00B7DC0D /* utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C240305514B404E60079EB64 /* BumpSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C240305314B404C90079EB64 /* BumpSpace.cpp */; };
+		C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */; };
 		C2C8D02D14A3C6E000578E65 /* BumpSpaceInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02B14A3C6B200578E65 /* BumpSpaceInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03014A3CEFC00578E65 /* BumpBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02E14A3CEFC00578E65 /* BumpBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1503,6 +1505,8 @@
 		C22C52BA13FAF6EF00B7DC0D /* strtod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strtod.h; sourceTree = "<group>"; };
 		C22C52BB13FAF6EF00B7DC0D /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		C240305314B404C90079EB64 /* BumpSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BumpSpace.cpp; sourceTree = "<group>"; };
+		C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocator.h; sourceTree = "<group>"; };
+		C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedAllocator.cpp; sourceTree = "<group>"; };
 		C2C8D02B14A3C6B200578E65 /* BumpSpaceInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpSpaceInlineMethods.h; sourceTree = "<group>"; };
 		C2C8D02E14A3CEFC00578E65 /* BumpBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpBlock.h; sourceTree = "<group>"; };
 		C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapBlock.h; sourceTree = "<group>"; };
@@ -1800,6 +1804,8 @@
 				142E3131134FF0A600AFADB5 /* LocalScope.h */,
 				14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */,
 				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
+				C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */,
+				C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */,
 				142D6F0613539A2800B02E86 /* MarkedBlock.cpp */,
 				142D6F0713539A2800B02E86 /* MarkedBlock.h */,
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
@@ -2672,6 +2678,7 @@
 				A73BE169148420520091204B /* ArrayBuffer.h in Headers */,
 				C2D9CA1314BCC04600304B46 /* CheckedBoolean.h in Headers */,
 				A73BE16B148420520091204B /* ArrayBufferView.h in Headers */,
+				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
@@ -3658,6 +3665,7 @@
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */,
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
+				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

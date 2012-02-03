@@ -35,155 +35,40 @@ MarkedSpace::MarkedSpace(Heap* heap)
     , m_nurseryWaterMark(0)
     , m_heap(heap)
 {
-    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
-        sizeClassFor(cellSize).cellSize = cellSize;
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
+        allocatorFor(cellSize).setCellSize(cellSize);
+        allocatorFor(cellSize).setHeap(heap);
+        allocatorFor(cellSize).setMarkedSpace(this);
+    }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
-        sizeClassFor(cellSize).cellSize = cellSize;
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+        allocatorFor(cellSize).setCellSize(cellSize);
+        allocatorFor(cellSize).setHeap(heap);
+        allocatorFor(cellSize).setMarkedSpace(this);
+    }
 }
 
-void MarkedSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
-{
-    ASSERT(!sizeClass.currentBlock);
-    ASSERT(!sizeClass.firstFreeCell);
-
-    sizeClass.blockList.append(block);
-    sizeClass.currentBlock = block;
-    sizeClass.firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
-}
-
-void MarkedSpace::removeBlock(MarkedBlock* block)
-{
-    SizeClass& sizeClass = sizeClassFor(block->cellSize());
-    if (sizeClass.currentBlock == block)
-        sizeClass.currentBlock = 0;
-    sizeClass.blockList.remove(block);
-}
-
-void MarkedSpace::resetAllocator()
+void MarkedSpace::resetAllocators()
 {
     m_waterMark = 0;
     m_nurseryWaterMark = 0;
 
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
-        sizeClassFor(cellSize).resetAllocator();
+        allocatorFor(cellSize).reset();
 
     for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
-        sizeClassFor(cellSize).resetAllocator();
+        allocatorFor(cellSize).reset();
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
-        sizeClassFor(cellSize).zapFreeList();
+        allocatorFor(cellSize).zapFreeList();
 
     for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
-        sizeClassFor(cellSize).zapFreeList();
+        allocatorFor(cellSize).zapFreeList();
 }
 
-inline void* MarkedSpace::tryAllocateHelper(MarkedSpace::SizeClass& sizeClass)
-{
-    MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
-    if (!firstFreeCell) {
-        for (MarkedBlock*& block = sizeClass.currentBlock; block; block = static_cast<MarkedBlock*>(block->next())) {
-            firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
-            if (firstFreeCell)
-                break;
-            m_nurseryWaterMark += block->capacity() - block->size();
-            m_waterMark += block->capacity();
-            block->didConsumeFreeList();
-        }
-
-        if (!firstFreeCell)
-            return 0;
-    }
-
-    ASSERT(firstFreeCell);
-    sizeClass.firstFreeCell = firstFreeCell->next;
-    return firstFreeCell;
-}
-
-inline void* MarkedSpace::tryAllocate(MarkedSpace::SizeClass& sizeClass)
-{
-    m_heap->m_operationInProgress = Allocation;
-    void* result = tryAllocateHelper(sizeClass);
-    m_heap->m_operationInProgress = NoOperation;
-    return result;
-}
-
-void* MarkedSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
-{
-#if COLLECT_ON_EVERY_ALLOCATION
-    m_heap->collectAllGarbage();
-    ASSERT(m_heap->m_operationInProgress == NoOperation);
-#endif
-    
-    void* result = tryAllocate(sizeClass);
-    
-    if (LIKELY(result != 0))
-        return result;
-    
-    AllocationEffort allocationEffort;
-    
-    if ((
-#if ENABLE(GGC)
-         nurseryWaterMark() < m_heap->m_minBytesPerCycle
-#else
-         m_heap->waterMark() < m_heap->highWaterMark()
-#endif
-         ) || !m_heap->m_isSafeToCollect)
-        allocationEffort = AllocationMustSucceed;
-    else
-        allocationEffort = AllocationCanFail;
-    
-    MarkedBlock* block = allocateBlock(sizeClass.cellSize, allocationEffort);
-    if (block) {
-        addBlock(sizeClass, block);
-        void* result = tryAllocate(sizeClass);
-        ASSERT(result);
-        return result;
-    }
-    
-    m_heap->collect(Heap::DoNotSweep);
-    
-    result = tryAllocate(sizeClass);
-    
-    if (result)
-        return result;
-    
-    ASSERT(m_heap->waterMark() < m_heap->highWaterMark());
-    
-    addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
-    
-    result = tryAllocate(sizeClass);
-    ASSERT(result);
-    return result;
-}
-
-MarkedBlock* MarkedSpace::allocateBlock(size_t cellSize, AllocationEffort allocationEffort)
-{
-    MarkedBlock* block;
-    
-    {
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        if (m_heap->m_numberOfFreeBlocks) {
-            block = static_cast<MarkedBlock*>(m_heap->m_freeBlocks.removeHead());
-            ASSERT(block);
-            m_heap->m_numberOfFreeBlocks--;
-        } else
-            block = 0;
-    }
-    if (block)
-        block = MarkedBlock::recycle(block, m_heap, cellSize);
-    else if (allocationEffort == AllocationCanFail)
-        return 0;
-    else
-        block = MarkedBlock::create(m_heap, cellSize);
-    
-    m_blocks.add(block);
-    
-    return block;
-}
 
 void MarkedSpace::freeBlocks(MarkedBlock* head)
 {
@@ -222,7 +107,7 @@ inline void TakeIfUnmarked::operator()(MarkedBlock* block)
     if (!block->markCountIsZero())
         return;
     
-    m_markedSpace->removeBlock(block);
+    m_markedSpace->allocatorFor(block->cellSize()).removeBlock(block);
     m_empties.append(block);
 }
 

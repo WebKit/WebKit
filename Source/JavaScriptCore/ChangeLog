@@ -1,3 +1,71 @@
+2012-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor MarkedBlock::SizeClass into a separate class
+        https://bugs.webkit.org/show_bug.cgi?id=77600
+
+        Reviewed by Geoffrey Garen.
+
+        We pulled SizeClass out into its own class, named MarkedAllocator, and gave it
+        the responsibility of allocating objects from the collection of MarkedBlocks 
+        that it manages. Also limited the amount of coupling to internal data fields 
+        from other places, although it's mostly unavoidable in the JIT code.
+
+        Eventually MarkedAllocator will implement various policies to do with object 
+        management, e.g. whether or not to run destructors on objects that it manages.
+        MarkedSpace will manage a collection of MarkedAllocators with varying policies,
+        as it does now but to a larger extent. 
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        (JSC::Heap::resetAllocators):
+        * heap/Heap.h:
+        (JSC::Heap::allocatorForObject):
+        (Heap):
+        * heap/MarkedAllocator.cpp: Added.
+        (JSC):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::allocateBlock):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        * heap/MarkedAllocator.h: Added.
+        (JSC):
+        (DFG):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::cellSize):
+        (JSC::MarkedAllocator::heap):
+        (JSC::MarkedAllocator::setHeap):
+        (JSC::MarkedAllocator::setCellSize):
+        (JSC::MarkedAllocator::setMarkedSpace):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::allocate):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::zapFreeList):
+        (JSC::MarkedAllocator::forEachBlock):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::TakeIfUnmarked::operator()):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::didAddBlock):
+        (JSC::MarkedSpace::didConsumeFreeList):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+
 2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace GNU linker script for exports with export macros in WTF/JSC

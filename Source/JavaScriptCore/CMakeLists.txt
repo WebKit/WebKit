@@ -80,6 +80,7 @@ SET(JavaScriptCore_SOURCES
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
     heap/MachineStackMarker.cpp
+    heap/MarkedAllocator.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
     heap/ConservativeRoots.cpp

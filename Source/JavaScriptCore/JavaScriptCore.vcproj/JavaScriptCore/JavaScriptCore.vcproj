@@ -2066,6 +2066,14 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\MarkedAllocator.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkedAllocator.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\MarkedBlock.cpp"
                                     >
                             </File>

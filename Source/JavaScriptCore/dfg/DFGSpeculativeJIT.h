@@ -33,6 +33,7 @@
 #include "DFGJITCompiler.h"
 #include "DFGOSRExit.h"
 #include "DFGOperations.h"
+#include "MarkedAllocator.h"
 #include "ValueRecovery.h"
 
 namespace JSC { namespace DFG {
@@ -1552,9 +1553,9 @@ private:
     template<typename T>
     void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
+        MarkedAllocator* allocator = &m_jit.globalData()->heap.allocatorForObject(sizeof(JSFinalObject));
         
-        m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
+        m_jit.loadPtr(&allocator->m_firstFreeCell, resultGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
         
         // The object is half-allocated: we have what we know is a fresh object, but
@@ -1566,7 +1567,7 @@ private:
         
         // Now that we have scratchGPR back, remove the object from the free list
         m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
-        m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
+        m_jit.storePtr(scratchGPR, &allocator->m_firstFreeCell);
         
         // Initialize the object's classInfo pointer
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(&JSFinalObject::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));

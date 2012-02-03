@@ -25,6 +25,7 @@
 #include "DFGCodeBlocks.h"
 #include "HandleHeap.h"
 #include "HandleStack.h"
+#include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
@@ -94,7 +95,7 @@ namespace JSC {
         // true if an allocation or collection is in progress
         inline bool isBusy();
         
-        MarkedSpace::SizeClass& sizeClassForObject(size_t bytes) { return m_objectSpace.sizeClassFor(bytes); }
+        MarkedAllocator& allocatorForObject(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
         void* allocate(size_t);
         CheckedBoolean tryAllocateStorage(size_t, void**);
         CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
@@ -136,6 +137,7 @@ namespace JSC {
 
     private:
         friend class MarkedSpace;
+        friend class MarkedAllocator;
         friend class MarkedBlock;
         friend class BumpSpace;
         friend class SlotVisitor;
@@ -160,7 +162,7 @@ namespace JSC {
         // conservative marking, eager sweeping, or iterating the cells in a MarkedBlock.)
         void canonicalizeCellLivenessData();
 
-        void resetAllocator();
+        void resetAllocators();
         void freeBlocks(MarkedBlock*);
 
         void clearMarks();

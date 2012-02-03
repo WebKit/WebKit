@@ -401,13 +401,13 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
 
 template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
 {
-    MarkedSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassForObject(sizeof(ClassType));
-    loadPtr(&sizeClass->firstFreeCell, result);
+    MarkedAllocator* allocator = &m_globalData->heap.allocatorForObject(sizeof(ClassType));
+    loadPtr(&allocator->m_firstFreeCell, result);
     addSlowCase(branchTestPtr(Zero, result));
 
     // remove the object from the free list
     loadPtr(Address(result), storagePtr);
-    storePtr(storagePtr, &sizeClass->firstFreeCell);
+    storePtr(storagePtr, &allocator->m_firstFreeCell);
 
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));

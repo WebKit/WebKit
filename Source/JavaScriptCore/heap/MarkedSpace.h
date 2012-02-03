@@ -23,6 +23,7 @@
 #define MarkedSpace_h
 
 #include "MachineStackMarker.h"
+#include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "PageAllocationAligned.h"
@@ -48,27 +49,13 @@ class MarkedSpace {
 public:
     static const size_t maxCellSize = 2048;
 
-    struct SizeClass {
-        SizeClass();
-        void resetAllocator();
-        void zapFreeList();
-
-        MarkedBlock::FreeCell* firstFreeCell;
-        MarkedBlock* currentBlock;
-        DoublyLinkedList<HeapBlock> blockList;
-        size_t cellSize;
-    };
-
     MarkedSpace(Heap*);
 
-    SizeClass& sizeClassFor(size_t);
+    MarkedAllocator& allocatorFor(size_t);
     void* allocate(size_t);
-    void* allocate(SizeClass&);
     
-    void resetAllocator();
+    void resetAllocators();
 
-    void addBlock(SizeClass&, MarkedBlock*);
-    void removeBlock(MarkedBlock*);
     MarkedBlockSet& blocks() { return m_blocks; }
     
     void canonicalizeCellLivenessData();
@@ -85,13 +72,10 @@ public:
     
     void shrink();
     void freeBlocks(MarkedBlock* head);
+    void didAddBlock(MarkedBlock*);
+    void didConsumeFreeList(MarkedBlock*);
 
 private:
-    JS_EXPORT_PRIVATE void* allocateSlowCase(SizeClass&);
-    void* tryAllocateHelper(MarkedSpace::SizeClass&);
-    void* tryAllocate(MarkedSpace::SizeClass&);
-    MarkedBlock* allocateBlock(size_t, AllocationEffort);
-
     // [ 32... 256 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
     static const size_t preciseCutoff = 256;
@@ -102,8 +86,8 @@ private:
     static const size_t impreciseCutoff = maxCellSize;
     static const size_t impreciseCount = impreciseCutoff / impreciseStep;
 
-    FixedArray<SizeClass, preciseCount> m_preciseSizeClasses;
-    FixedArray<SizeClass, impreciseCount> m_impreciseSizeClasses;
+    FixedArray<MarkedAllocator, preciseCount> m_preciseSizeClasses;
+    FixedArray<MarkedAllocator, impreciseCount> m_impreciseSizeClasses;
     size_t m_waterMark;
     size_t m_nurseryWaterMark;
     Heap* m_heap;
@@ -136,7 +120,7 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
     return forEachCell(functor);
 }
 
-inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
+inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
 {
     ASSERT(bytes && bytes <= maxCellSize);
     if (bytes <= preciseCutoff)
@@ -146,39 +130,17 @@ inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
 
 inline void* MarkedSpace::allocate(size_t bytes)
 {
-    SizeClass& sizeClass = sizeClassFor(bytes);
-    return allocate(sizeClass);
-}
-
-inline void* MarkedSpace::allocate(SizeClass& sizeClass)
-{
-    // This is a light-weight fast path to cover the most common case.
-    MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
-    if (UNLIKELY(!firstFreeCell))
-        return allocateSlowCase(sizeClass);
-    
-    sizeClass.firstFreeCell = firstFreeCell->next;
-    return firstFreeCell;
+    return allocatorFor(bytes).allocate();
 }
 
 template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
 {
     for (size_t i = 0; i < preciseCount; ++i) {
-        SizeClass& sizeClass = m_preciseSizeClasses[i];
-        HeapBlock* next;
-        for (HeapBlock* block = sizeClass.blockList.head(); block; block = next) {
-            next = block->next();
-            functor(static_cast<MarkedBlock*>(block));
-        }
+        m_preciseSizeClasses[i].forEachBlock(functor);
     }
 
     for (size_t i = 0; i < impreciseCount; ++i) {
-        SizeClass& sizeClass = m_impreciseSizeClasses[i];
-        HeapBlock* next;
-        for (HeapBlock* block = sizeClass.blockList.head(); block; block = next) {
-            next = block->next();
-            functor(static_cast<MarkedBlock*>(block));
-        }
+        m_impreciseSizeClasses[i].forEachBlock(functor);
     }
 
     return functor.returnValue();
@@ -190,27 +152,15 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
     return forEachBlock(functor);
 }
 
-inline MarkedSpace::SizeClass::SizeClass()
-    : firstFreeCell(0)
-    , currentBlock(0)
-    , cellSize(0)
+inline void MarkedSpace::didAddBlock(MarkedBlock* block)
 {
+    m_blocks.add(block);
 }
 
-inline void MarkedSpace::SizeClass::resetAllocator()
+inline void MarkedSpace::didConsumeFreeList(MarkedBlock* block)
 {
-    currentBlock = static_cast<MarkedBlock*>(blockList.head());
-}
-
-inline void MarkedSpace::SizeClass::zapFreeList()
-{
-    if (!currentBlock) {
-        ASSERT(!firstFreeCell);
-        return;
-    }
-
-    currentBlock->zapFreeList(firstFreeCell);
-    firstFreeCell = 0;
+    m_nurseryWaterMark += block->capacity() - block->size();
+    m_waterMark += block->capacity();
 }
 
 } // namespace JSC

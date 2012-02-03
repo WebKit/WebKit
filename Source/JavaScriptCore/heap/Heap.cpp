@@ -811,7 +811,7 @@ void Heap::collect(SweepToggle sweepToggle)
 
     {
         GCPHASE(ResetAllocator);
-        resetAllocator();
+        resetAllocators();
     }
     
     {
@@ -846,10 +846,10 @@ void Heap::canonicalizeCellLivenessData()
     m_objectSpace.canonicalizeCellLivenessData();
 }
 
-void Heap::resetAllocator()
+void Heap::resetAllocators()
 {
     m_extraCost = 0;
-    m_objectSpace.resetAllocator();
+    m_objectSpace.resetAllocators();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)

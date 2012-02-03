@@ -73,6 +73,7 @@ SOURCES += \
     heap/Heap.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
+    heap/MarkedAllocator.cpp \
     heap/MarkedBlock.cpp \
     heap/MarkedSpace.cpp \
     heap/VTableSpectrum.cpp \

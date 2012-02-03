@@ -64,7 +64,7 @@ EXPORTS
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXAAVJSGlobalData@2@II@Z
-    ?allocateSlowCase@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
+    ?allocateSlowCase@MarkedAllocator@JSC@@AAEPAXXZ
     ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
@@ -283,6 +283,7 @@ EXPORTS
     ?reifyString@StringBuilder@WTF@@ABEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseExecutableMemory@JSGlobalData@JSC@@QAEXXZ
+    ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
