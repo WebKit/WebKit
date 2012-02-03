@@ -1231,9 +1231,6 @@ EOF
 sub Generate {
     my ($object, $dataNode) = @_;
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-    my $hasRealParent = @{$dataNode->parents} > 0;
-    my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
     my $parentGObjType = GetParentGObjType($dataNode);
     my $interfaceName = $dataNode->name;

@@ -184,7 +184,7 @@ sub GetParentClassName
 {
     my $dataNode = shift;
 
-    return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
+    return $dataNode->extendedAttributes->{"JSLegacyParent"} if $dataNode->extendedAttributes->{"JSLegacyParent"};
     return "JSDOMWrapper" if (@{$dataNode->parents} eq 0);
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
@@ -652,7 +652,7 @@ sub GenerateHeader
         $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@ancestorInterfaceNames);
     }
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
+    my $hasLegacyParent = $dataNode->extendedAttributes->{"JSLegacyParent"};
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
@@ -1323,7 +1323,7 @@ sub GenerateImplementation
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
+    my $hasLegacyParent = $dataNode->extendedAttributes->{"JSLegacyParent"};
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);

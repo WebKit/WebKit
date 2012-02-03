@@ -33,7 +33,7 @@ module threads {
         EventTarget,
         ExtendsDOMGlobalObject,
         IsWorkerContext,
-        LegacyParent=JSWorkerContextBase,
+        JSLegacyParent=JSWorkerContextBase,
         NoStaticTables,
         OmitConstructor
     ] WorkerContext {

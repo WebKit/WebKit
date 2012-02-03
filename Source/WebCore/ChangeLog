@@ -1,3 +1,24 @@
+2012-02-03  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [LegacyParent] from CodeGeneratorGObject.pm, and rename it to [JSLegacyParent]
+        https://bugs.webkit.org/show_bug.cgi?id=77706
+
+        Reviewed by Adam Barth.
+
+        This patch removes dead code about [LegacyParent] from CodeGeneratorGObject.pm,
+        and renames [LegacyParent] to [JSLegacyParent].
+
+        No tests. No changes in behavior.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (Generate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetParentClassName):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2012-02-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: preserve elements panel selection upon node drag'n'drop

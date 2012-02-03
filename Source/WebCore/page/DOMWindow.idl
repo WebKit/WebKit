@@ -40,7 +40,7 @@ module window {
         ExtendsDOMGlobalObject,
         GenerateNativeConverter,
         ReplaceableConstructor,
-        LegacyParent=JSDOMWindowBase
+        JSLegacyParent=JSDOMWindowBase
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
