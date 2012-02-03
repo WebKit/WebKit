@@ -1,3 +1,13 @@
+2012-02-02  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add support for --makeargs to the ninja-based build
+        https://bugs.webkit.org/show_bug.cgi?id=77688
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromiumNinja):
+
 2012-02-02  Eric Seidel  <eric@webkit.org>
 
         Run tests in serial on SnowLeopard to avoid CFURLCache crashes
