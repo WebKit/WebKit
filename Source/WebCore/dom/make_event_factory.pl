@@ -42,7 +42,8 @@ sub defaultItemFactory
 {
     return (
         'interfaceName' => 0,
-        'conditional' => 0
+        'conditional' => 0,
+        'runtimeConditional' => 0
     );
 }
 
@@ -85,6 +86,9 @@ sub generateImplementation()
     print F "#include \"${namespace}Factory.h\"\n";
     print F "\n";
     print F "#include \"${namespace}Headers.h\"\n";
+    print F "#if USE(V8)\n";
+    print F "#include \"RuntimeEnabledFeatures.h\"\n";
+    print F "#endif\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
@@ -93,11 +97,20 @@ sub generateImplementation()
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
+        my $runtimeConditional = $parsedEvents{$eventName}{"runtimeConditional"};
         my $interfaceName = $InCompiler->interfaceForItem($eventName);
 
         print F "#if ENABLE($conditional)\n" if $conditional;
+        if ($runtimeConditional) {
+            print F "    #if USE(V8)\n";
+            print F "    // FIXME: JSC should support RuntimeEnabledFeatures as well.\n";
+            print F "    if (type == \"$eventName\" && RuntimeEnabledFeatures::$runtimeConditional())\n";
+            print F "        return ${interfaceName}::create();\n";
+            print F "    #else\n";
+        }
         print F "    if (type == \"$eventName\")\n";
         print F "        return ${interfaceName}::create();\n";
+        print F "#endif // USE(V8)\n" if $runtimeConditional;
         print F "#endif\n" if $conditional;
     }
 
