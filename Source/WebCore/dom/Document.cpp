@@ -1102,6 +1102,16 @@ void Document::setCharset(const String& charset)
     decoder()->setEncoding(charset, TextResourceDecoder::UserChosenEncoding);
 }
 
+void Document::setContentLanguage(const String& language)
+{
+    if (m_contentLanguage == language)
+        return;
+    m_contentLanguage = language;
+
+    // Recalculate style so language is used when selecting the initial font.
+    styleSelectorChanged(DeferRecalcStyle);
+}
+
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
 {
     if (!implementation()->hasFeature("XML", String())) {

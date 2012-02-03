@@ -24,33 +24,33 @@
     <div lang="][;][[" id="q9"></div>
 </div>
 <script>
-function getLangOfNode(n) {
-    e = document.getElementById(n);
-    return window.getComputedStyle(e).webkitLocale;
+function languageOfNode(id) {
+    var element = document.getElementById(id);
+    return window.getComputedStyle(element).webkitLocale;
 }
-shouldBeEqualToString("getLangOfNode('x1')", "ja");
-shouldBeEqualToString("getLangOfNode('x2')", "ja");
-shouldBeEqualToString("getLangOfNode('x3')", "ja");
-shouldBeEqualToString("getLangOfNode('l1')", "zh");
-shouldBeEqualToString("getLangOfNode('l2')", "zh");
-shouldBeEqualToString("getLangOfNode('l3')", "zh");
-shouldBeEqualToString("getLangOfNode('m1')", "ko");
-shouldBeEqualToString("getLangOfNode('m2')", "fr");
-shouldBeEqualToString("getLangOfNode('m3')", "fr");
-shouldBeEqualToString("getLangOfNode('n1')", "fr");
-shouldBeEqualToString("getLangOfNode('n2')", "fr");
-shouldBeEqualToString("getLangOfNode('n3')", "sv");
-shouldBeEqualToString("getLangOfNode('p1')", "ja");
-shouldBeEqualToString("getLangOfNode('p2')", "auto");
-shouldBeEqualToString("getLangOfNode('q1')", "ja");
-shouldBeEqualToString("getLangOfNode('q2')", "auto");
-shouldBeEqualToString("getLangOfNode('q3')", "auto");
-shouldBeEqualToString("getLangOfNode('q4')", "ar");
-shouldBeEqualToString("getLangOfNode('q5')", "auto");
-shouldBeEqualToString("getLangOfNode('q6')", "'  '");
-shouldBeEqualToString("getLangOfNode('q7')", "auto");
-shouldBeEqualToString("getLangOfNode('q8')", "xyzzy");
-shouldBeEqualToString("getLangOfNode('q9')", "'][;][['");
+shouldBeEqualToString("languageOfNode('x1')", "ja");
+shouldBeEqualToString("languageOfNode('x2')", "ja");
+shouldBeEqualToString("languageOfNode('x3')", "ja");
+shouldBeEqualToString("languageOfNode('l1')", "zh");
+shouldBeEqualToString("languageOfNode('l2')", "zh");
+shouldBeEqualToString("languageOfNode('l3')", "zh");
+shouldBeEqualToString("languageOfNode('m1')", "ko");
+shouldBeEqualToString("languageOfNode('m2')", "fr");
+shouldBeEqualToString("languageOfNode('m3')", "fr");
+shouldBeEqualToString("languageOfNode('n1')", "fr");
+shouldBeEqualToString("languageOfNode('n2')", "fr");
+shouldBeEqualToString("languageOfNode('n3')", "sv");
+shouldBeEqualToString("languageOfNode('p1')", "ja");
+shouldBeEqualToString("languageOfNode('p2')", "auto");
+shouldBeEqualToString("languageOfNode('q1')", "ja");
+shouldBeEqualToString("languageOfNode('q2')", "auto");
+shouldBeEqualToString("languageOfNode('q3')", "auto");
+shouldBeEqualToString("languageOfNode('q4')", "ar");
+shouldBeEqualToString("languageOfNode('q5')", "auto");
+shouldBeEqualToString("languageOfNode('q6')", "'  '");
+shouldBeEqualToString("languageOfNode('q7')", "auto");
+shouldBeEqualToString("languageOfNode('q8')", "xyzzy");
+shouldBeEqualToString("languageOfNode('q9')", "'][;][['");
 
 var successfullyParsed = true;
 </script>

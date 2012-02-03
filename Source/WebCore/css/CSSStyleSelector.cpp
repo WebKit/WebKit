@@ -1403,6 +1403,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document, C
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
     documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
+    documentStyle->setLocale(document->contentLanguage());
 
     Element* docElement = document->documentElement();
     RenderObject* docElementRenderer = docElement ? docElement->renderer() : 0;
@@ -1433,12 +1434,13 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document, C
 
     FontDescription fontDescription;
     fontDescription.setUsePrinterFont(document->printing());
+    fontDescription.setScript(localeToScriptCodeForFontSelection(documentStyle->locale()));
     if (Settings* settings = document->settings()) {
         fontDescription.setRenderingMode(settings->fontRenderingMode());
-        const AtomicString& stdfont = settings->standardFontFamily();
-        if (!stdfont.isEmpty()) {
+        const AtomicString& standardFont = settings->standardFontFamily(fontDescription.script());
+        if (!standardFont.isEmpty()) {
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
-            fontDescription.firstFamily().setFamily(stdfont);
+            fontDescription.firstFamily().setFamily(standardFont);
             fontDescription.firstFamily().appendFamily(0);
         }
         fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);

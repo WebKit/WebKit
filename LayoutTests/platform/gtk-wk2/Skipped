@@ -208,6 +208,8 @@ fast/events/wheelevent-direction-inverted-from-device.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # https://bugs.webkit.org/show_bug.cgi?id=42197
+fast/text/international/content-language-font-selection.html
+fast/text/international/content-language-with-subtags.html
 fast/text/international/locale-sensitive-fonts.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 editing/selection/caret-mode-paragraph-keys-navigation.html

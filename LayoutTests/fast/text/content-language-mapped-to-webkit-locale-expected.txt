@@ -1,0 +1,8 @@
+Test for bug 76701: map content-language to -webkit-locale.
+
+PASS languageOfNode('x1') is "zh-CN"
+PASS languageOfNode('m1') is "ar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

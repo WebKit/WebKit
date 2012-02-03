@@ -1502,6 +1502,8 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
 # DRT doesn't support overridePreference("WebKit*FontMap"...)
+fast/text/international/content-language-font-selection.html
+fast/text/international/content-language-with-subtags.html
 fast/text/international/locale-sensitive-fonts.html
 
 # Web Intents is not yet enabled.

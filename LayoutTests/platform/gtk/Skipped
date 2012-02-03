@@ -374,6 +374,8 @@ fast/mutation
 
 # layoutTestController.overridePreference("WebKit*FontMap"...) is not
 # supported.
+fast/text/international/content-language-font-selection.html
+fast/text/international/content-language-with-subtags.html
 fast/text/international/locale-sensitive-fonts.html
 
 # Needs layoutTestController.enableAutoResizeMode()

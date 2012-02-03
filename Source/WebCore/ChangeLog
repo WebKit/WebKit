@@ -1,3 +1,28 @@
+2012-02-02  Matt Falkenhagen  <falken@chromium.org>
+
+        Use content-language from http-equiv to set document locale and font
+        https://bugs.webkit.org/show_bug.cgi?id=76701
+
+        Reviewed by Darin Adler.
+
+        So far, only content-language set through http-equiv is used; the HTTP Content-Language
+        header is not yet supported.
+
+        Tests: fast/text/content-language-case-insensitivity.html
+               fast/text/content-language-mapped-to-webkit-locale.html
+               fast/text/international/content-language-font-selection-expected.html
+               fast/text/international/content-language-font-selection.html
+               fast/text/international/content-language-with-subtags-expected.html
+               fast/text/international/content-language-with-subtags.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument): Use content language when selecting initial font.
+        * dom/Document.cpp:
+        (WebCore::Document::setContentLanguage): Recalculate style so language is taken into account.
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106620.

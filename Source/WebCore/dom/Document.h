@@ -387,7 +387,7 @@ public:
     String suggestedMIMEType() const;
 
     String contentLanguage() const { return m_contentLanguage; }
-    void setContentLanguage(const String& lang) { m_contentLanguage = lang; }
+    void setContentLanguage(const String&);
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }

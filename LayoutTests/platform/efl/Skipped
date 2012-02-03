@@ -718,6 +718,8 @@ fast/parser/noscript-with-javascript-enabled.html
 fast/parser/pre-html5-parser-quirks.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/spatial-navigation
+fast/text/international/content-language-font-selection.html
+fast/text/international/content-language-with-subtags.html
 fast/text/international/locale-sensitive-fonts.html
 fast/text/zero-font-size.html
 fast/viewport/viewport-128.html

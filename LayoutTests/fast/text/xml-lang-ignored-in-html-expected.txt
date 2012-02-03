@@ -1,9 +1,9 @@
 This tests that the attribute in no namespace with no prefix and with the literal localname "xml:lang" is ignored in HTML. See bug 67586.
 
-PASS getLangOfNode('m1') is "auto"
-PASS getLangOfNode('n1') is "ko"
-PASS getLangOfNode('o1') is "ar"
-PASS getLangOfNode('o2') is "ar"
+PASS languageOfNode('m1') is "auto"
+PASS languageOfNode('n1') is "ko"
+PASS languageOfNode('o1') is "ar"
+PASS languageOfNode('o2') is "ar"
 PASS successfullyParsed is true
 
 TEST COMPLETE
