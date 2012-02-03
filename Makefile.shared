@@ -1,18 +1,31 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
+DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
+VERBOSITY ?= $(DEFAULT_VERBOSITY)
+
+ifeq ($(VERBOSITY),default)
+OUTPUT_FILTER = grep -v setenv
+else
+ifeq ($(VERBOSITY),noisy)
+OUTPUT_FILTER = cat
+else
+OUTPUT_FILTER = $(SCRIPTS_PATH)/filter-build-webkit
+endif
+endif
+
 all:
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 debug d development dev develop: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --debug
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 release r deployment dep deploy: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 clean:
-	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 force: ;

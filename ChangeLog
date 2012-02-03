@@ -1,3 +1,31 @@
+2012-02-02  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/77717> Makefile should provide control over output verbosity
+
+        Allow the filtering of the output of our Makefile to be configured via a user default
+        and overriden via a command-line argument to make.
+
+        The Makefile takes the verbosity from BuildTranscriptVerbosity default in the
+        org.webkit.BuildConfiguration domain. The supported values are "default", "quiet"
+        and "noisy". "default" maintains the existing behavior of only filtering out
+        the setenv lines from Xcode's shell script build phases. "quiet" filters all output
+        through filter-build-webkit. "noisy" provides unfiltered output. The verbosity can
+        be overriden for a single invocation of make by specifying the VERBOSITY variable
+        on the make command line.
+
+        To always get full output:
+        defaults write org.webkit.BuildConfiguration BuildTranscriptVerbosity noisy
+
+        To always get filtered ouptut:
+        defaults write org.webkit.BuildConfiguration BuildTranscriptVerbosity quiet
+
+        To get full output for a single build:
+        make VERBOSITY=noisy
+
+        Reviewed by Dan Bernstein.
+
+        * Makefile.shared:
+
 2012-02-02  Rakesh KN  <rakesh.kn@motorola.com>
 
         hidden attribute on <input type=file /> suppresses the file selection dialog
