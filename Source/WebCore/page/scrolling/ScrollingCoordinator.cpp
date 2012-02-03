@@ -37,6 +37,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeState.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -51,6 +52,7 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
     , m_scrollingTree(ScrollingTree::create(this))
+    , m_scrollingTreeState(ScrollingTreeState::create())
     , m_didDispatchDidUpdateMainFrameScrollPosition(false)
 {
 }

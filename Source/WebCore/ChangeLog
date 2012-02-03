@@ -1,3 +1,33 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollingTreeState class
+        https://bugs.webkit.org/show_bug.cgi?id=77756
+
+        Reviewed by Andreas Kling.
+
+        Add a new ScrollingTreeState whose intent is to be a data container for the current
+        scrolling tree state. the ScrollingCoordinator class will update it and periodically
+        send over the new state to the ScrollingTree object on the scrolling thread.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore):
+        (ScrollingCoordinator):
+        * page/scrolling/ScrollingTreeState.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollingTreeState::create):
+        (WebCore::ScrollingTreeState::ScrollingTreeState):
+        (WebCore::ScrollingTreeState::~ScrollingTreeState):
+        (WebCore::ScrollingTreeState::setViewportRect):
+        (WebCore::ScrollingTreeState::setContentsSize):
+        * page/scrolling/ScrollingTreeState.h: Added.
+        (WebCore):
+        (ScrollingTreeState):
+        (WebCore::ScrollingTreeState::viewportRect):
+        (WebCore::ScrollingTreeState::contentsSize):
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77691
