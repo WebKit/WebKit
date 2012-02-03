@@ -1,3 +1,19 @@
+2012-02-03  Jochen Eisinger  <jochen@chromium.org>
+
+        Crash when trying to add a timer to a detached document.
+        https://bugs.webkit.org/show_bug.cgi?id=77692
+
+        Reviewed by Alexey Proskuryakov.
+
+        In http://webkit.org/b/77370, a timer is fired on a detached document.
+        Since a document clears all timers when it is detached, and it
+        shouldn't be possible to add a timer to a detached document, we crash
+        if this should happen anyway. This will hopefully result in an easier
+        to debug crash dump.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+
 2012-02-03  Shinya Kawanaka  <shinyak@google.com>
 
         Stop calling Element::ensureShadowRoot in Internals.
