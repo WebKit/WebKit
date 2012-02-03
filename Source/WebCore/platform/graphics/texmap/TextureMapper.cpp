@@ -20,6 +20,8 @@
 #include "config.h"
 #include "TextureMapper.h"
 
+#include "TextureMapperImageBuffer.h"
+
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 namespace WebCore {
@@ -69,6 +71,14 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
 
     selectedTexture->reset(size, false);
     return selectedTexture;
+}
+
+
+PassOwnPtr<TextureMapper> TextureMapper::create(AccelerationMode mode)
+{
+    if (mode == SoftwareMode)
+        return TextureMapperImageBuffer::create();
+    return platformCreateAccelerated();
 }
 
 }

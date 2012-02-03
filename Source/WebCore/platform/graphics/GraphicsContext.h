@@ -124,6 +124,7 @@ namespace WebCore {
     class KURL;
     class GraphicsContext3D;
     class TextRun;
+    class TransformationMatrix;
 
     enum TextDrawingMode {
         TextModeInvisible = 0,
@@ -409,6 +410,12 @@ namespace WebCore {
         void setCTM(const AffineTransform&);
         AffineTransform getCTM() const;
 
+#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+        // This is needed when using accelerated-compositing in software mode, like in TextureMapper.
+        void concat3DTransform(const TransformationMatrix&);
+        void set3DTransform(const TransformationMatrix&);
+        TransformationMatrix get3DTransform() const;
+#endif
         // Create an image buffer compatible with this context, with suitable resolution
         // for drawing into the buffer and then into this context.
         PassOwnPtr<ImageBuffer> createCompatibleBuffer(const IntSize&) const;

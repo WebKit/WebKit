@@ -1,3 +1,19 @@
+2012-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.
+        https://bugs.webkit.org/show_bug.cgi?id=77148
+
+        Reviewed by Martin Robinson.
+
+        Use TextureMapper::create instead of creating TextureMapperGL/TextureMapperQt directly.
+        Remove calls to unused API.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit::LayerTreeHostProxy::paintToGraphicsContext):
+        (WebKit::LayerTreeHostProxy::createImage):
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+
 2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Split QQuickWebViewPrivate in two classes, for desktop and touch behavior.
