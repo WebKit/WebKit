@@ -80,6 +80,7 @@ typedef pair<InstrumentingAgents*, int> InspectorInstrumentationCookie;
 class InspectorInstrumentation {
 public:
     static void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
+    static bool isDebuggerPaused(Frame*);
 
     static void willInsertDOMNode(Document*, Node*, Node* parent);
     static void didInsertDOMNode(Document*, Node*);
@@ -228,6 +229,7 @@ public:
 private:
 #if ENABLE(INSPECTOR)
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
+    static bool isDebuggerPausedImpl(InstrumentingAgents*);
 
     static void willInsertDOMNodeImpl(InstrumentingAgents*, Node*, Node* parent);
     static void didInsertDOMNodeImpl(InstrumentingAgents*, Node*);
@@ -381,6 +383,16 @@ inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, 
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didClearWindowObjectInWorldImpl(instrumentingAgents, frame, world);
 #endif
+}
+
+inline bool InspectorInstrumentation::isDebuggerPaused(Frame* frame)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return isDebuggerPausedImpl(instrumentingAgents);
+#endif
+    return false;
 }
 
 inline void InspectorInstrumentation::willInsertDOMNode(Document* document, Node* node, Node* parent)

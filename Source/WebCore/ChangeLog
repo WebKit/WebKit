@@ -1,3 +1,36 @@
+2012-02-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        inspector/debugger/pause-in-inline-script.html asserts in chromium debug
+        https://bugs.webkit.org/show_bug.cgi?id=77663
+
+        Make ASSERT in MainResourceLoader not fail if debugger hits breakpoint
+        in the main resource inline script.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/pause-in-inline-script.html
+
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::isPaused):
+        (ScriptDebugServer):
+        * bindings/v8/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didClearMainFrameWindowObject):
+        (WebCore):
+        (WebCore::InspectorDebuggerAgent::isPaused):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::isDebuggerPausedImpl):
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::isDebuggerPaused):
+        (WebCore):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didFinishLoading):
+
 2012-02-03  Kentaro Hara  <haraken@chromium.org>
 
         Fix typo

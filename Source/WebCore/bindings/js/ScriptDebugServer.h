@@ -90,6 +90,8 @@ public:
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 
+    bool isPaused() { return m_paused; }
+
 protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);

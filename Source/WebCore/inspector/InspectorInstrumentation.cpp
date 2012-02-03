@@ -109,6 +109,15 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
 #endif
 }
 
+bool InspectorInstrumentation::isDebuggerPausedImpl(InstrumentingAgents* instrumentingAgents)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent())
+        return debuggerAgent->isPaused();
+#endif
+    return false;
+}
+
 void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents* instrumentingAgents, Node* node, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)

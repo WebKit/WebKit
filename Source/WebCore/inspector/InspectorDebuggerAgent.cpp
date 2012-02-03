@@ -185,6 +185,11 @@ void InspectorDebuggerAgent::didClearMainFrameWindowObject()
         m_frontend->globalObjectCleared();
 }
 
+bool InspectorDebuggerAgent::isPaused()
+{
+    return scriptDebugServer().isPaused();
+}
+
 static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, bool isRegex)
 {
     RefPtr<InspectorObject> breakpointObject = InspectorObject::create();

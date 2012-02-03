@@ -92,6 +92,8 @@ public:
     static void interruptAndRun(PassOwnPtr<Task>);
     void runPendingTasks();
 
+    bool isPaused();
+
 protected:
     ScriptDebugServer();
     ~ScriptDebugServer() { }
@@ -112,8 +114,6 @@ protected:
 
     void ensureDebuggerScriptCompiled();
     
-    bool isPaused();
-
     PauseOnExceptionsState m_pauseOnExceptionsState;
     OwnHandle<v8::Object> m_debuggerScript;
     OwnHandle<v8::Object> m_executionState;

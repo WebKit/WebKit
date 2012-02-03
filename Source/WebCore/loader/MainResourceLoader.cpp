@@ -469,7 +469,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading());
+    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame.get()));
 #endif
 
     // The additional processing can do anything including possibly removing the last

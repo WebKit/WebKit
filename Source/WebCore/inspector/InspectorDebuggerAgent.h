@@ -77,6 +77,7 @@ public:
     virtual void restore();
 
     void didClearMainFrameWindowObject();
+    bool isPaused();
 
     // Part of the protocol.
     void setBreakpointsActive(ErrorString*, bool active);
