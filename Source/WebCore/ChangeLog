@@ -1,3 +1,16 @@
+2012-02-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Do not ASSERT on TouchStationary TouchPoint state.
+        https://bugs.webkit.org/show_bug.cgi?id=77620
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * page/EventHandler.cpp:
+        (WebCore::eventNameForTouchPointState): Explicitly show that TouchStationary is asserted.
+        (WebCore::EventHandler::handleTouchEvent):
+            Remove TouchStationary from ASSERT. The value of HitTestRequest is restored to the
+            value it should have if hittested, but is not used.
+
 2012-02-03  Kentaro Hara  <haraken@chromium.org>
 
         Add the "ObjC" prefix to ObjC specific IDL attributes

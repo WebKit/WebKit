@@ -3281,6 +3281,8 @@ static const AtomicString& eventNameForTouchPointState(PlatformTouchPoint::State
         return eventNames().touchstartEvent;
     case PlatformTouchPoint::TouchMoved:
         return eventNames().touchmoveEvent;
+    case PlatformTouchPoint::TouchStationary:
+        // TouchStationary state is not converted to touch events, so fall through to assert.
     default:
         ASSERT_NOT_REACHED();
         return emptyAtom;
@@ -3336,6 +3338,9 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         case PlatformTouchPoint::TouchCancelled:
             hitType |= HitTestRequest::Release;
             break;
+        case PlatformTouchPoint::TouchStationary:
+            hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
+            break;
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -3368,7 +3373,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             // we also remove it from the map.
             touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey);
         } else
-            // No hittest is performed on move, since the target is not allowed to change anyway.
+            // No hittest is performed on move or stationary, since the target is not allowed to change anyway.
             touchTarget = m_originatingTouchPointTargets.get(touchPointTargetKey);
 
         if (!touchTarget.get())
