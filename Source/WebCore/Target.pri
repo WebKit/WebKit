@@ -3939,19 +3939,19 @@ win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
 
 contains(CONFIG, texmap) {
     HEADERS += \
-        platform/graphics/qt/TextureMapperQt.h \
         platform/graphics/texmap/GraphicsLayerTextureMapper.h \
         platform/graphics/texmap/LayerTransform.h \
         platform/graphics/texmap/TextureMapper.h \
         platform/graphics/texmap/TextureMapperAnimation.h \
+        platform/graphics/texmap/TextureMapperImageBuffer.h \
         platform/graphics/texmap/TextureMapperNode.h \
         platform/graphics/texmap/TextureMapperPlatformLayer.h
 
     SOURCES += \
-        platform/graphics/qt/TextureMapperQt.cpp \
         platform/graphics/texmap/LayerTransform.cpp \
         platform/graphics/texmap/TextureMapper.cpp \
         platform/graphics/texmap/TextureMapperAnimation.cpp \
+        platform/graphics/texmap/TextureMapperImageBuffer.cpp \
         platform/graphics/texmap/TextureMapperNode.cpp \
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 
@@ -3959,6 +3959,7 @@ contains(CONFIG, texmap) {
         HEADERS += platform/graphics/opengl/TextureMapperGL.h
         SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
         CONFIG += opengl-shims
+        DEFINES += WTF_USE_TEXTURE_MAPPER_GL
     }
 } else {
     HEADERS += platform/graphics/qt/GraphicsLayerQt.h

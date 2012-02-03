@@ -1,3 +1,78 @@
+2012-02-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][Texmap] Refactor TextureMapper API to use ImageBuffers when possible.
+        https://bugs.webkit.org/show_bug.cgi?id=77148
+
+        Reviewed by Martin Robinson.
+
+        Removed TextureMapperQt, and instead created a TextureMapperImageBuffer class,
+        which responds to an "Software" mode of TextureMapper, instead of creating subclasses
+        of TextureMapper directly. This allows using the software fallback of TextureMapper by any
+        sort.
+
+        To make the ImageBuffer backend easier, content updates to BitmapTexture can now use either
+        an image, or a raw data pointer. The raw data pointer is provided for performance reasons,
+        as converting data to/from Image references in Qt generates unnecessary deep copies of the
+        image data.
+
+        Also, functions that use TransformationMatrix were added to GraphicsContext, to allow for
+        3D transforms in cross platform code.
+        After this patch everything renders the same. An additional bug report was created to allow
+        ImageBuffer shallow image copies: https://bugs.webkit.org/show_bug.cgi?id=77689
+
+        Covered extensively by existing tests, no behavioral changes.
+
+        * Target.pri:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        (WebCore):
+        (GraphicsContext):
+        * platform/graphics/cairo/TextureMapperCairo.cpp:
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (TextureMapperGLData):
+        (BitmapTextureGL):
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::BitmapTextureGL::reset):
+        (WebCore):
+        (WebCore::swizzleBGRAToRGBA):
+        (WebCore::BitmapTextureGL::updateContents):
+        (WebCore::BitmapTextureGL::destroy):
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore::TextureMapper::platformCreateAccelerated):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        (TextureMapperGL):
+        (WebCore::TextureMapperGL::accelerationMode):
+        (WebCore):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore):
+        (WebCore::GraphicsContext::get3DTransform):
+        (WebCore::GraphicsContext::concat3DTransform):
+        (WebCore::GraphicsContext::set3DTransform):
+        * platform/graphics/qt/TextureMapperQt.cpp: Removed.
+        * platform/graphics/qt/TextureMapperQt.h: Removed.
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore):
+        (BitmapTextureImageBuffer):
+        (TextureMapperImageBuffer):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::BitmapTexture):
+        (BitmapTexture):
+        (WebCore::BitmapTexture::bpp):
+        (WebCore::BitmapTexture::isOpaque):
+        (WebCore::TextureMapper::setGraphicsContext):
+        (WebCore::TextureMapper::graphicsContext):
+        (TextureMapper):
+        (WebCore::TextureMapper::TextureMapper):
+        (WebCore::TextureMapper::platformCreateAccelerated):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::setContentsTileBackBuffer):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (TextureMapperNode):
+
 2012-02-02  Adam Barth  <abarth@webkit.org>
 
         Rename checkNodeSecurity and allowsAccessFromFrame to have sensible names

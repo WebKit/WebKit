@@ -23,6 +23,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayerTextureMapper.h"
+#include "ImageBuffer.h"
 #include "MathExtras.h"
 
 namespace {
@@ -156,12 +157,10 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
     if (!textureMapper)
         return;
 
-    // FIXME: Add directly composited images.
-    FloatRect dirtyRect = m_currentContent.needsDisplay ? entireRect() : m_currentContent.needsDisplayRect;
+    IntRect dirtyRect = enclosingIntRect(m_currentContent.needsDisplay ? entireRect() : m_currentContent.needsDisplayRect);
 
     for (size_t tileIndex = 0; tileIndex < m_ownedTiles.size(); ++tileIndex) {
         OwnedTile& tile = m_ownedTiles[tileIndex];
-        FloatRect rect = dirtyRect;
         if (!tile.texture)
             tile.texture = textureMapper->createTexture();
         RefPtr<BitmapTexture>& texture = tile.texture;
@@ -169,31 +168,43 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
 
         if (tile.needsReset || texture->contentSize() != tileSize || !texture->isValid()) {
             tile.needsReset = false;
-            texture->reset(tileSize, m_currentContent.contentType == DirectImageContentType ? false : m_state.contentsOpaque);
-            rect = tile.rect;
+            texture->reset(tileSize, m_state.contentsOpaque);
+            dirtyRect.unite(enclosingIntRect(tile.rect));
         }
+    }
 
-        IntRect contentRect = enclosingIntRect(tile.rect);
-        contentRect.intersect(enclosingIntRect(rect));
-        if (contentRect.isEmpty())
+    if (dirtyRect.isEmpty())
+        return;
+
+    // Paint the entire dirty rect into an image buffer. This ensures we only paint once.
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
+    GraphicsContext* context = imageBuffer->context();
+    context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
+    context->setTextDrawingMode(textureMapper->textDrawingMode());
+    context->translate(-dirtyRect.x(), -dirtyRect.y());
+    layer->paintGraphicsLayerContents(*context, dirtyRect);
+    if (m_currentContent.contentType == DirectImageContentType)
+        context->drawImage(m_currentContent.image.get(), ColorSpaceDeviceRGB, m_state.contentsRect);
+
+    // FIXME: Implement ImageBuffer::DontCopyBackingStore in Qt/GTK ports, and then change this.
+    // See https://bugs.webkit.org/show_bug.cgi?id=77689
+    RefPtr<Image> image = imageBuffer->copyImage(CopyBackingStore);
+
+    // Divide the image to tiles.
+    for (size_t tileIndex = 0; tileIndex < m_ownedTiles.size(); ++tileIndex) {
+        OwnedTile& tile = m_ownedTiles[tileIndex];
+        IntRect targetRect = enclosingIntRect(tile.rect);
+        targetRect.intersect(dirtyRect);
+        if (targetRect.isEmpty())
             continue;
+        IntRect sourceRect = targetRect;
 
-        FloatRect contentRectInTileCoordinates = contentRect;
-        FloatPoint offset(-tile.rect.x(), -tile.rect.y());
-        contentRectInTileCoordinates.move(offset.x(), offset.y());
+        // Normalize sourceRect to the buffer's coordinates.
+        sourceRect.move(-dirtyRect.x(), -dirtyRect.y());
 
-        {
-            GraphicsContext context(texture->beginPaint(enclosingIntRect(contentRectInTileCoordinates)));
-            context.setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
-            context.setTextDrawingMode(textureMapper->textDrawingMode());
-            context.translate(offset.x(), offset.y());
-            FloatRect scaledContentRect(contentRect);
-            if (m_currentContent.contentType == DirectImageContentType)
-                context.drawImage(m_currentContent.image.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
-            else
-                layer->paintGraphicsLayerContents(context, enclosingIntRect(scaledContentRect));
-            texture->endPaint();
-        }
+        // Normalize targetRect to the texture's coordinqates.
+        targetRect.move(-tile.rect.x(), -tile.rect.y());
+        tile.texture->updateContents(image.get(), targetRect, sourceRect, BitmapTexture::RGBAFormat);
     }
 
     m_currentContent.needsDisplay = false;
@@ -481,7 +492,7 @@ void TextureMapperNode::clearAllDirectlyCompositedImageTiles()
     }
 }
 
-void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void* bits)
+void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void* data)
 {
     ASSERT(m_textureMapper);
 
@@ -498,7 +509,7 @@ void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceR
     if (!tile.backBuffer.texture)
         tile.backBuffer.texture = m_textureMapper->createTexture();
     tile.backBuffer.texture->reset(sourceRect.size(), false);
-    tile.backBuffer.texture->updateRawContents(sourceRect, bits);
+    tile.backBuffer.texture->updateContents(data, sourceRect);
     tile.isBackBufferUpdated = true;
 }
 

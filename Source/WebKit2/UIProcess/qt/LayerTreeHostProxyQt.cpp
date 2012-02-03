@@ -26,8 +26,7 @@
 #include "MainThread.h"
 #include "MessageID.h"
 #include "ShareableBitmap.h"
-#include "TextureMapperGL.h"
-#include "TextureMapperQt.h"
+#include "TextureMapper.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLayerTreeInfo.h"
@@ -171,8 +170,8 @@ LayerTreeHostProxy::~LayerTreeHostProxy()
 void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect)
 {
     if (!m_textureMapper)
-        m_textureMapper = TextureMapperGL::create();
-    ASSERT(dynamic_cast<TextureMapperGL*>(m_textureMapper.get()));
+        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+    ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
 
     syncRemoteContent();
     GraphicsLayer* currentRootLayer = rootLayer();
@@ -184,9 +183,6 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     if (!node)
         return;
 
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    m_textureMapper->setViewportSize(IntSize(viewport[2], viewport[3]));
     node->setTextureMapper(m_textureMapper.get());
     m_textureMapper->beginPainting();
     m_textureMapper->bindSurface(0);
@@ -211,9 +207,8 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
 void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
 {
     if (!m_textureMapper)
-        m_textureMapper = TextureMapperQt::create();
-    ASSERT(dynamic_cast<TextureMapperQt*>(m_textureMapper.get()));
-
+        m_textureMapper = TextureMapper::create();
+    ASSERT(m_textureMapper->accelerationMode() == TextureMapper::SoftwareMode);
     syncRemoteContent();
     TextureMapperNode* node = toTextureMapperNode(rootLayer());
 
@@ -410,7 +405,7 @@ void LayerTreeHostProxy::createImage(int64_t imageID, ShareableBitmap* bitmap)
                 subImage = image.copy(rect);
             RefPtr<BitmapTexture> texture = m_textureMapper->createTexture();
             texture->reset(rect.size(), !imageHasAlpha);
-            texture->updateRawContents(IntRect(IntPoint::zero(), rect.size()), subImage.constBits());
+            texture->updateContents(subImage.constBits(), IntRect(IntPoint::zero(), rect.size()));
             tiledImage.add(rect.location(), texture);
         }
     }
@@ -473,7 +468,7 @@ void LayerTreeHostProxy::ensureRootLayer()
     // The root layer should not have zero size, or it would be optimized out.
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
     if (!m_textureMapper)
-        m_textureMapper = TextureMapperGL::create();
+        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     toTextureMapperNode(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 
