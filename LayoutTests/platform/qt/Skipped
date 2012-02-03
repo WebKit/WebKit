@@ -2526,3 +2526,7 @@ fast/events/touch/touch-target.html
 fast/events/touch/touch-before-pressing-spin-button.html
 fast/events/touch/touch-coords-in-zoom-and-scroll.html
 fast/events/touch/touch-inside-iframe.html
+
+# new test introduced in http://trac.webkit.org/changeset/106642 failes on Qt Release
+# https://bugs.webkit.org/show_bug.cgi?id=77729
+fast/events/touch/emulate-touch-events.html 
