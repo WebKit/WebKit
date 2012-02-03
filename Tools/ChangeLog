@@ -1,3 +1,12 @@
+2012-02-03  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
+
+        Ensure that inspector disabled build works
+        https://bugs.webkit.org/show_bug.cgi?id=77604
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-02-02  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add support for --makeargs to the ninja-based build
