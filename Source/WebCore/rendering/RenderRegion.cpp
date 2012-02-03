@@ -13,7 +13,7 @@
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
@@ -47,9 +47,6 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_parentFlowThread(0)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
-#ifndef NDEBUG
-    , m_insideRegionPaint(false)
-#endif
 {
 }
 
@@ -145,17 +142,9 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
             page->addRelevantRepaintedObject(this, paintInfo.rect);
     }
 
-#ifndef NDEBUG
-    m_insideRegionPaint = true;
-#endif
-
     setRegionBoxesRegionStyle();
     m_flowThread->paintIntoRegion(paintInfo, this, LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
     restoreRegionBoxesOriginalStyle();
-
-#ifndef NDEBUG
-    m_insideRegionPaint = false;
-#endif
 }
 
 // Hit Testing

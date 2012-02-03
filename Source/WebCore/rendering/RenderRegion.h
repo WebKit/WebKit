@@ -109,10 +109,6 @@ private:
 
     bool m_isValid;
     bool m_hasCustomRegionStyle;
-
-#ifndef NDEBUG
-    bool m_insideRegionPaint;
-#endif
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

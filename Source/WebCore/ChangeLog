@@ -1,3 +1,38 @@
+2012-02-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Crash in RenderFlowThread::setRegionBoxesRegionStyle
+        https://bugs.webkit.org/show_bug.cgi?id=77474
+
+        Reviewed by David Hyatt.
+
+        Flexbox and deprecated flexible box should also compute their region range
+        when they are part of a named flow. Until now, only RenderBlock elements
+        were doing that. Flexbox and deprecated flexible box, while implementing
+        their own layoutBlock method, were not doing that.
+
+        Tests: fast/regions/flexbox-in-region-crash.html
+               fast/regions/select-in-region-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInitialRegionRangeForBlock):
+        (WebCore):
+        (WebCore::RenderBlock::computeRegionRangeForBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeRegionFromThread):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::paintReplaced):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         Update the tree state after layout and add a way to commit it

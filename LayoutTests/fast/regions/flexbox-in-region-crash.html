@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #el1 {
+                -webkit-flow-into: A;
+                display: -webkit-flexbox;
+            }
+            #el3 {
+                -webkit-flow-from: A;
+            }
+        </style>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            onload = function() {
+                el1 = document.createElement('div')
+                el1.setAttribute('id','el1')
+                document.body.appendChild(el1)
+
+                el2 = document.createElement('div')
+                document.body.appendChild(el2)
+
+                el3 = document.createElement('hr')
+                el3.setAttribute('id','el3')
+                el2.appendChild(el3)
+
+                el4 = document.createElement('p')
+                el4.setAttribute('id', 'el4')
+                el5 = document.createTextNode("P1")
+                el4.appendChild(el5)
+                el1.appendChild(el4)
+
+                setTimeout(function() {
+                    el1.style.display='inline'
+                    el4.style.visibility = 'hidden'
+
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+	            },0)
+            }
+        </script>
+    </head>
+    <body>
+        <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=77474">77474</a>: Crash in RenderFlowThread::setRegionBoxesRegionStyle</p>
+        <p> This test PASSES if it does not CRASH or ASSERT.</p>
+    </body>
+</html>

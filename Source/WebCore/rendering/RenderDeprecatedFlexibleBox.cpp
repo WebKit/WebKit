@@ -228,6 +228,13 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), this, LayoutSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
+    if (inRenderFlowThread()) {
+        // Regions changing widths can force us to relayout our children.
+        if (logicalWidthChangedInRegions())
+            relayoutChildren = true;
+    }
+    computeInitialRegionRangeForBlock();
+
     LayoutSize previousSize = size();
 
     computeLogicalWidth();
@@ -266,6 +273,8 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit 
         relayoutChildren = true;
 
     bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
+
+    computeRegionRangeForBlock();
 
     if (!isFloatingOrPositioned() && height() == 0) {
         // We are a block with no border and padding and a computed height

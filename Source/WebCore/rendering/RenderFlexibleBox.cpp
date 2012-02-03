@@ -166,6 +166,13 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
+    if (inRenderFlowThread()) {
+        // Regions changing widths can force us to relayout our children.
+        if (logicalWidthChangedInRegions())
+            relayoutChildren = true;
+    }
+    computeInitialRegionRangeForBlock();
+
     IntSize previousSize = size();
 
     setLogicalHeight(0);
@@ -192,6 +199,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
         relayoutChildren = true;
 
     layoutPositionedObjects(relayoutChildren || isRoot());
+
+    computeRegionRangeForBlock();
 
     // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
     computeOverflow(oldClientAfterEdge);

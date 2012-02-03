@@ -204,6 +204,7 @@ void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
 void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
+
     m_regionRangeMap.clear();
     m_regionList.remove(renderRegion);
 
@@ -653,7 +654,7 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
     RenderRegion* startRegion;
     RenderRegion* endRegion;
     getRegionRangeForBox(box, startRegion, endRegion);
-    
+
     for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())
@@ -662,7 +663,17 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
         if (region == endRegion)
             break;
     }
-    
+
+#ifndef NDEBUG
+    // We have to make sure we did not left any boxes with region info attached in regions.
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        ASSERT(!region->renderBoxRegionInfo(box));
+    }
+#endif
+
     m_regionRangeMap.remove(box);
 }
 

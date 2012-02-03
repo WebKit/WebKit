@@ -1207,6 +1207,27 @@ void RenderBlock::layout()
         clearLayoutOverflow();
 }
 
+void RenderBlock::computeInitialRegionRangeForBlock()
+{
+    if (inRenderFlowThread()) {
+        // Set our start and end regions. No regions above or below us will be considered by our children. They are
+        // effectively clamped to our region range.
+        LayoutUnit oldHeight =  logicalHeight();
+        LayoutUnit oldLogicalTop = logicalTop();
+        setLogicalHeight(numeric_limits<LayoutUnit>::max() / 2);
+        computeLogicalHeight();
+        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
+        setLogicalHeight(oldHeight);
+        setLogicalTop(oldLogicalTop);
+    }
+}
+
+void RenderBlock::computeRegionRangeForBlock()
+{
+    if (inRenderFlowThread())
+        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
+}
+
 void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     ASSERT(needsLayout());
@@ -1268,22 +1289,13 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     RenderView* renderView = view();
     RenderStyle* styleToUse = style();
     LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
-    
+
     if (inRenderFlowThread()) {
         // Regions changing widths can force us to relayout our children.
         if (logicalWidthChangedInRegions())
             relayoutChildren = true;
-    
-        // Set our start and end regions. No regions above or below us will be considered by our children. They are
-        // effectively clamped to our region range.
-        LayoutUnit oldHeight =  logicalHeight();
-        LayoutUnit oldLogicalTop = logicalTop();
-        setLogicalHeight(numeric_limits<LayoutUnit>::max() / 2); 
-        computeLogicalHeight();
-        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
-        setLogicalHeight(oldHeight);
-        setLogicalTop(oldLogicalTop);
     }
+    computeInitialRegionRangeForBlock();
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -1361,8 +1373,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
 
-    if (inRenderFlowThread())
-        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
+    computeRegionRangeForBlock();
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);

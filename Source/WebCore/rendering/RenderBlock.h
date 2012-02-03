@@ -448,6 +448,8 @@ protected:
     }
 #endif
 
+    void computeInitialRegionRangeForBlock();
+    void computeRegionRangeForBlock();
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -468,6 +470,7 @@ private:
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild);
+
     virtual void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
     
     virtual bool isSelfCollapsingBlock() const;
