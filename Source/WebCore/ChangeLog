@@ -1,3 +1,13 @@
+2012-02-02  Keishi Hattori  <keishi@webkit.org>
+
+        Remove OVERRIDE from ColorInputType::valueAsColor
+        https://bugs.webkit.org/show_bug.cgi?id=77701
+
+        Reviewed by Kent Tamura.
+
+        * html/ColorInputType.h:
+        (WebCore::ColorInputType::valueAsColor):
+
 2012-02-02  Bear Travis  <betravis@adobe.com>
 
         Support 'disabled' attribute on SVGStyleElement

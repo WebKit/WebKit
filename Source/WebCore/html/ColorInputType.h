@@ -54,12 +54,12 @@ private:
     virtual bool supportsRequired() const OVERRIDE;
     virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
-    virtual Color valueAsColor() const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;
 
+    Color valueAsColor() const;
     void endColorChooser();
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
