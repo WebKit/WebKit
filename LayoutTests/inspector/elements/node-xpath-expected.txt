@@ -1,0 +1,33 @@
+Tests DOMNode.xPath()
+
+3 Prefix  Suffix
+4
+5
+6
+'#document':'' - '/'
+  '':' Pre-comment ' - '/comment()[1]'
+  'html':'' - '/html'
+    'head':'' - '/html/head'
+      'script':'' - '//*[@id="script-id"]'
+      'script':'' - '/html/head/script[2]'
+      'script':'' - '/html/head/script[4]'
+        '':'\n// Comment\n//' - '/html/head/script[4]/text()[1]'
+        '':'\nfunction f()\n{\n    document.write("<");\n}\n//' - '/html/head/script[4]/text()[2]'
+    'body':'' - '/html/body'
+      'p':'' - '/html/body/p'
+        '':'Tests DOMNode.xPath()' - '/html/body/p/text()'
+      'div':'' - '//*[@id="id1"]'
+      'div':'' - '//*[@id="id2"]'
+      'div':'' - '//*[@id="container"]'
+        'div':'' - '//*[@id="id3"]'
+          '':'3 Prefix ' - '//*[@id="id3"]/text()[1]'
+          '':'<greeting>Hello, world!</greeting>' - '//*[@id="id3"]/text()[2]'
+          '':' Suffix' - '//*[@id="id3"]/text()[3]'
+        'div':'' - '//*[@id="id4"]'
+          '':'4' - '//*[@id="id4"]/text()'
+        'div':'' - '//*[@id="id5"]'
+          '':'5' - '//*[@id="id5"]/text()'
+        'div':'' - '//*[@id="id6"]'
+          '':'6' - '//*[@id="id6"]/text()'
+  '':' Post-comment ' - '/comment()[2]'
+

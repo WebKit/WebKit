@@ -1,3 +1,26 @@
+2012-02-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Introduce "Copy XPath" popup menu item for DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=77619
+
+        Reviewed by Vsevolod Vlasov.
+
+        XPath is optimized whenever an element has the "id" attribute.
+
+        Test: inspector/elements/node-xpath.xhtml
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.XPathStep):
+        (WebInspector.DOMNode.XPathStep.prototype.toString):
+        (WebInspector.DOMNode.prototype.copyXPath):
+        (WebInspector.DOMNode.prototype.isXMLNode):
+        (WebInspector.DOMNode.prototype.xPath):
+        (WebInspector.DOMNode.prototype._xPathValue):
+        (WebInspector.DOMNode.prototype._xPathIndex):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateNodeContextMenu):
+
 2012-02-03  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Use the current clip when marking paints as opaque
