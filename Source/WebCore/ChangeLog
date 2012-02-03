@@ -1,3 +1,37 @@
+2012-01-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: console evaluation doesn't work on breakpoint in pages with CSP
+        https://bugs.webkit.org/show_bug.cgi?id=77203
+
+        Inspector console evaluation now works when debugger is paused in a page with
+        content-security-policy prohibiting evals.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/eval-on-pause-blocked.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/ScriptState.cpp:
+        (WebCore::evalEnabled):
+        (WebCore):
+        (WebCore::setEvalEnabled):
+        * bindings/js/ScriptState.h:
+        (WebCore):
+        * bindings/v8/ScriptObject.h:
+        (WebCore::ScriptObject::ScriptObject):
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::evalEnabled):
+        (WebCore):
+        (WebCore::setEvalEnabled):
+        * bindings/v8/ScriptState.h:
+        (WebCore):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::makeCall):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2012-02-03  Rob Buis  <rbuis@rim.com>
 
         Upstream targetType usage on ResourceRequest for BlackBerry port

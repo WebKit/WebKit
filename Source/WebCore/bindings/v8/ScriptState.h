@@ -109,6 +109,9 @@ private:
 
 DOMWindow* domWindowFromScriptState(ScriptState*);
 
+bool evalEnabled(ScriptState*);
+void setEvalEnabled(ScriptState*, bool);
+
 ScriptState* mainWorldScriptState(Frame*);
 
 ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);

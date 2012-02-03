@@ -36,8 +36,6 @@ module core {
     ] InjectedScriptHost {
         void clearConsoleMessages();
 
-        [Custom] DOMObject evaluate(in DOMString text);
-
         void copyText(in DOMString text);
         [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
         [Custom] DOMObject inspectedNode(in int num);

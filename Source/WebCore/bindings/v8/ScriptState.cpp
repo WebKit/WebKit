@@ -109,6 +109,18 @@ DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
     return scriptState->domWindow();
 }
 
+bool evalEnabled(ScriptState* scriptState)
+{
+    v8::HandleScope handleScope;
+    return scriptState->context()->IsCodeGenerationFromStringsAllowed();
+}
+
+void setEvalEnabled(ScriptState* scriptState, bool enabled)
+{
+    v8::HandleScope handleScope;
+    return scriptState->context()->AllowCodeGenerationFromStrings(enabled);
+}
+
 ScriptState* mainWorldScriptState(Frame* frame)
 {
     v8::HandleScope handleScope;

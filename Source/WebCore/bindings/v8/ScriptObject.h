@@ -43,7 +43,7 @@ namespace WebCore {
     class ScriptObject : public ScriptValue {
     public:
         ScriptObject(ScriptState*, v8::Handle<v8::Object>);
-        ScriptObject() {};
+        ScriptObject() : m_scriptState(0) { };
         virtual ~ScriptObject() {}
 
         v8::Local<v8::Object> v8Object() const;

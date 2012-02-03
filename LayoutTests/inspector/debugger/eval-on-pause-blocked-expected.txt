@@ -1,0 +1,9 @@
+Test that evaluation in the context of top frame will not be blocked by Content-Security-Policy. Bug 77203.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Evaluated in console in the top frame context: foo = 2012
+Script execution resumed.
+Debugger was disabled.
+

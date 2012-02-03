@@ -71,6 +71,18 @@ DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
     return static_cast<JSDOMWindowBase*>(globalObject)->impl();
 }
 
+bool evalEnabled(ScriptState* scriptState)
+{
+    JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
+    return globalObject->evalEnabled();
+}
+
+void setEvalEnabled(ScriptState* scriptState, bool enabled)
+{
+    JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
+    return globalObject->setEvalEnabled(enabled);
+}
+
 ScriptState* mainWorldScriptState(Frame* frame)
 {
     JSDOMWindowShell* shell = frame->script()->windowShell(mainThreadNormalWorld());
