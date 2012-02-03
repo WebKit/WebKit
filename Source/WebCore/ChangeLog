@@ -1,3 +1,19 @@
+2012-02-03  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Retained size for classes is too conservative in heap profiler
+        https://bugs.webkit.org/show_bug.cgi?id=77726
+
+        Reviewed by Yury Semikhatsky.
+
+        Makes retained size of all objects of particular class show correct value
+        in Summary view of heap profiler.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotConstructorNode.prototype.get data):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates.forDominatedNodes):
+
 2012-02-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Introduce "Copy XPath" popup menu item for DOM elements

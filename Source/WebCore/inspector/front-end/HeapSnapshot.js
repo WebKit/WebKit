@@ -915,28 +915,56 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildAggregates: function(filter)
     {
+        function shouldSkip(node)
+        {
+            if (filter && !filter(node))
+                return true;
+            if (node.type !== "native" && node.selfSize === 0)
+                return true;
+            var className = node.className;
+            if (className === "Document DOM tree")
+                return true;
+            if (className === "Detached DOM tree")
+                return true;
+            return false;
+        }
+
         var aggregates = {};
         for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
             var node = iter.node;
-            if (filter && !filter(node))
-                continue;
-            if (node.type !== "native" && node.selfSize === 0)
+            if (shouldSkip(node))
                 continue;
             var className = node.className;
-            if (className === "Document DOM tree")
-                continue;
-            if (className === "Detached DOM tree")
-                continue;
             var nameMatters = node.type === "object" || node.type === "native";
             if (!aggregates.hasOwnProperty(className))
                 aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
             var clss = aggregates[className];
             ++clss.count;
             clss.self += node.selfSize;
-            if (node.retainedSize > clss.maxRet)
-                clss.maxRet = node.retainedSize;
             clss.idxs.push(node.nodeIndex);
         }
+
+        // Recursively visit dominators tree and sum up retained sizes
+        // of topmost objects in each class.
+        // This gives us retained sizes for classes.
+        var seenClasses = {};
+        var snapshot = this;
+        function forDominatedNodes(nodeIndex)
+        {
+            var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex);
+            var className = node.className;
+            var seen = !!seenClasses[className];
+            if (!seen && className in aggregates && !shouldSkip(node)) {
+                aggregates[className].maxRet += node.retainedSize;
+                seenClasses[className] = true;
+            }
+            var dominatedNodes = snapshot._dominatedNodesOfNode(node);
+            for (var i = 0; i < dominatedNodes.length; i++)
+                forDominatedNodes(dominatedNodes.item(i));
+            seenClasses[className] = seen;
+        }
+        forDominatedNodes(this._rootNodeIndex);
+
         // Shave off provisionally allocated space.
         for (var className in aggregates)
             aggregates[className].idxs = aggregates[className].idxs.slice(0);

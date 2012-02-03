@@ -607,7 +607,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
         var view = this.dataGrid.snapshotView;
         data["count"] =  Number.withThousandsSeparator(this._count);
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
-        data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize) + "+";
+        data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
         if (view._showPercentage) {
             data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
             data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
