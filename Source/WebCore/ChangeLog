@@ -1,5 +1,82 @@
 2012-02-03  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Defer makeContextCurrent in compositor until first frame
+        https://bugs.webkit.org/show_bug.cgi?id=77269
+
+        Reviewed by Kenneth Russell.
+
+        There are situations where we need to instantiate a compositor, but can't call makeContextCurrent() until some
+        initialization work completes on another thread that we cannot block for. This defers the first
+        makeContextCurrent() call until we need to produce the first frame at which point we know the call can succeed,
+        assuming that the scheduler does the right thing.
+
+        This is accomplished by splitting up proxy initialization into two pieces:
+        *) initializeContext() which attempts to instantiate a GraphicsContext3D. This can fail if we can't make a
+        context at all, in which case we abort completely and return NULL from CCLayerTreeHost::create().
+
+        *) initializeLayerRenderer() which uses the previously-created context to instantiate our compositor objects and
+            grab our renderer capabilities. This can fail if the context is not usable for compositing, which we report
+            to the client as a lost context event.
+
+        Internally this introduces a new state to the CCLayerTreeHostImpl where it has a context but does not yet have a
+        LayerRendererChromium, which has fairly minimal impact. One other change is that we don't instantiate the
+        TextureManagers until we have the renderer capabilities, but this isn't necessary until we want to start
+        painting so it doesn't have any impact outside of some overly intrustive unit tests.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (WebCore::TiledLayerChromium::setSampledTexelFormat):
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+        (WebCore::CCLayerTreeHost::finishAllRendering):
+        (WebCore::CCLayerTreeHost::setViewportSize):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        ():
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::isContextLost):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::compositeAndReadback):
+        (WebCore::CCSingleThreadProxy::initializeContext):
+        (WebCore::CCSingleThreadProxy::initializeLayerRenderer):
+        (WebCore::CCSingleThreadProxy::layerRendererCapabilities):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::initializeContext):
+        (WebCore):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::layerRendererCapabilities):
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+        (WebCore::CCThreadProxy::initializeContextOnImplThread):
+        (WebCore::CCThreadProxy::initializeLayerRendererOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
+2012-02-03  James Robinson  <jamesr@chromium.org>
+
         Unreviewed compile fix for chromium - add commas after entries in list in WebCore.gypi
 
         * WebCore.gypi:

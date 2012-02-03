@@ -1,3 +1,15 @@
+2012-02-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Defer makeContextCurrent in compositor until first frame
+        https://bugs.webkit.org/show_bug.cgi?id=77269
+
+        Reviewed by Kenneth Russell.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestSetViewportSize::beginTest):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77691

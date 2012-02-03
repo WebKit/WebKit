@@ -44,6 +44,7 @@ public:
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
+    virtual bool initializeContext();
     virtual bool initializeLayerRenderer();
     virtual int compositorIdentifier() const { return m_compositorIdentifier; }
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -75,8 +76,13 @@ private:
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
 
+    // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
+    // be used for anything else.
+    RefPtr<GraphicsContext3D> m_contextBeforeInitialization;
+
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
+    bool m_layerRendererInitialized;
     LayerRendererCapabilities m_layerRendererCapabilitiesForMainThread;
 
     int m_numFailedRecreateAttempts;

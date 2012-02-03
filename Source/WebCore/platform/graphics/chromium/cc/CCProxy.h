@@ -61,6 +61,11 @@ public:
 
     virtual bool isStarted() const = 0;
 
+    // Attempts to initialize a context to use for rendering. Returns false if the context could not be created.
+    // The context will not be used and no frames may be produced until initializeLayerRenderer() is called.
+    virtual bool initializeContext() = 0;
+
+    // Attempts to initialize the layer renderer. Returns false if the context isn't usable for compositing.
     virtual bool initializeLayerRenderer() = 0;
 
     virtual int compositorIdentifier() const = 0;

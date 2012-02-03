@@ -154,7 +154,7 @@ public:
 
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
-    // Test-only hook
+    // Test only hook
     void loseCompositorContext(int numTimes);
 
     void setNeedsAnimate();
@@ -201,6 +201,8 @@ private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<OwnPtr<ManagedTexture> > TextureList;
 
+    void initializeLayerRenderer();
+
     enum PaintType { PaintVisible, PaintIdle };
     static void paintContentsIfDirty(LayerChromium*, PaintType, const Region& occludedScreenSpace);
     void paintLayerContents(const LayerList&, PaintType);
@@ -220,6 +222,7 @@ private:
     int m_frameNumber;
 
     OwnPtr<CCProxy> m_proxy;
+    bool m_layerRendererInitialized;
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TextureManager> m_contentsTextureManager;

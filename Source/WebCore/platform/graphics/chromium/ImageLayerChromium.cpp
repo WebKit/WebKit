@@ -160,6 +160,7 @@ void ImageLayerChromium::setContents(Image* contents)
 
 void ImageLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
 {
+    createTextureUpdaterIfNeeded();
     if (m_needsDisplay) {
         m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
         updateTileSizeAndTilingOption();
@@ -168,6 +169,17 @@ void ImageLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpa
     }
 
     prepareToUpdate(visibleLayerRect());
+}
+
+void ImageLayerChromium::createTextureUpdaterIfNeeded()
+{
+    if (m_textureUpdater)
+        return;
+
+    m_textureUpdater = ImageLayerTextureUpdater::create(layerTreeHost()->layerRendererCapabilities().usingMapSub);
+    GC3Denum textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
+    setTextureFormat(textureFormat);
+    setSampledTexelFormat(textureUpdater()->sampledTexelFormat(textureFormat));
 }
 
 LayerTextureUpdater* ImageLayerChromium::textureUpdater() const
@@ -185,13 +197,6 @@ IntSize ImageLayerChromium::contentBounds() const
 bool ImageLayerChromium::drawsContent() const
 {
     return m_contents && TiledLayerChromium::drawsContent();
-}
-
-void ImageLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
-{
-    // Avoid creating a new texture updater which would not have a valid copy of the current image.
-    if (!m_textureUpdater)
-        m_textureUpdater = ImageLayerTextureUpdater::create(host->layerRendererCapabilities().usingMapSub);
 }
 
 bool ImageLayerChromium::needsContentsScale() const

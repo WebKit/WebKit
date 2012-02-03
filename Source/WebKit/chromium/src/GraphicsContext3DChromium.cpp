@@ -123,9 +123,6 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFro
     Chrome* chrome = static_cast<Chrome*>(hostWindow);
     WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
 
-    if (threadUsage == ForUseOnThisThread && !webContext->makeContextCurrent())
-        return 0;
-
     OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(webViewImpl, webContext, attrs);
     if (!priv)
         return 0;

@@ -285,8 +285,7 @@ void CCLayerTreeHostImpl::finishAllRendering()
 
 bool CCLayerTreeHostImpl::isContextLost()
 {
-    ASSERT(m_layerRenderer);
-    return m_layerRenderer->isContextLost();
+    return m_layerRenderer && m_layerRenderer->isContextLost();
 }
 
 const LayerRendererCapabilities& CCLayerTreeHostImpl::layerRendererCapabilities() const

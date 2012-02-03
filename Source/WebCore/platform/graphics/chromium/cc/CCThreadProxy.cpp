@@ -59,6 +59,7 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_commitRequested(false)
     , m_layerTreeHost(layerTreeHost)
     , m_compositorIdentifier(-1)
+    , m_layerRendererInitialized(false)
     , m_started(false)
     , m_lastExecutedBeginFrameAndCommitSequenceNumber(-1)
     , m_numBeginFrameAndCommitsIssuedOnImplThread(0)
@@ -84,6 +85,11 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
     TRACE_EVENT("CCThreadPRoxy::compositeAndReadback", this, 0);
     ASSERT(isMainThread());
     ASSERT(m_layerTreeHost);
+
+    if (!m_layerRendererInitialized) {
+        TRACE_EVENT("compositeAndReadback_EarlyOut_LR_Uninitialized", this, 0);
+        return false;
+    }
 
     // If a commit is pending, perform the commit first.
     if (m_commitRequested)  {
@@ -146,9 +152,9 @@ bool CCThreadProxy::isStarted() const
     return m_started;
 }
 
-bool CCThreadProxy::initializeLayerRenderer()
+bool CCThreadProxy::initializeContext()
 {
-    TRACE_EVENT("CCThreadProxy::initializeLayerRenderer", this, 0);
+    TRACE_EVENT("CCThreadProxy::initializeContext", this, 0);
     RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
     if (!context)
         return false;
@@ -158,19 +164,29 @@ bool CCThreadProxy::initializeLayerRenderer()
     GraphicsContext3D* contextPtr = context.release().leakRef();
     ASSERT(contextPtr->hasOneRef());
 
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeContextOnImplThread,
+                                                       AllowCrossThreadAccess(contextPtr)));
+    return true;
+}
+
+bool CCThreadProxy::initializeLayerRenderer()
+{
+    TRACE_EVENT("CCThreadProxy::initializeLayerRenderer", this, 0);
     // Make a blocking call to initializeLayerRendererOnImplThread. The results of that call
     // are pushed into the initializeSucceeded and capabilities local variables.
     CCCompletionEvent completion;
     bool initializeSucceeded = false;
     LayerRendererCapabilities capabilities;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnImplThread,
-                                          AllowCrossThreadAccess(contextPtr), AllowCrossThreadAccess(&completion),
-                                          AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities),
-                                          AllowCrossThreadAccess(&m_compositorIdentifier)));
+                                          AllowCrossThreadAccess(&completion),
+                                          AllowCrossThreadAccess(&initializeSucceeded),
+                                          AllowCrossThreadAccess(&capabilities)));
     completion.wait();
 
-    if (initializeSucceeded)
+    if (initializeSucceeded) {
+        m_layerRendererInitialized = true;
         m_layerRendererCapabilitiesMainThreadCopy = capabilities;
+    }
     return initializeSucceeded;
 }
 
@@ -182,6 +198,7 @@ int CCThreadProxy::compositorIdentifier() const
 
 const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() const
 {
+    ASSERT(m_layerRendererInitialized);
     return m_layerRendererCapabilitiesMainThreadCopy;
 }
 
@@ -537,22 +554,30 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshIntervalMs, CCProxy::implThread())));
     m_schedulerOnImplThread = CCScheduler::create(this, frameRateController.release());
     m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
+
+    m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());
+    m_compositorIdentifier = m_inputHandlerOnImplThread->identifier();
+
     completion->signal();
 }
 
-void CCThreadProxy::initializeLayerRendererOnImplThread(GraphicsContext3D* contextPtr, CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities, int* compositorIdentifier)
+void CCThreadProxy::initializeContextOnImplThread(GraphicsContext3D* context)
+{
+    TRACE_EVENT("CCThreadProxy::initializeContextOnImplThread", this, 0);
+    ASSERT(isImplThread());
+    m_contextBeforeInitializationOnImplThread = adoptRef(context);
+}
+
+void CCThreadProxy::initializeLayerRendererOnImplThread(CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities)
 {
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnImplThread", this, 0);
     ASSERT(isImplThread());
-    RefPtr<GraphicsContext3D> context(adoptRef(contextPtr));
-    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(context);
+    ASSERT(m_contextBeforeInitializationOnImplThread);
+    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release());
     if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         if (capabilities->usingSwapCompleteCallback)
             m_schedulerOnImplThread->setMaxFramesPending(2);
-
-        m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());
-        *compositorIdentifier = m_inputHandlerOnImplThread->identifier();
     }
 
     completion->signal();

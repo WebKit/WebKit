@@ -62,10 +62,10 @@ public:
 private:
     ImageLayerChromium();
 
-    virtual void createTextureUpdater(const CCLayerTreeHost*);
     void setTilingOption(TilingOption);
 
     virtual LayerTextureUpdater* textureUpdater() const;
+    virtual void createTextureUpdaterIfNeeded();
     virtual IntSize contentBounds() const;
 
     NativeImagePtr m_imageForCurrentFrame;

@@ -174,21 +174,6 @@ IntSize TiledLayerChromium::contentBounds() const
     return IntSize(lroundf(bounds().width() * contentsScale()), lroundf(bounds().height() * contentsScale()));
 }
 
-void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
-{
-    if (host == layerTreeHost())
-        return;
-
-    LayerChromium::setLayerTreeHost(host);
-
-    if (!host)
-        return;
-
-    createTextureUpdater(host);
-    setTextureFormat(host->layerRendererCapabilities().bestTextureFormat);
-    m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
-}
-
 void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTextureUpdater& updater)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
@@ -371,6 +356,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
         tile->m_updateRect = IntRect();
     }
 
+    createTextureUpdaterIfNeeded();
+
     // Create tiles as needed, expanding a dirty rect to contain all
     // the dirty regions currently being drawn. All dirty tiles that are to be painted
     // get their m_updateRect set to m_dirtyRect and m_dirtyRect cleared. This way if
@@ -473,6 +460,7 @@ void TiledLayerChromium::reserveTextures()
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
+    createTextureUpdaterIfNeeded();
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);

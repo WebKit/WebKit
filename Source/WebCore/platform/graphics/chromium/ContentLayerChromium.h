@@ -69,8 +69,8 @@ protected:
 
 
 private:
-    virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
+    virtual void createTextureUpdaterIfNeeded();
 
     ContentLayerDelegate* m_delegate;
     RefPtr<LayerTextureUpdater> m_textureUpdater;

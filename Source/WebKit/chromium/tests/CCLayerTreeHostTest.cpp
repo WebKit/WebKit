@@ -1102,6 +1102,9 @@ public:
     {
         IntSize viewportSize(10, 10);
         layerTreeHost()->setViewportSize(viewportSize);
+
+        layerTreeHost()->updateLayers();
+
         EXPECT_EQ(viewportSize, layerTreeHost()->viewportSize());
         EXPECT_EQ(TextureManager::highLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
         EXPECT_EQ(TextureManager::reclaimLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->preferredMemoryLimitBytes());

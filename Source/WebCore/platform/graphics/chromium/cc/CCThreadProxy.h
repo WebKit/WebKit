@@ -52,6 +52,7 @@ public:
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
+    virtual bool initializeContext();
     virtual bool initializeLayerRenderer();
     virtual int compositorIdentifier() const;
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -98,7 +99,8 @@ private:
     void requestReadbackOnImplThread(ReadbackRequest*);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
-    void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
+    void initializeContextOnImplThread(GraphicsContext3D*);
+    void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
 
@@ -107,6 +109,7 @@ private:
     bool m_commitRequested;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
+    bool m_layerRendererInitialized;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
     int m_lastExecutedBeginFrameAndCommitSequenceNumber;
@@ -120,6 +123,10 @@ private:
     OwnPtr<CCScheduler> m_schedulerOnImplThread;
 
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
+
+    // Holds on to the GraphicsContext3D we might use for compositing in between initializeContext()
+    // and initializeLayerRenderer() calls.
+    RefPtr<GraphicsContext3D> m_contextBeforeInitializationOnImplThread;
 
     // Set when the main thread is waiing on a readback.
     ReadbackRequest* m_readbackRequestOnImplThread;

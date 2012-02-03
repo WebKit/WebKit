@@ -101,13 +101,13 @@ private:
 };
 
 
-TEST(FakeGraphicsContext3DTest, ContextForThisThreadShouldMakeCurrent)
+TEST(FakeGraphicsContext3DTest, ContextForThisThreadShouldNotMakeCurrent)
 {
     GraphicsContext3D::Attributes attrs;
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextThatCountsMakeCurrents()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
     EXPECT_TRUE(context);
     ContextThatCountsMakeCurrents& mockContext = *static_cast<ContextThatCountsMakeCurrents*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
-    EXPECT_EQ(1, mockContext.makeCurrentCount());
+    EXPECT_EQ(0, mockContext.makeCurrentCount());
 }
 
 TEST(FakeGraphicsContext3DTest, ContextForAnotherThreadShouldNotMakeCurrent)
@@ -119,15 +119,3 @@ TEST(FakeGraphicsContext3DTest, ContextForAnotherThreadShouldNotMakeCurrent)
     EXPECT_EQ(0, mockContext.makeCurrentCount());
 }
 
-class ContextWithMakeCurrentThatFails : public FakeWebGraphicsContext3D {
-public:
-    ContextWithMakeCurrentThatFails() { }
-    virtual bool makeContextCurrent() { return false; }
-};
-
-TEST(FakeGraphicsContext3DTest, ContextForThisThreadFailsWhenMakeCurrentFails)
-{
-    GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextWithMakeCurrentThatFails()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
-    EXPECT_FALSE(context);
-}

@@ -162,6 +162,8 @@ private:
         return m_fakeTextureUpdater.get();
     }
 
+    virtual void createTextureUpdaterIfNeeded() { }
+
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     TextureManager* m_textureManager;
 };
@@ -428,8 +430,12 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     IntSize contentBounds(300, 300);
     IntRect contentRect(IntPoint::zero(), contentBounds);
 
-    RefPtr<FakeTiledLayerChromium> rootLayer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
-    RefPtr<FakeTiledLayerChromium> childLayer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
+    // We have enough memory for only one of the two layers.
+    int memoryLimit = 4 * 300 * 300; // 4 bytes per pixel.
+    OwnPtr<TextureManager> textureManager = TextureManager::create(memoryLimit, memoryLimit, memoryLimit);
+
+    RefPtr<FakeTiledLayerChromium> rootLayer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    RefPtr<FakeTiledLayerChromium> childLayer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     rootLayer->addChild(childLayer);
 
     rootLayer->setBounds(contentBounds);
@@ -439,15 +445,12 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     rootLayer->invalidateRect(contentRect);
     childLayer->invalidateRect(contentRect);
 
-    // We have enough memory for only one of the two layers.
-    int memoryLimit = 4 * 300 * 300; // 4 bytes per pixel.
-
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
 
     ccLayerTreeHost->setRootLayer(rootLayer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 300));
-    ccLayerTreeHost->contentsTextureManager()->setMaxMemoryLimitBytes(memoryLimit);
+    textureManager->setMaxMemoryLimitBytes(memoryLimit);
     ccLayerTreeHost->updateLayers();
     ccLayerTreeHost->updateCompositorResources(ccLayerTreeHost->context(), updater);
 
@@ -460,8 +463,6 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     // Remove the child layer.
     rootLayer->removeAllChildren();
 
-    // Need to set the max limit again as it gets overwritten by updateLayers().
-    ccLayerTreeHost->contentsTextureManager()->setMaxMemoryLimitBytes(memoryLimit);
     ccLayerTreeHost->updateLayers();
     EXPECT_FALSE(rootLayer->skipsDraw());
 

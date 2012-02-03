@@ -63,6 +63,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
+    , m_layerRendererInitialized(false)
     , m_settings(settings)
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
@@ -88,20 +89,10 @@ bool CCLayerTreeHost::initialize()
         m_proxy = CCSingleThreadProxy::create(this);
     m_proxy->start();
 
-    if (!m_proxy->initializeLayerRenderer())
+    if (!m_proxy->initializeContext())
         return false;
 
     m_compositorIdentifier = m_proxy->compositorIdentifier();
-
-    // Update m_settings based on capabilities that we got back from the renderer.
-    m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
-
-    // Update m_settings based on partial update capability.
-    m_settings.partialTextureUpdates = m_settings.partialTextureUpdates && m_proxy->partialTextureUpdateCapability();
-
-    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
-                                                      TextureManager::reclaimLimitBytes(viewportSize()),
-                                                      m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
 }
 
@@ -115,6 +106,29 @@ CCLayerTreeHost::~CCLayerTreeHost()
     clearPendingUpdate();
     numLayerTreeInstances--;
 }
+
+void CCLayerTreeHost::initializeLayerRenderer()
+{
+    TRACE_EVENT("CCLayerTreeHost::initializeLayerRenderer", this, 0);
+    if (!m_proxy->initializeLayerRenderer()) {
+        // Uh oh, better tell the client that we can't do anything with this context.
+        m_client->didRecreateGraphicsContext(false);
+        return;
+    }
+
+    // Update m_settings based on capabilities that we got back from the renderer.
+    m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
+
+    // Update m_settings based on partial update capability.
+    m_settings.partialTextureUpdates = m_settings.partialTextureUpdates && m_proxy->partialTextureUpdateCapability();
+
+    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
+                                                      TextureManager::reclaimLimitBytes(viewportSize()),
+                                                      m_proxy->layerRendererCapabilities().maxTextureSize);
+
+    m_layerRendererInitialized = true;
+}
+
 
 void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
 {
@@ -140,8 +154,8 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
 
-    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
-    contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
+    m_contentsTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
+    m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 }
 
 // This function commits the CCLayerTreeHost to an impl tree. When modifying
@@ -198,6 +212,11 @@ GraphicsContext3D* CCLayerTreeHost::context()
 
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
+    if (!m_layerRendererInitialized) {
+        initializeLayerRenderer();
+        if (!m_layerRendererInitialized)
+            return false;
+    }
     m_triggerIdlePaints = false;
     bool ret = m_proxy->compositeAndReadback(pixels, rect);
     m_triggerIdlePaints = true;
@@ -206,6 +225,8 @@ bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 
 void CCLayerTreeHost::finishAllRendering()
 {
+    if (!m_layerRendererInitialized)
+        return;
     m_proxy->finishAllRendering();
 }
 
@@ -254,8 +275,10 @@ void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
     if (viewportSize == m_viewportSize)
         return;
 
-    contentsTextureManager()->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(viewportSize));
-    contentsTextureManager()->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(viewportSize));
+    if (m_contentsTextureManager) {
+        m_contentsTextureManager->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(viewportSize));
+        m_contentsTextureManager->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(viewportSize));
+    }
     m_viewportSize = viewportSize;
     setNeedsCommit();
 }
@@ -285,6 +308,10 @@ void CCLayerTreeHost::setVisible(bool visible)
         return;
 
     m_visible = visible;
+
+    if (!m_layerRendererInitialized)
+        return;
+
     if (!visible) {
         m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes(viewportSize()));
         m_contentsTextureManager->unprotectAllTextures();
@@ -346,6 +373,13 @@ void CCLayerTreeHost::composite()
 
 void CCLayerTreeHost::updateLayers()
 {
+    if (!m_layerRendererInitialized) {
+        initializeLayerRenderer();
+        // If we couldn't initialize, then bail since we're returning to software mode.
+        if (!m_layerRendererInitialized)
+            return;
+    }
+
     if (!rootLayer())
         return;
 
@@ -388,8 +422,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
 
     size_t preferredLimitBytes = TextureManager::reclaimLimitBytes(m_viewportSize);
     size_t maxLimitBytes = TextureManager::highLimitBytes(m_viewportSize);
-    contentsTextureManager()->reduceMemoryToLimit(preferredLimitBytes);
-    if (contentsTextureManager()->currentMemoryUseBytes() >= preferredLimitBytes)
+    m_contentsTextureManager->reduceMemoryToLimit(preferredLimitBytes);
+    if (m_contentsTextureManager->currentMemoryUseBytes() >= preferredLimitBytes)
         return;
 
     // Idle painting should fail when we hit the preferred memory limit,
