@@ -1,3 +1,19 @@
+2012-02-03  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Let userIdleTime() return maximum number instead of 0 as
+        most of other ports do.
+        https://bugs.webkit.org/show_bug.cgi?id=77769
+
+        Reviewed by Rob Buis.
+
+        userIdleTime() should return a big number so it won't block page cache
+        from releasing cached pages. See PageCache::releaseAutoreleasedPagesNowOrReschedule().
+
+        No new tests as no visible functional changes.
+
+        * platform/blackberry/SystemTimeBlackBerry.cpp:
+        (WebCore::userIdleTime):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         Commit scrolling tree state changes to the scrolling tree
