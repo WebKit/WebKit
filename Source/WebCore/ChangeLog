@@ -1,3 +1,29 @@
+2012-02-02  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Always show percents together with counters in heap inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=77434
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._toPercentString):
+        (WebInspector.HeapSnapshotGridNode.prototype._createValueCell):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.createCell):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.createCell):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.get data):
+        (WebInspector.HeapSnapshotDiffNode.prototype.get data):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid):
+        (WebInspector.HeapSnapshotConstructorsDataGrid):
+        (WebInspector.HeapSnapshotDiffDataGrid):
+        (WebInspector.HeapSnapshotDominatorsDataGrid):
+        (WebInspector.DetailedHeapshotView.prototype._mouseDownInContentsGrid):
+        (WebInspector.DetailedHeapshotView.prototype.get _isShowingAsPercent):
+        (WebInspector.DetailedHeapshotView.prototype._percentClicked):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view .data-grid span.percent-column):
+
 2012-02-02  Matt Falkenhagen  <falken@chromium.org>
 
         Use content-language from http-equiv to set document locale and font

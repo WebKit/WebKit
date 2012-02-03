@@ -32,7 +32,7 @@ function test()
             function step3(row)
             {
                 var count = row.data["count"];
-                InspectorTest.assertEquals(instanceCount, count);
+                InspectorTest.assertEquals(instanceCount.toString(), count);
                 var buttonsNode = InspectorTest.findButtonsNode(row);
                 InspectorTest.assertEquals(true, !!buttonsNode, "buttons node");
                 var words = buttonsNode.showAll.textContent.split(" ");

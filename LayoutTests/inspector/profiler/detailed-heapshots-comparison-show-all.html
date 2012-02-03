@@ -47,7 +47,7 @@ function test()
                 for (var i = 0; i < words.length; ++i) {
                     var maybeNumber = parseInt(words[i], 10);
                     if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(countA, maybeNumber, buttonsNode.showAll.textContent);
+                        InspectorTest.assertEquals(countA, words[i], buttonsNode.showAll.textContent);
                 }
                 InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }
@@ -56,7 +56,7 @@ function test()
             function step4(row)
             {
                 var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.addedCount; });
-                InspectorTest.assertEquals(countA, rowsShown, "after showAll click 1");
+                InspectorTest.assertEquals(countA, rowsShown.toString(), "after showAll click 1");
 
                 countB = row.data["removedCount"];
                 InspectorTest.assertEquals(true, countB > 0, "countB > 0");
@@ -66,7 +66,7 @@ function test()
                 for (var i = 0; i < words.length; ++i) {
                     var maybeNumber = parseInt(words[i], 10);
                     if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(countB, maybeNumber, buttonsNode.showAll.textContent);
+                        InspectorTest.assertEquals(countB, words[i], buttonsNode.showAll.textContent);
                 }
                 InspectorTest.clickShowMoreButton("showAll", buttonsNode, step5);
             }
@@ -74,7 +74,7 @@ function test()
             function step5(row)
             {
                 var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.removedCount; });
-                InspectorTest.assertEquals(countB, rowsShown, "after showAll click 2");
+                InspectorTest.assertEquals(countB, rowsShown.toString(), "after showAll click 2");
                 var buttonsNode = InspectorTest.findButtonsNode(row);
                 InspectorTest.assertEquals(false, !!buttonsNode, "buttons node found after all rows shown");
                 setTimeout(next, 0);

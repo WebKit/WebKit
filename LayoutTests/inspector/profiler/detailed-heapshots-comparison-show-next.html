@@ -38,7 +38,7 @@ function test()
 
             function step3(row)
             {
-                var expectedRowCountA = row.data["addedCount"];
+                var expectedRowCountA = parseInt(row.data["addedCount"]);
                 var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.addedCount; });
                 InspectorTest.assertEquals(true, rowsShown <= expectedRowCountA, "shown more instances than created: " + rowsShown + " > " + expectedRowCountA);
                 if (rowsShown < expectedRowCountA) {
@@ -51,7 +51,7 @@ function test()
 
             function step4(row)
             {
-                var expectedRowCountB = row.data["removedCount"];
+                var expectedRowCountB = parseInt(row.data["removedCount"]);
                 var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.removedCount; });
                 InspectorTest.assertEquals(true, rowsShown <= expectedRowCountB, "shown more instances than created: " + rowsShown + " > " + expectedRowCountB);
                 if (rowsShown < expectedRowCountB) {

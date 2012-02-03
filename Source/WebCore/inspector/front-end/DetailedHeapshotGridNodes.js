@@ -60,6 +60,30 @@ WebInspector.HeapSnapshotGridNode.prototype = {
     {
     },
 
+    _toPercentString: function(num)
+    {
+        return num.toFixed(2) + "%";
+    },
+
+    _createValueCell: function(columnIdentifier)
+    {
+        var cell = document.createElement("td");
+        cell.className = columnIdentifier + "-column";
+        var div = document.createElement("div");
+        var valueSpan = document.createElement("span");
+        valueSpan.textContent = this.data[columnIdentifier];
+        var percentColumn = columnIdentifier + "-percent";
+        if (percentColumn in this.data) {
+            var percentSpan = document.createElement("span");
+            percentSpan.className = "percent-column";
+            percentSpan.textContent = this.data[percentColumn];
+            div.appendChild(percentSpan);
+        }
+        div.appendChild(valueSpan);
+        cell.appendChild(div);
+        return cell;
+    },
+
     _populate: function(event)
     {
         this.removeEventListener("populate", this._populate, this);
@@ -195,7 +219,7 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
 WebInspector.HeapSnapshotGenericObjectNode.prototype = {
     createCell: function(columnIdentifier)
     {
-        var cell = columnIdentifier !== "object" ? WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier) : this._createObjectCell();
+        var cell = columnIdentifier !== "object" ? this._createValueCell(columnIdentifier) : this._createObjectCell();
         if (this._searchMatched)
             cell.addStyleClass("highlight");
         return cell;
@@ -268,8 +292,12 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         data["object"] = { valueStyle: valueStyle, value: value + ": @" + this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
-        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.withThousandsSeparator(this._shallowSize);
-        data["retainedSize"] = view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.withThousandsSeparator(this._retainedSize);
+        data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
+        data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
+        if (view._showPercentage) {
+            data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
+            data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
+        }
 
         return this._enhanceData ? this._enhanceData(data) : data;
     },
@@ -532,6 +560,14 @@ WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate, 
 }
 
 WebInspector.HeapSnapshotConstructorNode.prototype = {
+    createCell: function(columnIdentifier)
+    {
+        var cell = columnIdentifier !== "object" ? this._createValueCell(columnIdentifier) : WebInspector.HeapSnapshotGridNode.prototype.createCell.call(this, columnIdentifier);
+        if (this._searchMatched)
+            cell.addStyleClass("highlight");
+        return cell;
+    },
+
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotInstanceNode(this.dataGrid, null, this.dataGrid.snapshot, item);
@@ -567,11 +603,15 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
 
     get data()
     {
-        var data = {object: this._name, count: this._count};
+        var data = {object: this._name};
         var view = this.dataGrid.snapshotView;
-        data["count"] = view.showCountAsPercent ? WebInspector.UIString("%.2f%%", this._countPercent) : this._count;
-        data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.withThousandsSeparator(this._shallowSize);
-        data["retainedSize"] = view.showRetainedSizeAsPercent ? "~" + WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.withThousandsSeparator(this._retainedSize) + "+";
+        data["count"] =  Number.withThousandsSeparator(this._count);
+        data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
+        data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize) + "+";
+        if (view._showPercentage) {
+            data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
+            data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
+        }
         return data;
     },
 
@@ -748,12 +788,12 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
     {
         var data = {object: this._name};
 
-        data["addedCount"] = this._addedCount;
-        data["removedCount"] = this._removedCount;
-        data["countDelta"] = WebInspector.UIString("%s%d", this._signForDelta(this._countDelta), Math.abs(this._countDelta));
+        data["addedCount"] = Number.withThousandsSeparator(this._addedCount);
+        data["removedCount"] = Number.withThousandsSeparator(this._removedCount);
+        data["countDelta"] = this._signForDelta(this._countDelta) + Number.withThousandsSeparator(Math.abs(this._countDelta));
         data["addedSize"] = Number.withThousandsSeparator(this._addedSize);
         data["removedSize"] = Number.withThousandsSeparator(this._removedSize);
-        data["sizeDelta"] = WebInspector.UIString("%s%s", this._signForDelta(this._sizeDelta), Number.withThousandsSeparator(Math.abs(this._sizeDelta)));
+        data["sizeDelta"] = this._signForDelta(this._sizeDelta) + Number.withThousandsSeparator(Math.abs(this._sizeDelta));
 
         return data;
     }
