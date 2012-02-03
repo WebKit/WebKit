@@ -3460,9 +3460,6 @@ BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-scaling-hit.html = IMAGE
 // New test in http://trac.webkit.org/changeset/96470
 BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 
-// Broken in r96745.
-BUGWK69494 WIN : webaudio/audiobuffersource-playbackrate.html = AUDIO
-
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
 BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
@@ -3813,9 +3810,6 @@ BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-ove
 
 // Started failing between http://trac.webkit.org/changeset/104901 and http://trac.webkit.org/changeset/104910
 BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT
-
-// Started failing at http://trac.webkit.org/changeset/105007
-BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
 
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
