@@ -1,3 +1,17 @@
+2012-02-02  Hayato Ito  <hayato@chromium.org>
+
+        Make ShadowRoot interface inherit DocumentFragment interface in IDL.
+        https://bugs.webkit.org/show_bug.cgi?id=77511
+
+        Reviewed by Kentaro Hara.
+
+        This patch contains only the change of IDL to isolate issues.
+        Other changes, such as tests for querySelector of ShadowRoot, will be added in follow-up patches.
+
+        No tests. No change in behavior.
+
+        * dom/ShadowRoot.idl:
+
 2012-02-02  Raymond Toy  <rtoy@google.com>
 
         Check parameters to biquad filters

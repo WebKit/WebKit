@@ -31,7 +31,7 @@ module core {
         EnabledAtRuntime=shadowDOM,
         Constructor(in Element host),
         ConstructorRaisesException
-    ] ShadowRoot : Node {
+    ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
         Element getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
         NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString className);
