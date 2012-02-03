@@ -1,3 +1,44 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Update the tree state after layout and add a way to commit it
+        https://bugs.webkit.org/show_bug.cgi?id=77767
+
+        Reviewed by Andreas Kling.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        Call ScrollingCoordinator::frameViewLayoutUpdated if we have a scrolling coordinator.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        Initialize m_scrollingTreeStateCommitterTimer.
+
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        Update the viewport rect and contents size of the frame view.
+
+        (WebCore::ScrollingCoordinator::scheduleTreeStateCommit):
+        Schedule a tree state commit unless we've already scheduled one or there are no changed properties.
+
+        (WebCore::ScrollingCoordinator::scrollingTreeStateCommitterTimerFired):
+        Call commitTreeState().
+
+        (WebCore::ScrollingCoordinator::commitTreeStateIfNeeded):
+        Commit the tree state unless there are no changed properties.
+
+        (WebCore::ScrollingCoordinator::commitTreeState):
+        Commit the tree state. We currently don't do anything with the committed state yet.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        Add new member functions and the timer member variable.
+
+        * page/scrolling/ScrollingTreeState.cpp:
+        (WebCore::ScrollingTreeState::commit):
+        Copy the current tree state and restore the changed properties on the original.
+
+        * page/scrolling/ScrollingTreeState.h:
+        (WebCore::ScrollingTreeState::hasChangedProperties):
+        Return whether there are any changed properties in the tree state.
+
 2012-02-03  Andreas Kling  <awesomekling@apple.com>
 
         HTMLElement: Clean up tabindex attribute parsing.

@@ -53,6 +53,8 @@ public:
         ScrollLayer = 1 << 2,
     };
 
+    bool hasChangedProperties() const { return m_changedProperties; }
+
     const IntRect& viewportRect() const { return m_viewportRect; }
     void setViewportRect(const IntRect&);
 
@@ -61,6 +63,9 @@ public:
 
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(const GraphicsLayer*);
+
+    // Copies the current tree state and clears the changed properties mask in the original.
+    PassOwnPtr<ScrollingTreeState> commit();
 
 private:
     ScrollingTreeState();

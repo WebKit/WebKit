@@ -2305,6 +2305,13 @@ void FrameView::performPostLayoutTasks()
             break;
     }
 
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = m_frame->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewLayoutUpdated(this);
+    }
+#endif
+
     scrollToAnchor();
 
     m_actionScheduler->resume();

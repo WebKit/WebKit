@@ -62,6 +62,14 @@ void ScrollingTreeState::setContentsSize(const IntSize& contentsSize)
     m_changedProperties |= ContentsSize;
 }
 
+PassOwnPtr<ScrollingTreeState> ScrollingTreeState::commit()
+{
+    OwnPtr<ScrollingTreeState> treeState = adoptPtr(new ScrollingTreeState(*this));
+    m_changedProperties = 0;
+
+    return treeState.release();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

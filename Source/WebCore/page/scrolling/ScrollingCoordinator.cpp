@@ -53,6 +53,7 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
     , m_scrollingTree(ScrollingTree::create(this))
     , m_scrollingTreeState(ScrollingTreeState::create())
+    , m_scrollingTreeStateCommitterTimer(this, &ScrollingCoordinator::scrollingTreeStateCommitterTimerFired)
     , m_didDispatchDidUpdateMainFrameScrollPosition(false)
 {
 }
@@ -82,6 +83,19 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
         return false;
 
     return true;
+}
+
+void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
+
+    m_scrollingTreeState->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
+    m_scrollingTreeState->setContentsSize(frameView->contentsSize());
+    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinator::syncFrameViewGeometry(FrameView* frameView)
@@ -156,6 +170,41 @@ void ScrollingCoordinator::didUpdateMainFrameScrollPosition()
         frameView->scrollToOffsetWithoutAnimation(scrollPosition);
         frameView->setConstrainsScrollingToContentEdge(true);
     }
+}
+
+void ScrollingCoordinator::scheduleTreeStateCommit()
+{
+    if (m_scrollingTreeStateCommitterTimer.isActive())
+        return;
+
+    if (!m_scrollingTreeState->hasChangedProperties())
+        return;
+
+    m_scrollingTreeStateCommitterTimer.startOneShot(0);
+}
+
+void ScrollingCoordinator::scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*)
+{
+    commitTreeState();
+}
+
+void ScrollingCoordinator::commitTreeStateIfNeeded()
+{
+    if (!m_scrollingTreeState->hasChangedProperties())
+        return;
+
+    commitTreeState();
+    m_scrollingTreeStateCommitterTimer.stop();
+}
+
+void ScrollingCoordinator::commitTreeState()
+{
+    printf("committing!\n");
+    ASSERT(m_scrollingTreeState->hasChangedProperties());
+
+    OwnPtr<ScrollingTreeState> treeState = m_scrollingTreeState->commit();
+
+    // FIXME: Commit the tree state.
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 
 #include "GraphicsLayer.h"
 #include "IntRect.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
@@ -60,6 +61,9 @@ public:
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
     bool coordinatesScrollingForFrameView(FrameView*) const;
+
+    // Should be called whenever the given frame view has been laid out.
+    void frameViewLayoutUpdated(FrameView*);
 
     // Should be called whenever the scroll layer for the given frame view changes.
     void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
@@ -97,10 +101,16 @@ private:
     void updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint&);
 
 private:
+    void scheduleTreeStateCommit();
+    void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);
+    void commitTreeStateIfNeeded();
+    void commitTreeState();
+
     Page* m_page;
     RefPtr<ScrollingTree> m_scrollingTree;
 
     OwnPtr<ScrollingTreeState> m_scrollingTreeState;
+    Timer<ScrollingCoordinator> m_scrollingTreeStateCommitterTimer;
 
     Mutex m_mainFrameGeometryMutex;
     IntRect m_mainFrameVisibleContentRect;
