@@ -35,8 +35,8 @@ SuspendableTimer::SuspendableTimer(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_nextFireInterval(0)
     , m_repeatInterval(0)
-    , m_active(false)
 #if !ASSERT_DISABLED
+    , m_active(false)
     , m_suspended(false)
 #endif
 {

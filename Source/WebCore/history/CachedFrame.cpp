@@ -168,6 +168,7 @@ CachedFrame::CachedFrame(Frame* frame)
     // but after we've fired the pagehide event, in case that creates more objects.
     // Suspending must also happen after we've recursed over child frames, in case
     // those create more objects.
+    // FIXME: It's still possible to have objects created after suspending in some cases, see http://webkit.org/b/53733 for more details.
     m_document->documentWillSuspendForPageCache();
     m_document->suspendScriptedAnimationControllerCallbacks();
     m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);

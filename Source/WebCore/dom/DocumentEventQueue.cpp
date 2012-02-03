@@ -64,7 +64,6 @@ DocumentEventQueue::DocumentEventQueue(ScriptExecutionContext* context)
     : m_pendingEventTimer(adoptPtr(new DocumentEventQueueTimer(this, context)))
     , m_isClosed(false)
 {
-    m_pendingEventTimer->suspendIfNeeded();
 }
 
 DocumentEventQueue::~DocumentEventQueue()

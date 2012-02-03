@@ -41,9 +41,7 @@ PassRefPtr<IntentRequest> IntentRequest::create(ScriptExecutionContext* context,
                                                 PassRefPtr<IntentResultCallback> successCallback,
                                                 PassRefPtr<IntentResultCallback> errorCallback)
 {
-    RefPtr<IntentRequest> intentRequest(adoptRef(new IntentRequest(context, intent, successCallback, errorCallback)));
-    intentRequest->suspendIfNeeded();
-    return intentRequest.release();
+    return adoptRef(new IntentRequest(context, intent, successCallback, errorCallback));
 }
 
 IntentRequest::IntentRequest(ScriptExecutionContext* context,

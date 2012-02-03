@@ -56,9 +56,8 @@ namespace WebCore {
 PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
     RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, asyncFileSystem)));
-    fileSystem->suspendIfNeeded();
     InspectorInstrumentation::didOpenFileSystem(fileSystem.get());
-    return fileSystem.release();
+    return fileSystem;
 }
 
 DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)

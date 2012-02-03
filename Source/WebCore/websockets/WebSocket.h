@@ -53,7 +53,7 @@ class WebSocket : public RefCounted<WebSocket>, public EventTarget, public Activ
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
-    static PassRefPtr<WebSocket> create(ScriptExecutionContext*);
+    static PassRefPtr<WebSocket> create(ScriptExecutionContext* context) { return adoptRef(new WebSocket(context)); }
     virtual ~WebSocket();
 
     enum State {
