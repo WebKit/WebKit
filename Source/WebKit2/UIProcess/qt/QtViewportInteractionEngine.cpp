@@ -180,7 +180,7 @@ void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 
     qreal itemScale = m_viewport->width() / itemRect.width();
 
-    m_content->setContentScale(itemScale);
+    m_content->setContentsScale(itemScale);
 
     // We need to animate the content but the position represents the viewport hence we need to invert the position here.
     // To animate the position together with the scale we multiply the position with the current scale;
@@ -244,7 +244,7 @@ bool QtViewportInteractionEngine::event(QEvent* event)
         QScrollPrepareEvent* prepareEvent = static_cast<QScrollPrepareEvent*>(event);
         const QRectF viewportRect = m_viewport->boundingRect();
         const QRectF contentRect = m_viewport->mapRectFromItem(m_content, m_content->boundingRect());
-        const QRectF posRange = computePosRangeForItemAtScale(m_content->contentScale());
+        const QRectF posRange = computePosRangeForItemAtScale(m_content->contentsScale());
         prepareEvent->setContentPosRange(posRange);
         prepareEvent->setViewportSize(viewportRect.size());
 
@@ -303,7 +303,7 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
     else
         newPos.ry() += delta;
 
-    QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentScale());
+    QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
     m_content->setPos(-boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight()));
 
     emit visibleContentRectAndScaleChanged();
@@ -315,7 +315,7 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
     if (m_suspendCount)
         return;
 
-    qreal endItemScale = m_content->contentScale(); // Stay at same scale.
+    qreal endItemScale = m_content->contentsScale(); // Stay at same scale.
 
     QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
     QPointF endPosition = boundPosition(endPosRange.topLeft(), pagePosition * endItemScale, endPosRange.bottomRight());
@@ -327,7 +327,7 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
 
 QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScale) const
 {
-    const QSizeF contentItemSize = m_content->contentSize() * itemScale;
+    const QSizeF contentItemSize = m_content->contentsSize() * itemScale;
     const QSizeF viewportItemSize = m_viewport->boundingRect().size();
 
     const qreal horizontalRange = contentItemSize.width() - viewportItemSize.width();
@@ -449,7 +449,7 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
 
     if (!m_hadUserInteraction) {
         qreal initialScale = innerBoundedCSSScale(m_constraints.initialScale);
-        m_content->setContentScale(itemScaleFromCSS(initialScale));
+        m_content->setContentsScale(itemScaleFromCSS(initialScale));
     }
 
     // If the web app changes successively changes the viewport on purpose
@@ -459,7 +459,7 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
 
 qreal QtViewportInteractionEngine::currentCSSScale()
 {
-    return cssScaleFromItem(m_content->contentScale());
+    return cssScaleFromItem(m_content->contentsScale());
 }
 
 bool QtViewportInteractionEngine::scrollAnimationActive() const
@@ -532,7 +532,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
 
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
-    m_pinchStartScale = m_content->contentScale();
+    m_pinchStartScale = m_content->contentsScale();
 
     // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
     emit viewportTrajectoryVectorChanged(QPointF());
@@ -586,7 +586,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
 void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)
 {
     QPointF oldPinchCenterOnViewport = m_viewport->mapFromWebContent(centerInCSSCoordinates);
-    m_content->setContentScale(itemScaleFromCSS(cssScale));
+    m_content->setContentsScale(itemScaleFromCSS(cssScale));
     QPointF newPinchCenterOnViewport = m_viewport->mapFromWebContent(centerInCSSCoordinates);
     m_content->setPos(m_content->pos() - (newPinchCenterOnViewport - oldPinchCenterOnViewport));
 }

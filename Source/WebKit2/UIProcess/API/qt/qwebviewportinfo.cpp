@@ -38,7 +38,7 @@ QWebViewportInfo::~QWebViewportInfo()
 
 QSize QWebViewportInfo::contentsSize() const
 {
-    return QSize(m_webViewPrivate->pageView->contentSize().toSize());
+    return QSize(m_webViewPrivate->pageView->contentsSize().toSize());
 }
 
 QVariant QWebViewportInfo::currentScale() const

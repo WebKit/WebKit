@@ -54,8 +54,8 @@ public:
     bool paintingIsInitialized;
     QSGNode* m_paintNode;
 
-    QSizeF contentSize;
-    qreal contentScale;
+    QSizeF contentsSize;
+    qreal contentsScale;
     bool useTraditionalDesktopBehaviour;
 };
 

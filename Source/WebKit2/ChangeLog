@@ -1,3 +1,41 @@
+2012-02-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Rename content* to contents* in QQuickWebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=77629
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (QQuickWebPage::setContentsSize):
+        (QQuickWebPage::contentsSize):
+        (QQuickWebPage::setContentsScale):
+        (QQuickWebPage::contentsScale):
+        (QQuickWebPage::transformToItem):
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::PostTransitionState::apply):
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::contentsSize):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemAtScale):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::currentCSSScale):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+
 2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build when cross-compiling

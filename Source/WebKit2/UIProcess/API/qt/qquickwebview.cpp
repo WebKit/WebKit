@@ -231,7 +231,7 @@ void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
         return;
     }
 
-    pageView->setContentSize(newSize);
+    pageView->setContentsSize(newSize);
     q->m_experimental->viewportInfo()->didUpdateContentsSize();
 }
 
@@ -308,7 +308,7 @@ void QQuickWebViewPrivate::_q_updateVisibleContentRectAndScale()
 
     Q_Q(QQuickWebView);
     const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
-    float scale = pageView->contentScale();
+    float scale = pageView->contentsScale();
 
     QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
     drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
@@ -377,7 +377,7 @@ void QQuickWebViewPrivate::PostTransitionState::apply()
     p->interactionEngine->pagePositionRequest(position);
 
     if (contentsSize.isValid()) {
-        p->pageView->setContentSize(contentsSize);
+        p->pageView->setContentsSize(contentsSize);
         p->q_ptr->experimental()->viewportInfo()->didUpdateContentsSize();
     }
 

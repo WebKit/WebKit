@@ -69,7 +69,7 @@ QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* view
     , sgUpdateQueue(q)
     , paintingIsInitialized(false)
     , m_paintNode(0)
-    , contentScale(1)
+    , contentsScale(1)
     , useTraditionalDesktopBehaviour(false)
 {
 }
@@ -112,7 +112,7 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
         return;
 
     QTransform transform = q->itemTransform(0, 0);
-    transform.scale(contentScale, contentScale);
+    transform.scale(contentsScale, contentsScale);
 
     float opacity = computeEffectiveOpacity(q);
     QRectF clipRect = q->parentItem()->mapRectToScene(q->parentItem()->boundingRect());
@@ -235,32 +235,32 @@ QtWebPageEventHandler* QQuickWebPage::eventHandler() const
     return d->eventHandler.data();
 }
 
-void QQuickWebPage::setContentSize(const QSizeF& size)
+void QQuickWebPage::setContentsSize(const QSizeF& size)
 {
-    if (size.isEmpty() || d->contentSize == size)
+    if (size.isEmpty() || d->contentsSize == size)
         return;
 
-    d->contentSize = size;
+    d->contentsSize = size;
     d->updateSize();
-    d->setDrawingAreaSize(d->contentSize.toSize());
+    d->setDrawingAreaSize(d->contentsSize.toSize());
 }
 
-const QSizeF& QQuickWebPage::contentSize() const
+const QSizeF& QQuickWebPage::contentsSize() const
 {
-    return d->contentSize;
+    return d->contentsSize;
 }
 
-void QQuickWebPage::setContentScale(qreal scale)
+void QQuickWebPage::setContentsScale(qreal scale)
 {
     ASSERT(scale > 0);
-    d->contentScale = scale;
+    d->contentsScale = scale;
     d->updateSize();
 }
 
-qreal QQuickWebPage::contentScale() const
+qreal QQuickWebPage::contentsScale() const
 {
-    ASSERT(d->contentScale > 0);
-    return d->contentScale;
+    ASSERT(d->contentsScale > 0);
+    return d->contentsScale;
 }
 
 QTransform QQuickWebPage::transformFromItem() const
@@ -270,12 +270,12 @@ QTransform QQuickWebPage::transformFromItem() const
 
 QTransform QQuickWebPage::transformToItem() const
 {
-    return QTransform(d->contentScale, 0, 0, 0, d->contentScale, 0, x(), y(), 1);
+    return QTransform(d->contentsScale, 0, 0, 0, d->contentsScale, 0, x(), y(), 1);
 }
 
 void QQuickWebPagePrivate::updateSize()
 {
-    QSizeF scaledSize = contentSize * contentScale;
+    QSizeF scaledSize = contentsSize * contentsScale;
     q->setSize(scaledSize);
 }
 
