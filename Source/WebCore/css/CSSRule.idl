@@ -25,7 +25,7 @@ module css {
         CustomMarkFunction,
         GenerateIsReachable,
         CustomToJS,
-        Polymorphic,
+        ObjCPolymorphic,
         V8DependentLifetime
     ] CSSRule {
 

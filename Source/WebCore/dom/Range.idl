@@ -36,10 +36,10 @@ module ranges {
         readonly attribute Node commonAncestorContainer
             getter raises(DOMException);
 
-        [OldStyleObjC] void setStart(in [Optional=CallWithDefaultValue] Node refNode, 
+        [ObjCLegacyUnamedParameters] void setStart(in [Optional=CallWithDefaultValue] Node refNode, 
                                      in [Optional=CallWithDefaultValue] long offset)
             raises(RangeException, DOMException);
-        [OldStyleObjC] void setEnd(in [Optional=CallWithDefaultValue] Node refNode, 
+        [ObjCLegacyUnamedParameters] void setEnd(in [Optional=CallWithDefaultValue] Node refNode, 
                                    in [Optional=CallWithDefaultValue] long offset)
             raises(RangeException, DOMException);
         void setStartBefore(in [Optional=CallWithDefaultValue] Node refNode)
@@ -63,7 +63,7 @@ module ranges {
         const unsigned short END_TO_END     = 2;
         const unsigned short END_TO_START   = 3;
 
-        [OldStyleObjC] short compareBoundaryPoints(in [Optional=CallWithDefaultValue] CompareHow how,
+        [ObjCLegacyUnamedParameters] short compareBoundaryPoints(in [Optional=CallWithDefaultValue] CompareHow how,
                                                    in [Optional=CallWithDefaultValue] Range sourceRange)
             raises(DOMException);
 

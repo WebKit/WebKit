@@ -25,7 +25,7 @@ module html {
         HasNameGetter,
         CustomToJS,
         GenerateIsReachable,
-        Polymorphic
+        ObjCPolymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;
         Node item(in [Optional=CallWithDefaultValue] unsigned long index);

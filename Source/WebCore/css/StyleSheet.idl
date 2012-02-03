@@ -25,7 +25,7 @@ module stylesheets {
         CustomMarkFunction,
         GenerateIsReachable,
         CustomToJS,
-        Polymorphic,
+        ObjCPolymorphic,
         V8DependentLifetime
     ] StyleSheet {
         readonly attribute [ConvertNullStringTo=Null] DOMString        type;

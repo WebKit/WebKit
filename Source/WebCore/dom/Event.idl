@@ -25,7 +25,7 @@ module events {
         CustomToJS,
         ConstructorTemplate=Event,
         NoStaticTables,
-        Polymorphic
+        ObjCPolymorphic
     ] Event {
 
         // DOM PhaseType
@@ -63,7 +63,7 @@ module events {
 
         void               stopPropagation();
         void               preventDefault();
-        [OldStyleObjC] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
+        [ObjCLegacyUnamedParameters] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
                                       in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
                                       in [Optional=CallWithDefaultValue] boolean cancelableArg);
 

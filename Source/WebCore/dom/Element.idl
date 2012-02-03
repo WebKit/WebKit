@@ -30,7 +30,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
 
         [ConvertNullStringTo=Null] DOMString getAttribute(in [Optional=CallWithDefaultValue] DOMString name);
-        [OldStyleObjC] void setAttribute(in [Optional=CallWithDefaultValue] DOMString name,
+        [ObjCLegacyUnamedParameters] void setAttribute(in [Optional=CallWithDefaultValue] DOMString name,
                                          in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
         void removeAttribute(in [Optional=CallWithDefaultValue] DOMString name);
@@ -43,22 +43,22 @@ module core {
 
         // DOM Level 2 Core
 
-        [OldStyleObjC] DOMString getAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] DOMString getAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                 in [Optional=CallWithDefaultValue] DOMString localName);
-        [OldStyleObjC] void setAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] void setAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                            in [Optional=CallWithDefaultValue] DOMString qualifiedName, 
                                            in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
-        [OldStyleObjC] void removeAttributeNS(in [TreatNullAs=EmptyString] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] void removeAttributeNS(in [TreatNullAs=EmptyString] DOMString namespaceURI,
                                               in DOMString localName);
-        [OldStyleObjC] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
-        [OldStyleObjC] Attr getAttributeNodeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] Attr getAttributeNodeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                in [Optional=CallWithDefaultValue] DOMString localName);
         Attr setAttributeNodeNS(in [Optional=CallWithDefaultValue] Attr newAttr)
             raises(DOMException);
         boolean hasAttribute(in DOMString name);
-        [OldStyleObjC] boolean hasAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] boolean hasAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                               in [Optional=CallWithDefaultValue] DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;

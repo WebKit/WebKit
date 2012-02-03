@@ -38,7 +38,7 @@ module css {
         [ConvertNullStringTo=Null] DOMString          removeProperty(in [Optional=CallWithDefaultValue] DOMString propertyName)
             raises(DOMException);
         [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=CallWithDefaultValue] DOMString propertyName);
-        [OldStyleObjC] void setProperty(in [Optional=CallWithDefaultValue] DOMString propertyName, 
+        [ObjCLegacyUnamedParameters] void setProperty(in [Optional=CallWithDefaultValue] DOMString propertyName, 
                                         in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString value, 
                                         in [Optional=CallWithDefaultValue] DOMString priority)
             raises(DOMException);

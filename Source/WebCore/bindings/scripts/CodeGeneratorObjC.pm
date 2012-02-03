@@ -863,7 +863,7 @@ sub GenerateHeader
             my $functionName = $function->signature->name;
 
             my $returnType = GetObjCType($function->signature->type);
-            my $needsDeprecatedVersion = (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"});
+            my $needsDeprecatedVersion = (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"ObjCLegacyUnnamedParameters"});
             my $numberOfParameters = @{$function->parameters};
             my %typesToForwardDeclare = ($function->signature->type => 1);
 
@@ -942,7 +942,7 @@ sub GenerateHeader
                 push(@deprecatedHeaderFunctions, $functionDeclaration);
 
                 unless (defined $publicInterfaces{$publicInterfaceKey}) {
-                    warn "Deprecated method $publicInterfaceKey is not in PublicDOMInterfaces.h. All deprecated methods need to be public, or should have the OldStyleObjC IDL attribute removed";
+                    warn "Deprecated method $publicInterfaceKey is not in PublicDOMInterfaces.h. All deprecated methods need to be public, or should have the ObjCLegacyUnnamedParameters IDL attribute removed";
                     $fatalError = 1;
                 }
 
@@ -1036,7 +1036,7 @@ sub GenerateHeader
         push(@internalHeaderContent, "$implType* core($className *);\n");
         push(@internalHeaderContent, "$className *kit($implType*);\n");
 
-        if ($dataNode->extendedAttributes->{Polymorphic}) {
+        if ($dataNode->extendedAttributes->{"ObjCPolymorphic"}) {
             push(@internalHeaderContent, "Class kitClass($implType*);\n");
         }
 
@@ -1537,7 +1537,7 @@ sub GenerateImplementation
                 $implIncludes{"Node.h"} = 1;
             }
 
-            if ($function->signature->extendedAttributes->{"UsesView"}) {
+            if ($function->signature->extendedAttributes->{"ObjCUseDefaultView"}) {
                 push(@functionContent, "    WebCore::DOMWindow* dv = $caller->defaultView();\n");
                 push(@functionContent, "    if (!dv)\n");
                 push(@functionContent, "        return nil;\n");
@@ -1691,7 +1691,7 @@ sub GenerateImplementation
             push(@implContent, "#endif\n\n") if $conditionalString;
 
             # generate the old style method names with un-named parameters, these methods are deprecated
-            if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {
+            if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"ObjCLegacyUnnamedParameters"}) {
                 my $deprecatedFunctionSig = $functionSig;
                 $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
 
@@ -1724,7 +1724,7 @@ sub GenerateImplementation
         push(@implContent, "        return nil;\n");
         push(@implContent, "    if ($className *wrapper = getDOMWrapper(value))\n");
         push(@implContent, "        return [[wrapper retain] autorelease];\n");
-        if ($dataNode->extendedAttributes->{Polymorphic}) {
+        if ($dataNode->extendedAttributes->{"ObjCPolymorphic"}) {
             push(@implContent, "    $className *wrapper = [[kitClass(value) alloc] _init];\n");
             push(@implContent, "    if (!wrapper)\n");
             push(@implContent, "        return nil;\n");

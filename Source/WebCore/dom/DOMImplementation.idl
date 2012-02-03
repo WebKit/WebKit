@@ -27,23 +27,23 @@ module core {
 
         // DOM Level 1
 
-        [OldStyleObjC] boolean hasFeature(in [Optional=CallWithDefaultValue] DOMString feature, 
+        [ObjCLegacyUnamedParameters] boolean hasFeature(in [Optional=CallWithDefaultValue] DOMString feature, 
                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString version);
 
         // DOM Level 2
 
-        [OldStyleObjC] DocumentType createDocumentType(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName,
+        [ObjCLegacyUnamedParameters] DocumentType createDocumentType(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName,
                                                        in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString publicId,
                                                        in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString systemId)
             raises(DOMException);
-        [OldStyleObjC] Document createDocument(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+        [ObjCLegacyUnamedParameters] Document createDocument(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
                                                in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
                                                in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in [Optional=CallWithDefaultValue] DOMString title,
+        [ObjCLegacyUnamedParameters] CSSStyleSheet createCSSStyleSheet(in [Optional=CallWithDefaultValue] DOMString title,
                                                          in [Optional=CallWithDefaultValue] DOMString media)
             raises(DOMException);
 

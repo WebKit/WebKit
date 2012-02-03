@@ -52,7 +52,7 @@ module html {
         attribute [Reflect] boolean required;
         attribute long size;
         
-        [OldStyleObjC] void add(in [Optional=CallWithDefaultValue] HTMLElement element, 
+        [ObjCLegacyUnamedParameters] void add(in [Optional=CallWithDefaultValue] HTMLElement element, 
                                 in [Optional=CallWithDefaultValue] HTMLElement before) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

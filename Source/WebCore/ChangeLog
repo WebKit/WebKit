@@ -1,3 +1,45 @@
+2012-02-03  Kentaro Hara  <haraken@chromium.org>
+
+        Add the "ObjC" prefix to ObjC specific IDL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=77708
+
+        Reviewed by Adam Barth.
+
+        This patch adds the "ObjC" prefix to ObjC specific IDL attributes, as follows:
+
+            [Polymorphic] => [ObjCPolymorphic]
+            [OldStyleObjC] => [ObjCLegacyUnamedParameters]
+            [UsesView] => [ObjCUseDefaultView] (Note: Renamed for clarification)
+
+        No tests. No changes in behavior.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSValue.idl:
+        * css/StyleSheet.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/EventTarget.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/Range.idl:
+        * dom/UIEvent.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * svg/SVGPathSeg.idl:
+        * xml/XPathExpression.idl:
+
 2012-02-03  MORITA Hajime  <morrita@google.com>
 
         TypingCommand should be prepared against detached document.

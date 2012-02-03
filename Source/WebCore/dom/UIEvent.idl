@@ -24,7 +24,7 @@ module events {
         readonly attribute DOMWindow            view;
         readonly attribute long                 detail;
         
-        [OldStyleObjC] void initUIEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+        [ObjCLegacyUnamedParameters] void initUIEvent(in [Optional=CallWithDefaultValue] DOMString type, 
                                         in [Optional=CallWithDefaultValue] boolean canBubble, 
                                         in [Optional=CallWithDefaultValue] boolean cancelable, 
                                         in [Optional=CallWithDefaultValue] DOMWindow view, 

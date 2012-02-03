@@ -38,7 +38,7 @@ module core {
         [ReturnsNew] Comment createComment(in [Optional=CallWithDefaultValue] DOMString data);
         [ReturnsNew] CDATASection createCDATASection(in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
-        [OldStyleObjC, ReturnsNew] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
+        [ObjCLegacyUnamedParameters, ReturnsNew] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
                                                                                      in [Optional=CallWithDefaultValue] DOMString data)
             raises (DOMException);
         [ReturnsNew] Attr createAttribute(in [Optional=CallWithDefaultValue] DOMString name)
@@ -49,16 +49,16 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        [OldStyleObjC, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
+        [ObjCLegacyUnamedParameters, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
                                                    in [Optional] boolean deep)
             raises (DOMException);
-        [OldStyleObjC, ReturnsNew] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                            in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [OldStyleObjC, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [OldStyleObjC] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
         Element            getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
 
@@ -88,12 +88,12 @@ module core {
 
         // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-        [OldStyleObjC] NodeIterator createNodeIterator(in [Optional=CallWithDefaultValue] Node root,
+        [ObjCLegacyUnamedParameters] NodeIterator createNodeIterator(in [Optional=CallWithDefaultValue] Node root,
                                                        in [Optional=CallWithDefaultValue] unsigned long whatToShow,
                                                        in [Optional=CallWithDefaultValue] NodeFilter filter,
                                                        in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
             raises(DOMException);
-        [OldStyleObjC] TreeWalker createTreeWalker(in [Optional=CallWithDefaultValue] Node root,
+        [ObjCLegacyUnamedParameters] TreeWalker createTreeWalker(in [Optional=CallWithDefaultValue] Node root,
                                                    in [Optional=CallWithDefaultValue] unsigned long whatToShow,
                                                    in [Optional=CallWithDefaultValue] NodeFilter filter,
                                                    in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
@@ -109,15 +109,15 @@ module core {
 
         // DOM Level 2 Style (DocumentCSS interface)
 
-        [OldStyleObjC] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
+        [ObjCLegacyUnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
                                                             in [Optional=CallWithDefaultValue] DOMString pseudoElement);
 
         // DOM Level 3 XPath (XPathEvaluator interface)
-        [OldStyleObjC] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
+        [ObjCLegacyUnamedParameters] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
                                                         in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
             raises(DOMException);
         XPathNSResolver    createNSResolver(in Node nodeResolver);
-        [OldStyleObjC, V8Custom] XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
+        [ObjCLegacyUnamedParameters, V8Custom] XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
                                                       in [Optional=CallWithDefaultValue] Node contextNode,
                                                       in [Optional=CallWithDefaultValue] XPathNSResolver resolver,
                                                       in [Optional=CallWithDefaultValue] unsigned short type,
@@ -210,14 +210,14 @@ module core {
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // DOM Level 2 Style Interface
-        [OldStyleObjC, UsesView] CSSStyleDeclaration getComputedStyle(in Element element,
+        [ObjCLegacyUnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(in Element element,
                                                                       in DOMString pseudoElement);
 
         // WebKit extension
         // FIXME: remove the first version once [Optional] is implemented for Objective-C.
-        [UsesView] CSSRuleList getMatchedCSSRules(in Element element,
+        [ObjCUseDefaultView] CSSRuleList getMatchedCSSRules(in Element element,
                                                   in DOMString pseudoElement);
-        [UsesView] CSSRuleList getMatchedCSSRules(in Element element,
+        [ObjCUseDefaultView] CSSRuleList getMatchedCSSRules(in Element element,
                                                   in DOMString pseudoElement,
                                                   in [Optional] boolean authorOnly);
                                                   
