@@ -1,6 +1,6 @@
 2012-02-03  Dan Bernstein  <mitz@apple.com>
 
-        Floating image leaves hole in previous column when wrapped to next column
+        <rdar://problem/10352073> Floating image leaves hole in previous column when wrapped to next column
         https://bugs.webkit.org/show_bug.cgi?id=77694
 
         Reviewed by Darin Adler.
