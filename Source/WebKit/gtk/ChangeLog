@@ -1,3 +1,16 @@
+2012-02-02  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Don't use uint
+        https://bugs.webkit.org/show_bug.cgi?id=77678
+
+        Reviewed by Martin Robinson.
+
+        With the MingGW cross compiler toolchain in Fedora, uint wasn't
+        defined, so use unsigned int instead.
+
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient): Use unsigned int instead of uint
+
 2012-02-02  Claudio Saavedra  <csaavedra@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] WebKitWebView won't work in a GtkOffscreenWindow
