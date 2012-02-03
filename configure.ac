@@ -111,7 +111,14 @@ namespace std {
 }
 extern std::nullptr_t nullptr;
 ], [return 0;],
-CXXFLAGS="$TMPCXXFLAGS", CXXFLAGS="$TMPCXXFLAGS -Wno-c++0x-compat")
+disable_cxx0x_compat=no,
+disable_cxx0x_compat=yes)
+AC_MSG_RESULT($disable_cxx0x_compat)
+if test "$disable_cxx0x_compat" = yes; then
+  CXXFLAGS="$TMPCXXFLAGS -Wno-c++0x-compat"
+else
+  CXXFLAGS="$TMPCXXFLAGS"
+fi
 AC_LANG_POP(C++)
 
 # pthread (not needed on Windows)

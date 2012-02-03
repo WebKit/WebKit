@@ -1,3 +1,18 @@
+2012-02-03  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] configure: Print out the -Wno-c++0x-compat test result
+        https://bugs.webkit.org/show_bug.cgi?id=77757
+
+        Reviewed by Martin Robinson.
+
+        The check whether -Wno-c++0x-compat flag is needed didn't print out
+        the test result (and newline), which caused the following test to be
+        displayed on the same line.
+
+        checking if we have to disable C++0x compat warnings for GCC >= 4.6.0... checking pthread.h usability... yes
+
+        * configure.ac:
+
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         perf-o-matic should store chromium svn revision
