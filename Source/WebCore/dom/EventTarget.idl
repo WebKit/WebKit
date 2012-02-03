@@ -23,7 +23,7 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         ObjCProtocol,
-        PureInterface,
+        CPPPureInterface,
         OmitConstructor
     ] EventTarget {
         [OldStyleObjC] void addEventListener(in DOMString type, 

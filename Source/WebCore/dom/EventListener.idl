@@ -24,7 +24,7 @@ module events {
     interface [
         NoStaticTables,
         ObjCProtocol,
-        PureInterface,
+        CPPPureInterface,
         OmitConstructor
     ] EventListener {
         void               handleEvent(in Event evt);

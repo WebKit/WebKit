@@ -1,3 +1,23 @@
+2012-02-03  Kentaro Hara  <haraken@chromium.org>
+
+        Add the "CPP" prefix to CPP specific IDL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=77707
+
+        Reviewed by Adam Barth.
+
+        This patch adds the "CPP" prefix to a CPP specific IDL attribute.
+        Specifically, this patch renames [PureInterface] to [CPPPureInterface]
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * css/MediaQueryListListener.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * dom/NodeFilter.idl:
+
 2012-01-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Implement touch event emulation in the WebCore layer

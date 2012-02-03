@@ -21,7 +21,7 @@ module view {
     interface [
         NoStaticTables,
         ObjCProtocol,
-        PureInterface,
+        CPPPureInterface,
         OmitConstructor
     ] MediaQueryListListener {
         void queryChanged(in [Optional=CallWithDefaultValue] MediaQueryList list);
