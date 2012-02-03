@@ -89,7 +89,7 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
         if (blockState == Marked && m_marks.get(i))
             continue;
 
-        JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
+        JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
         if (blockState == Zapped && !cell->isZapped())
             continue;
 

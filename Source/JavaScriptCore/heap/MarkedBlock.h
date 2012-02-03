@@ -317,7 +317,7 @@ namespace JSC {
     template <typename Functor> inline void MarkedBlock::forEachCell(Functor& functor)
     {
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-            JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
+            JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
             if (!isLive(cell))
                 continue;
 

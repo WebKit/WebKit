@@ -93,7 +93,7 @@ public:
     {
         if (m_cell)
             validateCell(m_cell);
-        return reinterpret_cast<T*>(m_cell);
+        return reinterpret_cast<T*>(static_cast<void*>(m_cell));
     }
 
     T* operator*() const
@@ -128,7 +128,7 @@ public:
     }
 
 #if ENABLE(GC_VALIDATION)
-    T* unvalidatedGet() const { return reinterpret_cast<T*>(m_cell); }
+    T* unvalidatedGet() const { return reinterpret_cast<T*>(static_cast<void*>(m_cell)); }
 #endif
 
 private:

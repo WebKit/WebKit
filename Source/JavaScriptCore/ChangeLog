@@ -1,3 +1,22 @@
+2012-02-03  Rob Buis  <rbuis@rim.com>
+
+        Fix alignment warnings in ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=55368
+
+        Reviewed by Filip Pizlo.
+
+        Use reinterpret_cast_ptr and static_cast to get rid of alignment issues in ARMv7 code.
+
+        * heap/HandleTypes.h:
+        (JSC::HandleTypes::getFromSlot):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::forEachCell):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::unvalidatedGet):
+
 2012-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Build fix
