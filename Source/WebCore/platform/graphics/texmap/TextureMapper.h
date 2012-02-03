@@ -121,7 +121,7 @@ private:
 #else
     static PassOwnPtr<TextureMapper> platformCreateAccelerated()
     {
-        return 0;
+        return PassOwnPtr<TextureMapper>();
     }
 #endif
     InterpolationQuality m_interpolationQuality;

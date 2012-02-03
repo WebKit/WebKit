@@ -1,3 +1,11 @@
+2012-02-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Speculative unreviewed build fix for Qt-Windows
+        after http://trac.webkit.org/changeset/106659.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::platformCreateAccelerated):
+
 2012-02-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106654.
