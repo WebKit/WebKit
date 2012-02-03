@@ -1,3 +1,19 @@
+2012-02-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        REGRESSION (r105401-105403): Blue flash on css border transition
+        https://bugs.webkit.org/show_bug.cgi?id=77491
+
+        Reviewed by Simon Fraser.
+
+        The new blend function added with r105403 takes unsigned as parameters therefore
+        we have to be careful to not overflow in case the to is less than from (animating
+        from 400 to 0 for example).
+
+        Test: animations/animation-border-overflow.html
+
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::blend):
+
 2012-02-03  Justin Novosad  <junov@chromium.org>
 
         [Chromium] ImageBufferSkia: remove unnecessary overload of flush in
