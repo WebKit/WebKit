@@ -1,3 +1,13 @@
+2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace GNU linker script for exports with export macros in WTF/JSC
+        https://bugs.webkit.org/show_bug.cgi?id=77723
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri: Remove use of GNU linker script on Linux.
+        * Source/qtwebkit-export.map: Removed.
+
 2012-02-03  Shinya Kawanaka  <shinyak@google.com>
 
         Stop calling Element::ensureShadowRoot in Internals.

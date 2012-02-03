@@ -14,8 +14,8 @@ SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
 SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 
 !no_webkit2 {
-    SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
-    linux-g++*: SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
+    SUBDIRS += MiniBrowser/qt/MiniBrowser.pro \
+               WebKitTestRunner/WebKitTestRunner.pro
 }
 
 !win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
