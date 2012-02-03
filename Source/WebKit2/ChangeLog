@@ -1,3 +1,99 @@
+2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Split QQuickWebViewPrivate in two classes, for desktop and touch behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=77632
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace the runtime property setting the desktop behavior on each instance
+        by a static boolean controlling the behavior used by future created WebViews.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        Let only setContentsSize control the size of the drawing area instead of deferring
+        it until geometryChanged is called.
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (createPrivateObject):
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::~QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate):
+        (QQuickWebViewLegacyPrivate::initialize):
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::initialize):
+        (QQuickWebViewFlickablePrivate::loadDidCommit):
+        (QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_updateVisibleContentRectAndScale):
+        (QQuickWebViewFlickablePrivate::_q_suspend):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        (QQuickWebViewFlickablePrivate::computeViewportConstraints):
+        (QQuickWebViewFlickablePrivate::PostTransitionState::apply):
+        (QQuickWebViewExperimental::setFlickableViewportEnabled):
+        The switch is now a static function that has to be called before a WebView
+        is created. The switch can have it's default defined by the deploying platform.
+        (QQuickWebViewExperimental::flickableViewportEnabled):
+        (QQuickWebView::QQuickWebView):
+        On creation of QQuickWebView, the static boolean is read to know if we want
+        a QQuickWebViewTouchPrivate or a QQuickWebViewDesktopPrivate.
+        (QQuickWebView::geometryChanged):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::viewportInteractionEngine):
+        (QQuickWebViewPrivate::updateViewportSize):
+        (QQuickWebViewPrivate::_q_updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::_q_suspend):
+        (QQuickWebViewPrivate::_q_resume):
+        (QQuickWebViewPrivate::pageDidRequestScroll):
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewLegacyPrivate):
+        (QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::viewportInteractionEngine):
+        (PostTransitionState):
+        (QQuickWebViewFlickablePrivate::PostTransitionState::PostTransitionState):
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::currentScale):
+        (QWebViewportInfo::devicePixelRatio):
+        (QWebViewportInfo::initialScale):
+        (QWebViewportInfo::minimumScale):
+        (QWebViewportInfo::maximumScale):
+        (QWebViewportInfo::isScalable):
+        (QWebViewportInfo::layoutSize):
+        * UIProcess/API/qt/tests/publicapi/publicapi.pro:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro: Added.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/DesktopWebView.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_itemSelector.qml: Renamed
+        from Source/WebKit2/UIProcess/API/qt/tests/qmltests/WebView/tst_itemSelector.qml.
+        Moved to DesktopBehavior instead of using a DesktopWebView to workaround the touch event limitation.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_loadHtml.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro: Copied
+        from Source/WebKit2/UIProcess/API/qt/tests/qmltests/qmltests.pro.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        Split qmltests in two executables, tst_qmltests_DesktopBehavior and tst_qmltests_WebView.
+        The former runs without setFlickableViewportEnabled and the later does.
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+        * UIProcess/API/qt/tests/qquickwebview/qquickwebview.pro:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+
 2012-02-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Rename content* to contents* in QQuickWebPage.

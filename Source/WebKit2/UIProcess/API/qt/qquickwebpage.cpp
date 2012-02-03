@@ -51,17 +51,6 @@ QtSGUpdateQueue *QQuickWebPage::sceneGraphUpdateQueue() const
     return &d->sgUpdateQueue;
 }
 
-void QQuickWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
-{
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
-
-    if (!d->useTraditionalDesktopBehaviour)
-        return;
-
-    if (newGeometry.size() != oldGeometry.size())
-        d->setDrawingAreaSize(newGeometry.size().toSize());
-}
-
 QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem)
     : q(q)
     , viewportItem(viewportItem)
@@ -70,7 +59,6 @@ QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* view
     , paintingIsInitialized(false)
     , m_paintNode(0)
     , contentsScale(1)
-    , useTraditionalDesktopBehaviour(false)
 {
 }
 
@@ -218,16 +206,6 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     }
 
     return proxyNode;
-}
-
-bool QQuickWebPage::usesTraditionalDesktopBehaviour() const
-{
-    return d->useTraditionalDesktopBehaviour;
-}
-
-void QQuickWebPage::setUsesTraditionalDesktopBehaviour(bool enable)
-{
-    d->useTraditionalDesktopBehaviour = enable;
 }
 
 QtWebPageEventHandler* QQuickWebPage::eventHandler() const

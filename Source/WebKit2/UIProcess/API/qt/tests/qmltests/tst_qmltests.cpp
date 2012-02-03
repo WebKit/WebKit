@@ -20,6 +20,7 @@
 #include "../bytearraytestdata.h"
 #include "../util.h"
 
+#include "qquickwebview_p.h"
 #include <QVarLengthArray>
 #include <QtQuickTest/quicktest.h>
 #include <QtWidgets/QApplication>
@@ -43,5 +44,9 @@ int main(int argc, char** argv)
     // This can be removed as soon as we do not use QtWidgets any more.
     QApplication app(argc, argv);
     qmlRegisterType<ByteArrayTestData>("Test", 1, 0, "ByteArrayTestData");
+
+#ifdef DISABLE_FLICKABLE_VIEWPORT
+    QQuickWebViewExperimental::setFlickableViewportEnabled(false);
+#endif
     return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
 }

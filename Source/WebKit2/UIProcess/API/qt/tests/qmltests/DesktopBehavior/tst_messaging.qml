@@ -4,7 +4,7 @@ import QtWebKit 3.0
 import QtWebKit.experimental 3.0
 
 Item {
-    DesktopWebView {
+    WebView {
         id: webView
         property variant lastMessage
         experimental.preferences.navigatorQtObjectEnabled: true
@@ -13,7 +13,7 @@ Item {
         }
     }
 
-    DesktopWebView {
+    WebView {
         id: otherWebView
         property variant lastMessage
         experimental.preferences.navigatorQtObjectEnabled: true
@@ -22,7 +22,7 @@ Item {
         }
     }
 
-    DesktopWebView {
+    WebView {
         id: disabledWebView
         property bool receivedMessage
         experimental.preferences.navigatorQtObjectEnabled: false

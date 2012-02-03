@@ -3,11 +3,9 @@ import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 3.0
 
-// FIXME: used because we want to have mouseClick() to open the <select> tag. We can remove this
+// FIXME: Moved to Desktop tests because we want to have mouseClick() to open the <select> tag. We can move it back
 // when TestCase starts supporting touch events, see https://bugreports.qt.nokia.com/browse/QTBUG-23083.
-import "../DesktopBehavior"
-
-DesktopWebView {
+WebView {
     id: webView
 
     width: 400

@@ -61,32 +61,27 @@ class QQuickWebViewPrivate {
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
 
-    QQuickWebViewPrivate(QQuickWebView* viewport);
     virtual ~QQuickWebViewPrivate();
 
-    void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
+    virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
-    void initializeTouch(QQuickWebView* viewport);
-    void initializeDesktop(QQuickWebView* viewport);
     void enableMouseEvents();
     void disableMouseEvents();
 
-    void loadDidCommit();
-
-    void didFinishFirstNonEmptyLayout();
-    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+    virtual void loadDidCommit() { }
+    virtual void didFinishFirstNonEmptyLayout() { }
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args) { }
     void didChangeBackForwardList();
 
     void setNeedsDisplay();
 
-    void updateDesktopViewportSize();
+    virtual QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
+    virtual void updateViewportSize() { }
     void updateTouchViewportSize();
-    QtViewportInteractionEngine::Constraints computeViewportConstraints();
+    virtual void _q_updateVisibleContentRectAndScale() { }
 
-    void _q_updateVisibleContentRectAndScale();
-
-    void _q_suspend();
-    void _q_resume();
+    virtual void _q_suspend() { }
+    virtual void _q_resume() { }
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void _q_onOpenPanelFilesSelected();
     void _q_onOpenPanelFinished(int result);
@@ -102,7 +97,6 @@ public:
     void handleAuthenticationRequiredRequest(const QString& hostname, const QString& realm, const QString& prefilledUsername, QString& username, QString& password);
     bool handleCertificateVerificationRequest(const QString& hostname);
 
-    void setUseTraditionalDesktopBehaviour(bool enable);
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setViewInAttachedProperties(QObject*);
     void setIcon(const QUrl&);
@@ -114,30 +108,15 @@ public:
     // PageClient.
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);
-    void pageDidRequestScroll(const QPoint& pos);
-    void didChangeContentsSize(const QSize& newSize);
+    virtual void pageDidRequestScroll(const QPoint& pos) { }
+    virtual void didChangeContentsSize(const QSize& newSize) { }
     void processDidCrash();
     void didRelaunchProcess();
     PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     void handleDownloadRequest(DownloadProxy*);
 
-private:
-    // This class is responsible for collecting and applying all properties
-    // on the viewport item, when transitioning from page A to page B is finished.
-    // See more at https://trac.webkit.org/wiki/QtWebKitLayoutInteraction
-    class PostTransitionState {
-    public:
-        PostTransitionState(QQuickWebViewPrivate* parent)
-            : p(parent)
-        { }
-
-        void apply();
-
-        QQuickWebViewPrivate* p;
-        QSize contentsSize;
-        QPoint position;
-    };
-
+protected:
+    QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
 
@@ -151,8 +130,6 @@ private:
     QScopedPointer<QtWebPageUIClient> pageUIClient;
 
     QScopedPointer<QQuickWebPage> pageView;
-    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
-
     QQuickWebView* q_ptr;
 
     QDeclarativeComponent* alertDialog;
@@ -163,15 +140,65 @@ private:
     QDeclarativeComponent* itemSelector;
 
     WebCore::ViewportArguments viewportArguments;
-    OwnPtr<PostTransitionState> postTransitionState;
     QFileDialog* fileDialog;
     WKOpenPanelResultListenerRef openPanelResultListener;
 
-    bool isTransitioningToNewPage;
-    bool pageIsSuspended;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     QUrl m_iconURL;
+};
+
+class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {
+    Q_DECLARE_PUBLIC(QQuickWebView)
+public:
+    QQuickWebViewLegacyPrivate(QQuickWebView* viewport);
+    virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
+
+    virtual void updateViewportSize();
+};
+
+class QQuickWebViewFlickablePrivate : public QQuickWebViewPrivate {
+    Q_DECLARE_PUBLIC(QQuickWebView)
+public:
+    QQuickWebViewFlickablePrivate(QQuickWebView* viewport);
+    virtual ~QQuickWebViewFlickablePrivate();
+    virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
+
+    virtual void loadDidCommit();
+    virtual void didFinishFirstNonEmptyLayout();
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+    virtual QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
+    virtual void updateViewportSize();
+    virtual void _q_updateVisibleContentRectAndScale();
+    virtual void _q_suspend();
+    virtual void _q_resume();
+
+    virtual void pageDidRequestScroll(const QPoint& pos);
+    virtual void didChangeContentsSize(const QSize& newSize);
+
+    QtViewportInteractionEngine::Constraints computeViewportConstraints();
+
+private:
+    // This class is responsible for collecting and applying all properties
+    // on the viewport item, when transitioning from page A to page B is finished.
+    // See more at https://trac.webkit.org/wiki/QtWebKitLayoutInteraction
+    class PostTransitionState {
+    public:
+        PostTransitionState(QQuickWebViewFlickablePrivate* parent)
+            : p(parent)
+        { }
+
+        void apply();
+
+        QQuickWebViewFlickablePrivate* p;
+        QSize contentsSize;
+        QPoint position;
+    };
+
+    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
+    OwnPtr<PostTransitionState> postTransitionState;
+    bool isTransitioningToNewPage;
+    bool pageIsSuspended;
 };
 
 #endif // qquickwebview_p_p_h

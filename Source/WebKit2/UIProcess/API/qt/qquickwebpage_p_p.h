@@ -56,7 +56,6 @@ public:
 
     QSizeF contentsSize;
     qreal contentsScale;
-    bool useTraditionalDesktopBehaviour;
 };
 
 #endif // qquickwebpage_p_p_h

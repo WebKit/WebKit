@@ -75,7 +75,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     , m_modalEventLoop(0)
 {
     QQuickWebViewExperimental experimental(m_view);
-    experimental.setUseTraditionalDesktopBehaviour(true);
     experimental.setRenderToOffscreenBuffer(true);
 }
 

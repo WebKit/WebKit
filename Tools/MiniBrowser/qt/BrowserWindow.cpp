@@ -54,8 +54,6 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
     connect(rootObject(), SIGNAL(newWindow(QString)), this, SLOT(newWindow(QString)));
-    if (options->useTraditionalDesktopBehavior())
-        webView()->experimental()->setUseTraditionalDesktopBehaviour(true);
     if (options->startFullScreen())
         showFullScreen();
     else {

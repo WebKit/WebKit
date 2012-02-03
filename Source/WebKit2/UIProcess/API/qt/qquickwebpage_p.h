@@ -49,16 +49,12 @@ public:
     QTransform transformFromItem() const;
     QTransform transformToItem() const;
 
-    bool usesTraditionalDesktopBehaviour() const;
-    void setUsesTraditionalDesktopBehaviour(bool enable);
-
     QtWebPageEventHandler* eventHandler() const;
 
     // Internal. To be removed soon.
     WebKit::QtSGUpdateQueue* sceneGraphUpdateQueue() const;
 
 protected:
-    virtual void geometryChanged(const QRectF&, const QRectF&);
     virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);
 
 private:

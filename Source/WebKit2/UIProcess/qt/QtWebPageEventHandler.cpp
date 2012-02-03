@@ -87,6 +87,7 @@ static inline WebCore::DragOperation dropActionToDragOperation(Qt::DropActions a
 
 QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView)
     : m_webPageProxy(toImpl(pageRef))
+    , m_interactionEngine(0)
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)

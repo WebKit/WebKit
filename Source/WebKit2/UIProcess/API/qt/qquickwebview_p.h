@@ -213,7 +213,6 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* certificateVerificationDialog READ certificateVerificationDialog WRITE setCertificateVerificationDialog NOTIFY certificateVerificationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
-    Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
     Q_ENUMS(NavigationRequestAction)
@@ -238,8 +237,6 @@ public:
     void setCertificateVerificationDialog(QDeclarativeComponent*);
     QDeclarativeComponent* itemSelector() const;
     void setItemSelector(QDeclarativeComponent*);
-    bool useTraditionalDesktopBehaviour() const;
-    void setUseTraditionalDesktopBehaviour(bool enable);
 
     QWebViewportInfo* viewportInfo();
 
@@ -258,6 +255,8 @@ public:
     // C++ only
     bool renderToOffscreenBuffer() const;
     void setRenderToOffscreenBuffer(bool enable);
+    static void setFlickableViewportEnabled(bool enable);
+    static bool flickableViewportEnabled();
 
 public Q_SLOTS:
     void goBackTo(int index);

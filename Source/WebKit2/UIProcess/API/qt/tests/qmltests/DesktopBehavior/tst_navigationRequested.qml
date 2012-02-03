@@ -11,7 +11,7 @@ Item {
     property url beginUrl: Qt.resolvedUrl("../common/test2.html")
     property url endUrl: Qt.resolvedUrl("../common/test1.html")
 
-    DesktopWebView {
+    WebView {
         id: webView
         width: 200
         height: 200
@@ -51,7 +51,7 @@ Item {
         signalName: "loadSucceeded"
     }
 
-    DesktopWebView {
+    WebView {
         id: otherWebView
     }
 

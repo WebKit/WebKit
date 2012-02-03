@@ -5,8 +5,7 @@ TARGET = tst_$$TARGET
 
 HEADERS += ../bytearraytestdata.h
 
-SOURCES += $${TARGET}.cpp \
-           ../util.cpp \
+SOURCES += ../util.cpp \
            ../bytearraytestdata.cpp
 INCLUDEPATH += $$PWD
 

@@ -43,7 +43,6 @@ class BrowserWindow;
 class WindowOptions : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool printLoadedUrls READ printLoadedUrls)
-    Q_PROPERTY(bool useTraditionalDesktopBehavior READ useTraditionalDesktopBehavior)
     Q_PROPERTY(bool startMaximized READ startMaximized)
     Q_PROPERTY(bool touchMockingEnabled READ touchMockingEnabled WRITE setTouchMockingEnabled NOTIFY touchMockingEnabledChanged)
 
@@ -51,7 +50,6 @@ public:
     WindowOptions(QObject* parent = 0)
         : QObject(parent)
         , m_printLoadedUrls(false)
-        , m_useTraditionalDesktopBehavior(false)
         , m_startMaximized(false)
         , m_touchMockingEnabled(true)
         , m_windowSize(QSize(980, 735))
@@ -60,8 +58,6 @@ public:
 
     void setPrintLoadedUrls(bool enabled) { m_printLoadedUrls = enabled; }
     bool printLoadedUrls() const { return m_printLoadedUrls; }
-    void setUseTraditionalDesktopBehavior(bool enabled) { m_useTraditionalDesktopBehavior = enabled; }
-    bool useTraditionalDesktopBehavior() const { return m_useTraditionalDesktopBehavior; }
     void setStartMaximized(bool enabled) { m_startMaximized = enabled; }
     bool startMaximized() const { return m_startMaximized; }
     void setStartFullScreen(bool enabled) { m_startFullScreen = enabled; }
@@ -82,7 +78,6 @@ signals:
 
 private:
     bool m_printLoadedUrls;
-    bool m_useTraditionalDesktopBehavior;
     bool m_startMaximized;
     bool m_startFullScreen;
     bool m_touchMockingEnabled;

@@ -76,7 +76,7 @@ for(library, WEBKIT) {
 # Help keep the build tree clean
 MOC_DIR = moc
 RCC_DIR = rcc
-OBJECTS_DIR = obj/$$activeBuildConfig()
+isEmpty(OBJECTS_DIR): OBJECTS_DIR = obj/$$activeBuildConfig()
 
 # General default build tweaks
 DEFINES += \

@@ -1,3 +1,24 @@
+2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Split QQuickWebViewPrivate in two classes, for desktop and touch behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=77632
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::sendTouchEvent):
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions):
+        (WindowOptions::WindowOptions):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace GNU linker script for exports with export macros in WTF/JSC
