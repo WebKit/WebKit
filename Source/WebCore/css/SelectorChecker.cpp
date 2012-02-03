@@ -500,12 +500,9 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
                 if (parentStyle)
                     parentStyle->setChildrenAffectedByDirectAdjacentRules();
             }
-            Node* n = e->previousSibling();
-            while (n && !n->isElementNode())
-                n = n->previousSibling();
-            if (!n)
+            e = e->previousElementSibling();
+            if (!e)
                 return SelectorFailsAllSiblings;
-            e = static_cast<Element*>(n);
             return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     case CSSSelector::IndirectAdjacent:
@@ -515,12 +512,9 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
                 parentStyle->setChildrenAffectedByForwardPositionalRules();
         }
         while (true) {
-            Node* n = e->previousSibling();
-            while (n && !n->isElementNode())
-                n = n->previousSibling();
-            if (!n)
+            e = e->previousElementSibling();
+            if (!e)
                 return SelectorFailsAllSiblings;
-            e = static_cast<Element*>(n);
             SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
@@ -772,12 +766,9 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             }
         case CSSSelector::PseudoFirstChild:
             // first-child matches the first child that is an element
-            if (e->parentNode() && e->parentNode()->isElementNode()) {
+            if (e->parentElement()) {
                 bool result = false;
-                Node* n = e->previousSibling();
-                while (n && !n->isElementNode())
-                    n = n->previousSibling();
-                if (!n)
+                if (!e->previousElementSibling())
                     result = true;
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
@@ -792,17 +783,15 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             break;
         case CSSSelector::PseudoFirstOfType:
             // first-of-type matches the first element of its type
-            if (e->parentNode() && e->parentNode()->isElementNode()) {
-                bool result = false;
+            if (e->parentElement()) {
+                bool result = true;
                 const QualifiedName& type = e->tagQName();
-                Node* n = e->previousSibling();
-                while (n) {
-                    if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                    if (sibling->hasTagName(type)) {
+                        result = false;
                         break;
-                    n = n->previousSibling();
+                    }
                 }
-                if (!n)
-                    result = true;
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                     if (parentStyle)
@@ -814,14 +803,7 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
         case CSSSelector::PseudoLastChild:
             // last-child matches the last child that is an element
             if (Element* parentElement = e->parentElement()) {
-                bool result = false;
-                if (parentElement->isFinishedParsingChildren()) {
-                    Node* n = e->nextSibling();
-                    while (n && !n->isElementNode())
-                        n = n->nextSibling();
-                    if (!n)
-                        result = true;
-                }
+                bool result = parentElement->isFinishedParsingChildren() && !e->nextElementSibling();
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
@@ -843,36 +825,19 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                bool result = false;
                 const QualifiedName& type = e->tagQName();
-                Node* n = e->nextSibling();
-                while (n) {
-                    if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                        break;
-                    n = n->nextSibling();
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                    if (sibling->hasTagName(type))
+                        return false;
                 }
-                if (!n)
-                    result = true;
-                return result;
+                return true;
             }
             break;
         case CSSSelector::PseudoOnlyChild:
             if (Element* parentElement = e->parentElement()) {
-                bool firstChild = false;
-                bool lastChild = false;
+                bool firstChild = !e->previousElementSibling();
+                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && !e->nextElementSibling();
 
-                Node* n = e->previousSibling();
-                while (n && !n->isElementNode())
-                    n = n->previousSibling();
-                if (!n)
-                    firstChild = true;
-                if (firstChild && parentElement->isFinishedParsingChildren()) {
-                    n = e->nextSibling();
-                    while (n && !n->isElementNode())
-                        n = n->nextSibling();
-                    if (!n)
-                        lastChild = true;
-                }
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
@@ -882,10 +847,10 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                     }
                     if (firstChild && childStyle)
                         childStyle->setFirstChildState();
-                    if (lastChild && childStyle)
+                    if (onlyChild && childStyle)
                         childStyle->setLastChildState();
                 }
-                return firstChild && lastChild;
+                return onlyChild;
             }
             break;
         case CSSSelector::PseudoOnlyOfType:
@@ -900,28 +865,16 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                bool firstChild = false;
-                bool lastChild = false;
                 const QualifiedName& type = e->tagQName();
-                Node* n = e->previousSibling();
-                while (n) {
-                    if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                        break;
-                    n = n->previousSibling();
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                    if (sibling->hasTagName(type))
+                        return false;
                 }
-                if (!n)
-                    firstChild = true;
-                if (firstChild) {
-                    n = e->nextSibling();
-                    while (n) {
-                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                            break;
-                        n = n->nextSibling();
-                    }
-                    if (!n)
-                        lastChild = true;
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                    if (sibling->hasTagName(type))
+                        return false;
                 }
-                return firstChild && lastChild;
+                return true;
             }
             break;
         case CSSSelector::PseudoNthChild:
@@ -929,18 +882,14 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 break;
             if (Element* parentElement = e->parentElement()) {
                 int count = 1;
-                Node* n = e->previousSibling();
-                while (n) {
-                    if (n->isElementNode()) {
-                        RenderStyle* s = n->renderStyle();
-                        unsigned index = s ? s->childIndex() : 0;
-                        if (index) {
-                            count += index;
-                            break;
-                        }
-                        count++;
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                    RenderStyle* s = sibling->renderStyle();
+                    unsigned index = s ? s->childIndex() : 0;
+                    if (index) {
+                        count += index;
+                        break;
                     }
-                    n = n->previousSibling();
+                    count++;
                 }
 
                 if (!m_isCollectingRulesOnly) {
@@ -962,13 +911,10 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
             if (Element* parentElement = e->parentElement()) {
                 int count = 1;
                 const QualifiedName& type = e->tagQName();
-                Node* n = e->previousSibling();
-                while (n) {
-                    if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                        count++;
-                    n = n->previousSibling();
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                    if (sibling->hasTagName(type))
+                        ++count;
                 }
-
                 if (!m_isCollectingRulesOnly) {
                     RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
@@ -991,12 +937,8 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
                 int count = 1;
-                Node* n = e->nextSibling();
-                while (n) {
-                    if (n->isElementNode())
-                        count++;
-                    n = n->nextSibling();
-                }
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
+                    ++count;
                 if (sel->matchNth(count))
                     return true;
             }
@@ -1014,11 +956,9 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
                     return false;
                 int count = 1;
                 const QualifiedName& type = e->tagQName();
-                Node* n = e->nextSibling();
-                while (n) {
-                    if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                        count++;
-                    n = n->nextSibling();
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                    if (sibling->hasTagName(type))
+                        ++count;
                 }
                 if (sel->matchNth(count))
                     return true;

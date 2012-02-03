@@ -506,6 +506,22 @@ inline Element* Node::parentElement() const
     return parent && parent->isElementNode() ? toElement(parent) : 0;
 }
 
+inline Element* Element::previousElementSibling() const
+{
+    Node* n = previousSibling();
+    while (n && !n->isElementNode())
+        n = n->previousSibling();
+    return static_cast<Element*>(n);
+}
+
+inline Element* Element::nextElementSibling() const
+{
+    Node* n = nextSibling();
+    while (n && !n->isElementNode())
+        n = n->nextSibling();
+    return static_cast<Element*>(n);
+}
+
 inline NamedNodeMap* Element::ensureUpdatedAttributes() const
 {
     updateInvalidAttributes();

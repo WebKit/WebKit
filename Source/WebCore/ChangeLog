@@ -1,3 +1,25 @@
+2012-02-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Simplify SelectorChecker::checkSelector and checkOneSelector
+        https://bugs.webkit.org/show_bug.cgi?id=77697
+
+        Make use of Element::previous/nextElementSibling.
+        Made those methods inline.
+        Simplify code in checkSelector and checkOneSelector, esp. for first/nth/nth-last/last/only-child implementations.
+
+        Reviewed by Andreas Kling.
+
+        No new tests. (refactoring)
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        (WebCore::Element::previousElementSibling):
+        (WebCore):
+        (WebCore::Element::nextElementSibling):
+
 2012-02-02  Keishi Hattori  <keishi@webkit.org>
 
         ColorChooserClient is missing a virtual destructor
