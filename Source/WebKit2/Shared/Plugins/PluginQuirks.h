@@ -33,7 +33,7 @@ public:
     enum PluginQuirk {
         // Mac specific quirks:
 #if PLUGIN_ARCHITECTURE(MAC)
-        // The plug-in wants the call to getprogame() to return "WebKitPluginHost".
+        // The plug-in wants the call to getprogname() to return "WebKitPluginHost".
         // Adobe Flash Will not handle key down events otherwise.
         PrognameShouldBeWebKitPluginHost,
 

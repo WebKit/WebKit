@@ -1,3 +1,15 @@
+2012-02-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac WK2] Use a minimally invasive way to fake plug-in process name
+        https://bugs.webkit.org/show_bug.cgi?id=77682
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/PluginProcess.cpp: (WebKit::PluginProcess::netscapePluginModule):
+        Only change the name as it's seen from within the process.
+
+        * Shared/Plugins/PluginQuirks.h: Fixed a typo.
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77691
