@@ -106,6 +106,7 @@ struct _Ewk_Tiled_Backing_Store_Data {
         bool size : 1;
         bool model : 1;
         bool offset : 1;
+        bool contentsSize : 1;
     } changed;
 #ifdef DEBUG_MEM_LEAKS
     Ecore_Event_Handler* sig_usr;
@@ -1322,10 +1323,10 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
 
     ewk_tile_matrix_freeze(priv->model.matrix);
 
-    if (priv->changed.model && !priv->changed.size)
+    if (priv->changed.contentsSize)
         ewk_tile_matrix_invalidate(priv->model.matrix);
 
-    if (!priv->render.suspend && priv->changed.model) {
+    if (!priv->render.suspend && (priv->changed.model || priv->changed.contentsSize)) {
         unsigned long columns, rows;
 
         columns = priv->model.width / priv->view.tile.width + 1;
@@ -1356,7 +1357,7 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
         priv->changed.size = false;
     }
 
-    if (!priv->render.suspend && priv->changed.model) {
+    if (!priv->render.suspend && (priv->changed.model || priv->changed.contentsSize)) {
         _ewk_tiled_backing_store_fill_renderers(priv);
         ewk_tile_matrix_resize(priv->model.matrix,
                                priv->model.current.columns,
@@ -1371,6 +1372,8 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
         { 0, 0, priv->model.width, priv->model.height };
         ewk_tile_matrix_update(priv->model.matrix, &rect,
                                priv->view.tile.zoom);
+
+        priv->changed.contentsSize = false;
     }
 
     ewk_tile_matrix_thaw(priv->model.matrix);
@@ -1796,7 +1799,7 @@ void ewk_tiled_backing_store_contents_resize(Evas_Object* ewkBackingStore, Evas_
 
     priv->model.width = width;
     priv->model.height = height;
-    priv->changed.model = true;
+    priv->changed.contentsSize = true;
 
     DBG("w,h=%d, %d", width, height);
     _ewk_tiled_backing_store_changed(priv);

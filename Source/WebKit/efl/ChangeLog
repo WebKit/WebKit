@@ -1,3 +1,21 @@
+2012-02-02  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Add contentsSize flag into ewk_tiled_backing_store's private data.
+        https://bugs.webkit.org/show_bug.cgi?id=77586
+
+        Reviewed by Andreas Kling.
+
+        As both zoom and content size change are identified by model flag,
+        ewk_tiled_backing_store can not detect the conflict between them.
+        In order to prevent conflict between zoom and contents size change,
+        contentsSize flag is newly added.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_Ewk_Tiled_Backing_Store_Item):
+        (_Ewk_Tiled_Backing_Store_Data):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (ewk_tiled_backing_store_contents_resize):
+
 2012-02-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Remove check for ENABLE_GTK_PLUGINS_SUPPORT
