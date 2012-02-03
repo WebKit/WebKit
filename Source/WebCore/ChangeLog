@@ -1,3 +1,31 @@
+2012-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollingTree class
+        https://bugs.webkit.org/show_bug.cgi?id=77695
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        Create a scrolling tree.
+
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        Assert that the scrolling tree is null.
+
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+        Null out the scrolling tree member variable and tell it to invalidate itself.
+
+        * page/scrolling/ScrollingTree.cpp: Added.
+
+        (WebCore::ScrollingTree::invalidate):
+        Null out the scrolling coordinator, breaking the reference cycle between the scrolling
+        coordinator and the scrolling tree.
+    
+        * page/scrolling/ScrollingTree.h: Added.
+
 2012-02-02  Tim Dresser  <tdresser@chromium.org>
 
         Refactor plugin drawing to be more data driven

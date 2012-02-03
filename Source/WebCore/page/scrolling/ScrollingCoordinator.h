@@ -44,6 +44,7 @@ class FrameView;
 class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
+class ScrollingTree;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
@@ -96,6 +97,7 @@ private:
 
 private:
     Page* m_page;
+    RefPtr<ScrollingTree> m_scrollingTree;
 
     Mutex m_mainFrameGeometryMutex;
     IntRect m_mainFrameVisibleContentRect;

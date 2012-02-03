@@ -36,6 +36,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollingThread.h"
+#include "ScrollingTree.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -49,6 +50,7 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
+    , m_scrollingTree(ScrollingTree::create(this))
     , m_didDispatchDidUpdateMainFrameScrollPosition(false)
 {
 }
@@ -56,12 +58,16 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
 ScrollingCoordinator::~ScrollingCoordinator()
 {
     ASSERT(!m_page);
+    ASSERT(!m_scrollingTree);
 }
 
 void ScrollingCoordinator::pageDestroyed()
 {
     ASSERT(m_page);
     m_page = 0;
+
+    // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
+    ScrollingThread::dispatch(bind(&ScrollingTree::invalidate, m_scrollingTree.release()));
 }
 
 bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView) const
