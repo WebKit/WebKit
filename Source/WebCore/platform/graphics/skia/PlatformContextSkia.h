@@ -152,6 +152,7 @@ public:
 
     // Returns the canvas used for painting, NOT guaranteed to be non-null.
     SkCanvas* canvas() { return m_canvas; }
+    const SkCanvas* canvas() const { return m_canvas; }
 
     InterpolationQuality interpolationQuality() const;
     void setInterpolationQuality(InterpolationQuality interpolationQuality);

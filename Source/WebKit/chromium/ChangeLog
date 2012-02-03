@@ -1,3 +1,14 @@
+2012-02-03  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Use the current clip when marking paints as opaque
+        https://bugs.webkit.org/show_bug.cgi?id=77582
+
+        Reviewed by Stephen White.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium deps.

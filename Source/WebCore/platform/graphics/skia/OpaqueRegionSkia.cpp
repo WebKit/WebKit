@@ -34,6 +34,7 @@
 
 #include "PlatformContextSkia.h"
 
+#include "SkCanvas.h"
 #include "SkShader.h"
 
 namespace WebCore {
@@ -236,19 +237,29 @@ void OpaqueRegionSkia::didDrawUnbounded(const SkPaint& paint, bool drawsOpaque)
     }
 }
 
-void OpaqueRegionSkia::markRectAsOpaque(const PlatformContextSkia* context, const SkRect& rect)
+void OpaqueRegionSkia::markRectAsOpaque(const PlatformContextSkia* context, const SkRect& paintRect)
 {
     // We want to keep track of an opaque region but bound its complexity at a constant size.
     // We keep track of the largest rectangle seen by area. If we can add the new rect to this
     // rectangle then we do that, as that is the cheapest way to increase the area returned
     // without increasing the complexity.
 
-    if (rect.isEmpty())
+    if (paintRect.isEmpty())
         return;
     if (!context->clippedToImage().isOpaque())
         return;
-    if (m_opaqueRect.contains(rect))
+    if (context->canvas()->getClipType() != SkCanvas::kRect_ClipType)
         return;
+    if (m_opaqueRect.contains(paintRect))
+        return;
+
+    // Apply the current clip.
+    SkIRect deviceClip;
+    context->canvas()->getClipDeviceBounds(&deviceClip);
+    SkRect rect = paintRect;
+    if (!rect.intersect(SkIntToScalar(deviceClip.fLeft), SkIntToScalar(deviceClip.fTop), SkIntToScalar(deviceClip.fRight), SkIntToScalar(deviceClip.fBottom)))
+        return;
+
     if (rect.contains(m_opaqueRect)) {
         m_opaqueRect = rect;
         return;

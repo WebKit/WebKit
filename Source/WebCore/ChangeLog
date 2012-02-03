@@ -1,3 +1,17 @@
+2012-02-03  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Use the current clip when marking paints as opaque
+        https://bugs.webkit.org/show_bug.cgi?id=77582
+
+        Reviewed by Stephen White.
+
+        New unit test in PlatformContextSkiaTest.cpp
+
+        * platform/graphics/skia/OpaqueRegionSkia.cpp:
+        (WebCore::OpaqueRegionSkia::markRectAsOpaque):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::canvas):
+
 2012-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         inspector/debugger/pause-in-inline-script.html asserts in chromium debug
