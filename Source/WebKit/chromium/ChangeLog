@@ -1,3 +1,9 @@
+2012-02-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium deps.
+
+        * DEPS:
+
 2012-02-02  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Adding the embedding code for MediaStreamCenter
