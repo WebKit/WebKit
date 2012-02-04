@@ -1,3 +1,10 @@
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf bot build fix.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_json):
+
 2012-02-03  Adam Barth  <abarth@webkit.org>
 
         Add a blank "Expected Failures" tab to garden-o-matic

@@ -154,6 +154,7 @@ class PerfTestsRunner(object):
                 contents[key] = value
 
         filesystem = self._host.filesystem
+        succeeded = False
         if source_json_path:
             try:
                 source_json_file = filesystem.open_text_file_for_reading(source_json_path)
