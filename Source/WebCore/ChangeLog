@@ -1,3 +1,13 @@
+2012-02-03  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] WebCore::toV8Context crashes if DomWindow::frame() returns null.
+        https://bugs.webkit.org/show_bug.cgi?id=77686.
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/V8Helpers.cpp:
+        (WebCore::toV8Context):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         The scrolling tree should be able to handle wheel events
