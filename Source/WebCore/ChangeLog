@@ -1,3 +1,20 @@
+2012-02-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: get rid of cycles in retaining tree
+        https://bugs.webkit.org/show_bug.cgi?id=77801
+
+        Drive by fix: 'retained by' prefix was removed.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._updateHasChildren):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+        * inspector/front-end/profilesPanel.css:
+        (.cycled-ancessor-node):
+
 2012-02-04  Kentaro Hara  <haraken@chromium.org>
 
         Add the "JS" prefix to JSC specific IDL attributes
