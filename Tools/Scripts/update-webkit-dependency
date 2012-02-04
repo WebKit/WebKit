@@ -103,7 +103,7 @@ if (open NEW, "$tmpAbsDir/$file.headers") {
 }
 
 print "Downloading $zipFile...\n\n";
-$result = system "curl -o \"$tmpAbsDir/$zipFile\" $libsURL";
+$result = system "curl -k --sslv3 -o \"$tmpAbsDir/$zipFile\" $libsURL";
 die "Couldn't download $zipFile!" if $result;
 
 $result = system "unzip", "-q", "-d", $tmpAbsDir, "$tmpAbsDir/$zipFile";
