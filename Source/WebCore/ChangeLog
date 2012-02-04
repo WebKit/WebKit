@@ -1,3 +1,20 @@
+2012-02-04  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Fix multi-second hangs in compositor invalidating large layers
+        https://bugs.webkit.org/show_bug.cgi?id=77774
+
+        Reviewed by James Robinson.
+
+        Correctness covered by existing tests.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        Remove tiles from the tiler when they are invalid (ie., no longer have
+        texture backing).
+        (WebCore::TiledLayerChromium::invalidateRect):
+        Instead of iterating over the tile indices (which may be very large),
+        iterate over the tile hash map instead.
+
 2012-02-04  Swapna P  <spottabathini@innominds.com>
 
         Reviewed by Antonio Gomes.

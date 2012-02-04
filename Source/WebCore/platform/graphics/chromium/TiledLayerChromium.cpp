@@ -249,18 +249,23 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     tiledLayer->setSkipsDraw(m_skipsDraw);
     tiledLayer->setContentsSwizzled(m_sampledTexelFormat != LayerTextureUpdater::SampledTexelFormatRGBA);
     tiledLayer->setTilingData(*m_tiler);
+    Vector<UpdatableTile*> invalidTiles;
 
     for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
         int i = iter->first.first;
         int j = iter->first.second;
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
-        if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
+        if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
+            invalidTiles.append(tile);
             continue;
+        }
         if (tile->isDirty())
             continue;
 
         tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->m_opaqueRect);
     }
+    for (Vector<UpdatableTile*>::const_iterator iter = invalidTiles.begin(); iter != invalidTiles.end(); ++iter)
+        m_tiler->takeTile((*iter)->i(), (*iter)->j());
 }
 
 TextureManager* TiledLayerChromium::textureManager() const
@@ -310,17 +315,12 @@ void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
     if (m_tiler->isEmpty() || layerRect.isEmpty() || m_skipsDraw)
         return;
 
-    int left, top, right, bottom;
-    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
-    for (int j = top; j <= bottom; ++j) {
-        for (int i = left; i <= right; ++i) {
-            UpdatableTile* tile = tileAt(i, j);
-            if (!tile)
-                continue;
-            IntRect bound = m_tiler->tileRect(tile);
-            bound.intersect(layerRect);
-            tile->m_dirtyRect.unite(bound);
-        }
+    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
+        UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+        ASSERT(tile);
+        IntRect bound = m_tiler->tileRect(tile);
+        bound.intersect(layerRect);
+        tile->m_dirtyRect.unite(bound);
     }
 }
 
