@@ -51,7 +51,7 @@ my $versionFile = $file . "Version";
 my $pathToVersionFile = File::Spec->catfile($webkitLibrariesDir, $versionFile);
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
-my $versionFileURL = "http://developer.apple.com/opensource/internet/$versionFile";
+my $versionFileURL = "https://developer.apple.com/opensource/internet/$versionFile";
 
 my $extractedVersion = extractedVersion();
 
