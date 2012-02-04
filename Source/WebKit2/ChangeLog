@@ -1,3 +1,14 @@
+2012-02-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Use properly quoted string literals
+        https://bugs.webkit.org/show_bug.cgi?id=77583
+
+        Reviewed by Darin Adler.
+
+        Also added some FIXMEs.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2012-02-03  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10742441> and https://bugs.webkit.org/show_bug.cgi?id=77766

@@ -39,8 +39,8 @@
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
        (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")
        (home-literal "/Library/Preferences/.GlobalPreferences.plist")
-       (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\.")
-       (home-regex "/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
+       (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
+       (home-regex #"/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
        (home-literal "/Library/Preferences/com.apple.ATS.plist")
        (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
        (home-literal "/Library/Preferences/com.apple.HIToolbox.plist")
@@ -49,7 +49,7 @@
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist")
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
-       (home-regex "/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
+       (home-regex #"/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
 
        ;; On-disk WebKit2 framework location, to account for debug installations
        ;; outside of /System/Library/Frameworks
@@ -86,8 +86,8 @@
 ;; Writable preferences and temporary files
 (allow file*
        (home-subpath "/Library/Caches/com.apple.WebProcess")
-       (home-regex "/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
-       (home-regex "/Library/Preferences/com\.apple\.WebProcess\.")
+       (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
+       (home-regex #"/Library/Preferences/com\.apple\.WebProcess\.")
 
        ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
        (home-subpath "/Library/Keychains"))
@@ -96,9 +96,11 @@
 (allow file*
     (subpath "/private/var/db/mds/system"))
 
-;; Darwin temporary files and Security mds caches, if present
+;; FIXME: <rdar://problem/10792047> Use private user cache directory
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
+
+;; FIXME: <rdar://problem/10785457> Use private temporary directory
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
