@@ -1,3 +1,33 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling tree should be able to handle wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=77794
+
+        Reviewed by Andreas Kling.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::tryToHandleWheelEvent):
+        New function. Currently this always returns that it was able to handle the wheel event,
+        but this will change in the future.
+
+        (WebCore::ScrollingTree::handleWheelEvent):
+        Ask the root node to handle the wheel event.
+
+        * page/scrolling/ScrollingTreeNode.h:
+        Add a handleWheelEvent pure virtual member function.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::handleWheelEvent):
+        Call scrollBy for now. Eventually this should use a scroll elasticity controller to handle
+        things like rubber-banding.
+
+        (WebCore::ScrollingTreeNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeNodeMac::setScrollPosition):
+        Add getters and setters for the scroll position.
+
+        (WebCore::ScrollingTreeNodeMac::scrollBy):
+        Update the scroll position given the offset.
+
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in Node::dispatchSubtreeModifiedEvent

@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class PlatformWheelEvent;
 class ScrollingCoordinator;
 class ScrollingTreeNode;
 class ScrollingTreeState;
@@ -48,6 +49,14 @@ class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
 public:
     static PassRefPtr<ScrollingTree> create(ScrollingCoordinator*);
     ~ScrollingTree();
+
+    // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
+    // Returns true if the wheel event can be handled on the scrolling thread and false if the
+    // event must be sent again to the WebCore event handler.
+    bool tryToHandleWheelEvent(const PlatformWheelEvent&);
+
+    // Must be called from the scrolling thread. Handles the wheel event.
+    void handleWheelEvent(const PlatformWheelEvent&);
 
     void invalidate();
     void commitNewTreeState(PassOwnPtr<ScrollingTreeState>);

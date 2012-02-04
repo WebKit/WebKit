@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "PlatformWheelEvent.h"
 #include "ScrollingTreeState.h"
 
 namespace WebCore {
@@ -48,6 +49,30 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 
     if (state->changedProperties() & ScrollingTreeState::ScrollLayer)
         m_scrollLayer = state->platformScrollLayer();
+}
+
+void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    // FXIME: This needs to handle rubberbanding.
+    scrollBy(IntSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()));
+}
+
+IntPoint ScrollingTreeNodeMac::scrollPosition() const
+{
+    CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+    return IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+}
+
+void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& position)
+{
+    m_scrollLayer.get().position = CGPointMake(-position.x(), -position.y());
+}
+
+void ScrollingTreeNodeMac::scrollBy(const IntSize &offset)
+{
+    setScrollPosition(scrollPosition() + offset);
+
+    // FIXME: Tell the scrolling coordinator that our position changed.
 }
 
 } // namespace WebCore

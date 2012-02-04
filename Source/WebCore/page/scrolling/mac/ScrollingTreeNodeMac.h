@@ -41,6 +41,12 @@ public:
 
 private:
     virtual void update(ScrollingTreeState*) OVERRIDE;
+    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
+
+    IntPoint scrollPosition() const;
+    void setScrollPosition(const IntPoint&);
+
+    void scrollBy(const IntSize&);
 
     RetainPtr<CALayer> m_scrollLayer;
 };

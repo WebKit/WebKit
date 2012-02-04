@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class PlatformWheelEvent;
 class ScrollingTree;
 class ScrollingTreeState;
 
@@ -42,6 +43,7 @@ public:
     virtual ~ScrollingTreeNode();
 
     virtual void update(ScrollingTreeState*);
+    virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
 
 protected:
     explicit ScrollingTreeNode(ScrollingTree*);

@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "PlatformWheelEvent.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeNode.h"
@@ -49,6 +50,22 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
 ScrollingTree::~ScrollingTree()
 {
     ASSERT(!m_scrollingCoordinator);
+}
+
+bool ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    // FIXME: Check for wheel event handlers.
+    // FIXME: Check if we're over a subframe or overflow div.
+
+    ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
+    return true;
+}
+
+void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    m_rootNode->handleWheelEvent(wheelEvent);
 }
 
 void ScrollingTree::invalidate()
