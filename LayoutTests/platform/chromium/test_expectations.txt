@@ -535,6 +535,9 @@ WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.ht
 // Mac's popup behavior is different.
 WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.html = FAIL
 
+// Chrome uses its quota manager and doesn't respect the 5mb limit.
+WONTFIX SKIP : storage/indexeddb/database-quota.html = TEXT
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
@@ -3226,9 +3229,6 @@ BUGCR87732 : fast/regex/toString.html = TEXT
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
 BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
-
-// Quota enforcement not yet implemented for LevelDB back-end.
-BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
 BUGCR88311 LINUX WIN DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
