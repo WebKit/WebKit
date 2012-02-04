@@ -1,5 +1,17 @@
 2012-02-03  Lucas Forschler  <lforschler@apple.com>
 
+        update-webkit-support-libraries is broken with the change from http to https on developer.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=77785
+
+        Fix the build bots.
+        
+        Pass the -k and --sslv3 keys to make curl work with https on https://developer.apple.com
+
+        * Scripts/update-webkit-support-libs:
+        (downloadExpectedVersionNumber):
+
+2012-02-03  Lucas Forschler  <lforschler@apple.com>
+
         Add a Mac Lion Performance bot.
         https://bugs.webkit.org/show_bug.cgi?id=77765
 

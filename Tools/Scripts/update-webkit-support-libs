@@ -114,7 +114,7 @@ sub extractedVersion
 
 sub downloadExpectedVersionNumber
 {
-    chomp(my $expectedVersion = `curl -s $versionFileURL`);
+    chomp(my $expectedVersion = `curl -s --sslv3 -k $versionFileURL`);
     return WEXITSTATUS($?) ? NOTAVERSION : $expectedVersion;
 }
 
