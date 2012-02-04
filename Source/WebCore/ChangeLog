@@ -1,3 +1,17 @@
+2012-02-04  Swapna P  <spottabathini@innominds.com>
+
+        Reviewed by Antonio Gomes.
+        
+        Bug: iframe with scrolling=no incorrectly autoscrollable
+        https://bugs.webkit.org/show_bug.cgi?id=61558
+        
+        Added check for frame scrolling mode just before applying scroll on frame content in function RenderLayer::scrollRect
+        
+        Testcase: LayoutTests/fast/events/autoscroll-with-non-scrollable-parent.html
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2012-02-03  Tim Horton  <timothy_horton@apple.com>
 
         Canvas-into-canvas drawing should respect backing store scale ratio
