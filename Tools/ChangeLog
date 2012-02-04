@@ -1,3 +1,18 @@
+2012-02-04  Ojan Vafai  <ojan@chromium.org>
+
+        check-webkit-style is throwing an exception
+        https://bugs.webkit.org/show_bug.cgi?id=77744
+
+        Reviewed by David Levin.
+
+        If the test_list is None, then we don't need to check for unsupported
+        feature tests to skip.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._has_test_in_directories):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_skipped_tests_for_unsupported_features_empty_test_list):
+
 2012-02-03  Adam Barth  <abarth@webkit.org>
 
         List of all failures in garden-o-matic should actually list all the failures

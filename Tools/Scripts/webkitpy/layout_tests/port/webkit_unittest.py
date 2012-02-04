@@ -145,6 +145,12 @@ class WebKitPortTest(port_testcase.PortTestCase):
         result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features(test_list=['foo.html']))
         self.assertEqual(result_directories, expected_directories)
 
+    def test_skipped_tests_for_unsupported_features_empty_test_list(self):
+        supported_features = ["Accelerated Compositing", "Foo Feature"]
+        expected_directories = set([])
+        result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features(test_list=None))
+        self.assertEqual(result_directories, expected_directories)
+
     def test_skipped_layout_tests(self):
         self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(test_list=[]), set(['media']))
 

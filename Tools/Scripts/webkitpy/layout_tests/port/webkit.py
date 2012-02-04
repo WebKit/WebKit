@@ -307,6 +307,9 @@ class WebKitPort(Port):
         }
 
     def _has_test_in_directories(self, directory_lists, test_list):
+        if not test_list:
+            return False
+
         directories = itertools.chain.from_iterable(directory_lists)
         for directory, test in itertools.product(directories, test_list):
             if test.startswith(directory):
