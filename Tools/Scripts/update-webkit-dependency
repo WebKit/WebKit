@@ -73,7 +73,7 @@ my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my $result = system "curl -s -I $libsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
+my $result = system "curl -s -I -k --sslv3 $libsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
 
 if (WEXITSTATUS($result)) {
     print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
