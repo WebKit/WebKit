@@ -476,14 +476,23 @@ public:
         ASSERT(term.type > PatternTerm::TypeAssertionWordBoundary);
         ASSERT((term.quantityCount == 1) && (term.quantityType == QuantifierFixedCount));
 
-        // For any assertion with a zero minimum, not matching is valid and has no effect,
-        // remove it.  Otherwise, we need to match as least once, but there is no point
-        // matching more than once, so remove the quantifier.  It is not entirely clear
-        // from the spec whether or not this behavior is correct, but I believe this
-        // matches Firefox. :-/
         if (term.type == PatternTerm::TypeParentheticalAssertion) {
+            // If an assertion is quantified with a minimum count of zero, it can simply be removed.
+            // This arises from the RepeatMatcher behaviour in the spec. Matching an assertion never
+            // results in any input being consumed, however the continuation passed to the assertion
+            // (called in steps, 8c and 9 of the RepeatMatcher definition, ES5.1 15.10.2.5) will
+            // reject all zero length matches (see step 2.1). A match from the continuation of the
+            // expression will still be accepted regardless (via steps 8a and 11) - the upshot of all
+            // this is that matches from the assertion are not required, and won't be accepted anyway,
+            // so no need to ever run it.
             if (!min)
                 m_alternative->removeLastTerm();
+            // We never need to run an assertion more than once. Subsequent interations will be run
+            // with the same start index (since assertions are non-capturing) and the same captures
+            // (per step 4 of RepeatMatcher in ES5.1 15.10.2.5), and as such will always produce the
+            // same result and captures. If the first match succeeds then the subsequent (min - 1)
+            // matches will too. Any additional optional matches will fail (on the same basis as the
+            // minimum zero quantified assertions, above), but this will still result in a match.
             return;
         }
 

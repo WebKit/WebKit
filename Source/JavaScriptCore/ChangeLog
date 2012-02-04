@@ -1,3 +1,11 @@
+2012-02-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::quantifyAtom):
+            - Fix comment.
+
 2012-02-04  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] CurrentTime: Reorder headers for win32
