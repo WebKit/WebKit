@@ -81,9 +81,9 @@ PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document* docume
     RefPtr<HTMLSummaryElement> defaultSummary = HTMLSummaryElement::create(summaryTag, document);
     defaultSummary->appendChild(Text::create(document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
 
-    DetailsSummaryElement* elem = new DetailsSummaryElement(document);
+    RefPtr<DetailsSummaryElement> elem = adoptRef(new DetailsSummaryElement(document));
     elem->appendChild(defaultSummary);
-    return adoptRef(elem);
+    return elem.release();
 }
 
 PassRefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document* document)

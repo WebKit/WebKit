@@ -1,3 +1,10 @@
+2012-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Debug build fix after r106715.
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsSummaryElement::create):
+
 2012-02-04  Andreas Kling  <awesomekling@apple.com>
 
         Unreviewed test fix after r106740.
