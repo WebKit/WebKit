@@ -349,6 +349,8 @@ public:
     static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(value); }
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
     {
+        float positiveFlex = 0;
+        float negativeFlex = 0;
         if (!value->isPrimitiveValue()) {
             if (!flexDirection || !value->isFlexValue())
                 return;
@@ -356,13 +358,16 @@ public:
             CSSFlexValue* flexValue = static_cast<CSSFlexValue*>(value);
             value = flexValue->preferredSize();
 
-            if (flexDirection == FlexWidth) {
-                selector->style()->setFlexboxWidthPositiveFlex(flexValue->positiveFlex());
-                selector->style()->setFlexboxWidthNegativeFlex(flexValue->negativeFlex());
-            } else if (flexDirection == FlexHeight) {
-                selector->style()->setFlexboxHeightPositiveFlex(flexValue->positiveFlex());
-                selector->style()->setFlexboxHeightNegativeFlex(flexValue->negativeFlex());
-            }
+            positiveFlex = flexValue->positiveFlex();
+            negativeFlex = flexValue->negativeFlex();
+        }
+
+        if (flexDirection == FlexWidth) {
+            selector->style()->setFlexboxWidthPositiveFlex(positiveFlex);
+            selector->style()->setFlexboxWidthNegativeFlex(negativeFlex);
+        } else if (flexDirection == FlexHeight) {
+            selector->style()->setFlexboxHeightPositiveFlex(positiveFlex);
+            selector->style()->setFlexboxHeightNegativeFlex(negativeFlex);
         }
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);

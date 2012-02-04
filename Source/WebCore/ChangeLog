@@ -1,3 +1,19 @@
+2012-02-03  Tony Chang  <tony@chromium.org>
+
+        positive and negative flex values are not being cleared on style changes
+        https://bugs.webkit.org/show_bug.cgi?id=77771
+
+        Reviewed by Ojan Vafai.
+
+        If the width or height was a flex() value, but is no longer a flex
+        value, we weren't clearing the positive and negative flex values in
+        RenderStyle.
+
+        Test: css3/flexbox/flex-no-flex.html
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+
 2012-02-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Defer makeContextCurrent in compositor until first frame
