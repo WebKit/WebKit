@@ -129,7 +129,7 @@ public: \
         return location; \
     } \
 private: \
-typedef int ThisIsHereToForceASemicolonAfterThisMacro
+typedef int __thisIsHereToForceASemicolonAfterThisMacro
 
 namespace WTF {
 
