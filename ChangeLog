@@ -1,3 +1,12 @@
+2012-02-04  Philip Rogers  <pdr@google.com>
+
+        Fix bug in svg-link-hover-use.svg
+        https://bugs.webkit.org/show_bug.cgi?id=77768
+
+        Reviewed by Eric Seidel.
+
+        * ManualTests/svg-link-hover-use.svg:
+
 2012-02-04  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Use the wide character version of win32 API by default
