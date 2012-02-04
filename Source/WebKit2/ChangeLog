@@ -1,5 +1,18 @@
 2012-02-03  Alexey Proskuryakov  <ap@apple.com>
 
+        [WK2 Mac] No need to allow access to input methods or keyboard layouts
+        https://bugs.webkit.org/show_bug.cgi?id=77775
+        <rdar://problem/9276253>
+        <rdar://problem/9276268>
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/com.apple.WebProcess.sb: These rules were likely only necessary in early days
+        of WebKit2. If there are cases when this happens, that's likely wrong, and we need to know
+        about that.
+
+2012-02-03  Alexey Proskuryakov  <ap@apple.com>
+
         [WK2] Use properly quoted string literals
         https://bugs.webkit.org/show_bug.cgi?id=77583
 

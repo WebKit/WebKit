@@ -67,12 +67,6 @@
        (subpath "/Library/Video/Plug-Ins")
        (subpath "/Library/QuickTime")
 
-       ;; FIXME: This should be removed when <rdar://problem/9276253> is fixed.
-       (home-subpath "/Library/Keyboard Layouts")
-
-       ;; FIXME: This should be removed when <rdar://problem/9276268> is fixed.
-       (home-subpath "/Library/Input Methods")
-
        (home-subpath "/Library/Dictionaries"))
 
 ;; This should be updated when <rdar://problem/9355830> is fixed.
