@@ -56,14 +56,16 @@ extern "C" time_t mktime(struct tm *t);
 #endif
 #endif
 
-#elif PLATFORM(GTK)
-#include <glib.h>
 #elif PLATFORM(WX)
 #include <wx/datetime.h>
 #elif PLATFORM(EFL)
 #include <Ecore.h>
 #else
 #include <sys/time.h>
+#endif
+
+#if PLATFORM(GTK)
+#include <glib.h>
 #endif
 
 #if PLATFORM(QT)

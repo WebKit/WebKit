@@ -1,3 +1,20 @@
+2012-02-04  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] CurrentTime: Reorder headers for win32
+        https://bugs.webkit.org/show_bug.cgi?id=77808
+
+        Reviewed by Martin Robinson.
+
+        In GTK+ win32 port, monotonicallyIncreasingTime() implementation is
+        based on g_get_monotonic_time(). Reorder headers to make sure glib.h
+        gets included even when the platform is win32.
+
+        CurrentTime.cpp: In function 'double WTF::monotonicallyIncreasingTime()':
+        CurrentTime.cpp:321:53: error: 'g_get_monotonic_time' was not declared in this scope
+        CurrentTime.cpp:322:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+        * wtf/CurrentTime.cpp:
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         Prefix the typedef in WTF_MAKE_FAST_ALLOCATED with underscores
