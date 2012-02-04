@@ -357,9 +357,9 @@ class PortTest(unittest.TestCase):
 
     def test_reference_files(self):
         port = self.make_port(with_tests=True)
-        self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', '/test.checkout/LayoutTests/passes/svgreftest-expected.svg')])
-        self.assertEqual(port.reference_files('passes/xhtreftest.svg'), [('==', '/test.checkout/LayoutTests/passes/xhtreftest-expected.html')])
-        self.assertEqual(port.reference_files('passes/phpreftest.php'), [('!=', '/test.checkout/LayoutTests/passes/phpreftest-expected-mismatch.svg')])
+        self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', port.layout_tests_dir() + '/passes/svgreftest-expected.svg')])
+        self.assertEqual(port.reference_files('passes/xhtreftest.svg'), [('==', port.layout_tests_dir() + '/passes/xhtreftest-expected.html')])
+        self.assertEqual(port.reference_files('passes/phpreftest.php'), [('!=', port.layout_tests_dir() + '/passes/phpreftest-expected-mismatch.svg')])
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())

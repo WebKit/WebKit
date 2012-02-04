@@ -1,3 +1,10 @@
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix after r106692.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_reference_files):
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77782
