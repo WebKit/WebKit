@@ -105,10 +105,10 @@ void SVGImageElement::parseMappedAttribute(Attribute* attr)
         SVGPreserveAspectRatio::parsePreserveAspectRatio(this, attr->value());
     else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
-        addCSSProperty(attr, CSSPropertyWidth, attr->value());
+        addCSSProperty(CSSPropertyWidth, attr->value());
     } else if (attr->name() == SVGNames::heightAttr) {
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-        addCSSProperty(attr, CSSPropertyHeight, attr->value());
+        addCSSProperty(CSSPropertyHeight, attr->value());
     } else if (SVGTests::parseMappedAttribute(attr)
              || SVGLangSpace::parseMappedAttribute(attr)
              || SVGExternalResourcesRequired::parseMappedAttribute(attr)

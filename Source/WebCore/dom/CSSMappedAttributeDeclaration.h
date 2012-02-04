@@ -42,13 +42,6 @@ public:
 
     ~CSSMappedAttributeDeclaration();
 
-    void setMappedState(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& val)
-    {
-        m_entryType = type;
-        m_attrName = name;
-        m_attrValue = val;
-    }
-
     void setMappedProperty(StyledElement*, int propertyId, int value);
     void setMappedProperty(StyledElement*, int propertyId, const String& value);
     void setMappedImageProperty(StyledElement*, int propertyId, const String& url);
@@ -63,17 +56,12 @@ public:
 private:
     CSSMappedAttributeDeclaration()
         : m_declaration(StylePropertySet::create())
-        , m_entryType(eNone)
-        , m_attrName(anyQName())
     {
     }
 
     void setNeedsStyleRecalc(StyledElement*);
 
     RefPtr<StylePropertySet> m_declaration;
-    MappedAttributeEntry m_entryType;
-    QualifiedName m_attrName;
-    AtomicString m_attrValue;
 };
 
 } //namespace

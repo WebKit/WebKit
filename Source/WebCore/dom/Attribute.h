@@ -25,13 +25,11 @@
 #ifndef Attribute_h
 #define Attribute_h
 
-#include "CSSMappedAttributeDeclaration.h"
 #include "QualifiedName.h"
 
 namespace WebCore {
 
 class Attr;
-class CSSStyleDeclaration;
 class Element;
 class NamedNodeMap;
 
@@ -43,15 +41,15 @@ class Attribute : public RefCounted<Attribute> {
 public:
     static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value, false, 0));
+        return adoptRef(new Attribute(name, value, false));
     }
     static PassRefPtr<Attribute> createMapped(const QualifiedName& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value, true, 0));
+        return adoptRef(new Attribute(name, value, true));
     }
     static PassRefPtr<Attribute> createMapped(const AtomicString& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value, true, 0));
+        return adoptRef(new Attribute(name, value, true));
     }
 
     const AtomicString& value() const { return m_value; }
@@ -68,11 +66,6 @@ public:
     bool isEmpty() const { return m_value.isEmpty(); }
     
     PassRefPtr<Attribute> clone() const;
-    
-    StylePropertySet* decl() const { return m_mappedAttributeDeclaration ? m_mappedAttributeDeclaration->declaration() : 0; }
-
-    CSSMappedAttributeDeclaration* mappedAttributeDeclaration() const { return m_mappedAttributeDeclaration.get(); }
-    void setMappedAttributeDeclaration(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_mappedAttributeDeclaration = decl; }
 
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
@@ -85,21 +78,19 @@ public:
     bool isMappedAttribute() { return m_isMappedAttribute; }
 
 private:
-    Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+    Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute)
         : m_isMappedAttribute(isMappedAttribute)
         , m_hasAttr(false)
         , m_name(name)
         , m_value(value)
-        , m_mappedAttributeDeclaration(styleDecl)
     {
     }
 
-    Attribute(const AtomicString& name, const AtomicString& value, bool isMappedAttribute, CSSMappedAttributeDeclaration* styleDecl)
+    Attribute(const AtomicString& name, const AtomicString& value, bool isMappedAttribute)
         : m_isMappedAttribute(isMappedAttribute)
         , m_hasAttr(false)
         , m_name(nullAtom, name, nullAtom)
         , m_value(value)
-        , m_mappedAttributeDeclaration(styleDecl)
     {
     }
 
@@ -112,7 +103,6 @@ private:
     
     QualifiedName m_name;
     AtomicString m_value;
-    RefPtr<CSSMappedAttributeDeclaration> m_mappedAttributeDeclaration;
 };
 
 } // namespace WebCore

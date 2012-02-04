@@ -38,7 +38,6 @@ inline void CSSMappedAttributeDeclaration::setNeedsStyleRecalc(StyledElement* el
 
 CSSMappedAttributeDeclaration::~CSSMappedAttributeDeclaration()
 {
-    StyledElement::removeMappedAttributeDecl(m_entryType, m_attrName, m_attrValue);
 }
 
 void CSSMappedAttributeDeclaration::setMappedImageProperty(StyledElement* element, int propertyId, const String& url)
@@ -66,8 +65,10 @@ void CSSMappedAttributeDeclaration::setMappedProperty(StyledElement* element, in
         return;
     }
 
-    if (!CSSParser::parseMappedAttributeValue(this, element, propertyId, value))
+    if (!CSSParser::parseMappedAttributeValue(this, element, propertyId, value)) {
+        removeMappedProperty(element, propertyId);
         return;
+    }
 
     setNeedsStyleRecalc(element);
 }

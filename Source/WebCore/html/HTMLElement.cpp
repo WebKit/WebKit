@@ -120,27 +120,6 @@ bool HTMLElement::ieForbidsInsertHTML() const
     return false;
 }
 
-bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == alignAttr
-        || attrName == contenteditableAttr
-        || attrName == hiddenAttr) {
-        result = eUniversal;
-        return false;
-    }
-    if (attrName == dirAttr) {
-        if (hasLocalName(bdoTag))
-            result = eBDO;
-        else if (hasLocalName(bdiTag))
-            result = eBDI;
-        else
-            result = eUniversal;
-        return true;
-    }
-
-    return StyledElement::mapToEntry(attrName, result);
-}
-
 static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
 {
     if (element->hasLocalName(preTag) || element->hasLocalName(textareaTag))
@@ -163,23 +142,25 @@ static unsigned parseBorderWidthAttribute(Attribute* attr)
 
 void HTMLElement::applyBorderAttribute(Attribute* attr)
 {
-    addCSSLength(attr, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
-    addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
-    addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
-    addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
-    addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
+    addCSSLength(CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
+    addCSSProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
+    addCSSProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+    addCSSProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+    addCSSProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
 }
 
 void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute)
 {
     ASSERT(attribute && (attribute->name() == langAttr || attribute->name().matches(XMLNames::langAttr)));
     const AtomicString& value = attribute->value();
-    if (!value.isEmpty()) {
+    if (value.isNull())
+        removeCSSProperty(CSSPropertyWebkitLocale);
+    else if (!value.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addCSSProperty(attribute, CSSPropertyWebkitLocale, quoteCSSString(value));
+        addCSSProperty(CSSPropertyWebkitLocale, quoteCSSString(value));
     } else {
         // The empty string means the language is explicitly unknown.
-        addCSSProperty(attribute, CSSPropertyWebkitLocale, CSSValueAuto);
+        addCSSProperty(CSSPropertyWebkitLocale, CSSValueAuto);
     }
     setNeedsStyleRecalc();
 }
@@ -190,14 +171,19 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         return StyledElement::parseMappedAttribute(attr);
 
     if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "middle"))
-            addCSSProperty(attr, CSSPropertyTextAlign, "center");
+        if (attr->isNull())
+            removeCSSProperty(CSSPropertyTextAlign);
+        else if (equalIgnoringCase(attr->value(), "middle"))
+            addCSSProperty(CSSPropertyTextAlign, "center");
         else
-            addCSSProperty(attr, CSSPropertyTextAlign, attr->value());
+            addCSSProperty(CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == contenteditableAttr) {
         setContentEditable(attr);
     } else if (attr->name() == hiddenAttr) {
-        addCSSProperty(attr, CSSPropertyDisplay, CSSValueNone);
+        if (attr->isNull())
+            removeCSSProperty(CSSPropertyDisplay);
+        else
+            addCSSProperty(CSSPropertyDisplay, CSSValueNone);
     } else if (attr->name() == tabindexAttr) {
         int tabindex = 0;
         if (attr->isEmpty())
@@ -213,21 +199,33 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         if (!fastHasAttribute(XMLNames::langAttr))
             mapLanguageAttributeToLocale(attr);
     } else if (attr->name() == dirAttr) {
-        bool dirIsAuto = equalIgnoringCase(attr->value(), "auto");
-        if (!dirIsAuto)
-            addCSSProperty(attr, CSSPropertyDirection, attr->value());
-        dirAttributeChanged(attr);
-        if (dirIsAuto)
-            addCSSProperty(attr, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
-        else if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-            addCSSProperty(attr, CSSPropertyUnicodeBidi, CSSValueEmbed);
+        if (attr->isNull())
+            removeCSSProperties(CSSPropertyDirection, CSSPropertyUnicodeBidi);
+        else {
+            bool dirIsAuto = equalIgnoringCase(attr->value(), "auto");
+            if (!dirIsAuto)
+                addCSSProperty(CSSPropertyDirection, attr->value());
+            else
+                removeCSSProperty(CSSPropertyDirection);
+
+            dirAttributeChanged(attr);
+            if (dirIsAuto)
+                addCSSProperty(CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
+            else if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
+                addCSSProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
+            else
+                removeCSSProperty(CSSPropertyUnicodeBidi);
+        }
     } else if (attr->name() == draggableAttr) {
         const AtomicString& value = attr->value();
         if (equalIgnoringCase(value, "true")) {
-            addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueElement);
-            addCSSProperty(attr, CSSPropertyWebkitUserSelect, CSSValueNone);
-        } else if (equalIgnoringCase(value, "false"))
-            addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueNone);
+            addCSSProperty(CSSPropertyWebkitUserDrag, CSSValueElement);
+            addCSSProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
+        } else if (equalIgnoringCase(value, "false")) {
+            addCSSProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
+            removeCSSProperty(CSSPropertyWebkitUserSelect);
+        } else
+            removeCSSProperties(CSSPropertyWebkitUserDrag, CSSPropertyWebkitUserSelect);
 #if ENABLE(MICRODATA)
     } else if (attr->name() == itempropAttr) {
         setItemProp(attr->value());
@@ -685,6 +683,11 @@ void HTMLElement::addHTMLAlignment(Attribute* attr)
     addHTMLAlignmentToStyledElement(this, attr);
 }
 
+void HTMLElement::removeHTMLAlignment()
+{
+    removeCSSProperties(CSSPropertyFloat, CSSPropertyVerticalAlign);
+}
+
 void HTMLElement::addHTMLAlignmentToStyledElement(StyledElement* element, Attribute* attr)
 {
     // Vertical alignment with respect to the current baseline of the text
@@ -715,10 +718,14 @@ void HTMLElement::addHTMLAlignmentToStyledElement(StyledElement* element, Attrib
         verticalAlignValue = CSSValueTextTop;
 
     if (floatValue != CSSValueInvalid)
-        element->addCSSProperty(attr, CSSPropertyFloat, floatValue);
+        element->addCSSProperty(CSSPropertyFloat, floatValue);
+    else
+        element->removeCSSProperty(CSSPropertyFloat);
 
     if (verticalAlignValue != CSSValueInvalid)
-        element->addCSSProperty(attr, CSSPropertyVerticalAlign, verticalAlignValue);
+        element->addCSSProperty(CSSPropertyVerticalAlign, verticalAlignValue);
+    else
+        element->removeCSSProperty(CSSPropertyVerticalAlign);
 }
 
 bool HTMLElement::supportsFocus() const
@@ -745,21 +752,21 @@ String HTMLElement::contentEditable() const
 void HTMLElement::setContentEditable(Attribute* attr) 
 {
     const AtomicString& enabled = attr->value();
-    if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
-        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWrite);
-        addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
-        addCSSProperty(attr, CSSPropertyWebkitNbspMode, CSSValueSpace);
-        addCSSProperty(attr, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+    if (enabled.isNull())
+        removeCSSProperties(CSSPropertyWebkitUserModify, CSSPropertyWordWrap, CSSPropertyWebkitNbspMode, CSSPropertyWebkitLineBreak);
+    else if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
+        addCSSProperty(CSSPropertyWebkitUserModify, CSSValueReadWrite);
+        addCSSProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+        addCSSProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
+        addCSSProperty(CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
     } else if (equalIgnoringCase(enabled, "false")) {
-        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadOnly);
-        removeCSSProperty(attr, CSSPropertyWordWrap);
-        removeCSSProperty(attr, CSSPropertyWebkitNbspMode);
-        removeCSSProperty(attr, CSSPropertyWebkitLineBreak);
+        addCSSProperty(CSSPropertyWebkitUserModify, CSSValueReadOnly);
+        removeCSSProperties(CSSPropertyWordWrap, CSSPropertyWebkitNbspMode, CSSPropertyWebkitLineBreak);
     } else if (equalIgnoringCase(enabled, "plaintext-only")) {
-        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
-        addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
-        addCSSProperty(attr, CSSPropertyWebkitNbspMode, CSSValueSpace);
-        addCSSProperty(attr, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+        addCSSProperty(CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
+        addCSSProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+        addCSSProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
+        addCSSProperty(CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
     }
 }
 

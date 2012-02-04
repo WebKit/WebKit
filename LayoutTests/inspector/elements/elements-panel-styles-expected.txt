@@ -32,7 +32,7 @@ margin-right: 0px;
 margin-top: 10px;
     .foo - 10px elements-panel-styles.css:14
 text-align: -webkit-left;
-    div[align=left] - -webkit-left 
+    div[] - -webkit-left 
 
 [expanded] 
 element.style  { ()
@@ -67,7 +67,7 @@ border-radius: 5px;
 /-- overloaded --/ font-style: normal !important;
 
 [expanded] 
-div[align=left]  { ()
+div[]  { ()
 text-align: -webkit-left;
 
 [expanded] 

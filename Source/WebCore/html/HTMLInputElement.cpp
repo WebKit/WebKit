@@ -659,24 +659,6 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     m_inputType->accessKeyAction(sendMouseEvents);
 }
 
-bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (((attrName == heightAttr || attrName == widthAttr) && m_inputType->shouldRespectHeightAndWidthAttributes())
-        || attrName == vspaceAttr
-        || attrName == hspaceAttr) {
-        result = eUniversal;
-        return false;
-    }
-
-    if (attrName == alignAttr && m_inputType->shouldRespectAlignAttribute()) {
-        // Share with <img> since the alignment behavior is the same.
-        result = eReplaced;
-        return false;
-    }
-
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == nameAttr) {
@@ -733,20 +715,26 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == usemapAttr || attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
-        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
+        addCSSLength(CSSPropertyMarginTop, attr->value());
+        addCSSLength(CSSPropertyMarginBottom, attr->value());
     } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
-        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
+        addCSSLength(CSSPropertyMarginLeft, attr->value());
+        addCSSLength(CSSPropertyMarginRight, attr->value());
     } else if (attr->name() == alignAttr) {
         if (m_inputType->shouldRespectAlignAttribute())
             addHTMLAlignment(attr);
+        else
+            removeHTMLAlignment();
     } else if (attr->name() == widthAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
-            addCSSLength(attr, CSSPropertyWidth, attr->value());
+            addCSSLength(CSSPropertyWidth, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWidth);
     } else if (attr->name() == heightAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
-            addCSSLength(attr, CSSPropertyHeight, attr->value());
+            addCSSLength(CSSPropertyHeight, attr->value());
+        else
+            removeCSSProperty(CSSPropertyHeight);
     } else if (attr->name() == borderAttr && isImageButton()) {
         applyBorderAttribute(attr);
     } else if (attr->name() == onsearchAttr) {

@@ -91,7 +91,7 @@ raw style
 ['background-image':'url(bar.png)'] @[33-63] active
 
 === Attribute styles for table ===
-Attribute: width
+Attribute: 
 
 style
 raw style

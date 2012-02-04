@@ -36,8 +36,7 @@ public:
 
 private:
     HTMLHRElement(const QualifiedName&, Document*);
-    
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
+
     virtual void parseMappedAttribute(Attribute*);
 };
 

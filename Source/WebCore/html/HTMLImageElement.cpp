@@ -78,25 +78,6 @@ PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* 
     return image.release();
 }
 
-bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == widthAttr ||
-        attrName == heightAttr ||
-        attrName == vspaceAttr ||
-        attrName == hspaceAttr ||
-        attrName == valignAttr) {
-        result = eUniversal;
-        return false;
-    }
-
-    if (attrName == borderAttr || attrName == alignAttr) {
-        result = eReplaced; // Shared with embed and iframe elements.
-        return false;
-    }
-
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLImageElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
@@ -106,22 +87,39 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
     } else if (attrName == srcAttr)
         m_imageLoader.updateFromElementIgnoringPreviousError();
     else if (attrName == widthAttr)
-        addCSSLength(attr, CSSPropertyWidth, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyWidth);
+        else
+            addCSSLength(CSSPropertyWidth, attr->value());
     else if (attrName == heightAttr)
-        addCSSLength(attr, CSSPropertyHeight, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyHeight);
+        else
+            addCSSLength(CSSPropertyHeight, attr->value());
     else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
         applyBorderAttribute(attr);
     } else if (attrName == vspaceAttr) {
-        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
-        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyMarginTop, CSSPropertyMarginBottom);
+        else {
+            addCSSLength(CSSPropertyMarginTop, attr->value());
+            addCSSLength(CSSPropertyMarginBottom, attr->value());
+        }
     } else if (attrName == hspaceAttr) {
-        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
-        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyMarginLeft, CSSPropertyMarginRight);
+        else {
+            addCSSLength(CSSPropertyMarginLeft, attr->value());
+            addCSSLength(CSSPropertyMarginRight, attr->value());
+        }
     } else if (attrName == alignAttr)
         addHTMLAlignment(attr);
     else if (attrName == valignAttr)
-        addCSSProperty(attr, CSSPropertyVerticalAlign, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyVerticalAlign);
+        else
+            addCSSProperty(CSSPropertyVerticalAlign, attr->value());
     else if (attrName == usemapAttr)
         setIsLink(!attr->isNull());
     else if (attrName == onabortAttr)

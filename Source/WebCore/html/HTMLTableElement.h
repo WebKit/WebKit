@@ -72,7 +72,6 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document*);
 
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
     virtual bool isURLAttribute(Attribute*) const;
 

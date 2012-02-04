@@ -74,16 +74,6 @@ RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings()
     return findWidgetRenderer(this);
 }
 
-bool HTMLEmbedElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == hiddenAttr) {
-        result = eUniversal;
-        return false;
-    }
-        
-    return HTMLPlugInImageElement::mapToEntry(attrName, result);
-}
-
 void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
@@ -108,9 +98,10 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
         if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {
             // FIXME: Not dynamic, since we add this but don't remove it, but it may be OK for now
             // that this rarely-used attribute won't work properly if you remove it.
-            addCSSLength(attr, CSSPropertyWidth, "0");
-            addCSSLength(attr, CSSPropertyHeight, "0");
-        }
+            addCSSLength(CSSPropertyWidth, "0");
+            addCSSLength(CSSPropertyHeight, "0");
+        } else
+            removeCSSProperties(CSSPropertyWidth, CSSPropertyHeight);
     } else
         HTMLPlugInImageElement::parseMappedAttribute(attr);
 }

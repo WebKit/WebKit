@@ -123,18 +123,6 @@ static bool parseFontSize(const String& input, int& size)
     return true;
 }
 
-bool HTMLFontElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == sizeAttr ||
-        attrName == colorAttr ||
-        attrName == faceAttr) {
-        result = eUniversal;
-        return false;
-    }
-    
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
 {
     int num = 0;
@@ -175,11 +163,19 @@ void HTMLFontElement::parseMappedAttribute(Attribute* attr)
     if (attr->name() == sizeAttr) {
         int size = 0;
         if (cssValueFromFontSizeNumber(attr->value(), size))
-            addCSSProperty(attr, CSSPropertyFontSize, size);
+            addCSSProperty(CSSPropertyFontSize, size);
+        else
+            removeCSSProperty(CSSPropertyFontSize);
     } else if (attr->name() == colorAttr) {
-        addCSSColor(attr, CSSPropertyColor, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyColor);
+        else
+            addCSSColor(CSSPropertyColor, attr->value());
     } else if (attr->name() == faceAttr) {
-        addCSSProperty(attr, CSSPropertyFontFamily, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyFontFamily);
+        else
+            addCSSProperty(CSSPropertyFontFamily, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

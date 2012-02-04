@@ -94,8 +94,8 @@ protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 
     void addHTMLAlignment(Attribute*);
+    void removeHTMLAlignment();
 
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
     void applyBorderAttribute(Attribute*);
 

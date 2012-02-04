@@ -75,22 +75,6 @@ int HTMLTableCellElement::cellIndex() const
     return index;
 }
 
-bool HTMLTableCellElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == nowrapAttr) {
-        result = eUniversal;
-        return false;
-    }
-    
-    if (attrName == widthAttr ||
-        attrName == heightAttr) {
-        result = eCell; // Because of the quirky behavior of ignoring 0 values, cells are special.
-        return false;
-    }
-
-    return HTMLTablePartElement::mapToEntry(attrName, result);
-}
-
 void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
@@ -100,20 +84,25 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else if (attr->name() == nowrapAttr) {
-        if (!attr->isNull())
-            addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
+        if (attr->isNull())
+            removeCSSProperty(CSSPropertyWhiteSpace);
+        else
+            addCSSProperty(CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
+
     } else if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addCSSLength(attr, CSSPropertyWidth, attr->value());
-        }
+                addCSSLength(CSSPropertyWidth, attr->value());
+        } else
+            removeCSSProperty(CSSPropertyWidth);
     } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty()) {
             int heightInt = attr->value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addCSSLength(attr, CSSPropertyHeight, attr->value());
-        }
+                addCSSLength(CSSPropertyHeight, attr->value());
+        } else
+            removeCSSProperty(CSSPropertyHeight);
     } else
         HTMLTablePartElement::parseMappedAttribute(attr);
 }

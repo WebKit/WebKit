@@ -60,46 +60,43 @@ HTMLBodyElement::~HTMLBodyElement()
 {
 }
 
-bool HTMLBodyElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == backgroundAttr) {
-        result = (MappedAttributeEntry)(eLastEntry + document()->docID());
-        return false;
-    } 
-    
-    if (attrName == bgcolorAttr ||
-        attrName == textAttr ||
-        attrName == marginwidthAttr ||
-        attrName == leftmarginAttr ||
-        attrName == marginheightAttr ||
-        attrName == topmarginAttr ||
-        attrName == bgpropertiesAttr) {
-        result = eUniversal;
-        return false;
-    }
-
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSSPropertyBackgroundImage, document()->completeURL(url).string());
+            addCSSImageProperty(CSSPropertyBackgroundImage, document()->completeURL(url).string());
+        else
+            removeCSSProperty(CSSPropertyBackgroundImage);
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {
-        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
-        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyMarginRight, CSSPropertyMarginLeft);
+        else {
+            addCSSLength(CSSPropertyMarginRight, attr->value());
+            addCSSLength(CSSPropertyMarginLeft, attr->value());
+        }
     } else if (attr->name() == marginheightAttr || attr->name() == topmarginAttr) {
-        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
-        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyMarginBottom, CSSPropertyMarginTop);
+        else {
+            addCSSLength(CSSPropertyMarginBottom, attr->value());
+            addCSSLength(CSSPropertyMarginTop, attr->value());
+        }
     } else if (attr->name() == bgcolorAttr) {
-        addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyBackgroundColor);
+        else
+            addCSSColor(CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == textAttr) {
-        addCSSColor(attr, CSSPropertyColor, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyColor);
+        else
+            addCSSColor(CSSPropertyColor, attr->value());
     } else if (attr->name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attr->value(), "fixed"))
-            addCSSProperty(attr, CSSPropertyBackgroundAttachment, CSSValueFixed);
+            addCSSProperty(CSSPropertyBackgroundAttachment, CSSValueFixed);
+        else
+            removeCSSProperty(CSSPropertyBackgroundAttachment);
     } else if (attr->name() == vlinkAttr ||
                attr->name() == alinkAttr ||
                attr->name() == linkAttr) {

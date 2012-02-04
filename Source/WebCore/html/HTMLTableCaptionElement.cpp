@@ -44,21 +44,13 @@ PassRefPtr<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const Qualif
     return adoptRef(new HTMLTableCaptionElement(tagName, document));
 }
 
-bool HTMLTableCaptionElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == alignAttr) {
-        result = eCaption;
-        return false;
-    }
-
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLTableCaptionElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSSPropertyCaptionSide, attr->value());
+            addCSSProperty(CSSPropertyCaptionSide, attr->value());
+        else
+            removeCSSProperty(CSSPropertyCaptionSide);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

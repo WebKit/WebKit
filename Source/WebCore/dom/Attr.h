@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class CSSStyleDeclaration;
+
 // Attr can have Text and EntityReference children
 // therefore it has to be a fullblown Node. The plan
 // is to dynamically allocate a textchild and store the
@@ -55,8 +57,9 @@ public:
 
     bool isId() const;
 
-    // An extension to get presentational information for attributes.
-    CSSStyleDeclaration* style() { return m_attribute->decl()->ensureCSSStyleDeclaration(); }
+    // A deprecated extension to get presentational information for attributes.
+    // We have to keep it around because it's exposed in the Obj-C DOM API.
+    CSSStyleDeclaration* style() { return 0; }
 
     void setSpecified(bool specified) { m_specified = specified; }
 

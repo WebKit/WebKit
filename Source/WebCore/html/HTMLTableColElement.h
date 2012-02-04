@@ -42,7 +42,6 @@ public:
 private:
     HTMLTableColElement(const QualifiedName& tagName, Document*);
 
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
     virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
 

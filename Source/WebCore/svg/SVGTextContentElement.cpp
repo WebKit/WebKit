@@ -247,9 +247,9 @@ void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
             DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
 
             if (attr->value() == preserveString)
-                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);
+                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePre);
             else
-                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueNowrap);
+                addCSSProperty(CSSPropertyWhiteSpace, CSSValueNowrap);
         }
     } else
         ASSERT_NOT_REACHED();

@@ -54,29 +54,21 @@ PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLOListElement(tagName, document));
 }
 
-bool HTMLOListElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == typeAttr) {
-        result = eListItem; // Share with <li>
-        return false;
-    }
-    
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLOListElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr) {
         if (attr->value() == "a")
-            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerAlpha);
+            addCSSProperty(CSSPropertyListStyleType, CSSValueLowerAlpha);
         else if (attr->value() == "A")
-            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperAlpha);
+            addCSSProperty(CSSPropertyListStyleType, CSSValueUpperAlpha);
         else if (attr->value() == "i")
-            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerRoman);
+            addCSSProperty(CSSPropertyListStyleType, CSSValueLowerRoman);
         else if (attr->value() == "I")
-            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperRoman);
+            addCSSProperty(CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (attr->value() == "1")
-            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueDecimal);
+            addCSSProperty(CSSPropertyListStyleType, CSSValueDecimal);
+        else
+            removeCSSProperty(CSSPropertyListStyleType);
     } else if (attr->name() == startAttr) {
         int oldStart = start();
         bool canParse;

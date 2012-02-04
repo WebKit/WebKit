@@ -48,32 +48,12 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == widthAttr || attrName == heightAttr) {
-        result = eUniversal;
-        return false;
-    }
-    
-    if (attrName == alignAttr) {
-        result = eReplaced; // Share with <img> since the alignment behavior is the same.
-        return false;
-    }
-    
-    if (attrName == frameborderAttr) {
-        result = eReplaced;
-        return false;
-    }
-
-    return HTMLFrameElementBase::mapToEntry(attrName, result);
-}
-
 void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
-        addCSSLength(attr, CSSPropertyWidth, attr->value());
+        addCSSLength(CSSPropertyWidth, attr->value());
     else if (attr->name() == heightAttr)
-        addCSSLength(attr, CSSPropertyHeight, attr->value());
+        addCSSLength(CSSPropertyHeight, attr->value());
     else if (attr->name() == alignAttr)
         addHTMLAlignment(attr);
     else if (attr->name() == nameAttr) {
@@ -87,9 +67,11 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes.  It simply adds
         // a presentational hint that the border should be off if set to zero.
-        if (!attr->isNull() && !attr->value().toInt())
+        if (!attr->isNull() && !attr->value().toInt()) {
             // Add a rule that nulls out our border width.
-            addCSSLength(attr, CSSPropertyBorderWidth, "0");
+            addCSSLength(CSSPropertyBorderWidth, "0");
+        } else
+            removeCSSProperty(CSSPropertyBorderWidth);
     } else if (attr->name() == sandboxAttr)
         setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
     else

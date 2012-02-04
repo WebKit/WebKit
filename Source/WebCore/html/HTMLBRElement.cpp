@@ -48,27 +48,18 @@ PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLBRElement(tagName, document));
 }
 
-bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == clearAttr) {
-        result = eUniversal;
-        return false;
-    }
-    
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLBRElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == clearAttr) {
         // If the string is empty, then don't add the clear property. 
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
-        const AtomicString& str = attr->value();
-        if (!str.isEmpty()) {
-            if (equalIgnoringCase(str, "all"))
-                addCSSProperty(attr, CSSPropertyClear, "both");
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyClear);
+        else if (!attr->value().isEmpty()) {
+            if (equalIgnoringCase(attr->value(), "all"))
+                addCSSProperty(CSSPropertyClear, "both");
             else
-                addCSSProperty(attr, CSSPropertyClear, str);
+                addCSSProperty(CSSPropertyClear, attr->value());
         }
     } else
         HTMLElement::parseMappedAttribute(attr);

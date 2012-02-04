@@ -1,3 +1,201 @@
+2012-02-03  Andreas Kling  <awesomekling@apple.com>
+
+        Kill per-Attribute style declarations.
+        <http://webkit.org/b/77204>
+
+        Reviewed by Antti Koivisto.
+
+        TL;DR summary: Remove the per-Attribute style declarations and replace them by a single
+        style declaration on StyledElement that acts as a secondary inline style.
+
+        The previous design was conceived in the Age of the Old Web(tm) where the majority of
+        element styling was accomplished via attributes. Nowadays, CSS is a much better tool for
+        this and we should optimize around that instead.
+
+        StyledElements now have an attributeStyle() which contains all the styling from attributes.
+        parseMappedAttribute() is responsible for adding/removing properties to the attributeStyle
+        as the corresponding attributes come in/out of the element.
+
+        Each Attribute instance shrinks by one pointer, each element that has attributes grows by
+        one pointer. The styles from individual attributes are no longer shared, so content that
+        uses a lot of repeating styling attributes will see a slight memory regression from this.
+        Future improvements to this could enable sharing the attributeStyle between elements that
+        have the same exact attributes to mitigate some of the damage.
+
+        There should be no web-facing behavior change from this, but it does break two things:
+
+        - The Inspector feature for displaying per-attribute styles. To keep things manageable,
+          this patch simply files all the attribute styles together under an anonymous attribute
+          in the Inspector.
+
+        - The Obj-C DOM binding for Attr::style() has to be kept for compatibility reasons,
+          though it's already deprecated. It will now always return nil, since there's no way to
+          retrieve a live style declaration that's specific to a certain Attr.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        * dom/Attr.h:
+        (WebCore):
+        (Attr):
+        (WebCore::Attr::style):
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::clone):
+        * dom/Attribute.h:
+        (WebCore):
+        (WebCore::Attribute::create):
+        (WebCore::Attribute::createMapped):
+        (Attribute):
+        (WebCore::Attribute::Attribute):
+        * dom/CSSMappedAttributeDeclaration.cpp:
+        (WebCore::CSSMappedAttributeDeclaration::~CSSMappedAttributeDeclaration):
+        (WebCore::CSSMappedAttributeDeclaration::setMappedProperty):
+        * dom/CSSMappedAttributeDeclaration.h:
+        (CSSMappedAttributeDeclaration):
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::ensureAttributeStyle):
+        (WebCore):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::attributeStyle):
+        (NamedNodeMap):
+        * dom/StyledElement.cpp:
+        (WebCore):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::removeCSSProperties):
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+        (WebCore::StyledElement::addCSSLength):
+        (WebCore::StyledElement::addCSSColor):
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::removeCSSProperty):
+        (WebCore::StyledElement::attributeStyle):
+        (WebCore::StyledElement::ensureAttributeStyle):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::parseMappedAttribute):
+        * html/HTMLBRElement.h:
+        (HTMLBRElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLBodyElement.h:
+        (HTMLBodyElement):
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::parseMappedAttribute):
+        * html/HTMLDivElement.h:
+        (HTMLDivElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttribute):
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::HTMLElement::removeHTMLAlignment):
+        (WebCore):
+        (WebCore::HTMLElement::addHTMLAlignmentToStyledElement):
+        (WebCore::HTMLElement::setContentEditable):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::parseMappedAttribute):
+        * html/HTMLFontElement.h:
+        (HTMLFontElement):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.h:
+        (HTMLFrameSetElement):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::parseMappedAttribute):
+        * html/HTMLHRElement.h:
+        (HTMLHRElement):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * html/HTMLIFrameElement.h:
+        (HTMLIFrameElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseMappedAttribute):
+        * html/HTMLLIElement.h:
+        (HTMLLIElement):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::parseMappedAttribute):
+        * html/HTMLMarqueeElement.h:
+        (HTMLMarqueeElement):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseMappedAttribute):
+        * html/HTMLOListElement.h:
+        (HTMLOListElement):
+        * html/HTMLOutputElement.cpp:
+        * html/HTMLOutputElement.h:
+        (HTMLOutputElement):
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::parseMappedAttribute):
+        * html/HTMLParagraphElement.h:
+        (HTMLParagraphElement):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::parseMappedAttribute):
+        * html/HTMLPlugInElement.h:
+        (HTMLPlugInElement):
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::parseMappedAttribute):
+        * html/HTMLPreElement.h:
+        (HTMLPreElement):
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::parseMappedAttribute):
+        * html/HTMLTableCaptionElement.h:
+        (HTMLTableCaptionElement):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseMappedAttribute):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseMappedAttribute):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore):
+        (WebCore::HTMLTablePartElement::parseMappedAttribute):
+        * html/HTMLTablePartElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::parseMappedAttribute):
+        * html/HTMLUListElement.h:
+        (HTMLUListElement):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForAttributeStyles):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseMappedAttribute):
+        * mathml/MathMLElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::parseMappedAttribute):
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+        * svg/SVGStyledElement.h:
+        (SVGStyledElement):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+
 2012-02-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: get rid of cycles in retaining tree

@@ -996,17 +996,13 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
-        if (const NamedNodeMap* map = m_styledElement->attributeMap()) {
-            // Walk the element's attribute map and add all mapped attribute declarations.
-            for (unsigned i = 0; i < map->length(); ++i) {
-                Attribute* attribute = map->attributeItem(i);
-                if (!attribute->decl())
-                    continue;
-                ASSERT(attribute->isMappedAttribute());
-                result.ranges.lastAuthorRule = m_matchedDecls.size();
+        if (CSSMappedAttributeDeclaration* attributeStyle = m_styledElement->attributeStyle()) {
+            ASSERT(attributeStyle->declaration());
+            if (!attributeStyle->declaration()->isEmpty()) {
+                result.ranges.lastAuthorRule = m_matchedRules.size();
                 if (result.ranges.firstAuthorRule == -1)
                     result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
-                addMatchedDeclaration(attribute->decl());
+                addMatchedDeclaration(attributeStyle->declaration());
             }
         }
 
@@ -1198,22 +1194,6 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     return true;
 }
 
-static inline bool mappedAttributesEquivalent(NamedNodeMap* a, NamedNodeMap* b)
-{
-    ASSERT(a->mappedAttributeCount() == b->mappedAttributeCount());
-
-    for (size_t i = 0; i < a->length(); ++i) {
-        Attribute* attribute = a->attributeItem(i);
-        if (!attribute->decl())
-            continue;
-        ASSERT(attribute->isMappedAttribute());
-        Attribute* otherAttribute = b->getAttributeItem(attribute->name());
-        if (!otherAttribute || attribute->value() != otherAttribute->value() || attribute->decl() != otherAttribute->decl())
-            return false;
-    }
-    return true;
-}
-
 bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
 {
     RenderStyle* style = element->renderStyle();
@@ -1228,8 +1208,7 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->inlineStyleDecl())
         return false;
-    size_t mappedAttributeCount = element->mappedAttributeCount();
-    if (mappedAttributeCount != m_styledElement->mappedAttributeCount())
+    if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
     if (element->isLink() != m_element->isLink())
         return false;
@@ -1295,7 +1274,7 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
         return false;
 
-    if (mappedAttributeCount && !mappedAttributesEquivalent(element->attributeMap(), m_styledElement->attributeMap()))
+    if (element->attributeStyle() && !element->attributeMap()->mapsEquivalent(m_styledElement->attributeMap()))
         return false;
 
     if (element->isLink() && m_elementLinkState != style->insideLink())

@@ -716,23 +716,23 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForRuleList(CSSRuleList*
 
 PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Element* element)
 {
+    // FIXME: Since we no longer have per-attribute style declarations, we should come up
+    //        with a nicer way to present what we do have.
+
+    if (!element->isStyledElement())
+        return InspectorArray::create();
+
+    CSSMappedAttributeDeclaration* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
+    if (!attributeStyle || !attributeStyle->declaration())
+        return InspectorArray::create();
+
+    RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
+    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->declaration()->ensureCSSStyleDeclaration(), 0);
+    attrStyleObject->setString("name", "");
+    attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
+
     RefPtr<InspectorArray> attrStyles = InspectorArray::create();
-    NamedNodeMap* attributes = element->updatedAttributes();
-    if (!attributes)
-        return attrStyles.release();
-
-    for (unsigned i = 0; attributes && i < attributes->length(); ++i) {
-        Attribute* attribute = attributes->attributeItem(i);
-        if (!attribute->decl())
-            continue;
-        RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
-        String attributeName = attribute->localName();
-        RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->decl()->ensureCSSStyleDeclaration(), 0);
-        attrStyleObject->setString("name", attributeName.utf8().data());
-        attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
-        attrStyles->pushObject(attrStyleObject.release());
-    }
-
+    attrStyles->pushObject(attrStyleObject.release());
     return attrStyles.release();
 }
 

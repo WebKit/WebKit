@@ -292,22 +292,11 @@ bool SVGStyledElement::isAnimatableCSSProperty(const QualifiedName& attrName)
     return cssPropertyToTypeMap().contains(attrName);
 }
 
-bool SVGStyledElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName) > 0) {
-        result = eSVG;
-        return false;
-    }
-    return SVGElement::mapToEntry(attrName, result);
-}
-
 void SVGStyledElement::parseMappedAttribute(Attribute* attr)
 {
-    // NOTE: Any subclass which overrides parseMappedAttribute for a property handled by
-    // cssPropertyIdForSVGAttributeName will also have to override mapToEntry to disable the default eSVG mapping
     int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
-        addCSSProperty(attr, propId, attr->value());
+        addCSSProperty(propId, attr->value());
         setNeedsStyleRecalc();
         return;
     }
@@ -422,22 +411,14 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
     Attribute* attr = attributeMap()->getAttributeItem(attributeName);
-    if (!attr || !attr->isMappedAttribute() || !attr->mappedAttributeDeclaration())
+    if (!attr || !attr->isMappedAttribute())
         return 0;
 
-    Attribute* cssSVGAttr = attr;
-    // This function returns a pointer to a CSSValue which can be mutated from JavaScript.
-    // If the associated MappedAttribute uses the same CSSMappedAttributeDeclaration
-    // as StyledElement's mappedAttributeDecls cache, create a new CSSMappedAttributeDeclaration
-    // before returning so that any modifications to the CSSValue will not affect other attributes.
-    MappedAttributeEntry entry;
-    mapToEntry(attributeName, entry);
-    if (getMappedAttributeDecl(entry, cssSVGAttr) == cssSVGAttr->mappedAttributeDeclaration()) {
-        cssSVGAttr->setMappedAttributeDeclaration(0);
-        int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(cssSVGAttr->name());
-        addCSSProperty(cssSVGAttr, propId, cssSVGAttr->value());
-    }
-    return cssSVGAttr->decl()->getPropertyCSSValue(cssPropertyID(name));
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
+    style->setStrictParsing(false);
+    int propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
+    style->setProperty(propertyID, attr->value());
+    return style->getPropertyCSSValue(propertyID);
 }
 
 bool SVGStyledElement::instanceUpdatesBlocked() const

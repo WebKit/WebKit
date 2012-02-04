@@ -58,7 +58,6 @@ protected:
 
     virtual void detach();
     virtual void removedFromDocument();
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
 
     bool m_inBeforeLoadEventHandler;

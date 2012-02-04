@@ -276,7 +276,6 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
 
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
     virtual void finishParsingChildren();
 

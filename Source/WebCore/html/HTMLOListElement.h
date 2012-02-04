@@ -53,7 +53,6 @@ private:
 
     void recalculateItemCount();
 
-    virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
 
     int m_start;

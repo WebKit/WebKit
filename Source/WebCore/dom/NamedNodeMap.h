@@ -26,6 +26,8 @@
 #define NamedNodeMap_h
 
 #include "Attribute.h"
+#include "CSSMappedAttributeDeclaration.h"
+#include "CSSPropertyNames.h"
 #include "ElementAttributeData.h"
 #include "SpaceSplitString.h"
 #include <wtf/NotFound.h>
@@ -102,6 +104,9 @@ public:
     StylePropertySet* inlineStyleDecl() { return attributeData()->m_inlineStyleDecl.get(); }
     StylePropertySet* ensureInlineStyleDecl();
     void destroyInlineStyleDecl();
+
+    CSSMappedAttributeDeclaration* attributeStyle() const { return attributeData()->m_attributeStyle.get(); }
+    CSSMappedAttributeDeclaration* ensureAttributeStyle();
 
 private:
     NamedNodeMap(Element* element)
@@ -182,16 +187,6 @@ inline void NamedNodeMap::removeAttribute(const QualifiedName& name)
         return;
 
     removeAttribute(index);
-}
-
-inline size_t NamedNodeMap::mappedAttributeCount() const
-{
-    size_t count = 0;
-    for (size_t i = 0; i < m_attributes.size(); ++i) {
-        if (m_attributes[i]->decl())
-            ++count;
-    }
-    return count;
 }
 
 } // namespace WebCore

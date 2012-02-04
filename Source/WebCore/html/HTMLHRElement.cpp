@@ -48,60 +48,68 @@ PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLHRElement(tagName, document));
 }
 
-bool HTMLHRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == alignAttr ||
-        attrName == widthAttr ||
-        attrName == colorAttr ||
-        attrName == sizeAttr ||
-        attrName == noshadeAttr) {
-        result = eHR;
-        return false;
-    }
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLHRElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "left")) {
-            addCSSProperty(attr, CSSPropertyMarginLeft, "0");
-            addCSSProperty(attr, CSSPropertyMarginRight, CSSValueAuto);
+        if (attr->value().isNull()) {
+            removeCSSProperties(CSSPropertyMarginLeft, CSSPropertyMarginRight);
+        } else if (equalIgnoringCase(attr->value(), "left")) {
+            addCSSProperty(CSSPropertyMarginLeft, "0");
+            addCSSProperty(CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalIgnoringCase(attr->value(), "right")) {
-            addCSSProperty(attr, CSSPropertyMarginLeft, CSSValueAuto);
-            addCSSProperty(attr, CSSPropertyMarginRight, "0");
+            addCSSProperty(CSSPropertyMarginLeft, CSSValueAuto);
+            addCSSProperty(CSSPropertyMarginRight, "0");
         } else {
-            addCSSProperty(attr, CSSPropertyMarginLeft, CSSValueAuto);
-            addCSSProperty(attr, CSSPropertyMarginRight, CSSValueAuto);
+            addCSSProperty(CSSPropertyMarginLeft, CSSValueAuto);
+            addCSSProperty(CSSPropertyMarginRight, CSSValueAuto);
         }
     } else if (attr->name() == widthAttr) {
-        bool ok;
-        int v = attr->value().toInt(&ok);
-        if (ok && !v)
-            addCSSLength(attr, CSSPropertyWidth, "1");
-        else
-            addCSSLength(attr, CSSPropertyWidth, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyWidth);
+        else {
+            bool ok;
+            int v = attr->value().toInt(&ok);
+            if (ok && !v)
+                addCSSLength(CSSPropertyWidth, "1");
+            else
+                addCSSLength(CSSPropertyWidth, attr->value());
+        }
     } else if (attr->name() == colorAttr) {
-        addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
-        addCSSColor(attr, CSSPropertyBorderColor, attr->value());
-        addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle, CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle, CSSPropertyBorderColor, CSSPropertyBackgroundColor);
+        else {
+            addCSSProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+            addCSSColor(CSSPropertyBorderColor, attr->value());
+            addCSSColor(CSSPropertyBackgroundColor, attr->value());
+        }
     } else if (attr->name() == noshadeAttr) {
-        addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
-        addCSSColor(attr, CSSPropertyBorderColor, String("grey"));
-        addCSSColor(attr, CSSPropertyBackgroundColor, String("grey"));
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle, CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle, CSSPropertyBorderColor, CSSPropertyBackgroundColor);
+        else {
+            addCSSProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+            addCSSProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+            addCSSColor(CSSPropertyBorderColor, String("grey"));
+            addCSSColor(CSSPropertyBackgroundColor, String("grey"));
+        }
     } else if (attr->name() == sizeAttr) {
-        StringImpl* si = attr->value().impl();
-        int size = si->toInt();
-        if (size <= 1)
-            addCSSProperty(attr, CSSPropertyBorderBottomWidth, String("0"));
-        else
-            addCSSLength(attr, CSSPropertyHeight, String::number(size-2));
+        if (attr->value().isNull())
+            removeCSSProperties(CSSPropertyBorderBottomWidth, CSSPropertyHeight);
+        else {
+            StringImpl* si = attr->value().impl();
+            int size = si->toInt();
+            if (size <= 1) {
+                addCSSProperty(CSSPropertyBorderBottomWidth, String("0"));
+                removeCSSProperty(CSSPropertyHeight);
+            } else {
+                addCSSLength(CSSPropertyHeight, String::number(size-2));
+                removeCSSProperty(CSSPropertyBorderBottomWidth);
+            }
+        }
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

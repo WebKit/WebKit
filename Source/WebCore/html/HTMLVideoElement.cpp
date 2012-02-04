@@ -114,9 +114,15 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
         }
 #endif
     } else if (attrName == widthAttr)
-        addCSSLength(attr, CSSPropertyWidth, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyWidth);
+        else
+            addCSSLength(CSSPropertyWidth, attr->value());
     else if (attrName == heightAttr)
-        addCSSLength(attr, CSSPropertyHeight, attr->value());
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyHeight);
+        else
+            addCSSLength(CSSPropertyHeight, attr->value());
     else
         HTMLMediaElement::parseMappedAttribute(attr);
 }

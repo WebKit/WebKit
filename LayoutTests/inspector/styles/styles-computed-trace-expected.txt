@@ -52,7 +52,7 @@ element.style  { ()
 
 ======== Matched CSS Rules ========
 [expanded] 
-button[hidden]  { ()
+button[]  { ()
 display: none;
 
 

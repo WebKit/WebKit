@@ -39,21 +39,14 @@ public:
     virtual ~StyledElement();
 
     size_t mappedAttributeCount() const { return attributeMap() ? attributeMap()->mappedAttributeCount() : 0; }
-    bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }
 
-    void addCSSLength(Attribute*, int id, const String& value);
-    void addCSSProperty(Attribute*, int id, const String& value);
-    void addCSSProperty(Attribute*, int id, int value);
-    void addCSSImageProperty(Attribute*, int propertyID, const String& url);
-    void addCSSColor(Attribute*, int id, const String& color);
-    void removeCSSProperty(Attribute*, int id);
-
-    static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
-    static void setMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration*);
-    static void removeMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
-
-    static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
-    static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
+    void addCSSLength(int id, const String& value);
+    void addCSSProperty(int id, const String& value);
+    void addCSSProperty(int id, int value);
+    void addCSSImageProperty(int propertyID, const String& url);
+    void addCSSColor(int id, const String& color);
+    void removeCSSProperties(int id1, int id2 = CSSPropertyInvalid, int id3 = CSSPropertyInvalid, int id4 = CSSPropertyInvalid, int id5 = CSSPropertyInvalid, int id6 = CSSPropertyInvalid, int id7 = CSSPropertyInvalid, int id8 = CSSPropertyInvalid);
+    void removeCSSProperty(int id) { removeCSSProperties(id); }
 
     virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
@@ -62,9 +55,10 @@ public:
     StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
     virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
-    const SpaceSplitString& classNames() const;
+    CSSMappedAttributeDeclaration* attributeStyle() const { return attributeMap() ? attributeMap()->attributeStyle() : 0; }
+    CSSMappedAttributeDeclaration* ensureAttributeStyle() { return ensureAttributeMap()->ensureAttributeStyle(); }
 
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    const SpaceSplitString& classNames() const;
 
     virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
 
@@ -86,8 +80,6 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
-    void createMappedDecl(Attribute*);
-
     virtual void updateStyleAttribute() const;
 
     void destroyInlineStyleDecl()

@@ -51,65 +51,63 @@ PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& t
     return adoptRef(new HTMLMarqueeElement(tagName, document));
 }
 
-bool HTMLMarqueeElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == widthAttr ||
-        attrName == heightAttr ||
-        attrName == bgcolorAttr ||
-        attrName == vspaceAttr ||
-        attrName == hspaceAttr ||
-        attrName == scrollamountAttr ||
-        attrName == scrolldelayAttr ||
-        attrName == loopAttr ||
-        attrName == behaviorAttr ||
-        attrName == directionAttr) {
-        result = eUniversal;
-        return false;
-    }
-
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLMarqueeElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSSPropertyWidth, attr->value());
+            addCSSLength(CSSPropertyWidth, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWidth);
     } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSSPropertyHeight, attr->value());
+            addCSSLength(CSSPropertyHeight, attr->value());
+        else
+            removeCSSProperty(CSSPropertyHeight);
     } else if (attr->name() == bgcolorAttr) {
         if (!attr->value().isEmpty())
-            addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
+            addCSSColor(CSSPropertyBackgroundColor, attr->value());
+        else
+            removeCSSProperty(CSSPropertyBackgroundColor);
     } else if (attr->name() == vspaceAttr) {
         if (!attr->value().isEmpty()) {
-            addCSSLength(attr, CSSPropertyMarginTop, attr->value());
-            addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
-        }
+            addCSSLength(CSSPropertyMarginTop, attr->value());
+            addCSSLength(CSSPropertyMarginBottom, attr->value());
+        } else
+            removeCSSProperties(CSSPropertyMarginTop, CSSPropertyMarginBottom);
     } else if (attr->name() == hspaceAttr) {
         if (!attr->value().isEmpty()) {
-            addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
-            addCSSLength(attr, CSSPropertyMarginRight, attr->value());
-        }
+            addCSSLength(CSSPropertyMarginLeft, attr->value());
+            addCSSLength(CSSPropertyMarginRight, attr->value());
+        } else
+            removeCSSProperties(CSSPropertyMarginLeft, CSSPropertyMarginRight);
     } else if (attr->name() == scrollamountAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSSPropertyWebkitMarqueeIncrement, attr->value());
+            addCSSLength(CSSPropertyWebkitMarqueeIncrement, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWebkitMarqueeIncrement);
     } else if (attr->name() == scrolldelayAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSSPropertyWebkitMarqueeSpeed, attr->value());
+            addCSSLength(CSSPropertyWebkitMarqueeSpeed, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWebkitMarqueeSpeed);
     } else if (attr->name() == loopAttr) {
         if (!attr->value().isEmpty()) {
             if (attr->value() == "-1" || equalIgnoringCase(attr->value(), "infinite"))
-                addCSSProperty(attr, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
+                addCSSProperty(CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
-                addCSSLength(attr, CSSPropertyWebkitMarqueeRepetition, attr->value());
-        }
+                addCSSLength(CSSPropertyWebkitMarqueeRepetition, attr->value());
+        } else
+            removeCSSProperty(CSSPropertyWebkitMarqueeRepetition);
     } else if (attr->name() == behaviorAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSSPropertyWebkitMarqueeStyle, attr->value());
+            addCSSProperty(CSSPropertyWebkitMarqueeStyle, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWebkitMarqueeStyle);
     } else if (attr->name() == directionAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSSPropertyWebkitMarqueeDirection, attr->value());
+            addCSSProperty(CSSPropertyWebkitMarqueeDirection, attr->value());
+        else
+            removeCSSProperty(CSSPropertyWebkitMarqueeDirection);
     } else if (attr->name() == truespeedAttr)
         m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;
     else

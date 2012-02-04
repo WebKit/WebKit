@@ -151,11 +151,11 @@ void HTMLTextAreaElement::parseMappedAttribute(Attribute* attr)
             m_wrap = wrap;
 
             if (shouldWrapText()) {
-                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePreWrap);
-                addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
+                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
+                addCSSProperty(CSSPropertyWordWrap, CSSValueBreakWord);
             } else {
-                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);
-                addCSSProperty(attr, CSSPropertyWordWrap, CSSValueNormal);
+                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePre);
+                addCSSProperty(CSSPropertyWordWrap, CSSValueNormal);
             }
 
             if (renderer())

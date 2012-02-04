@@ -44,26 +44,19 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
-bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == alignAttr) {
-        result = eBlock; // We can share with DIV here.
-        return false;
-    }
-    return HTMLElement::mapToEntry(attrName, result);
-}
-
 void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitCenter);
+        if (attr->value().isNull())
+            removeCSSProperty(CSSPropertyTextAlign);
+        else if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(attr->value(), "left"))
-            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitLeft);
+            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalIgnoringCase(attr->value(), "right"))
-            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitRight);
+            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(attr, CSSPropertyTextAlign, attr->value());
+            addCSSProperty(CSSPropertyTextAlign, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

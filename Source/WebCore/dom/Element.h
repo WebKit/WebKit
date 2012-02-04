@@ -221,6 +221,7 @@ public:
     NamedNodeMap* updatedAttributes() const;
 
     // This method is called whenever an attribute is added, changed or removed.
+    // FIXME: Remove the preserveDecls argument.
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     // Only called by the parser immediately after element construction.
