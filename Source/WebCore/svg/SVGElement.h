@@ -111,7 +111,7 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void finishParsingChildren();
-    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+    virtual void attributeChanged(Attribute*) OVERRIDE;
     virtual bool childShouldCreateRenderer(Node*) const;
     
     virtual void removedFromDocument();

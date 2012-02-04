@@ -548,11 +548,11 @@ void HTMLInputElement::updateType()
         NamedNodeMap* map = attributeMap();
         ASSERT(map);
         if (Attribute* height = map->getAttributeItem(heightAttr))
-            attributeChanged(height, false);
+            attributeChanged(height);
         if (Attribute* width = map->getAttributeItem(widthAttr))
-            attributeChanged(width, false);
+            attributeChanged(width);
         if (Attribute* align = map->getAttributeItem(alignAttr))
-            attributeChanged(align, false);
+            attributeChanged(align);
     }
 
     if (wasAttached) {

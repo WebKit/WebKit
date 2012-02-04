@@ -201,12 +201,12 @@ void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
     ASSERT_NOT_REACHED();
 }
 
-void SVGAnimationElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void SVGAnimationElement::attributeChanged(Attribute* attr)
 {
     // Assumptions may not hold after an attribute change.
     m_animationValid = false;
     setInactive();
-    SVGSMILElement::attributeChanged(attr, preserveDecls);
+    SVGSMILElement::attributeChanged(attr);
 }
 
 float SVGAnimationElement::getStartTime() const

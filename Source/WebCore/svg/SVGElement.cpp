@@ -359,13 +359,13 @@ bool SVGElement::childShouldCreateRenderer(Node* child) const
     return false;
 }
 
-void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void SVGElement::attributeChanged(Attribute* attr)
 {
     ASSERT(attr);
     if (!attr)
         return;
 
-    StyledElement::attributeChanged(attr, preserveDecls);
+    StyledElement::attributeChanged(attr);
 
     // When an animated SVG property changes through SVG DOM, svgAttributeChanged() is called, not attributeChanged().
     // Next time someone tries to access the XML attributes, the synchronization code starts. During that synchronization

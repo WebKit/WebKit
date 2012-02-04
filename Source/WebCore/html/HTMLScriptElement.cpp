@@ -58,11 +58,11 @@ void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-void HTMLScriptElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void HTMLScriptElement::attributeChanged(Attribute* attr)
 {
     if (attr->name() == asyncAttr)
         handleAsyncAttribute();
-    HTMLElement::attributeChanged(attr, preserveDecls);
+    HTMLElement::attributeChanged(attr);
 }
 
 void HTMLScriptElement::parseMappedAttribute(Attribute* attr)

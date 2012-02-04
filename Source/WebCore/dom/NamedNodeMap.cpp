@@ -239,15 +239,12 @@ void NamedNodeMap::setAttributes(const NamedNodeMap& other)
     clearAttributes();
     unsigned newLength = other.length();
     m_attributes.resize(newLength);
+
+    // FIXME: These loops can probably be combined.
     for (unsigned i = 0; i < newLength; i++)
         m_attributes[i] = other.m_attributes[i]->clone();
-
-    // FIXME: This is wasteful.  The class list could be preserved on a copy, and we
-    // wouldn't have to waste time reparsing the attribute.
-    // The derived class, HTMLNamedNodeMap, which manages a parsed class list for the CLASS attribute,
-    // will update its member variable when parse attribute is called.
     for (unsigned i = 0; i < newLength; i++)
-        m_element->attributeChanged(m_attributes[i].get(), true);
+        m_element->attributeChanged(m_attributes[i].get());
 }
 
 void NamedNodeMap::addAttribute(PassRefPtr<Attribute> prpAttribute)

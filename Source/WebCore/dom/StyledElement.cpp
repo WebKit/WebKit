@@ -64,13 +64,13 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
     return Attribute::createMapped(name, value);
 }
 
-void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void StyledElement::attributeChanged(Attribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr)
         setHasName(!attr->isNull());
 
     if (!attr->isMappedAttribute()) {
-        Element::attributeChanged(attr, preserveDecls);
+        Element::attributeChanged(attr);
         return;
     }
 

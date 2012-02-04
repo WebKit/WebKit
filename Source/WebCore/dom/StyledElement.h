@@ -68,7 +68,7 @@ protected:
     {
     }
 
-    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+    virtual void attributeChanged(Attribute*) OVERRIDE;
     virtual void parseMappedAttribute(Attribute*);
     virtual void copyNonAttributeProperties(const Element*);
 

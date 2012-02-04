@@ -406,10 +406,10 @@ void SVGSMILElement::parseMappedAttribute(Attribute* attr)
         SVGElement::parseMappedAttribute(attr);
 }
 
-void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void SVGSMILElement::attributeChanged(Attribute* attr)
 {
-    SVGElement::attributeChanged(attr, preserveDecls);
-    
+    SVGElement::attributeChanged(attr);
+
     const QualifiedName& attrName = attr->name();
     if (attrName == SVGNames::durAttr)
         m_cachedDur = invalidCachedTime;

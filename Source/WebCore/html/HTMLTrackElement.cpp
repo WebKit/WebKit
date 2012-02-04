@@ -100,9 +100,9 @@ void HTMLTrackElement::parseMappedAttribute(Attribute* attribute)
         HTMLElement::parseMappedAttribute(attribute);
 }
 
-void HTMLTrackElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void HTMLTrackElement::attributeChanged(Attribute* attr)
 {
-    HTMLElement::attributeChanged(attr, preserveDecls);
+    HTMLElement::attributeChanged(attr);
 
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;

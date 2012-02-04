@@ -315,9 +315,9 @@ bool HTMLMediaElement::supportsFocus() const
     return controls() ||  HTMLElement::supportsFocus();
 }
 
-void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
+void HTMLMediaElement::attributeChanged(Attribute* attr)
 {
-    HTMLElement::attributeChanged(attr, preserveDecls);
+    HTMLElement::attributeChanged(attr);
 
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {

@@ -655,7 +655,7 @@ PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const 
     return Attribute::create(name, value);
 }
 
-void Element::attributeChanged(Attribute* attr, bool)
+void Element::attributeChanged(Attribute* attr)
 {
     if (isIdAttributeName(attr->name()))
         idAttributeChanged(attr);

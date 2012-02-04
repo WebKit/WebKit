@@ -1,3 +1,53 @@
+2012-02-04  Andreas Kling  <awesomekling@apple.com>
+
+        Element: Remove unnecessary attributeChanged() argument.
+        <http://webkit.org/b/77814>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the 'preserveDecls' argument to Element::attributeChanged() as that is no
+        longer needed after the removal of per-attribute style declarations.
+        Decorated subclass overrides with OVERRIDE since we're touching the lines.
+
+        Also removed an old inaccurate comment in NamedNodeMap::setAttributes() - calling
+        attributeChanged() is absolutely necessary to initialize element-specific state.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Element.h:
+        (Element):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setAttributes):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::attributeChanged):
+        * html/HTMLScriptElement.h:
+        (HTMLScriptElement):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::attributeChanged):
+        * html/HTMLTrackElement.h:
+        (HTMLTrackElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::attributeChanged):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::attributeChanged):
+        * svg/animation/SVGSMILElement.h:
+        (SVGSMILElement):
+
 2012-02-04  Ken Buchanan  <kenrb@chromium.org>
 
         Crash when reparenting children of flexible boxes
