@@ -1,3 +1,14 @@
+2012-02-04  Andreas Kling  <awesomekling@apple.com>
+
+        Unreviewed test fix after r106740.
+        <http://webkit.org/b/77204>
+
+        Disable matched declaration caching for elements with attribute style until we can
+        figure out how it's supposed to work.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+
 2012-02-03  Andreas Kling  <awesomekling@apple.com>
 
         Kill per-Attribute style declarations.
