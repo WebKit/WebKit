@@ -1,3 +1,19 @@
+2012-02-03  Lucas Forschler  <lforschler@apple.com>
+
+        Add a Mac Lion Performance bot.
+        https://bugs.webkit.org/show_bug.cgi?id=77765
+
+        Reviewed by Adam Roben.
+
+        This will update the master configuration in the following ways:
+            Add a new performance slave (apple-xseve-11)
+            Add a new Factory to download a build and run perf tests.
+            
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (DownloadAndPerfTestFactory):
+        (DownloadAndPerfTestFactory.__init__):
+
 2012-02-03  Dirk Pranke  <dpranke@chromium.org>
 
         Extra TestWebKitAPI.gyp/TestWebKitAPI.target.chromium.mk in repository

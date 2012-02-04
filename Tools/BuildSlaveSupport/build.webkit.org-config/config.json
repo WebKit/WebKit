@@ -21,6 +21,7 @@
                     { "name": "apple-xserve-2", "platform": "mac-lion" },
                     { "name": "apple-xserve-3", "platform": "mac-lion" },
                     { "name": "apple-xserve-10", "platform": "mac-lion" },
+                    { "name": "apple-xserve-11", "platform": "mac-lion" },
                     
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -110,7 +111,7 @@
                     },
                     { "name": "Lion Intel Release (Build)", "type": "Build", "builddir": "lion-intel-release",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2"],
+                      "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2", "lion-intel-release-perf"],
                       "slavenames": ["apple-xserve-3"]
                     },
                     { "name": "Lion Intel Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
@@ -128,6 +129,11 @@
                     { "name": "Lion Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-6"]
+                    },
+                    {
+                      "name": "Lion Intel Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
+                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-xserve-11"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
@@ -296,6 +302,9 @@
                     },
                     { "type": "Triggerable", "name": "lion-intel-release-tests-wk2",
                       "builderNames": ["Lion Intel Release (WebKit2 Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "lion-intel-release-perf",
+                      "builderNames": ["Lion Intel Release (Perf)"]
                     },
                     { "type": "Triggerable", "name": "lion-intel-debug-tests",
                       "builderNames": ["Lion Intel Debug (Tests)"]
