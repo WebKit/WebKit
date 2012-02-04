@@ -69,6 +69,6 @@ var kTenMinutesInMilliseconds = 10 * 60 * 1000;
 config.kUpdateFrequency = kTenMinutesInMilliseconds;
 config.kRelativeTimeUpdateFrequency = 1000 * 60;
 
-
+config.kExperimentalFeatures = window.location.search.search('enableExperiments=1') != -1;
 
 })();

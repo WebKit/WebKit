@@ -1,3 +1,21 @@
+2012-02-03  Adam Barth  <abarth@webkit.org>
+
+        Add a blank "Expected Failures" tab to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=77793
+
+        Reviewed by Eric Seidel.
+
+        This tab will help us explore and manage our expected failures.  The
+        tab is hidden by default via a new "experimental features" flag.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        (#unexpected):
+        (#onebar.partytime #unexpected):
+
 2012-02-03  Lucas Forschler  <lforschler@apple.com>
 
         update-webkit-support-libraries is broken with the change from http to https on developer.apple.com

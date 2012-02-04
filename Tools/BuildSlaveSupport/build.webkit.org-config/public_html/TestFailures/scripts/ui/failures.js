@@ -127,4 +127,11 @@ ui.failures.FailureGrid = base.extends('table', {
     }
 });
 
+ui.failures.List = base.extends('div', {
+    init: function()
+    {
+        this.textContent = "TODO: List failures here.";
+    }
+});
+
 })();

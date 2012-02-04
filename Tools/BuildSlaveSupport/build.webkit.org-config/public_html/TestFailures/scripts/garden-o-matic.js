@@ -99,10 +99,16 @@ $(document).ready(function() {
     updateButton.addEventListener("click", update);
     updateButton.textContent = 'update';
 
-    var summary = onebar.summary();
-    summary.appendChild(updateButton);
-    summary.appendChild(g_info);
-    summary.appendChild(unexpectedFailuresView);
+    var unexpected = onebar.unexpected();
+    unexpected.appendChild(updateButton);
+    unexpected.appendChild(g_info);
+    unexpected.appendChild(unexpectedFailuresView);
+
+    var expected = onebar.expected();
+    if (expected) {
+        var expectedFailuresView = new ui.failures.List();
+        expected.appendChild(expectedFailuresView);
+    }
 
     update();
 });

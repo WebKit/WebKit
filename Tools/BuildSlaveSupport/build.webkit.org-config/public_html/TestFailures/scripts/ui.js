@@ -63,18 +63,23 @@ ui.onebar = base.extends('div', {
         this.id = 'onebar';
         this.innerHTML =
             '<ul>' +
-                '<li><a href="#summary">Summary</a></li>' +
+                '<li><a href="#unexpected">Unexpected Failures</a></li>' +
+                '<li><a href="#expected">Expected Failures</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
             '</ul>' +
-            '<div id="summary"></div>' +
+            '<div id="unexpected"></div>' +
+            '<div id="expected"></div>' +
             '<div id="results"></div>';
         this._tabNames = [
-            'summary',
+            'unexpected',
+            'expected',
             'results',
         ]
         this._tabs = $(this).tabs({
-            disabled: [1],
+            disabled: [2],
         });
+        if (!config.kExperimentalFeatures)
+            this._tabs.tabs('remove', 1);
     },
     attach: function()
     {
@@ -83,6 +88,8 @@ ui.onebar = base.extends('div', {
     tabNamed: function(tabName)
     {
         tab = document.getElementById(tabName);
+        if (!tab)
+            return null;
         // We perform this sanity check below to make sure getElementById
         // hasn't given us a node in some other unrelated part of the document.
         // that shouldn't happen normally, but it could happen if an attacker
@@ -91,9 +98,13 @@ ui.onebar = base.extends('div', {
             return null;
         return tab;
     },
-    summary: function()
+    unexpected: function()
     {
-        return this.tabNamed('summary');
+        return this.tabNamed('unexpected');
+    },
+    expected: function()
+    {
+        return this.tabNamed('expected');
     },
     results: function()
     {
