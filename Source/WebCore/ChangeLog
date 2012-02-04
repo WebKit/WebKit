@@ -1,3 +1,19 @@
+2012-02-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77782
+        WebPageProxy::didNewFirstVisuallyNonEmptyLayout should is called more than 
+        once on some pages with frames
+        -and corresponding-
+        <rdar://problem/10798474>
+
+        Reviewed by Sam Weinig.
+
+        startCountingRelevantRepaintedObjects() should only be called for the main 
+        frame. Otherwise, the counter will be re-set inappropriately, and 
+        didNewFirstVisuallyNonEmptyLayout may even end up firing more than once. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2012-02-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Reduce the memory allocations of WebCore's cssPropertyName()

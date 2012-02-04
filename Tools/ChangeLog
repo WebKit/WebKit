@@ -1,3 +1,29 @@
+2012-02-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77782
+        WebPageProxy::didNewFirstVisuallyNonEmptyLayout should is called more than 
+        once on some pages with frames
+        -and corresponding-
+        <rdar://problem/10798474>
+
+        Reviewed by Sam Weinig.
+
+        One new test.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didForceRepaint):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didNewFirstVisuallyNonEmptyLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (NewFirstVisuallyNonEmptyLayoutFramesTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFramesTest::NewFirstVisuallyNonEmptyLayoutFramesTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFramesTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/lots-of-iframes.html: Added.
+
 2012-02-03  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: change exit() calls to sys.exit(), fix a leak in outputcapture
