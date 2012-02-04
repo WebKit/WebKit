@@ -138,6 +138,23 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
     return PropertyNamePrefixNone;
 }
 
+template<typename CharacterType>
+static inline bool containsASCIIUpperChar(const CharacterType* string, size_t length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (isASCIIUpper(string[i]))
+            return true;
+    }
+    return false;
+}
+
+static inline bool containsASCIIUpperChar(const StringImpl& string)
+{
+    if (string.is8Bit())
+        return containsASCIIUpperChar(string.characters8(), string.length());
+    return containsASCIIUpperChar(string.characters16(), string.length());
+}
+
 static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPosPrefix = 0)
 {
     if (hadPixelOrPosPrefix)
@@ -147,10 +164,15 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     if (!length)
         return String();
 
+    StringImpl* propertyNameString = propertyName.impl();
+    // If there is no uppercase character in the propertyName, there can
+    // be no prefix, nor extension and we can return the same string.
+    if (!containsASCIIUpperChar(*propertyNameString))
+        return String(propertyNameString);
+
     StringBuilder builder;
     builder.reserveCapacity(length);
 
-    const StringImpl* propertyNameString = propertyName.impl();
     unsigned i = 0;
     switch (getCSSPropertyNamePrefix(*propertyNameString)) {
     case PropertyNamePrefixNone:
@@ -177,10 +199,10 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
         builder.append('-');
     }
 
-    builder.append(toASCIILower(propertyName.characters()[i++]));
+    builder.append(toASCIILower((*propertyNameString)[i++]));
 
     for (; i < length; ++i) {
-        UChar c = propertyName.characters()[i];
+        UChar c = (*propertyNameString)[i];
         if (!isASCIIUpper(c))
             builder.append(c);
         else
@@ -192,8 +214,6 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
 
 static bool isCSSPropertyName(const Identifier& propertyIdentifier)
 {
-    // FIXME: This mallocs a string for the property name and then throws it
-    // away.  This shows up on peacekeeper's domDynamicCreationCreateElement.
     return cssPropertyID(cssPropertyName(propertyIdentifier));
 }
 

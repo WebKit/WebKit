@@ -1,3 +1,29 @@
+2012-02-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Reduce the memory allocations of WebCore's cssPropertyName()
+        https://bugs.webkit.org/show_bug.cgi?id=74782
+
+        Reviewed by Geoffrey Garen.
+
+        Add a fast path to avoid the use of the StringBuilder.
+
+        The string builder is needed for two cases:
+        -CSS prefix (the character after the prefix must be uppercase)
+        -JavaScript CamelCase name for CSS properties
+
+        We can skip all memory allocations if the property is not in those
+        two cases. We start by testing the string for uppercase characters,
+        and just return the an identical string.
+
+        This patch create a "fast case" 2.7 times faster than previously.
+        The "slow case" is 2-3% slower due to the additional check at the beginning.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore):
+        (WebCore::containsASCIIUpperChar):
+        (WebCore::cssPropertyName):
+        (WebCore::isCSSPropertyName):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         WebKit2 should dispatch wheel events to the new ScrollingTree class
