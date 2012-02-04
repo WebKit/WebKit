@@ -28,6 +28,8 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "ScrollingTreeState.h"
+
 namespace WebCore {
 
 PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrollingTree)
@@ -38,6 +40,14 @@ PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrolling
 ScrollingTreeNodeMac::ScrollingTreeNodeMac(ScrollingTree* scrollingTree)
     : ScrollingTreeNode(scrollingTree)
 {
+}
+
+void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
+{
+    ScrollingTreeNode::update(state);
+
+    if (state->changedProperties() & ScrollingTreeState::ScrollLayer)
+        m_scrollLayer = state->platformScrollLayer();
 }
 
 } // namespace WebCore

@@ -40,6 +40,8 @@ public:
     explicit ScrollingTreeNodeMac(ScrollingTree*);
 
 private:
+    virtual void update(ScrollingTreeState*) OVERRIDE;
+
     RetainPtr<CALayer> m_scrollLayer;
 };
 

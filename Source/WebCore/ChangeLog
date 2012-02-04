@@ -1,3 +1,29 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Apply changed properties from the updated scrolling tree state
+        https://bugs.webkit.org/show_bug.cgi?id=77792
+
+        Reviewed by Andreas Kling.
+
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::update):
+        Update the tree node properties from the scrolling tree state.
+
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::scrollingTree):
+        (WebCore::ScrollingTreeNode::viewportRect):
+        (WebCore::ScrollingTreeNode::contentsSize):
+        Add getters.
+
+        * page/scrolling/ScrollingTreeState.h:
+        (WebCore::ScrollingTreeState::changedProperties):
+        New function for accessing the changed properties of the scrolling tree state.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::update):
+        Update the scroll layer from the scrolling tree if necessary.
+
 2012-02-03  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10742441> and https://bugs.webkit.org/show_bug.cgi?id=77766

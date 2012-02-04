@@ -54,6 +54,7 @@ public:
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
+    unsigned changedProperties() const { return m_changedProperties; }
 
     const IntRect& viewportRect() const { return m_viewportRect; }
     void setViewportRect(const IntRect&);

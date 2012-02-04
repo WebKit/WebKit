@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "IntRect.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -45,8 +46,15 @@ public:
 protected:
     explicit ScrollingTreeNode(ScrollingTree*);
 
+    ScrollingTree* scrollingTree() const { return m_scrollingTree; }
+    const IntRect& viewportRect() const { return m_viewportRect; }
+    const IntSize& contentsSize() const { return m_contentsSize; }
+
 private:
     ScrollingTree* m_scrollingTree;
+
+    IntRect m_viewportRect;
+    IntSize m_contentsSize;
 };
 
 } // namespace WebCore

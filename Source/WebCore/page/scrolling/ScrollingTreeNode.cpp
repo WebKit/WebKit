@@ -28,6 +28,8 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "ScrollingTreeState.h"
+
 namespace WebCore {
 
 ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree)
@@ -39,9 +41,13 @@ ScrollingTreeNode::~ScrollingTreeNode()
 {
 }
 
-void ScrollingTreeNode::update(ScrollingTreeState*)
+void ScrollingTreeNode::update(ScrollingTreeState* state)
 {
-    // FIXME: Update the tree node properties.
+    if (state->changedProperties() & ScrollingTreeState::ViewportRect)
+        m_viewportRect = state->viewportRect();
+
+    if (state->changedProperties() & ScrollingTreeState::ContentsSize)
+        m_contentsSize = state->contentsSize();
 }
 
 } // namespace WebCore
