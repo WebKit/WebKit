@@ -94,6 +94,20 @@ controllers.ResultsDetails = base.extends(Object, {
     }
 });
 
+controllers.ExpectedFailures = base.extends(Object, {
+    init: function(model, view, delegate)
+    {
+        this._model = model;
+        this._view = view;
+        this._delegate = delegate;
+    },
+    update: function()
+    {
+        var expectedOrUnexpectedFailures = results.expectedOrUnexpectedFailuresByTest(this._model.resultsByBuilder);
+        this._view.setFailingTests(Object.keys(expectedOrUnexpectedFailures));
+    }
+});
+
 var FailureStreamController = base.extends(Object, {
     _resultsFilter: null,
     _keyFor: function(failureAnalysis) { throw "Not implemented!"; },

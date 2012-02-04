@@ -1,3 +1,19 @@
+2012-02-03  Adam Barth  <abarth@webkit.org>
+
+        List of all failures in garden-o-matic should actually list all the failures
+        https://bugs.webkit.org/show_bug.cgi?id=77796
+
+        Reviewed by Eric Seidel.
+
+        This patch wires a bit more data into the new "All Failures" tab.  I've
+        also iterated on how we enable this experimental feature.  The tab is
+        still just a dumb list, but we'll make it smarter.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix after r106692.

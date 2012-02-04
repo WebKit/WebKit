@@ -130,7 +130,15 @@ ui.failures.FailureGrid = base.extends('table', {
 ui.failures.List = base.extends('div', {
     init: function()
     {
-        this.textContent = "TODO: List failures here.";
+        this.textContent = 'Loading...';
+    },
+    setFailingTests: function(failingTestsList)
+    {
+        $(this).empty();
+        var list = this.appendChild(document.createElement('ul'));
+        failingTestsList.sort().forEach(function(failingTest) {
+            list.appendChild(document.createElement('li')).textContent = failingTest;
+        });
     }
 });
 
