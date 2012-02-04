@@ -604,6 +604,8 @@ void ContainerNode::removeChildren()
 
 bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
+    RefPtr<ContainerNode> protector(this);
+
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrHostNode());

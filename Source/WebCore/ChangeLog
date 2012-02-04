@@ -1,3 +1,20 @@
+2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in Node::dispatchSubtreeModifiedEvent
+        https://bugs.webkit.org/show_bug.cgi?id=77449
+
+        Reviewed by Alexey Proskuryakov.
+
+        The bug was caused by appendChild not retaining this pointer.
+        This is normally okay because there's another owner within JSC/V8 binding code that
+        holds onto the node but this isn't the case when nodes are created as a part
+        of setting document.title. Fixed the crash by retaining the pointer as needed.
+
+        Test: fast/dom/remove-body-during-title-creation.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::appendChild):
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         Apply changed properties from the updated scrolling tree state
