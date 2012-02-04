@@ -428,7 +428,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node)
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* filter)
 {
     ASSERT(node);
     if (!node)
@@ -445,7 +445,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node)
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = frame->documentTypeString() + markupString;
 
-    return create(markupString, frame, nodeList);
+    return create(markupString, frame, nodeList, filter);
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
@@ -494,10 +494,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     // FIXME: This is always "for interchange". Is that right? See the previous method.
     String markupString = frame->documentTypeString() + createMarkup(range, &nodeList, AnnotateForInterchange);
 
-    return create(markupString, frame, nodeList);
+    return create(markupString, frame, nodeList, 0);
 }
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes)
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes, FrameFilter* frameFilter)
 {
     ASSERT(frame);
     
@@ -521,7 +521,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         Frame* childFrame;
         if ((node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag) || node->hasTagName(HTMLNames::objectTag)) &&
              (childFrame = static_cast<HTMLFrameOwnerElement*>(node)->contentFrame())) {
-            RefPtr<LegacyWebArchive> subframeArchive = create(childFrame->document());
+            if (frameFilter && !frameFilter->shouldIncludeSubframe(childFrame))
+                continue;
+                
+            RefPtr<LegacyWebArchive> subframeArchive = create(childFrame->document(), frameFilter);
             
             if (subframeArchive)
                 subframeArchives.append(subframeArchive);
@@ -584,7 +587,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     Vector<Node*> nodeList;
     String markupString = frame->documentTypeString() + createMarkup(selectionRange.get(), &nodeList, AnnotateForInterchange);
     
-    RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList);
+    RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList, 0);
     
     if (!frame->document() || !frame->document()->isFrameSet())
         return archive.release();

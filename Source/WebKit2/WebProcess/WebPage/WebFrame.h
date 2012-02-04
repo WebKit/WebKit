@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "ImmutableArray.h"
+#include "WKBase.h"
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -137,7 +138,8 @@ public:
     LoadListener* loadListener() const { return m_loadListener; }
     
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    RetainPtr<CFDataRef> webArchiveData() const;
+    typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
+    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
 #endif
 
 private:

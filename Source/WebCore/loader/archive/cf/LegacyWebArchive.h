@@ -37,13 +37,19 @@ class Frame;
 class Node;
 class Range;
 
+class FrameFilter {
+public:
+    virtual ~FrameFilter() { }
+    virtual bool shouldIncludeSubframe(Frame*) const = 0;
+};
+
 class LegacyWebArchive : public Archive {
 public:
     static PassRefPtr<LegacyWebArchive> create();
     static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
     static PassRefPtr<LegacyWebArchive> create(const KURL&, SharedBuffer*);
     static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<PassRefPtr<ArchiveResource> >& subresources, Vector<PassRefPtr<LegacyWebArchive> >& subframeArchives);
-    static PassRefPtr<LegacyWebArchive> create(Node*);
+    static PassRefPtr<LegacyWebArchive> create(Node*, FrameFilter* = 0);
     static PassRefPtr<LegacyWebArchive> create(Frame*);
     static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
     static PassRefPtr<LegacyWebArchive> create(Range*);
@@ -57,7 +63,7 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static PassRefPtr<LegacyWebArchive> create(const String& markupString, Frame*, const Vector<Node*>& nodes);
+    static PassRefPtr<LegacyWebArchive> create(const String& markupString, Frame*, const Vector<Node*>& nodes, FrameFilter*);
     static PassRefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);

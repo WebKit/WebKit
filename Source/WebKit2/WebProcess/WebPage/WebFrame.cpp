@@ -30,6 +30,8 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -734,9 +736,40 @@ void WebFrame::setTextDirection(const String& direction)
 }
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-RetainPtr<CFDataRef> WebFrame::webArchiveData() const
+
+class WebFrameFilter : public FrameFilter {
+public:
+    WebFrameFilter(WebFrame*, WebFrame::FrameFilterFunction, void* context);
+        
+private:
+    virtual bool shouldIncludeSubframe(Frame*) const OVERRIDE;
+
+    WebFrame* m_topLevelWebFrame;
+    WebFrame::FrameFilterFunction m_callback;
+    void* m_context;
+};
+
+WebFrameFilter::WebFrameFilter(WebFrame* topLevelWebFrame, WebFrame::FrameFilterFunction callback, void* context)
+    : m_topLevelWebFrame(topLevelWebFrame)
+    , m_callback(callback)
+    , m_context(context)
 {
-    if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreFrame()->document()))
+}
+
+bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
+{
+    if (!m_callback)
+        return true;
+        
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    return m_callback(toAPI(m_topLevelWebFrame), toAPI(webFrame), m_context);
+}
+
+RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
+{
+    WebFrameFilter filter(this, callback, context);
+
+    if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreFrame()->document(), &filter))
         return archive->rawDataRepresentation();
     
     return 0;

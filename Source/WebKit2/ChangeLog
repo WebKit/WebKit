@@ -1,3 +1,29 @@
+2012-02-03  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10742441> and https://bugs.webkit.org/show_bug.cgi?id=77766
+        Need a WK2 API to filter which subframes go into WebArchives as they are created.
+
+        Reviewed by Darin Adler.
+
+        Add a new WKBundleFrame API that takes a filter callback object to allow or reject
+        subframes from a WebArchive:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyWebArchive):
+        (WKBundleFrameCopyWebArchiveFilteringSubframes):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+
+        Implement the above API by calling through to WebCore:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebFrameFilter):
+        (WebKit::WebFrameFilter::WebFrameFilter):
+        (WebKit::WebFrameFilter::shouldIncludeSubframe):
+        (WebKit::WebFrame::webArchiveData):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getWebArchiveOfFrame):
+
 2012-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac WK2] Use a minimally invasive way to fake plug-in process name

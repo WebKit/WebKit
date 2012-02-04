@@ -249,8 +249,13 @@ void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef direct
 
 WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frameRef)
 {
+    return WKBundleFrameCopyWebArchiveFilteringSubframes(frameRef, 0, 0);
+}
+
+WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRef, WKBundleFrameFrameFilterCallback frameFilterCallback, void* context)
+{
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    RetainPtr<CFDataRef> data = toImpl(frameRef)->webArchiveData();
+    RetainPtr<CFDataRef> data = toImpl(frameRef)->webArchiveData(frameFilterCallback, context);
     if (data)
         return WKDataCreate(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
 #endif
