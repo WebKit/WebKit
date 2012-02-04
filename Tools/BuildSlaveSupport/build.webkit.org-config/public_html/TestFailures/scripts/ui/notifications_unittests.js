@@ -218,8 +218,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                     '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=foo">foo</a></li>' +
+                    '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
@@ -263,8 +263,8 @@ test('FailingTestsSummary', 12, function() {
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
-                    '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                     '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=foo">foo</a></li>' +
+                    '<li><a target="_blank" href="http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=test">test</a></li>' +
                 '</ul>' +
                 '<ul class="actions">' +
                     '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +

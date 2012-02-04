@@ -127,18 +127,23 @@ ui.failures.FailureGrid = base.extends('table', {
     }
 });
 
-ui.failures.List = base.extends('div', {
+ui.failures.ListItem = base.extends('li', {
+    init: function(groupName, failingTestsList)
+    {
+        this._failingTestsList = failingTestsList;
+        this.appendChild(new ui.actions.List([
+            new ui.actions.Examine().makeDefault(),
+        ]));
+        var label = this.appendChild(document.createElement('label'))
+        label.textContent = failingTestsList.length == 1 ? failingTestsList[0] : groupName;
+    },
+});
+
+ui.failures.List = base.extends('ul', {
     init: function()
     {
+        this.className = 'failures';
         this.textContent = 'Loading...';
-    },
-    setFailingTests: function(failingTestsList)
-    {
-        $(this).empty();
-        var list = this.appendChild(document.createElement('ul'));
-        failingTestsList.sort().forEach(function(failingTest) {
-            list.appendChild(document.createElement('li')).textContent = failingTest;
-        });
     }
 });
 

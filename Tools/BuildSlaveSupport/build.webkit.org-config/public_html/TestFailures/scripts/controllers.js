@@ -104,7 +104,29 @@ controllers.ExpectedFailures = base.extends(Object, {
     update: function()
     {
         var expectedOrUnexpectedFailures = results.expectedOrUnexpectedFailuresByTest(this._model.resultsByBuilder);
-        this._view.setFailingTests(Object.keys(expectedOrUnexpectedFailures));
+        var failingTestsList = Object.keys(expectedOrUnexpectedFailures);
+
+        $(this._view).empty();
+        base.forEachDirectory(failingTestsList, function(label, testsFailingInDirectory) {
+            var listItem = new ui.failures.ListItem(label, testsFailingInDirectory);
+            this._view.appendChild(listItem);
+            $(listItem).bind('examine', function() {
+                this.onExamine(testsFailingInDirectory);
+            }.bind(this));
+        }.bind(this));
+    },
+    onExamine: function(failingTestsList)
+    {
+        var resultsView = new ui.results.View({
+            fetchResultsURLs: results.fetchResultsURLs
+        });
+        var failuresByTest = base.filterDictionary(
+            results.expectedOrUnexpectedFailuresByTest(this._model.resultsByBuilder),
+            function(key) {
+                return failingTestsList.indexOf(key) != -1;
+            });
+        var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
+        this._delegate.showResults(resultsView);
     }
 });
 

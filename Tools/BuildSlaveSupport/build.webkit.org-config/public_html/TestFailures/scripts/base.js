@@ -171,12 +171,26 @@ base.filterTree = function(tree, isLeaf, predicate)
     return filteredTree;
 };
 
+base.forEachDirectory = function(pathList, callback)
+{
+    var pathsByDirectory = {};
+    pathList.forEach(function(path) {
+        var directory = base.dirName(path);
+        pathsByDirectory[directory] = pathsByDirectory[directory] || [];
+        pathsByDirectory[directory].push(path);
+    });
+    Object.keys(pathsByDirectory).sort().forEach(function(directory) {
+        var paths = pathsByDirectory[directory];
+        callback(directory + ' (' + paths.length + ' tests)', paths);
+    });
+};
+
 base.parseJSONP = function(jsonp)
 {
     var startIndex = jsonp.indexOf('(') + 1;
     var endIndex = jsonp.lastIndexOf(')');
     return JSON.parse(jsonp.substr(startIndex, endIndex - startIndex));
-}
+};
 
 base.RequestTracker = function(requestsInFlight, callback, args)
 {

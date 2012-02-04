@@ -1,3 +1,22 @@
+2012-02-04  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic's All Failure tab should let you examine and rebaseline expected failures
+        https://bugs.webkit.org/show_bug.cgi?id=77802
+
+        Reviewed by Eric Seidel.
+
+        This patch refactors our directory grouping code into base.js where it
+        can be shared between failures.js and notifications.js.  It then adds
+        an Examine action to each group of failures that triggers the "results"
+        view.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/failures.css:
+
 2012-02-04  Ojan Vafai  <ojan@chromium.org>
 
         check-webkit-style is throwing an exception

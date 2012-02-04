@@ -51,3 +51,25 @@ a.failing-builder {
     a.failing-builder>span.graphics {
         padding: 0 2px;
     }
+
+
+ul.failures {
+    padding: 0px;
+}
+
+    ul.failures>li {
+        display: -webkit-box;
+    }
+
+    ul.failures>li label {
+        margin-left: 10px;
+    }
+
+        ul.failures>li ul.actions {
+            padding: 0px;
+            visibility: hidden;
+        }
+
+        ul.failures>li:hover ul.actions {
+            visibility: visible;
+        }
