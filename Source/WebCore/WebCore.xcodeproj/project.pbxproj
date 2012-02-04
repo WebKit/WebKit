@@ -489,7 +489,7 @@
 		1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */; };
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */; };
-		1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */; };
+		1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */; };
 		1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */; };
 		1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */; };

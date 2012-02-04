@@ -33,7 +33,7 @@
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
-    class ScrollingCoordinator;
+    class ScrollingTree;
 }
 
 namespace WebKit {
@@ -54,8 +54,8 @@ public:
     ~EventDispatcher();
 
 #if ENABLE(THREADED_SCROLLING)
-    void addScrollingCoordinatorForPage(WebPage*);
-    void removeScrollingCoordinatorForPage(WebPage*);
+    void addScrollingTreeForPage(WebPage*);
+    void removeScrollingTreeForPage(WebPage*);
 #endif
 
 private:
@@ -80,8 +80,8 @@ private:
 #if ENABLE(THREADED_SCROLLING)
     void sendDidHandleEvent(uint64_t pageID, const WebEvent&);
 
-    Mutex m_scrollingCoordinatorsMutex;
-    HashMap<uint64_t, RefPtr<WebCore::ScrollingCoordinator> > m_scrollingCoordinators;
+    Mutex m_scrollingTreesMutex;
+    HashMap<uint64_t, RefPtr<WebCore::ScrollingTree> > m_scrollingTrees;
 #endif
 };
 

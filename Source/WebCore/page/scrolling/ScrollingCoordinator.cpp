@@ -73,6 +73,12 @@ void ScrollingCoordinator::pageDestroyed()
     ScrollingThread::dispatch(bind(&ScrollingTree::invalidate, m_scrollingTree.release()));
 }
 
+ScrollingTree* ScrollingCoordinator::scrollingTree() const
+{
+    ASSERT(m_scrollingTree);
+    return m_scrollingTree.get();
+}
+
 bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView) const
 {
     ASSERT(isMainThread());

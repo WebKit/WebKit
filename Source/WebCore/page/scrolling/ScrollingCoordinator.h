@@ -59,6 +59,8 @@ public:
 
     void pageDestroyed();
 
+    ScrollingTree* scrollingTree() const;
+
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
     bool coordinatesScrollingForFrameView(FrameView*) const;
 

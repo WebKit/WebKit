@@ -1,3 +1,26 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2 should dispatch wheel events to the new ScrollingTree class
+        https://bugs.webkit.org/show_bug.cgi?id=77795
+
+        Reviewed by Andreas Kling.
+
+        Replace all uses of ScrollingCoordinator with ScrollingTree instead.
+        Also, don't try to handle gesture events on the scrolling thread anymore;
+        we don't need to to that right now.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+        (WebKit::EventDispatcher::removeScrollingTreeForPage):
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::gestureEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (WebCore):
+        (EventDispatcher):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+
 2012-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2 Mac] No need to allow access to input methods or keyboard layouts

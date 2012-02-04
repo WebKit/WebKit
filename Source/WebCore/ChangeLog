@@ -1,3 +1,21 @@
+2012-02-03  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2 should dispatch wheel events to the new ScrollingTree class
+        https://bugs.webkit.org/show_bug.cgi?id=77795
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        Add new symbols needed by WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make ScrollingTree.h private so it can be included by WebKit2.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::scrollingTree):
+        * page/scrolling/ScrollingCoordinator.h:
+        Add a scrolling tree getter.
+
 2012-02-03  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] WebCore::toV8Context crashes if DomWindow::frame() returns null.
