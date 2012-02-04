@@ -34,7 +34,7 @@ use FindBin;
 
 my $file = "WebKitAuxiliaryLibrary";
 my $zipFile = "$file.zip"; 
-my $auxiliaryLibsURL = "http://developer.apple.com/opensource/internet/$zipFile";
+my $auxiliaryLibsURL = "https://developer.apple.com/opensource/internet/$zipFile";
 my $command = "$FindBin::Bin/update-webkit-dependency";
 
 system("perl", $command, $auxiliaryLibsURL, "win") == 0 or die;

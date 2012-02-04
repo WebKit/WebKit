@@ -135,7 +135,7 @@ sub dieAndInstructToDownload
 $message
 Please download $zipFile from:
 
-    http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html
+    https://developer.apple.com/opensource/internet/webkit_sptlib_agree.html
 
 and place it in:
 
