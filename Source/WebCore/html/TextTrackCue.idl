@@ -32,8 +32,8 @@ module html {
         Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=CallWithDefaultValue] DOMString settings, in [Optional=CallWithDefaultValue] boolean pauseOnExit),
         CallWith=ScriptExecutionContext,
         EventTarget,
-        CustomMarkFunction,
-        CustomIsReachable
+        JSCustomMarkFunction,
+        JSCustomIsReachable
     ] TextTrackCue {
         readonly attribute TextTrack track;
 

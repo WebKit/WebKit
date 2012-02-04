@@ -31,7 +31,7 @@ module storage {
     interface [
         Conditional=SQL_DATABASE,
         OmitConstructor,
-        NoStaticTables
+        JSNoStaticTables
     ] Database {
         readonly attribute DOMString version;
         void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);

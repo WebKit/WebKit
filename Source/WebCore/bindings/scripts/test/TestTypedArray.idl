@@ -30,8 +30,8 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        NoStaticTables,
-        CustomToJS,
+        JSNoStaticTables,
+        JSCustomToJS,
         DontCheckEnums
     ] Float64Array : ArrayBufferView {
         Int32Array foo(in Float32Array array);

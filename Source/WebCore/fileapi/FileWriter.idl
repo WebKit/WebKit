@@ -35,7 +35,7 @@ module html {
         ActiveDOMObject,
         CallWith=ScriptExecutionContext,
         EventTarget,
-        NoStaticTables
+        JSNoStaticTables
     ] FileWriter {
         // ready states
         const unsigned short INIT = 0;

@@ -33,9 +33,9 @@ module xml {
         Constructor,
         CallWith=ScriptExecutionContext,
         V8CustomConstructor,
-        CustomMarkFunction,
+        JSCustomMarkFunction,
         EventTarget,
-        NoStaticTables
+        JSNoStaticTables
     ] XMLHttpRequest {
         // From XMLHttpRequestEventTarget
         // event handler attributes

@@ -30,7 +30,7 @@
 module window {
 
     interface [
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Screen {
         readonly attribute unsigned long height;

@@ -32,8 +32,8 @@ module storage {
     interface [
         Conditional=FILE_SYSTEM,
         GenerateNativeConverter,
-        GenerateToJS,
-        NoStaticTables
+        JSGenerateToJS,
+        JSNoStaticTables
     ] DirectoryEntrySync : EntrySync {
         DirectoryReaderSync createReader() raises (FileException);
         [Custom] FileEntrySync getFile(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString path, in WebKitFlags flags) raises (FileException);

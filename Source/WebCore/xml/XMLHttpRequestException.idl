@@ -29,7 +29,7 @@
 module xml {
 
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         DontCheckEnums
     ] XMLHttpRequestException {
 

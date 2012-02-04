@@ -32,8 +32,8 @@ module storage {
     interface [
         Conditional=FILE_SYSTEM,
         GenerateNativeConverter,
-        GenerateToJS,
-        NoStaticTables
+        JSGenerateToJS,
+        JSNoStaticTables
     ] DirectoryEntry : Entry {
         DirectoryReader createReader();
         [Custom] void getFile(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString path, in [Optional] WebKitFlags flags, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);

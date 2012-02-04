@@ -33,7 +33,7 @@ module storage {
     interface [
         Conditional=SQL_DATABASE,
         OmitConstructor,
-        NoStaticTables
+        JSNoStaticTables
     ] SQLTransactionSync {
         [Custom] SQLResultSet executeSql(in DOMString sqlStatement, in ObjectArray arguments);
     };

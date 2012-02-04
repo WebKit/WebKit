@@ -32,7 +32,7 @@ module html {
     interface [
         Conditional=BLOB,
         Constructor,
-        NoStaticTables
+        JSNoStaticTables
     ] FileReaderSync {
         [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)
             raises(FileException);

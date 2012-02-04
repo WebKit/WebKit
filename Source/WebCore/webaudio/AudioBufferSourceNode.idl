@@ -26,7 +26,7 @@ module audio {
     // A cached (non-streamed), memory-resident audio source
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS
+        JSGenerateToJS
     ] AudioBufferSourceNode : AudioSourceNode {
         attribute [CustomSetter] AudioBuffer buffer
             setter raises (DOMException);

@@ -26,7 +26,7 @@
 module events {
 
     interface [
-        NoStaticTables
+        JSNoStaticTables
     // We should also inherit from LSProgressEvent when the idl is added.
     ] XMLHttpRequestProgressEvent : ProgressEvent {
          readonly attribute unsigned long long position;

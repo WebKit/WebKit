@@ -26,9 +26,9 @@
 module html {
 
     interface [
-        GenerateIsReachable=Impl,
+        JSGenerateIsReachable=Impl,
         CustomConstructor,
-        NoStaticTables
+        JSNoStaticTables
     ] ArrayBuffer {
         readonly attribute int byteLength;
         ArrayBuffer slice(in long begin, in [Optional] long end);

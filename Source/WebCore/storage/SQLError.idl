@@ -31,7 +31,7 @@ module storage {
     interface [
         Conditional=SQL_DATABASE,
         OmitConstructor,
-        NoStaticTables
+        JSNoStaticTables
     ] SQLError {
         readonly attribute unsigned long code;
         readonly attribute DOMString message;

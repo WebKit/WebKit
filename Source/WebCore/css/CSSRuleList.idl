@@ -27,7 +27,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomIsReachable,
+        JSCustomIsReachable,
         HasIndexGetter,
         V8DependentLifetime
     ] CSSRuleList {

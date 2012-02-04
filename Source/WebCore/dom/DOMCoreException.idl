@@ -29,7 +29,7 @@
 module core {
 
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         DontCheckEnums
     ] DOMCoreException {
 

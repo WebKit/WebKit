@@ -22,9 +22,9 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomMarkFunction,
-        GenerateIsReachable,
-        CustomToJS,
+        JSCustomMarkFunction,
+        JSGenerateIsReachable,
+        JSCustomToJS,
         ObjCPolymorphic,
         V8DependentLifetime
     ] CSSRule {

@@ -28,7 +28,7 @@ module core {
     // http://www.w3.org/TR/geolocation-API/#geolocation_interface
     interface [
         Conditional=GEOLOCATION, 
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Geolocation {
         [Custom] void getCurrentPosition(in PositionCallback successCallback,

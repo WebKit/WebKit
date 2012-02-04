@@ -19,7 +19,7 @@
 
 module view {
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         ObjCProtocol,
         CPPPureInterface,
         OmitConstructor

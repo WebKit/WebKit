@@ -30,8 +30,8 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        GenerateIsReachable=Impl,
-        NoStaticTables,
+        JSGenerateIsReachable=Impl,
+        JSNoStaticTables,
         OmitConstructor
     ] WorkerNavigator {
         readonly attribute DOMString appName;

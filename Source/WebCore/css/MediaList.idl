@@ -27,7 +27,7 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
-        GenerateIsReachable,
+        JSGenerateIsReachable,
         HasIndexGetter
     ] MediaList {
 

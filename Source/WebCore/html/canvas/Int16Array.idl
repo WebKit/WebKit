@@ -29,8 +29,8 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        NoStaticTables,
-        CustomToJS,
+        JSNoStaticTables,
+        JSCustomToJS,
         DontCheckEnums
     ] Int16Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 2;

@@ -32,7 +32,7 @@ module html {
     interface [
         Constructor,
         GenerateNativeConverter,
-        NoStaticTables
+        JSNoStaticTables
     ] WebKitBlobBuilder {
 #if !defined(LANGUAGE_OBJECTIVE_C)
         Blob getBlob(in [Optional, TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString contentType);

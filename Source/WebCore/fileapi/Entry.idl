@@ -31,8 +31,8 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        CustomToJS,
-        NoStaticTables
+        JSCustomToJS,
+        JSNoStaticTables
     ] Entry {
         readonly attribute boolean isFile;
         readonly attribute boolean isDirectory;

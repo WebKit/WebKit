@@ -36,7 +36,7 @@ module html {
         Constructor,
         CallWith=ScriptExecutionContext,
         EventTarget,
-        NoStaticTables
+        JSNoStaticTables
     ] FileReader {
         // ready states
         const unsigned short EMPTY = 0;

@@ -3139,7 +3139,7 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "TextTrack";
 
     # For everything else, do what JSC does.
-    return $dataNode->extendedAttributes->{"CustomToJS"};
+    return $dataNode->extendedAttributes->{"JSCustomToJS"};
 }
 
 sub GetDomMapFunction

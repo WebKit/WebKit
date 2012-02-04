@@ -31,7 +31,7 @@
 module events {
 
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         ConstructorTemplate=Event
     ] ErrorEvent : Event {
         readonly attribute [InitializedByEventConstructor] DOMString message;

@@ -27,7 +27,7 @@ module html {
 
     interface [
         HasIndexGetter,
-        NoStaticTables
+        JSNoStaticTables
     ] FileList {
         readonly attribute unsigned long length;
         File item(in [IsIndex] unsigned long index);

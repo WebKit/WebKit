@@ -29,7 +29,7 @@
 module html {
 
     interface [
-        CustomToJS
+        JSCustomToJS
     ] ImageData {
         readonly attribute long width;
         readonly attribute long height;

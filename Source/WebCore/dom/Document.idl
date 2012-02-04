@@ -21,9 +21,9 @@
 module core {
 
     interface [
-        CustomToJS,
+        JSCustomToJS,
         GenerateNativeConverter,
-        InlineGetOwnPropertySlot
+        JSInlineGetOwnPropertySlot
     ] Document : Node {
 
         // DOM Level 1 Core

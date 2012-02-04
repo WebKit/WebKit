@@ -22,8 +22,8 @@ module traversal {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomMarkFunction,
-        CustomNativeConverter,
+        JSCustomMarkFunction,
+        JSCustomToNativeObject,
         ObjCProtocol,
         CPPPureInterface
     ] NodeFilter {

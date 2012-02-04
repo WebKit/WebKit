@@ -32,7 +32,7 @@ module window {
     // This is based off of Mozilla's Selection interface
     // https://developer.mozilla.org/En/DOM/Selection
     interface [
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         OmitConstructor
     ] DOMSelection {
         readonly attribute Node anchorNode;

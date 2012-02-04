@@ -27,8 +27,8 @@ module html {
 
     interface [
         GenerateNativeConverter,
-        GenerateToJS,
-        NoStaticTables
+        JSGenerateToJS,
+        JSNoStaticTables
     ] File : Blob {
         readonly attribute DOMString name;
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT

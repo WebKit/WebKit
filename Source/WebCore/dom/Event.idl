@@ -22,9 +22,9 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        CustomToJS,
+        JSCustomToJS,
         ConstructorTemplate=Event,
-        NoStaticTables,
+        JSNoStaticTables,
         ObjCPolymorphic
     ] Event {
 

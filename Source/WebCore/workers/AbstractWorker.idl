@@ -34,7 +34,7 @@ module threads {
     interface [
         Conditional=WORKERS,
         ActiveDOMObject,
-        CustomToJS,
+        JSCustomToJS,
         EventTarget
     ] AbstractWorker {
 

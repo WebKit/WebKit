@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomIsReachable,
+        JSCustomIsReachable,
         HasIndexGetter,
         HasNameGetter
     ] NodeList {

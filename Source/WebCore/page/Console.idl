@@ -29,7 +29,7 @@
 module window {
 
     interface [
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Console {
 

@@ -31,7 +31,7 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        NoStaticTables
+        JSNoStaticTables
     ] Metadata {
         readonly attribute Date modificationTime;
     };

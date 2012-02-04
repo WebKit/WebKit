@@ -25,7 +25,7 @@
 module audio {
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS
+        JSGenerateToJS
     ] AudioPannerNode : AudioNode {
         // Panning model
         const unsigned short EQUALPOWER = 0;

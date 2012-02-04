@@ -27,7 +27,7 @@ module storage {
 
     interface [
         Conditional=INDEXED_DATABASE,
-        CustomToJS
+        JSCustomToJS
     ] IDBAny {
         // This space is intentionally left blank.
     };

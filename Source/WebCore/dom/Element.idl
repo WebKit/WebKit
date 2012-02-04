@@ -22,7 +22,7 @@ module core {
 
     interface [
         GenerateNativeConverter,
-        InlineGetOwnPropertySlot
+        JSInlineGetOwnPropertySlot
     ] Element : Node {
 
         // DOM Level 1 Core

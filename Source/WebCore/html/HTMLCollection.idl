@@ -23,8 +23,8 @@ module html {
     interface [
         HasIndexGetter,
         HasNameGetter,
-        CustomToJS,
-        GenerateIsReachable,
+        JSCustomToJS,
+        JSGenerateIsReachable,
         ObjCPolymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;

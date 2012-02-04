@@ -33,7 +33,7 @@ module storage {
     interface [
         Conditional=SQL_DATABASE,
         OmitConstructor,
-        NoStaticTables
+        JSNoStaticTables
     ] DatabaseSync {
         readonly attribute DOMString version;
         readonly attribute DOMString lastErrorMessage;

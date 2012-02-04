@@ -26,7 +26,7 @@
 module core {
 
     interface [
-        GenerateIsReachable=ImplElementRoot,
+        JSGenerateIsReachable=ImplElementRoot,
         HasNameGetter,
         CustomDeleteProperty,
         CustomGetPropertyNames,

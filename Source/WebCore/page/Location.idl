@@ -34,11 +34,11 @@ module window {
 #endif
         DelegatingGetOwnPropertySlot,
         DelegatingPutFunction,
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
         CustomDefineGetter,
-        DelegatingPrototypePutFunction,
+        JSCustomPrototypePutDelegate,
         CustomPrototypeDefineGetter,
         OmitConstructor
     ] Location {

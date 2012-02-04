@@ -28,11 +28,11 @@
 module events {
 
     interface [
-        CustomMarkFunction,
-        GenerateIsReachable=Impl,
+        JSCustomMarkFunction,
+        JSGenerateIsReachable=Impl,
         ActiveDOMObject,
         EventTarget,
-        NoStaticTables
+        JSNoStaticTables
     ] MessagePort {
 // We need to have something as an ObjC binding, because MessagePort is used in MessageEvent, which already has one,
 // but we don't want to actually expose the API while it is in flux.

@@ -21,7 +21,7 @@
 module window {
 
     interface [
-        GenerateIsReachable=ImplFrame,
+        JSGenerateIsReachable=ImplFrame,
         HasNameGetter,
         HasIndexGetter
     ] DOMPluginArray {

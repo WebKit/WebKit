@@ -29,7 +29,7 @@
 module audio {
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS
+        JSGenerateToJS
     ] AudioGain : AudioParam {
     };
 }

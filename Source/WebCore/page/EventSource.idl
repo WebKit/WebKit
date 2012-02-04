@@ -38,7 +38,7 @@ module window {
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
         EventTarget,
-        NoStaticTables
+        JSNoStaticTables
     ] EventSource {
 
         readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.

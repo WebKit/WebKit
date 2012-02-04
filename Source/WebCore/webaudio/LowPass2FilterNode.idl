@@ -27,7 +27,7 @@ module audio {
     // FIXME: design BiquadNode and use instead of this
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS
+        JSGenerateToJS
     ] LowPass2FilterNode : AudioNode {
         readonly attribute AudioParam cutoff;
         readonly attribute AudioParam resonance;

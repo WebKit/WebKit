@@ -30,8 +30,8 @@ module html {
         V8EnabledAtRuntime=webkitVideoTrack,
         HasIndexGetter,
         EventTarget,
-        CustomMarkFunction,
-        CustomIsReachable
+        JSCustomMarkFunction,
+        JSCustomIsReachable
     ] TextTrackList {
         readonly attribute unsigned long length;
         TextTrack item(in unsigned long index);

@@ -36,7 +36,7 @@ module threads {
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
         GenerateNativeConverter,
-        GenerateToJS
+        JSGenerateToJS
     ] Worker : AbstractWorker {
 
         attribute EventListener onmessage;

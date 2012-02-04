@@ -32,8 +32,8 @@ module storage {
     interface [
         Conditional=FILE_SYSTEM,
         GenerateNativeConverter,
-        GenerateToJS,
-        NoStaticTables
+        JSGenerateToJS,
+        JSNoStaticTables
     ] FileEntry : Entry {
         void createWriter(in [Callback] FileWriterCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void file(in [Callback] FileCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);

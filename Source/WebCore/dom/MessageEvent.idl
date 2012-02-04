@@ -28,7 +28,7 @@
 module events {
 
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         ConstructorTemplate=Event
     ] MessageEvent : Event {
         readonly attribute [InitializedByEventConstructor] DOMString origin;

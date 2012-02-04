@@ -28,8 +28,8 @@ module html {
         Conditional=BLOB,
         OmitConstructor,
         GenerateNativeConverter,
-        GenerateToJS,
-        NoStaticTables
+        JSGenerateToJS,
+        JSNoStaticTables
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
         [ConvertNullStringTo=Undefined] DOMString createObjectURL(in MediaStream stream);

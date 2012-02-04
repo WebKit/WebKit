@@ -22,14 +22,14 @@ module core {
 
     interface [
         CustomHeader,
-        CustomMarkFunction,
+        JSCustomMarkFunction,
         CustomPushEventHandlerScope,
-        CustomIsReachable,
-        CustomFinalize,
-        CustomToJS,
+        JSCustomIsReachable,
+        JSCustomFinalize,
+        JSCustomToJS,
         EventTarget,
         GenerateNativeConverter,
-        InlineGetOwnPropertySlot,
+        JSInlineGetOwnPropertySlot,
         ObjCPolymorphic,
         V8DependentLifetime
     ] Node

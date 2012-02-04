@@ -28,7 +28,7 @@ module html {
         Conditional=VIDEO,
         Constructor,
         CallWith=ScriptExecutionContext,
-        GenerateToJS,
+        JSGenerateToJS,
         EventTarget
     ] MediaController {
         readonly attribute TimeRanges buffered;

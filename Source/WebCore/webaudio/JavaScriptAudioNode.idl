@@ -26,8 +26,8 @@ module audio {
     // For real-time audio stream synthesis/processing in JavaScript 
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS,
-        CustomMarkFunction,
+        JSGenerateToJS,
+        JSCustomMarkFunction,
 #if defined(V8_BINDING) && V8_BINDING
         EventTarget
 #endif

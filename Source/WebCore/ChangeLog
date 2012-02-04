@@ -1,3 +1,190 @@
+2012-02-04  Kentaro Hara  <haraken@chromium.org>
+
+        Add the "JS" prefix to JSC specific IDL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=77693
+
+        Reviewed by Darin Adler.
+
+        Some JSC specific IDLs do not have "JS" prefix, e.g. [CustomIsReachable].
+        It might be OK since JSC is the main JavaScript engine in WebKit, but
+        distinguishing IDLs widely used in WebKit and IDLs used in JSC only would help
+        people understand the role of IDLs.
+
+        This patch renames the following JSC specific IDLs:
+
+            CustomFinalize => JSCustomFinalize
+            CustomIsReachable => JSCustomIsReachable
+            CustomMarkFunction => JSCustomMarkFunction
+            CustomToJS => JSCustomToJS
+            CustomNativeConverter => JSCustomToNativeObject (Note: For naming consistency with [JSCustomToJS])
+            GenerateIsReachable => JSGenerateIsReachable
+            GenerateToJS => JSGenerateToJS
+            NoStaticTables => JSNoStaticTables
+            WindowEventListener => JSWindowEventListener
+            InlineGetOwnPropertySlot => JSInlineGetOwnPropertySlot
+            DelegatingPrototypePutFunction => JSCustomPrototypePutDelegate
+
+        No tests. No changes in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (HasCustomToV8Implementation):
+
+        * bindings/scripts/test/TestTypedArray.idl: No change in run-bindings-tests results.
+
+        * css/CSSRule.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/MediaQueryListListener.idl:
+        * css/StyleMedia.idl:
+        * css/StyleSheet.idl:
+        * css/StyleSheetList.idl:
+        * dom/Attr.idl:
+        * dom/DOMCoreException.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringMap.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/ErrorEvent.idl:
+        * dom/Event.idl:
+        * dom/EventException.idl:
+        * dom/EventListener.idl:
+        * dom/MessageChannel.idl:
+        * dom/MessageEvent.idl:
+        * dom/MessagePort.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeFilter.idl:
+        * dom/NodeIterator.idl:
+        * dom/NodeList.idl:
+        * dom/TreeWalker.idl:
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/Blob.idl:
+        * fileapi/DOMFileSystem.idl:
+        * fileapi/DOMFileSystemSync.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryEntrySync.idl:
+        * fileapi/DirectoryReader.idl:
+        * fileapi/DirectoryReaderSync.idl:
+        * fileapi/Entry.idl:
+        * fileapi/EntryArray.idl:
+        * fileapi/EntryArraySync.idl:
+        * fileapi/EntrySync.idl:
+        * fileapi/File.idl:
+        * fileapi/FileEntry.idl:
+        * fileapi/FileEntrySync.idl:
+        * fileapi/FileError.idl:
+        * fileapi/FileException.idl:
+        * fileapi/FileList.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * fileapi/FileWriter.idl:
+        * fileapi/Metadata.idl:
+        * fileapi/OperationNotAllowedException.idl:
+        * fileapi/WebKitBlobBuilder.idl:
+        * html/DOMFormData.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/ImageData.idl:
+        * html/MediaController.idl:
+        * html/TextTrack.idl:
+        * html/TextTrackCue.idl:
+        * html/VoidCallback.idl:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/ArrayBufferView.idl:
+        * html/canvas/CanvasRenderingContext.idl:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * html/canvas/WebGLCompressedTextures.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/track/TextTrackList.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * mediastream/LocalMediaStream.idl:
+        * page/BarInfo.idl:
+        * page/Console.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/Geolocation.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/Screen.idl:
+        * page/WorkerNavigator.idl:
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPluginArray.idl:
+        * storage/Database.idl:
+        * storage/DatabaseSync.idl:
+        * storage/IDBAny.idl:
+        * storage/IDBKey.idl:
+        * storage/SQLError.idl:
+        * storage/SQLException.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        * storage/SQLTransactionSync.idl:
+        * storage/Storage.idl:
+        * svg/SVGElementInstance.idl:
+        * svg/SVGPathSeg.idl:
+        * webaudio/AudioBufferCallback.idl:
+        * webaudio/AudioBufferSourceNode.idl:
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioDestinationNode.idl:
+        * webaudio/AudioGain.idl:
+        * webaudio/AudioGainNode.idl:
+        * webaudio/AudioPannerNode.idl:
+        * webaudio/AudioProcessingEvent.idl:
+        * webaudio/BiquadFilterNode.idl:
+        * webaudio/ConvolverNode.idl:
+        * webaudio/DelayNode.idl:
+        * webaudio/DynamicsCompressorNode.idl:
+        * webaudio/HighPass2FilterNode.idl:
+        * webaudio/JavaScriptAudioNode.idl:
+        * webaudio/LowPass2FilterNode.idl:
+        * webaudio/MediaElementAudioSourceNode.idl:
+        * webaudio/OfflineAudioCompletionEvent.idl:
+        * webaudio/RealtimeAnalyserNode.idl:
+        * webaudio/WaveShaperNode.idl:
+        * websockets/CloseEvent.idl:
+        * websockets/WebSocket.idl:
+        * workers/AbstractWorker.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/SharedWorker.idl:
+        * workers/SharedWorkerContext.idl:
+        * workers/Worker.idl:
+        * workers/WorkerContext.idl:
+        * workers/WorkerLocation.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XMLHttpRequestProgressEvent.idl:
+        * xml/XMLHttpRequestUpload.idl:
+        * xml/XPathResult.idl:
+
 2012-02-04  Emil A Eklund  <eae@chromium.org>
 
         Convert RenderTheme over to new layout abstraction

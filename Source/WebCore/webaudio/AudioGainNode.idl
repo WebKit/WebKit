@@ -25,7 +25,7 @@
 module audio {
     interface [
         Conditional=WEB_AUDIO,
-        GenerateToJS
+        JSGenerateToJS
     ] AudioGainNode : AudioNode {
         // FIXME: eventually it will be interesting to remove the readonly restriction, but need to properly deal with thread safety here.
         readonly attribute AudioGain gain;

@@ -35,7 +35,7 @@ module threads {
         ExtendsDOMGlobalObject,
         IsWorkerContext,
         GenerateNativeConverter,
-        NoStaticTables,
+        JSNoStaticTables,
         OmitConstructor
     ] DedicatedWorkerContext : WorkerContext {
 

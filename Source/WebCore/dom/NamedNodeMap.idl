@@ -21,8 +21,8 @@
 module core {
 
     interface [
-        GenerateIsReachable=ImplElementRoot,
-        CustomMarkFunction,
+        JSGenerateIsReachable=ImplElementRoot,
+        JSCustomMarkFunction,
         HasIndexGetter,
         HasNameGetter
     ] NamedNodeMap {

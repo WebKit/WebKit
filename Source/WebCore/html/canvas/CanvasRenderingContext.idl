@@ -26,9 +26,9 @@
 module html {
 
     interface [
-        CustomMarkFunction,
-        GenerateIsReachable,
-        CustomToJS
+        JSCustomMarkFunction,
+        JSGenerateIsReachable,
+        JSCustomToJS
     ] CanvasRenderingContext {
 
         readonly attribute HTMLCanvasElement canvas;

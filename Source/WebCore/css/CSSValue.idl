@@ -21,9 +21,9 @@
 module css {
 
     interface [
-        CustomToJS,
-        CustomIsReachable,
-        CustomFinalize,
+        JSCustomToJS,
+        JSCustomIsReachable,
+        JSCustomFinalize,
         ObjCPolymorphic,
         V8DependentLifetime
     ] CSSValue {

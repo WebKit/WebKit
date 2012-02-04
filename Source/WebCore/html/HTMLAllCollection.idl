@@ -30,7 +30,7 @@ module html {
         HasNameGetter,
         CustomCall,
         MasqueradesAsUndefined,
-        GenerateIsReachable
+        JSGenerateIsReachable
     ] HTMLAllCollection {
         readonly attribute unsigned long length;
         [Custom] Node item(in [Optional=CallWithDefaultValue] unsigned long index);

@@ -30,7 +30,7 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        NoStaticTables,
+        JSNoStaticTables,
         DontCheckEnums
     ] EventException {
 
