@@ -1,3 +1,17 @@
+2012-02-04  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebCoreSupport ClientExtension and GeolocationControllerClientBlackBerry classes
+        https://bugs.webkit.org/show_bug.cgi?id=77751
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/ClientExtension.cpp: Added.
+        * blackberry/WebCoreSupport/ClientExtension.h: Added.
+        * blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.h: Added.
+
 2012-01-11  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] ASSERT failure in BackingStorePrivate::blitVisibleContents()
