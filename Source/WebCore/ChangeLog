@@ -1,3 +1,19 @@
+2012-02-04  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash when reparenting children of flexible boxes
+        https://bugs.webkit.org/show_bug.cgi?id=77458
+
+        Reviewed by Ojan Vafai.
+
+        This fixes some regressions I introduced in r106150. RenderBlock::
+        removeChild needs to be careful about not collapsing anonymous
+        blocks underneath flexible boxes, and also about node ordering
+        when there is an after block.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+
 2012-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Debug build fix after r106715.
