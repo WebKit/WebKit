@@ -67,4 +67,4 @@ class CheckStyle(AbstractStep):
                 # style-queue do the right thing.
                 raise e
             if not self._tool.user.confirm("Are you sure you want to continue?"):
-                exit(1)
+                self._exit(1)

@@ -46,6 +46,6 @@ class AbstractSequencedCommand(AbstractDeclarativeCommand):
             state = self._prepare_state(options, args, tool)
         except ScriptError, e:
             log(e.message_with_output())
-            exit(e.exit_code or 2)
+            self._exit(e.exit_code or 2)
 
         self._sequence.run_and_handle_errors(tool, options, state)

@@ -74,4 +74,4 @@ class ConfirmDiff(AbstractStep):
         if pretty_diff_file:
             pretty_diff_file.close()
         if not diff_correct:
-            exit(1)
+            self._exit(1)

@@ -410,7 +410,7 @@ class MarkBugFixed(AbstractDeclarativeCommand):
 
         if needs_prompt:
             if not tool.user.confirm("Is this correct?"):
-                exit(1)
+                self._exit(1)
 
         bug_comment = bug_comment_from_svn_revision(svn_revision)
         if options.comment:

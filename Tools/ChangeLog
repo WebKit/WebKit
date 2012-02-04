@@ -1,3 +1,43 @@
+2012-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: change exit() calls to sys.exit(), fix a leak in outputcapture
+        https://bugs.webkit.org/show_bug.cgi?id=77781
+
+        Reviewed by Eric Seidel.
+
+        This change fixes a couple of issues discovered while debugging
+        test-webkitpy; both calling exit() instead of sys.exit() --
+        which is discouraged in program code instead of the interpreter
+        -- and a particular usage of outputcapture were stdin to get whacked
+        and preventing debugging.
+       
+        This change introduces a couple of common _exit() methods that
+        will standardize how webkit-patch exit's, in case we need to do
+        something different in the future.
+
+        * Scripts/webkitpy/common/system/deprecated_logging.py:
+        (error):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.assert_outputs):
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine.exit_after_handled_error):
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        (AbstractSequencedCommand.execute):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (StyleQueue.handle_script_error):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (MarkBugFixed.execute):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (Command._exit):
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        (AbstractStep._exit):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle.run):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations):
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        (ConfirmDiff.run):
+
 2012-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf bot build fix.

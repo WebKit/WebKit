@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 import time
 import traceback
 
@@ -86,7 +87,7 @@ class QueueEngine:
     @classmethod
     def exit_after_handled_error(cls, error):
         log(error)
-        exit(cls.handled_error_code)
+        sys.exit(cls.handled_error_code)
 
     def run(self):
         self._begin_logging()

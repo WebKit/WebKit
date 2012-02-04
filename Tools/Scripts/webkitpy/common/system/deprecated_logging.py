@@ -41,7 +41,7 @@ def log(string):
 
 def error(string):
     log("ERROR: %s" % string)
-    exit(1)
+    sys.exit(1)
 
 
 # Simple class to split output between multiple destinations

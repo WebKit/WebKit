@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.steps.options import Options
@@ -35,6 +37,9 @@ class AbstractStep(object):
     def __init__(self, tool, options):
         self._tool = tool
         self._options = options
+
+    def _exit(self, code):
+        sys.exit(code)
 
     def _changed_files(self, state):
         return self.cached_lookup(state, "changed_files")

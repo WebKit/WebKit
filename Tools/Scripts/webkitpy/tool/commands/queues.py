@@ -30,9 +30,10 @@
 from __future__ import with_statement
 
 import codecs
+import os
+import sys
 import time
 import traceback
-import os
 
 from datetime import datetime
 from optparse import make_option
@@ -440,4 +441,4 @@ class StyleQueue(AbstractReviewQueue):
             QueueEngine.exit_after_handled_error(script_error)
         message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (state["patch"].id(), cls.name, script_error.message_with_output(output_limit=3*1024))
         tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
-        exit(1)
+        sys.exit(1)

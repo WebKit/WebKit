@@ -58,6 +58,9 @@ class Command(object):
         # This default parser will be used for standalone_help printing.
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
 
+    def _exit(self, code):
+        sys.exit(code)
+
     # This design is slightly awkward, but we need the
     # the tool to be able to create and modify the option_parser
     # before it knows what Command to run.

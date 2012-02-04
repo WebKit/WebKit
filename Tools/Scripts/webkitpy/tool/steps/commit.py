@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
 from webkitpy.common.checkout.scm import AuthenticationError, AmbiguousCommitError
 from webkitpy.common.config import urls
 from webkitpy.common.system.deprecated_logging import log
@@ -65,7 +67,7 @@ class Commit(AbstractStep):
             self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
             if not self._tool.user.confirm("Are you sure you want to continue?", default="n"):
-                exit(1)
+                self._exit(1)
 
     def run(self, state):
         self._commit_message = self._tool.checkout().commit_message_for_this_commit(self._options.git_commit).message()
