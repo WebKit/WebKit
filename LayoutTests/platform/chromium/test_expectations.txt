@@ -758,10 +758,6 @@ BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 // Security tests
 // -----------------------------------------------------------------
 
-// Expectations for this test changed upstream. We should fix this test, but
-// it doesn't need to block the current release
-BUGCR10275 : http/tests/security/cross-frame-access-put.html = FAIL
-
 // Need to update chromium so the web frame delegate is informed when window objects
 // in isolated worlds are cleared.
 BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
