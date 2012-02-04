@@ -796,7 +796,6 @@ BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
-BUGRICOW : http/tests/security/xss-eval.html = TEXT
 BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 

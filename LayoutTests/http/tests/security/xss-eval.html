@@ -25,16 +25,27 @@ function shouldBe(aDescription, a, b)
     }
 }
 
+document.testExpando = "It's me!";
+
 addEventListener("message", function()
 {
-    shouldBe("eval.call(frames[0], 'document')", (function() { try { return eval.call(frames[0], 'document'); } catch(e) { return e.name; } })(), "EvalError");
+    (function() {
+        try {
+            var doc = eval.call(frames[0], 'document');
+            // V8 execute the eval our scope, which is safe.
+            shouldBe("documentFromEval", doc.testExpando, "It's me!")
+        } catch(e) {
+            // JSC throws an exception, which is also safe.
+            shouldBe("eval.call(frames[0], 'document')", e.name, "EvalError");
+        }
+    })();
 
     shouldBe("childEval.call(frames[0], 'document')", (function() { try { return childEval.call(frames[0], 'document'); } catch(e) { return e.name; } })(), "EvalError");
 
     shouldBe("childEvalCaller('document')", (function() { try { return childEvalCaller('document'); } catch(e) { return e.name; } })(), "TypeError");
-    
+
     shouldBe("childLocalEvalCaller('document')", (function() { try { return childLocalEvalCaller('document'); } catch(e) { return e.name; } })(), "EvalError");
-    
+
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }, false);

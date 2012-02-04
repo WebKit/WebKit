@@ -4,7 +4,7 @@ This page verifies that you can't use eval to subvert cross-domain checks.
 
 If the test passes, you'll see a pass message below.
 
-PASS: eval.call(frames[0], 'document') should be EvalError and is.
+PASS: documentFromEval should be It's me! and is.
 PASS: childEval.call(frames[0], 'document') should be EvalError and is.
 PASS: childEvalCaller('document') should be TypeError and is.
 PASS: childLocalEvalCaller('document') should be EvalError and is.
