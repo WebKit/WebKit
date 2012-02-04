@@ -260,10 +260,10 @@ void RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle(CSSStyleSelecto
     style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
-IntRect RenderThemeChromiumSkia::convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const
+LayoutRect RenderThemeChromiumSkia::convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const
 {
     // Compute an offset between the part renderer and the input renderer.
-    IntSize offsetFromInputRenderer = -(partRenderer->offsetFromAncestorContainer(inputRenderer));
+    LayoutSize offsetFromInputRenderer = -(partRenderer->offsetFromAncestorContainer(inputRenderer));
     // Move the rect into partRenderer's coords.
     partRect.move(offsetFromInputRenderer);
     // Account for the local drawing offset.
@@ -279,17 +279,17 @@ bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* cancelB
     if (!input->renderer()->isBox())
         return false;
     RenderBox* inputRenderBox = toRenderBox(input->renderer());
-    IntRect inputContentBox = inputRenderBox->contentBoxRect();
+    LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled button stays square and will fit in its parent's box.
-    int cancelButtonSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), r.height()));
+    LayoutUnit cancelButtonSize = std::min(inputContentBox.width(), std::min<LayoutUnit>(inputContentBox.height(), r.height()));
     // Calculate cancel button's coordinates relative to the input element.
     // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
-    IntRect cancelButtonRect(cancelButtonObject->offsetFromAncestorContainer(inputRenderBox).width(),
-                             inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
-                             cancelButtonSize, cancelButtonSize);
-    IntRect paintingRect = convertToPaintingRect(inputRenderBox, cancelButtonObject, cancelButtonRect, r);
+    LayoutRect cancelButtonRect(cancelButtonObject->offsetFromAncestorContainer(inputRenderBox).width(),
+                                inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
+                                cancelButtonSize, cancelButtonSize);
+    LayoutRect paintingRect = convertToPaintingRect(inputRenderBox, cancelButtonObject, cancelButtonRect, r);
 
     static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
     static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
@@ -322,17 +322,17 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* ma
     if (!input->renderer()->isBox())
         return false;
     RenderBox* inputRenderBox = toRenderBox(input->renderer());
-    IntRect inputContentBox = inputRenderBox->contentBoxRect();
+    LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration stays square and will fit in its parent's box.
-    int magnifierSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), r.height()));
+    LayoutUnit magnifierSize = std::min(inputContentBox.width(), std::min<LayoutUnit>(inputContentBox.height(), r.height()));
     // Calculate decoration's coordinates relative to the input element.
     // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
-    IntRect magnifierRect(magnifierObject->offsetFromAncestorContainer(inputRenderBox).width(),
-                          inputContentBox.y() + (inputContentBox.height() - magnifierSize + 1) / 2,
-                          magnifierSize, magnifierSize);
-    IntRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
+    LayoutRect magnifierRect(magnifierObject->offsetFromAncestorContainer(inputRenderBox).width(),
+                             inputContentBox.y() + (inputContentBox.height() - magnifierSize + 1) / 2,
+                             magnifierSize, magnifierSize);
+    LayoutRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
 
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
     paintInfo.context->drawImage(magnifierImage, magnifierObject->style()->colorSpace(), paintingRect);
@@ -357,15 +357,15 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* magnif
     if (!input->renderer()->isBox())
         return false;
     RenderBox* inputRenderBox = toRenderBox(input->renderer());
-    IntRect inputContentBox = inputRenderBox->contentBoxRect();
+    LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration will fit in its parent's box.
-    int magnifierHeight = std::min(inputContentBox.height(), r.height());
-    int magnifierWidth = std::min(inputContentBox.width(), static_cast<int>(magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize));
-    IntRect magnifierRect(magnifierObject->offsetFromAncestorContainer(inputRenderBox).width(),
-                          inputContentBox.y() + (inputContentBox.height() - magnifierHeight + 1) / 2,
-                          magnifierWidth, magnifierHeight);
-    IntRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
+    LayoutUnit magnifierHeight = std::min<LayoutUnit>(inputContentBox.height(), r.height());
+    LayoutUnit magnifierWidth = std::min<LayoutUnit>(inputContentBox.width(), magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);
+    LayoutRect magnifierRect(magnifierObject->offsetFromAncestorContainer(inputRenderBox).width(),
+                             inputContentBox.y() + (inputContentBox.height() - magnifierHeight + 1) / 2,
+                             magnifierWidth, magnifierHeight);
+    LayoutRect paintingRect = convertToPaintingRect(inputRenderBox, magnifierObject, magnifierRect, r);
 
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
     paintInfo.context->drawImage(magnifierImage, magnifierObject->style()->colorSpace(), paintingRect);

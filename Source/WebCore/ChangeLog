@@ -1,3 +1,59 @@
+2012-02-04  Emil A Eklund  <eae@chromium.org>
+
+        Convert RenderTheme over to new layout abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=77783
+
+        Reviewed by Eric Seidel.
+
+        Change the RenderTheme classes to use the new layout abstraction as a
+        part of the ongoing conversion work.
+
+        No new tests.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton):
+        (WebCore::RenderTheme::baselinePosition):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        (WebCore::RenderTheme::meterSizeForBounds):
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+        (WebCore::RenderTheme::paintCapsLockIndicator):
+        * rendering/RenderThemeChromiumMac.h:
+        (RenderThemeChromiumMac):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::convertToPaintingRect):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::inflateRect):
+        (WebCore::RenderThemeMac::setControlSize):
+        (WebCore::RenderThemeMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::meterSizeForBounds):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::baselinePosition):
+        * rendering/RenderThemeSafari.h:
+        (RenderThemeSafari):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeWin::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderThemeWin.h:
+        (RenderThemeWin):
+
 2012-02-04  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Fix multi-second hangs in compositor invalidating large layers

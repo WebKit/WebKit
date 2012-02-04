@@ -500,7 +500,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
-void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
+void RenderThemeMac::adjustRepaintRect(const RenderObject* o, LayoutRect& r)
 {
     ControlPart part = o->style()->appearance();
     
@@ -531,13 +531,13 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
     }
 }
 
-IntRect RenderThemeMac::inflateRect(const IntRect& r, const IntSize& size, const int* margins, float zoomLevel) const
+LayoutRect RenderThemeMac::inflateRect(const LayoutRect& r, const IntSize& size, const int* margins, float zoomLevel) const
 {
     // Only do the inflation if the available width/height are too small.  Otherwise try to
     // fit the glow/check space into the available box's width/height.
-    int widthDelta = r.width() - (size.width() + margins[leftMargin] * zoomLevel + margins[rightMargin] * zoomLevel);
-    int heightDelta = r.height() - (size.height() + margins[topMargin] * zoomLevel + margins[bottomMargin] * zoomLevel);
-    IntRect result(r);
+    LayoutUnit widthDelta = r.width() - (size.width() + margins[leftMargin] * zoomLevel + margins[rightMargin] * zoomLevel);
+    LayoutUnit heightDelta = r.height() - (size.height() + margins[topMargin] * zoomLevel + margins[bottomMargin] * zoomLevel);
+    LayoutRect result(r);
     if (widthDelta < 0) {
         result.setX(result.x() - margins[leftMargin] * zoomLevel);
         result.setWidth(result.width() - widthDelta);
@@ -639,14 +639,14 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize, float zoomLevel)
+void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const LayoutSize& minSize, float zoomLevel)
 {
     NSControlSize size;
-    if (minSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomLevel) &&
-        minSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomLevel))
+    if (minSize.width() >= static_cast<LayoutUnit>(sizes[NSRegularControlSize].width() * zoomLevel) &&
+        minSize.height() >= static_cast<LayoutUnit>(sizes[NSRegularControlSize].height() * zoomLevel))
         size = NSRegularControlSize;
-    else if (minSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomLevel) &&
-             minSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomLevel))
+    else if (minSize.width() >= static_cast<LayoutUnit>(sizes[NSSmallControlSize].width() * zoomLevel) &&
+             minSize.height() >= static_cast<LayoutUnit>(sizes[NSSmallControlSize].height() * zoomLevel))
         size = NSSmallControlSize;
     else
         size = NSMiniControlSize;
@@ -729,7 +729,7 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 {
 }
 
-bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& paintInfo, const LayoutRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return true;
@@ -792,7 +792,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    IntRect inflatedRect = r;
+    LayoutRect inflatedRect = r;
     if (r.width() >= minimumMenuListSize(o->style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(), zoomLevel);
 
@@ -817,16 +817,16 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
 #if ENABLE(METER_TAG)
 
-IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const IntRect& bounds) const
+LayoutSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const LayoutRect& bounds) const
 {
     if (NoControlPart == renderMeter->style()->appearance())
         return bounds.size();
 
     NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
     // Makes enough room for cell's intrinsic size.
-    NSSize cellSize = [cell cellSizeForBounds:IntRect(IntPoint(), bounds.size())];
-    return IntSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
-                   bounds.height() < cellSize.height ? cellSize.height : bounds.height());
+    NSSize cellSize = [cell cellSizeForBounds:LayoutRect(LayoutPoint(), bounds.size())];
+    return LayoutSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
+                      bounds.height() < cellSize.height ? cellSize.height : bounds.height());
 }
 
 bool RenderThemeMac::paintMeter(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1106,7 +1106,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, topGradient);
-        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingLayoutRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, topShading.get());
     }
@@ -1114,7 +1114,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     if (!bottomGradient.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingLayoutRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
+        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, bottomShading.get());
     }
@@ -1276,7 +1276,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* s
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)
+void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const LayoutRect& r)
 {
     NSPopUpButtonCell* popupButton = this->popupButton();
 
@@ -1538,9 +1538,9 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 #if ENABLE(INPUT_SPEECH)
     // Take care of cases where the cancel button was not aligned with the right border of the input element (for e.g.
     // when speech input is enabled for the input element.
-    IntRect absBoundingBox = input->renderer()->absoluteBoundingBoxRect();
-    int absRight = absBoundingBox.x() + absBoundingBox.width() - input->renderBox()->paddingRight() - input->renderBox()->borderRight();
-    int spaceToRightOfCancelButton = absRight - (r.x() + r.width());
+    LayoutRect absBoundingBox = input->renderer()->absoluteBoundingBoxRect();
+    LayoutUnit absRight = absBoundingBox.x() + absBoundingBox.width() - input->renderBox()->paddingRight() - input->renderBox()->borderRight();
+    LayoutUnit spaceToRightOfCancelButton = absRight - (r.x() + r.width());
     localBounds.setX(localBounds.x() - spaceToRightOfCancelButton);
 #endif
 
@@ -2024,7 +2024,7 @@ bool RenderThemeMac::usesMediaControlVolumeSlider() const
     return mediaControllerTheme() == MediaControllerThemeQuickTime;
 }
 
-IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const IntSize& size) const
+LayoutPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const LayoutSize& size) const
 {
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }

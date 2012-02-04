@@ -97,7 +97,7 @@ public:
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual int baselinePosition(const RenderObject*) const;
+    virtual LayoutUnit baselinePosition(const RenderObject*) const;
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
@@ -114,7 +114,7 @@ public:
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
-    virtual void adjustRepaintRect(const RenderObject*, IntRect&);
+    virtual void adjustRepaintRect(const RenderObject*, LayoutRect&);
 
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
@@ -176,7 +176,7 @@ public:
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
     // Method for painting the caps lock indicator
-    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&) { return 0; };
+    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const LayoutRect&) { return 0; };
 
 #if ENABLE(PROGRESS_TAG)
     // Returns the repeat interval of the animation for the progress bar.
@@ -198,11 +198,11 @@ public:
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
     
     // Returns the media volume slider container's offset from the mute button.
-    virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
+    virtual LayoutPoint volumeSliderOffsetFromMuteButton(RenderBox*, const LayoutSize&) const;
 #endif
 
 #if ENABLE(METER_TAG)
-    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
+    virtual LayoutSize meterSizeForBounds(const RenderMeter*, const LayoutRect&) const;
     virtual bool supportsMeter(ControlPart) const;
 #endif
     

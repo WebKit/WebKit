@@ -242,7 +242,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     }
 }
 
-bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const LayoutRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -500,13 +500,13 @@ String RenderTheme::formatMediaControlsRemainingTime(float currentTime, float du
     return formatMediaControlsTime(currentTime - duration);
 }
 
-IntPoint RenderTheme::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const IntSize& size) const
+LayoutPoint RenderTheme::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const LayoutSize& size) const
 {
-    int y = -size.height();
+    LayoutUnit y = -size.height();
     FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->offsetLeft(), y), true, true);
     if (absPoint.y() < 0)
         y = muteButtonBox->height();
-    return IntPoint(0, y);
+    return LayoutPoint(0, y);
 }
 
 #endif
@@ -612,7 +612,7 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor() const
     return platformInactiveSelectionForegroundColor();
 }
 
-int RenderTheme::baselinePosition(const RenderObject* o) const
+LayoutUnit RenderTheme::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())
         return 0;
@@ -662,7 +662,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     }
 }
 
-void RenderTheme::adjustRepaintRect(const RenderObject* o, IntRect& r)
+void RenderTheme::adjustRepaintRect(const RenderObject* o, LayoutRect& r)
 {
 #if USE(NEW_THEME)
     m_theme->inflateControlPaintRect(o->style()->appearance(), controlStatesForRenderer(o), r, o->style()->effectiveZoom());
@@ -919,7 +919,7 @@ void RenderTheme::adjustMeterStyle(CSSStyleSelector*, RenderStyle* style, Elemen
     style->setBoxShadow(nullptr);
 }
 
-IntSize RenderTheme::meterSizeForBounds(const RenderMeter*, const IntRect& bounds) const
+LayoutSize RenderTheme::meterSizeForBounds(const RenderMeter*, const LayoutRect& bounds) const
 {
     return bounds.size();
 }
