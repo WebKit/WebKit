@@ -150,6 +150,13 @@ global_cppflags += \
 	-DXP_UNIX
 endif
 
+# Use the wide character version of win32 API by default
+if TARGET_WIN32
+global_cppflags += \
+	-DUNICODE \
+	-D_UNICODE
+endif
+
 if USE_ICU_UNICODE
 global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1

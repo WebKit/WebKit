@@ -1,3 +1,17 @@
+2012-02-04  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Use the wide character version of win32 API by default
+        https://bugs.webkit.org/show_bug.cgi?id=77809
+
+        Reviewed by Martin Robinson.
+
+        Certain win32-specific files (like PluginDatabaseWin.cpp) make the
+        assumption that the wide character version of win32 API is the default.
+        Define _UNICODE and UNICODE to do this, similar to what other win32
+        ports are doing.
+
+        * GNUmakefile.am:
+
 2012-02-03  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] configure: Print out the -Wno-c++0x-compat test result
