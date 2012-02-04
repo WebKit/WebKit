@@ -1364,38 +1364,31 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     }
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y, ExceptionCode& ec)
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, float x, float y, ExceptionCode& ec)
 {
-    if (!canvas) {
+    if (!sourceCanvas) {
         ec = TYPE_MISMATCH_ERR;
         return;
     }
 
-    // In order to emulate drawing the result of toDataURL() into the canvas, we
-    // need to deflate the size of the source rectangle by the source canvas's
-    // backing store scale factor.
-    // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=15041 for motivation.
-
-    FloatSize logicalSize = canvas->convertDeviceToLogical(canvas->size());
-
-    drawImage(canvas, 0, 0, logicalSize.width(), logicalSize.height(), x, y, canvas->width(), canvas->height(), ec);
+    drawImage(sourceCanvas, 0, 0, sourceCanvas->width(), sourceCanvas->height(), x, y, sourceCanvas->width(), sourceCanvas->height(), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas,
     float x, float y, float width, float height, ExceptionCode& ec)
 {
-    if (!canvas) {
+    if (!sourceCanvas) {
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    drawImage(canvas, FloatRect(0, 0, canvas->width(), canvas->height()), FloatRect(x, y, width, height), ec);
+    drawImage(sourceCanvas, FloatRect(0, 0, sourceCanvas->width(), sourceCanvas->height()), FloatRect(x, y, width, height), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas,
     float sx, float sy, float sw, float sh,
     float dx, float dy, float dw, float dh, ExceptionCode& ec)
 {
-    drawImage(canvas, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh), ec);
+    drawImage(sourceCanvas, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const FloatRect& srcRect,

@@ -1,3 +1,24 @@
+2012-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        Canvas-into-canvas drawing should respect backing store scale ratio
+        https://bugs.webkit.org/show_bug.cgi?id=77784
+        <rdar://problem/10549729>
+
+        Reviewed by Dan Bernstein.
+
+        Respect the backing store scale ratio when drawing a canvas into another
+        canvas via ctx.drawImage(canvas, x, y). Previous behavior caused canvas
+        drawing to differ based on the size of the backing store, which is ideally
+        an implementation detail to authors.
+
+        Also, rename the source canvas arguments to CanvasRenderingContext2D::drawImage
+        to be more clear.
+
+        No new tests.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2012-02-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77782
