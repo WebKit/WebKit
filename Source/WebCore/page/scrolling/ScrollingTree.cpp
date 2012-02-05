@@ -33,6 +33,7 @@
 #include "ScrollingThread.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeState.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -82,6 +83,14 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingT
     ASSERT(ScrollingThread::isCurrentThread());
 
     m_rootNode->update(scrollingTreeState.get());
+}
+
+void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition));
 }
 
 } // namespace WebCore

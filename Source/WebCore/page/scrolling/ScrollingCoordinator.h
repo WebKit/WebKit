@@ -76,6 +76,9 @@ public:
     // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
     void frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer);
 
+    // Dispatched by the scrolling tree whenever the main frame scroll position changes.
+    void updateMainFrameScrollPosition(const IntPoint&);
+
     // Should be called whenever the geometry of the given frame view changes,
     // including the visible content rect and the content size.
     void syncFrameViewGeometry(FrameView*);

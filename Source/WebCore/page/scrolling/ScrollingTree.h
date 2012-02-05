@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class IntPoint;
 class PlatformWheelEvent;
 class ScrollingCoordinator;
 class ScrollingTreeNode;
@@ -60,6 +61,8 @@ public:
 
     void invalidate();
     void commitNewTreeState(PassOwnPtr<ScrollingTreeState>);
+
+    void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);

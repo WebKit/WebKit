@@ -1,3 +1,22 @@
+2012-02-04  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling tree should inform the main scrolling coordinator when the scroll position changes
+        https://bugs.webkit.org/show_bug.cgi?id=77818
+
+        Reviewed by Sam Weinig.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+        Set the main frame scroll position.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateMainFrameScrollPosition):
+        Call ScrollingCoordinator::updateMainFrameScrollPosition on the main thread.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::scrollBy):
+        Call ScrollingTree::updateMainFrameScrollPosition.
+
 2012-02-04  Andreas Kling  <awesomekling@apple.com>
 
         Element: Remove unnecessary attributeChanged() argument.

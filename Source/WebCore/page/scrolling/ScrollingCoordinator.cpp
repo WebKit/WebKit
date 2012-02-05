@@ -104,6 +104,22 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scheduleTreeStateCommit();
 }
 
+void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    FrameView* frameView = m_page->mainFrame()->view();
+    if (!frameView)
+        return;
+
+    frameView->setConstrainsScrollingToContentEdge(false);
+    frameView->scrollToOffsetWithoutAnimation(scrollPosition);
+    frameView->setConstrainsScrollingToContentEdge(true);
+}
+
 void ScrollingCoordinator::syncFrameViewGeometry(FrameView* frameView)
 {
     ASSERT(isMainThread());

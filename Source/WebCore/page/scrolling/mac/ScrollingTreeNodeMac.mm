@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "PlatformWheelEvent.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeState.h"
 
 namespace WebCore {
@@ -72,7 +73,7 @@ void ScrollingTreeNodeMac::scrollBy(const IntSize &offset)
 {
     setScrollPosition(scrollPosition() + offset);
 
-    // FIXME: Tell the scrolling coordinator that our position changed.
+    scrollingTree()->updateMainFrameScrollPosition(scrollPosition());
 }
 
 } // namespace WebCore
