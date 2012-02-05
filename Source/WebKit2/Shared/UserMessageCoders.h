@@ -41,6 +41,7 @@
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include "WebURLRequest.h"
 #include "WebUserContentURLPattern.h"
 
 namespace WebKit {
@@ -57,6 +58,7 @@ namespace WebKit {
 //   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
 //   - WebURL -> WebURL
+//   - WebURLRequest -> WebURLRequest
 
 template<typename Owner>
 class UserMessageEncoder {
@@ -142,6 +144,11 @@ public:
             encoder->encode(urlObject->string());
             return true;
         }
+        case APIObject::TypeURLRequest: {
+            WebURLRequest* urlRequestObject = static_cast<WebURLRequest*>(m_root);
+            encoder->encode(urlRequestObject->resourceRequest());
+            return true;
+        }
         case APIObject::TypeUserContentURLPattern: {
             WebUserContentURLPattern* urlPattern = static_cast<WebUserContentURLPattern*>(m_root);
             encoder->encode(urlPattern->patternString());
@@ -203,6 +210,7 @@ protected:
 //   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
 //   - WebURL -> WebURL
+//   - WebURLRequest -> WebURLRequest
 
 template<typename Owner>
 class UserMessageDecoder {
@@ -335,6 +343,13 @@ public:
             if (!decoder->decode(string))
                 return false;
             coder.m_root = WebURL::create(string);
+            break;
+        }
+        case APIObject::TypeURLRequest: {
+            WebCore::ResourceRequest request;
+            if (!decoder->decode(request))
+                return false;
+            coder.m_root = WebURLRequest::create(request);
             break;
         }
         case APIObject::TypeUserContentURLPattern: {

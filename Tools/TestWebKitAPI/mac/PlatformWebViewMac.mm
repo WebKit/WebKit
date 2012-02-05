@@ -55,17 +55,18 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     [m_window setReleasedWhenClosed:NO];
 }
 
-void PlatformWebView::resizeTo(unsigned width, unsigned height)
-{
-    [m_view setFrame:NSMakeRect(0, 0, width, height)];
-}
-
 PlatformWebView::~PlatformWebView()
 {
     [m_window close];
     [m_window release];
     [m_view release];
 }
+
+void PlatformWebView::resizeTo(unsigned width, unsigned height)
+{
+    [m_view setFrame:NSMakeRect(0, 0, width, height)];
+}
+
 
 WKPageRef PlatformWebView::page() const
 {

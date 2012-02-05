@@ -55,6 +55,8 @@
 		BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC131A9B1171316900B69727 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131A9A1171316900B69727 /* main.mm */; };
 		BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		BC22D31514DC689800FFB1DD /* UserMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31314DC689800FFB1DD /* UserMessage.cpp */; };
+		BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */; };
 		BC246D8E132F115A00B56D7C /* AboutBlankLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */; };
 		BC246D9A132F1FE100B56D7C /* CanHandleRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */; };
 		BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */; };
@@ -220,6 +222,8 @@
 		BC131A9A1171316900B69727 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		BC131A9E1171317C00B69727 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		BC131AA8117131FC00B69727 /* TestsController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = TestsController.cpp; sourceTree = "<group>"; };
+		BC22D31314DC689800FFB1DD /* UserMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessage.cpp; sourceTree = "<group>"; };
+		BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessage_Bundle.cpp; sourceTree = "<group>"; };
 		BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AboutBlankLoad.cpp; sourceTree = "<group>"; };
 		BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanHandleRequest_Bundle.cpp; sourceTree = "<group>"; };
 		BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanHandleRequest.cpp; sourceTree = "<group>"; };
@@ -470,6 +474,8 @@
 				C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */,
 				C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
+				BC22D31314DC689800FFB1DD /* UserMessage.cpp */,
+				BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */,
 				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
 				520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */,
 				BC901E221492ADCE0074A667 /* WKConnection.cpp */,
@@ -761,6 +767,7 @@
 				93F1DB3114DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
 				93F1DB5514DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
 				93F7E86C14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
+				BC22D31514DC689800FFB1DD /* UserMessage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -787,6 +794,7 @@
 				93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */,
 				93F1DB5714DB1B840024C362 /* NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp in Sources */,
 				93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */,
+				BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

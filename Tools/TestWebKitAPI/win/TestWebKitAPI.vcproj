@@ -560,6 +560,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\UserMessage.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\WebArchive.cpp"
 					>
 				</File>

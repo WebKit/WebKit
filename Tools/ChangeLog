@@ -1,3 +1,39 @@
+2012-02-04  Sam Weinig  <sam@webkit.org>
+
+        Add ability to send WKURLRequests in WebKit2 API user messages
+        https://bugs.webkit.org/show_bug.cgi?id=77819
+
+        Reviewed by Anders Carlsson.
+
+        Add testing for round-tripping WKTypes from the UIProcess,
+        to the WebProcess, and back.
+
+        - This commit adds a test fixture and tests for WKURLRequestRef, WKURLRef, and WKStringRef.
+          More can easily be added.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/UserMessage.cpp: Added.
+        (TestWebKitAPI):
+        (WebKit2UserMessageRoundTripTest):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::WebKit2UserMessageRoundTripTest):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::didFinishLoadForFrame):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::setInjectedBundleClient):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::setPageLoaderClient):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::SetUp):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::roundTrip):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (UserMessageTest):
+        (TestWebKitAPI::UserMessageTest::UserMessageTest):
+        (TestWebKitAPI::UserMessageTest::didReceiveMessage):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+
 2012-02-04  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10772406> WKPreferences instances cannot be copied

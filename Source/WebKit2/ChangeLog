@@ -1,3 +1,17 @@
+2012-02-04  Sam Weinig  <sam@webkit.org>
+
+        Add ability to send WKURLRequests in WebKit2 API user messages
+        https://bugs.webkit.org/show_bug.cgi?id=77819
+
+        Reviewed by Anders Carlsson.
+
+        Test: WebKit2UserMessageRoundTripTest API test.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        Add encode/decode for WebURLRequest.
+
 2012-02-04  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10772406> WKPreferences instances cannot be copied
