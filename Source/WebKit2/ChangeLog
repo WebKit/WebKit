@@ -1,3 +1,27 @@
+2012-02-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10660698> Clients cannot prevent caching of individual responses
+        https://bugs.webkit.org/show_bug.cgi?id=77822
+
+        Reviewed by Sam Weinig.
+
+        * Shared/APIClientTraits.cpp: Added definition of interfaceSizesByVersion for
+        WKBundlePageResourceLoadClient.
+        * Shared/APIClientTraits.h: Added APIClientTraits specialization for WKBundlePageResourceLoadClient.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Added WKBundlePageShouldCacheResponseCallback
+        typedef, added shouldCacheResponse member to WKBundlePageResourceLoadClient, and bumped
+        kWKBundlePageResourceLoadClientCurrentVersion to 1.
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldCacheResponse): Added. Calls through
+        to the client if it implements shouldCacheResponse. Returns true otherwise.
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::willCacheResponse): Changed to call
+        InjectedBundlePageResourceLoadClient::shouldCacheResponse() and return nil if the former
+        returns false.
+        (WebKit::WebFrameLoaderClient::shouldCacheResponse): Changed to call
+        InjectedBundlePageResourceLoadClient::shouldCacheResponse().
+
 2012-02-04  Sam Weinig  <sam@webkit.org>
 
         Add ability to send WKURLRequests in WebKit2 API user messages

@@ -35,6 +35,11 @@ const size_t APIClientTraits<WKBundlePageLoaderClient>::interfaceSizesByVersion[
     sizeof(WKBundlePageLoaderClient)
 };
 
+const size_t APIClientTraits<WKBundlePageResourceLoadClient>::interfaceSizesByVersion[] = {
+    offsetof(WKBundlePageResourceLoadClient, shouldCacheResponse),
+    sizeof(WKBundlePageResourceLoadClient)
+};
+    
 const size_t APIClientTraits<WKPageContextMenuClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageContextMenuClient, contextMenuDismissed),
     sizeof(WKPageContextMenuClient)

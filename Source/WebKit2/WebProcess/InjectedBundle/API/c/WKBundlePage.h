@@ -164,10 +164,13 @@ typedef void (*WKBundlePageDidReceiveResponseForResourceCallback)(WKBundlePageRe
 typedef void (*WKBundlePageDidReceiveContentLengthForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, uint64_t contentLength, const void* clientInfo);
 typedef void (*WKBundlePageDidFinishLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 typedef void (*WKBundlePageDidFailLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKErrorRef, const void* clientInfo);
+typedef bool (*WKBundlePageShouldCacheResponseCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 
 struct WKBundlePageResourceLoadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
     WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
 
     // willSendRequestForFrame is supposed to return a retained reference to the URL request.
@@ -177,10 +180,13 @@ struct WKBundlePageResourceLoadClient {
     WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
     WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;
     WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
+
+    // Version 1.
+    WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
 };
 typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
 
-enum { kWKBundlePageResourceLoadClientCurrentVersion = 0 };
+enum { kWKBundlePageResourceLoadClientCurrentVersion = 1 };
 
 enum {
     WKBundlePageUIElementVisibilityUnknown,

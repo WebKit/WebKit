@@ -1416,19 +1416,28 @@ RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject()
 #if ENABLE(MAC_JAVA_BRIDGE)
 jobject WebFrameLoaderClient::javaApplet(NSView*) { return 0; }
 #endif
+
 NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse* response) const
 {
-    return response;
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return response;
+
+    return webPage->injectedBundleResourceLoadClient().shouldCacheResponse(webPage, m_frame, identifier) ? response : nil;
 }
 
-#endif
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(WIN) && USE(CFNETWORK)
 bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length)
 {
-    return true;
-}
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return true;
 
-#endif
+    return webPage->injectedBundleResourceLoadClient().shouldCacheResponse(webPage, m_frame, identifier);
+}
+#endif // PLATFORM(WIN) && USE(CFNETWORK)
 
 bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) const
 {

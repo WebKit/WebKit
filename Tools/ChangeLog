@@ -1,3 +1,13 @@
+2012-02-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10660698> Clients cannot prevent caching of individual responses
+        https://bugs.webkit.org/show_bug.cgi?id=77822
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Updated for the additional callback.
+
 2012-02-04  Sam Weinig  <sam@webkit.org>
 
         Add ability to send WKURLRequests in WebKit2 API user messages

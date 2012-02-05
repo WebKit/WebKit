@@ -85,4 +85,12 @@ void InjectedBundlePageResourceLoadClient::didFailLoadForResource(WebPage* page,
     m_client.didFailLoadForResource(toAPI(page), toAPI(frame), identifier, toAPI(error), m_client.clientInfo);
 }
 
+bool InjectedBundlePageResourceLoadClient::shouldCacheResponse(WebPage* page, WebFrame* frame, uint64_t identifier)
+{
+    if (!m_client.shouldCacheResponse)
+        return true;
+
+    return m_client.shouldCacheResponse(toAPI(page), toAPI(frame), identifier, m_client.clientInfo);
+}
+
 } // namespace WebKit
