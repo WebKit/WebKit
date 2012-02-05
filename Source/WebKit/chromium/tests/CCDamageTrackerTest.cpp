@@ -748,4 +748,27 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
     EXPECT_FLOAT_RECT_EQ(FloatRect(194, 200, 6, 8), childDamageRect);
 }
 
+TEST_F(CCDamageTrackerTest, verifyDamageWhenReset)
+{
+    RefPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
+    RefPtr<CCLayerImpl> child = root->children()[0];
+
+    // Case 1: This test ensures that when the tracker is forced to have full damage, that
+    //         it takes priority over any other partial damage.
+    //
+    child->setUpdateRect(FloatRect(10, 11, 12, 13));
+    root->renderSurface()->damageTracker()->forceFullDamageNextUpdate();
+    emulateDrawingOneFrame(root.get());
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 500, 500), rootDamageRect);
+
+    // Case 2: An additional sanity check that forcing full damage works even when nothing
+    //         on the layer tree changed.
+    //
+    root->renderSurface()->damageTracker()->forceFullDamageNextUpdate();
+    emulateDrawingOneFrame(root.get());
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 500, 500), rootDamageRect);
+}
+
 } // namespace

@@ -1,3 +1,24 @@
+2012-02-04  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Add support to force full damage in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=76805
+
+        Reviewed by James Robinson.
+
+        Unit test added to CCDamageTrackerTest.cpp.
+
+        This feature is needed for events that should cause the entire
+        surface to be damaged, even if layers themselves had only partial
+        damage or no damage at all. For example, tab-switching is one such
+        event.
+
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::CCDamageTracker):
+        (WebCore::CCDamageTracker::updateDamageRectForNextFrame):
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (WebCore::CCDamageTracker::forceFullDamageNextUpdate):
+        (CCDamageTracker):
+
 2012-02-04  Anders Carlsson  <andersca@apple.com>
 
         Remove dead code from ScrollingCoordinator

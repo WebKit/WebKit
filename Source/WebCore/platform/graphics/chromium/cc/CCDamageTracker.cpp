@@ -46,6 +46,7 @@ PassOwnPtr<CCDamageTracker> CCDamageTracker::create()
 }
 
 CCDamageTracker::CCDamageTracker()
+    : m_forceFullDamageNextUpdate(false)
 {
     m_currentRectHistory = adoptPtr(new RectMap);
     m_nextRectHistory = adoptPtr(new RectMap);
@@ -125,6 +126,7 @@ void CCDamageTracker::updateDamageRectForNextFrame(const Vector<RefPtr<CCLayerIm
     CCLayerImpl* layer = layerList[0].get();
     if (layer->targetRenderSurface()->surfacePropertyChangedOnlyFromDescendant()) {
         m_currentDamageRect = FloatRect(layer->targetRenderSurface()->contentRect());
+        // FIXME: this early exit is incorrect: https://bugs.webkit.org/show_bug.cgi?id=76924
         return;
     }
 
@@ -132,9 +134,14 @@ void CCDamageTracker::updateDamageRectForNextFrame(const Vector<RefPtr<CCLayerIm
     FloatRect damageFromSurfaceMask = computeDamageFromSurfaceMask(targetSurfaceMaskLayer);
     FloatRect damageFromLeftoverRects = computeDamageFromLeftoverRects();
 
-    m_currentDamageRect = damageFromActiveLayers;
-    m_currentDamageRect.uniteIfNonZero(damageFromSurfaceMask);
-    m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);
+    if (m_forceFullDamageNextUpdate) {
+        m_currentDamageRect = FloatRect(layer->targetRenderSurface()->contentRect());
+        m_forceFullDamageNextUpdate = false;
+    } else {
+        m_currentDamageRect = damageFromActiveLayers;
+        m_currentDamageRect.uniteIfNonZero(damageFromSurfaceMask);
+        m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);
+    }
 
     // The next history map becomes the current map for the next frame.
     swap(m_currentRectHistory, m_nextRectHistory);

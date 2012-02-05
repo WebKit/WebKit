@@ -1,3 +1,14 @@
+2012-02-04  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Add support to force full damage in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=76805
+
+        Reviewed by James Robinson.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-02-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Defer makeContextCurrent in compositor until first frame

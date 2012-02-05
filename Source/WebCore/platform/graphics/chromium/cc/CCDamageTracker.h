@@ -43,6 +43,7 @@ public:
     static PassOwnPtr<CCDamageTracker> create();
     ~CCDamageTracker();
 
+    void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
     void updateDamageRectForNextFrame(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer);
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
@@ -68,6 +69,7 @@ private:
     OwnPtr<RectMap> m_nextRectHistory;
 
     FloatRect m_currentDamageRect;
+    bool m_forceFullDamageNextUpdate;
 };
 
 } // namespace WebCore
