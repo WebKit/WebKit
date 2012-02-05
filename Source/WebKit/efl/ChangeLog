@@ -1,3 +1,16 @@
+2012-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove g_thread_init() calls
+        https://bugs.webkit.org/show_bug.cgi?id=77828
+
+        Reviewed by Andreas Kling.
+
+        g_thread_init has been deprecated since glib 2.32. This function is no longer necessary.
+        The GLib threading system is automatically initialized at the start of your program.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2012-02-02  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Add contentsSize flag into ewk_tiled_backing_store's private data.

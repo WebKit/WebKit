@@ -141,9 +141,6 @@ Eina_Bool _ewk_init_body(void)
 #if ENABLE(GLIB_SUPPORT)
     g_type_init();
 
-    if (!g_thread_supported())
-        g_thread_init(0);
-
     if (!ecore_main_loop_glib_integrate())
         WRN("Ecore was not compiled with GLib support, some plugins will not "
             "work (ie: Adobe Flash)");
