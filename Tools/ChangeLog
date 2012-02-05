@@ -1,3 +1,13 @@
+2012-02-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10772406> WKPreferences instances cannot be copied
+        https://bugs.webkit.org/show_bug.cgi?id=77816
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-02-04  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic's All Failure tab should let you examine and rebaseline expected failures

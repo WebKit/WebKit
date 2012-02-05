@@ -97,4 +97,18 @@ TEST(WebKit2, WKPreferencesDefaults)
     WKRelease(preference);
 }
 
+TEST(WebKit2, WKPreferencesCopying)
+{
+    WKRetainPtr<WKStringRef> identifier(AdoptWK, WKStringCreateWithUTF8CString("identifier"));
+
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreateWithIdentifier(identifier.get()));
+    WKPreferencesSetDefaultFontSize(preferences.get(), 36);
+
+    WKRetainPtr<WKPreferencesRef> copy(AdoptWK, WKPreferencesCreateCopy(preferences.get()));
+
+    WKPreferencesSetDefaultFontSize(preferences.get(), 24);
+    EXPECT_EQ(24u, WKPreferencesGetDefaultFontSize(preferences.get()));
+    EXPECT_EQ(36u, WKPreferencesGetDefaultFontSize(copy.get()));
+}
+
 } // namespace TestWebKitAPI

@@ -52,6 +52,12 @@ WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
     return toAPI(preferences.release().leakRef());
 }
 
+WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
+{
+    RefPtr<WebPreferences> preferences = WebPreferences::create(*toImpl(preferencesRef));
+    return toAPI(preferences.release().leakRef());
+}
+
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)
 {
     toImpl(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);

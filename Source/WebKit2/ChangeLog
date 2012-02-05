@@ -1,3 +1,22 @@
+2012-02-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10772406> WKPreferences instances cannot be copied
+        https://bugs.webkit.org/show_bug.cgi?id=77816
+
+        Reviewed by Sam Weinig.
+
+        Test added in TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreateCopy): Added.
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences): Added this constructor that copies the
+        WebPreferencesStore of the given WebPreferences.
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::create): Added this create function that takes a WebPreferences
+        instance and creates a new instance with a copy of the given instance’s store.
+
 2012-02-03  Anders Carlsson  <andersca@apple.com>
 
         WebKit2 should dispatch wheel events to the new ScrollingTree class

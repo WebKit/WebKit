@@ -52,6 +52,9 @@ enum WKEditableLinkBehavior {
 };
 typedef enum WKEditableLinkBehavior WKEditableLinkBehavior;
 
+// Creates a copy with no identifier.
+WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
+
 // Defaults to kWKFontSmoothingLevelWindows on Windows, kWKFontSmoothingLevelMedium on other platforms.
 WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);
 WK_EXPORT WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef);

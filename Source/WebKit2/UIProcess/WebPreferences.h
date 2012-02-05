@@ -54,6 +54,11 @@ public:
         return adoptRef(new WebPreferences(identifier));
     }
 
+    static PassRefPtr<WebPreferences> create(const WebPreferences& other)
+    {
+        return adoptRef(new WebPreferences(other));
+    }
+
     virtual ~WebPreferences();
 
     void addPageGroup(WebPageGroup*);
@@ -75,6 +80,7 @@ public:
 private:
     WebPreferences();
     WebPreferences(const String& identifier);
+    WebPreferences(const WebPreferences&);
 
     void platformInitializeStore();
 
