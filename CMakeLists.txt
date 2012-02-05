@@ -17,11 +17,14 @@ IF (NOT ENABLE_WEBKIT AND NOT ENABLE_WEBKIT2)
     SET(ENABLE_WEBKIT On)
 ENDIF ()
 
+SET(ENABLE_TOOLS On)
+
 OPTION(ONLY_BUILD_JAVASCRIPTCORE "only build JavaScriptCore")
 IF (ONLY_BUILD_JAVASCRIPTCORE)
     SET(ENABLE_WEBCORE Off)
     SET(ENABLE_WEBKIT Off)
     SET(ENABLE_WEBKIT2 Off)
+    SET(ENABLE_TOOLS Off)
 ENDIF ()
 
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")
@@ -152,7 +155,9 @@ ADD_SUBDIRECTORY(Source)
 # -----------------------------------------------------------------------------
 # Add tools
 # -----------------------------------------------------------------------------
-ADD_SUBDIRECTORY(Tools)
+IF (ENABLE_TOOLS)
+    ADD_SUBDIRECTORY(Tools)
+ENDIF ()
 
 # -----------------------------------------------------------------------------
 # Prints a summary of all enabled/disabled features

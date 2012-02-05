@@ -1,3 +1,15 @@
+2012-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Do not build Tools when building jsc only. 
+        https://bugs.webkit.org/show_bug.cgi?id=77826
+
+        Reviewed by Daniel Bates.
+
+        Do not build Tools when jsc is only built. Build breaks occur because
+        Tools is built together when building jsc.
+
+        * CMakeLists.txt: Build Tools directory when ENABLE_TOOLS is on.
+
 2012-02-04  Philip Rogers  <pdr@google.com>
 
         Fix bug in svg-link-hover-use.svg
