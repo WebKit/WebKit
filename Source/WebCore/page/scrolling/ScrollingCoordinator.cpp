@@ -54,7 +54,6 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
     , m_scrollingTree(ScrollingTree::create(this))
     , m_scrollingTreeState(ScrollingTreeState::create())
     , m_scrollingTreeStateCommitterTimer(this, &ScrollingCoordinator::scrollingTreeStateCommitterTimerFired)
-    , m_didDispatchDidUpdateMainFrameScrollPosition(false)
 {
 }
 
@@ -118,80 +117,6 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->scrollToOffsetWithoutAnimation(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
-}
-
-void ScrollingCoordinator::syncFrameViewGeometry(FrameView* frameView)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (frameView->frame() != m_page->mainFrame())
-        return;
-
-    IntRect visibleContentRect = frameView->visibleContentRect();
-    IntSize contentsSize = frameView->contentsSize();
-
-    MutexLocker locker(m_mainFrameGeometryMutex);
-    if (m_mainFrameVisibleContentRect == visibleContentRect && m_mainFrameContentsSize == contentsSize)
-        return;
-
-    m_mainFrameVisibleContentRect = visibleContentRect;
-    m_mainFrameContentsSize = contentsSize;
-
-    // FIXME: Inform the scrolling thread that the frame geometry has changed.
-}
-
-bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
-{
-    // FIXME: Check for wheel event handlers.
-    // FIXME: Check if we're over a subframe or overflow div.
-    // FIXME: As soon as we've determined that we can handle the wheel event, we should do the
-    // bulk of the work on the scrolling thread and return from this function.
-    // FIXME: Handle rubberbanding.
-    float deltaX = wheelEvent.deltaX();
-    float deltaY = wheelEvent.deltaY();
-
-    // Slightly prefer scrolling vertically by applying the = case to deltaY
-    if (fabsf(deltaY) >= fabsf(deltaX))
-        deltaX = 0;
-    else
-        deltaY = 0;
-
-    IntSize scrollOffset = IntSize(-deltaX, -deltaY);
-    ScrollingThread::dispatch(bind(&ScrollingCoordinator::scrollByOnScrollingThread, this, scrollOffset));
-    return true;
-}
-
-#if ENABLE(GESTURE_EVENTS)
-bool ScrollingCoordinator::handleGestureEvent(const PlatformGestureEvent&)
-{
-    // FIXME: Implement.
-    return false;
-}
-#endif
-
-void ScrollingCoordinator::didUpdateMainFrameScrollPosition()
-{
-    ASSERT(isMainThread());
-
-    if (!m_page)
-        return;
-
-    IntPoint scrollPosition;
-
-    {
-        MutexLocker locker(m_mainFrameGeometryMutex);
-        ASSERT(m_didDispatchDidUpdateMainFrameScrollPosition);
-
-        scrollPosition = m_mainFrameScrollPosition;
-        m_didDispatchDidUpdateMainFrameScrollPosition = false;
-    }
-
-    if (FrameView* frameView = m_page->mainFrame()->view()) {
-        frameView->setConstrainsScrollingToContentEdge(false);
-        frameView->scrollToOffsetWithoutAnimation(scrollPosition);
-        frameView->setConstrainsScrollingToContentEdge(true);
-    }
 }
 
 void ScrollingCoordinator::scheduleTreeStateCommit()

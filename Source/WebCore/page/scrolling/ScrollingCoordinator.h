@@ -79,33 +79,9 @@ public:
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
     void updateMainFrameScrollPosition(const IntPoint&);
 
-    // Should be called whenever the geometry of the given frame view changes,
-    // including the visible content rect and the content size.
-    void syncFrameViewGeometry(FrameView*);
-
-    // Can be called from any thread. Will try to handle the wheel event on the scrolling thread,
-    // and return false if the event must be sent again to the WebCore event handler.
-    bool handleWheelEvent(const PlatformWheelEvent&);
-
-#if ENABLE(GESTURE_EVENTS)
-    // Can be called from any thread. Will try to handle the gesture event on the scrolling thread,
-    // and return false if the event must be sent again to the WebCore event handler.
-    bool handleGestureEvent(const PlatformGestureEvent&);
-#endif
-
 private:
     explicit ScrollingCoordinator(Page*);
 
-    // The following functions can only be called from the main thread.
-    void didUpdateMainFrameScrollPosition();
-
-    // The following functions can only be called from the scrolling thread.
-    void scrollByOnScrollingThread(const IntSize& offset);
-
-    // This function must be called with the main frame geometry mutex held.
-    void updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint&);
-
-private:
     void scheduleTreeStateCommit();
     void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);
     void commitTreeStateIfNeeded();
@@ -116,16 +92,6 @@ private:
 
     OwnPtr<ScrollingTreeState> m_scrollingTreeState;
     Timer<ScrollingCoordinator> m_scrollingTreeStateCommitterTimer;
-
-    Mutex m_mainFrameGeometryMutex;
-    IntRect m_mainFrameVisibleContentRect;
-    IntSize m_mainFrameContentsSize;
-#if PLATFORM(MAC)
-    RetainPtr<PlatformLayer> m_mainFrameScrollLayer;
-#endif
-
-    bool m_didDispatchDidUpdateMainFrameScrollPosition;
-    IntPoint m_mainFrameScrollPosition;
 };
 
 } // namespace WebCore

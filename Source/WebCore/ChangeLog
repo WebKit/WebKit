@@ -1,5 +1,23 @@
 2012-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Remove dead code from ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=77821
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::frameViewScrollLayerDidChange):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+
+2012-02-04  Anders Carlsson  <andersca@apple.com>
+
         The scrolling tree should inform the main scrolling coordinator when the scroll position changes
         https://bugs.webkit.org/show_bug.cgi?id=77818
 

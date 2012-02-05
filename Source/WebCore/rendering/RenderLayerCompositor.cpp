@@ -972,11 +972,6 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         if (m_layerForOverhangAreas)
             m_layerForOverhangAreas->setSize(frameView->frameRect().size());
 #endif
-
-#if ENABLE(THREADED_SCROLLING)
-        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->syncFrameViewGeometry(frameView);
-#endif
     }
 }
 
@@ -1236,11 +1231,6 @@ void RenderLayerCompositor::updateRootLayerPosition()
         FrameView* frameView = m_renderView->frameView();
         m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
     }
-
-#if ENABLE(THREADED_SCROLLING)
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->syncFrameViewGeometry(m_renderView->frameView());
-#endif
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)

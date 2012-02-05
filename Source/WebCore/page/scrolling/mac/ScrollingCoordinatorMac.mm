@@ -74,52 +74,6 @@ void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, c
 
     m_scrollingTreeState->setScrollLayer(scrollLayer);
     scheduleTreeStateCommit();
-
-    MutexLocker locker(m_mainFrameGeometryMutex);
-    m_mainFrameScrollLayer = scrollLayer->platformLayer();
-
-    // FIXME: Inform the scrolling thread?
-}
-
-#define ENABLE_FREE_SCROLLING 0
-
-void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-
-    MutexLocker locker(m_mainFrameGeometryMutex);
-
-    // FIXME: Should we cache the scroll position as well or always get it from the layer?
-    IntPoint scrollPosition = IntPoint([m_mainFrameScrollLayer.get() position]);
-    scrollPosition = -scrollPosition;
-
-    scrollPosition += offset;
-
-#if !ENABLE_FREE_SCROLLING
-    scrollPosition.clampNegativeToZero();
-
-    IntPoint maximumScrollPosition = IntPoint(m_mainFrameContentsSize.width() - m_mainFrameVisibleContentRect.width(), m_mainFrameContentsSize.height() - m_mainFrameVisibleContentRect.height());
-    scrollPosition = scrollPosition.shrunkTo(maximumScrollPosition);
-#endif
-
-    updateMainFrameScrollLayerPositionOnScrollingThread(-scrollPosition);
-
-    m_mainFrameScrollPosition = scrollPosition;
-    if (!m_didDispatchDidUpdateMainFrameScrollPosition) {
-        callOnMainThread(bind(&ScrollingCoordinator::didUpdateMainFrameScrollPosition, this));
-        m_didDispatchDidUpdateMainFrameScrollPosition = true;
-    }
-}
-
-void ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint& scrollLayerPosition)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    ASSERT(!m_mainFrameGeometryMutex.tryLock());
-
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [m_mainFrameScrollLayer.get() setPosition:scrollLayerPosition];
-    [CATransaction commit];
 }
 
 } // namespace WebCore
