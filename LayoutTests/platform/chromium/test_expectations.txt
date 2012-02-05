@@ -772,7 +772,6 @@ BUGCR39423 : security/block-test.html = TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
-BUGCR9798 WIN : http/tests/security/cross-frame-access-protocol-explicit-domain.html = PASS FAIL
 BUGCR9798 WIN DEBUG : http/tests/security/cross-frame-access-protocol.html = PASS FAIL
 BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
 BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
