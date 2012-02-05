@@ -1,3 +1,17 @@
+2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: beautify retaining tree items view.
+        https://bugs.webkit.org/show_bug.cgi?id=77810
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype._createObjectCell):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+        * inspector/front-end/heapProfiler.css:
+        (.cycled-ancessor-node):
+        * inspector/front-end/profilesPanel.css:
+
 2012-02-04  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Add support to force full damage in CCDamageTracker

@@ -239,8 +239,6 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         valueSpan.className = "value console-formatted-" + data.valueStyle;
         valueSpan.textContent = data.value;
         div.appendChild(valueSpan);
-        if (this._postfixObjectCell)
-            this._postfixObjectCell(div, data);
         cell.appendChild(div);
         cell.addStyleClass("disclosure");
         if (this.depth)
@@ -458,6 +456,16 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         if (this._retainerNode) {
             if (this._cycledWithAncestorGridNode)
                 div.className += " cycled-ancessor-node";
+            var referenceNameSpan = document.createElement("span");
+            referenceNameSpan.className = "name";
+            referenceNameSpan.textContent = this._referenceName + " ";
+            div.appendChild(referenceNameSpan);
+
+            var separatorSpan = document.createElement("span");
+            separatorSpan.className = "separator";
+            separatorSpan.textContent = " of ";
+            div.appendChild(separatorSpan);
+
             return;
         }
 
@@ -470,16 +478,6 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         separatorSpan.className = "separator";
         separatorSpan.textContent = ": ";
         div.appendChild(separatorSpan);
-    },
-
-    _postfixObjectCell: function(div, data)
-    {
-        if (this._retainerNode) {
-            var referenceTypeSpan = document.createElement("span");
-            referenceTypeSpan.className = "console-formatted-object";
-            referenceTypeSpan.textContent = this._propertyAccessor;
-            div.appendChild(referenceTypeSpan);
-        }
     }
 }
 

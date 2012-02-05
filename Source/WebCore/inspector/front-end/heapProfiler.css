@@ -220,3 +220,8 @@ div.retaining-paths-view td.path-column div:hover {
     text-decoration: underline;
     color: blue;
 }
+
+.cycled-ancessor-node {
+    opacity: 0.6;
+}
+
