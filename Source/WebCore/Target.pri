@@ -484,7 +484,6 @@ SOURCES += \
     dom/Comment.cpp \
     dom/CompositionEvent.cpp \
     dom/ContainerNode.cpp \
-    dom/CSSMappedAttributeDeclaration.cpp \
     dom/CustomEvent.cpp \
     dom/DecodedDataDocumentParser.cpp \
     dom/DeviceMotionController.cpp \
@@ -1596,7 +1595,6 @@ HEADERS += \
     dom/Clipboard.h \
     dom/Comment.h \
     dom/ContainerNode.h \
-    dom/CSSMappedAttributeDeclaration.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DeviceMotionClient.h \

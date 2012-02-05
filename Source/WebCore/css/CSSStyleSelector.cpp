@@ -996,13 +996,12 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
-        if (CSSMappedAttributeDeclaration* attributeStyle = m_styledElement->attributeStyle()) {
-            ASSERT(attributeStyle->declaration());
-            if (!attributeStyle->declaration()->isEmpty()) {
+        if (StylePropertySet* attributeStyle = m_styledElement->attributeStyle()) {
+            if (!attributeStyle->isEmpty()) {
                 result.ranges.lastAuthorRule = m_matchedRules.size();
                 if (result.ranges.firstAuthorRule == -1)
                     result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
-                addMatchedDeclaration(attributeStyle->declaration());
+                addMatchedDeclaration(attributeStyle);
                 result.isCacheable = false;
             }
         }

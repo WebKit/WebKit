@@ -336,11 +336,11 @@ void NamedNodeMap::destroyInlineStyleDecl()
     attributeData()->m_inlineStyleDecl = 0;
 }
 
-CSSMappedAttributeDeclaration* NamedNodeMap::ensureAttributeStyle()
+StylePropertySet* NamedNodeMap::ensureAttributeStyle()
 {
     if (!attributeData()->m_attributeStyle) {
-        attributeData()->m_attributeStyle = CSSMappedAttributeDeclaration::create();
-        attributeData()->m_attributeStyle->declaration()->setStrictParsing(false);
+        attributeData()->m_attributeStyle = StylePropertySet::create();
+        attributeData()->m_attributeStyle->setStrictParsing(false);
     }
     return attributeData()->m_attributeStyle.get();
 }

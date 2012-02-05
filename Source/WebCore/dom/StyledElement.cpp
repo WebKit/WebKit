@@ -25,6 +25,7 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
+#include "CSSImageValue.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -121,49 +122,56 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
 
 void StyledElement::removeCSSProperties(int id1, int id2, int id3, int id4, int id5, int id6, int id7, int id8)
 {
-    CSSMappedAttributeDeclaration* style = attributeStyle();
+    StylePropertySet* style = attributeStyle();
     if (!style)
         return;
 
+    setNeedsStyleRecalc(FullStyleChange);
+
     ASSERT(id1 != CSSPropertyInvalid);
-    style->removeMappedProperty(this, id1);
+    style->removeProperty(id1);
 
     if (id2 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id2);
+    style->removeProperty(id2);
     if (id3 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id3);
+    style->removeProperty(id3);
     if (id4 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id4);
+    style->removeProperty(id4);
     if (id5 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id5);
+    style->removeProperty(id5);
     if (id6 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id6);
+    style->removeProperty(id6);
     if (id7 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id7);
+    style->removeProperty(id7);
     if (id8 == CSSPropertyInvalid)
         return;
-    style->removeMappedProperty(this, id8);
+    style->removeProperty(id8);
 }
 
 void StyledElement::addCSSProperty(int id, const String &value)
 {
-    ensureAttributeStyle()->setMappedProperty(this, id, value);
+    if (!ensureAttributeStyle()->setProperty(id, value))
+        removeCSSProperty(id);
+    else
+        setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSProperty(int id, int value)
 {
-    ensureAttributeStyle()->setMappedProperty(this, id, value);
+    ensureAttributeStyle()->setProperty(id, value);
+    setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSImageProperty(int id, const String& url)
 {
-    ensureAttributeStyle()->setMappedImageProperty(this, id, url);
+    ensureAttributeStyle()->setProperty(CSSProperty(id, CSSImageValue::create(url)));
+    setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSLength(int id, const String &value)
@@ -192,12 +200,12 @@ void StyledElement::addCSSLength(int id, const String &value)
         }
 
         if (l != v->length()) {
-            ensureAttributeStyle()->setMappedLengthProperty(this, id, v->substring(0, l));
+            addCSSProperty(id, v->substring(0, l));
             return;
         }
     }
 
-    ensureAttributeStyle()->setMappedLengthProperty(this, id, value);
+    addCSSProperty(id, value);
 }
 
 static String parseColorStringWithCrazyLegacyRules(const String& colorString)
@@ -272,11 +280,11 @@ void StyledElement::addCSSColor(int id, const String& attributeValue)
     // If the string is a named CSS color or a 3/6-digit hex color, use that.
     Color parsedColor(colorString);
     if (parsedColor.isValid()) {
-        ensureAttributeStyle()->setMappedProperty(this, id, colorString);
+        addCSSProperty(id, colorString);
         return;
     }
 
-    ensureAttributeStyle()->setMappedProperty(this, id, parseColorStringWithCrazyLegacyRules(colorString));
+    addCSSProperty(id, parseColorStringWithCrazyLegacyRules(colorString));
 }
 
 void StyledElement::copyNonAttributeProperties(const Element* sourceElement)

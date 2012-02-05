@@ -409,7 +409,7 @@ static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativ
     }
 }
 
-static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet = 0)
+static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict)
 {
     bool acceptsNegativeNumbers;
     unsigned length = string.length();
@@ -473,7 +473,7 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
 
-    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->contextStyleSheet();
+    CSSStyleSheet* styleSheet = declaration->contextStyleSheet();
     if (!styleSheet)
         return false;
     Document* document = styleSheet->findDocument();
@@ -482,20 +482,6 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId
     CSSProperty property(propertyId, document->cssValuePool()->createValue(number, unit), important);
     declaration->addParsedProperty(property);
     return true;
-}
-
-bool CSSParser::parseMappedAttributeValue(CSSMappedAttributeDeclaration* mappedAttribute, StyledElement* element, int propertyId, const String& value)
-{
-    ASSERT(mappedAttribute);
-    ASSERT(element);
-    ASSERT(element->document());
-    CSSStyleSheet* elementSheet = element->document()->elementSheet();
-    if (parseSimpleLengthValue(mappedAttribute->declaration(), propertyId, value, false, false, elementSheet))
-        return true;
-    if (parseColorValue(mappedAttribute->declaration(), propertyId, value, false, false, elementSheet))
-        return true;
-    CSSParser parser(false);
-    return parser.parseValue(mappedAttribute->declaration(), propertyId, value, false, elementSheet);
 }
 
 bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict)

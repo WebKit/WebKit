@@ -520,7 +520,6 @@ SET(WebCore_SOURCES
     dom/Comment.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp
-    dom/CSSMappedAttributeDeclaration.cpp
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp

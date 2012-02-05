@@ -3972,8 +3972,6 @@
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
 		A8C4A80709D563270003AC8D /* Element.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F509D563270003AC8D /* Element.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80809D563270003AC8D /* Element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F609D563270003AC8D /* Element.cpp */; };
-		A8C4A80909D563270003AC8D /* CSSMappedAttributeDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8C4A80A09D563270003AC8D /* CSSMappedAttributeDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */; };
 		A8C4A80B09D563270003AC8D /* Attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F909D563270003AC8D /* Attribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FA09D563270003AC8D /* Attribute.cpp */; };
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10693,8 +10691,6 @@
 		A8C4A7EE09D563270003AC8D /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		A8C4A7F509D563270003AC8D /* Element.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Element.h; sourceTree = "<group>"; };
 		A8C4A7F609D563270003AC8D /* Element.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Element.cpp; sourceTree = "<group>"; };
-		A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSMappedAttributeDeclaration.h; sourceTree = "<group>"; };
-		A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSMappedAttributeDeclaration.cpp; sourceTree = "<group>"; };
 		A8C4A7F909D563270003AC8D /* Attribute.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attribute.h; sourceTree = "<group>"; };
 		A8C4A7FA09D563270003AC8D /* Attribute.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attribute.cpp; sourceTree = "<group>"; };
 		A8C4A7FB09D563270003AC8D /* Attr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attr.h; sourceTree = "<group>"; };
@@ -20406,8 +20402,6 @@
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
 				2E3FAA0811A36BF100576624 /* CrossThreadTask.h */,
-				A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */,
-				A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
 				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
@@ -21290,7 +21284,6 @@
 				A80E6D010A1989CA007FB8C5 /* CSSInheritedValue.h in Headers */,
 				A80E6D080A1989CA007FB8C5 /* CSSInitialValue.h in Headers */,
 				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
-				A8C4A80909D563270003AC8D /* CSSMappedAttributeDeclaration.h in Headers */,
 				A80E6D030A1989CA007FB8C5 /* CSSMediaRule.h in Headers */,
 				A80E6DFC0A199067007FB8C5 /* StylePropertySet.h in Headers */,
 				A80E734E0A199C77007FB8C5 /* CSSNamespace.h in Headers */,
@@ -24695,7 +24688,6 @@
 				A80E6CF00A1989CA007FB8C5 /* CSSInheritedValue.cpp in Sources */,
 				A80E6D020A1989CA007FB8C5 /* CSSInitialValue.cpp in Sources */,
 				BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */,
-				A8C4A80A09D563270003AC8D /* CSSMappedAttributeDeclaration.cpp in Sources */,
 				A80E6CFC0A1989CA007FB8C5 /* CSSMediaRule.cpp in Sources */,
 				A80E6DFB0A199067007FB8C5 /* StylePropertySet.cpp in Sources */,
 				F98FFF4411A2676200F548E8 /* CSSOMUtils.cpp in Sources */,

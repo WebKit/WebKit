@@ -1474,8 +1474,6 @@ webcore_sources += \
 	Source/WebCore/dom/ContainerNode.cpp \
 	Source/WebCore/dom/ContainerNode.h \
 	Source/WebCore/dom/CrossThreadTask.h \
-	Source/WebCore/dom/CSSMappedAttributeDeclaration.cpp \
-	Source/WebCore/dom/CSSMappedAttributeDeclaration.h \
 	Source/WebCore/dom/CustomEvent.cpp \
 	Source/WebCore/dom/CustomEvent.h \
 	Source/WebCore/dom/DatasetDOMStringMap.cpp \

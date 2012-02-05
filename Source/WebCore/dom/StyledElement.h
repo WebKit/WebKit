@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class Attribute;
-class CSSMappedAttributeDeclaration;
 
 class StyledElement : public Element {
 public:
@@ -55,8 +54,8 @@ public:
     StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
     virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
-    CSSMappedAttributeDeclaration* attributeStyle() const { return attributeMap() ? attributeMap()->attributeStyle() : 0; }
-    CSSMappedAttributeDeclaration* ensureAttributeStyle() { return ensureAttributeMap()->ensureAttributeStyle(); }
+    StylePropertySet* attributeStyle() const { return attributeMap() ? attributeMap()->attributeStyle() : 0; }
+    StylePropertySet* ensureAttributeStyle() { return ensureAttributeMap()->ensureAttributeStyle(); }
 
     const SpaceSplitString& classNames() const;
 

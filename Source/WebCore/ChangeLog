@@ -1,3 +1,60 @@
+2012-02-05  Andreas Kling  <awesomekling@apple.com>
+
+        Kill CSSMappedAttributeDeclaration.
+        <http://webkit.org/b/77820>
+
+        Reviewed by Antti Koivisto.
+
+        Replace all use of CSSMappedAttributeDeclaration by StylePropertySet.
+        Moved the setNeedsStyleRecalc() calls from CSSMappedAttributeDeclaration
+        to the add/remove-CSS-property helpers in StyledElement.
+
+        This removes one step of indirection for attribute styles and reduces
+        the size of elements that have presentational attributes by one pointer.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CSSMappedAttributeDeclaration.cpp: Removed.
+        * dom/CSSMappedAttributeDeclaration.h: Removed.
+        * dom/DOMAllInOne.cpp:
+
+            Remove CSSMappedAttributeDeclaration.{cpp,h}
+
+        * css/CSSParser.h:
+        * css/CSSParser.cpp:
+        (WebCore::parseSimpleLengthValue):
+
+            Remove CSSParser::parseMappedAttributeValue(), we now use parseValue()
+            directly instead. We lose the benefit of caching new CSSValues in the
+            document's CSSValuePool but this optimization can be added back later.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::ensureAttributeStyle):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::attributeStyle):
+        (NamedNodeMap):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::removeCSSProperties):
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+        (WebCore::StyledElement::addCSSLength):
+        (WebCore::StyledElement::addCSSColor):
+        * dom/StyledElement.h:
+        (WebCore):
+        (WebCore::StyledElement::attributeStyle):
+        (WebCore::StyledElement::ensureAttributeStyle):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForAttributeStyles):
+
 2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: beautify retaining tree items view.

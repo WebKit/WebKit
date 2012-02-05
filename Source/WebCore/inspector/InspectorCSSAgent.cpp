@@ -722,12 +722,12 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Eleme
     if (!element->isStyledElement())
         return InspectorArray::create();
 
-    CSSMappedAttributeDeclaration* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
-    if (!attributeStyle || !attributeStyle->declaration())
+    StylePropertySet* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
+    if (!attributeStyle)
         return InspectorArray::create();
 
     RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
-    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->declaration()->ensureCSSStyleDeclaration(), 0);
+    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->ensureCSSStyleDeclaration(), 0);
     attrStyleObject->setString("name", "");
     attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
 

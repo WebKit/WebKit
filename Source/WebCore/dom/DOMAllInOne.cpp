@@ -31,7 +31,6 @@
 #include "BeforeTextInsertedEvent.cpp"
 #include "BeforeUnloadEvent.cpp"
 #include "CDATASection.cpp"
-#include "CSSMappedAttributeDeclaration.cpp"
 #include "CharacterData.cpp"
 #include "CheckedRadioButtons.cpp"
 #include "ChildNodeList.cpp"

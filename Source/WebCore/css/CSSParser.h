@@ -43,7 +43,6 @@
 namespace WebCore {
 
 class CSSBorderImageSliceValue;
-class CSSMappedAttributeDeclaration;
 class CSSPrimitiveValue;
 class CSSValuePool;
 class CSSProperty;
@@ -76,8 +75,6 @@ public:
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>* = 0, CSSStyleSheet* contextStyleSheet = 0);
     bool parseMediaQuery(MediaList*, const String&);
-
-    static bool parseMappedAttributeValue(CSSMappedAttributeDeclaration*, StyledElement*, int propertyId, const String&);
 
     Document* findDocument() const;
 

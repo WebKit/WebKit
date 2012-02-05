@@ -26,7 +26,6 @@
 #ifndef ElementAttributeData_h
 #define ElementAttributeData_h
 
-#include "CSSMappedAttributeDeclaration.h"
 #include "SpaceSplitString.h"
 #include "StylePropertySet.h"
 
@@ -51,7 +50,7 @@ private:
     }
 
     RefPtr<StylePropertySet> m_inlineStyleDecl;
-    RefPtr<CSSMappedAttributeDeclaration> m_attributeStyle;
+    RefPtr<StylePropertySet> m_attributeStyle;
     SpaceSplitString m_classNames;
     AtomicString m_idForStyleResolution;
 };
