@@ -772,30 +772,19 @@ BUGCR39423 : security/block-test.html = TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
-BUGCR9798 WIN DEBUG : http/tests/security/cross-frame-access-protocol.html = PASS FAIL
 BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
 BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
-BUGWK65567 LINUX WIN DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+BUGWK65567 DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
 BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
-BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = PASS TEXT
-BUGWK54322 SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = PASS TEXT
-BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
-BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
+BUGDPRANKE WIN : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
-BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
-BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH
-BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-blocked.html = PASS CRASH
+BUG_LEVIN DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
-BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
-BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
-BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
-BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 
 // -----------------------------------------------------------------
