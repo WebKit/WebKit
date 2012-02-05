@@ -1,3 +1,18 @@
+2012-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Support javascriptcore test for EFL port. 
+        https://bugs.webkit.org/show_bug.cgi?id=77425
+
+        Reviewed by Daniel Bates.
+
+        Efl and WinCE as well as Blackberry port are now using Cmake as its build system
+        and they are share the make file to create jsc excutable. In order to run
+        "run-javascriptcore-tests", EFL port needs to change jsc installation configuration
+        with executable output directory(e.g. Programs). So, this patch change jsc installation
+        configuration only for EFL port.
+
+        * shell/CMakeLists.txt:
+
 2012-02-04  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.
