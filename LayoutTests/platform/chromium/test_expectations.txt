@@ -773,7 +773,6 @@ BUGCR39423 : security/block-test.html = TIMEOUT
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
 BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
-BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
 BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 BUGWK65567 DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
