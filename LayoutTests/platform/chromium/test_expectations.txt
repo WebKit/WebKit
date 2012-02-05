@@ -776,7 +776,6 @@ BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-fore
 BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 BUGWK65567 DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
-BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
 BUGDPRANKE WIN : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
