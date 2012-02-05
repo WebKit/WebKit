@@ -93,4 +93,12 @@ bool InjectedBundlePageResourceLoadClient::shouldCacheResponse(WebPage* page, We
     return m_client.shouldCacheResponse(toAPI(page), toAPI(frame), identifier, m_client.clientInfo);
 }
 
+bool InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage(WebPage* page, WebFrame* frame, uint64_t identifier)
+{
+    if (!m_client.shouldUseCredentialStorage)
+        return true;
+
+    return m_client.shouldUseCredentialStorage(toAPI(page), toAPI(frame), identifier, m_client.clientInfo);
+}
+
 } // namespace WebKit

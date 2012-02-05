@@ -1,3 +1,19 @@
+2012-02-05  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10809525> WebKit2’s WebFrameLoaderClient::shouldUseCredentialStorage() always returns true
+        https://bugs.webkit.org/show_bug.cgi?id=77823
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage): Added. Calls
+        through to the client if it implements shouldUseCredentialStorage. Returns true otherwise.
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage): Changed to call the injected
+        bundle resource load client.
+
 2012-02-04  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10660698> Clients cannot prevent caching of individual responses

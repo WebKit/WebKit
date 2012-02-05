@@ -53,6 +53,7 @@ public:
     void didFinishLoadForResource(WebPage*, WebFrame*, uint64_t identifier);
     void didFailLoadForResource(WebPage*, WebFrame*, uint64_t identifier, const WebCore::ResourceError&);
     bool shouldCacheResponse(WebPage*, WebFrame*, uint64_t identifier);
+    bool shouldUseCredentialStorage(WebPage*, WebFrame*, uint64_t identifier);
 };
 
 } // namespace WebKit

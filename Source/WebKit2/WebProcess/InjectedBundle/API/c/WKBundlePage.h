@@ -165,6 +165,7 @@ typedef void (*WKBundlePageDidReceiveContentLengthForResourceCallback)(WKBundleP
 typedef void (*WKBundlePageDidFinishLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 typedef void (*WKBundlePageDidFailLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKErrorRef, const void* clientInfo);
 typedef bool (*WKBundlePageShouldCacheResponseCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
+typedef bool (*WKBundlePageShouldUseCredentialStorageCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 
 struct WKBundlePageResourceLoadClient {
     int                                                                 version;
@@ -183,6 +184,7 @@ struct WKBundlePageResourceLoadClient {
 
     // Version 1.
     WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
+    WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
 };
 typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
 

@@ -175,7 +175,11 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
 
 bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned long identifier)
 {
-    return true;
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return true;
+
+    return webPage->injectedBundleResourceLoadClient().shouldUseCredentialStorage(webPage, m_frame, identifier);
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
