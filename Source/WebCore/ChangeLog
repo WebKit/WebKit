@@ -1,5 +1,51 @@
 2012-02-05  Andreas Kling  <awesomekling@apple.com>
 
+        Remove mapped vs non-mapped attribute distinction.
+        <http://webkit.org/b/77827>
+
+        Reviewed by Antti Koivisto.
+
+        Removed the isMappedAttribute flag from Attribute as it no longer serves
+        a practical purpose. Previously, StyledElement would generate mapped
+        attributes and plain Element would generate non-mapped ones.
+
+        The distinction is now made much more clearly by dividing the work between
+        Element's and StyledElement's attributeChanged() methods. The only thing
+        that StyledElement wants to do in addition to what Element does is
+        calling parseMappedAttribute() (which we'll rename in a later patch.)
+
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::clone):
+        * dom/Attribute.h:
+        (WebCore::Attribute::create):
+        (WebCore::Attribute::Attribute):
+        (Attribute):
+        * dom/Document.cpp:
+        (WebCore::Document::createAttributeNS):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Element.h:
+        (Element):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::parseMappedAttribute):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::::initializeAttributes):
+
+2012-02-05  Andreas Kling  <awesomekling@apple.com>
+
         Kill CSSMappedAttributeDeclaration.
         <http://webkit.org/b/77820>
 

@@ -4335,9 +4335,7 @@ PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const S
         return 0;
     }
 
-    // FIXME: Assume this is a mapped attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
-    // documents if we're wrong.
-    return Attr::create(0, this, Attribute::createMapped(qName, StringImpl::empty()));
+    return Attr::create(0, this, Attribute::create(qName, StringImpl::empty()));
 }
 
 #if ENABLE(SVG)

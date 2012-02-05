@@ -59,8 +59,6 @@ public:
 
     const SpaceSplitString& classNames() const;
 
-    virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
-
 protected:
     StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
         : Element(name, document, type)

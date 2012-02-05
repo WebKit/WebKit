@@ -159,8 +159,6 @@ void Node::dumpStatistics()
     HashMap<String, size_t> perTagCount;
 
     size_t attributes = 0;
-    size_t mappedAttributes = 0;
-    size_t mappedAttributesWithStyleDecl = 0;
     size_t attributesWithAttr = 0;
     size_t attrMaps = 0;
 
@@ -188,11 +186,6 @@ void Node::dumpStatistics()
                         Attribute* attr = attrMap->attributeItem(i);
                         if (attr->attr())
                             ++attributesWithAttr;
-                        if (attr->isMappedAttribute()) {
-                            ++mappedAttributes;
-                            if (attr->style())
-                                ++mappedAttributesWithStyleDecl;
-                        }
                     }
                 }
                 break;
@@ -277,8 +270,6 @@ void Node::dumpStatistics()
 
     printf("Attribute Maps:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
-    printf("  Number of Attributes that are mapped: %zu\n", mappedAttributes);
-    printf("  Number of Attributes with a StyleDeclaration: %zu\n", mappedAttributesWithStyleDecl);
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
     printf("  Number of NamedNodeMaps: %zu [%zu]\n", attrMaps, sizeof(NamedNodeMap));
 #endif

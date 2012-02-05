@@ -659,6 +659,9 @@ void Element::attributeChanged(Attribute* attr)
 {
     if (isIdAttributeName(attr->name()))
         idAttributeChanged(attr);
+    else if (attr->name() == HTMLNames::nameAttr)
+        setHasName(!attr->isNull());
+
     recalcStyleIfNeededAfterAttributeChanged(attr);
     updateAfterAttributeChanged(attr);
 }

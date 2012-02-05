@@ -383,6 +383,8 @@ public:
     
     PassRefPtr<RenderStyle> styleForRenderer();
 
+    PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
@@ -422,8 +424,7 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
 
     void setAttributeInternal(size_t index, const QualifiedName&, const AtomicString& value);
-    virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
-    
+
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 #endif

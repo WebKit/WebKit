@@ -60,26 +60,12 @@ StyledElement::~StyledElement()
     destroyInlineStyleDecl();
 }
 
-PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    return Attribute::createMapped(name, value);
-}
-
 void StyledElement::attributeChanged(Attribute* attr)
 {
-    if (attr->name() == HTMLNames::nameAttr)
-        setHasName(!attr->isNull());
-
-    if (!attr->isMappedAttribute()) {
-        Element::attributeChanged(attr);
-        return;
-    }
-
     if (!(attr->name() == styleAttr && isSynchronizingStyleAttribute()))
         parseMappedAttribute(attr);
 
-    recalcStyleIfNeededAfterAttributeChanged(attr);
-    updateAfterAttributeChanged(attr);
+    Element::attributeChanged(attr);
 }
 
 void StyledElement::classAttributeChanged(const AtomicString& newClassString)
@@ -106,9 +92,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
 
 void StyledElement::parseMappedAttribute(Attribute* attr)
 {
-    if (isIdAttributeName(attr->name()))
-        idAttributeChanged(attr);
-    else if (attr->name() == classAttr)
+    if (attr->name() == classAttr)
         classAttributeChanged(attr->value());
     else if (attr->name() == styleAttr) {
         if (attr->isNull())

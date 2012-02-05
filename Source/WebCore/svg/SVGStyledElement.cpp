@@ -411,7 +411,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
     Attribute* attr = attributeMap()->getAttributeItem(attributeName);
-    if (!attr || !attr->isMappedAttribute())
+    if (!attr)
         return 0;
 
     RefPtr<StylePropertySet> style = StylePropertySet::create();

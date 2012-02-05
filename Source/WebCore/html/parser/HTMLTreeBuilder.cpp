@@ -571,7 +571,7 @@ PassOwnPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLTo
         attributes->removeAttribute(promptAttr);
     }
 
-    RefPtr<Attribute> mappedAttribute = Attribute::createMapped(nameAttr, isindexTag.localName());
+    RefPtr<Attribute> mappedAttribute = Attribute::create(nameAttr, isindexTag.localName());
     attributes->insertAttribute(mappedAttribute.release(), false);
     return attributes.release();
 }

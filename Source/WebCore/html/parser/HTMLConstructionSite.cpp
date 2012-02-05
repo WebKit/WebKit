@@ -432,7 +432,7 @@ inline PassOwnPtr<NamedNodeMap> cloneAttributes(Element* element)
     OwnPtr<NamedNodeMap> newAttributes = NamedNodeMap::create();
     for (size_t i = 0; i < attributes->length(); ++i) {
         Attribute* attribute = attributes->attributeItem(i);
-        RefPtr<Attribute> clone = Attribute::createMapped(attribute->name(), attribute->value());
+        RefPtr<Attribute> clone = Attribute::create(attribute->name(), attribute->value());
         newAttributes->addAttribute(clone);
     }
     return newAttributes.release();

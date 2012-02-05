@@ -41,15 +41,11 @@ class Attribute : public RefCounted<Attribute> {
 public:
     static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value, false));
+        return adoptRef(new Attribute(name, value));
     }
-    static PassRefPtr<Attribute> createMapped(const QualifiedName& name, const AtomicString& value)
+    static PassRefPtr<Attribute> create(const AtomicString& name, const AtomicString& value)
     {
-        return adoptRef(new Attribute(name, value, true));
-    }
-    static PassRefPtr<Attribute> createMapped(const AtomicString& name, const AtomicString& value)
-    {
-        return adoptRef(new Attribute(name, value, true));
+        return adoptRef(new Attribute(name, value));
     }
 
     const AtomicString& value() const { return m_value; }
@@ -75,20 +71,16 @@ public:
     // elements may have placed the Attribute in a hash by name.
     void parserSetName(const QualifiedName& name) { m_name = name; }
 
-    bool isMappedAttribute() { return m_isMappedAttribute; }
-
 private:
-    Attribute(const QualifiedName& name, const AtomicString& value, bool isMappedAttribute)
-        : m_isMappedAttribute(isMappedAttribute)
-        , m_hasAttr(false)
+    Attribute(const QualifiedName& name, const AtomicString& value)
+        : m_hasAttr(false)
         , m_name(name)
         , m_value(value)
     {
     }
 
-    Attribute(const AtomicString& name, const AtomicString& value, bool isMappedAttribute)
-        : m_isMappedAttribute(isMappedAttribute)
-        , m_hasAttr(false)
+    Attribute(const AtomicString& name, const AtomicString& value)
+        : m_hasAttr(false)
         , m_name(nullAtom, name, nullAtom)
         , m_value(value)
     {
@@ -97,8 +89,7 @@ private:
     void bindAttr(Attr*);
     void unbindAttr(Attr*);
 
-    // These booleans will go into the spare 32-bits of padding from RefCounted in 64-bit.
-    bool m_isMappedAttribute;
+    // This boolean will go into the spare 32-bits of padding from RefCounted in 64-bit.
     bool m_hasAttr;
     
     QualifiedName m_name;
