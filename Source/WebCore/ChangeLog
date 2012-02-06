@@ -1,3 +1,13 @@
+2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add a null check for the gdkwindow, that will happen if the window
+        is not mapped.
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::convertWidgetPointToScreenPoint):
+
 2012-02-06  Eugene Girard  <girard@chromium.org>
 
         IndexedDB createObjectStore should throw if options arg is invalid

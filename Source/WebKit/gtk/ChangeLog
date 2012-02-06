@@ -1,3 +1,13 @@
+2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add a null check for the gdkwindow, that will happen if the window
+        is not mapped.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::setCursor):
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] WebKitWebView does a lot of work during size_allocate when not mapped
