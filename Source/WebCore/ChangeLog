@@ -1,3 +1,15 @@
+2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        LayoutTest failures on r106797
+        https://bugs.webkit.org/show_bug.cgi?id=77868
+
+        Call suspendIfNeeded from subclass of IDBRequest, IDBVersionChangeRequest.
+
+        Reviewed by Simon Hausmann.
+
+        * storage/IDBVersionChangeRequest.cpp:
+        (WebCore::IDBVersionChangeRequest::create):
+
 2012-02-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Implement ImageBuffer::copyImage(ImageBuffer::DontCopyBackingStore)
