@@ -48926,10 +48926,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MappedAttributeEntry.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MessageChannel.cpp"
 				>
 				<FileConfiguration

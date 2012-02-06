@@ -3976,7 +3976,6 @@
 		A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FA09D563270003AC8D /* Attribute.cpp */; };
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FC09D563270003AC8D /* Attr.cpp */; };
-		A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
@@ -10695,7 +10694,6 @@
 		A8C4A7FA09D563270003AC8D /* Attribute.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attribute.cpp; sourceTree = "<group>"; };
 		A8C4A7FB09D563270003AC8D /* Attr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attr.h; sourceTree = "<group>"; };
 		A8C4A7FC09D563270003AC8D /* Attr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attr.cpp; sourceTree = "<group>"; };
-		A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttributeEntry.h; sourceTree = "<group>"; };
 		A8CB41020E85B8A50032C4F0 /* DashArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DashArray.h; sourceTree = "<group>"; };
 		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
@@ -20526,7 +20524,6 @@
 				BC9A6144146859D9006057FD /* make_dom_exceptions.pl */,
 				BC9A6145146859D9006057FD /* make_event_factory.pl */,
 				BC9A6146146859D9006057FD /* make_names.pl */,
-				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
 				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
 				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,
 				E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */,
@@ -23045,7 +23042,6 @@
 				FD31603912B0267600C1A359 /* LowPass2FilterNode.h in Headers */,
 				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
-				A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				00A629C113D0BEC70050AC52 /* MarkupTokenBase.h in Headers */,

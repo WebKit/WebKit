@@ -603,7 +603,6 @@
             'dom/ExceptionCodePlaceholder.h',
             'dom/FragmentScriptingPermission.h',
             'dom/KeyboardEvent.h',
-            'dom/MappedAttributeEntry.h',
             'dom/MessagePort.h',
             'dom/MessagePortChannel.h',
             'dom/MouseEvent.h',

@@ -1,5 +1,19 @@
 2012-02-05  Andreas Kling  <awesomekling@apple.com>
 
+        Remove unused file MappedAttributeEntry.h.
+        <http://webkit.org/b/77841>
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/MappedAttributeEntry.h: Removed.
+        * dom/StyledElement.h:
+
+2012-02-05  Andreas Kling  <awesomekling@apple.com>
+
         StyledElement: Rename parseMappedAttribute() to parseAttribute().
         <http://webkit.org/b/77830>
 

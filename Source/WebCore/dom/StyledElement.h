@@ -26,7 +26,6 @@
 #define StyledElement_h
 
 #include "Element.h"
-#include "MappedAttributeEntry.h"
 #include "StylePropertySet.h"
 
 namespace WebCore {
