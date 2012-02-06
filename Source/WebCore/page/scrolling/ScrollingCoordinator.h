@@ -67,6 +67,10 @@ public:
     // Should be called whenever the given frame view has been laid out.
     void frameViewLayoutUpdated(FrameView*);
 
+    // Should be called whenever a wheel event handler is added or removed in the 
+    // frame view's underlying document.
+    void frameViewWheelEventHandlerCountChanged(FrameView*);
+
     // Should be called whenever the scroll layer for the given frame view changes.
     void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
 
@@ -81,6 +85,8 @@ public:
 
 private:
     explicit ScrollingCoordinator(Page*);
+
+    void recomputeWheelEventHandlerCount();
 
     void scheduleTreeStateCommit();
     void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);

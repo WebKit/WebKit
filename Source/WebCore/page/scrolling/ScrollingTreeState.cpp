@@ -37,6 +37,7 @@ PassOwnPtr<ScrollingTreeState> ScrollingTreeState::create()
 
 ScrollingTreeState::ScrollingTreeState()
     : m_changedProperties(0)
+    , m_wheelEventHandlerCount(0)
 {
 }
 
@@ -60,6 +61,15 @@ void ScrollingTreeState::setContentsSize(const IntSize& contentsSize)
 
     m_contentsSize = contentsSize;
     m_changedProperties |= ContentsSize;
+}
+
+void ScrollingTreeState::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
+{
+    if (m_wheelEventHandlerCount == wheelEventHandlerCount)
+        return;
+
+    m_wheelEventHandlerCount = wheelEventHandlerCount;
+    m_changedProperties |= WheelEventHandlerCount;
 }
 
 PassOwnPtr<ScrollingTreeState> ScrollingTreeState::commit()

@@ -50,7 +50,8 @@ public:
     enum ChangedProperty {
         ViewportRect = 1 << 0,
         ContentsSize = 1 << 1,
-        ScrollLayer = 1 << 2,
+        WheelEventHandlerCount = 1 << 2,
+        ScrollLayer = 1 << 3,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -61,6 +62,9 @@ public:
 
     const IntSize& contentsSize() const { return m_contentsSize; }
     void setContentsSize(const IntSize&);
+
+    unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
+    void setWheelEventHandlerCount(unsigned);
 
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(const GraphicsLayer*);
@@ -75,6 +79,8 @@ private:
 
     IntRect m_viewportRect;
     IntSize m_contentsSize;
+
+    unsigned m_wheelEventHandlerCount;
 
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_platformScrollLayer;

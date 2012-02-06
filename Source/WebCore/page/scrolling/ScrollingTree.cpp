@@ -45,6 +45,7 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_rootNode(ScrollingTreeNode::create(this))
+    , m_hasWheelEventHandlers(false)
 {
 }
 
@@ -55,7 +56,13 @@ ScrollingTree::~ScrollingTree()
 
 bool ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    // FIXME: Check for wheel event handlers.
+    {
+        MutexLocker lock(m_mutex);
+
+        if (m_hasWheelEventHandlers)
+            return false;
+    }
+
     // FIXME: Check if we're over a subframe or overflow div.
 
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
@@ -81,6 +88,12 @@ void ScrollingTree::invalidate()
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingTreeState)
 {
     ASSERT(ScrollingThread::isCurrentThread());
+
+    if (scrollingTreeState->changedProperties() & ScrollingTreeState::WheelEventHandlerCount) {
+        MutexLocker lock(m_mutex);
+
+        m_hasWheelEventHandlers = scrollingTreeState->wheelEventHandlerCount();
+    }
 
     m_rootNode->update(scrollingTreeState.get());
 }

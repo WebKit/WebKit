@@ -1,3 +1,43 @@
+2012-02-05  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling tree should be aware of any wheel event handlers on the page
+        https://bugs.webkit.org/show_bug.cgi?id=77840
+
+        Reviewed by Andreas Kling.
+
+        If there are wheel event handlers on the page, any wheel events must be redispatched
+        to the main thread so they can go through the DOM event handling.
+
+        * dom/Document.cpp:
+        (WebCore::wheelEventHandlerCountChanged):
+        Inform the scrolling coordinator that the wheel event count changed.
+
+        (WebCore::Document::didAddWheelEventHandler):
+        (WebCore::Document::didRemoveWheelEventHandler):
+        Call wheelEventHandlerCountChanged.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewWheelEventHandlerCountChanged):
+        Call recomputeWheelEventHandlerCount.
+
+        (WebCore::ScrollingCoordinator::recomputeWheelEventHandlerCount):
+        Update the scrolling tree state.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        Initialize m_hasWheelEventHandlers to false.
+
+        (WebCore::ScrollingTree::tryToHandleWheelEvent):
+        If m_hasWheelEventHandlers is true, bail.
+
+        (WebCore::ScrollingTree::commitNewTreeState):
+        Update m_hasWheelEventHandlers.
+
+        * page/scrolling/ScrollingTreeState.cpp:
+        (WebCore::ScrollingTreeState::ScrollingTreeState):
+        (WebCore::ScrollingTreeState::setWheelEventHandlerCount):
+        Add getter and setter for the wheel event handler count.
+
 2012-02-05  Andreas Kling  <awesomekling@apple.com>
 
         Remove mapped vs non-mapped attribute distinction.

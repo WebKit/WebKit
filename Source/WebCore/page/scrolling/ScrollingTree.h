@@ -68,8 +68,10 @@ private:
     explicit ScrollingTree(ScrollingCoordinator*);
 
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
-
     OwnPtr<ScrollingTreeNode> m_rootNode;
+
+    Mutex m_mutex;
+    bool m_hasWheelEventHandlers;
 };
 
 } // namespace WebCore

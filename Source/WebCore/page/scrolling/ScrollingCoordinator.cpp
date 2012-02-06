@@ -103,6 +103,14 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scheduleTreeStateCommit();
 }
 
+void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    recomputeWheelEventHandlerCount();
+}
+
 void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());
@@ -117,6 +125,18 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->scrollToOffsetWithoutAnimation(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
+}
+
+void ScrollingCoordinator::recomputeWheelEventHandlerCount()
+{
+    unsigned wheelEventHandlerCount = 0;
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            wheelEventHandlerCount += frame->document()->wheelEventHandlerCount();
+    }
+
+    m_scrollingTreeState->setWheelEventHandlerCount(wheelEventHandlerCount);
+    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinator::scheduleTreeStateCommit()

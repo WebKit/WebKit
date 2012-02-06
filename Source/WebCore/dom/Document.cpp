@@ -200,6 +200,10 @@
 #include "NodeRareData.h"
 #endif
 
+#if ENABLE(THREADED_SCROLLING)
+#include "ScrollingCoordinator.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -5360,12 +5364,35 @@ PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
 }
 #endif
 
+static void wheelEventHandlerCountChanged(Document* document)
+{
+#if ENABLE(THREADED_SCROLLING)
+    Page* page = document->page();
+    if (!page)
+        return;
+
+    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return;
+
+    FrameView* frameView = document->view();
+    if (!frameView)
+        return;
+
+    scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
+#else
+    UNUSED_PARAM(document)
+#endif
+}
+
 void Document::didAddWheelEventHandler()
 {
     ++m_wheelEventHandlerCount;
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+
+    wheelEventHandlerCountChanged(this);
 }
 
 void Document::didRemoveWheelEventHandler()
@@ -5375,6 +5402,8 @@ void Document::didRemoveWheelEventHandler()
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+
+    wheelEventHandlerCountChanged(this);
 }
 
 bool Document::visualUpdatesAllowed() const
