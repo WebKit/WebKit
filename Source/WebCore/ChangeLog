@@ -1,3 +1,58 @@
+2012-02-05  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: switch domain agents to formal interfaces in BackendDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=77444
+
+        Reviewed by Yury Semikhatsky.
+
+        All agent code is switched to formal interfaces. Actual agent class
+        names and includes are dropped from InspectorBackendDispatcher.h.
+
+        * inspector/CodeGeneratorInspector.py:
+        (DomainNameFixes.get_fixed_data):
+        (Generator.go):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightNode):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/InspectorFileSystemAgent.h:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getProfile):
+        (WebCore::InspectorProfilerAgent::removeProfile):
+        * inspector/InspectorProfilerAgent.h:
+        (InspectorProfilerAgent):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setExtraHTTPHeaders):
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+        * inspector/InspectorWorkerAgent.h:
+        (InspectorWorkerAgent):
+
 2012-02-05  Kentaro Hara  <haraken@chromium.org>
 
         Rename [TreatNullAs=EmptyString] to [TreatNullAs=NullString],

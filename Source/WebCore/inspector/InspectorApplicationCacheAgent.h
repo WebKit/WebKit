@@ -49,7 +49,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorBaseAgent<InspectorApplicationCacheAgent> {
+class InspectorApplicationCacheAgent : public InspectorBaseAgent<InspectorApplicationCacheAgent>, public InspectorBackendDispatcher::ApplicationCacheCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorPageAgent* pageAgent)
@@ -68,10 +68,10 @@ public:
     void networkStateChanged();
 
     // ApplicationCache API for InspectorFrontend
-    void enable(ErrorString*);
-    void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>& result);
-    void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
-    void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>& applicationCache);
+    virtual void enable(ErrorString*);
+    virtual void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>& result);
+    virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
+    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>& applicationCache);
 
 private:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);

@@ -43,7 +43,7 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorBaseAgent<InspectorIndexedDBAgent> {
+class InspectorIndexedDBAgent : public InspectorBaseAgent<InspectorIndexedDBAgent>, public InspectorBackendDispatcher::IndexedDBCommandHandler {
 public:
     class FrontendProvider;
 
@@ -58,10 +58,10 @@ public:
     virtual void restore();
 
     // Called from the front-end.
-    void enable(ErrorString*);
-    void disable(ErrorString*);
-    void requestDatabaseNamesForFrame(ErrorString*, int requestId, const String& frameId);
-    void requestDatabase(ErrorString*, int requestId, const String& frameId, const String& databaseName);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
+    virtual void requestDatabaseNamesForFrame(ErrorString*, int requestId, const String& frameId);
+    virtual void requestDatabase(ErrorString*, int requestId, const String& frameId, const String& databaseName);
 private:
     InspectorIndexedDBAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);
 

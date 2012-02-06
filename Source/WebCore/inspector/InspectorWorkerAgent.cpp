@@ -169,7 +169,7 @@ void InspectorWorkerAgent::disconnectFromWorker(ErrorString* error, int workerId
         *error = "Worker is gone";
 }
 
-void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId, PassRefPtr<InspectorObject> message)
+void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId, const RefPtr<InspectorObject>& message)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)

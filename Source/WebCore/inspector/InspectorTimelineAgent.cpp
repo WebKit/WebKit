@@ -136,7 +136,7 @@ void InspectorTimelineAgent::restore()
     }
 }
 
-void InspectorTimelineAgent::start(ErrorString*, int* maxCallStackDepth)
+void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
 {
     if (!m_frontend)
         return;

@@ -47,7 +47,7 @@ class WorkerContextProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent> {
+class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent>, public InspectorBackendDispatcher::WorkerCommandHandler {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorState*);
     ~InspectorWorkerAgent();
@@ -62,11 +62,11 @@ public:
     void workerContextTerminated(WorkerContextProxy*);
 
     // Called from InspectorBackendDispatcher
-    void setWorkerInspectionEnabled(ErrorString*, bool value);
-    void connectToWorker(ErrorString*, int workerId);
-    void disconnectFromWorker(ErrorString*, int workerId);
-    void sendMessageToWorker(ErrorString*, int workerId, PassRefPtr<InspectorObject> message);
-    void setAutoconnectToWorkers(ErrorString*, bool value);
+    virtual void setWorkerInspectionEnabled(ErrorString*, bool value);
+    virtual void connectToWorker(ErrorString*, int workerId);
+    virtual void disconnectFromWorker(ErrorString*, int workerId);
+    virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<InspectorObject>& message);
+    virtual void setAutoconnectToWorkers(ErrorString*, bool value);
 
 private:
     InspectorWorkerAgent(InstrumentingAgents*, InspectorState*);

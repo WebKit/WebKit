@@ -54,7 +54,7 @@ class SelectorProfile;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorCSSAgent : public InspectorBaseAgent<InspectorCSSAgent>, public InspectorDOMAgent::DOMListener {
+class InspectorCSSAgent : public InspectorBaseAgent<InspectorCSSAgent>, public InspectorDOMAgent::DOMListener, public InspectorBackendDispatcher::CSSCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
@@ -70,26 +70,27 @@ public:
     virtual void clearFrontend();
     virtual void discardAgent();
     virtual void restore();
-    void enable(ErrorString*);
-    void disable(ErrorString*);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
     void reset();
     void mediaQueryResultChanged();
 
-    void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>& style);
-    void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>& inlineStyle, RefPtr<InspectorArray>& attributes);
-    void getMatchedStylesForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, bool* includePseudo, bool* includeInherited, RefPtr<InspectorArray>& matchedCSSRules, RefPtr<InspectorArray>& pseudoIdRules, RefPtr<InspectorArray>& inheritedEntries);
-    void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>& styleSheetInfos);
-    void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>& result);
-    void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
-    void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
-    void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>& result);
-    void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>& result);
-    void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>& result);
-    void addRule(ErrorString*, const int contextNodeId, const String& selector, RefPtr<InspectorObject>& result);
-    void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>& result);
+    virtual void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>& style);
+    virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>& inlineStyle, RefPtr<InspectorArray>& attributes);
+    virtual void getMatchedStylesForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, const bool* includePseudo, const bool* includeInherited, RefPtr<InspectorArray>& matchedCSSRules, RefPtr<InspectorArray>& pseudoIdRules, RefPtr<InspectorArray>& inheritedEntries);
+    virtual void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>& styleSheetInfos);
+    virtual void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>& result);
+    virtual void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
+    virtual void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
+    virtual void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>& result);
+    virtual void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>& result);
+    virtual void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>& result);
+    virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<InspectorObject>& result);
+    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>& result);
 
-    void startSelectorProfiler(ErrorString*);
-    void stopSelectorProfiler(ErrorString*, RefPtr<InspectorObject>&);
+    virtual void startSelectorProfiler(ErrorString*);
+    virtual void stopSelectorProfiler(ErrorString*, RefPtr<InspectorObject>&);
+
     void stopSelectorProfilerImpl(ErrorString*, RefPtr<InspectorObject>* = 0);
     void willMatchRule(const CSSStyleRule*);
     void didMatchRule(bool);

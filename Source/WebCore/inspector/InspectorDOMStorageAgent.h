@@ -47,7 +47,7 @@ class StorageArea;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent> {
+class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent>, public InspectorBackendDispatcher::DOMStorageCommandHandler {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {
@@ -62,11 +62,11 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void enable(ErrorString*);
-    void disable(ErrorString*);
-    void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries);
-    void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
-    void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
+    virtual void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries);
+    virtual void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
+    virtual void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
 
     // Called from the injected script.
     int storageId(Storage*);

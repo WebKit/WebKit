@@ -975,7 +975,7 @@ void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int
 void InspectorDOMAgent::highlightNode(
     ErrorString*,
     int nodeId,
-    const RefPtr<InspectorObject> highlightConfig)
+    const RefPtr<InspectorObject>& highlightConfig)
 {
     if (Node* node = nodeForId(nodeId)) {
         if (setHighlightDataFromConfig(highlightConfig.get())) {

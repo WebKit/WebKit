@@ -54,7 +54,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener {
+class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener, public InspectorBackendDispatcher::TimelineCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorMemoryAgent* memoryAgent)
@@ -68,9 +68,9 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
-    void start(ErrorString*, int* maxCallStackDepth);
-    void stop(ErrorString*);
-    void setIncludeMemoryDetails(ErrorString*, bool);
+    virtual void start(ErrorString*, const int* maxCallStackDepth);
+    virtual void stop(ErrorString*);
+    virtual void setIncludeMemoryDetails(ErrorString*, bool);
 
     int id() const { return m_id; }
 

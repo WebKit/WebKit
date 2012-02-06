@@ -217,8 +217,9 @@ private:
 
 } // namespace
 
-void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, unsigned uid, RefPtr<InspectorObject>& profileObject)
+void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, int rawUid, RefPtr<InspectorObject>& profileObject)
 {
+    unsigned uid = static_cast<unsigned>(rawUid);
     if (type == CPUProfileType) {
         ProfilesMap::iterator it = m_profiles.find(uid);
         if (it != m_profiles.end()) {
@@ -240,8 +241,9 @@ void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, unsign
     }
 }
 
-void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, unsigned uid)
+void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, int rawUid)
 {
+    unsigned uid = static_cast<unsigned>(rawUid);
     if (type == CPUProfileType) {
         if (m_profiles.contains(uid))
             m_profiles.remove(uid);

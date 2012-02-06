@@ -52,14 +52,14 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorBaseAgent<InspectorConsoleAgent> {
+class InspectorConsoleAgent : public InspectorBaseAgent<InspectorConsoleAgent>, public InspectorBackendDispatcher::ConsoleCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
     virtual ~InspectorConsoleAgent();
 
-    void enable(ErrorString*);
-    void disable(ErrorString*);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
     virtual void clearMessages(ErrorString*);
     void reset();
 
@@ -83,7 +83,7 @@ public:
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 #endif
-    void setMonitoringXHREnabled(ErrorString* error, bool enabled);
+    virtual void setMonitoringXHREnabled(ErrorString*, bool enabled);
     virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
 
 protected:

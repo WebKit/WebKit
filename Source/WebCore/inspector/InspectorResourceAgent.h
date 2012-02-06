@@ -73,7 +73,7 @@ class WebSocketHandshakeResponse;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorBaseAgent<InspectorResourceAgent> {
+class InspectorResourceAgent : public InspectorBaseAgent<InspectorResourceAgent>, public InspectorBackendDispatcher::NetworkCommandHandler {
 public:
     static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
     {
@@ -123,18 +123,19 @@ public:
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
     // Called from frontend
-    void enable(ErrorString*);
-    void disable(ErrorString*);
-    void setUserAgentOverride(ErrorString*, const String& userAgent);
-    void setExtraHTTPHeaders(ErrorString*, PassRefPtr<InspectorObject>);
-    void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
+    virtual void setUserAgentOverride(ErrorString*, const String& userAgent);
+    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>&);
+    virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
+    // FIXME: this seems to be unsued.
     void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
-    void canClearBrowserCache(ErrorString*, bool*);
-    void clearBrowserCache(ErrorString*);
-    void canClearBrowserCookies(ErrorString*, bool*);
-    void clearBrowserCookies(ErrorString*);
-    void setCacheDisabled(ErrorString*, bool cacheDisabled);
+    virtual void canClearBrowserCache(ErrorString*, bool*);
+    virtual void clearBrowserCache(ErrorString*);
+    virtual void canClearBrowserCookies(ErrorString*, bool*);
+    virtual void clearBrowserCookies(ErrorString*);
+    virtual void setCacheDisabled(ErrorString*, bool cacheDisabled);
 
 private:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*);

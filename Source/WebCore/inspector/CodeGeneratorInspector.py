@@ -153,15 +153,9 @@ VALIDATOR_IFDEF_NAME = "!ASSERT_DISABLED"
 class DomainNameFixes:
     @classmethod
     def get_fixed_data(cls, domain_name):
-        if domain_name in cls.agent_type_map:
-            agent_name_res = cls.agent_type_map[domain_name]
-        else:
-            agent_name_res = "Inspector%sAgent" % domain_name
-
         field_name_res = Capitalizer.upper_camel_case_to_lower(domain_name) + "Agent"
 
         class Res(object):
-            agent_type_name = agent_name_res
             skip_js_bind = domain_name in cls.skip_js_bind_domains
             agent_field_name = field_name_res
 
@@ -184,7 +178,6 @@ class DomainNameFixes:
         return Res
 
     skip_js_bind_domains = set(["Runtime", "DOMDebugger"])
-    agent_type_map = {"Network": "InspectorResourceAgent", "Inspector": "InspectorAgent", }
 
 
 class CParamType(object):
@@ -1675,8 +1668,6 @@ class InspectorObject;
 class InspectorArray;
 class InspectorFrontendChannel;
 
-$forwardDeclarations
-
 typedef String ErrorString;
 
 class InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher> {
@@ -1731,7 +1722,6 @@ $methodNamesEnumContent
 #include "InspectorValues.h"
 #include "InspectorFrontendChannel.h"
 #include <wtf/text/WTFString.h>
-$includes
 
 namespace WebCore {
 
@@ -1747,9 +1737,9 @@ public:
 $constructorInit
     { }
 
-    void clearFrontend() { m_inspectorFrontendChannel = 0; }
-    void dispatch(const String& message);
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
+    virtual void clearFrontend() { m_inspectorFrontendChannel = 0; }
+    virtual void dispatch(const String& message);
+    virtual void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
     using InspectorBackendDispatcher::reportProtocolError;
 
 $setters
@@ -2397,8 +2387,6 @@ class Generator:
     backend_setters_list = []
     backend_constructor_init_list = []
     backend_field_list = []
-    backend_forward_list = []
-    backend_include_list = []
     frontend_constructor_init_list = []
     type_builder_fragments = []
     type_builder_forwards = []
@@ -2459,10 +2447,11 @@ class Generator:
             agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
             Generator.backend_agent_interface_list.append("    class %s {\n" % agent_interface_name)
             Generator.backend_agent_interface_list.append("    public:\n")
-            Generator.backend_agent_interface_list.append("        virtual ~%s() { }\n" % agent_interface_name);
             if "commands" in json_domain:
                 for json_command in json_domain["commands"]:
                     Generator.process_command(json_command, domain_name, agent_field_name)
+            Generator.backend_agent_interface_list.append("\n    protected:\n")
+            Generator.backend_agent_interface_list.append("        virtual ~%s() { }\n" % agent_interface_name)
             Generator.backend_agent_interface_list.append("    };\n\n")
 
             if domain_guard:
@@ -2477,9 +2466,7 @@ class Generator:
             Generator.backend_constructor_init_list,
             Generator.backend_virtual_setters_list,
             Generator.backend_setters_list,
-            Generator.backend_field_list,
-            Generator.backend_forward_list,
-            Generator.backend_include_list]
+            Generator.backend_field_list]
 
         for json_domain in sorted_json_domains:
             domain_name = json_domain["domain"]
@@ -2493,14 +2480,11 @@ class Generator:
 
             agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
 
-            agent_type_name = domain_fixes.agent_type_name
             agent_field_name = domain_fixes.agent_field_name
             Generator.backend_constructor_init_list.append("        , m_%s(0)" % agent_field_name)
-            Generator.backend_virtual_setters_list.append("    virtual void registerAgent(%s /* %s */* %s) = 0;" % (agent_type_name, agent_interface_name, agent_field_name))
-            Generator.backend_setters_list.append("    void registerAgent(%s /* %s */* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_type_name, agent_interface_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
-            Generator.backend_field_list.append("    %s /* %s */* m_%s;" % (agent_type_name, agent_interface_name, agent_field_name))
-            Generator.backend_forward_list.append("class %s;" % agent_type_name)
-            Generator.backend_include_list.append("#include \"%s.h\"" % agent_type_name)
+            Generator.backend_virtual_setters_list.append("    virtual void registerAgent(%s* %s) = 0;" % (agent_interface_name, agent_field_name))
+            Generator.backend_setters_list.append("    virtual void registerAgent(%s* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_interface_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
+            Generator.backend_field_list.append("    %s* m_%s;" % (agent_interface_name, agent_field_name))
 
             if domain_guard:
                 for l in reversed(sorted_cycle_guardable_list_list):
@@ -2802,15 +2786,13 @@ backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
 backend_h_file.write(Templates.backend_h.substitute(None,
     virtualSetters=join(Generator.backend_virtual_setters_list, "\n"),
     agentInterfaces=join(Generator.backend_agent_interface_list, ""),
-    methodNamesEnumContent=join(Generator.method_name_enum_list, "\n"),
-    forwardDeclarations=join(Generator.backend_forward_list, "\n")))
+    methodNamesEnumContent=join(Generator.method_name_enum_list, "\n")))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     constructorInit=join(Generator.backend_constructor_init_list, "\n"),
     setters=join(Generator.backend_setters_list, "\n"),
     fieldDeclarations=join(Generator.backend_field_list, "\n"),
     methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
-    includes=join(Generator.backend_include_list, "\n"),
     methods=join(Generator.backend_method_implementation_list, "\n"),
     methodDeclarations=join(Generator.backend_method_declaration_list, "\n"),
     messageHandlers=join(Generator.method_handler_list, "\n")))

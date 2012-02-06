@@ -45,7 +45,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorBaseAgent<InspectorDatabaseAgent> {
+class InspectorDatabaseAgent : public InspectorBaseAgent<InspectorDatabaseAgent>, public InspectorBackendDispatcher::DatabaseCommandHandler {
 public:
     class FrontendProvider;
 
@@ -62,10 +62,10 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void enable(ErrorString*);
-    void disable(ErrorString*);
-    void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>& names);
-    void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
+    virtual void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>& names);
+    virtual void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
 
     // Called from the injected script.
     int databaseId(Database*);
