@@ -731,6 +731,11 @@ String InputType::defaultToolTip() const
     return String();
 }
 
+bool InputType::supportsIndeterminateAppearance() const
+{
+    return false;
+}
+
 namespace InputTypeNames {
 
 // The type names must be lowercased because they will be the return values of

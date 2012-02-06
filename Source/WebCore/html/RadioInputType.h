@@ -52,6 +52,7 @@ private:
     virtual PassOwnPtr<ClickHandlingState> willDispatchClick() OVERRIDE;
     virtual void didDispatchClick(Event*, const ClickHandlingState&) OVERRIDE;
     virtual bool isRadioButton() const OVERRIDE;
+    virtual bool supportsIndeterminateAppearance() const OVERRIDE;
 };
 
 } // namespace WebCore

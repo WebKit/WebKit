@@ -101,4 +101,9 @@ bool CheckboxInputType::isCheckbox() const
     return true;
 }
 
+bool CheckboxInputType::supportsIndeterminateAppearance() const
+{
+    return true;
+}
+
 } // namespace WebCore

@@ -128,7 +128,7 @@ public:
     void setIndeterminate(bool);
     // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     bool shouldAppearChecked() const;
-    virtual bool isIndeterminate() const { return indeterminate(); }
+    virtual bool isIndeterminate() const;
 
     int size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;

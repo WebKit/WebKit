@@ -1,3 +1,40 @@
+2012-02-06  Joe Thomas  <joethomas@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76995.
+        WebKit fails IETC :indeterminate and input type=radio test.
+
+        All input types should respect indeterminate property(getter and setter). This is true with other browsers.
+        Indeterminate appearance for radio input type is supported by IOS platform. Webkit need not support indeterminate appearance
+        for radio input type on other platforms.
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/indeterminate-input-types.html
+
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::supportsIndeterminateAppearance): Checks indeterminate appearance is supported.
+        (WebCore):
+        * html/CheckboxInputType.h:
+        (CheckboxInputType):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setIndeterminate): Removed the check isCheckable().
+        (WebCore::HTMLInputElement::isIndeterminate): Checks indeterminate appearance is supported.
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore::InputType::supportsIndeterminateAppearance): Checks indeterminate appearance is supported.
+        (WebCore):
+        * html/InputType.h:
+        (InputType):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::willDispatchClick): Indeterminate related code is moved to IOS specific.
+        (WebCore::RadioInputType::didDispatchClick): Ditto.
+        (WebCore::RadioInputType::supportsIndeterminateAppearance): Checks indeterminate appearance is supported.
+        (WebCore):
+        * html/RadioInputType.h:
+        (RadioInputType):
+
 2012-02-06  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Remove unused variable in PluginViewBlackBerry

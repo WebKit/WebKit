@@ -152,11 +152,15 @@ PassOwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
     OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
 
     state->checked = element()->checked();
-    state->indeterminate = element()->indeterminate();
     state->checkedRadioButton = element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+
+#if PLATFORM(IOS)
+    state->indeterminate = element()->indeterminate();
 
     if (element()->indeterminate())
         element()->setIndeterminate(false);
+#endif
+
     element()->setChecked(true, true);
 
     return state.release();
@@ -174,7 +178,11 @@ void RadioInputType::didDispatchClick(Event* event, const ClickHandlingState& st
                 && checkedRadioButton->name() == element()->name()) {
             checkedRadioButton->setChecked(true);
         }
+
+#if PLATFORM(IOS)        
         element()->setIndeterminate(state.indeterminate);
+#endif
+
     }
 
     // The work we did in willDispatchClick was default handling.
@@ -184,6 +192,15 @@ void RadioInputType::didDispatchClick(Event* event, const ClickHandlingState& st
 bool RadioInputType::isRadioButton() const
 {
     return true;
+}
+
+bool RadioInputType::supportsIndeterminateAppearance() const
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore

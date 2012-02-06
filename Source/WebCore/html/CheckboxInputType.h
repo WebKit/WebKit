@@ -48,6 +48,7 @@ private:
     virtual PassOwnPtr<ClickHandlingState> willDispatchClick() OVERRIDE;
     virtual void didDispatchClick(Event*, const ClickHandlingState&) OVERRIDE;
     virtual bool isCheckbox() const OVERRIDE;
+    virtual bool supportsIndeterminateAppearance() const OVERRIDE;
 };
 
 } // namespace WebCore

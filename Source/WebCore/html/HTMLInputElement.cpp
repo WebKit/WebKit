@@ -934,7 +934,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 
 void HTMLInputElement::setIndeterminate(bool newValue)
 {
-    if (!m_inputType->isCheckable() || indeterminate() == newValue)
+    if (indeterminate() == newValue)
         return;
 
     m_isIndeterminate = newValue;
@@ -1815,6 +1815,11 @@ void HTMLInputElement::updateValueIfNeeded()
 String HTMLInputElement::defaultToolTip() const
 {
     return m_inputType->defaultToolTip();
+}
+
+bool HTMLInputElement::isIndeterminate() const 
+{
+    return m_inputType->supportsIndeterminateAppearance() && indeterminate();
 }
 
 } // namespace
