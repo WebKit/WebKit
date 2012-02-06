@@ -27,7 +27,6 @@
 #include "config.h"
 #include "DOMTimer.h"
 
-#include "Document.h"
 #include "InspectorInstrumentation.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
@@ -71,9 +70,6 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> 
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
-    // FIXME: remove once we found out the root cause for http://webkit.org/b/77370
-    if (scriptExecutionContext()->isDocument() && !static_cast<Document*>(scriptExecutionContext())->frame())
-        CRASH();
     scriptExecutionContext()->addTimeout(m_timeoutId, this);
 
     double intervalMilliseconds = intervalClampedToMinimum(interval, context->minimumTimerInterval());

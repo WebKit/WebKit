@@ -59,7 +59,7 @@ void ScriptCachedFrameData::restore(Frame* frame)
     if (m_context.get().IsEmpty())
         return;
 
-    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame || !frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     v8::HandleScope handleScope;
