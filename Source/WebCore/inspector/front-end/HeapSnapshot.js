@@ -576,9 +576,9 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this.name.substr(0, 9) === "DOMWindow";
     },
 
-    get isNativeRoot()
+    get isDetachedDOMTreesRoot()
     {
-        return this.name === "(Native objects)";
+        return this.name === "(Detached DOM trees)";
     },
 
     get isDetachedDOMTree()
@@ -1087,19 +1087,19 @@ WebInspector.HeapSnapshot.prototype = {
     _markDetachedDOMTreeNodes: function()
     {
         var flag = this._nodeFlags.detachedDOMTreeNode;
-        var nativeRoot;
+        var detachedDOMTreesRoot;
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
             var node = iter.edge.node;
-            if (node.isNativeRoot) {
-                nativeRoot = node;
+            if (node.isDetachedDOMTreesRoot) {
+                detachedDOMTreesRoot = node;
                 break;
             }
         }
 
-        if (!nativeRoot)
+        if (!detachedDOMTreesRoot)
             return;
 
-        for (var iter = nativeRoot.edges; iter.hasNext(); iter.next()) {
+        for (var iter = detachedDOMTreesRoot.edges; iter.hasNext(); iter.next()) {
             var node = iter.edge.node;
             if (node.isDetachedDOMTree) {
                 for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next())

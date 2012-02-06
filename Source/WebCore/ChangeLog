@@ -1,5 +1,18 @@
 2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: REGRESSION detached dom nodes aren't highlighted
+        https://bugs.webkit.org/show_bug.cgi?id=77829
+
+        This functionality was lost when I replaced (Native roots) with (Detached DOM trees) on v8 side.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get isDetachedDOMTreesRoot):
+        (WebInspector.HeapSnapshot.prototype._markDetachedDOMTreeNodes):
+
+2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: get rid of artificial heap snapshot nodes from the retaining tree.
         https://bugs.webkit.org/show_bug.cgi?id=77850
 
