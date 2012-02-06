@@ -1,3 +1,12 @@
+2012-02-06  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Add missing pango include dir to fix build
+        https://bugs.webkit.org/show_bug.cgi?id=77832
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Added $(PANGO_CFLAGS) to libWebCore_la_CPPFLAGS.
+
 2012-02-06  Jochen Eisinger  <jochen@chromium.org>
 
         Before accessing a frame's script controller in V8 bindings, first check that the frame actually exists

@@ -65,6 +65,7 @@ libWebCoreInternals_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	$(CAIRO_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
+	$(PANGO_CFLAGS) \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/DerivedSources/WebCore
 

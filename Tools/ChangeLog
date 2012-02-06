@@ -1,3 +1,12 @@
+2012-02-06  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Add missing pango include dir to fix build
+        https://bugs.webkit.org/show_bug.cgi?id=77832
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Added $(PANGO_CFLAGS) to libWebCoreInternals_la_CPPFLAGS.
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Fix remaining errors in GTK+ WebKit2 API
