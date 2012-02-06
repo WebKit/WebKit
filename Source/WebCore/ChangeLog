@@ -1,3 +1,10 @@
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distrcheck.
+
+        * GNUmakefile.am: Fix typo in inspector json file.
+        * GNUmakefile.list.am: Remove non existent file.
+
 2012-02-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Qt minimal compilation fix after r106777.

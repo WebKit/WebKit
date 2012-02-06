@@ -1,3 +1,9 @@
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2012-02-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG's child references from one node to another should have room for type information

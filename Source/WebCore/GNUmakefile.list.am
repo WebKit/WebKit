@@ -5412,7 +5412,6 @@ webcore_sources += \
 	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
 	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
 	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
 	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp
