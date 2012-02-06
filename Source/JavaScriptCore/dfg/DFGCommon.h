@@ -92,6 +92,11 @@ struct NodeIndexTraits {
     }
 };
 
+enum UseKind {
+    UntypedUse,
+    LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
+};
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

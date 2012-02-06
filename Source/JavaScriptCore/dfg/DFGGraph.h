@@ -71,6 +71,15 @@ struct ResolveGlobalData {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
+    using Vector<Node, 64>::operator[];
+    using Vector<Node, 64>::at;
+    
+    Node& operator[](NodeUse nodeUse) { return at(nodeUse.index()); }
+    const Node& operator[](NodeUse nodeUse) const { return at(nodeUse.index()); }
+    
+    Node& at(NodeUse nodeUse) { return at(nodeUse.index()); }
+    const Node& at(NodeUse nodeUse) const { return at(nodeUse.index()); }
+    
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
     {
@@ -79,35 +88,43 @@ public:
         if (node.ref())
             refChildren(nodeIndex);
     }
+    void ref(NodeUse nodeUse)
+    {
+        ref(nodeUse.index());
+    }
     
     void deref(NodeIndex nodeIndex)
     {
         if (at(nodeIndex).deref())
             derefChildren(nodeIndex);
     }
+    void deref(NodeUse nodeUse)
+    {
+        deref(nodeUse.index());
+    }
     
     void clearAndDerefChild1(Node& node)
     {
-        if (node.children.fixed.child1 == NoNode)
+        if (!node.child1())
             return;
-        deref(node.children.fixed.child1);
-        node.children.fixed.child1 = NoNode;
+        deref(node.child1());
+        node.children.child1() = NodeUse();
     }
 
     void clearAndDerefChild2(Node& node)
     {
-        if (node.children.fixed.child2 == NoNode)
+        if (!node.child2())
             return;
-        deref(node.children.fixed.child2);
-        node.children.fixed.child2 = NoNode;
+        deref(node.child2());
+        node.children.child2() = NodeUse();
     }
 
     void clearAndDerefChild3(Node& node)
     {
-        if (node.children.fixed.child3 == NoNode)
+        if (!node.child3())
             return;
-        deref(node.children.fixed.child3);
-        node.children.fixed.child3 = NoNode;
+        deref(node.child3());
+        node.children.child3() = NodeUse();
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
@@ -255,7 +272,7 @@ public:
     }
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
-    Vector<NodeIndex, 16> m_varArgChildren;
+    Vector<NodeUse, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;
     Vector<ResolveGlobalData> m_resolveGlobalData;
     Vector<NodeIndex, 8> m_arguments;

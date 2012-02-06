@@ -81,6 +81,8 @@
 		0F620178143FCD440068B77C /* DFGAbstractState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016E143FCD2F0068B77C /* DFGAbstractState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */; };
 		0F636DA0142D27D700B2E66A /* PackedIntVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F636D9F142D27D200B2E66A /* PackedIntVector.h */; };
+		0F66E16B14DF3F1600B7B2E4 /* DFGNodeReferenceBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16814DF3F1300B7B2E4 /* DFGNodeReferenceBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F66E16C14DF3F1600B7B2E4 /* DFGNodeUse.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16914DF3F1300B7B2E4 /* DFGNodeUse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -875,6 +877,8 @@
 		0F620171143FCD2F0068B77C /* DFGOperands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOperands.h; path = dfg/DFGOperands.h; sourceTree = "<group>"; };
 		0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessData.h; path = dfg/DFGVariableAccessData.h; sourceTree = "<group>"; };
 		0F636D9F142D27D200B2E66A /* PackedIntVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackedIntVector.h; sourceTree = "<group>"; };
+		0F66E16814DF3F1300B7B2E4 /* DFGNodeReferenceBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeReferenceBlob.h; path = dfg/DFGNodeReferenceBlob.h; sourceTree = "<group>"; };
+		0F66E16914DF3F1300B7B2E4 /* DFGNodeUse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeUse.h; path = dfg/DFGNodeUse.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCCallHelpers.h; path = dfg/DFGCCallHelpers.h; sourceTree = "<group>"; };
@@ -2458,6 +2462,8 @@
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
+				0F66E16814DF3F1300B7B2E4 /* DFGNodeReferenceBlob.h */,
+				0F66E16914DF3F1300B7B2E4 /* DFGNodeUse.h */,
 				0F620171143FCD2F0068B77C /* DFGOperands.h */,
 				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
 				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
@@ -3120,6 +3126,8 @@
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
+				0F66E16B14DF3F1600B7B2E4 /* DFGNodeReferenceBlob.h in Headers */,
+				0F66E16C14DF3F1600B7B2E4 /* DFGNodeUse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

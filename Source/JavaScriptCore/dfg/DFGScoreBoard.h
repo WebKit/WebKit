@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGGraph.h>
+#include "DFGGraph.h"
 #include <wtf/BitVector.h>
 #include <wtf/Vector.h>
 
@@ -105,6 +105,10 @@ public:
             m_used[index] = 0;
             m_free.append(index);
         }
+    }
+    void use(NodeUse child)
+    {
+        use(child.indexUnchecked());
     }
 
     unsigned highWatermark()

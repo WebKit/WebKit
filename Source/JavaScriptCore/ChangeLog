@@ -1,3 +1,178 @@
+2012-02-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG's child references from one node to another should have room for type information
+        https://bugs.webkit.org/show_bug.cgi?id=77797
+
+        Reviewed by Oliver Hunt.
+        
+        The DFG::Node::child fields now contain both a DFG::NodeIndex (which is just an unsigned)
+        and a DFG::UseKind (which is currently an effectively empty enum). They are encapsulated
+        together as a DFG::NodeUse, which can in most cases still be used as an index (for
+        example DFG::Graph, AbstractState, and SpeculativeJIT all accept NodeUse in most places
+        where they really want a NodeIndex).
+        
+        The NodeUse stores both the index and the UseKind without bloating the memory usage of
+        DFG::Node, since we really don't need full 32 bits for the NodeIndex (a DFG::Node is
+        roughly 11 words, so if we assume that we never want to use more than 1GB to DFG compile
+        something - likely a sensible assumption! - then we will only be able to have room for
+        about 24 million nodes, which means we only need about 24.5 bits for the node index).
+        Currently the DFG::NodeUse allocates 4 bits for the UseKind and 28 bits for the index,
+        but stores the index as a signed number to make NoNode work naturally. Hence we really
+        just have 27 bits for the index.
+        
+        This is performance-neutral on all benchmarks we track.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::forNode):
+        (AbstractState):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::addVarArgChild):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        * dfg/DFGCommon.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        (JSC::DFG::Graph::operator[]):
+        (JSC::DFG::Graph::at):
+        (JSC::DFG::Graph::ref):
+        (JSC::DFG::Graph::deref):
+        (JSC::DFG::Graph::clearAndDerefChild1):
+        (JSC::DFG::Graph::clearAndDerefChild2):
+        (JSC::DFG::Graph::clearAndDerefChild3):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::getPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child1Unchecked):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (JSC::DFG::Node::firstChild):
+        (JSC::DFG::Node::numChildren):
+        (JSC::DFG::Node::dumpChildren):
+        (Node):
+        * dfg/DFGNodeReferenceBlob.h: Added.
+        (DFG):
+        (NodeReferenceBlob):
+        (JSC::DFG::NodeReferenceBlob::NodeReferenceBlob):
+        (JSC::DFG::NodeReferenceBlob::child):
+        (JSC::DFG::NodeReferenceBlob::child1):
+        (JSC::DFG::NodeReferenceBlob::child2):
+        (JSC::DFG::NodeReferenceBlob::child3):
+        (JSC::DFG::NodeReferenceBlob::child1Unchecked):
+        (JSC::DFG::NodeReferenceBlob::initialize):
+        (JSC::DFG::NodeReferenceBlob::firstChild):
+        (JSC::DFG::NodeReferenceBlob::setFirstChild):
+        (JSC::DFG::NodeReferenceBlob::numChildren):
+        (JSC::DFG::NodeReferenceBlob::setNumChildren):
+        * dfg/DFGNodeUse.h: Added.
+        (DFG):
+        (NodeUse):
+        (JSC::DFG::NodeUse::NodeUse):
+        (JSC::DFG::NodeUse::indexUnchecked):
+        (JSC::DFG::NodeUse::index):
+        (JSC::DFG::NodeUse::setIndex):
+        (JSC::DFG::NodeUse::useKind):
+        (JSC::DFG::NodeUse::setUseKind):
+        (JSC::DFG::NodeUse::isSet):
+        (JSC::DFG::NodeUse::operator!):
+        (JSC::DFG::NodeUse::operator==):
+        (JSC::DFG::NodeUse::operator!=):
+        (JSC::DFG::NodeUse::shift):
+        (JSC::DFG::NodeUse::makeWord):
+        (JSC::DFG::operator==):
+        (JSC::DFG::operator!=):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::vote):
+        (JSC::DFG::Propagator::toDouble):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::canonicalize):
+        (JSC::DFG::Propagator::startIndex):
+        (JSC::DFG::Propagator::globalVarLoadElimination):
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::getByOffsetLoadElimination):
+        (JSC::DFG::Propagator::performSubstitution):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::at):
+        (JSC::DFG::SpeculativeJIT::canReuse):
+        (JSC::DFG::SpeculativeJIT::use):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::IntegerOperand::IntegerOperand):
+        (JSC::DFG::DoubleOperand::DoubleOperand):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::SpeculateIntegerOperand::SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateStrictInt32Operand::SpeculateStrictInt32Operand):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Support javascriptcore test for EFL port. 

@@ -272,6 +272,7 @@ public:
     // Helper methods to get predictions
     PredictedType getPrediction(Node& node) { return node.prediction(); }
     PredictedType getPrediction(NodeIndex nodeIndex) { return getPrediction(graph()[nodeIndex]); }
+    PredictedType getPrediction(NodeUse nodeUse) { return getPrediction(nodeUse.index()); }
 
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex)

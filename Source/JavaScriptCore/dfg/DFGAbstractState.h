@@ -101,6 +101,11 @@ public:
         return m_nodes[nodeIndex - m_block->begin];
     }
     
+    AbstractValue& forNode(NodeUse nodeUse)
+    {
+        return forNode(nodeUse.index());
+    }
+    
     // Call this before beginning CFA to initialize the abstract values of
     // arguments, and to indicate which blocks should be listed for CFA
     // execution.

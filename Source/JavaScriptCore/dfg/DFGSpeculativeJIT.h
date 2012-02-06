@@ -182,6 +182,10 @@ public:
     {
         return m_jit.graph()[nodeIndex];
     }
+    Node& at(NodeUse nodeUse)
+    {
+        return at(nodeUse.index());
+    }
     
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
     FPRReg fillDouble(NodeIndex);
@@ -217,6 +221,10 @@ public:
         VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.canReuse();
+    }
+    bool canReuse(NodeUse nodeUse)
+    {
+        return canReuse(nodeUse.index());
     }
     GPRReg reuse(GPRReg reg)
     {
@@ -318,13 +326,17 @@ public:
             m_gprs.release(info.gpr());
 #endif
     }
+    void use(NodeUse nodeUse)
+    {
+        use(nodeUse.index());
+    }
 
     static void markCellCard(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2);
     static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, WriteBarrierUseKind);
 
-    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
+    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
     void writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
-    void writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
+    void writeBarrier(JSCell* owner, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg)
     {
@@ -875,7 +887,7 @@ private:
 
         // Check if the lastNode is a branch on this node.
         Node& lastNode = at(lastNodeIndex);
-        return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
+        return lastNode.op == Branch && lastNode.child1().index() == m_compileIndex ? lastNodeIndex : NoNode;
     }
     
     void nonSpeculativeValueToNumber(Node&);
@@ -885,15 +897,15 @@ private:
     enum SpillRegistersMode { NeedToSpill, DontSpill };
 #if USE(JSVALUE64)
     JITCompiler::Call cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, NodeUse valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #elif USE(JSVALUE32_64)
     JITCompiler::Call cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, NodeUse valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #endif
 
-    void nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert = false);
-    void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
-    bool nonSpeculativeCompareNull(Node&, NodeIndex operand, bool invert = false);
+    void nonSpeculativeNonPeepholeCompareNull(NodeUse operand, bool invert = false);
+    void nonSpeculativePeepholeBranchNull(NodeUse operand, NodeIndex branchNodeIndex, bool invert = false);
+    bool nonSpeculativeCompareNull(Node&, NodeUse operand, bool invert = false);
     
     void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
     void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
@@ -1505,15 +1517,15 @@ private:
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, PredictionChecker);
     void compileObjectEquality(Node&, const ClassInfo*, PredictionChecker);
     void compileValueAdd(Node&);
-    void compileObjectOrOtherLogicalNot(NodeIndex value, const ClassInfo*, bool needSpeculationCheck);
+    void compileObjectOrOtherLogicalNot(NodeUse value, const ClassInfo*, bool needSpeculationCheck);
     void compileLogicalNot(Node&);
-    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, const ClassInfo*, bool needSpeculationCheck);
+    void emitObjectOrOtherBranch(NodeUse value, BlockIndex taken, BlockIndex notTaken, const ClassInfo*, bool needSpeculationCheck);
     void emitBranch(Node&);
     
     void compileIntegerCompare(Node&, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node&, MacroAssembler::DoubleCondition);
     
-    bool compileStrictEqForConstant(Node&, NodeIndex value, JSValue constant);
+    bool compileStrictEqForConstant(Node&, NodeUse value, JSValue constant);
     
     bool compileStrictEq(Node&);
     
@@ -1593,12 +1605,20 @@ private:
             return;
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail)
+    {
+        speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail);
+    }
     // Add a set of speculation checks without additional recovery.
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
     {
         Vector<MacroAssembler::Jump, 16> JumpVector = jumpsToFail.jumps();
         for (unsigned i = 0; i < JumpVector.size(); ++i)
             speculationCheck(kind, jsValueSource, nodeIndex, JumpVector[i]);
+    }
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::JumpList& jumpsToFail)
+    {
+        speculationCheck(kind, jsValueSource, nodeUse.index(), jumpsToFail);
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -1607,6 +1627,10 @@ private:
             return;
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+    }
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+    {
+        speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
     }
 
     // Called when we statically determine that a speculation will fail.
@@ -1619,6 +1643,10 @@ private:
             return;
         speculationCheck(kind, jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
+    }
+    void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeUse nodeUse)
+    {
+        terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
     }
     
     template<bool strict>
@@ -1712,16 +1740,16 @@ private:
 
 class IntegerOperand {
 public:
-    explicit IntegerOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit IntegerOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
 #ifndef NDEBUG
         , m_format(DataFormatNone)
 #endif
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
 
@@ -1764,13 +1792,13 @@ private:
 
 class DoubleOperand {
 public:
-    explicit DoubleOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit DoubleOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilledDouble(index))
+        if (jit->isFilledDouble(m_index))
             fpr();
     }
 
@@ -1805,9 +1833,9 @@ private:
 
 class JSValueOperand {
 public:
-    explicit JSValueOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit JSValueOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
 #if USE(JSVALUE64)
         , m_gprOrInvalid(InvalidGPRReg)
 #elif USE(JSVALUE32_64)
@@ -1816,12 +1844,12 @@ public:
     {
         ASSERT(m_jit);
 #if USE(JSVALUE64)
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
 #elif USE(JSVALUE32_64)
         m_register.pair.tagGPR = InvalidGPRReg;
         m_register.pair.payloadGPR = InvalidGPRReg;
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             fill();
 #endif
     }
@@ -1919,13 +1947,13 @@ private:
 
 class StorageOperand {
 public:
-    explicit StorageOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit StorageOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
     
@@ -2088,16 +2116,16 @@ private:
 
 class SpeculateIntegerOperand {
 public:
-    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
 #ifndef NDEBUG
         , m_format(DataFormatNone)
 #endif
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
 
@@ -2135,13 +2163,13 @@ private:
 
 class SpeculateStrictInt32Operand {
 public:
-    explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, NodeIndex index)
+    explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
 
@@ -2176,13 +2204,13 @@ private:
 
 class SpeculateDoubleOperand {
 public:
-    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             fpr();
     }
 
@@ -2212,13 +2240,13 @@ private:
 
 class SpeculateCellOperand {
 public:
-    explicit SpeculateCellOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit SpeculateCellOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
 
@@ -2253,13 +2281,13 @@ private:
 
 class SpeculateBooleanOperand {
 public:
-    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, NodeIndex index)
+    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, NodeUse use)
         : m_jit(jit)
-        , m_index(index)
+        , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
-        if (jit->isFilled(index))
+        if (jit->isFilled(m_index))
             gpr();
     }
     

@@ -170,7 +170,7 @@ private:
                 Node& flushChild = m_graph[nodePtr->child1()];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1());
+                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index());
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
@@ -179,7 +179,7 @@ private:
             if (nodePtr->op == GetLocal)
                 return nodeIndex;
             ASSERT(nodePtr->op == SetLocal);
-            return nodePtr->child1();
+            return nodePtr->child1().index();
         }
 
         // Check for reads of temporaries from prior blocks,
@@ -219,7 +219,7 @@ private:
                 Node& flushChild = m_graph[nodePtr->child1()];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1());
+                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index());
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
@@ -238,7 +238,7 @@ private:
                 return nodeIndex;
             
             ASSERT(nodePtr->op == SetLocal);
-            return nodePtr->child1();
+            return nodePtr->child1().index();
         }
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
@@ -327,7 +327,7 @@ private:
             return index;
 
         if (node.op == UInt32ToNumber)
-            return node.child1();
+            return node.child1().index();
 
         // Check for numeric constants boxed as JSValues.
         if (node.op == JSConstant) {
@@ -572,7 +572,7 @@ private:
     }
     void addVarArgChild(NodeIndex child)
     {
-        m_graph.m_varArgChildren.append(child);
+        m_graph.m_varArgChildren.append(NodeUse(child));
         m_numPassedVarArgs++;
     }
     
@@ -2241,9 +2241,9 @@ void ByteCodeParser::processPhiStack()
                 // GetLocal and its block-local Phi. Strictly speaking we only need the two
                 // to be unified. But for efficiency, we want the code that creates GetLocals
                 // and Phis to try to reuse VariableAccessDatas as much as possible.
-                ASSERT(m_graph[valueInPredecessor].variableAccessData() == m_graph[m_graph[valueInPredecessor].child1()].variableAccessData());
+                ASSERT(m_graph[valueInPredecessor].variableAccessData() == m_graph[m_graph[valueInPredecessor].child1().index()].variableAccessData());
                 
-                valueInPredecessor = m_graph[valueInPredecessor].child1();
+                valueInPredecessor = m_graph[valueInPredecessor].child1().index();
             } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Found @%u.\n", valueInPredecessor);
@@ -2266,11 +2266,11 @@ void ByteCodeParser::processPhiStack()
                 m_graph.ref(valueInPredecessor);
             }
 
-            if (phiNode->child1() == NoNode) {
+            if (!phiNode->child1()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.fixed.child1 = valueInPredecessor;
+                phiNode->children.setChild1(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(stdout);
@@ -2278,11 +2278,11 @@ void ByteCodeParser::processPhiStack()
 #endif
                 continue;
             }
-            if (phiNode->child2() == NoNode) {
+            if (!phiNode->child2()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.fixed.child2 = valueInPredecessor;
+                phiNode->children.setChild2(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(stdout);
@@ -2290,11 +2290,11 @@ void ByteCodeParser::processPhiStack()
 #endif
                 continue;
             }
-            if (phiNode->child3() == NoNode) {
+            if (!phiNode->child3()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.fixed.child3 = valueInPredecessor;
+                phiNode->children.setChild3(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 printf("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(stdout);
@@ -2314,9 +2314,7 @@ void ByteCodeParser::processPhiStack()
             if (phiNode->refCount())
                 m_graph.ref(newPhi);
 
-            newPhiNode.children.fixed.child1 = phiNode->child1();
-            newPhiNode.children.fixed.child2 = phiNode->child2();
-            newPhiNode.children.fixed.child3 = phiNode->child3();
+            newPhiNode.children = phiNode->children;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             printf("      Children of @%u: ", newPhi);
@@ -2324,9 +2322,7 @@ void ByteCodeParser::processPhiStack()
             printf(".\n");
 #endif
 
-            phiNode->children.fixed.child1 = newPhi;
-            phiNode->children.fixed.child2 = valueInPredecessor;
-            phiNode->children.fixed.child3 = NoNode;
+            phiNode->children.initialize(newPhi, valueInPredecessor, NoNode);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             printf("      Children of @%u: ", entry.m_phi);
