@@ -1,4 +1,34 @@
 =================
+WebKitGTK+ 1.7.5
+=================
+
+What's new in WebKitGTK+ 1.7.5?
+
+  - Add new signals to track resources loading.
+  - Add --no-timeout command line option to DumpRenderTree.
+  - Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs.
+  - Allow to build using extra jhbuild modulesets.
+  - Fix emission of ATK text-caret-moved and text-selection-changed
+    events.
+  - Update primary clipboard with the current selection in X11
+    platforms in WebKit2.
+  - Implement the policy client in WebKit2 GTK+ API.
+  - Add basic printing support to WebKit2.
+  - Do not add unnecessary blanks at the end of a line of text to fix.
+    the line returned by atk_text_get_text_at_offset().
+  - Make sure input text field is repainted when value is changed.
+  - Add print-backgrounds setting to WebKit2 GTK+ API.
+  - Respect the has-backward-stepper and has-forward-stepper
+    properties when drawing scrollbars.
+  - WebKit-3.0.gir now includes information about C includes or
+    exported packages.
+  - WebKit1 API documentation was not generated when building with
+    gtk-2.0.
+  - Make WebKitWebView work inside a GtkOffscreenWindow.
+  - Implement DownloadClient and add downloads API to WebKit2 GTK+
+    API.
+
+=================
 WebKitGTK+ 1.7.4
 =================
 

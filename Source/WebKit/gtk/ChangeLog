@@ -1,5 +1,14 @@
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Update NEWS and configure.ac for 1.7.5 release
+        https://bugs.webkit.org/show_bug.cgi?id=77859
+
+        Reviewed by Philippe Normand.
+
+        * NEWS: Added release notes for 1.7.5.
+
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix several gtkdoc-fixxref warnings
         https://bugs.webkit.org/show_bug.cgi?id=77613
 
