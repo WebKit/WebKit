@@ -1,3 +1,13 @@
+2012-02-06  Chris Rogers  <crogers@google.com>
+
+        zvmul incorrectly multiplies complex arrays on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=77900
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::zvmul):
+
 2012-02-06  Andreas Kling  <awesomekling@apple.com>
 
         REGRESSION(r106756): 10% performance hit on DOM/Template.

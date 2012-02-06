@@ -418,8 +418,13 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
     }
 #endif
     for (; i < framesToProcess; ++i) {
-        realDestP[i] = real1P[i] * real2P[i] - imag1P[i] * imag2P[i];
-        imagDestP[i] = real1P[i] * imag2P[i] + imag1P[i] * real2P[i];
+        // Read and compute result before storing them, in case the
+        // destination is the same as one of the sources.
+        float realResult = real1P[i] * real2P[i] - imag1P[i] * imag2P[i];
+        float imagResult = real1P[i] * imag2P[i] + imag1P[i] * real2P[i];
+
+        realDestP[i] = realResult;
+        imagDestP[i] = imagResult;
     }
 }
 

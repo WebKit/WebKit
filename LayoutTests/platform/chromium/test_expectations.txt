@@ -3761,8 +3761,6 @@ BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.
 BUGWK75932 : fast/js/array-defineOwnProperty.html = TEXT
 BUGWK75932 : fast/js/mozilla/strict/15.4.4.6.html = TEXT
 
-BUGWK75933 WIN : webaudio/convolution-mono-mono.html = TEXT
-
 BUGWK76280 : media/W3C/video/networkState/networkState_during_progress.html = PASS TEXT
 BUGV81900 SLOW LINUX DEBUG : inspector/debugger/watch-expressions-panel-switch.html = PASS CRASH
 BUGV81900 SLOW LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = PASS CRASH
