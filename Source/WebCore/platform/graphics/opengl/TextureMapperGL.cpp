@@ -30,6 +30,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+#if PLATFORM(QT) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QPlatformPixmap>
+#endif
+
 #if PLATFORM(QT)
 #include <cairo/OpenGLShims.h>
 #elif defined(TEXMAP_OPENGL_ES_2)
@@ -633,7 +637,16 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
         return;
 
 #if PLATFORM(QT)
-    QImage qtImage = frameImage->toImage();
+    QImage qtImage;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // With QPA, we can avoid a deep copy.
+    qtImage = *frameImage->handle()->buffer();
+#else
+    // This might be a deep copy, depending on other references to the pixmap.
+    qtImage = frameImage->toImage();
+#endif
+
     if (IntSize(qtImage.size()) != sourceRect.size())
         qtImage = qtImage.copy(sourceRect);
     if (format == BGRAFormat || format == BGRFormat)

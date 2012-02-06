@@ -1,3 +1,18 @@
+2012-02-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap][Qt] Avoid an image copy when uploading textures in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=77748
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use QPixmap::buffer() API to get access to the QPixmap's pixels without implicit copies.
+
+        Instrumentation shows that the deep image copies created from TextureMapperGL are
+        eliminated.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+
 2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         LayoutTest failures on r106797
