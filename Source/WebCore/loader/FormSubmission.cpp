@@ -142,8 +142,11 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     ASSERT(form);
 
     HTMLFormControlElement* submitButton = 0;
-    if (event && event->target() && event->target()->toNode())
-        submitButton = static_cast<HTMLFormControlElement*>(event->target()->toNode());
+    if (event && event->target()) {
+        Node* node = event->target()->toNode();
+        if (node && node->isElementNode() && toElement(node)->isFormControlElement())
+            submitButton = static_cast<HTMLFormControlElement*>(node);
+    }
 
     FormSubmission::Attributes copiedAttributes;
     copiedAttributes.copyFrom(attributes);

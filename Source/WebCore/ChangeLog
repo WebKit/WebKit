@@ -1,3 +1,15 @@
+2012-02-05  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FormSubmission::create.
+        https://bugs.webkit.org/show_bug.cgi?id=77813
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/form-submission-create-crash.xhtml
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
 2012-02-05  Andreas Kling  <awesomekling@apple.com>
 
         Remove unused file MappedAttributeEntry.h.
