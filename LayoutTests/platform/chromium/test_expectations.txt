@@ -4029,3 +4029,6 @@ BUGWK77661 WIN LINUX : http/tests/inspector/indexeddb/database-structure.html = 
 BUGWK77620 DEBUG : fast/events/touch/touch-target.html = CRASH
 BUGWK77620 DEBUG : fast/events/touch/touch-coords-in-zoom-and-scroll.html = CRASH
 BUGWK77620 DEBUG : fast/events/touch/basic-multi-touch-events.html = CRASH
+
+BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
+BUGWK77889 SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
