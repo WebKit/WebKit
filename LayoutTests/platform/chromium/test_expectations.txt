@@ -782,11 +782,6 @@ BUG_LEVIN DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 
-// Hopefully fixed flakiness (need to verify with dashboard).
-BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
-BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
