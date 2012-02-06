@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
-import QtWebKit.experimental 3.0
+import QtWebKit.experimental 1.0
 
 // FIXME: Moved to Desktop tests because we want to have mouseClick() to open the <select> tag. We can move it back
 // when TestCase starts supporting touch events, see https://bugreports.qt.nokia.com/browse/QTBUG-23083.

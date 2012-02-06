@@ -1,3 +1,12 @@
+2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Don't version QtWebKit.experimental.
+        https://bugs.webkit.org/show_bug.cgi?id=77739
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix several gtkdoc-fixxref warnings

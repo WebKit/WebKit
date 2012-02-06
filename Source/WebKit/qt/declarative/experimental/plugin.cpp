@@ -48,18 +48,18 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit.experimental"));
 
-        qmlRegisterUncreatableType<QWebDownloadItem>(uri, 3, 0, "DownloadItem", QObject::tr("Cannot create separate instance of DownloadItem"));
-        qmlRegisterUncreatableType<QWebNavigationListModel>(uri, 3, 0, "NavigationListModel", QObject::tr("Cannot create separate instance of NavigationListModel"));
-        qmlRegisterUncreatableType<QWebNavigationHistory>(uri, 3, 0, "NavigationHistory", QObject::tr("Cannot create separate instance of NavigationHistory"));
-        qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 3, 0, "WebView");
-        qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "WebViewExperimental",
+        qmlRegisterUncreatableType<QWebDownloadItem>(uri, 1, 0, "DownloadItem", QObject::tr("Cannot create separate instance of DownloadItem"));
+        qmlRegisterUncreatableType<QWebNavigationListModel>(uri, 1, 0, "NavigationListModel", QObject::tr("Cannot create separate instance of NavigationListModel"));
+        qmlRegisterUncreatableType<QWebNavigationHistory>(uri, 1, 0, "NavigationHistory", QObject::tr("Cannot create separate instance of NavigationHistory"));
+        qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 1, 0, "WebView");
+        qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 1, 0, "WebViewExperimental",
             QObject::tr("Cannot create separate instance of WebViewExperimental"));
-        qmlRegisterUncreatableType<QWebViewportInfo>(uri, 3, 0, "QWebViewportInfo",
+        qmlRegisterUncreatableType<QWebViewportInfo>(uri, 1, 0, "QWebViewportInfo",
             QObject::tr("Cannot create separate instance of QWebViewportInfo"));
-        qmlRegisterType<QQuickUrlSchemeDelegate>(uri, 3, 0, "UrlSchemeDelegate");
-        qmlRegisterUncreatableType<QQuickNetworkRequest>(uri, 3, 0, "NetworkRequest",
+        qmlRegisterType<QQuickUrlSchemeDelegate>(uri, 1, 0, "UrlSchemeDelegate");
+        qmlRegisterUncreatableType<QQuickNetworkRequest>(uri, 1, 0, "NetworkRequest",
             QObject::tr("NetworkRequest should not be created from QML"));
-        qmlRegisterUncreatableType<QQuickNetworkReply>(uri, 3, 0, "NetworkReply",
+        qmlRegisterUncreatableType<QQuickNetworkReply>(uri, 1, 0, "NetworkReply",
             QObject::tr("NetworkReply should not be created from QML"));
     }
 };

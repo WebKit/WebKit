@@ -1,3 +1,20 @@
+2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Don't version QtWebKit.experimental.
+        https://bugs.webkit.org/show_bug.cgi?id=77739
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_itemSelector.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_applicationScheme.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_download.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_geopermission.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_javaScriptDialogs.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_navigationHistory.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix several gtkdoc-fixxref warnings

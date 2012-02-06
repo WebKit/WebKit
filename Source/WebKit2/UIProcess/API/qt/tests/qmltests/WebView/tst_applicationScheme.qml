@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
-import QtWebKit.experimental 3.0
+import QtWebKit.experimental 1.0
 import Test 1.0
 
 WebView {
