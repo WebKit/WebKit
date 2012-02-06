@@ -314,6 +314,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
         return;
     }
 
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     // Make a copy of the source to ensure the bits don't change before being drawn
     IntSize sourceCopySize(sourceRect.width(), sourceRect.height());
     OwnPtr<ImageBuffer> sourceCopy = ImageBuffer::create(sourceCopySize, ColorSpaceDeviceRGB, Unaccelerated);
@@ -337,6 +338,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const Int
     RetainPtr<CGImageRef> sourceCopyImage(AdoptCF, sourceCopy->copyNativeImage());
     CGContextDrawImage(destContext, destRectInCGCoords, sourceCopyImage.get());
     CGContextRestoreGState(destContext);
+#endif
 }
 
 static inline CFStringRef jpegUTI()
