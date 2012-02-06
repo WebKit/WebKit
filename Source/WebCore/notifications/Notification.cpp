@@ -102,12 +102,16 @@ Notification::~Notification()
 
 PassRefPtr<Notification> Notification::create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
-    return adoptRef(new Notification(url, context, ec, provider));
+    RefPtr<Notification> notification(adoptRef(new Notification(url, context, ec, provider)));
+    notification->suspendIfNeeded();
+    return notification.release();
 }
 
 PassRefPtr<Notification> Notification::create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
-    return adoptRef(new Notification(contents, context, ec, provider));
+    RefPtr<Notification> notification(adoptRef(new Notification(contents, context, ec, provider)));
+    notification->suspendIfNeeded();
+    return notification.release();
 }
 
 const AtomicString& Notification::interfaceName() const

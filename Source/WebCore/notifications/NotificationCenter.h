@@ -50,7 +50,7 @@ class VoidCallback;
 
 class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveDOMObject {
 public:
-    static PassRefPtr<NotificationCenter> create(ScriptExecutionContext* context, NotificationPresenter* presenter) { return adoptRef(new NotificationCenter(context, presenter)); }
+    static PassRefPtr<NotificationCenter> create(ScriptExecutionContext*, NotificationPresenter*);
 
     PassRefPtr<Notification> createHTMLNotification(const String& URI, ExceptionCode& ec)
     {

@@ -42,7 +42,9 @@ namespace WebCore {
 
 PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
 {
-    return adoptRef(new IDBTransaction(context, backend, db));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, backend, db)));
+    transaction->suspendIfNeeded();
+    return transaction.release();
 }
 
 IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)

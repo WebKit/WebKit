@@ -48,6 +48,13 @@ namespace WebCore {
 
 static const double progressNotificationIntervalMS = 50;
 
+PassRefPtr<FileReader> FileReader::create(ScriptExecutionContext* context)
+{
+    RefPtr<FileReader> fileReader(adoptRef(new FileReader(context)));
+    fileReader->suspendIfNeeded();
+    return fileReader.release();
+}
+
 FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(EMPTY)

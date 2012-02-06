@@ -48,10 +48,7 @@ class ScriptExecutionContext;
 
 class FileWriter : public FileWriterBase, public ActiveDOMObject, public EventTarget, public AsyncFileWriterClient {
 public:
-    static PassRefPtr<FileWriter> create(ScriptExecutionContext* context)
-    {
-        return adoptRef(new FileWriter(context));
-    }
+    static PassRefPtr<FileWriter> create(ScriptExecutionContext*);
 
     enum ReadyState {
         INIT = 0,

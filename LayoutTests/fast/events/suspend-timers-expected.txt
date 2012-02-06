@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 6: Timeout in subframe-1 created
+CONSOLE MESSAGE: line 5: Loaded pagehide-timeout-go-back.html, going back
+CONSOLE MESSAGE: line 31: Restored page from page cache.
+ALERT: Timeout created in subframe-1.html fired
+Tests that all JS timers are suspended after the pagehide event is fired, so that timers created within it will not fire while the document is in the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

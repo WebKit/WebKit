@@ -41,6 +41,7 @@ PassRefPtr<PeerConnection> PeerConnection::create(ScriptExecutionContext* contex
     RefPtr<PeerConnection> connection = adoptRef(new PeerConnection(context, serverConfiguration, signalingCallback));
     connection->setPendingActivity(connection.get());
     connection->scheduleInitialNegotiation();
+    connection->suspendIfNeeded();
 
     return connection.release();
 }

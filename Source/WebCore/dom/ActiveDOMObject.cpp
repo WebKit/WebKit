@@ -60,6 +60,9 @@ void ContextDestructionObserver::contextDestroyed()
 ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext, void* upcastPointer)
     : ContextDestructionObserver(scriptExecutionContext)
     , m_pendingActivityCount(0)
+#if !ASSERT_DISABLED
+    , m_suspendIfNeededCalled(false)
+#endif
 {
     if (!m_scriptExecutionContext)
         return;
@@ -73,8 +76,21 @@ ActiveDOMObject::~ActiveDOMObject()
     if (!m_scriptExecutionContext)
         return;
 
+    ASSERT(m_suspendIfNeededCalled);
     ASSERT(m_scriptExecutionContext->isContextThread());
     m_scriptExecutionContext->willDestroyActiveDOMObject(this);
+}
+
+void ActiveDOMObject::suspendIfNeeded()
+{
+#if !ASSERT_DISABLED
+    ASSERT(!m_suspendIfNeededCalled);
+    m_suspendIfNeededCalled = true;
+#endif
+    if (!m_scriptExecutionContext)
+        return;
+
+    m_scriptExecutionContext->suspendActiveDOMObjectIfNeeded(this);
 }
 
 bool ActiveDOMObject::hasPendingActivity() const

@@ -43,7 +43,9 @@ HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document* docum
 
 PassRefPtr<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
-    return adoptRef(new HTMLAudioElement(tagName, document, createdByParser));
+    RefPtr<HTMLAudioElement> audioElement(adoptRef(new HTMLAudioElement(tagName, document, createdByParser)));
+    audioElement->suspendIfNeeded();
+    return audioElement.release();
 }
 
 PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* document, const String& src)
@@ -54,6 +56,7 @@ PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* 
         audio->setSrc(src);
         audio->scheduleLoad(HTMLMediaElement::MediaResource);
     }
+    audio->suspendIfNeeded();
     return audio.release();
 }
 

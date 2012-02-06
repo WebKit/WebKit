@@ -48,7 +48,9 @@ inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Docu
 
 PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLMarqueeElement(tagName, document));
+    RefPtr<HTMLMarqueeElement> marqueeElement(adoptRef(new HTMLMarqueeElement(tagName, document)));
+    marqueeElement->suspendIfNeeded();
+    return marqueeElement.release();
 }
 
 void HTMLMarqueeElement::parseAttribute(Attribute* attr)

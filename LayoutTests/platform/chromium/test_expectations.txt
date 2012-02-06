@@ -203,6 +203,7 @@ WONTFIX SKIP : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FA
 WONTFIX SKIP : fast/events/pagehide-timeout.html = TIMEOUT
 WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
+WONTFIX SKIP : fast/events/suspend-timers.html = TIMEOUT
 WONTFIX SKIP : media/restore-from-page-cache.html = TIMEOUT
 WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
 WONTFIX SKIP : fast/loader/crash-copying-backforwardlist.html = TEXT
