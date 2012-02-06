@@ -29,8 +29,10 @@
 // FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
+#include <WebCore/FloatPoint.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/IntSize.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -254,9 +256,12 @@ class WebGestureEvent : public WebEvent {
 public:
     WebGestureEvent() { }
     WebGestureEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, Modifiers, double timestamp);
+    WebGestureEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, Modifiers, double timestamp, const WebCore::IntSize& area, const WebCore::FloatPoint& delta);
 
     const WebCore::IntPoint position() const { return m_position; }
     const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
+    const WebCore::IntSize area() const { return m_area; }
+    const WebCore::FloatPoint delta() const { return m_delta; }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebGestureEvent&);
@@ -266,6 +271,8 @@ private:
 
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;
+    WebCore::IntSize m_area;
+    WebCore::FloatPoint m_delta;
 };
 #endif // ENABLE(GESTURE_EVENTS)
 

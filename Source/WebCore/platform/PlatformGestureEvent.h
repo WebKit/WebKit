@@ -28,7 +28,9 @@
 
 #if ENABLE(GESTURE_EVENTS)
 
+#include "FloatPoint.h"
 #include "IntPoint.h"
+#include "IntSize.h"
 #include "PlatformEvent.h"
 
 namespace WebCore {
@@ -51,8 +53,20 @@ public:
     {
     }
 
+    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, const IntSize& area, const FloatPoint& delta, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+        : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
+        , m_position(position)
+        , m_globalPosition(globalPosition)
+        , m_area(area)
+        , m_deltaX(delta.x())
+        , m_deltaY(delta.y())
+    {
+    }
+
     const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
     const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
+
+    const IntSize& area() const { return m_area; }
 
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
@@ -60,6 +74,7 @@ public:
 protected:
     IntPoint m_position;
     IntPoint m_globalPosition;
+    IntSize m_area;
     float m_deltaX;
     float m_deltaY;
 };

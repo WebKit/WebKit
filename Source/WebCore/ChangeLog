@@ -1,3 +1,16 @@
+2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        WebGestureEvent can not encode delta and area.
+        https://bugs.webkit.org/show_bug.cgi?id=77728
+
+        Add area field to PlatformGestureEvent.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/PlatformGestureEvent.h:
+        (WebCore::PlatformGestureEvent::PlatformGestureEvent):
+        (WebCore::PlatformGestureEvent::area):
+
 2012-02-06  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry]Use extension for a mimetype as the suggested extension

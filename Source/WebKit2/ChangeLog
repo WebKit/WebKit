@@ -1,3 +1,24 @@
+2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        WebGestureEvent can not encode delta and area.
+        https://bugs.webkit.org/show_bug.cgi?id=77728
+
+        Support delta and area fields in WebGestureEvent, and send area with Qt tap gesture.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebGestureEvent::area):
+        (WebKit::WebGestureEvent::delta):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        * Shared/WebGestureEvent.cpp:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        (WebKit::WebGestureEvent::encode):
+        (WebKit::WebGestureEvent::decode):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleSingleTapEvent):
+
 2012-02-03  Zalan Bujtas  <zbujtas@gmail.com>  and  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Remove TiledDrawingArea and dependencies.
