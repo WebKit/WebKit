@@ -1,3 +1,13 @@
+2012-02-06  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Remove unused variable in BackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=77851
+
+        Reviewed by Kentaro Hara.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+
 2012-02-04  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry WebCoreSupport ClientExtension and GeolocationControllerClientBlackBerry classes

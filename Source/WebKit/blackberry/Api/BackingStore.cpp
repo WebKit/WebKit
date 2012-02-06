@@ -1337,8 +1337,6 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         TileRect wholeTileRect;
         wholeTileRect.first = index;
         wholeTileRect.second = this->tileRect();
-        Platform::IntRect wholeRect
-            = mapFromTilesToTransformedContents(wholeTileRect, currentState->backingStoreRect());
 
         bool committed = tile->isCommitted();
         bool rendered = tileBuffer->isRendered(dirtyTileRect);
