@@ -307,26 +307,36 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), false);
 }
 
-void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (m_context->isAcceleratedContext()) {
-        CGContextFlush(context()->platformContext());
-#if defined(BUILDING_ON_LION)
-        m_data.m_lastFlushTime = currentTimeMS();
-#endif
+    if (!m_context->isAcceleratedContext()) {
+        m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), multiplied == Unmultiplied);
+        return;
     }
-    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), true);
-}
 
-void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    if (m_context->isAcceleratedContext()) {
-        CGContextFlush(context()->platformContext());
-#if defined(BUILDING_ON_LION)
-        m_data.m_lastFlushTime = currentTimeMS();
-#endif
-    }
-    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), false);
+    // Make a copy of the source to ensure the bits don't change before being drawn
+    IntSize sourceCopySize(sourceRect.width(), sourceRect.height());
+    OwnPtr<ImageBuffer> sourceCopy = ImageBuffer::create(sourceCopySize, ColorSpaceDeviceRGB, Unaccelerated);
+    if (!sourceCopy)
+        return;
+    sourceCopy->m_data.putData(source, sourceSize, sourceRect, IntPoint(-sourceRect.x(), -sourceRect.y()), sourceCopy->size(), sourceCopy->context()->isAcceleratedContext(), multiplied == Unmultiplied);
+
+    // Set up context for using drawImage as a direct bit copy
+    CGContextRef destContext = context()->platformContext();
+    CGContextSaveGState(destContext);
+    CGContextConcatCTM(destContext, AffineTransform(CGContextGetCTM(destContext)).inverse());
+    wkCGContextResetClip(destContext);
+    CGContextSetInterpolationQuality(destContext, kCGInterpolationNone);
+    CGContextSetAlpha(destContext, 1.0);
+    CGContextSetBlendMode(destContext, kCGBlendModeCopy);
+    CGContextSetShadowWithColor(destContext, CGSizeZero, 0, 0);
+
+    // Draw the image in CG coordinate space
+    IntPoint destPointInCGCoords(destPoint.x() + sourceRect.x(), m_size.height() - (destPoint.y()+sourceRect.y()) - sourceRect.height());
+    IntRect destRectInCGCoords(destPointInCGCoords, sourceCopySize);
+    RetainPtr<CGImageRef> sourceCopyImage(AdoptCF, sourceCopy->copyNativeImage());
+    CGContextDrawImage(destContext, destRectInCGCoords, sourceCopyImage.get());
+    CGContextRestoreGState(destContext);
 }
 
 static inline CFStringRef jpegUTI()

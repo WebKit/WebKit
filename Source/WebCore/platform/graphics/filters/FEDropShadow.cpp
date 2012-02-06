@@ -108,7 +108,7 @@ void FEDropShadow::platformApplySoftware()
 
     contextShadow.blurLayerImage(srcPixelArray->data(), shadowArea.size(), 4 * shadowArea.size().width());
 
-    resultImage->putPremultipliedImageData(srcPixelArray.get(), shadowArea.size(), shadowArea, IntPoint());
+    resultImage->putByteArray(Premultiplied, srcPixelArray.get(), shadowArea.size(), shadowArea, IntPoint());
 
     resultContext->setCompositeOperation(CompositeSourceIn);
     resultContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor, ColorSpaceDeviceRGB);

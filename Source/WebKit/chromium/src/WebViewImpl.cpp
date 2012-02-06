@@ -1206,7 +1206,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
     if (imageBuffer && pixelArray) {
         m_layerTreeHost->compositeAndReadback(pixelArray->data(), invertRect);
-        imageBuffer->putPremultipliedImageData(pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
+        imageBuffer->putByteArray(Premultiplied, pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
         gc.translate(IntSize(0, bitmapHeight));
         gc.scale(FloatSize(1.0f, -1.0f));

@@ -40,6 +40,7 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyCFLocalizationPreferredName);
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CGPatternCreateWithImageAndTransform);
+        INIT(CGContextResetClip);
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);
         INIT(CreateCTLineWithUniCharProvider);

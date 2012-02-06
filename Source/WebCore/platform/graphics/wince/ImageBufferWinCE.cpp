@@ -183,9 +183,9 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<true>(rect, m_data.m_bitmap.get());
 }
 
-template <bool premultiplied>
-static void putImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, SharedBitmap* bitmap)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
+    SharedBitmap* bitmap = m_data.m_bitmap.get();
     unsigned char* dst = (unsigned char*)bitmap->bytes();
     if (!dst)
         return;
@@ -211,7 +211,7 @@ static void putImageData(ByteArray* source, const IntSize& sourceSize, const Int
             int green = *src++;
             int blue = *src++;
             int alpha = *src++;
-            if (premultiplied) {
+            if (multiplied == Premultiplied) {
                 *dst++ = static_cast<unsigned char>(blue * 255 / alpha);
                 *dst++ = static_cast<unsigned char>(green * 255 / alpha);
                 *dst++ = static_cast<unsigned char>(red * 255 / alpha);
@@ -226,16 +226,6 @@ static void putImageData(ByteArray* source, const IntSize& sourceSize, const Int
         src += srcSkip;
         dst += dstSkip;
     }
-}
-
-void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<false>(source, sourceSize, sourceRect, destPoint, m_data.m_bitmap.get());
-}
-
-void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<true>(source, sourceSize, sourceRect, destPoint, m_data.m_bitmap.get());
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

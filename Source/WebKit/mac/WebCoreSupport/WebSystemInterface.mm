@@ -45,6 +45,7 @@ void InitWebCoreSystemInterface(void)
     INIT(AdvanceDefaultButtonPulseAnimation);
     INIT(CGContextGetShouldSmoothFonts);
     INIT(CGPatternCreateWithImageAndTransform);
+    INIT(CGContextResetClip);
     INIT(CopyCFLocalizationPreferredName);
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);

@@ -113,6 +113,7 @@ typedef enum {
     wkPatternTilingConstantSpacing
 } wkPatternTiling;
 extern CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
+extern void (*wkCGContextResetClip)(CGContextRef);
 extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
     void (*formFinalize)(CFReadStreamRef, void *), 
     Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 

@@ -1,3 +1,43 @@
+2012-02-06  Matthew Delaney  <mdelaney@apple.com>
+
+        toDataURL() uses stale data after putImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=65767
+
+        This patch fixes the issue we've encountered of getting back
+        stale copies of the CGContext of accelerated ImageBuffers who have seen
+        putImageData calls but have not been drawn into via the CG API.
+        This issue is fixed by modifying the way we implement putImageData
+        in ImageBufferCG to draw the bits wrapped in a CGImage while the CGContext
+        is in a state where the data will effectively be copied (as is needed for
+        implementing putImageData) instead of directly modifying the bits of the IOSurface.
+
+        Reviewed by Chris Marrin.
+
+        Test: fast/canvas/check-stale-putImageData, pixel test to check that the canvas is in fact painted.
+
+        * platform/graphics/cg/ImageBufferCG.cpp: Implement new way of putting image data.
+        * platform/graphics/ImageBuffer.h: Merged two previously separate put data calls
+            into a single and more sensibly named 'putByteArray', since that's what it does!
+
+        * WebCore.exp.in: Added new WKSI call for use in ImageBufferCG.cpp
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        Using new method name.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ShadowBlur.cpp:        
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+
+        Updated other ports' ImageBuffers to use new method.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        * platform/graphics/wx/ImageBufferWx.cpp:
+
 2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Provide more attribute methods in Element

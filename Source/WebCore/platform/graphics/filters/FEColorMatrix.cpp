@@ -187,7 +187,7 @@ void FEColorMatrix::platformApplySoftware()
         break;
     }
 
-    resultImage->putUnmultipliedImageData(pixelArray.get(), imageRect.size(), imageRect, IntPoint());
+    resultImage->putByteArray(Unmultiplied, pixelArray.get(), imageRect.size(), imageRect, IntPoint());
 }
 
 void FEColorMatrix::dump()

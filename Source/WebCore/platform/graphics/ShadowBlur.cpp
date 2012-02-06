@@ -828,7 +828,7 @@ void ShadowBlur::blurShadowBuffer(const IntSize& templateSize)
     IntRect blurRect(IntPoint(), templateSize);
     RefPtr<ByteArray> layerData = m_layerImage->getUnmultipliedImageData(blurRect);
     blurLayerImage(layerData->data(), blurRect.size(), blurRect.width() * 4);
-    m_layerImage->putUnmultipliedImageData(layerData.get(), blurRect.size(), blurRect, IntPoint());
+    m_layerImage->putByteArray(Unmultiplied, layerData.get(), blurRect.size(), blurRect, IntPoint());
 }
 
 void ShadowBlur::blurAndColorShadowBuffer(const IntSize& templateSize)

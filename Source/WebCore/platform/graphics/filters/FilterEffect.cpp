@@ -130,9 +130,9 @@ ImageBuffer* FilterEffect::asImageBuffer()
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB, m_filter->renderingMode());
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
-        m_imageBufferResult->putPremultipliedImageData(m_premultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(Premultiplied, m_premultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
     else
-        m_imageBufferResult->putUnmultipliedImageData(m_unmultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(Unmultiplied, m_unmultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
     return m_imageBufferResult.get();
 }
 

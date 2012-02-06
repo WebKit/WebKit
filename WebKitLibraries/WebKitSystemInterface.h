@@ -454,7 +454,11 @@ NSCursor *WKCursor(const char *name);
 dispatch_source_t WKCreateVMPressureDispatchOnMainQueue(void);
 
 #endif
-    
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+NSString *WKGetMacOSXVersionString(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

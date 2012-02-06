@@ -275,34 +275,33 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<Premultiplied>(rect, context()->platformContext()->canvas(), m_size);
 }
 
-template <Multiply multiplied>
-void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint,
-                  SkCanvas* canvas, const IntSize& size)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
+    SkCanvas* canvas = context()->platformContext()->canvas();
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
 
     int originX = sourceRect.x();
     int destX = destPoint.x() + sourceRect.x();
     ASSERT(destX >= 0);
-    ASSERT(destX < size.width());
+    ASSERT(destX < m_size.width());
     ASSERT(originX >= 0);
     ASSERT(originX < sourceRect.maxX());
 
     int endX = destPoint.x() + sourceRect.maxX();
-    ASSERT(endX <= size.width());
+    ASSERT(endX <= m_size.width());
 
     int numColumns = endX - destX;
 
     int originY = sourceRect.y();
     int destY = destPoint.y() + sourceRect.y();
     ASSERT(destY >= 0);
-    ASSERT(destY < size.height());
+    ASSERT(destY < m_size.height());
     ASSERT(originY >= 0);
     ASSERT(originY < sourceRect.maxY());
 
     int endY = destPoint.y() + sourceRect.maxY();
-    ASSERT(endY <= size.height());
+    ASSERT(endY <= m_size.height());
     int numRows = endY - destY;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
@@ -317,16 +316,6 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
         config8888 = SkCanvas::kRGBA_Unpremul_Config8888;
 
     canvas->writePixels(srcBitmap, destX, destY, config8888);
-}
-
-void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas(), m_size);
-}
-
-void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas(), m_size);
 }
 
 template <typename T>

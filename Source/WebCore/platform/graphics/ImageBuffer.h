@@ -101,8 +101,7 @@ namespace WebCore {
         PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;
         PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&) const;
 
-        void putUnmultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
-        void putPremultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
+        void putByteArray(Multiply multiplied, ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
         
         void convertToLuminanceMask();
         

@@ -86,7 +86,7 @@ inline void ImageBuffer::genericConvertToLuminanceMask()
         double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
         srcPixelArray->set(pixelOffset + 3, luma);
     }
-    putUnmultipliedImageData(srcPixelArray.get(), luminanceRect.size(), luminanceRect, IntPoint());
+    putByteArray(Unmultiplied, srcPixelArray.get(), luminanceRect.size(), luminanceRect, IntPoint());
 }
 
 void ImageBuffer::convertToLuminanceMask()

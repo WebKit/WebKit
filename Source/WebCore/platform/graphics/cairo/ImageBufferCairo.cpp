@@ -204,12 +204,11 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
-template <Multiply multiplied>
-void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    ASSERT(cairo_surface_get_type(data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    unsigned char* dataDst = cairo_image_surface_get_data(data.m_surface);
+    unsigned char* dataDst = cairo_image_surface_get_data(m_data.m_surface);
 
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -217,28 +216,28 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     int originx = sourceRect.x();
     int destx = destPoint.x() + sourceRect.x();
     ASSERT(destx >= 0);
-    ASSERT(destx < size.width());
+    ASSERT(destx < m_size.width());
     ASSERT(originx >= 0);
     ASSERT(originx <= sourceRect.maxX());
 
     int endx = destPoint.x() + sourceRect.maxX();
-    ASSERT(endx <= size.width());
+    ASSERT(endx <= m_size.width());
 
     int numColumns = endx - destx;
 
     int originy = sourceRect.y();
     int desty = destPoint.y() + sourceRect.y();
     ASSERT(desty >= 0);
-    ASSERT(desty < size.height());
+    ASSERT(desty < m_size.height());
     ASSERT(originy >= 0);
     ASSERT(originy <= sourceRect.maxY());
 
     int endy = destPoint.y() + sourceRect.maxY();
-    ASSERT(endy <= size.height());
+    ASSERT(endy <= m_size.height());
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
-    int stride = cairo_image_surface_get_stride(data.m_surface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface);
 
     unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
@@ -257,19 +256,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
         }
         srcRows += srcBytesPerRow;
     }
-    cairo_surface_mark_dirty_rectangle (data.m_surface,
+    cairo_surface_mark_dirty_rectangle(m_data.m_surface,
                                         destx, desty,
                                         numColumns, numRows);
-}
-
-void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
-}
-
-void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
 }
 
 #if !PLATFORM(GTK)

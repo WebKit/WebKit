@@ -301,8 +301,7 @@ static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
     return x;
 }
 
-template <Multiply multiplied>
-void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
+void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -310,24 +309,24 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     int originx = sourceRect.x();
     int destx = destPoint.x() + sourceRect.x();
     ASSERT(destx >= 0);
-    ASSERT(destx < size.width());
+    ASSERT(destx < m_size.width());
     ASSERT(originx >= 0);
     ASSERT(originx <= sourceRect.maxX());
 
     int endx = destPoint.x() + sourceRect.maxX();
-    ASSERT(endx <= size.width());
+    ASSERT(endx <= m_size.width());
 
     int numColumns = endx - destx;
 
     int originy = sourceRect.y();
     int desty = destPoint.y() + sourceRect.y();
     ASSERT(desty >= 0);
-    ASSERT(desty < size.height());
+    ASSERT(desty < m_size.height());
     ASSERT(originy >= 0);
     ASSERT(originy <= sourceRect.maxY());
 
     int endy = destPoint.y() + sourceRect.maxY();
-    ASSERT(endy <= size.height());
+    ASSERT(endy <= m_size.height());
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
@@ -361,35 +360,25 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
         }
     }
 
-    bool isPainting = data.m_painter->isActive();
+    bool isPainting = m_data.m_painter->isActive();
     if (!isPainting)
-        data.m_painter->begin(&data.m_pixmap);
+        m_data.m_painter->begin(&m_data.m_pixmap);
     else {
-        data.m_painter->save();
+        m_data.m_painter->save();
 
         // putImageData() should be unaffected by painter state
-        data.m_painter->resetTransform();
-        data.m_painter->setOpacity(1.0);
-        data.m_painter->setClipping(false);
+        m_data.m_painter->resetTransform();
+        m_data.m_painter->setOpacity(1.0);
+        m_data.m_painter->setClipping(false);
     }
 
-    data.m_painter->setCompositionMode(QPainter::CompositionMode_Source);
-    data.m_painter->drawImage(destx, desty, image);
+    m_data.m_painter->setCompositionMode(QPainter::CompositionMode_Source);
+    m_data.m_painter->drawImage(destx, desty, image);
 
     if (!isPainting)
-        data.m_painter->end();
+        m_data.m_painter->end();
     else
-        data.m_painter->restore();
-}
-
-void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
-}
-
-void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
+        m_data.m_painter->restore();
 }
 
 // We get a mimeType here but QImageWriter does not support mimetypes but

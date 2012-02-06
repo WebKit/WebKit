@@ -1971,7 +1971,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
 
-    buffer->putUnmultipliedImageData(data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset));
+    buffer->putByteArray(Unmultiplied, data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset));
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 

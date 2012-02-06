@@ -1,3 +1,13 @@
+2012-02-06  Matthew Delaney  <mdelaney@apple.com>
+
+        toDataURL() uses stale data after putImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=65767
+
+        Reviewed by Chris Marrin.
+
+        * src/WebViewImpl.cpp: Updated method name.
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+
 2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Provide more attribute methods in Element
