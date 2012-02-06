@@ -52,7 +52,7 @@ public:
     virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
     StylePropertySet* attributeStyle() const { return attributeData() ? attributeData()->attributeStyle() : 0; }
-    StylePropertySet* ensureAttributeStyle() { return ensureAttributeData()->ensureAttributeStyle(); }
+    StylePropertySet* ensureAttributeStyle() { return ensureAttributeData()->ensureAttributeStyle(this); }
 
     const SpaceSplitString& classNames() const;
 

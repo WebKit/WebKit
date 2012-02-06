@@ -55,8 +55,12 @@ public:
         return adoptRef(new StylePropertySet(0, properties));
     }
     static PassRefPtr<StylePropertySet> createInline(StyledElement* element)
-    { 
-        return adoptRef(new StylePropertySet(element));
+    {
+        return adoptRef(new StylePropertySet(element, /*isInlineStyle*/ true));
+    }
+    static PassRefPtr<StylePropertySet> createAttributeStyle(StyledElement* element)
+    {
+        return adoptRef(new StylePropertySet(element, /*isInlineStyle*/ false));
     }
 
     void deref();
@@ -109,12 +113,12 @@ public:
 
     PassRefPtr<StylePropertySet> copyPropertiesInSet(const int* set, unsigned length) const;
 
-    CSSRule* parentRuleInternal() const { return m_isInlineStyleDeclaration ? 0 : m_parent.rule; }
-    void clearParentRule() { ASSERT(!m_isInlineStyleDeclaration); m_parent.rule = 0; }
-    
-    StyledElement* parentElement() const { ASSERT(m_isInlineStyleDeclaration); return m_parent.element; }
-    void clearParentElement() { ASSERT(m_isInlineStyleDeclaration); m_parent.element = 0; }
-    
+    CSSRule* parentRuleInternal() const { return m_parentIsElement ? 0 : m_parent.rule; }
+    void clearParentRule() { ASSERT(!m_parentIsElement); m_parent.rule = 0; }
+
+    StyledElement* parentElement() const { ASSERT(m_parentIsElement); return m_parent.element; }
+    void clearParentElement() { ASSERT(m_parentIsElement); m_parent.element = 0; }
+
     CSSStyleSheet* contextStyleSheet() const;
     
     String asText() const;
@@ -126,7 +130,7 @@ private:
     StylePropertySet(CSSRule* parentRule);
     StylePropertySet(CSSRule* parentRule, const Vector<CSSProperty>&);
     StylePropertySet(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
-    StylePropertySet(StyledElement*);
+    StylePropertySet(StyledElement*, bool isInlineStyle);
 
     void setNeedsStyleRecalc();
 
@@ -155,6 +159,7 @@ private:
     Vector<CSSProperty, 4> m_properties;
 
     bool m_strictParsing : 1;
+    bool m_parentIsElement : 1;
     bool m_isInlineStyleDeclaration : 1;
 
     union Parent {

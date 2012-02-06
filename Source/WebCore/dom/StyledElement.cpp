@@ -110,8 +110,6 @@ void StyledElement::removeCSSProperties(int id1, int id2, int id3, int id4, int 
     if (!style)
         return;
 
-    setNeedsStyleRecalc(FullStyleChange);
-
     ASSERT(id1 != CSSPropertyInvalid);
     style->removeProperty(id1);
 
@@ -142,20 +140,16 @@ void StyledElement::addCSSProperty(int id, const String &value)
 {
     if (!ensureAttributeStyle()->setProperty(id, value))
         removeCSSProperty(id);
-    else
-        setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSProperty(int id, int value)
 {
     ensureAttributeStyle()->setProperty(id, value);
-    setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSImageProperty(int id, const String& url)
 {
     ensureAttributeStyle()->setProperty(CSSProperty(id, CSSImageValue::create(url)));
-    setNeedsStyleRecalc(FullStyleChange);
 }
 
 void StyledElement::addCSSLength(int id, const String &value)

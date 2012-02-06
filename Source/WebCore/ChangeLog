@@ -1,3 +1,56 @@
+2012-02-06  Andreas Kling  <awesomekling@apple.com>
+
+        REGRESSION(r106756): 10% performance hit on DOM/Template.
+        <http://webkit.org/b/77831>
+
+        Reviewed by Ryosuke Niwa.
+
+        Let the StylePropertySet used for element attribute style have the element as its parent.
+        This is accomplished by adding an m_parentIsElement bit to StylePropertySet and sharing
+        some of the internal logic with inline styles.
+
+        In the end, this means that CSSParser will now pick up the document's CSSValuePool when
+        parsing properties for attribute styles, which fixes the perf regression from r106756.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::contextStyleSheet):
+
+            Find contextStyleSheet via the parentElement() when there is one.
+
+        (WebCore::StylePropertySet::setNeedsStyleRecalc):
+
+            Always set FullStyleChange for attribute style mutations. We can probably use the
+            same lighter invalidation as inline styles, but that's a topic for another patch.
+
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::createInline):
+        (WebCore::StylePropertySet::createAttributeStyle):
+        (WebCore::StylePropertySet::parentRuleInternal):
+        (WebCore::StylePropertySet::clearParentRule):
+        (StylePropertySet):
+        (WebCore::StylePropertySet::parentElement):
+        (WebCore::StylePropertySet::clearParentElement):
+
+            Added m_parentIsElement bit and update assertions as appropriate to not just
+            cover the inline style case. Added a createAttributeStyle() helper to create
+            a StylePropertySet for use as Element::attributeStyle().
+
+        * dom/StyledElement.h:
+        * dom/ElementAttributeData.h:
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ensureAttributeStyle):
+
+            Use StylePropertySet::createAttributeStyle().
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::removeCSSProperties):
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+
+            Remove setNeedsStyleRecalc() calls since that is now handled automatically by
+            StylePropertySet's mutation methods.
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         In AppleWebKit, stop rebuilding IDLs that need not to be rebuilt

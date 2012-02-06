@@ -47,7 +47,7 @@ public:
     void destroyInlineStyleDecl();
 
     StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
-    StylePropertySet* ensureAttributeStyle();
+    StylePropertySet* ensureAttributeStyle(StyledElement*);
 
 private:
     friend class NamedNodeMap;

@@ -169,6 +169,7 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 
 StylePropertySet::StylePropertySet()
     : m_strictParsing(false)
+    , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(static_cast<CSSRule*>(0))
 {
@@ -176,6 +177,7 @@ StylePropertySet::StylePropertySet()
 
 StylePropertySet::StylePropertySet(CSSRule* parentRule)
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(parentRule)
 {
@@ -184,6 +186,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule)
 StylePropertySet::StylePropertySet(CSSRule* parentRule, const Vector<CSSProperty>& properties)
     : m_properties(properties)
     , m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(parentRule)
 {
@@ -192,6 +195,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const Vector<CSSProperty
 
 StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const * properties, int numProperties)
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
+    , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(parentRule)
 {
@@ -214,11 +218,12 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const
     }
 }
 
-StylePropertySet::StylePropertySet(StyledElement* parentElement) 
+StylePropertySet::StylePropertySet(StyledElement* parentElement, bool isInlineStyle)
     : m_strictParsing(false)
-    , m_isInlineStyleDeclaration(true)
+    , m_parentIsElement(true)
+    , m_isInlineStyleDeclaration(isInlineStyle)
     , m_parent(parentElement)
-{ 
+{
 }
 
 StylePropertySet::~StylePropertySet()
@@ -239,7 +244,7 @@ void StylePropertySet::deref()
 
 CSSStyleSheet* StylePropertySet::contextStyleSheet() const
 {
-    if (m_isInlineStyleDeclaration) {
+    if (m_parentIsElement) {
         Document* document = m_parent.element ? m_parent.element->document() : 0;
         return document ? document->elementSheet() : 0;
     }
@@ -705,10 +710,16 @@ String StylePropertySet::removeProperty(int propertyID, bool notifyChanged, bool
 
 void StylePropertySet::setNeedsStyleRecalc()
 {
-    if (isInlineStyleDeclaration()) {
+    if (m_parentIsElement) {
         StyledElement* element = parentElement();
         if (!element)
             return;
+
+        if (!m_isInlineStyleDeclaration) {
+            element->setNeedsStyleRecalc();
+            return;
+        }
+
         element->setNeedsStyleRecalc(InlineStyleChange);
         element->invalidateStyleAttribute();
         StyleAttributeMutationScope(this).didInvalidateStyleAttr();
