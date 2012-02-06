@@ -1,3 +1,17 @@
+2012-02-06  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Fix CallArgument type in Inspector.json
+        https://bugs.webkit.org/show_bug.cgi?id=77839
+
+        Reviewed by Yury Semikhatsky.
+
+        Protocol description is fixed: field type is changed. No changes to
+        program code are necessary.
+
+        * inspector/Inspector-0.1.json:
+        * inspector/Inspector-1.0.json:
+        * inspector/Inspector.json:
+
 2012-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Remove JSObject defineGetter/defineSetter lookupGetter/lookupSetter
