@@ -1,3 +1,15 @@
+2012-02-06  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Remove unused variable in PluginViewBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=77847
+
+        Reviewed by Kentaro Hara.
+
+        No changes in behavior, so no new tests.
+
+        * plugins/blackberry/PluginViewBlackBerry.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+
 2012-02-06  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Fix CallArgument type in Inspector.json

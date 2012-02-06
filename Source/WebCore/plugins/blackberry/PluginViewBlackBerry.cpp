@@ -113,7 +113,6 @@ void PluginView::updatePluginWidget()
     m_windowRect.move(root()->scrollOffset());
 
     m_clipRect = calculateClipRect();
-    IntRect f = frameRect();
 
     // Notify the plugin if it may or may not be on/offscreen.
     handleScrollEvent();
