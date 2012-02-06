@@ -584,15 +584,20 @@ BINDING_IDLS = \
 DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
 
 JS_DOM_HEADERS=$(filter-out JSMediaQueryListListener.h JSEventListener.h JSEventTarget.h, $(DOM_CLASSES:%=JS%.h))
+JS_IDL_NEEDS_REBUILDS=$(JS_DOM_HEADERS:JS%.h=%.idl-needs-rebuild) JavaScriptCallFrame.idl-needs-rebuild
 
 WEB_DOM_HEADERS :=
 ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
 WEB_DOM_HEADERS := $(filter-out WebDOMXSLTProcessor.h WebDOMEventTarget.h, $(DOM_CLASSES:%=WebDOM%.h))
+CPP_IDL_NEEDS_REBUILDS=$(WEB_DOM_HEADERS:WebDOM%.h=%.idl-needs-rebuild)
 endif # BUILDING_WX
 
 all : \
     $(JS_DOM_HEADERS) \
+    $(JS_IDL_NEEDS_REBUILDS) \
+    \
     $(WEB_DOM_HEADERS) \
+    $(CPP_IDL_NEEDS_REBUILDS) \
     \
     JSJavaScriptCallFrame.h \
     \
@@ -912,23 +917,24 @@ IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir
 
 JS_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
 
-SUPPLEMENTAL_DEPENDENCY_FILE = ./supplemental_dependency.tmp
+SUPPLEMENTAL_DEPENDENCY_FILE = ./supplemental.dep
 IDL_FILES_TMP = ./idl_files.tmp
-ADDITIONAL_IDLS = $(WebCore)/inspector/JavaScriptCallFrame.idl
 
 # The following two lines get a space character stored in a variable.
 # See <http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html>.
 space :=
 space +=
 
-$(SUPPLEMENTAL_DEPENDENCY_FILE) : $(RESOLVE_SUPPLEMENTAL_SCRIPTS) $(BINDING_IDLS) $(ADDITIONAL_IDLS)
-	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS) $(ADDITIONAL_IDLS)))" > $(IDL_FILES_TMP)
-	$(call resolve_supplemental_script, $(RESOLVE_SUPPLEMENTAL_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
+$(SUPPLEMENTAL_DEPENDENCY_FILE) : $(RESOLVE_SUPPLEMENTAL_SCRIPTS) $(BINDING_IDLS) $(WebCore)/inspector/JavaScriptCallFrame.idl
+	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS) $(WebCore)/inspector/JavaScriptCallFrame.idl))" > $(IDL_FILES_TMP)
+	$(call resolve_supplemental_script, $(RESOLVE_SUPPLEMENTAL_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@ --newBuildFlow
 	rm -f $(IDL_FILES_TMP)
 
-JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(SUPPLEMENTAL_DEPENDENCY_FILE)
-	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+%.idl-needs-rebuild : %.idl $(SUPPLEMENTAL_DEPENDENCY_FILE) $(WebCore)/bindings/scripts/update-idl-needs-rebuild.pl
+	perl $(WebCore)/bindings/scripts/update-idl-needs-rebuild.pl --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --idlFile $<
 
+JS%.h : %.idl-needs-rebuild $(JS_BINDINGS_SCRIPTS)
+	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --idlNeedsRebuildFile $< --newBuildFlow
 
 # Inspector interfaces generator
 
@@ -954,8 +960,8 @@ InjectedScriptSource.h : InjectedScriptSource.js
 ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)
 CPP_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorCPP.pm
 
-WebDOM%.h : %.idl $(CPP_BINDINGS_SCRIPTS) $(SUPPLEMENTAL_DEPENDENCY_FILE)
-	$(call generator_script, $(CPP_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_CPP" --generator CPP --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+WebDOM%.h : %.idl-needs-rebuild $(CPP_BINDINGS_SCRIPTS)
+	$(call generator_script, $(CPP_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_CPP" --generator CPP --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE)  --idlNeedsRebuildFile $< --newBuildFlow
 endif # BUILDING_WX
 
 # ------------------------
@@ -965,8 +971,9 @@ endif # BUILDING_WX
 ifeq ($(OS),MACOS)
 
 OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMDOMMimeType.h DOMDOMPlugin.h,$(DOM_CLASSES:%=DOM%.h))
+OBJC_IDL_NEEDS_REBUILDS=$(OBJC_DOM_HEADERS:DOM%.h=%.idl-needs-rebuild)
 
-all : $(OBJC_DOM_HEADERS)
+all : $(OBJC_DOM_HEADERS) $(OBJC_IDL_NEEDS_REBUILDS)
 
 all : CharsetData.cpp
 
@@ -997,8 +1004,8 @@ endif # installhdrs
 # Objective-C bindings
 
 DOM_BINDINGS_SCRIPTS = $(GENERATE_BINDING_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm
-DOM%.h : %.idl $(DOM_BINDINGS_SCRIPTS) $(SUPPLEMENTAL_DEPENDENCY_FILE) bindings/objc/PublicDOMInterfaces.h
-	$(call generator_script, $(DOM_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+DOM%.h : %.idl-needs-rebuild $(DOM_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
+	$(call generator_script, $(DOM_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --idlNeedsRebuildFile $< --newBuildFlow
 
 -include $(OBJC_DOM_HEADERS:.h=.dep)
 

@@ -1,3 +1,55 @@
+2012-02-06  Kentaro Hara  <haraken@chromium.org>
+
+        In AppleWebKit, stop rebuilding IDLs that need not to be rebuilt
+        https://bugs.webkit.org/show_bug.cgi?id=77510
+
+        Reviewed by Adam Barth.
+
+        Currently, if any IDL file is updated, all IDL files are rebuilt.
+        This patch stops rebuilding IDL files which are not modified nor
+        whose supplemental dependencies are not changed.
+
+        The new build flow is as follows:
+
+            supplemental.dep : $(ALL_IDLS)
+                perl resolve-supplemental.pl ...
+
+            %.idl-needs-rebuild : %.idl supplemental.dep
+                perl update-idl-needs-rebuild.pl ...
+
+            JS%.cpp : %.idl-needs-rebuild
+                perl generate-bindings.pl ...
+
+        resolve-supplemental.pl generates the following supplemental.dep.
+        The number in () is the last access timestamp of the file.
+
+            A.idl(1200)
+            B.idl(1000) B-supplemental1.idl(800) B-supplemental2.idl(1200)
+            C.idl(1000)
+
+        update-idl-needs-rebuild.pl for X.idl touches X.idl-needs-rebuild,
+        if X.idl-needs-rebuild is older than X.idl or the IDL files which are
+        supplementing X.idl. For example, if the timestamps of A.idl-needs-rebuild,
+        B.idl-needs-rebuild and C.idl-needs-rebuild are all 1000, then A.idl-needs-rebuild
+        and B.idl-needs-rebuild will be touched.
+
+        Even if no IDL files are modified, update-idl-needs-rebuild.pl can run for all IDL files,
+        but generate-bindings.pl won't run. If any IDL file is updated, resolve-supplemental.pl
+        will run once, update-idl-needs-rebuild.pl will run for all IDL files, and
+        generate-bindings.pl will run for the IDL files which are modified or whose
+        dependencies are changed.
+
+        No tests. I manually confirmed the followings:
+        - Touch Element.idl, then only Element.idl is rebuilt
+        - Touch DOMWindow.idl, then only DOMWindow.idl is rebuilt
+        - Touch DOMWindowWebAudio.idl, then only DOMWindow.idl and DOMWindowWebAudio.idl are rebuilt
+
+        * DerivedSources.make: Modified the build flow as described above.
+        * bindings/scripts/generate-bindings.pl: Modified to read an IDL file path from .idl-needs-rebuild.
+        * bindings/scripts/update-idl-needs-rebuild.pl: Added. Touches X.idl-needs-rebuild if
+        the X.idl-needs-rebuild is older than X.idl or the IDL files which are supplementing X.idl.
+        (touch):
+
 2012-02-06  Wei James  <james.wei@intel.com>
 
         AudioBus need to support stereo->mono down mix in copyFrom sumFrom etc.
