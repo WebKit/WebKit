@@ -1,3 +1,22 @@
+2012-02-06  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] Non-supported about: operations never stops loading
+        https://bugs.webkit.org/show_bug.cgi?id=76366
+
+        Reviewed by Rob Buis.
+
+        If user typed a non-supported "about:" scheme such as "about:nonsupport",
+        the loadAboutURL() function in NetworkManger should recognize and handle it as 
+        an error of invalid url.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::loadAboutURL):
+        (WebCore::NetworkJob::handleAbout):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+
 2012-02-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Remove unused disabledComputedProperties from methods in StylesSidebarPane

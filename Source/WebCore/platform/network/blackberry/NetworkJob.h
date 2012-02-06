@@ -60,7 +60,7 @@ public:
     bool isCancelled() const { return m_cancelled; }
     bool clientIsOk() const { return !m_cancelled && m_handle && m_handle->client(); }
     void loadDataURL() { m_loadDataTimer.startOneShot(0); }
-    bool loadAboutURL();
+    void loadAboutURL();
     int cancelJob();
     bool isDeferringLoading() const { return m_deferLoadingCount > 0; }
     void updateDeferLoadingCount(int delta);

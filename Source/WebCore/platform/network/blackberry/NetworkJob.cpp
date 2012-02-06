@@ -157,30 +157,9 @@ bool NetworkJob::initialize(int playerId,
     return true;
 }
 
-bool NetworkJob::loadAboutURL()
+void NetworkJob::loadAboutURL()
 {
-    // First 6 chars are "about:".
-    String aboutWhat(m_response.url().string().substring(6));
-
-    if (!aboutWhat.isEmpty()
-            && !equalIgnoringCase(aboutWhat, "blank")
-            && !equalIgnoringCase(aboutWhat, "credits")
-#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-            && !aboutWhat.startsWith("cache?query=", false)
-            && !equalIgnoringCase(aboutWhat, "cache")
-            && !equalIgnoringCase(aboutWhat, "cache/enable")
-            && !equalIgnoringCase(aboutWhat, "cache/disable")
-            && !equalIgnoringCase(aboutWhat, "version")
-            && (!BlackBerry::Platform::debugSetting()
-                || (!equalIgnoringCase(aboutWhat, "config")
-                    && !equalIgnoringCase(aboutWhat, "build")
-                    && !equalIgnoringCase(aboutWhat, "memory")))
-#endif
-            )
-        return false;
-
     m_loadAboutTimer.startOneShot(0);
-    return true;
 }
 
 int NetworkJob::cancelJob()
@@ -979,13 +958,18 @@ void NetworkJob::handleAbout()
 #endif
     }
 
-    CString resultString = result.utf8();
-
-    notifyStatusReceived(handled ? 404 : 200, 0);
-    notifyStringHeaderReceived("Content-Length", String::number(resultString.length()));
-    notifyStringHeaderReceived("Content-Type", "text/html");
-    notifyDataReceivedPlain(resultString.data(), resultString.length());
-    notifyClose(BlackBerry::Platform::FilterStream::StatusSuccess);
+    if (handled) {
+        CString resultString = result.utf8();
+        notifyStatusReceived(404, 0);
+        notifyStringHeaderReceived("Content-Length", String::number(resultString.length()));
+        notifyStringHeaderReceived("Content-Type", "text/html");
+        notifyDataReceivedPlain(resultString.data(), resultString.length());
+        notifyClose(BlackBerry::Platform::FilterStream::StatusSuccess);
+    } else {
+        // If we can not handle it, we take it as an error of invalid URL.
+        notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl, 0);
+        notifyClose(BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl);
+    }
 }
 
 } // namespace WebCore

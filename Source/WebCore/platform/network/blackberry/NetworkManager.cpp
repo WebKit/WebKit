@@ -150,9 +150,9 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
     }
 
     if (url.protocolIs("about")) {
-        // Try to handle the url internally; if it isn't recognized, continue and pass it to the client.
-        if (networkJob->loadAboutURL())
-            return true;
+        // If the protocol matches "about", loadAboutURL should recognize and handle it.
+        networkJob->loadAboutURL();
+        return true;
     }
 
     int result = networkJob->streamOpen();
