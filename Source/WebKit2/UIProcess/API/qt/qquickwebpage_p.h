@@ -31,10 +31,6 @@ class QQuickWebView;
 class QtWebPageEventHandler;
 class QWebPreferences;
 
-namespace WebKit {
-class QtSGUpdateQueue;
-}
-
 class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
     Q_OBJECT
 public:
@@ -50,9 +46,6 @@ public:
     QTransform transformToItem() const;
 
     QtWebPageEventHandler* eventHandler() const;
-
-    // Internal. To be removed soon.
-    WebKit::QtSGUpdateQueue* sceneGraphUpdateQueue() const;
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);

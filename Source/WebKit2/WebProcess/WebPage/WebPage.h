@@ -716,7 +716,6 @@ private:
 #endif
 
 #if USE(TILED_BACKING_STORE)
-    WebCore::IntSize m_resizesToContentsLayoutSize;
     WebCore::IntSize m_viewportSize;
 #endif
 

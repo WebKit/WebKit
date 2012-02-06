@@ -130,14 +130,6 @@ private:
 #if PLATFORM(MAC)
     virtual void didUpdateGeometry() { }
 #endif
-#if USE(TILED_BACKING_STORE)
-    virtual void snapshotTaken(const UpdateInfo&) { }
-    virtual void createTile(int tileID, const UpdateInfo& updateInfo) { }
-    virtual void updateTile(int tileID, const UpdateInfo& updateInfo) { }
-    virtual void didRenderFrame() { }
-    virtual void removeTile(int tileID) { }
-    virtual void allTileUpdatesProcessed() { }
-#endif
 };
 
 } // namespace WebKit

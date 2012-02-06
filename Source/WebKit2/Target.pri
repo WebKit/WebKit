@@ -211,7 +211,6 @@ HEADERS += \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
     UIProcess/TextChecker.h \
-    UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
     UIProcess/WebBackForwardList.h \
@@ -267,8 +266,6 @@ HEADERS += \
     UIProcess/qt/QtWebPageLoadClient.h \
     UIProcess/qt/QtWebPagePolicyClient.h \
     UIProcess/qt/QtWebPageUIClient.h \
-    UIProcess/qt/QtSGUpdateQueue.h \
-    UIProcess/qt/QtSGTileNode.h \
     UIProcess/qt/QtViewportInteractionEngine.h \
     UIProcess/qt/QtWebUndoController.h \
     UIProcess/qt/QtWebIconDatabaseClient.h \
@@ -541,7 +538,6 @@ SOURCES += \
     UIProcess/Plugins/qt/PluginProcessProxyQt.cpp \
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
     UIProcess/ResponsivenessTimer.cpp \
-    UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebApplicationCacheManagerProxy.cpp \
     UIProcess/WebBackForwardList.cpp \
@@ -597,9 +593,6 @@ SOURCES += \
     UIProcess/qt/QtWebPageLoadClient.cpp \
     UIProcess/qt/QtWebPagePolicyClient.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
-    UIProcess/qt/QtSGUpdateQueue.cpp \
-    UIProcess/qt/QtSGTileNode.cpp \
-    UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/QtViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
@@ -704,7 +697,6 @@ SOURCES += \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp \
-    WebProcess/WebPage/TiledDrawingArea.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebFrame.cpp \

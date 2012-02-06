@@ -106,15 +106,6 @@ private:
     // Used by TiledCoreAnimationDrawingArea.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) { }
 #endif
-
-#if USE(TILED_BACKING_STORE)
-    virtual void setSize(const WebCore::IntSize& viewSize) { }
-    virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float) { }
-    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
-    virtual void setContentsScale(float scale) { }
-    virtual void renderNextFrame() { }
-    virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect) { }
-#endif
 };
 
 } // namespace WebKit

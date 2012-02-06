@@ -219,7 +219,6 @@ SET(WebKit2_SOURCES
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
     UIProcess/ResponsivenessTimer.cpp
-    UIProcess/TiledDrawingAreaProxy.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp
@@ -373,7 +372,6 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/FindController.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
-    WebProcess/WebPage/TiledDrawingArea.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebUndoStep.cpp

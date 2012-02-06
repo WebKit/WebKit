@@ -1,3 +1,40 @@
+2012-02-03  Zalan Bujtas  <zbujtas@gmail.com>  and  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Remove TiledDrawingArea and dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=71681
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tiled drawing surface functionality got converted to LayerTree.
+        TiledDrawingArea and its dependencies are not used by any port anymore.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Shared/DrawingAreaInfo.h:
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/TiledDrawingAreaProxy.cpp: Removed.
+        * UIProcess/TiledDrawingAreaProxy.h: Removed.
+        * UIProcess/qt/QtSGTileNode.cpp: Removed.
+        * UIProcess/qt/QtSGTileNode.h: Removed.
+        * UIProcess/qt/QtSGUpdateQueue.cpp: Removed.
+        * UIProcess/qt/QtSGUpdateQueue.h: Removed.
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp: Removed.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/TiledDrawingArea.cpp: Removed.
+        * WebProcess/WebPage/TiledDrawingArea.h: Removed.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-02-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Don't version QtWebKit.experimental.

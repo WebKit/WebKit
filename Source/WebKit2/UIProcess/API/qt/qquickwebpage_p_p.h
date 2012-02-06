@@ -21,7 +21,6 @@
 #ifndef qquickwebpage_p_p_h
 #define qquickwebpage_p_p_h
 
-#include "QtSGUpdateQueue.h"
 #include "qquickwebpage_p.h"
 #include <QTransform>
 
@@ -50,7 +49,6 @@ public:
     QQuickWebPage* const q;
     QQuickWebView* const viewportItem;
     WebKit::WebPageProxy* webPageProxy;
-    WebKit::QtSGUpdateQueue sgUpdateQueue;
     bool paintingIsInitialized;
     QSGNode* m_paintNode;
 

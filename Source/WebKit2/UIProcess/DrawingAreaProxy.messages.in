@@ -32,12 +32,4 @@ messages -> DrawingAreaProxy {
     // Used by TiledCoreAnimationDrawingAreaProxy.
     DidUpdateGeometry()
 #endif
-
-#if USE(TILED_BACKING_STORE)
-    CreateTile(int tileID, WebKit::UpdateInfo updateInfo)
-    UpdateTile(int tileID, WebKit::UpdateInfo updateInfo)
-    DidRenderFrame()
-    RemoveTile(int tileID)
-    SnapshotTaken(WebKit::UpdateInfo updateInfo)
-#endif
 }

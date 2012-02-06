@@ -46,16 +46,10 @@ QQuickWebPage::~QQuickWebPage()
     delete d;
 }
 
-QtSGUpdateQueue *QQuickWebPage::sceneGraphUpdateQueue() const
-{
-    return &d->sgUpdateQueue;
-}
-
 QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem)
     : q(q)
     , viewportItem(viewportItem)
     , webPageProxy(0)
-    , sgUpdateQueue(q)
     , paintingIsInitialized(false)
     , m_paintNode(0)
     , contentsScale(1)
