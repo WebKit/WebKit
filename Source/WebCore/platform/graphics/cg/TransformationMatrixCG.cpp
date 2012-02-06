@@ -54,6 +54,11 @@ TransformationMatrix::operator CGAffineTransform() const
                                  narrowPrecisionToCGFloat(f()));
 }
 
+AffineTransform::AffineTransform(const CGAffineTransform& t)
+{
+    setMatrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
+}
+
 AffineTransform::operator CGAffineTransform() const
 {
     return CGAffineTransformMake(narrowPrecisionToCGFloat(a()),

@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x358
+  RenderBlock {html} at (0,0) size 800x358
+    RenderBody {body} at (8,8) size 784x342
+      RenderText {#text} at (0,0) size 762x18
+        text run at (0,0) width 762: "There should be no red displayed on the screen, and the patterns should not change when the browser window is resized."
+      RenderBR {br} at (762,0) size 0x18
+      RenderBR {br} at (0,18) size 0x18
+      RenderSVGRoot {svg} at (8,44) size 202x203
+        RenderSVGContainer {g} at (9,45) size 200x200
+          RenderSVGRect {rect} at (9,145) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=100.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (109,45) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=100.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (9,145) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (109,45) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderText {#text} at (202,324) size 4x18
+        text run at (202,324) width 4: " "
+      RenderSVGRoot {svg} at (214,44) size 202x287
+        RenderSVGText {text} at (5,266) size 81x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 81x18
+            chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 11 width 81.00: "+Transforms"
+        RenderSVGContainer {g} at (215,145) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+          RenderSVGRect {rect} at (215,145) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (215,145) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGContainer {g} at (315,45) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+          RenderSVGRect {rect} at (315,45) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (315,45) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+            RenderSVGRect {rect} at (215,45) size 100x25 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=25.00]
+            RenderSVGRect {rect} at (215,70) size 100x25 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=25.00] [width=100.00] [height=25.00]
+      RenderText {#text} at (408,324) size 4x18
+        text run at (408,324) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (420,44) size 202x302
+  RenderSVGRoot {svg} at (420,44) size 202x287
+    RenderSVGText {text} at (5,266) size 169x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 169x18
+        chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 24 width 169.00: "+Accelerated Compositing"
+    RenderSVGContainer {g} at (421,45) size 200x200
+      RenderSVGRect {rect} at (421,145) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (521,45) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]

@@ -63,6 +63,10 @@ public:
     AffineTransform();
     AffineTransform(double a, double b, double c, double d, double e, double f);
 
+#if USE(CG)
+    AffineTransform(const CGAffineTransform&);
+#endif
+
     void setMatrix(double a, double b, double c, double d, double e, double f);
 
     void map(double x, double y, double& x2, double& y2) const;
