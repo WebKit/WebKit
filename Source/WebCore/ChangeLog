@@ -1,3 +1,9 @@
+2012-02-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed syntax fix.
+
+        * English.lproj/localizedStrings.js:
+
 2012-02-05  Andreas Kling  <awesomekling@apple.com>
 
         Swedish buildfix.
