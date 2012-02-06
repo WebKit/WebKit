@@ -26,7 +26,6 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
-#include "IntSize.h"
 #include "GraphicsLayer.h"
 #include "GraphicsTypes3D.h"
 #include "PlatformString.h"
@@ -93,6 +92,8 @@ class HostWindow;
 class Image;
 class ImageBuffer;
 class ImageData;
+class IntRect;
+class IntSize;
 #if USE(CAIRO)
 class PlatformContextCairo;
 #endif
@@ -908,6 +909,9 @@ public:
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
 #endif
 
+    bool reshapeFBOs(const IntSize&);
+    void resolveMultisamplingIfNecessary(const IntRect&);
+
     int m_currentWidth, m_currentHeight;
     bool isResourceSafe();
 
@@ -942,6 +946,10 @@ public:
     GC3Duint m_depthBuffer;
     GC3Duint m_stencilBuffer;
 #else
+#if USE(OPENGL_ES_2)
+    GC3Duint m_depthBuffer;
+    GC3Duint m_stencilBuffer;
+#endif
     GC3Duint m_depthStencilBuffer;
 #endif
     bool m_layerComposited;

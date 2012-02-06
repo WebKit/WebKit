@@ -1,3 +1,67 @@
+2012-02-06  ChangSeok Oh  <shivamidow@gmail.com>
+
+        Initial implementation of GraphicsContext3DOpenGLES.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=76248
+
+        Reviewed by Martin Robinson.
+
+        Implemented APIs in GraphicsContext3DOpenGLES.cpp according to the GLES spec. roughly.
+        But no way to run these codes right now, because they need an extra port
+        specific implementation to work. I plan to add these extra codes for the GTK port
+        in the next patch. And also this patch doesn't support anti-aliasing yet. Another bug
+        will deal with it.
+        Moved some APIs in GraphicsContext3DOpenGLES.cpp to GraphicsContext3DCommon.cpp.
+        It looks it could be shared between gl and gles.
+        Two helper functions are added to avoid code duplication in GraphicsContext3D.
+        Added a missing period at the end of comment lines.
+
+        No new tests required.
+        We'll be able to verify this patch by using the existing webgl test cases.
+
+        * platform/graphics/GraphicsContext3D.h: Add build flag to access stencilBuffer & depthBuffer for gles.
+        (WebCore):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs): Helper function extracted from GC3D::reshape to resize regular & multisampled FBOs.
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary): Helper function to resolve multisampling.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::validateAttributes): Add condition to disable antialiasing & packedDepthStencilExtension for GLES.
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+
+        Following APIs looked shareable so that moved into GC3DOpenGLCommon.cpp.
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore):
+        (WebCore::GraphicsContext3D::readRenderingResults):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::copyTexImage2D):
+        (WebCore::GraphicsContext3D::copyTexSubImage2D):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::readPixels):
+
+        Added a missing period at the end of comment line.
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::uniform2fv):
+        (WebCore::GraphicsContext3D::uniform3fv):
+        (WebCore::GraphicsContext3D::uniform4fv):
+        (WebCore::GraphicsContext3D::uniform2iv):
+        (WebCore::GraphicsContext3D::uniform3iv):
+        (WebCore::GraphicsContext3D::uniform4iv):
+        (WebCore::GraphicsContext3D::uniformMatrix2fv):
+        (WebCore::GraphicsContext3D::uniformMatrix3fv):
+        (WebCore::GraphicsContext3D::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs): Same with the above.
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary): Same with the above.
+
+        Brief explanation about what the differences are between gl and gles.
+        (WebCore::GraphicsContext3D::renderbufferStorage): Removed codes for converting GLES parameter to GL parameter.
+        (WebCore::GraphicsContext3D::getIntegerv): Removed codes that emulate GLES.
+        (WebCore::GraphicsContext3D::texImage2D): Removed codes for converting GLES parameter to GL parameter.
+
 2012-02-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Meta] Allow emulation of touch events

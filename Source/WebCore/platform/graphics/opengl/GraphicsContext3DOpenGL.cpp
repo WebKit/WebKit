@@ -30,6 +30,8 @@
 #include "GraphicsContext3D.h"
 
 #include "Extensions3DOpenGL.h"
+#include "IntRect.h"
+#include "IntSize.h"
 #include "NotImplemented.h"
 
 #if PLATFORM(MAC)
@@ -43,58 +45,10 @@
 
 namespace WebCore {
 
-void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
+bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
-    if (pixelsSize < m_currentWidth * m_currentHeight * 4)
-        return;
-
-    makeContextCurrent();
-
-    bool mustRestoreFBO = false;
-    if (m_attrs.antialias) {
-        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        mustRestoreFBO = true;
-    } else {
-        if (m_boundFBO != m_fbo) {
-            mustRestoreFBO = true;
-            ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        }
-    }
-
-    GLint packAlignment = 4;
-    bool mustRestorePackAlignment = false;
-    ::glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
-    if (packAlignment > 4) {
-        ::glPixelStorei(GL_PACK_ALIGNMENT, 4);
-        mustRestorePackAlignment = true;
-    }
-
-    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
-
-    if (mustRestorePackAlignment)
-        ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
-
-    if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-}
-
-void GraphicsContext3D::reshape(int width, int height)
-{
-    if (!platformGraphicsContext3D())
-        return;
-
-    if (width == m_currentWidth && height == m_currentHeight)
-        return;
-    
-    m_currentWidth = width;
-    m_currentHeight = height;
-    
-    makeContextCurrent();
-    validateAttributes();
-
+    const int width = size.width();
+    const int height = size.height();
     GLuint colorFormat, internalDepthStencilFormat = 0;
     if (m_attrs.alpha) {
         m_internalColorFormat = GL_RGBA8;
@@ -108,7 +62,7 @@ void GraphicsContext3D::reshape(int width, int height)
         // See GraphicsContext3D::validateAttributes.
 
         Extensions3D* extensions = getExtensions();
-        // Use a 24 bit depth buffer where we know we have it
+        // Use a 24 bit depth buffer where we know we have it.
         if (extensions->supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
@@ -117,7 +71,7 @@ void GraphicsContext3D::reshape(int width, int height)
 
     bool mustRestoreFBO = false;
 
-    // resize multisample FBO
+    // Resize multisample FBO.
     if (m_attrs.antialias) {
         GLint maxSampleCount;
         ::glGetIntegerv(GL_MAX_SAMPLES_EXT, &maxSampleCount);
@@ -177,166 +131,14 @@ void GraphicsContext3D::reshape(int width, int height)
             mustRestoreFBO = false;
     }
 
-    // Initialize renderbuffers to 0.
-    GLfloat clearColor[] = {0, 0, 0, 0}, clearDepth = 0;
-    GLint clearStencil = 0;
-    GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE;
-    GLuint stencilMask = 0xffffffff;
-    GLboolean isScissorEnabled = GL_FALSE;
-    GLboolean isDitherEnabled = GL_FALSE;
-    GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
-    ::glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
-    ::glClearColor(0, 0, 0, 0);
-    ::glGetBooleanv(GL_COLOR_WRITEMASK, colorMask);
-    ::glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    if (m_attrs.depth) {
-        ::glGetFloatv(GL_DEPTH_CLEAR_VALUE, &clearDepth);
-        ::glClearDepth(1);
-        ::glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
-        ::glDepthMask(GL_TRUE);
-        clearMask |= GL_DEPTH_BUFFER_BIT;
-    }
-    if (m_attrs.stencil) {
-        ::glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &clearStencil);
-        ::glClearStencil(0);
-        ::glGetIntegerv(GL_STENCIL_WRITEMASK, reinterpret_cast<GLint*>(&stencilMask));
-        ::glStencilMaskSeparate(GL_FRONT, 0xffffffff);
-        clearMask |= GL_STENCIL_BUFFER_BIT;
-    }
-    isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
-    ::glDisable(GL_SCISSOR_TEST);
-    isDitherEnabled = ::glIsEnabled(GL_DITHER);
-    ::glDisable(GL_DITHER);
-
-    ::glClear(clearMask);
-
-    ::glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    ::glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-    if (m_attrs.depth) {
-        ::glClearDepth(clearDepth);
-        ::glDepthMask(depthMask);
-    }
-    if (m_attrs.stencil) {
-        ::glClearStencil(clearStencil);
-        ::glStencilMaskSeparate(GL_FRONT, stencilMask);
-    }
-    if (isScissorEnabled)
-        ::glEnable(GL_SCISSOR_TEST);
-    else
-        ::glDisable(GL_SCISSOR_TEST);
-    if (isDitherEnabled)
-        ::glEnable(GL_DITHER);
-    else
-        ::glDisable(GL_DITHER);
-
-    if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-
-    ::glFlush();
+    return mustRestoreFBO;
 }
 
-void GraphicsContext3D::prepareTexture()
+void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
-    if (m_layerComposited)
-        return;
-    makeContextCurrent();
-    if (m_attrs.antialias) {
-        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    }
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    ::glActiveTexture(GL_TEXTURE0);
-    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-    ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
-    ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
-    ::glActiveTexture(m_activeTexture);
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-    ::glFinish();
-    m_layerComposited = true;
-}
-
-void GraphicsContext3D::bindFramebuffer(GC3Denum target, Platform3DObject buffer)
-{
-    makeContextCurrent();
-    GLuint fbo;
-    if (buffer)
-        fbo = buffer;
-    else
-        fbo = (m_attrs.antialias ? m_multisampleFBO : m_fbo);
-    if (fbo != m_boundFBO) {
-        ::glBindFramebufferEXT(target, fbo);
-        m_boundFBO = fbo;
-    }
-}
-
-void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
-{
-    makeContextCurrent();
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
-        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        ::glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    }
-    ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-}
-
-void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
-{
-    makeContextCurrent();
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
-        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        ::glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    }
-    ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-}
-
-bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
-{
-    if (!program) {
-        synthesizeGLError(INVALID_VALUE);
-        return false;
-    }
-    makeContextCurrent();
-    GLint maxUniformSize = 0;
-    ::glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
-    GLchar name[maxUniformSize]; // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination
-    GLsizei nameLength = 0;
-    GLint size = 0;
-    GLenum type = 0;
-    ::glGetActiveUniform(program, index, maxUniformSize, &nameLength, &size, &type, name);
-    if (!nameLength)
-        return false;
-    info.name = String(name, nameLength);
-    info.type = type;
-    info.size = size;
-    return true;
-}
-
-
-void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
-{
-    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
-    // all previous rendering calls should be done before reading pixels.
-    makeContextCurrent();
-    ::glFlush();
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
-        ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        ::glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        ::glFlush();
-    }
-    ::glReadPixels(x, y, width, height, format, type, data);
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+    ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+    ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+    ::glBlitFramebufferEXT(rect.x(), rect.y(), rect.maxX(), rect.maxY(), rect.x(), rect.y(), rect.maxX(), rect.maxY(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
