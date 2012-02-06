@@ -38,13 +38,17 @@ WebInspector.SettingsScreen = function()
 
     this._leftColumnElement = document.createElement("td");
     this._rightColumnElement = document.createElement("td");
+    var p;
 
-    if (Preferences.showDockToRight) {
-        var p = this._appendSection(WebInspector.UIString("General"));
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
+    if (Preferences.showDockToRight || Preferences.exposeDisableCache) {
+        p = this._appendSection(WebInspector.UIString("General"));
+        if (Preferences.showDockToRight)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
+        if (Preferences.exposeDisableCache)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     }
 
-    var p = this._appendSection(WebInspector.UIString("Elements"));
+    p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
 
     p = this._appendSection(WebInspector.UIString("Styles"));
@@ -63,10 +67,9 @@ WebInspector.SettingsScreen = function()
             [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
         ], WebInspector.settings.textEditorIndent));
 
-    p = this._appendSection(WebInspector.UIString("Network"), true);
-    if (Preferences.exposeDisableCache)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
+    p = this._appendSection(WebInspector.UIString("User Agent"), true);
     p.appendChild(this._createUserActionControl());
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
 
     p = this._appendSection(WebInspector.UIString("Scripts"), true);
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show script folders"), WebInspector.settings.showScriptFolders));

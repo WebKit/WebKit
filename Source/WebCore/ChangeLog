@@ -1,3 +1,31 @@
+2012-02-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Meta] Allow emulation of touch events
+        https://bugs.webkit.org/show_bug.cgi?id=77096
+
+        Reviewed by Pavel Feldman.
+
+        This is the inspector part of the change, core part implementation tracked in bug 77105.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (DOMAgentState):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::restore):
+        (WebCore):
+        (WebCore::InspectorDOMAgent::updateTouchEventEmulationInDocuments):
+        (WebCore::InspectorDOMAgent::setTouchEmulationEnabled):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._captureDOM):
+        (WebInspector.DOMAgent.prototype._emulateTouchEventsChanged):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2012-02-06  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] Non-supported about: operations never stops loading

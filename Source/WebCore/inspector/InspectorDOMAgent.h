@@ -142,6 +142,7 @@ public:
     virtual void highlightNode(ErrorString*, int nodeId, const RefPtr<InspectorObject>& highlightConfig);
     virtual void highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
     virtual void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId);
+    virtual void setTouchEmulationEnabled(ErrorString*, bool);
 
     Node* highlightedNode() const;
 
@@ -215,6 +216,10 @@ private:
     Node* nodeForPath(const String& path);
 
     void discardBindings();
+
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchEventEmulationInPage(bool);
+#endif
 
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;

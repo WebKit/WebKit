@@ -78,6 +78,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
+#include "Settings.h"
 #include "StylePropertySet.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -96,6 +97,10 @@ namespace WebCore {
 
 namespace DOMAgentState {
 static const char documentRequested[] = "documentRequested";
+
+#if ENABLE(TOUCH_EVENTS)
+static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
+#endif
 };
 
 static const size_t maxTextSize = 10000;
@@ -213,6 +218,9 @@ void InspectorDOMAgent::clearFrontend()
     m_frontend = 0;
     m_instrumentingAgents->setInspectorDOMAgent(0);
     m_state->setBoolean(DOMAgentState::documentRequested, false);
+#if ENABLE(TOUCH_EVENTS)
+    updateTouchEventEmulationInPage(false);
+#endif
     reset();
 }
 
@@ -221,6 +229,9 @@ void InspectorDOMAgent::restore()
     // Reset document to avoid early return from setDocument.
     m_document = 0;
     setDocument(m_pageAgent->mainFrame()->document());
+#if ENABLE(TOUCH_EVENTS)
+    updateTouchEventEmulationInPage(m_state->getBoolean(DOMAgentState::touchEventEmulationEnabled));
+#endif
 }
 
 Vector<Document*> InspectorDOMAgent::documents()
@@ -390,6 +401,14 @@ void InspectorDOMAgent::discardBindings()
     releaseDanglingNodes();
     m_childrenRequested.clear();
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void InspectorDOMAgent::updateTouchEventEmulationInPage(bool enabled)
+{
+    m_state->setBoolean(DOMAgentState::touchEventEmulationEnabled, enabled);
+    m_pageAgent->mainFrame()->settings()->setTouchEventEmulationEnabled(enabled);
+}
+#endif
 
 Node* InspectorDOMAgent::nodeForId(int id)
 {
@@ -1039,6 +1058,19 @@ void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElement
         return;
     }
     *newNodeId = pushNodePathToFrontend(node);
+}
+
+void InspectorDOMAgent::setTouchEmulationEnabled(ErrorString* error, bool enabled)
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (m_state->getBoolean(DOMAgentState::touchEventEmulationEnabled) == enabled)
+        return;
+    UNUSED_PARAM(error);
+    updateTouchEventEmulationInPage(enabled);
+#else
+    *error = "Touch events emulation not supported";
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>& result)

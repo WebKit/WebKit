@@ -1508,6 +1508,14 @@
                     { "name": "nodeId", "$ref": "NodeId", "description": "New id of the moved node." }
                 ],
                 "description": "Moves node into the new container, places it before the given anchor."
+            },
+            {
+                "name": "setTouchEmulationEnabled",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Whether the touch event emulation should be enabled." }
+                ],
+                "description": "Toggles mouse event-based touch event emulation.",
+                "hidden": true
             }
         ],
         "events": [

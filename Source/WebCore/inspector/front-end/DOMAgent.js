@@ -662,6 +662,10 @@ WebInspector.DOMAgent = function() {
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
     if (WebInspector.experimentsSettings.freeFlowDOMEditing.isEnabled())
         new WebInspector.DOMModelResourceBinding(this);
+
+    if (WebInspector.settings.emulateTouchEvents.get())
+        this._emulateTouchEventsChanged();
+    WebInspector.settings.emulateTouchEvents.addChangeListener(this._emulateTouchEventsChanged, this);
 }
 
 WebInspector.DOMAgent.Events = {
@@ -1157,6 +1161,11 @@ WebInspector.DOMAgent.prototype = {
         }
         DOMAgent.getOuterHTML(node.ownerDocument.id, callback);
         
+    },
+
+    _emulateTouchEventsChanged: function()
+    {
+        DOMAgent.setTouchEmulationEnabled(WebInspector.settings.emulateTouchEvents.get());
     }
 }
 
