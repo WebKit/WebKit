@@ -24,6 +24,7 @@
 
 #include "config.h"
 
+#include "ManagedTexture.h"
 #include "TextureManager.h"
 
 #include <gtest/gtest.h>
@@ -241,6 +242,26 @@ TEST_F(TextureManagerTest, setPreferredMemoryLimitBytes)
     EXPECT_EQ(texturesMemorySize(maxTextures), textureManager->currentMemoryUseBytes());
     EXPECT_EQ(texturesMemorySize(maxTextures), textureManager->maxMemoryLimitBytes());
     EXPECT_EQ(texturesMemorySize(preferredTextures), textureManager->preferredMemoryLimitBytes());
+}
+
+TEST_F(TextureManagerTest, textureManagerDestroyedBeforeManagedTexture)
+{
+    OwnPtr<TextureManager> textureManager = createTextureManager(1, 1);
+    OwnPtr<ManagedTexture> managedTexture = ManagedTexture::create(textureManager.get());
+
+    IntSize size(50, 50);
+    unsigned format = GraphicsContext3D::RGBA;
+
+    // Texture is initially invalid, but we should be able to reserve.
+    EXPECT_FALSE(managedTexture->isValid(size, format));
+    EXPECT_TRUE(managedTexture->reserve(size, format));
+    EXPECT_TRUE(managedTexture->isValid(size, format));
+
+    textureManager.clear();
+
+    // Deleting the manager should invalidate the texture and reservation attempts should fail.
+    EXPECT_FALSE(managedTexture->isValid(size, format));
+    EXPECT_FALSE(managedTexture->reserve(size, format));
 }
 
 } // namespace

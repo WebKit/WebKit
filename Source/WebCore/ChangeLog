@@ -1,3 +1,41 @@
+2012-02-06  James Robinson  <jamesr@chromium.org>
+
+        Support detaching TextureManager from ManagedTexture
+        https://bugs.webkit.org/show_bug.cgi?id=77655
+
+        Reviewed by Kenneth Russell.
+        Initial patch by Alok Priyadarshi.
+
+        TextureManager now holds references to the textures it manages.
+        This allows TextureManager to inform managed textures when it gets deleted
+        so that the texture that outlive the TextureManager can handle the situation gracefully.
+
+        Unit test in TextureManagerTest.cpp
+
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::ManagedTexture):
+        (WebCore::ManagedTexture::~ManagedTexture):
+        (WebCore):
+        (WebCore::ManagedTexture::managerWillDie):
+        (WebCore::ManagedTexture::isValid):
+        (WebCore::ManagedTexture::reserve):
+        (WebCore::ManagedTexture::unreserve):
+        (WebCore::ManagedTexture::steal):
+        (WebCore::ManagedTexture::reset):
+        * platform/graphics/chromium/ManagedTexture.h:
+        (WebCore::ManagedTexture::manager):
+        (ManagedTexture):
+        (WebCore::ManagedTexture::isReserved):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::~TextureManager):
+        (WebCore):
+        (WebCore::TextureManager::setPreferredMemoryLimitBytes):
+        (WebCore::TextureManager::registerTexture):
+        (WebCore::TextureManager::unregisterTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore):
+        (TextureManager):
+
 2012-02-06  Anders Carlsson  <andersca@apple.com>
 
         Wheel event handler count not updated when adding handlers to the window

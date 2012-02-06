@@ -46,13 +46,14 @@ public:
     }
     ~ManagedTexture();
 
+    void clearManager() { m_textureManager = 0; }
+
     bool isValid(const IntSize&, unsigned format);
     bool reserve(const IntSize&, unsigned format);
     void unreserve();
     bool isReserved()
     {
-        ASSERT(m_textureManager);
-        return m_textureManager->isProtected(m_token);
+        return m_textureManager && m_textureManager->isProtected(m_token);
     }
 
     void allocate(TextureAllocator*);

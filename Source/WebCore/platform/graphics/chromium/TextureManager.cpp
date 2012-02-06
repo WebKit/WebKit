@@ -29,6 +29,7 @@
 #include "TextureManager.h"
 
 #include "LayerRendererChromium.h"
+#include "ManagedTexture.h"
 
 using namespace std;
 
@@ -103,6 +104,12 @@ TextureManager::TextureManager(size_t maxMemoryLimitBytes, size_t preferredMemor
 {
 }
 
+TextureManager::~TextureManager()
+{
+    for (HashSet<ManagedTexture*>::iterator it = m_registeredTextures.begin(); it != m_registeredTextures.end(); ++it)
+        (*it)->clearManager();
+}
+
 void TextureManager::setMaxMemoryLimitBytes(size_t memoryLimitBytes)
 {
     reduceMemoryToLimit(memoryLimitBytes);
@@ -113,6 +120,22 @@ void TextureManager::setMaxMemoryLimitBytes(size_t memoryLimitBytes)
 void TextureManager::setPreferredMemoryLimitBytes(size_t memoryLimitBytes)
 {
     m_preferredMemoryLimitBytes = memoryLimitBytes;
+}
+
+void TextureManager::registerTexture(ManagedTexture* texture)
+{
+    ASSERT(texture);
+    ASSERT(!m_registeredTextures.contains(texture));
+
+    m_registeredTextures.add(texture);
+}
+
+void TextureManager::unregisterTexture(ManagedTexture* texture)
+{
+    ASSERT(texture);
+    ASSERT(m_registeredTextures.contains(texture));
+
+    m_registeredTextures.remove(texture);
 }
 
 TextureToken TextureManager::getToken()

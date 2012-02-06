@@ -1,3 +1,14 @@
+2012-02-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Support detaching TextureManager from ManagedTexture
+        https://bugs.webkit.org/show_bug.cgi?id=77655
+
+        Adds unit test for destroying a TextureManager while ManagedTextures are still alive referring to it.
+
+        Reviewed by Kenneth Russell.
+
+        * tests/TextureManagerTest.cpp:
+
 2012-02-06  Matthew Delaney  <mdelaney@apple.com>
 
         toDataURL() uses stale data after putImageData()
