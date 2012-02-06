@@ -52,7 +52,7 @@ private:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
     // overload from HTMLElement
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 #if ENABLE(STYLE_SCOPED)

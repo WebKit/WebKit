@@ -37,7 +37,7 @@ public:
 private:
     HTMLTableCaptionElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } // namespace

@@ -85,7 +85,7 @@ protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual void updatePlaceholderText() = 0;
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
     

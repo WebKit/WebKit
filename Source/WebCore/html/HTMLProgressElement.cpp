@@ -75,14 +75,14 @@ const AtomicString& HTMLProgressElement::formControlType() const
     return progress;
 }
 
-void HTMLProgressElement::parseMappedAttribute(Attribute* attribute)
+void HTMLProgressElement::parseAttribute(Attribute* attribute)
 {
     if (attribute->name() == valueAttr)
         didElementStateChange();
     else if (attribute->name() == maxAttr)
         didElementStateChange();
     else
-        HTMLFormControlElement::parseMappedAttribute(attribute);
+        HTMLFormControlElement::parseAttribute(attribute);
 }
 
 void HTMLProgressElement::attach()

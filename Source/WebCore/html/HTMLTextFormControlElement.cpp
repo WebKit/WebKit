@@ -421,7 +421,7 @@ void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
     }
 }
 
-void HTMLTextFormControlElement::parseMappedAttribute(Attribute* attr)
+void HTMLTextFormControlElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == placeholderAttr)
         updatePlaceholderVisibility(true);
@@ -430,7 +430,7 @@ void HTMLTextFormControlElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == onchangeAttr)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     else
-        HTMLFormControlElementWithState::parseMappedAttribute(attr);
+        HTMLFormControlElementWithState::parseAttribute(attr);
 }
 
 void HTMLTextFormControlElement::notifyFormStateChanged()

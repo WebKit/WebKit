@@ -109,7 +109,7 @@ static int cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
     return propertyNameToIdMap->get(attrName.localName().impl());
 }
 
-void SVGFontFaceElement::parseMappedAttribute(Attribute* attr)
+void SVGFontFaceElement::parseAttribute(Attribute* attr)
 {    
     int propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
@@ -118,7 +118,7 @@ void SVGFontFaceElement::parseMappedAttribute(Attribute* attr)
         return;
     }
     
-    SVGElement::parseMappedAttribute(attr);
+    SVGElement::parseAttribute(attr);
 }
 
 unsigned SVGFontFaceElement::unitsPerEm() const

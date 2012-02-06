@@ -108,7 +108,7 @@ public:
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void finishParsingChildren();
     virtual void attributeChanged(Attribute*) OVERRIDE;

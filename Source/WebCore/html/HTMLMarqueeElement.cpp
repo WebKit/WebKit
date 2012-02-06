@@ -51,7 +51,7 @@ PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& t
     return adoptRef(new HTMLMarqueeElement(tagName, document));
 }
 
-void HTMLMarqueeElement::parseMappedAttribute(Attribute* attr)
+void HTMLMarqueeElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())
@@ -111,7 +111,7 @@ void HTMLMarqueeElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == truespeedAttr)
         m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLMarqueeElement::start()

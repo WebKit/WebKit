@@ -125,13 +125,13 @@ bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
+void SVGMarkerElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
     const AtomicString& value = attr->value();
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::markerUnitsAttr) {
         SVGMarkerUnitsType propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
@@ -151,9 +151,9 @@ void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
             setOrientTypeBaseValue(orientType);
         if (orientType == SVGMarkerOrientAngle)
             setOrientAngleBaseValue(angle);
-    } else if (SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-             || SVGFitToViewBox::parseMappedAttribute(document(), attr)) {
+    } else if (SVGLangSpace::parseAttribute(attr)
+             || SVGExternalResourcesRequired::parseAttribute(attr)
+             || SVGFitToViewBox::parseAttribute(document(), attr)) {
     } else
         ASSERT_NOT_REACHED();
 

@@ -53,7 +53,7 @@ private:
 
     void recalculateItemCount();
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     int m_start;
     unsigned m_itemCount;

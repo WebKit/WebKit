@@ -93,7 +93,7 @@ private:
     virtual bool isTextFormControl() const { return true; }
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();

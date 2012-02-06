@@ -109,12 +109,12 @@ bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPatternElement::parseMappedAttribute(Attribute* attr)
+void SVGPatternElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::patternUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
         if (propertyValue > 0)
@@ -141,11 +141,11 @@ void SVGPatternElement::parseMappedAttribute(Attribute* attr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
     else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGURIReference::parseMappedAttribute(attr)
-             || SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-             || SVGFitToViewBox::parseMappedAttribute(document(), attr)) {
+    else if (SVGURIReference::parseAttribute(attr)
+             || SVGTests::parseAttribute(attr)
+             || SVGLangSpace::parseAttribute(attr)
+             || SVGExternalResourcesRequired::parseAttribute(attr)
+             || SVGFitToViewBox::parseAttribute(document(), attr)) {
     } else
         ASSERT_NOT_REACHED();
 

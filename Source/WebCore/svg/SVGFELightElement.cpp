@@ -106,10 +106,10 @@ bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFELightElement::parseMappedAttribute(Attribute* attr)
+void SVGFELightElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
         return;
     }
 

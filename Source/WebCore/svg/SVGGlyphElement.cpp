@@ -53,12 +53,12 @@ void SVGGlyphElement::invalidateGlyphCache()
     }
 }
 
-void SVGGlyphElement::parseMappedAttribute(Attribute* attr)
+void SVGGlyphElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::dAttr)
         invalidateGlyphCache();
     else
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
 }
 
 void SVGGlyphElement::insertedIntoDocument()

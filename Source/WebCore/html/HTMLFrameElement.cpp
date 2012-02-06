@@ -82,7 +82,7 @@ void HTMLFrameElement::attach()
     }
 }
 
-void HTMLFrameElement::parseMappedAttribute(Attribute* attr)
+void HTMLFrameElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == frameborderAttr) {
         m_frameBorder = attr->value().toInt();
@@ -92,7 +92,7 @@ void HTMLFrameElement::parseMappedAttribute(Attribute* attr)
         if (renderer())
             renderer()->updateFromElement();
     } else
-        HTMLFrameElementBase::parseMappedAttribute(attr);
+        HTMLFrameElementBase::parseAttribute(attr);
 }
 
 } // namespace WebCore

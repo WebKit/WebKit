@@ -88,7 +88,7 @@ void HTMLTrackElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 }
 
-void HTMLTrackElement::parseMappedAttribute(Attribute* attribute)
+void HTMLTrackElement::parseAttribute(Attribute* attribute)
 {
     const QualifiedName& attrName = attribute->name();
 
@@ -97,7 +97,7 @@ void HTMLTrackElement::parseMappedAttribute(Attribute* attribute)
     else if (attrName == onerrorAttr)
         setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
     else
-        HTMLElement::parseMappedAttribute(attribute);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLTrackElement::attributeChanged(Attribute* attr)

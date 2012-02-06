@@ -75,7 +75,7 @@ int HTMLTableCellElement::cellIndex() const
     return index;
 }
 
-void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
+void HTMLTableCellElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
@@ -104,7 +104,7 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
         } else
             removeCSSProperty(CSSPropertyHeight);
     } else
-        HTMLTablePartElement::parseMappedAttribute(attr);
+        HTMLTablePartElement::parseAttribute(attr);
 }
 
 PassRefPtr<StylePropertySet> HTMLTableCellElement::additionalAttributeStyle()

@@ -72,7 +72,7 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual bool isURLAttribute(Attribute*) const;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.

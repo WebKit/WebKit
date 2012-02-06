@@ -39,7 +39,7 @@ class SVGExternalResourcesRequired {
 public:
     virtual ~SVGExternalResourcesRequired() { }
 
-    bool parseMappedAttribute(Attribute*);
+    bool parseAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 

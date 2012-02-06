@@ -42,7 +42,7 @@ PassRefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, 
     return adoptRef(new HTMLPreElement(tagName, document));
 }
 
-void HTMLPreElement::parseMappedAttribute(Attribute* attr)
+void HTMLPreElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr) {
         // FIXME: Implement this some day.  Width on a <pre> is the # of characters that
@@ -55,7 +55,7 @@ void HTMLPreElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
     } else
-        return HTMLElement::parseMappedAttribute(attr);
+        return HTMLElement::parseAttribute(attr);
 }
 
 }

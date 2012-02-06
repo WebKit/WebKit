@@ -97,10 +97,10 @@ bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& at
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
+void SVGStyledTransformableElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGStyledLocatableElement::parseMappedAttribute(attr);
+        SVGStyledLocatableElement::parseAttribute(attr);
         return;
     }
 

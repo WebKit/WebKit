@@ -53,7 +53,7 @@ public:
 private:
     HTMLTableCellElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
 

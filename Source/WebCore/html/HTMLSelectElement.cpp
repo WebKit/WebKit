@@ -256,7 +256,7 @@ void HTMLSelectElement::setValue(const String &value)
     setSelectedIndex(-1);
 }
 
-void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
+void HTMLSelectElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
         int oldSize = m_size;
@@ -288,7 +288,7 @@ void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == onchangeAttr)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     else
-        HTMLFormControlElementWithState::parseMappedAttribute(attr);
+        HTMLFormControlElementWithState::parseAttribute(attr);
 }
 
 bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const

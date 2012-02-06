@@ -120,7 +120,7 @@ bool SVGTests::isValid() const
     return true;
 }
 
-bool SVGTests::parseMappedAttribute(Attribute* attr)
+bool SVGTests::parseAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
         m_requiredFeatures.value.reset(attr->value());

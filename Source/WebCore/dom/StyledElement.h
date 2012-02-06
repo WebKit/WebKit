@@ -66,13 +66,13 @@ protected:
     }
 
     virtual void attributeChanged(Attribute*) OVERRIDE;
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*);
     virtual void copyNonAttributeProperties(const Element*);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     // classAttributeChanged() exists to share code between
-    // parseMappedAttribute (called via setAttribute()) and
+    // parseAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
 

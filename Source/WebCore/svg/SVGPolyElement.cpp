@@ -77,10 +77,10 @@ bool SVGPolyElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPolyElement::parseMappedAttribute(Attribute* attr)
+void SVGPolyElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        SVGStyledTransformableElement::parseAttribute(attr);
         return;
     }
 
@@ -97,11 +97,11 @@ void SVGPolyElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGTests::parseMappedAttribute(attr))
+    if (SVGTests::parseAttribute(attr))
         return;
-    if (SVGLangSpace::parseMappedAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attr))
         return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attr))
         return;
 
     ASSERT_NOT_REACHED();

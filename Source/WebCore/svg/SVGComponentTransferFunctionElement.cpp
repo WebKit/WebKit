@@ -75,10 +75,10 @@ bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedNa
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)
+void SVGComponentTransferFunctionElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
         return;
     }
 

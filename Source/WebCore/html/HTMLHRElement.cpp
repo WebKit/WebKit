@@ -48,7 +48,7 @@ PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLHRElement(tagName, document));
 }
 
-void HTMLHRElement::parseMappedAttribute(Attribute* attr)
+void HTMLHRElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (attr->value().isNull()) {
@@ -111,7 +111,7 @@ void HTMLHRElement::parseMappedAttribute(Attribute* attr)
             }
         }
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

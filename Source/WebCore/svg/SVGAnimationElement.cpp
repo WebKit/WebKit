@@ -157,10 +157,10 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
      
-void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
+void SVGAnimationElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGSMILElement::parseMappedAttribute(attr);
+        SVGSMILElement::parseAttribute(attr);
         return;
     }
 
@@ -193,9 +193,9 @@ void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGTests::parseMappedAttribute(attr))
+    if (SVGTests::parseAttribute(attr))
         return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attr))
         return;
 
     ASSERT_NOT_REACHED();

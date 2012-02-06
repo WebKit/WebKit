@@ -51,7 +51,7 @@ private:
 
     void focus(bool restorePreviousSelection = true);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } //namespace

@@ -35,7 +35,7 @@ private:
     SVGFETileElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 

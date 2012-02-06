@@ -187,7 +187,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseMappedAttribute(Attribute* attr)
+void HTMLOptionElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == selectedAttr) {
         // FIXME: This doesn't match what the HTML specification says.
@@ -198,7 +198,7 @@ void HTMLOptionElement::parseMappedAttribute(Attribute* attr)
         // case; we'd need to do the other work from the setSelected function.
         m_isSelected = !attr->isNull();
     } else
-        HTMLFormControlElement::parseMappedAttribute(attr);
+        HTMLFormControlElement::parseAttribute(attr);
 }
 
 String HTMLOptionElement::value() const

@@ -64,7 +64,7 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
     return true;
 }
 
-void SVGGlyphRefElement::parseMappedAttribute(Attribute* attr)
+void SVGGlyphRefElement::parseAttribute(Attribute* attr)
 {
     const UChar* startPtr = attr->value().characters();
     const UChar* endPtr = startPtr + attr->value().length();
@@ -79,9 +79,9 @@ void SVGGlyphRefElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == SVGNames::dyAttr)
         parseNumber(startPtr, endPtr, m_dy);
     else {
-        if (SVGURIReference::parseMappedAttribute(attr))
+        if (SVGURIReference::parseAttribute(attr))
             return;
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
     }
 }
 

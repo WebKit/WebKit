@@ -87,12 +87,12 @@ bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGRadialGradientElement::parseMappedAttribute(Attribute* attr)
+void SVGRadialGradientElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGGradientElement::parseMappedAttribute(attr);
+        SVGGradientElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::cxAttr)
         setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
     else if (attr->name() == SVGNames::cyAttr)

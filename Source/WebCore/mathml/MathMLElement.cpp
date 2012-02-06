@@ -48,7 +48,7 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
     return adoptRef(new MathMLElement(tagName, document));
 }
 
-void MathMLElement::parseMappedAttribute(Attribute* attr)
+void MathMLElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == mathbackgroundAttr)
         addCSSProperty(CSSPropertyBackgroundColor, attr->value());
@@ -72,7 +72,7 @@ void MathMLElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == fontfamilyAttr)
         addCSSProperty(CSSPropertyFontFamily, attr->value());
     else
-        StyledElement::parseMappedAttribute(attr);
+        StyledElement::parseAttribute(attr);
 }
     
 }

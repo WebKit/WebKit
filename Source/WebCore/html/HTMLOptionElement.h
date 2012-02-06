@@ -74,7 +74,7 @@ private:
 
     virtual const AtomicString& formControlType() const;
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void insertedIntoTree(bool);
     virtual void accessKeyAction(bool);

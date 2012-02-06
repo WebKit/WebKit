@@ -103,7 +103,7 @@ protected:
     virtual bool isValid() const { return SVGTests::isValid(); }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual bool selfHasRelativeLengths() const;

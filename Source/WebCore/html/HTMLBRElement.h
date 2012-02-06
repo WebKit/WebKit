@@ -38,7 +38,7 @@ public:
 private:
     HTMLBRElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };

@@ -79,7 +79,7 @@ const AtomicString& HTMLButtonElement::formControlType() const
     return emptyAtom;
 }
 
-void HTMLButtonElement::parseMappedAttribute(Attribute* attr)
+void HTMLButtonElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr) {
         if (equalIgnoringCase(attr->value(), "reset"))
@@ -93,7 +93,7 @@ void HTMLButtonElement::parseMappedAttribute(Attribute* attr)
         // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
         // See http://bugs.webkit.org/show_bug.cgi?id=12071
     } else
-        HTMLFormControlElement::parseMappedAttribute(attr);
+        HTMLFormControlElement::parseAttribute(attr);
 }
 
 void HTMLButtonElement::defaultEventHandler(Event* event)

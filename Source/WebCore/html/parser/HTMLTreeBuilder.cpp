@@ -452,7 +452,7 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
     //
     // FIXME: Stop clearing the rawToken once we start running the parser off
     // the main thread or once we stop allowing synchronous JavaScript
-    // execution from parseMappedAttribute.
+    // execution from parseAttribute.
     if (rawToken.type() != HTMLTokenTypes::Character)
         rawToken.clear();
 

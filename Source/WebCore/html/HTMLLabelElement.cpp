@@ -154,7 +154,7 @@ void HTMLLabelElement::accessKeyAction(bool sendMouseEvents)
         HTMLElement::accessKeyAction(sendMouseEvents);
 }
 
-void HTMLLabelElement::parseMappedAttribute(Attribute* attribute)
+void HTMLLabelElement::parseAttribute(Attribute* attribute)
 {
     if (attribute->name() == forAttr) {
         // htmlFor attribute change affects other nodes than this.
@@ -162,7 +162,7 @@ void HTMLLabelElement::parseMappedAttribute(Attribute* attribute)
         if (document())
             document()->notifyLocalNodeListsLabelChanged();
     } else
-        HTMLElement::parseMappedAttribute(attribute);
+        HTMLElement::parseAttribute(attribute);
 }
                 
 } // namespace

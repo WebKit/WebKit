@@ -502,7 +502,7 @@ void HTMLInputElement::updateType()
 
     if (hadType && !newType->canChangeFromAnotherType()) {
         // Set the attribute back to the old value.
-        // Useful in case we were called from inside parseMappedAttribute.
+        // Useful in case we were called from inside parseAttribute.
         setAttribute(typeAttr, type());
         return;
     }
@@ -659,13 +659,13 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     m_inputType->accessKeyAction(sendMouseEvents);
 }
 
-void HTMLInputElement::parseMappedAttribute(Attribute* attr)
+void HTMLInputElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == nameAttr) {
         checkedRadioButtons().removeButton(this);
         m_name = attr->value();
         checkedRadioButtons().addButton(this);
-        HTMLTextFormControlElement::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
         if (equalIgnoringCase(attr->value(), "off")) {
             m_autocomplete = Off;
@@ -763,10 +763,10 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         setNeedsValidityCheck();
     else if (attr->name() == disabledAttr) {
         m_inputType->disabledAttributeChanged();
-        HTMLTextFormControlElement::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attr);
     } else if (attr->name() == readonlyAttr) {
         m_inputType->readonlyAttributeChanged();
-        HTMLTextFormControlElement::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attr);
     }
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)
@@ -793,7 +793,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().webkitspeechchangeEvent, createAttributeEventListener(this, attr));
 #endif
     else
-        HTMLTextFormControlElement::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attr);
     updateInnerTextValue();
 }
 

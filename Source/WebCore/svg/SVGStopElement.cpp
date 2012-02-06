@@ -62,10 +62,10 @@ bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGStopElement::parseMappedAttribute(Attribute* attr)
+void SVGStopElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
         return;
     }
 

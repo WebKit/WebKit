@@ -266,7 +266,7 @@ static bool setTableCellsChanged(Node* n)
     return cellChanged;
 }
 
-void HTMLTableElement::parseMappedAttribute(Attribute* attr)
+void HTMLTableElement::parseAttribute(Attribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
@@ -421,7 +421,7 @@ void HTMLTableElement::parseMappedAttribute(Attribute* attr)
         else
             removeCSSProperty(CSSPropertyVerticalAlign);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = 0;

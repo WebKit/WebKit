@@ -78,7 +78,7 @@ PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* 
     return image.release();
 }
 
-void HTMLImageElement::parseMappedAttribute(Attribute* attr)
+void HTMLImageElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == altAttr) {
@@ -132,7 +132,7 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 String HTMLImageElement::altText() const

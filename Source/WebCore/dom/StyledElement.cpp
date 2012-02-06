@@ -63,7 +63,7 @@ StyledElement::~StyledElement()
 void StyledElement::attributeChanged(Attribute* attr)
 {
     if (!(attr->name() == styleAttr && isSynchronizingStyleAttribute()))
-        parseMappedAttribute(attr);
+        parseAttribute(attr);
 
     Element::attributeChanged(attr);
 }
@@ -90,7 +90,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     dispatchSubtreeModifiedEvent();
 }
 
-void StyledElement::parseMappedAttribute(Attribute* attr)
+void StyledElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == classAttr)
         classAttributeChanged(attr->value());

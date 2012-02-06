@@ -94,10 +94,10 @@ bool SVGFESpecularLightingElement::isSupportedAttribute(const QualifiedName& att
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)
+void SVGFESpecularLightingElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

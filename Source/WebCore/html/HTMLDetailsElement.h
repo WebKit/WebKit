@@ -37,7 +37,7 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     bool childShouldCreateRenderer(Node*) const;
 
     void createShadowSubtree();

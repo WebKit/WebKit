@@ -99,7 +99,7 @@ bool HTMLFormControlElement::formNoValidate() const
     return fastHasAttribute(formnovalidateAttr);
 }
 
-void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
+void HTMLFormControlElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == formAttr)
         formAttributeChanged();
@@ -125,7 +125,7 @@ void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
         if (oldRequired != m_required)
             requiredAttributeChanged();
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
     setNeedsWillValidateCheck();
 }
 

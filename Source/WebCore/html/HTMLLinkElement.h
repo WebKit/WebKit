@@ -61,7 +61,7 @@ public:
     DOMSettableTokenList* sizes() const;
 
 private:
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual bool shouldLoadLink();
     void process();

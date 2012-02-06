@@ -120,7 +120,7 @@ private:
 
     virtual void handleLocalEvents(Event*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual bool isURLAttribute(Attribute*) const;
 

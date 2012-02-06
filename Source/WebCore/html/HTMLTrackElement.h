@@ -75,7 +75,7 @@ private:
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void attributeChanged(Attribute*) OVERRIDE;
 
     virtual void insertedIntoDocument() OVERRIDE;

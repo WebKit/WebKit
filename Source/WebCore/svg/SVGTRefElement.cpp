@@ -166,14 +166,14 @@ bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGTRefElement::parseMappedAttribute(Attribute* attr)
+void SVGTRefElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGTextPositioningElement::parseMappedAttribute(attr);
+        SVGTextPositioningElement::parseAttribute(attr);
         return;
     }
 
-    if (SVGURIReference::parseMappedAttribute(attr)) {
+    if (SVGURIReference::parseAttribute(attr)) {
         return;
     }
 

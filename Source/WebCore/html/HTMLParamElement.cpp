@@ -47,11 +47,11 @@ bool HTMLParamElement::isURLParameter(const String& name)
     return equalIgnoringCase(name, "data") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "src");
 }
 
-void HTMLParamElement::parseMappedAttribute(Attribute* attr)
+void HTMLParamElement::parseAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name())) {
         // Must call base class so that hasID bit gets set.
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
         if (document()->isHTMLDocument())
             return;
         m_name = attr->value();
@@ -60,7 +60,7 @@ void HTMLParamElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == valueAttr) {
         m_value = attr->value();
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 bool HTMLParamElement::isURLAttribute(Attribute* attr) const

@@ -77,7 +77,7 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
     return renderPart(); // This will return 0 if the renderer is not a RenderPart.
 }
 
-void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
+void HTMLObjectElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == formAttr)
         formAttributeChanged();
@@ -111,7 +111,7 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == borderAttr)
         applyBorderAttribute(attr);
     else
-        HTMLPlugInImageElement::parseMappedAttribute(attr);
+        HTMLPlugInImageElement::parseAttribute(attr);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)

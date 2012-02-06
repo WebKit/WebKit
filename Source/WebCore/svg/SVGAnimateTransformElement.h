@@ -43,7 +43,7 @@ private:
     AnimatedPropertyType determineAnimatedPropertyType(SVGElement*) const;
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void resetToBaseValue(const String&);
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString);

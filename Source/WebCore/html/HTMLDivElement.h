@@ -36,7 +36,7 @@ protected:
     HTMLDivElement(const QualifiedName&, Document*);
 
 private:
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } // namespace WebCore

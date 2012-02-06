@@ -119,10 +119,10 @@ bool SVGFEConvolveMatrixElement::isSupportedAttribute(const QualifiedName& attrN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
+void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

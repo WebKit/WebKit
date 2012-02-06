@@ -85,10 +85,10 @@ bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEGaussianBlurElement::parseMappedAttribute(Attribute* attr)
+void SVGFEGaussianBlurElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

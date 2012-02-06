@@ -74,7 +74,7 @@ RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings()
     return findWidgetRenderer(this);
 }
 
-void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
+void HTMLEmbedElement::parseAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
   
@@ -103,7 +103,7 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
         } else
             removeCSSProperties(CSSPropertyWidth, CSSPropertyHeight);
     } else
-        HTMLPlugInImageElement::parseMappedAttribute(attr);
+        HTMLPlugInImageElement::parseAttribute(attr);
 }
 
 void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)

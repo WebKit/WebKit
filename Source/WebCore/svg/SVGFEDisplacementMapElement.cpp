@@ -73,10 +73,10 @@ bool SVGFEDisplacementMapElement::isSupportedAttribute(const QualifiedName& attr
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEDisplacementMapElement::parseMappedAttribute(Attribute* attr)
+void SVGFEDisplacementMapElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

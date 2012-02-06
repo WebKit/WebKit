@@ -44,7 +44,7 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
-void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
+void HTMLParagraphElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (attr->value().isNull())
@@ -58,7 +58,7 @@ void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyTextAlign, attr->value());
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

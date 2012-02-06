@@ -49,7 +49,7 @@ PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLLIElement(tagName, document));
 }
 
-void HTMLLIElement::parseMappedAttribute(Attribute* attr)
+void HTMLLIElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == valueAttr) {
         if (renderer() && renderer()->isListItem())
@@ -70,7 +70,7 @@ void HTMLLIElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyListStyleType, attr->value());
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLLIElement::attach()

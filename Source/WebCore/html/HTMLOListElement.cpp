@@ -54,7 +54,7 @@ PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLOListElement(tagName, document));
 }
 
-void HTMLOListElement::parseMappedAttribute(Attribute* attr)
+void HTMLOListElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr) {
         if (attr->value() == "a")
@@ -85,7 +85,7 @@ void HTMLOListElement::parseMappedAttribute(Attribute* attr)
         m_isReversed = reversed;
         updateItemValues();
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLOListElement::setStart(int start)

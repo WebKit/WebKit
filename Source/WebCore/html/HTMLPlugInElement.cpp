@@ -136,7 +136,7 @@ Widget* HTMLPlugInElement::pluginWidget()
     return renderWidget->widget();
 }
 
-void HTMLPlugInElement::parseMappedAttribute(Attribute* attr)
+void HTMLPlugInElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
         if (attr->isNull())
@@ -165,7 +165,7 @@ void HTMLPlugInElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == alignAttr)
         addHTMLAlignment(attr);
     else
-        HTMLFrameOwnerElement::parseMappedAttribute(attr);
+        HTMLFrameOwnerElement::parseAttribute(attr);
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event* event)

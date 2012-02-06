@@ -93,7 +93,7 @@ void HTMLVideoElement::detach()
         m_imageLoader.clear();
 }
 
-void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
+void HTMLVideoElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 
@@ -124,7 +124,7 @@ void HTMLVideoElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSLength(CSSPropertyHeight, attr->value());
     else
-        HTMLMediaElement::parseMappedAttribute(attr);
+        HTMLMediaElement::parseAttribute(attr);
 }
 
 bool HTMLVideoElement::supportsFullscreen() const

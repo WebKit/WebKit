@@ -130,12 +130,12 @@ bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGUseElement::parseMappedAttribute(Attribute* attr)
+void SVGUseElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        SVGStyledTransformableElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
     else if (attr->name() == SVGNames::yAttr)
@@ -144,10 +144,10 @@ void SVGUseElement::parseMappedAttribute(Attribute* attr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
     else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-             || SVGURIReference::parseMappedAttribute(attr)) {
+    else if (SVGTests::parseAttribute(attr)
+             || SVGLangSpace::parseAttribute(attr)
+             || SVGExternalResourcesRequired::parseAttribute(attr)
+             || SVGURIReference::parseAttribute(attr)) {
     } else
         ASSERT_NOT_REACHED();
 

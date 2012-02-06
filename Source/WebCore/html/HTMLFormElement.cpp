@@ -357,7 +357,7 @@ void HTMLFormElement::reset()
     m_isInResetFunction = false;
 }
 
-void HTMLFormElement::parseMappedAttribute(Attribute* attr)
+void HTMLFormElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == actionAttr)
         m_attributes.parseAction(attr->value());
@@ -379,7 +379,7 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == onresetAttr)
         setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attr));
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T* item)

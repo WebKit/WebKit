@@ -77,13 +77,13 @@ bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(Attribute* attr)
+void SVGFilterPrimitiveStandardAttributes::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
     const AtomicString& value = attr->value();
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (attr->name() == SVGNames::yAttr)

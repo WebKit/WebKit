@@ -45,7 +45,7 @@ private:
     SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool alreadyStarted);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 

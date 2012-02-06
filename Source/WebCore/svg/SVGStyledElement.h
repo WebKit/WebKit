@@ -65,7 +65,7 @@ protected:
     SVGStyledElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual void attach();

@@ -36,7 +36,7 @@ private:
 
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEComponentTransferElement)

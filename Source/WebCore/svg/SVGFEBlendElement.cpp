@@ -67,10 +67,10 @@ bool SVGFEBlendElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)
+void SVGFEBlendElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

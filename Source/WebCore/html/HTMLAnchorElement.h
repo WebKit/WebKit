@@ -103,7 +103,7 @@ public:
 protected:
     HTMLAnchorElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
 private:
     virtual bool supportsFocus() const;

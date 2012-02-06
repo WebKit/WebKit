@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void HTMLTablePartElement::parseMappedAttribute(Attribute* attr)
+void HTMLTablePartElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == bgcolorAttr)
         if (attr->value().isNull())
@@ -83,7 +83,7 @@ void HTMLTablePartElement::parseMappedAttribute(Attribute* attr)
         else
             removeCSSProperty(CSSPropertyHeight);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

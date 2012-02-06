@@ -216,10 +216,10 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPathElement::parseMappedAttribute(Attribute* attr)
+void SVGPathElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        SVGStyledTransformableElement::parseAttribute(attr);
         return;
     }
 
@@ -237,11 +237,11 @@ void SVGPathElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGTests::parseMappedAttribute(attr))
+    if (SVGTests::parseAttribute(attr))
         return;
-    if (SVGLangSpace::parseMappedAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attr))
         return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attr))
         return;
 
     ASSERT_NOT_REACHED();

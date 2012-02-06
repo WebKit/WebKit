@@ -121,7 +121,7 @@ private:
     virtual bool saveFormControlState(String& value) const;
     virtual void restoreFormControlState(const String&);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle *);
     virtual bool appendFormData(FormDataList&, bool);

@@ -43,7 +43,7 @@ private:
 
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGMPathElement)
         DECLARE_ANIMATED_STRING(Href, href)

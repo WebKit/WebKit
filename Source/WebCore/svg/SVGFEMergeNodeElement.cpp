@@ -60,10 +60,10 @@ bool SVGFEMergeNodeElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEMergeNodeElement::parseMappedAttribute(Attribute* attr)
+void SVGFEMergeNodeElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
         return;
     }
 

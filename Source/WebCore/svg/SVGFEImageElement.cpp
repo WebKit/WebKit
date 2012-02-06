@@ -119,10 +119,10 @@ bool SVGFEImageElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
+void SVGFEImageElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 
@@ -132,11 +132,11 @@ void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGURIReference::parseMappedAttribute(attr))
+    if (SVGURIReference::parseAttribute(attr))
         return;
-    if (SVGLangSpace::parseMappedAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attr))
         return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attr))
         return;
 
     ASSERT_NOT_REACHED();

@@ -276,7 +276,7 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void finishParsingChildren();
 
     virtual void copyNonAttributeProperties(const Element* source);

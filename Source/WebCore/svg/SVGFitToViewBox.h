@@ -40,7 +40,7 @@ public:
     bool parseViewBox(Document*, const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio&, float viewWidth, float viewHeight);
 
-    bool parseMappedAttribute(Document*, Attribute*);
+    bool parseAttribute(Document*, Attribute*);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 

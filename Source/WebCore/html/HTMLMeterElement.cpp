@@ -71,12 +71,12 @@ bool HTMLMeterElement::supportsFocus() const
     return Node::supportsFocus() && !disabled();
 }
 
-void HTMLMeterElement::parseMappedAttribute(Attribute* attribute)
+void HTMLMeterElement::parseAttribute(Attribute* attribute)
 {
     if (attribute->name() == valueAttr || attribute->name() == minAttr || attribute->name() == maxAttr || attribute->name() == lowAttr || attribute->name() == highAttr || attribute->name() == optimumAttr)
         didElementStateChange();
     else
-        HTMLFormControlElement::parseMappedAttribute(attribute);
+        HTMLFormControlElement::parseAttribute(attribute);
 }
 
 void HTMLMeterElement::attach()

@@ -42,12 +42,12 @@ PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName
     return adoptRef(new HTMLBaseElement(tagName, document));
 }
 
-void HTMLBaseElement::parseMappedAttribute(Attribute* attribute)
+void HTMLBaseElement::parseAttribute(Attribute* attribute)
 {
     if (attribute->name() == hrefAttr || attribute->name() == targetAttr)
         document()->processBaseElement();
     else
-        HTMLElement::parseMappedAttribute(attribute);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLBaseElement::insertedIntoDocument()

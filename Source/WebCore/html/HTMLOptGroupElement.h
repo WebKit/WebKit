@@ -44,7 +44,7 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual void attach();
     virtual void detach();

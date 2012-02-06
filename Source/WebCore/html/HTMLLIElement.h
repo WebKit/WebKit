@@ -35,7 +35,7 @@ public:
 private:
     HTMLLIElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void attach();
 

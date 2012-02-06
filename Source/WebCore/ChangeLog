@@ -1,3 +1,12 @@
+2012-02-05  Andreas Kling  <awesomekling@apple.com>
+
+        StyledElement: Rename parseMappedAttribute() to parseAttribute().
+        <http://webkit.org/b/77830>
+
+        Reviewed by Anders Carlsson.
+
+        Rename across the board and decorate subclasses with OVERRIDE.
+
 2012-02-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed syntax fix.

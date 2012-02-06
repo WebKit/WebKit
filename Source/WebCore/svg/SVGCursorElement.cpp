@@ -78,19 +78,19 @@ bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGCursorElement::parseMappedAttribute(Attribute* attr)
+void SVGCursorElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-             || SVGURIReference::parseMappedAttribute(attr)) {
+    else if (SVGTests::parseAttribute(attr)
+             || SVGExternalResourcesRequired::parseAttribute(attr)
+             || SVGURIReference::parseAttribute(attr)) {
     } else
         ASSERT_NOT_REACHED();
     

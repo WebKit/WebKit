@@ -50,7 +50,7 @@ void SVGLangSpace::setXmlspace(const AtomicString& xmlSpace)
     m_space = xmlSpace;
 }
 
-bool SVGLangSpace::parseMappedAttribute(Attribute* attr)
+bool SVGLangSpace::parseAttribute(Attribute* attr)
 {
     if (attr->name().matches(XMLNames::langAttr)) {
         setXmllang(attr->value());

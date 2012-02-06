@@ -158,7 +158,7 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
     return true;
 }
 
-void HTMLFontElement::parseMappedAttribute(Attribute* attr)
+void HTMLFontElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
         int size = 0;
@@ -177,7 +177,7 @@ void HTMLFontElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyFontFamily, attr->value());
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

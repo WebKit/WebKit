@@ -49,7 +49,7 @@ private:
     virtual String target() const { return svgTarget(); }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

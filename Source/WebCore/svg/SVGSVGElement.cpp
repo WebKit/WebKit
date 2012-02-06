@@ -238,7 +238,7 @@ void SVGSVGElement::updateCurrentTranslate()
         document()->renderer()->repaint();
 }
 
-void SVGSVGElement::parseMappedAttribute(Attribute* attr)
+void SVGSVGElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
@@ -273,13 +273,13 @@ void SVGSVGElement::parseMappedAttribute(Attribute* attr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
     else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseMappedAttribute(attr)
-               || SVGLangSpace::parseMappedAttribute(attr)
-               || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-               || SVGFitToViewBox::parseMappedAttribute(document(), attr)
-               || SVGZoomAndPan::parseMappedAttribute(attr)) {
+    else if (SVGTests::parseAttribute(attr)
+               || SVGLangSpace::parseAttribute(attr)
+               || SVGExternalResourcesRequired::parseAttribute(attr)
+               || SVGFitToViewBox::parseAttribute(document(), attr)
+               || SVGZoomAndPan::parseAttribute(attr)) {
     } else
-        SVGStyledLocatableElement::parseMappedAttribute(attr);
+        SVGStyledLocatableElement::parseAttribute(attr);
 
     reportAttributeParsingError(parseError, attr);
 }

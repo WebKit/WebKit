@@ -63,10 +63,10 @@ bool SVGTextElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGTextElement::parseMappedAttribute(Attribute* attr)
+void SVGTextElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGTextPositioningElement::parseMappedAttribute(attr);
+        SVGTextPositioningElement::parseAttribute(attr);
         return;
     }
 

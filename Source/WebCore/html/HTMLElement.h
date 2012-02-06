@@ -96,7 +96,7 @@ protected:
     void addHTMLAlignment(Attribute*);
     void removeHTMLAlignment();
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     void applyBorderAttribute(Attribute*);
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);

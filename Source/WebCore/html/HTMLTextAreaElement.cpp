@@ -117,7 +117,7 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
     
-void HTMLTextAreaElement::parseMappedAttribute(Attribute* attr)
+void HTMLTextAreaElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         int rows = attr->value().toInt();
@@ -169,7 +169,7 @@ void HTMLTextAreaElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == maxlengthAttr)
         setNeedsValidityCheck();
     else
-        HTMLTextFormControlElement::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attr);
 }
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)

@@ -57,7 +57,7 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
 }
 
-void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
+void HTMLStyleElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
@@ -71,7 +71,7 @@ void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
     }
 #endif
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLStyleElement::finishParsingChildren()

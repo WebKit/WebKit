@@ -92,10 +92,10 @@ bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
+void SVGAnimateTransformElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGAnimationElement::parseMappedAttribute(attr);
+        SVGAnimationElement::parseAttribute(attr);
         return;
     }
 

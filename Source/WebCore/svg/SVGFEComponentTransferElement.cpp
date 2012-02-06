@@ -62,10 +62,10 @@ bool SVGFEComponentTransferElement::isSupportedAttribute(const QualifiedName& at
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEComponentTransferElement::parseMappedAttribute(Attribute* attr)
+void SVGFEComponentTransferElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

@@ -48,7 +48,7 @@ PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, 
     return adoptRef(new HTMLDivElement(tagName, document));
 }
 
-void HTMLDivElement::parseMappedAttribute(Attribute* attr)
+void HTMLDivElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (attr->value().isNull())
@@ -62,7 +62,7 @@ void HTMLDivElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyTextAlign, attr->value());
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

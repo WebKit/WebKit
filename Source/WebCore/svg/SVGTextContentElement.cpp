@@ -228,21 +228,21 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
+void SVGTextContentElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseMappedAttribute(attr);
+        SVGStyledElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::lengthAdjustAttr) {
         SVGLengthAdjustType propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(attr->value());
         if (propertyValue > 0)
             setLengthAdjustBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::textLengthAttr) {
         m_textLength.value = SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths);
-    } else if (SVGTests::parseMappedAttribute(attr)
-               || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else if (SVGLangSpace::parseMappedAttribute(attr)) {
+    } else if (SVGTests::parseAttribute(attr)
+               || SVGExternalResourcesRequired::parseAttribute(attr)) {
+    } else if (SVGLangSpace::parseAttribute(attr)) {
         if (attr->name().matches(XMLNames::spaceAttr)) {
             DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
 

@@ -123,7 +123,7 @@ Element* HTMLDetailsElement::findMainSummary() const
     return static_cast<DetailsSummaryElement*>(shadowRoot()->firstChild())->fallbackSummary();
 }
 
-void HTMLDetailsElement::parseMappedAttribute(Attribute* attr)
+void HTMLDetailsElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == openAttr) {
         bool oldValue = m_isOpen;
@@ -131,7 +131,7 @@ void HTMLDetailsElement::parseMappedAttribute(Attribute* attr)
         if (oldValue != m_isOpen)
             reattachIfAttached();
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 bool HTMLDetailsElement::childShouldCreateRenderer(Node* child) const

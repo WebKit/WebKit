@@ -53,7 +53,7 @@ public:
 private:
     HTMLMarqueeElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     // ActiveDOMObject
     virtual bool canSuspend() const;

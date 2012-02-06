@@ -37,7 +37,7 @@ public:
 private:
     HTMLHRElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } // namespace WebCore

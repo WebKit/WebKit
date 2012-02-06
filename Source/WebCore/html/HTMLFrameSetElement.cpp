@@ -64,7 +64,7 @@ PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName&
     return adoptRef(new HTMLFrameSetElement(tagName, document));
 }
 
-void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
+void HTMLFrameSetElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {
@@ -137,7 +137,7 @@ void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == onpopstateAttr)
         document()->setWindowAttributeEventListener(eventNames().popstateEvent, createAttributeEventListener(document()->frame(), attr));
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 bool HTMLFrameSetElement::rendererIsNeeded(const NodeRenderingContext& context)

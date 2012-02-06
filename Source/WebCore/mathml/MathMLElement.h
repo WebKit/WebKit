@@ -42,7 +42,7 @@ protected:
 
 private:    
     virtual bool isMathMLElement() const { return true; }
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
     
 }

@@ -69,10 +69,10 @@ bool SVGScriptElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGScriptElement::parseMappedAttribute(Attribute* attr)
+void SVGScriptElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
         return;
     }
 
@@ -86,9 +86,9 @@ void SVGScriptElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGURIReference::parseMappedAttribute(attr))
+    if (SVGURIReference::parseAttribute(attr))
         return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attr))
         return;
 
     ASSERT_NOT_REACHED();

@@ -301,7 +301,7 @@ protected:
     HTMLMediaElement(const QualifiedName&, Document*, bool);
     virtual ~HTMLMediaElement();
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void finishParsingChildren();
     virtual bool isURLAttribute(Attribute*) const;
     virtual void attach();

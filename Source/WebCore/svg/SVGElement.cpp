@@ -271,7 +271,7 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
     ensureRareSVGData()->setCorrespondingElement(correspondingElement);
 }
 
-void SVGElement::parseMappedAttribute(Attribute* attr)
+void SVGElement::parseAttribute(Attribute* attr)
 {
     // standard events
     if (attr->name() == onloadAttr)
@@ -295,7 +295,7 @@ void SVGElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == SVGNames::onactivateAttr)
         setAttributeEventListener(eventNames().DOMActivateEvent, createAttributeEventListener(this, attr));
     else
-        StyledElement::parseMappedAttribute(attr);
+        StyledElement::parseAttribute(attr);
 }
 
 void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>& propertyTypes)

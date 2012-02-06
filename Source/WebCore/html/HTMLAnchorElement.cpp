@@ -210,7 +210,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
     ContainerNode::setActive(down, pause);
 }
 
-void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
+void HTMLAnchorElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == hrefAttr) {
         bool wasLink = isLink();
@@ -234,7 +234,7 @@ void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == relAttr)
         setRel(attr->value());
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)

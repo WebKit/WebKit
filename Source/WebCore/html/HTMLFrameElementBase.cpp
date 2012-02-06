@@ -131,13 +131,13 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
-void HTMLFrameElementBase::parseMappedAttribute(Attribute* attr)
+void HTMLFrameElementBase::parseAttribute(Attribute* attr)
 {
     if (attr->name() == srcAttr)
         setLocation(stripLeadingAndTrailingHTMLSpaces(attr->value()));
     else if (isIdAttributeName(attr->name())) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
-        HTMLFrameOwnerElement::parseMappedAttribute(attr);
+        HTMLFrameOwnerElement::parseAttribute(attr);
         m_frameName = attr->value();
     } else if (attr->name() == nameAttr) {
         m_frameName = attr->value();
@@ -169,7 +169,7 @@ void HTMLFrameElementBase::parseMappedAttribute(Attribute* attr)
         // FIXME: should <frame> elements have beforeunload handlers?
         setAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(this, attr));
     } else
-        HTMLFrameOwnerElement::parseMappedAttribute(attr);
+        HTMLFrameOwnerElement::parseAttribute(attr);
 }
 
 void HTMLFrameElementBase::setNameAndOpenURL()

@@ -47,7 +47,7 @@ PassRefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLUListElement(tagName, document));
 }
 
-void HTMLUListElement::parseMappedAttribute(Attribute* attr)
+void HTMLUListElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr)
         if (attr->value().isNull())
@@ -55,7 +55,7 @@ void HTMLUListElement::parseMappedAttribute(Attribute* attr)
         else
             addCSSProperty(CSSPropertyListStyleType, attr->value());
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

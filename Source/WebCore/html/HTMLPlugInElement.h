@@ -58,7 +58,7 @@ protected:
 
     virtual void detach();
     virtual void removedFromDocument();
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     bool m_inBeforeLoadEventHandler;
     // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.

@@ -47,7 +47,7 @@ PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName&
     return adoptRef(new HTMLTableColElement(tagName, document));
 }
 
-void HTMLTableColElement::parseMappedAttribute(Attribute* attr)
+void HTMLTableColElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == spanAttr) {
         m_span = !attr->isNull() ? attr->value().toInt() : 1;
@@ -65,7 +65,7 @@ void HTMLTableColElement::parseMappedAttribute(Attribute* attr)
         } else
             removeCSSProperty(CSSPropertyWidth);
     } else
-        HTMLTablePartElement::parseMappedAttribute(attr);
+        HTMLTablePartElement::parseAttribute(attr);
 }
 
 PassRefPtr<StylePropertySet> HTMLTableColElement::additionalAttributeStyle()

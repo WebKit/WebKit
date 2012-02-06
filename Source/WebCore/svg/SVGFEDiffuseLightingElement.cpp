@@ -90,10 +90,10 @@ bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attr
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
+void SVGFEDiffuseLightingElement::parseAttribute(Attribute* attr)
 {
     if (!isSupportedAttribute(attr->name()) || attr->name() == SVGNames::lighting_colorAttr) {
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
         return;
     }
 

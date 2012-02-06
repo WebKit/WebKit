@@ -79,21 +79,21 @@ bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGCircleElement::parseMappedAttribute(Attribute* attr)
+void SVGCircleElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(attr->name()))
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        SVGStyledTransformableElement::parseAttribute(attr);
     else if (attr->name() == SVGNames::cxAttr)
         setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
     else if (attr->name() == SVGNames::cyAttr)
         setCyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
     else if (attr->name() == SVGNames::rAttr)
         setRBaseValue(SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
+    else if (SVGTests::parseAttribute(attr)
+             || SVGLangSpace::parseAttribute(attr)
+             || SVGExternalResourcesRequired::parseAttribute(attr)) {
     } else
         ASSERT_NOT_REACHED();
 

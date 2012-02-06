@@ -39,7 +39,7 @@ public:
 private:
     HTMLParamElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual bool isURLAttribute(Attribute*) const;
 

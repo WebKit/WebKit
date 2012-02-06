@@ -44,7 +44,7 @@ PassRefPtr<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const Qualif
     return adoptRef(new HTMLTableCaptionElement(tagName, document));
 }
 
-void HTMLTableCaptionElement::parseMappedAttribute(Attribute* attr)
+void HTMLTableCaptionElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty())
@@ -52,7 +52,7 @@ void HTMLTableCaptionElement::parseMappedAttribute(Attribute* attr)
         else
             removeCSSProperty(CSSPropertyCaptionSide);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 }

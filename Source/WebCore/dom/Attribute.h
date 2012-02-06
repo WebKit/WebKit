@@ -67,7 +67,7 @@ public:
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
 
     // Note: This API is only for HTMLTreeBuilder.  It is not safe to change the
-    // name of an attribute once parseMappedAttribute has been called as DOM
+    // name of an attribute once parseAttribute has been called as DOM
     // elements may have placed the Attribute in a hash by name.
     void parserSetName(const QualifiedName& name) { m_name = name; }
 

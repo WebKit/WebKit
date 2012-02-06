@@ -44,7 +44,7 @@ public:
     unsigned short zoomAndPan() const { return m_zoomAndPan; }
     virtual void setZoomAndPan(unsigned short zoomAndPan);
 
-    bool parseMappedAttribute(Attribute*);
+    bool parseAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 

@@ -47,7 +47,7 @@ private:
 
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 

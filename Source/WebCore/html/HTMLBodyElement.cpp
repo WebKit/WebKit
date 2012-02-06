@@ -60,7 +60,7 @@ HTMLBodyElement::~HTMLBodyElement()
 {
 }
 
-void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
+void HTMLBodyElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
@@ -156,7 +156,7 @@ void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == onofflineAttr)
         document()->setWindowAttributeEventListener(eventNames().offlineEvent, createAttributeEventListener(document()->frame(), attr));
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLBodyElement::insertedIntoDocument()

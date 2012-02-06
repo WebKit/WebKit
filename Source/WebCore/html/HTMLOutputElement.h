@@ -55,7 +55,7 @@ public:
 private:
     HTMLOutputElement(const QualifiedName&, Document*, HTMLFormElement*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportsFocus() const;

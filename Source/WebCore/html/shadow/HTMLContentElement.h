@@ -73,7 +73,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     OwnPtr<ShadowInclusionList> m_inclusions;
 };

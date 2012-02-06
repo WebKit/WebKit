@@ -36,7 +36,7 @@ private:
 
     virtual String target() const;
     virtual bool isURLAttribute(Attribute*) const;
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 };

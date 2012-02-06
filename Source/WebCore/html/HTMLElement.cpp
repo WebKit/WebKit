@@ -165,10 +165,10 @@ void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute)
     setNeedsStyleRecalc();
 }
 
-void HTMLElement::parseMappedAttribute(Attribute* attr)
+void HTMLElement::parseAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
-        return StyledElement::parseMappedAttribute(attr);
+        return StyledElement::parseAttribute(attr);
 
     if (attr->name() == alignAttr) {
         if (attr->isNull())

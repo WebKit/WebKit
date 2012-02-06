@@ -382,7 +382,7 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
     sortTimeList(timeList);
 }
 
-void SVGSMILElement::parseMappedAttribute(Attribute* attr)
+void SVGSMILElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::beginAttr) {
         if (!m_conditions.isEmpty()) {
@@ -403,7 +403,7 @@ void SVGSMILElement::parseMappedAttribute(Attribute* attr)
         if (inDocument())
             connectConditions();
     } else
-        SVGElement::parseMappedAttribute(attr);
+        SVGElement::parseAttribute(attr);
 }
 
 void SVGSMILElement::attributeChanged(Attribute* attr)

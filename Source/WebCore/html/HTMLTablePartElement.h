@@ -37,7 +37,7 @@ protected:
     {
     }
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } //namespace

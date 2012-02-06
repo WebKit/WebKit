@@ -67,7 +67,7 @@ public:
 private:
     HTMLFrameSetElement(const QualifiedName&, Document*);
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void attach();
     virtual bool rendererIsNeeded(const NodeRenderingContext&);

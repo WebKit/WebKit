@@ -48,7 +48,7 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
+void HTMLIFrameElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
         addCSSLength(CSSPropertyWidth, attr->value());
@@ -75,7 +75,7 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == sandboxAttr)
         setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
     else
-        HTMLFrameElementBase::parseMappedAttribute(attr);
+        HTMLFrameElementBase::parseAttribute(attr);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const NodeRenderingContext& context)

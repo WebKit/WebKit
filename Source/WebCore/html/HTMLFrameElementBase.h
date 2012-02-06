@@ -55,7 +55,7 @@ protected:
 
     bool isURLAllowed() const;
 
-    virtual void parseMappedAttribute(Attribute*);
+    virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void attach();
 

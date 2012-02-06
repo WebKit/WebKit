@@ -48,7 +48,7 @@ PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLBRElement(tagName, document));
 }
 
-void HTMLBRElement::parseMappedAttribute(Attribute* attr)
+void HTMLBRElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == clearAttr) {
         // If the string is empty, then don't add the clear property. 
@@ -62,7 +62,7 @@ void HTMLBRElement::parseMappedAttribute(Attribute* attr)
                 addCSSProperty(CSSPropertyClear, attr->value());
         }
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle* style)

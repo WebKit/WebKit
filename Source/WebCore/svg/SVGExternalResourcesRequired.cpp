@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-bool SVGExternalResourcesRequired::parseMappedAttribute(Attribute* attr)
+bool SVGExternalResourcesRequired::parseAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
         setExternalResourcesRequiredBaseValue(attr->value() == "true");

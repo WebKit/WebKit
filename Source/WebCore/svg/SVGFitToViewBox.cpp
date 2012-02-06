@@ -88,7 +88,7 @@ AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBox
     return preserveAspectRatio.getCTM(viewBoxRect.x(), viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(), viewWidth, viewHeight);
 }
 
-bool SVGFitToViewBox::parseMappedAttribute(Document* document, Attribute* attr)
+bool SVGFitToViewBox::parseAttribute(Document* document, Attribute* attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr) {
         FloatRect viewBox;

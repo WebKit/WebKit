@@ -65,7 +65,7 @@ void HTMLScriptElement::attributeChanged(Attribute* attr)
     HTMLElement::attributeChanged(attr);
 }
 
-void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
+void HTMLScriptElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 
@@ -76,7 +76,7 @@ void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
     else if (attrName == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
     else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLScriptElement::insertedIntoDocument()
