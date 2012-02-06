@@ -90,6 +90,7 @@
 #include "HTMLQuoteElement.cpp"
 #include "HTMLScriptElement.cpp"
 #include "HTMLSelectElement.cpp"
+#include "HTMLShadowElement.cpp"
 #include "HTMLSourceElement.cpp"
 #include "HTMLSpanElement.cpp"
 #include "HTMLStyleElement.cpp"

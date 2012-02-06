@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+  <shadow id="shadow"></content>
+</div>
+<script>
+ description("This test ensures that the shadow element is available.")
+// Since shadow element does not have its own APIS, it acts like a normal element.
+// We don't have to guard this by SHADOW_DOM flag for now.
+var shadow = document.getElementById("shadow");
+shouldBe("shadow.nodeName", "'SHADOW'");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

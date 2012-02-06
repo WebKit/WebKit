@@ -307,6 +307,7 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint8ClampedArray.idl
 
     html/shadow/HTMLContentElement.idl
+    html/shadow/HTMLShadowElement.idl
 
     html/track/TextTrackList.idl
     html/track/TrackEvent.idl
@@ -866,6 +867,7 @@ SET(WebCore_SOURCES
     html/shadow/ContentInclusionSelector.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
+    html/shadow/HTMLShadowElement.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp
     html/shadow/MeterShadowElement.cpp

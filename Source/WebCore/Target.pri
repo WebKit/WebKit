@@ -846,6 +846,7 @@ SOURCES += \
     html/shadow/ContentInclusionSelector.cpp \
     html/shadow/DetailsMarkerControl.cpp \
     html/shadow/HTMLContentElement.cpp \
+    html/shadow/HTMLShadowElement.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/MediaControlRootElement.cpp \
     html/shadow/MeterShadowElement.cpp \
@@ -1906,6 +1907,7 @@ HEADERS += \
     html/shadow/ContentSelectorQuery.h \
     html/shadow/ContentInclusionSelector.h \
     html/shadow/HTMLContentElement.h \
+    html/shadow/HTMLShadowElement.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
     html/track/TextTrackList.h \

@@ -5761,3 +5761,15 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/TextureMapperGLCairo.h
 endif  # END USE_TEXTURE_MAPPER_GL
 endif  # USE_ACCELERATED_COMPOSITING
+
+# ---
+# Shadow DOM support
+# ---
+if ENABLE_SHADOW_DOM
+webcore_built_sources += \
+	DerivedSources/WebCore/JSHTMLShadowElement.cpp \
+	DerivedSources/WebCore/JSHTMLShadowElement.h
+dom_binding_idls += \
+	$(WebCore)/html/shadow/HTMLShadowElement.idl
+
+endif  # END ENABLE_SHADOW_DOM

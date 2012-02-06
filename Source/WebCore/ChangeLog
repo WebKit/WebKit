@@ -1,3 +1,33 @@
+2012-02-06  Hayato Ito  <hayato@chromium.org>
+
+        Add <shadow> element, which is guarded by SHADOW_DOM flag.
+        https://bugs.webkit.org/show_bug.cgi?id=76435
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/dom/shadow/shadow-element.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * html/shadow/HTMLShadowElement.cpp: Added.
+        (WebCore):
+        (WebCore::HTMLShadowElement::HTMLShadowElement):
+        (WebCore::HTMLShadowElement::create):
+        (WebCore::HTMLShadowElement::~HTMLShadowElement):
+        * html/shadow/HTMLShadowElement.h: Added.
+        (WebCore):
+        (HTMLShadowElement):
+        * html/shadow/HTMLShadowElement.idl: Added.
+
 2012-02-06  Joe Thomas  <joethomas@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76995.

@@ -1,0 +1,10 @@
+This test ensures that the shadow element is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadow.nodeName is 'SHADOW'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

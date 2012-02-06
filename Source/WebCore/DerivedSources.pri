@@ -327,6 +327,7 @@ IDL_BINDINGS += \
     $$PWD/html/ValidityState.idl \
     $$PWD/html/VoidCallback.idl \
     $$PWD/html/shadow/HTMLContentElement.idl \
+    $$PWD/html/shadow/HTMLShadowElement.idl \
     $$PWD/inspector/InjectedScriptHost.idl \
     $$PWD/inspector/InspectorFrontendHost.idl \
     $$PWD/inspector/JavaScriptCallFrame.idl \

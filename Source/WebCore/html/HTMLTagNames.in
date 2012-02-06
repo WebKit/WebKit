@@ -93,6 +93,7 @@ ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement
 option constructorNeedsFormElement
 output constructorNeedsFormElement
+shadow interfaceName=HTMLShadowElement, conditional=SHADOW_DOM
 p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement

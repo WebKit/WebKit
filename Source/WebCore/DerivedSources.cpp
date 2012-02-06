@@ -193,6 +193,9 @@
 #include "JSHTMLQuoteElement.cpp"
 #include "JSHTMLScriptElement.cpp"
 #include "JSHTMLSelectElement.cpp"
+#if ENABLE(SHADOW_DOM)
+#include "JSHTMLShadowElement.cpp"
+#endif
 #include "JSHTMLSourceElement.cpp"
 #include "JSHTMLSpanElement.cpp"
 #include "JSHTMLStyleElement.cpp"
