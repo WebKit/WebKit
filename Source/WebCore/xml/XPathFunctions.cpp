@@ -29,7 +29,6 @@
 #include "XPathFunctions.h"
 
 #include "Element.h"
-#include "NamedNodeMap.h"
 #include "ProcessingInstruction.h"
 #include "TreeScope.h"
 #include "XMLNames.h"
@@ -592,8 +591,9 @@ Value FunLang::evaluate() const
     Node* node = evaluationContext().node.get();
     while (node) {
         if (node->isElementNode()) {
-            if (NamedNodeMap* attributes = toElement(node)->updatedAttributes())
-                languageAttribute = attributes->getAttributeItem(XMLNames::langAttr);
+            Element* element = toElement(node);
+            if (element->hasAttributes())
+                languageAttribute = element->getAttributeItem(XMLNames::langAttr);
         }
         if (languageAttribute)
             break;

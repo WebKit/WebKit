@@ -1822,9 +1822,9 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
             if (elem->prefix().isNull())
                 return elem->namespaceURI() == namespaceURI;
 
-            if (NamedNodeMap* attrs = elem->updatedAttributes()) {
-                for (unsigned i = 0; i < attrs->length(); i++) {
-                    Attribute* attr = attrs->attributeItem(i);
+            if (elem->hasAttributes()) {
+                for (unsigned i = 0; i < elem->attributeCount(); i++) {
+                    Attribute* attr = elem->attributeItem(i);
                     
                     if (attr->localName() == xmlnsAtom)
                         return attr->value() == namespaceURI;
@@ -1908,9 +1908,9 @@ String Node::lookupNamespaceURI(const String &prefix) const
             if (!elem->namespaceURI().isNull() && elem->prefix() == prefix)
                 return elem->namespaceURI();
             
-            if (NamedNodeMap* attrs = elem->updatedAttributes()) {
-                for (unsigned i = 0; i < attrs->length(); i++) {
-                    Attribute *attr = attrs->attributeItem(i);
+            if (elem->hasAttributes()) {
+                for (unsigned i = 0; i < elem->attributeCount(); i++) {
+                    Attribute* attr = elem->attributeItem(i);
                     
                     if (attr->prefix() == xmlnsAtom && attr->localName() == prefix) {
                         if (!attr->value().isEmpty())
@@ -1962,9 +1962,11 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     if (originalElement->lookupNamespaceURI(prefix()) == _namespaceURI)
         return prefix();
     
-    if (NamedNodeMap* attrs = toElement(this)->updatedAttributes()) {
-        for (unsigned i = 0; i < attrs->length(); i++) {
-            Attribute* attr = attrs->attributeItem(i);
+    ASSERT(isElementNode());
+    const Element* thisElement = toElement(this);
+    if (thisElement->hasAttributes()) {
+        for (unsigned i = 0; i < thisElement->attributeCount(); i++) {
+            Attribute* attr = thisElement->attributeItem(i);
             
             if (attr->prefix() == xmlnsAtom && attr->value() == _namespaceURI
                     && originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
@@ -2105,17 +2107,17 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
         chain2.append(attr2);
     
     if (attr1 && attr2 && start1 == start2 && start1) {
-        // We are comparing two attributes on the same node.  Crawl our attribute map
-        // and see which one we hit first.
-        NamedNodeMap* map = attr1->ownerElement()->updatedAttributes();
-        unsigned length = map->length();
+        // We are comparing two attributes on the same node. Crawl our attribute map and see which one we hit first.
+        Element* owner1 = attr1->ownerElement();
+        owner1->updatedAttributes(); // Force update invalid attributes.
+        unsigned length = owner1->attributeCount();
         for (unsigned i = 0; i < length; ++i) {
             // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 
             // implementation-dependent order between the determining nodes is returned. This order is stable as long as no nodes of
             // the same nodeType are inserted into or removed from the direct container. This would be the case, for example, 
             // when comparing two attributes of the same element, and inserting or removing additional attributes might change 
             // the order between existing attributes.
-            Attribute* attr = map->attributeItem(i);
+            Attribute* attr = owner1->attributeItem(i);
             if (attr1->attr() == attr)
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
             if (attr2->attr() == attr)

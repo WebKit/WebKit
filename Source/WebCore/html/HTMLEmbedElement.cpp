@@ -108,12 +108,11 @@ void HTMLEmbedElement::parseAttribute(Attribute* attr)
 
 void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)
 {
-    NamedNodeMap* attributes = updatedAttributes();
-    if (!attributes)
+    if (!hasAttributes())
         return;
 
-    for (unsigned i = 0; i < attributes->length(); ++i) {
-        Attribute* it = attributes->attributeItem(i);
+    for (unsigned i = 0; i < attributeCount(); ++i) {
+        Attribute* it = attributeItem(i);
         paramNames.append(it->localName().string());
         paramValues.append(it->value().string());
     }

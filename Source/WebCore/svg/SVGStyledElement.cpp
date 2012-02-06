@@ -406,11 +406,11 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)
 {
-    if (!attributeMap())
+    if (!hasAttributesWithoutUpdate())
         return 0;
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
-    Attribute* attr = attributeMap()->getAttributeItem(attributeName);
+    Attribute* attr = getAttributeItem(attributeName);
     if (!attr)
         return 0;
 

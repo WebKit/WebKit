@@ -1,3 +1,13 @@
+2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Provide more attribute methods in Element
+        https://bugs.webkit.org/show_bug.cgi?id=77800
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::openTagToString): access attributes via Element interface.
+
 2012-02-04  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Add support to force full damage in CCDamageTracker

@@ -1,3 +1,93 @@
+2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Provide more attribute methods in Element
+        https://bugs.webkit.org/show_bug.cgi?id=77800
+
+        Reviewed by Ryosuke Niwa.
+
+        Reduce the clients of NamedNodeMap. This will make easier to change the
+        implementation of our attribute storage. The clients now use Element methods
+        that expose Attribute* accessors.
+
+        Instead of checking the existence of NamedNodeMap, clients can call
+        hasAttributes() or hasAttributesWithoutUpdate() (that skips updating invalid
+        style or animation svg attributes).
+
+        If there are attributes, they can be accessed by index via attributeCount() /
+        attributeItem(), as well as by QualifiedName. Those accessors assume there are an
+        attribute storage.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::anyAttributeMatches):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::checkExactAttribute):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::getNames):
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::contains):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode): use setAttributesFromElement() instead of manually copying.
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::hasAttributesWithoutUpdate):
+        (WebCore):
+        (WebCore::Element::attributeCount):
+        (WebCore::Element::attributeItem):
+        (WebCore::Element::getAttributeItem):
+        (WebCore::Element::removeAttribute):
+        * dom/Node.cpp:
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::Node::lookupNamespacePrefix):
+        (WebCore::Node::compareDocumentPosition):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::hasNoAttributeOrOnlyStyleAttribute):
+        (WebCore::isEmptyFontTag):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::highestVisuallyEquivalentDivBelowRoot):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendElement):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLAttribute):
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::attributeCountWithoutUpdate):
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+        (WebCore::HTMLFormattingElementList::ensureNoahsArkCondition): Store Attribute*
+        to avoid looking up the right element again by name.
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::innerPatchNode):
+        (WebCore::DOMEditor::createDigest):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        * page/PageSerializer.cpp:
+        (WebCore::isCharsetSpecifyingNode):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::XMLTreeBuilder):
+
 2012-02-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Raise exception during add/put call if autoIncrement key insertion will fail

@@ -599,9 +599,9 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
 
     for (; !elemStack.isEmpty(); elemStack.removeLast()) {
         Element* element = elemStack.last();
-        if (NamedNodeMap* attrs = element->updatedAttributes()) {
-            for (unsigned i = 0; i < attrs->length(); i++) {
-                Attribute* attr = attrs->attributeItem(i);
+        if (element->hasAttributes()) {
+            for (unsigned i = 0; i < element->attributeCount(); i++) {
+                Attribute* attr = element->attributeItem(i);
                 if (attr->localName() == xmlnsAtom)
                     m_defaultNamespaceURI = attr->value();
                 else if (attr->prefix() == xmlnsAtom)

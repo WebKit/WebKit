@@ -349,11 +349,10 @@ void MarkupAccumulator::appendElement(StringBuilder& out, Element* element, Name
 {
     appendOpenTag(out, element, namespaces);
 
-    NamedNodeMap* attributes = element->updatedAttributes();
-    if (attributes) {
-        unsigned length = attributes->length();
+    if (element->hasAttributes()) {
+        unsigned length = element->attributeCount();
         for (unsigned int i = 0; i < length; i++)
-            appendAttribute(out, element, *attributes->attributeItem(i), namespaces);
+            appendAttribute(out, element, *element->attributeItem(i), namespaces);
     }
 
     // Give an opportunity to subclasses to add their own attributes.

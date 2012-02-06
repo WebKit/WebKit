@@ -307,13 +307,12 @@ void WebPageSerializerImpl::openTagToString(Element* element,
     // Add open tag
     result += "<" + element->nodeName().lower();
     // Go through all attributes and serialize them.
-    const NamedNodeMap *attrMap = element->updatedAttributes();
-    if (attrMap) {
-        unsigned numAttrs = attrMap->length();
+    if (element->hasAttributes()) {
+        unsigned numAttrs = element->attributeCount();
         for (unsigned i = 0; i < numAttrs; i++) {
             result += " ";
             // Add attribute pair
-            const Attribute *attribute = attrMap->attributeItem(i);
+            const Attribute *attribute = element->attributeItem(i);
             result += attribute->name().toString();
             result += "=\"";
             if (!attribute->value().isEmpty()) {

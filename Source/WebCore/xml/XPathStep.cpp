@@ -31,7 +31,6 @@
 #include "Attr.h"
 #include "Document.h"
 #include "Element.h"
-#include "NamedNodeMap.h"
 #include "XMLNSNames.h"
 #include "XPathParser.h"
 #include "XPathUtil.h"
@@ -343,12 +342,11 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 return;
             }
             
-            NamedNodeMap* attrs = contextElement->updatedAttributes();
-            if (!attrs)
+            if (!contextElement->hasAttributes())
                 return;
 
-            for (unsigned i = 0; i < attrs->length(); ++i) {
-                RefPtr<Attr> attr = attrs->attributeItem(i)->createAttrIfNeeded(static_cast<Element*>(context));
+            for (unsigned i = 0; i < contextElement->attributeCount(); ++i) {
+                RefPtr<Attr> attr = contextElement->attributeItem(i)->createAttrIfNeeded(static_cast<Element*>(context));
                 if (nodeMatches(attr.get(), AttributeAxis, m_nodeTest))
                     nodes.append(attr.release());
             }

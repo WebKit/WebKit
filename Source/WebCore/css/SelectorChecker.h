@@ -185,12 +185,11 @@ inline bool SelectorChecker::attributeNameMatches(const Attribute* attribute, co
 
 inline bool SelectorChecker::checkExactAttribute(const Element* element, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)
 {
-    NamedNodeMap* attributeMap = element->attributeMap();
-    if (!attributeMap)
+    if (!element->hasAttributesWithoutUpdate())
         return false;
-    unsigned size = attributeMap->length();
+    unsigned size = element->attributeCount();
     for (unsigned i = 0; i < size; ++i) {
-        Attribute* attribute = attributeMap->attributeItem(i);
+        Attribute* attribute = element->attributeItem(i);
         if (attributeNameMatches(attribute, selectorAttributeName) && (!value || attribute->value().impl() == value))
             return true;
     }

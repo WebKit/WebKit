@@ -854,15 +854,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         if (ec)
             return 0;
 
-        NamedNodeMap* attrs = oldElement->updatedAttributes();
-        if (attrs) {
-            unsigned length = attrs->length();
-            for (unsigned i = 0; i < length; i++) {
-                Attribute* attr = attrs->attributeItem(i);
-                newElement->setAttribute(attr->name(), attr->value().impl());
-            }
-        }
-
+        newElement->setAttributesFromElement(*oldElement);
         newElement->copyNonAttributeProperties(oldElement);
 
         if (deep) {

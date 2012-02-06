@@ -29,7 +29,6 @@
 #include "Attribute.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "NamedNodeMap.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -142,27 +141,27 @@ void DatasetDOMStringMap::deref()
 
 void DatasetDOMStringMap::getNames(Vector<String>& names)
 {
-    NamedNodeMap* attributeMap = m_element->updatedAttributes();
-    if (attributeMap) {
-        unsigned length = attributeMap->length();
-        for (unsigned i = 0; i < length; i++) {
-            Attribute* attribute = attributeMap->attributeItem(i);
-            if (isValidAttributeName(attribute->localName()))
-                names.append(convertAttributeNameToPropertyName(attribute->localName()));
-        }
+    if (!m_element->hasAttributes())
+        return;
+
+    unsigned length = m_element->attributeCount();
+    for (unsigned i = 0; i < length; i++) {
+        Attribute* attribute = m_element->attributeItem(i);
+        if (isValidAttributeName(attribute->localName()))
+            names.append(convertAttributeNameToPropertyName(attribute->localName()));
     }
 }
 
 String DatasetDOMStringMap::item(const String& name)
 {
-    NamedNodeMap* attributeMap = m_element->updatedAttributes();
-    if (attributeMap) {
-        unsigned length = attributeMap->length();
-        for (unsigned i = 0; i < length; i++) {
-            Attribute* attribute = attributeMap->attributeItem(i);
-            if (propertyNameMatchesAttributeName(name, attribute->localName()))
-                return attribute->value();
-        }
+    if (!m_element->hasAttributes())
+        return String();
+
+    unsigned length = m_element->attributeCount();
+    for (unsigned i = 0; i < length; i++) {
+        Attribute* attribute = m_element->attributeItem(i);
+        if (propertyNameMatchesAttributeName(name, attribute->localName()))
+            return attribute->value();
     }
 
     return String();
@@ -170,15 +169,16 @@ String DatasetDOMStringMap::item(const String& name)
 
 bool DatasetDOMStringMap::contains(const String& name)
 {
-    NamedNodeMap* attributeMap = m_element->updatedAttributes();
-    if (attributeMap) {
-        unsigned length = attributeMap->length();
-        for (unsigned i = 0; i < length; i++) {
-            Attribute* attribute = attributeMap->attributeItem(i);
-            if (propertyNameMatchesAttributeName(name, attribute->localName()))
-                return true;
-        }
+    if (!m_element->hasAttributes())
+        return false;
+
+    unsigned length = m_element->attributeCount();
+    for (unsigned i = 0; i < length; i++) {
+        Attribute* attribute = m_element->attributeItem(i);
+        if (propertyNameMatchesAttributeName(name, attribute->localName()))
+            return true;
     }
+
     return false;
 }
 

@@ -69,9 +69,9 @@ static bool isCharsetSpecifyingNode(Node* node)
     if (!element->hasTagName(HTMLNames::metaTag))
         return false;
     HTMLMetaCharsetParser::AttributeList attributes;
-    if (const NamedNodeMap* attributesMap = element->updatedAttributes()) {
-        for (unsigned i = 0; i < attributesMap->length(); ++i) {
-            Attribute* item = attributesMap->attributeItem(i);
+    if (element->hasAttributes()) {
+        for (unsigned i = 0; i < element->attributeCount(); ++i) {
+            Attribute* item = element->attributeItem(i);
             // FIXME: We should deal appropriately with the attribute if they have a namespace.
             attributes.append(make_pair(item->name().toString(), item->value().string()));
         }

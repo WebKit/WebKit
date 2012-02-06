@@ -545,13 +545,12 @@ void HTMLInputElement::updateType()
         registerForSuspensionCallbackIfNeeded();
 
     if (didRespectHeightAndWidth != m_inputType->shouldRespectHeightAndWidthAttributes()) {
-        NamedNodeMap* map = attributeMap();
-        ASSERT(map);
-        if (Attribute* height = map->getAttributeItem(heightAttr))
+        ASSERT(attributeMap());
+        if (Attribute* height = getAttributeItem(heightAttr))
             attributeChanged(height);
-        if (Attribute* width = map->getAttributeItem(widthAttr))
+        if (Attribute* width = getAttributeItem(widthAttr))
             attributeChanged(width);
-        if (Attribute* align = map->getAttributeItem(alignAttr))
+        if (Attribute* align = getAttributeItem(alignAttr))
             attributeChanged(align);
     }
 

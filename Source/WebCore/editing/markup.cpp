@@ -104,12 +104,11 @@ static void completeURLs(Node* node, const String& baseURL)
     for (Node* n = node; n != end; n = n->traverseNextNode()) {
         if (n->isElementNode()) {
             Element* e = static_cast<Element*>(n);
-            NamedNodeMap* attributes = e->updatedAttributes();
-            if (!attributes)
+            if (!e->hasAttributes())
                 continue;
-            unsigned length = attributes->length();
+            unsigned length = e->attributeCount();
             for (unsigned i = 0; i < length; i++) {
-                Attribute* attribute = attributes->attributeItem(i);
+                Attribute* attribute = e->attributeItem(i);
                 if (e->isURLAttribute(attribute))
                     changes.append(AttributeChange(e, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
             }
@@ -289,12 +288,11 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
     const bool documentIsHTML = element->document()->isHTMLDocument();
     appendOpenTag(out, element, 0);
 
-    NamedNodeMap* attributes = element->updatedAttributes();
-    const unsigned length = attributes ? attributes->length() : 0;
+    const unsigned length = element->hasAttributes() ? element->attributeCount() : 0;
     const bool shouldAnnotateOrForceInline = element->isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
     for (unsigned int i = 0; i < length; i++) {
-        Attribute* attribute = attributes->attributeItem(i);
+        Attribute* attribute = element->attributeItem(i);
         // We'll handle the style attribute separately, below.
         if (attribute->name() == styleAttr && shouldOverrideStyleAttr)
             continue;

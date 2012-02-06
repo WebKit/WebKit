@@ -549,17 +549,17 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         return;
     }
 
-    const NamedNodeMap* attrMap = toHTMLElement(child)->updatedAttributes();
-    if (!attrMap && name) {
+    Element* childElement = toElement(child);
+    if (!childElement->hasAttributes() && name) {
         element->removeAttribute(*name);
         return;
     }
 
     bool foundOriginalAttribute = false;
-    unsigned numAttrs = attrMap->length();
+    unsigned numAttrs = childElement->attributeCount();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute* attribute = attrMap->attributeItem(i);
+        const Attribute* attribute = childElement->attributeItem(i);
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
         element->setAttribute(attribute->name(), attribute->value());
     }
@@ -800,14 +800,14 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                     break;
                 }
                 // Go through all attributes and serialize them.
-                const NamedNodeMap* attrMap = static_cast<Element*>(node)->updatedAttributes();
-                if (!attrMap)
+                const Element* element = toElement(node);
+                if (!element->hasAttributes())
                     break;
 
-                unsigned numAttrs = attrMap->length();
+                unsigned numAttrs = element->attributeCount();
                 for (unsigned i = 0; i < numAttrs; ++i) {
                     // Add attribute pair
-                    const Attribute* attribute = attrMap->attributeItem(i);
+                    const Attribute* attribute = element->attributeItem(i);
                     if (attribute->localName().find(whitespaceTrimmedQuery) != notFound) {
                         resultCollector.add(node);
                         break;
@@ -1191,13 +1191,12 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForElementAttributes(Ele
 {
     RefPtr<InspectorArray> attributesValue = InspectorArray::create();
     // Go through all attributes and serialize them.
-    const NamedNodeMap* attrMap = element->updatedAttributes();
-    if (!attrMap)
+    if (!element->hasAttributes())
         return attributesValue.release();
-    unsigned numAttrs = attrMap->length();
+    unsigned numAttrs = element->attributeCount();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute* attribute = attrMap->attributeItem(i);
+        const Attribute* attribute = element->attributeItem(i);
         attributesValue->pushString(attribute->name().toString());
         attributesValue->pushString(attribute->value());
     }

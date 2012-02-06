@@ -40,9 +40,9 @@ namespace WebCore {
 // Noah's Ark of Formatting Elements can fit three of each element.
 static const size_t kNoahsArkCapacity = 3;
 
-static inline size_t attributeCount(Element* element)
+static inline size_t attributeCountWithoutUpdate(Element* element)
 {
-    return element->attributeMap() ? element->attributeMap()->length() : 0;
+    return element->hasAttributesWithoutUpdate() ? element->attributeCount() : 0;
 }
 
 HTMLFormattingElementList::HTMLFormattingElementList()
@@ -142,7 +142,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(Element* new
     // of a quickly ensuring the condition.
     Vector<Element*, 10> candidates;
 
-    size_t newElementAttributeCount = attributeCount(newElement);
+    size_t newElementAttributeCount = attributeCountWithoutUpdate(newElement);
 
     for (size_t i = m_entries.size(); i; ) {
         --i;
@@ -154,7 +154,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(Element* new
         Element* candidate = entry.element();
         if (newElement->tagQName() != candidate->tagQName())
             continue;
-        if (attributeCount(candidate) != newElementAttributeCount)
+        if (attributeCountWithoutUpdate(candidate) != newElementAttributeCount)
             continue;
 
         candidates.append(candidate);
@@ -178,18 +178,16 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(Element* newElement)
     Vector<Element*> remainingCandidates;
     remainingCandidates.reserveInitialCapacity(candidates.size());
 
-    NamedNodeMap* attributeMap = newElement->attributeMap();
-    size_t newElementAttributeCount = attributeCount(newElement);
+    size_t newElementAttributeCount = attributeCountWithoutUpdate(newElement);
 
     for (size_t i = 0; i < newElementAttributeCount; ++i) {
-        QualifiedName attributeName = attributeMap->attributeItem(i)->name();
-        AtomicString attributeValue = newElement->fastGetAttribute(attributeName);
+        Attribute* attribute = newElement->attributeItem(i);
 
         for (size_t j = 0; j < candidates.size(); ++j) {
             Element* candidate = candidates[j];
 
             // These properties should already have been checked by tryToEnsureNoahsArkConditionQuickly.
-            ASSERT(newElement->attributeMap()->length() == candidate->attributeMap()->length());
+            ASSERT(newElement->attributeCount() == candidate->attributeCount());
             ASSERT(newElement->tagQName() == candidate->tagQName());
 
             // FIXME: Technically we shouldn't read this information back from
@@ -199,7 +197,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(Element* newElement)
             // that implementations can run off the main thread. If JavaScript
             // changes the attributes values, we could get a slightly wrong
             // output here.
-            if (candidate->fastGetAttribute(attributeName) == attributeValue)
+            if (candidate->fastGetAttribute(attribute->name()) == attribute->value())
                 remainingCandidates.append(candidate);
         }
 

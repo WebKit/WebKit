@@ -160,16 +160,17 @@ void DOMEditor::innerPatchNode(Digest* oldDigest, Digest* newDigest, ExceptionCo
     Element* oldElement = static_cast<Element*>(oldNode);
     Element* newElement = static_cast<Element*>(newNode);
     if (oldDigest->m_attrsSHA1 != newDigest->m_attrsSHA1) {
-        NamedNodeMap* oldAttributeMap = oldElement->attributeMap();
+        // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
+        if (oldElement->hasAttributesWithoutUpdate()) {
+            while (oldElement->attributeCount())
+                oldElement->removeAttribute(0);
+        }
 
-        while (oldAttributeMap && oldAttributeMap->length())
-            oldAttributeMap->removeAttribute(0);
-
-        NamedNodeMap* newAttributeMap = newElement->attributeMap();
-        if (newAttributeMap) {
-            size_t numAttrs = newAttributeMap->length();
+        // FIXME: Create a function in Element for copying properties. setAttributesFromElement() is close but not enough for this case.
+        if (newElement->hasAttributesWithoutUpdate()) {
+            size_t numAttrs = newElement->attributeCount();
             for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute* attribute = newAttributeMap->attributeItem(i);
+                const Attribute* attribute = newElement->attributeItem(i);
                 oldElement->setAttribute(attribute->name(), attribute->value());
             }
         }
@@ -384,12 +385,11 @@ PassOwnPtr<DOMEditor::Digest> DOMEditor::createDigest(Node* node, UnusedNodesMap
         }
         Element* element = static_cast<Element*>(node);
 
-        NamedNodeMap* attrMap = element->attributeMap();
-        if (attrMap && attrMap->length()) {
-            size_t numAttrs = attrMap->length();
+        if (element->hasAttributesWithoutUpdate()) {
+            size_t numAttrs = element->attributeCount();
             SHA1 attrsSHA1;
             for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute* attribute = attrMap->attributeItem(i);
+                const Attribute* attribute = element->attributeItem(i);
                 addStringToSHA1(attrsSHA1, attribute->name().toString());
                 addStringToSHA1(attrsSHA1, attribute->value());
             }

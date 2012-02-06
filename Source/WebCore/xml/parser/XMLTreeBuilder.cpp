@@ -80,9 +80,9 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, DocumentFragment* f
 
     for (Element* element; !nodeStack.isEmpty(); nodeStack.removeLast()) {
         element = nodeStack.last();
-        if (NamedNodeMap* attrs = element->updatedAttributes()) {
-            for (size_t i = 0; i < attrs->length(); ++i) {
-                Attribute* attr = attrs->attributeItem(i);
+        if (element->hasAttributes()) {
+            for (size_t i = 0; i < element->attributeCount(); ++i) {
+                Attribute* attr = element->attributeItem(i);
                 if (attr->localName() == xmlnsAtom)
                     stackItem.setNamespaceURI(attr->value());
                 else if (attr->prefix() == xmlnsAtom)

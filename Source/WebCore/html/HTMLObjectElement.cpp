@@ -177,10 +177,9 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     }
     
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
-    NamedNodeMap* attributes = updatedAttributes();
-    if (attributes) {
-        for (unsigned i = 0; i < attributes->length(); ++i) {
-            Attribute* it = attributes->attributeItem(i);
+    if (hasAttributes()) {
+        for (unsigned i = 0; i < attributeCount(); ++i) {
+            Attribute* it = attributeItem(i);
             const AtomicString& name = it->name().localName();
             if (!uniqueParamNames.contains(name.impl())) {
                 paramNames.append(name.string());

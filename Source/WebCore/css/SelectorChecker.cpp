@@ -671,10 +671,11 @@ static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match m
     return true;
 }
 
-static bool anyAttributeMatches(NamedNodeMap* attributes, CSSSelector::Match match, const QualifiedName& selectorAttr, const AtomicString& selectorValue, bool caseSensitive)
+static bool anyAttributeMatches(Element* element, CSSSelector::Match match, const QualifiedName& selectorAttr, const AtomicString& selectorValue, bool caseSensitive)
 {
-    for (size_t i = 0; i < attributes->length(); ++i) {
-        Attribute* attributeItem = attributes->attributeItem(i);
+    ASSERT(element->hasAttributesWithoutUpdate());
+    for (size_t i = 0; i < element->attributeCount(); ++i) {
+        Attribute* attributeItem = element->attributeItem(i);
 
         if (!SelectorChecker::attributeNameMatches(attributeItem, selectorAttr))
             continue;
@@ -701,13 +702,12 @@ bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& d
     if (sel->isAttributeSelector()) {
         const QualifiedName& attr = sel->attribute();
 
-        NamedNodeMap* attributes = e->updatedAttributes();
-        if (!attributes)
+        if (!e->hasAttributes())
             return false;
 
         bool caseSensitive = !m_documentIsHTML || !htmlAttributeHasCaseInsensitiveValue(attr);
 
-        if (!anyAttributeMatches(attributes, static_cast<CSSSelector::Match>(sel->m_match), attr, sel->value(), caseSensitive))
+        if (!anyAttributeMatches(e, static_cast<CSSSelector::Match>(sel->m_match), attr, sel->value(), caseSensitive))
             return false;
     }
 

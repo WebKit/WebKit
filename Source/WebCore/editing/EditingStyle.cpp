@@ -832,8 +832,7 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
         }
     }
 
-    const NamedNodeMap* attributeMap = element->attributeMap();
-    if (!attributeMap || attributeMap->isEmpty())
+    if (!element->hasAttributes())
         return elementIsSpanOrElementEquivalent; // span, b, etc... without any attributes
 
     unsigned matchedAttributes = 0;
@@ -861,8 +860,8 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
     }
 
     // font with color attribute, span with style attribute, etc...
-    ASSERT(matchedAttributes <= attributeMap->length());
-    return matchedAttributes >= attributeMap->length();
+    ASSERT(matchedAttributes <= element->attributeCount());
+    return matchedAttributes >= element->attributeCount();
 }
 
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)
