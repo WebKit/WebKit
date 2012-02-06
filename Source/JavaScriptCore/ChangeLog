@@ -1,3 +1,10 @@
+2012-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r106197.
+
+        * tools/CodeProfiling.cpp:
+        (JSC::CodeProfiling::notifyAllocator): getenv() isn't supported by WinCE. Don't call it.
+
 2012-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Remove JSObject defineGetter/defineSetter lookupGetter/lookupSetter
