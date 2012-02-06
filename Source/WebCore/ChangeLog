@@ -1,3 +1,9 @@
+2012-02-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Qt minimal compilation fix after r106777.
+
+        * inspector/InspectorDatabaseAgent.h: added missing #if ENABLED guards.
+
 2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: REGRESSION detached dom nodes aren't highlighted
