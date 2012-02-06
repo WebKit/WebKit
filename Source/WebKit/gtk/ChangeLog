@@ -1,3 +1,35 @@
+2012-02-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Insta-crash when closing browser with inspector window opened
+        https://bugs.webkit.org/show_bug.cgi?id=50744
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::releaseFrontendPage): also let go of the
+        frontend client when releasing the frontend page;
+        (WebKit::InspectorFrontendClient::~InspectorFrontendClient(): Call releaseFrontendPage()
+        like other ports do instead of just disconnectFrontendClient().
+        (WebKit::InspectorFrontendClient::destroyInspectorWindow): Use GRefPtr for the
+        inspector ref.
+        (WebKit::InspectorFrontendClient::bringToFront): Adjust for GRefPtr usage.
+        (WebKit::InspectorFrontendClient::attachWindow): Ditto.
+        (WebKit::InspectorFrontendClient::detachWindow): Ditto.
+        (WebKit::InspectorFrontendClient::inspectedURLChanged): Ditto.
+        * WebCoreSupport/InspectorClientGtk.h:
+        (InspectorFrontendClient): Use GRefPtr for inspector member.
+        * tests/testwebinspector.c: Added. Test that killing a WebView with the inspector
+        open does not crash, and that closing and reinspecting works.
+        (quitLoop):
+        (consoleMessageCallback):
+        (inspectElementCallback):
+        (closeInspector):
+        (showInspector):
+        (test_webkit_web_inspector_close_and_inspect):
+        (test_webkit_web_inspector_destroy_inspected_web_view):
+        (main):
+
 2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Add a null check for the gdkwindow, that will happen if the window

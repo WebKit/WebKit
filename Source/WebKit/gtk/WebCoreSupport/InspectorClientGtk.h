@@ -30,6 +30,7 @@
 #define InspectorClientGtk_h
 
 #include "GOwnPtr.h"
+#include "GRefPtr.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
@@ -98,7 +99,7 @@ namespace WebKit {
     private:
         WebKitWebView* m_inspectorWebView;
         WebKitWebView* m_inspectedWebView;
-        WebKitWebInspector* m_webInspector;
+        GRefPtr<WebKitWebInspector> m_webInspector;
         InspectorClient* m_inspectorClient;
     };
 }

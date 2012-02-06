@@ -101,9 +101,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # This test crashes whatever test follows it. Perhaps it's related to the previous failure.
 fast/dom/gc-10.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=50744
-inspector/debugger/open-close-open.html
-
 # [GTK] fast/workers/storage/use-same-database-in-page-and-workers.html fails an ASSERT
 # https://bugs.webkit.org/show_bug.cgi?id=56147 
 # Fails assertion: ASSERT(m_workerContext->hasOneRef());

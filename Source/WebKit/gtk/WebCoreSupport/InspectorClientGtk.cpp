@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Gustavo Noronha Silva
+ * Copyright (C) 2008, 2012 Gustavo Noronha Silva
  * Copyright (C) 2010 Collabora Ltd.
  *
  *  This library is free software; you can redistribute it and/or
@@ -171,6 +171,7 @@ void InspectorClient::bringFrontendToFront()
 void InspectorClient::releaseFrontendPage()
 {
     m_frontendPage = 0;
+    m_frontendClient = 0;
 }
 
 void InspectorClient::highlight()
@@ -220,9 +221,10 @@ InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView
 InspectorFrontendClient::~InspectorFrontendClient()
 {
     if (m_inspectorClient) {
-        m_inspectorClient->disconnectFrontendClient();
+        m_inspectorClient->releaseFrontendPage();
         m_inspectorClient = 0;
     }
+
     ASSERT(!m_webInspector);
 }
 
@@ -230,11 +232,13 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
 {
     if (!m_webInspector)
         return;
-    WebKitWebInspector* webInspector = m_webInspector;
-    m_webInspector = 0;
 
-    g_signal_handlers_disconnect_by_func(m_inspectorWebView, (gpointer)notifyWebViewDestroyed, (gpointer)this);
-    m_inspectorWebView = 0;
+    GRefPtr<WebKitWebInspector> webInspector = adoptGRef(m_webInspector.leakRef());
+
+    if (m_inspectorWebView) {
+        g_signal_handlers_disconnect_by_func(m_inspectorWebView, reinterpret_cast<gpointer>(notifyWebViewDestroyed), this);
+        m_inspectorWebView = 0;
+    }
 
     if (notifyInspectorController)
         core(m_inspectedWebView)->inspectorController()->disconnectFrontend();
@@ -243,14 +247,11 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
         m_inspectorClient->releaseFrontendPage();
 
     gboolean handled = FALSE;
-    g_signal_emit_by_name(webInspector, "close-window", &handled);
+    g_signal_emit_by_name(webInspector.get(), "close-window", &handled);
     ASSERT(handled);
 
     // Please do not use member variables here because InspectorFrontendClient object pointed by 'this'
     // has been implicitly deleted by "close-window" function.
-
-    /* we should now dispose our own reference */
-    g_object_unref(webInspector);
 }
 
 String InspectorFrontendClient::localizedStringsURL()
@@ -274,7 +275,7 @@ void InspectorFrontendClient::bringToFront()
         return;
 
     gboolean handled = FALSE;
-    g_signal_emit_by_name(m_webInspector, "show-window", &handled);
+    g_signal_emit_by_name(m_webInspector.get(), "show-window", &handled);
 }
 
 void InspectorFrontendClient::closeWindow()
@@ -288,7 +289,7 @@ void InspectorFrontendClient::attachWindow()
         return;
 
     gboolean handled = FALSE;
-    g_signal_emit_by_name(m_webInspector, "attach-window", &handled);
+    g_signal_emit_by_name(m_webInspector.get(), "attach-window", &handled);
 }
 
 void InspectorFrontendClient::detachWindow()
@@ -297,7 +298,7 @@ void InspectorFrontendClient::detachWindow()
         return;
 
     gboolean handled = FALSE;
-    g_signal_emit_by_name(m_webInspector, "detach-window", &handled);
+    g_signal_emit_by_name(m_webInspector.get(), "detach-window", &handled);
 }
 
 void InspectorFrontendClient::setAttachedWindowHeight(unsigned height)
@@ -310,7 +311,7 @@ void InspectorFrontendClient::inspectedURLChanged(const String& newURL)
     if (!m_inspectorWebView)
         return;
 
-    webkit_web_inspector_set_inspected_uri(m_webInspector, newURL.utf8().data());
+    webkit_web_inspector_set_inspected_uri(m_webInspector.get(), newURL.utf8().data());
 }
 
 }
