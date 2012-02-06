@@ -206,6 +206,13 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming",
       "-readability/parameter_name",
       "-whitespace/declaration"]),
+    ([# These files define GObjects, which implies some definitions of
+      # variables and functions containing underscores.
+      "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer1.cpp",
+      "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",
+      "Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp",
+      "Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp"],
+     ["-readability/naming"]),
 
     # For third-party Python code, keep only the following checks--
     #

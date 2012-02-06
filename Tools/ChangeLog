@@ -1,3 +1,15 @@
+2012-02-06  Philippe Normand  <pnormand@igalia.com>
+
+        [webkitpy] cpp style-checker complains about readability/naming in GStreamer elements source files
+        https://bugs.webkit.org/show_bug.cgi?id=77866
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/style/checker.py: Ignore readability/naming
+        errors in some gstreamer source code files defining new GStreamer elements.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier):
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make sure html_dir exists before calling gtkdoc-rebase
