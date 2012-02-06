@@ -134,6 +134,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     white-space: nowrap;
 }
 
+.detailed-heapshot-view .console-formatted-id {
+    color: grey;
+}
+
 .detailed-heapshot-view .data-grid tr.selected * {
     color: inherit;
 }
@@ -206,6 +210,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
 
 .detailed-heapshot-view tr:not(.selected) td.object-column span.highlight {
     background-color: rgb(255, 255, 200);
+}
+
+.detailed-heapshot-view td.object-column span.grayed {
+    color: gray;
 }
 
 .heapshot-help-status-bar-item .glyph {

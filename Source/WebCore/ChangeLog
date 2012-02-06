@@ -1,3 +1,25 @@
+2012-02-06  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Redesign summary view / retaining tree contents
+        https://bugs.webkit.org/show_bug.cgi?id=77870
+
+        Reviewed by Pavel Feldman.
+
+        1. Make object IDs less contrast.
+        2. Put array indices in [].
+        3. Do not write type if it's just "Object".
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype._createObjectCell):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        (WebInspector.HeapSnapshotObjectNode.prototype._emptyData):
+        (WebInspector.HeapSnapshotObjectNode.prototype._enhanceData):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.get data):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view .console-formatted-id):
+        (.detailed-heapshot-view td.object-column span.grayed):
+
 2012-02-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap][Qt] Avoid an image copy when uploading textures in WebKit1

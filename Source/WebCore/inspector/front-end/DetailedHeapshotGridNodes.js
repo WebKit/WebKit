@@ -239,6 +239,12 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         valueSpan.className = "value console-formatted-" + data.valueStyle;
         valueSpan.textContent = data.value;
         div.appendChild(valueSpan);
+        var idSpan = document.createElement("span");
+        idSpan.className = "console-formatted-id";
+        idSpan.textContent = " @" + data["nodeId"];
+        div.appendChild(idSpan);
+        if (this._postfixObjectCell)
+            this._postfixObjectCell(div, data);
         cell.appendChild(div);
         cell.addStyleClass("disclosure");
         if (this.depth)
@@ -267,7 +273,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle = "string";
             break;
         case "closure":
-            value = "function " + value + "()";
+            value = "function" + (value ? " " : "") + value + "()";
             valueStyle = "function";
             break;
         case "number":
@@ -280,14 +286,16 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             if (!value)
                 value = "[]";
             else
-                value += " []";
+                value += "[]";
             break;
         };
         if (this.hasHoverMessage)
             valueStyle += " highlight";
+        if (value === "Object")
+            value = "";
         if (this.detachedDOMTreeNode)
             valueStyle += " detached-dom-tree-node";
-        data["object"] = { valueStyle: valueStyle, value: value + ": @" + this.snapshotNodeId };
+        data["object"] = { valueStyle: valueStyle, value: value, nodeId: this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
@@ -430,7 +438,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _emptyData: function()
     {
-        return {count:"", addedCount: "", removedCount: "", countDelta:"", addedSize: "", removedSize: "", sizeDelta: ""};
+        return { count: "", addedCount: "", removedCount: "", countDelta: "", addedSize: "", removedSize: "", sizeDelta: "" };
     },
 
     _enhanceData: function(data)
@@ -446,6 +454,9 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         case "hidden":
             nameClass = "console-formatted-null";
             break;
+        case "element":
+            name = "[" + name + "]";
+            break;
         }
         data["object"].nameClass = nameClass;
         data["object"].name = name;
@@ -454,21 +465,8 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _prefixObjectCell: function(div, data)
     {
-        if (this.showRetainingEdges) {
-            if (this._cycledWithAncestorGridNode)
-                div.className += " cycled-ancessor-node";
-            var referenceNameSpan = document.createElement("span");
-            referenceNameSpan.className = "name";
-            referenceNameSpan.textContent = this._referenceName + " ";
-            div.appendChild(referenceNameSpan);
-
-            var separatorSpan = document.createElement("span");
-            separatorSpan.className = "separator";
-            separatorSpan.textContent = " of ";
-            div.appendChild(separatorSpan);
-
-            return;
-        }
+        if (this.showRetainingEdges && this._cycledWithAncestorGridNode)
+            div.className += " cycled-ancessor-node";
 
         var nameSpan = document.createElement("span");
         nameSpan.className = data.nameClass;
@@ -476,8 +474,8 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         div.appendChild(nameSpan);
 
         var separatorSpan = document.createElement("span");
-        separatorSpan.className = "separator";
-        separatorSpan.textContent = ": ";
+        separatorSpan.className = "grayed";
+        separatorSpan.textContent = this.showRetainingEdges ? " in " : " :: ";
         div.appendChild(separatorSpan);
     }
 }
@@ -617,7 +615,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
 
     get data()
     {
-        var data = {object: this._name};
+        var data = { object: this._name };
         var view = this.dataGrid.snapshotView;
         data["count"] =  Number.withThousandsSeparator(this._count);
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
