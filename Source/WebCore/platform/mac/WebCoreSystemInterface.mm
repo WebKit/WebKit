@@ -29,6 +29,7 @@
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
+void (*wkCGContextResetClip)(CGContextRef);
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
@@ -132,7 +133,6 @@ CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
-void (*wkCGContextResetClip)(CGContextRef);
 CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
 CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 
