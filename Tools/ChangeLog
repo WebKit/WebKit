@@ -1,3 +1,18 @@
+2012-02-06  Eric Seidel  <eric@webkit.org>
+
+        webkit-patch apply-from-bug should be able to apply non-reviewed patches
+        https://bugs.webkit.org/show_bug.cgi?id=77883
+
+        Reviewed by Adam Barth.
+
+        This is very helpful if you use bugzilla as a replacement for git-stash.
+        Makes it simpler to re-apply the patch w/o having to look up the patch id.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (ProcessBugsMixin._fetch_list_of_patches_to_process):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.test_apply_from_bug):
+
 2012-02-06  Philippe Normand  <pnormand@igalia.com>
 
         [webkitpy] cpp style-checker complains about readability/naming in GStreamer elements source files

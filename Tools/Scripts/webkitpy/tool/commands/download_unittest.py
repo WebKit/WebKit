@@ -104,10 +104,14 @@ class DownloadCommandsTest(CommandsTest):
         expected_stderr = "Updating working directory\nProcessing 1 patch from 1 bug.\nProcessing patch 10000 from bug 50000.\n"
         self.assert_execute_outputs(ApplyAttachment(), [10000], options=options, expected_stderr=expected_stderr)
 
-    def test_apply_patches(self):
+    def test_apply_from_bug(self):
         options = self._default_options()
         options.update = True
         options.local_commit = True
+
+        expected_stderr = "Updating working directory\n0 reviewed patches found on bug 50001.\nNo reviewed patches found, looking for unreviewed patches.\n1 patch found on bug 50001.\nProcessing 1 patch from 1 bug.\nProcessing patch 10002 from bug 50001.\n"
+        self.assert_execute_outputs(ApplyFromBug(), [50001], options=options, expected_stderr=expected_stderr)
+
         expected_stderr = "Updating working directory\n2 reviewed patches found on bug 50000.\nProcessing 2 patches from 1 bug.\nProcessing patch 10000 from bug 50000.\nProcessing patch 10001 from bug 50000.\n"
         self.assert_execute_outputs(ApplyFromBug(), [50000], options=options, expected_stderr=expected_stderr)
 

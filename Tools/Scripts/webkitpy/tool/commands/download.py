@@ -187,6 +187,12 @@ class ProcessBugsMixin(object):
             patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
             log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
             all_patches += patches
+        if not all_patches:
+            log("No reviewed patches found, looking for unreviewed patches.")
+            for bug_id in args:
+                patches = tool.bugs.fetch_bug(bug_id).patches()
+                log("%s found on bug %s." % (pluralize("patch", len(patches)), bug_id))
+                all_patches += patches
         return all_patches
 
 
