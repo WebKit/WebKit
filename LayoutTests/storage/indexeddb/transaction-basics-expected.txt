@@ -23,7 +23,7 @@ addRemoveIDBObjects():
 trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
-index = store.createIndex('indexFail', 'x', false)
+index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
 
@@ -36,11 +36,11 @@ addRemoveAddIDBObjects():
 trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
-index = store.createIndex('indexFail', 'x', false)
+index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
 store = db.createObjectStore('storeFail', null)
-index = store.createIndex('indexFail', 'x', false)
+index = store.createIndex('indexFail', 'x')
 
 testSetVersionAbort3():
 PASS event.cancelable is false
@@ -53,7 +53,7 @@ PASS event.cancelable is false
 trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
-index = store.createIndex('indexFail', 'x', false)
+index = store.createIndex('indexFail', 'x')
 
 testInactiveAbortedTransaction():
 Expecting exception from index.openCursor()
@@ -99,7 +99,7 @@ addIDBObjectsAndCommit():
 trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
-index = store.createIndex('indexFail', 'x', false)
+index = store.createIndex('indexFail', 'x')
 
 testInactiveCompletedTransaction():
 Expecting exception from index.openCursor()

@@ -47,6 +47,9 @@ function cleanDatabase()
     req = evalAndLog("trans.objectStore('a').put({'a': 0})");
     req.onsuccess = putB;
     req.onerror = unexpectedErrorCallback;
+
+    evalAndExpectExceptionClass("db.createObjectStore('d', 'bar');", "TypeError");
+    evalAndExpectExceptionClass("db.createObjectStore('e', false);", "TypeError");
 }
 
 function putB()

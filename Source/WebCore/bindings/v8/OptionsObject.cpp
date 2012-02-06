@@ -64,6 +64,11 @@ OptionsObject& OptionsObject::operator=(const OptionsObject& optionsObject)
     return *this;
 }
 
+bool OptionsObject::isObject() const
+{
+    return !isUndefinedOrNull() && m_options->IsObject();
+}
+
 bool OptionsObject::isUndefinedOrNull() const
 {
     if (m_options.IsEmpty())

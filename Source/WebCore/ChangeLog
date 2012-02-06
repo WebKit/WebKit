@@ -1,3 +1,20 @@
+2012-02-06  Eugene Girard  <girard@chromium.org>
+
+        IndexedDB createObjectStore should throw if options arg is invalid
+        Added logic to OptionsObject to determine if an invalid object was created.
+        Javascript bindings now detect invalid OptionsObject's and throw TypeError when found.
+        https://bugs.webkit.org/show_bug.cgi?id=58471
+
+        Reviewed by Adam Barth.
+
+        Test: storage/indexeddb/createObjectStore-bad-options.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::isObject):
+        * bindings/v8/OptionsObject.h:
+
 2012-02-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106797 and r106806.

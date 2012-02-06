@@ -39,8 +39,8 @@ function deleteExisting()
 
     window.store = evalAndLog("db.createObjectStore('storeName', null)");
     window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
-    window.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', false)");
-    window.indexObject3 = evalAndLog("store.createIndex('zIndex', 'z', true)");
+    window.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', {unique: false})");
+    window.indexObject3 = evalAndLog("store.createIndex('zIndex', 'z', {unique: true})");
     addData();
 }
 

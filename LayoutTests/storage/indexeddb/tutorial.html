@@ -180,8 +180,8 @@ function onSetVersion()
     // indexes for a persons first and last name. Indexes can optionally be specified to not be
     // unique, which is good in the case of names. The first parameter is the name of the index.
     // Second is the key path. The third specifies uniqueness.
-    var fname = objectStore.createIndex("fname", "fname", false);
-    var lname = objectStore.createIndex("lname", "lname", false);
+    var fname = objectStore.createIndex("fname", "fname", { unique: false});
+    var lname = objectStore.createIndex("lname", "lname", { unique: false});
 
     // Note that if you wanted to delete these indexes, you can either call objectStore.deleteIndex
     // or simply delete the objectStores that own the indexes.

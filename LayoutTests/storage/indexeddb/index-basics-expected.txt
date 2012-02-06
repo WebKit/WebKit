@@ -12,8 +12,8 @@ PASS trans !== null is true
 Deleted all object stores.
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
-store.createIndex('indexName2', 'y', false)
-store.createIndex('zIndex', 'z', true)
+store.createIndex('indexName2', 'y', {unique: false})
+store.createIndex('zIndex', 'z', {unique: true})
 PASS 'name' in indexObject is true
 PASS indexObject.name is "indexName"
 PASS 'objectStore' in indexObject is true

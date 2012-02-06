@@ -50,6 +50,21 @@ function evalAndExpectException(cmd, expected)
     }
 }
 
+function evalAndExpectExceptionClass(cmd, expected)
+{
+    debug("Expecting " + expected + " exception from " + cmd);
+    try {
+        eval(cmd);
+        testFailed("No exception thrown!" );
+    } catch (e) {
+		testPassed("Exception was thrown.");
+		if (eval("e instanceof " + expected))
+			testPassed(cmd + " threw " + e);
+		else
+			testFailed("Expected " + expected + " but saw " + e);
+    }
+}
+
 function deleteAllObjectStores(db)
 {
     while (db.objectStoreNames.length)

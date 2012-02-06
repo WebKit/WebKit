@@ -49,6 +49,7 @@ public:
 
     OptionsObject& operator=(const OptionsObject&);
 
+    bool isObject() const;
     bool isUndefinedOrNull() const;
 
     bool get(const String&, bool&) const;
