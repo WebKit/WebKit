@@ -1,3 +1,12 @@
+2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed fix for the new API test that is failing -
+        WEBKIT_INSPECTOR_PATH needs to be set, since we do not install our
+        builds.
+
+        * tests/testwebinspector.c:
+        (main):
+
 2012-02-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Insta-crash when closing browser with inspector window opened

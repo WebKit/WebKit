@@ -154,6 +154,12 @@ int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, NULL);
 
+    testutils_relative_chdir("Programs/resources/inspector/inspector.html", argv[0]);
+
+    char *currentDir = g_get_current_dir();
+    g_setenv("WEBKIT_INSPECTOR_PATH", currentDir, TRUE);
+    g_free(currentDir);
+
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webinspector/destroy-inspected-web-view", test_webkit_web_inspector_destroy_inspected_web_view);
     g_test_add_func("/webkit/webinspector/close-and-inspect", test_webkit_web_inspector_close_and_inspect);
