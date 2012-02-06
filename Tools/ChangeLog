@@ -1,3 +1,15 @@
+2012-02-02  Hajime Morrita  <morrita@chromium.org>
+
+        [PerformanceTests] Each Dromaeo test needs its landing html.
+        https://bugs.webkit.org/show_bug.cgi?id=77504
+
+        Reviewed by Ryosuke Niwa.
+
+        Added an ignorable pattern which happens in some Dromaeo tests.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+
 2012-02-06  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Add missing pango include dir to fix build

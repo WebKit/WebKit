@@ -1,3 +1,92 @@
+2012-02-02  Hajime Morrita  <morrita@chromium.org>
+
+        [PerformanceTests] Each Dromaeo test needs its landing html.
+        https://bugs.webkit.org/show_bug.cgi?id=77504
+
+        Reviewed by Ryosuke Niwa.
+
+        - Added landing pages for each test which are listed in MANIFEST.json
+        - Removed some tests which depends on the library whose license is incompatible to WebKit.
+        - Added local copy of corresponding library. And replace the references to the remote sources
+          to the local copies.
+        - Removed old library files under Dromaeo/resources/dromaeo/web/lib/.
+        - Skipped Sunsupier and v8 test. Such JS centric test should have its own test instead of
+          running as a part of Dromaeo.
+
+        * Dromaeo/cssquery-dojo.html: Added.
+        * Dromaeo/cssquery-jquery.html: Added.
+        * Dromaeo/cssquery-prototype.html: Added.
+        * Dromaeo/dom-attr.html: Added.
+        * Dromaeo/dom-modify.html: Added.
+        * Dromaeo/dom-traverse.html: Added.
+        * Dromaeo/dromaeo-3d-cube.html: Added.
+        * Dromaeo/dromaeo-core-eval.html: Added.
+        * Dromaeo/dromaeo-object-array.html: Added.
+        * Dromaeo/dromaeo-object-regexp.html: Added.
+        * Dromaeo/dromaeo-object-string.html: Added.
+        * Dromaeo/dromaeo-string-base64.html: Added.
+        * Dromaeo/jslib-attr-jquery.html: Added.
+        * Dromaeo/jslib-attr-prototype.html: Added.
+        * Dromaeo/jslib-event-jquery.html: Added.
+        * Dromaeo/jslib-event-prototype.html: Added.
+        * Dromaeo/jslib-modify-jquery.html: Added.
+        * Dromaeo/jslib-modify-prototype.html: Added.
+        * Dromaeo/jslib-style-jquery.html: Added.
+        * Dromaeo/jslib-style-prototype.html: Added.
+        * Dromaeo/jslib-traverse-jquery.html: Added.
+        * Dromaeo/jslib-traverse-prototype.html: Added.
+        * Dromaeo/resources/dromaeo/web/lib/dojo.js: Removed.
+        * Dromaeo/resources/dromaeo/web/lib/dojo-1.6.1.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/jquery.js: Removed.
+        * Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js: Added.
+        * Dromaeo/resources/dromaeo/web/lib/mootools.js: Removed.
+        * Dromaeo/resources/dromaeo/web/lib/prototype.js: Removed.
+        * Dromaeo/resources/dromaeo/web/lib/prototype-1.7.js: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-dojo.html:
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-mootools.html: Removed.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-prototype.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-attr-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-attr-prototype.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-event-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-event-prototype.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-modify-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-modify-prototype.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-style-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-style-prototype.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-traverse-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-traverse-prototype.html:
+        * Dromaeo/sunspider-3d-morph.html: Added.
+        * Dromaeo/sunspider-3d-raytrace.html: Added.
+        * Dromaeo/sunspider-access-binary-trees.html: Added.
+        * Dromaeo/sunspider-access-fannkuch.html: Added.
+        * Dromaeo/sunspider-access-nbody.html: Added.
+        * Dromaeo/sunspider-access-nsieve.html: Added.
+        * Dromaeo/sunspider-bitops-3bit-bits-in-byte.html: Added.
+        * Dromaeo/sunspider-bitops-bits-in-byte.html: Added.
+        * Dromaeo/sunspider-bitops-bitwise-and.html: Added.
+        * Dromaeo/sunspider-bitops-nsieve-bits.html: Added.
+        * Dromaeo/sunspider-controlflow-recursive.html: Added.
+        * Dromaeo/sunspider-crypto-aes.html: Added.
+        * Dromaeo/sunspider-crypto-md5.html: Added.
+        * Dromaeo/sunspider-crypto-sha1.html: Added.
+        * Dromaeo/sunspider-date-format-tofte.html: Added.
+        * Dromaeo/sunspider-date-format-xparb.html: Added.
+        * Dromaeo/sunspider-math-cordic.html: Added.
+        * Dromaeo/sunspider-math-partial-sums.html: Added.
+        * Dromaeo/sunspider-math-spectral-norm.html: Added.
+        * Dromaeo/sunspider-regexp-dna.html: Added.
+        * Dromaeo/sunspider-string-fasta.html: Added.
+        * Dromaeo/sunspider-string-tagcloud.html: Added.
+        * Dromaeo/sunspider-string-unpack-code.html: Added.
+        * Dromaeo/sunspider-string-validate-input.html: Added.
+        * Dromaeo/v8-crypto.html: Added.
+        * Dromaeo/v8-deltablue.html: Added.
+        * Dromaeo/v8-earley-boyer.html: Added.
+        * Dromaeo/v8-raytrace.html: Added.
+        * Dromaeo/v8-richards.html: Added.
+        * Skipped:
+
 2012-02-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106543.
