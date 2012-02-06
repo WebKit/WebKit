@@ -24,7 +24,7 @@ module window {
         Supplemental=DOMWindow
     ] DOMWindowWebAudio {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        attribute [JSCCustomGetter, V8EnabledAtRuntime] AudioContextConstructor webkitAudioContext;
+        attribute [JSCustomGetter, V8EnabledAtRuntime] AudioContextConstructor webkitAudioContext;
         attribute AudioPannerNodeConstructor webkitAudioPannerNode;
         attribute AudioProcessingEventConstructor AudioProcessingEvent;
         attribute OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;

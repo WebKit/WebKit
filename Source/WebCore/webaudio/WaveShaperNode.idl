@@ -27,6 +27,6 @@ module audio {
         Conditional=WEB_AUDIO,
         JSGenerateToJS
     ] WaveShaperNode : AudioNode {
-        attribute [JSCCustomSetter] Float32Array curve;
+        attribute [JSCustomSetter] Float32Array curve;
     };
 }

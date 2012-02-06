@@ -34,7 +34,7 @@ module css {
                      setter raises(DOMException);
 
         [ConvertNullStringTo=Null] DOMString          getPropertyValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
-        [JSCCustom] CSSValue           getPropertyCSSValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
         [ConvertNullStringTo=Null] DOMString          removeProperty(in [Optional=CallWithDefaultValue] DOMString propertyName)
             raises(DOMException);
         [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=CallWithDefaultValue] DOMString propertyName);

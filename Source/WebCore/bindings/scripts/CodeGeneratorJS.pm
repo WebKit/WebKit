@@ -857,9 +857,9 @@ sub GenerateHeader
     if ($numAttributes > 0) {
         foreach (@{$dataNode->attributes}) {
             my $attribute = $_;
-            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"};
-            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"});
-            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"});
+            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"};
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"});
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"});
             if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                 push(@headerContent, "    JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
                 $numCachedAttributes++;
@@ -878,24 +878,24 @@ sub GenerateHeader
         push(@headerContent, "\n    // Custom attributes\n");
 
         foreach my $attribute (@{$dataNode->attributes}) {
-            if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
+            if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"}) {
                 my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
                 push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
             }
-            if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && $attribute->type !~ /^readonly/) {
+            if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) && $attribute->type !~ /^readonly/) {
                 push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
             }
         }
     }
 
     foreach my $function (@{$dataNode->functions}) {
-        $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"};
+        $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCustom"};
     }
 
     if ($numCustomFunctions > 0) {
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$dataNode->functions}) {
-            next unless $function->signature->extendedAttributes->{"Custom"} or $function->signature->extendedAttributes->{"JSCCustom"};
+            next unless $function->signature->extendedAttributes->{"Custom"} or $function->signature->extendedAttributes->{"JSCustom"};
             next if $function->{overloads} && $function->{overloadIndex} != 1;
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
             push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
@@ -1695,7 +1695,7 @@ sub GenerateImplementation
                     push(@implContent, "        return jsUndefined();\n");
                 }
 
-                if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
+                if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"}) {
                     push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckAccessToNode"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
@@ -1894,7 +1894,7 @@ sub GenerateImplementation
                             push(@implContent, "        return;\n");
                         }
 
-                        if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) {
+                        if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) {
                             push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
@@ -2058,7 +2058,7 @@ sub GenerateImplementation
         foreach my $function (@{$dataNode->functions}) {
             AddIncludesForTypeInImpl($function->signature->type);
 
-            my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"};
+            my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCustom"};
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;

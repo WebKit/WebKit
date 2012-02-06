@@ -1,3 +1,30 @@
+2012-02-05  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [JSCCustom*] IDL to [JSCustom*] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=77844
+
+        Reviewed by Adam Barth.
+
+        Most existing JSC-specific IDLs have "JS" prefix. We can rename [JSCCustom] to
+        [JSCustom], [JSCCustomGetter] to [JSCustomGetter], and [JSCCustomSetter] to
+        [JSCustomSetter].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * css/CSSStyleDeclaration.idl:
+        * html/HTMLDocument.idl:
+        * html/canvas/DataView.idl:
+        * page/DOMWindow.idl:
+        * page/MemoryInfo.idl:
+        * webaudio/ConvolverNode.idl:
+        * webaudio/DOMWindowWebAudio.idl:
+        * webaudio/WaveShaperNode.idl:
+        * websockets/DOMWindowWebSocket.idl:
+        * workers/WorkerContext.idl:
+
 2012-02-05  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Enable WebGL with glx backend

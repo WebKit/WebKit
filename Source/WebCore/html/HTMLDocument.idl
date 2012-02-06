@@ -23,7 +23,7 @@ module html {
     interface [
         HasOverridingNameGetter
     ] HTMLDocument : Document {
-        [JSCCustom, V8Custom] void open();
+        [JSCustom, V8Custom] void open();
         void close();
         [Custom] void write(in [Optional=CallWithDefaultValue] DOMString text);
         [Custom] void writeln(in [Optional=CallWithDefaultValue] DOMString text);

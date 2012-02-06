@@ -50,9 +50,9 @@ module html {
             raises (DOMException);
 
         // Use custom code to handle NaN case for JSC.
-        [JSCCustom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [JSCustom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [JSCCustom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [JSCustom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
 
         // We have to use custom code because our code generator does not support uint8_t type.

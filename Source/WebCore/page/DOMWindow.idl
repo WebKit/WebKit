@@ -44,7 +44,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, JSCCustomGetter] History history;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, JSCustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;
@@ -54,7 +54,7 @@ module window {
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
         readonly attribute Crypto crypto;
-        attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8Unforgeable, CPPCustom] Location location;
+        attribute [DoNotCheckDomainSecurity, JSCustom, V8CustomSetter, V8Unforgeable, CPPCustom] Location location;
 
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
@@ -472,8 +472,8 @@ module window {
         attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
         attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
-        attribute [JSCCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
-        attribute [JSCCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
+        attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
+        attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
@@ -579,7 +579,7 @@ module window {
 #endif
 
 #if defined(ENABLE_SHARED_WORKERS) && ENABLE_SHARED_WORKERS
-        attribute [JSCCustomGetter, V8EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
+        attribute [JSCustomGetter, V8EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
@@ -602,7 +602,7 @@ module window {
 
         attribute StorageConstructor Storage;
 
-        attribute [JSCCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+        attribute [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
         attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
         attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
         attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
