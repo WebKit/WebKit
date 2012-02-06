@@ -48,7 +48,7 @@
 
 #if PLATFORM(MAC)
 #include <OpenGL/gl.h>
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(EFL)
 #include "OpenGLShims.h"
 #elif PLATFORM(QT)
 #include <QtGlobal>

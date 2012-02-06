@@ -648,6 +648,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setOfflineWebApplicationCacheEnabled(true);
     priv->pageSettings->setUsesPageCache(true);
     priv->pageSettings->setUsesEncodingDetector(false);
+    priv->pageSettings->setWebGLEnabled(true);
 
     url = priv->pageSettings->userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());

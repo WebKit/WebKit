@@ -281,7 +281,6 @@ IF (ENABLE_VIDEO)
   )
 ENDIF ()
 
-
 IF (ENABLE_GLIB_SUPPORT)
   LIST(APPEND WebCore_LIBRARIES
     ${Glib_LIBRARIES}
@@ -294,9 +293,22 @@ ENDIF ()
 IF (ENABLE_WEBGL)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     ${OPENGL_INCLUDE_DIR}
+    "${WEBCORE_DIR}/platform/graphics/cairo"
+    "${WEBCORE_DIR}/platform/graphics/glx"
+    "${WEBCORE_DIR}/platform/graphics/opengl"
   )
   LIST(APPEND WebCore_LIBRARIES
     ${OPENGL_gl_LIBRARY}
+  )
+  LIST(APPEND WebCore_SOURCES
+    platform/graphics/cairo/GraphicsContext3DCairo.cpp
+    platform/graphics/cairo/OpenGLShims.cpp
+    platform/graphics/efl/DrawingBufferEfl.cpp
+    platform/graphics/efl/GraphicsContext3DEfl.cpp
+    platform/graphics/glx/GraphicsContext3DPrivate.cpp
+    platform/graphics/opengl/Extensions3DOpenGL.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
   )
 ENDIF ()
 

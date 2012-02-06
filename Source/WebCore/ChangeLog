@@ -1,3 +1,45 @@
+2012-02-05  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [EFL] Enable WebGL with glx backend
+        https://bugs.webkit.org/show_bug.cgi?id=77308
+
+        Reviewed by Martin Robinson.
+
+        Implemented WebGL feature for EFL port. The way is very similar to the one of GTK port.
+
+        No new tests required. We can verify this feature with the existing test cases.
+
+        * CMakeLists.txt: Revised common files required for WebGL.
+        * PlatformEfl.cmake: Added EFL specific files.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (GraphicsContext3D):
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer):
+        * platform/graphics/efl/DrawingBufferEfl.cpp: Copied from GTK port.
+        (WebCore):
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        (WebCore::DrawingBuffer::platformColorBuffer):
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp: Almost same with GraphicsContext3DGtk.cpp.
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+
 2012-02-05  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FormSubmission::create.
