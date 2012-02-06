@@ -192,13 +192,6 @@ namespace JSC {
         void putDirectOffset(JSGlobalData& globalData, size_t offset, JSValue value) { propertyStorage()[offset].set(globalData, this, value); }
         void putUndefinedAtDirectOffset(size_t offset) { propertyStorage()[offset].setUndefined(); }
 
-        JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
-        void initializeGetterSetterProperty(ExecState*, const Identifier&, GetterSetter*, unsigned attributes);
-
-        JS_EXPORT_PRIVATE static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
-        JS_EXPORT_PRIVATE static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
-        JS_EXPORT_PRIVATE JSValue lookupGetter(ExecState*, const Identifier& propertyName);
-        JS_EXPORT_PRIVATE JSValue lookupSetter(ExecState*, const Identifier& propertyName);
         JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         bool isGlobalObject() const;
@@ -296,6 +289,7 @@ namespace JSC {
         bool putDirectInternal(JSGlobalData&, const Identifier& propertyName, JSValue, unsigned attr, PutPropertySlot&, JSCell*);
 
         bool inlineGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
 
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         Structure* createInheritorID(JSGlobalData&);

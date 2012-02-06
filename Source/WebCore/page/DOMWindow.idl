@@ -28,8 +28,7 @@ module window {
 
     interface [
         CheckDomainSecurity,
-        CustomDefineGetter,
-        CustomDefineSetter,
+        CustomDefineOwnProperty,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
         CustomGetPropertyNames,

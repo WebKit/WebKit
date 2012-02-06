@@ -1,3 +1,28 @@
+2012-02-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove JSObject defineGetter/defineSetter lookupGetter/lookupSetter
+        https://bugs.webkit.org/show_bug.cgi?id=77451
+
+        Reviewed by Sam Weinig.
+
+        These can now all be implemented in terms of defineOwnProperty & getPropertyDescriptor.
+        Also remove initializeGetterSetterProperty, since this is equivalent to putDirectAccessor.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore):
+        * bindings/js/JSDOMWindowShell.h:
+        (JSDOMWindowShell):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::defineOwnProperty):
+        (WebCore::JSLocationPrototype::defineOwnProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * page/DOMWindow.idl:
+        * page/Location.idl:
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distrcheck.

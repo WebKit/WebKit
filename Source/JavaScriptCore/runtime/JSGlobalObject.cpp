@@ -171,21 +171,16 @@ void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, const I
     }
 }
 
-void JSGlobalObject::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes)
+bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     PropertySlot slot;
-    if (!thisObject->symbolTableGet(propertyName, slot))
-        JSVariableObject::defineGetter(thisObject, exec, propertyName, getterFunc, attributes);
+    // silently ignore attempts to add accessors aliasing vars.
+    if (descriptor.isAccessorDescriptor() && thisObject->symbolTableGet(propertyName, slot))
+        return false;
+    return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-void JSGlobalObject::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes)
-{
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    PropertySlot slot;
-    if (!thisObject->symbolTableGet(propertyName, slot))
-        JSVariableObject::defineSetter(thisObject, exec, propertyName, setterFunc, attributes);
-}
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {

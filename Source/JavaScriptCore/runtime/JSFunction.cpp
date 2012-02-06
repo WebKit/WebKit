@@ -30,6 +30,7 @@
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
+#include "GetterSetter.h"
 #include "JSArray.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
@@ -219,7 +220,7 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
         if (thisObject->jsExecutable()->isStrictMode()) {
             bool result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
             if (!result) {
-                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec->globalData(), propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
                 result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
                 ASSERT(result);
             }
@@ -238,7 +239,7 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
         if (thisObject->jsExecutable()->isStrictMode()) {
             bool result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
             if (!result) {
-                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec->globalData(), propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
                 result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
                 ASSERT(result);
             }
@@ -267,7 +268,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
         if (thisObject->jsExecutable()->isStrictMode()) {
             bool result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
             if (!result) {
-                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec->globalData(), propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
                 result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
                 ASSERT(result);
             }
@@ -286,7 +287,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
         if (thisObject->jsExecutable()->isStrictMode()) {
             bool result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
             if (!result) {
-                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec->globalData(), propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
                 result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
                 ASSERT(result);
             }

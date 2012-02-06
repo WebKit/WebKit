@@ -1,3 +1,45 @@
+2012-02-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove JSObject defineGetter/defineSetter lookupGetter/lookupSetter
+        https://bugs.webkit.org/show_bug.cgi?id=77451
+
+        Reviewed by Sam Weinig.
+
+        These can now all be implemented in terms of defineOwnProperty & getPropertyDescriptor.
+        Also remove initializeGetterSetterProperty, since this is equivalent to putDirectAccessor.
+
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::defineOwnProperty):
+        * debugger/DebuggerActivation.h:
+        (DebuggerActivation):
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        (JSC):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSCell.cpp:
+        (JSC):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        * runtime/JSObject.cpp:
+        (JSC):
+        * runtime/JSObject.h:
+        (JSObject):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

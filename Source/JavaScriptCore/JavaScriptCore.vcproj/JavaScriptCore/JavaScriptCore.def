@@ -135,11 +135,8 @@ EXPORTS
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultAttributes@PropertyDescriptor@JSC@@0IA
     ?defaultValue@JSObject@JSC@@SA?AVJSValue@2@PBV12@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
-    ?defineGetter@JSGlobalObject@JSC@@SAXPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@0I@Z
-    ?defineGetter@JSObject@JSC@@SAXPAV12@PAVExecState@2@ABVIdentifier@2@0I@Z
+    ?defineOwnProperty@JSGlobalObject@JSC@@SA_NPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@_N@Z
     ?defineOwnProperty@JSObject@JSC@@SA_NPAV12@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@_N@Z
-    ?defineSetter@JSGlobalObject@JSC@@SAXPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@0I@Z
-    ?defineSetter@JSObject@JSC@@SAXPAV12@PAVExecState@2@ABVIdentifier@2@0I@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHBITMAP__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHBRUSH__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHDC__@@@Z
@@ -178,7 +175,7 @@ EXPORTS
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
-    ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
+    ?fillGetterPropertySlot@JSObject@JSC@@AAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
     ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z

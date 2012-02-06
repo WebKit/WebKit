@@ -158,16 +158,6 @@ void slowValidateCell(JSCell* cell)
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
 }
 
-void JSCell::defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void JSCell::defineSetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned)
-{
-    ASSERT_NOT_REACHED();
-}
-
 JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType)
 {
     ASSERT_NOT_REACHED();

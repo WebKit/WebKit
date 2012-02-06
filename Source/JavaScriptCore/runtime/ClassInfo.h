@@ -66,12 +66,6 @@ namespace JSC {
         typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
         ToThisObjectFunctionPtr toThisObject;
 
-        typedef void (*DefineGetterFunctionPtr)(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
-        DefineGetterFunctionPtr defineGetter;
-
-        typedef void (*DefineSetterFunctionPtr)(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
-        DefineSetterFunctionPtr defineSetter;
-
         typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
         DefaultValueFunctionPtr defaultValue;
 
@@ -128,8 +122,6 @@ struct MemberCheck##member { \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
         &ClassName::toThisObject, \
-        &ClassName::defineGetter, \
-        &ClassName::defineSetter, \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getPropertyNames, \

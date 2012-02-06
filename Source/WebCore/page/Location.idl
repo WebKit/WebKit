@@ -37,9 +37,9 @@ module window {
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        CustomDefineGetter,
+        CustomDefineOwnProperty,
         JSCustomPrototypePutDelegate,
-        CustomPrototypeDefineGetter,
+        CustomPrototypeDefineOwnProperty,
         OmitConstructor
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

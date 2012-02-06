@@ -170,11 +170,11 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void JSLocation::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
-    if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
-        return;
-    Base::defineGetter(object, exec, propertyName, getterFunction, attributes);
+    if (descriptor.isAccessorDescriptor() && (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf))
+        return false;
+    return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
 void JSLocation::setHref(ExecState* exec, JSValue value)
@@ -281,11 +281,11 @@ bool JSLocationPrototype::putDelegate(ExecState* exec, const Identifier& propert
     return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }
 
-void JSLocationPrototype::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+bool JSLocationPrototype::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
-    if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
-        return;
-    Base::defineGetter(object, exec, propertyName, getterFunction, attributes);
+    if (descriptor.isAccessorDescriptor() && (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf))
+        return false;
+    return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
 } // namespace WebCore

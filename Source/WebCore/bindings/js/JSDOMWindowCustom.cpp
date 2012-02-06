@@ -388,35 +388,17 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void JSDOMWindow::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
-{
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
-    // Only allow defining getters by frames in the same origin.
-    if (!thisObject->allowsAccessFrom(exec))
-        return;
-
-    // Don't allow shadowing location using defineGetter.
-    if (propertyName == "location")
-        return;
-
-    Base::defineGetter(thisObject, exec, propertyName, getterFunction, attributes);
-}
-
-void JSDOMWindow::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
-{
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
-    // Only allow defining setters by frames in the same origin.
-    if (!thisObject->allowsAccessFrom(exec))
-        return;
-    Base::defineSetter(thisObject, exec, propertyName, setterFunction, attributes);
-}
-
 bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
     if (!thisObject->allowsAccessFrom(exec))
         return false;
+
+    // Don't allow shadowing location using accessor properties.
+    if (descriptor.isAccessorDescriptor() && propertyName == "location")
+        return false;
+
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 

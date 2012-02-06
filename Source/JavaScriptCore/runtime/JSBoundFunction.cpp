@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSBoundFunction.h"
 
+#include "GetterSetter.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {
@@ -111,8 +112,8 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
     Base::finishCreation(exec, executable, length, name);
     ASSERT(inherits(&s_info));
 
-    initializeGetterSetterProperty(exec, exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
-    initializeGetterSetterProperty(exec, exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+    putDirectAccessor(exec->globalData(), exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+    putDirectAccessor(exec->globalData(), exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
