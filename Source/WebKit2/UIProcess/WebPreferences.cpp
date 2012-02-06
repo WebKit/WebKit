@@ -42,7 +42,8 @@ WebPreferences::WebPreferences(const String& identifier)
 }
 
 WebPreferences::WebPreferences(const WebPreferences& other)
-    : m_store(other.m_store)
+    : APIObject()
+    , m_store(other.m_store)
 {
     platformInitializeStore();
 }

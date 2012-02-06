@@ -1,3 +1,10 @@
+2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        gcc build fix after r106749.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences):
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] WebKitWebView does a lot of work during size_allocate when not mapped
