@@ -26,7 +26,6 @@
 #define NamedNodeMap_h
 
 #include "Attribute.h"
-#include "CSSPropertyNames.h"
 #include "ElementAttributeData.h"
 #include "SpaceSplitString.h"
 #include <wtf/NotFound.h>
@@ -95,17 +94,8 @@ public:
 
     Element* element() const { return m_element; }
 
-    size_t mappedAttributeCount() const;
-
     ElementAttributeData* attributeData() { return &m_attributeData; }
     const ElementAttributeData* attributeData() const { return &m_attributeData; }
-
-    StylePropertySet* inlineStyleDecl() { return attributeData()->m_inlineStyleDecl.get(); }
-    StylePropertySet* ensureInlineStyleDecl();
-    void destroyInlineStyleDecl();
-
-    StylePropertySet* attributeStyle() const { return attributeData()->m_attributeStyle.get(); }
-    StylePropertySet* ensureAttributeStyle();
 
 private:
     NamedNodeMap(Element* element)

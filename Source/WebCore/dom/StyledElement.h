@@ -36,8 +36,6 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
-    size_t mappedAttributeCount() const { return attributeMap() ? attributeMap()->mappedAttributeCount() : 0; }
-
     void addCSSLength(int id, const String& value);
     void addCSSProperty(int id, const String& value);
     void addCSSProperty(int id, int value);
@@ -49,12 +47,12 @@ public:
     virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
-    StylePropertySet* inlineStyleDecl() const { return attributeMap() ? attributeMap()->inlineStyleDecl() : 0; }
-    StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeMap()->ensureInlineStyleDecl(); }
+    StylePropertySet* inlineStyleDecl() const { return attributeData() ? attributeData()->inlineStyleDecl() : 0; }
+    StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeData()->ensureInlineStyleDecl(this); }
     virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
-    StylePropertySet* attributeStyle() const { return attributeMap() ? attributeMap()->attributeStyle() : 0; }
-    StylePropertySet* ensureAttributeStyle() { return ensureAttributeMap()->ensureAttributeStyle(); }
+    StylePropertySet* attributeStyle() const { return attributeData() ? attributeData()->attributeStyle() : 0; }
+    StylePropertySet* ensureAttributeStyle() { return ensureAttributeData()->ensureAttributeStyle(); }
 
     const SpaceSplitString& classNames() const;
 
@@ -80,8 +78,8 @@ private:
 
     void destroyInlineStyleDecl()
     {
-        if (attributeMap())
-            attributeMap()->destroyInlineStyleDecl();
+        if (attributeData())
+            attributeData()->destroyInlineStyleDecl();
     }
 };
 

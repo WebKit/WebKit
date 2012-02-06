@@ -26,11 +26,40 @@
 #include "config.h"
 #include "ElementAttributeData.h"
 
+#include "StyledElement.h"
+
 namespace WebCore {
 
 void ElementAttributeData::setClass(const String& className, bool shouldFoldCase)
 {
     m_classNames.set(className, shouldFoldCase);
+}
+
+StylePropertySet* ElementAttributeData::ensureInlineStyleDecl(Element* element)
+{
+    if (!m_inlineStyleDecl) {
+        ASSERT(element->isStyledElement());
+        m_inlineStyleDecl = StylePropertySet::createInline(static_cast<StyledElement*>(element));
+        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+    }
+    return m_inlineStyleDecl.get();
+}
+
+void ElementAttributeData::destroyInlineStyleDecl()
+{
+    if (!m_inlineStyleDecl)
+        return;
+    m_inlineStyleDecl->clearParentElement();
+    m_inlineStyleDecl = 0;
+}
+
+StylePropertySet* ElementAttributeData::ensureAttributeStyle()
+{
+    if (!m_attributeStyle) {
+        m_attributeStyle = StylePropertySet::create();
+        m_attributeStyle->setStrictParsing(false);
+    }
+    return m_attributeStyle.get();
 }
 
 }

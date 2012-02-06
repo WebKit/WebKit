@@ -1,3 +1,32 @@
+2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Move style related functions from NamedNodeMap to ElementAttributeData
+        https://bugs.webkit.org/show_bug.cgi?id=77879
+
+        Reviewed by Ryosuke Niwa.
+
+        This commit also removes the NamedNodeMap::mappedAttributeCount(),
+        which is a leftover from removal of mapped attributes.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ensureInlineStyleDecl):
+        (WebCore):
+        (WebCore::ElementAttributeData::destroyInlineStyleDecl):
+        (WebCore::ElementAttributeData::ensureAttributeStyle):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::inlineStyleDecl):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::attributeStyle):
+        * dom/NamedNodeMap.cpp:
+        * dom/NamedNodeMap.h:
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::inlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::attributeStyle):
+        (WebCore::StyledElement::ensureAttributeStyle):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+
 2012-02-06  Abhishek Arya  <inferno@chromium.org>
 
         Crash in SubframeLoader::loadSubframe.

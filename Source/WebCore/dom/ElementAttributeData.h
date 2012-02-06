@@ -42,6 +42,13 @@ public:
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
     void setIdForStyleResolution(const AtomicString& newId) { m_idForStyleResolution = newId; }
 
+    StylePropertySet* inlineStyleDecl() { return m_inlineStyleDecl.get(); }
+    StylePropertySet* ensureInlineStyleDecl(Element*);
+    void destroyInlineStyleDecl();
+
+    StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
+    StylePropertySet* ensureAttributeStyle();
+
 private:
     friend class NamedNodeMap;
 

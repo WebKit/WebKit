@@ -30,7 +30,6 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
-#include "StyledElement.h"
 
 namespace WebCore {
 
@@ -316,33 +315,6 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
     }
     
     return true;
-}
-
-StylePropertySet* NamedNodeMap::ensureInlineStyleDecl()
-{
-    if (!attributeData()->m_inlineStyleDecl) {
-        ASSERT(m_element->isStyledElement());
-        attributeData()->m_inlineStyleDecl = StylePropertySet::createInline(static_cast<StyledElement*>(m_element));
-        attributeData()->m_inlineStyleDecl->setStrictParsing(m_element->isHTMLElement() && !m_element->document()->inQuirksMode());
-    }
-    return attributeData()->m_inlineStyleDecl.get();
-}
-
-void NamedNodeMap::destroyInlineStyleDecl()
-{
-    if (!attributeData()->m_inlineStyleDecl)
-        return;
-    attributeData()->m_inlineStyleDecl->clearParentElement();
-    attributeData()->m_inlineStyleDecl = 0;
-}
-
-StylePropertySet* NamedNodeMap::ensureAttributeStyle()
-{
-    if (!attributeData()->m_attributeStyle) {
-        attributeData()->m_attributeStyle = StylePropertySet::create();
-        attributeData()->m_attributeStyle->setStrictParsing(false);
-    }
-    return attributeData()->m_attributeStyle.get();
 }
 
 } // namespace WebCore
