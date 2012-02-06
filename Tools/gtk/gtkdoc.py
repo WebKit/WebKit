@@ -357,6 +357,8 @@ class GTKDoc(object):
 
     def rebase_installed_docs(self):
         html_dir = os.path.join(self.prefix, 'share', 'gtk-doc', 'html', self.module_name)
+        if not os.path.isdir(html_dir):
+            return
         args = ['gtkdoc-rebase',
                 '--relative',
                 '--html-dir=%s' % html_dir]
