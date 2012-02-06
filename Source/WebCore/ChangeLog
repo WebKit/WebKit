@@ -1,3 +1,10 @@
+2012-02-05  Andreas Kling  <awesomekling@apple.com>
+
+        Swedish buildfix.
+
+        * dom/Document.cpp:
+        (WebCore::wheelEventHandlerCountChanged):
+
 2012-02-05  Anders Carlsson  <andersca@apple.com>
 
         The scrolling tree should be aware of any wheel event handlers on the page

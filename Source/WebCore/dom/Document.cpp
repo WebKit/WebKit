@@ -5381,7 +5381,7 @@ static void wheelEventHandlerCountChanged(Document* document)
 
     scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
 #else
-    UNUSED_PARAM(document)
+    UNUSED_PARAM(document);
 #endif
 }
 
