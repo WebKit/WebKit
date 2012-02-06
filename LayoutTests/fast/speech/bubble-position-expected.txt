@@ -4,8 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Clicking the speech button.
-onSpeechChange()
-PASS input.value === expectedString is true
+PASS rect is inside the iframe
 PASS successfullyParsed is true
 
 TEST COMPLETE

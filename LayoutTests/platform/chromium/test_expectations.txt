@@ -4024,8 +4024,6 @@ BUGWK77531 WIN LINUX : media/controls-drag-timebar.html = PASS TIMEOUT
 
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
-BUGWK77641 MAC : fast/speech/bubble-position.html = TEXT
-
 BUGWK77661 WIN LINUX : http/tests/inspector/indexeddb/database-structure.html = TEXT
 
 // Hitting ASSERT_NOT_REACHED in EventHandler::handleTouchEvent() as of r106554.
