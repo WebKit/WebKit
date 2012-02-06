@@ -25,7 +25,7 @@ module css {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute [ConvertNullStringTo=Null] DOMString encoding;
 #else
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString encoding
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString encoding
                      setter raises(DOMException);
 #endif
     };

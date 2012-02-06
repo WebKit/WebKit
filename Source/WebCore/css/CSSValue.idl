@@ -34,7 +34,7 @@ module css {
         const unsigned short CSS_VALUE_LIST      = 2;
         const unsigned short CSS_CUSTOM          = 3;
 
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString cssText
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString cssText
                      setter raises(DOMException);
 
         readonly attribute unsigned short cssValueType;

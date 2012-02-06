@@ -33,7 +33,7 @@ module html {
         attribute long width;
         attribute long height;
 
-        [Custom] DOMString toDataURL(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString type)
+        [Custom] DOMString toDataURL(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString type)
             raises(DOMException);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

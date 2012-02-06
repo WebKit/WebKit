@@ -21,13 +21,13 @@
 module html {
 
     interface HTMLInputElement : HTMLElement {
-        attribute [TreatNullAs=EmptyString] DOMString defaultValue;
+        attribute [TreatNullAs=NullString] DOMString defaultValue;
         attribute [Reflect=checked] boolean defaultChecked;
         attribute [Reflect] DOMString dirName;
         readonly attribute HTMLFormElement form;
         attribute [Reflect, URL] DOMString formAction;
-        attribute [TreatNullAs=EmptyString] DOMString formEnctype;
-        attribute [TreatNullAs=EmptyString] DOMString formMethod;
+        attribute [TreatNullAs=NullString] DOMString formEnctype;
+        attribute [TreatNullAs=NullString] DOMString formMethod;
         attribute [Reflect] boolean formNoValidate;
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
@@ -57,9 +57,9 @@ module html {
 #endif
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString step;
-        attribute [TreatNullAs=EmptyString] DOMString type; // readonly dropped as part of DOM level 2
+        attribute [TreatNullAs=NullString] DOMString type; // readonly dropped as part of DOM level 2
         attribute [Reflect] DOMString useMap;
-        attribute [TreatNullAs=EmptyString] DOMString value;
+        attribute [TreatNullAs=NullString] DOMString value;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
         attribute Date valueAsDate setter raises(DOMException);
 #endif
@@ -73,12 +73,12 @@ module html {
         readonly attribute boolean willValidate;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
-        void setCustomValidity(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString error);
+        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
         void select();
         void click();
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        void setValueForUser(in [TreatNullAs=EmptyString] DOMString value);
+        void setValueForUser(in [TreatNullAs=NullString] DOMString value);
 #endif
 
         // WinIE extension:

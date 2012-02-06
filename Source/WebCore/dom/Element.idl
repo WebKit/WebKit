@@ -43,22 +43,22 @@ module core {
 
         // DOM Level 2 Core
 
-        [ObjCLegacyUnnamedParameters] DOMString getAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] DOMString getAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                 in [Optional=CallWithDefaultValue] DOMString localName);
-        [ObjCLegacyUnnamedParameters] void setAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] void setAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                            in [Optional=CallWithDefaultValue] DOMString qualifiedName, 
                                            in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
-        [ObjCLegacyUnnamedParameters] void removeAttributeNS(in [TreatNullAs=EmptyString] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] void removeAttributeNS(in [TreatNullAs=NullString] DOMString namespaceURI,
                                               in DOMString localName);
-        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
-        [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                in [Optional=CallWithDefaultValue] DOMString localName);
         Attr setAttributeNodeNS(in [Optional=CallWithDefaultValue] Attr newAttr)
             raises(DOMException);
         boolean hasAttribute(in DOMString name);
-        [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                               in [Optional=CallWithDefaultValue] DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;

@@ -41,8 +41,8 @@ module storage {
         readonly attribute DOMFileSystem filesystem;
 
         void getMetadata(in [Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void moveTo(in DirectoryEntry parent, in [Optional, TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void copyTo(in DirectoryEntry parent, in [Optional, TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void moveTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void copyTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         DOMString toURL();
         void remove(in [Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);

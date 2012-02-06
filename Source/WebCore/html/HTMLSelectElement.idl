@@ -26,7 +26,7 @@ module html {
     ] HTMLSelectElement : HTMLElement {
         readonly attribute DOMString type;
         attribute long selectedIndex;
-        attribute [TreatNullAs=EmptyString] DOMString value;
+        attribute [TreatNullAs=NullString] DOMString value;
         
         // Modified in DOM Level 2:
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -40,7 +40,7 @@ module html {
         readonly attribute boolean willValidate;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
-        void setCustomValidity(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString error);
+        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
         // Modified in DOM Level 2:
         readonly attribute HTMLOptionsCollection options;
@@ -48,7 +48,7 @@ module html {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute boolean multiple;
-        attribute [TreatNullAs=EmptyString] DOMString name;
+        attribute [TreatNullAs=NullString] DOMString name;
         attribute [Reflect] boolean required;
         attribute long size;
         

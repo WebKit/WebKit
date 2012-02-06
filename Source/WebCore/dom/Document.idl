@@ -31,7 +31,7 @@ module core {
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        [ReturnsNew] Element createElement(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString tagName)
+        [ReturnsNew] Element createElement(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
         [ReturnsNew] Text createTextNode(in [Optional=CallWithDefaultValue] DOMString data);
@@ -52,13 +52,13 @@ module core {
         [ObjCLegacyUnnamedParameters, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
                                                    in [Optional] boolean deep)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                                           in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                          in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                                          in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
         Element            getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
 
@@ -67,7 +67,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString inputEncoding;
 
         readonly attribute [ConvertNullStringTo=Null] DOMString xmlEncoding;
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString xmlVersion
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString xmlVersion
                     setter raises (DOMException);
                  attribute boolean xmlStandalone
                     setter raises (DOMException);
@@ -75,7 +75,7 @@ module core {
         Node               adoptNode(in [Optional=CallWithDefaultValue] Node source)
             raises (DOMException);
 
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString documentURI;
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString documentURI;
 
         // DOM Level 2 Events (DocumentEvents interface)
 
@@ -128,7 +128,7 @@ module core {
 
         boolean            execCommand(in [Optional=CallWithDefaultValue] DOMString command,
                                        in [Optional=CallWithDefaultValue] boolean userInterface,
-                                       in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString value);
+                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString value);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // FIXME: remove the these two versions once [Optional] is implemented for Objective-C.
@@ -145,17 +145,17 @@ module core {
 
         // Moved down from HTMLDocument
 
-                 attribute [TreatNullAs=EmptyString] DOMString title;
+                 attribute [TreatNullAs=NullString] DOMString title;
         readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [TreatNullAs=EmptyString] DOMString domain
+                 attribute [TreatNullAs=NullString] DOMString domain
                      setter raises (DOMException);
 #else
         readonly attribute DOMString domain;
 #endif
         readonly attribute DOMString URL;
 
-                 attribute [TreatNullAs=EmptyString] DOMString cookie
+                 attribute [TreatNullAs=NullString] DOMString cookie
                      setter raises (DOMException),
                      getter raises (DOMException);
 
@@ -175,7 +175,7 @@ module core {
         NodeList getElementsByName(in [Optional=CallWithDefaultValue] DOMString elementName);
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-        NodeList getItems(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString, Optional=CallWithDefaultValue] DOMString typeNames);
+        NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=CallWithDefaultValue] DOMString typeNames);
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -184,7 +184,7 @@ module core {
 
         // IE extensions
 
-                 attribute [ConvertNullStringTo=Undefined, TreatNullAs=EmptyString] DOMString charset;
+                 attribute [ConvertNullStringTo=Undefined, TreatNullAs=NullString] DOMString charset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
@@ -202,7 +202,7 @@ module core {
         // WebKit extensions
 
         readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=EmptyString] DOMString selectedStylesheetSet;
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString selectedStylesheetSet;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         CSSStyleDeclaration createCSSStyleDeclaration();

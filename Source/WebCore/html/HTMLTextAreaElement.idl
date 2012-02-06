@@ -22,7 +22,7 @@
 module html {
 
     interface HTMLTextAreaElement : HTMLElement {
-        attribute [TreatNullAs=EmptyString] DOMString defaultValue;
+        attribute [TreatNullAs=NullString] DOMString defaultValue;
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState validity;
         attribute long cols;
@@ -30,14 +30,14 @@ module html {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute long maxLength setter raises(DOMException);
-        attribute [TreatNullAs=EmptyString] DOMString name;
+        attribute [TreatNullAs=NullString] DOMString name;
         attribute [Reflect] DOMString placeholder;
         attribute [Reflect] boolean readOnly;
         attribute [Reflect] boolean required;
         attribute long rows;
         attribute [Reflect] DOMString wrap;
         readonly attribute DOMString type;
-        attribute [TreatNullAs=EmptyString] DOMString value;
+        attribute [TreatNullAs=NullString] DOMString value;
         readonly attribute unsigned long textLength;
 
         void select();
@@ -45,7 +45,7 @@ module html {
         readonly attribute boolean willValidate;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
-        void setCustomValidity(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString] DOMString error);
+        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
         // WinIE & FireFox extension:
         attribute long selectionStart;

@@ -48,19 +48,19 @@ module html {
         readonly attribute long width;
         readonly attribute long height;
 #endif
-                 attribute [TreatNullAs=EmptyString] DOMString dir;
-                 attribute [TreatNullAs=EmptyString] DOMString designMode;
+                 attribute [TreatNullAs=NullString] DOMString dir;
+                 attribute [TreatNullAs=NullString] DOMString designMode;
         readonly attribute DOMString compatMode;
 
         readonly attribute Element activeElement;
         boolean hasFocus();
 
         // Deprecated attributes
-                 attribute [TreatNullAs=EmptyString] DOMString bgColor;
-                 attribute [TreatNullAs=EmptyString] DOMString fgColor;
-                 attribute [TreatNullAs=EmptyString] DOMString alinkColor;
-                 attribute [TreatNullAs=EmptyString] DOMString linkColor;
-                 attribute [TreatNullAs=EmptyString] DOMString vlinkColor;
+                 attribute [TreatNullAs=NullString] DOMString bgColor;
+                 attribute [TreatNullAs=NullString] DOMString fgColor;
+                 attribute [TreatNullAs=NullString] DOMString alinkColor;
+                 attribute [TreatNullAs=NullString] DOMString linkColor;
+                 attribute [TreatNullAs=NullString] DOMString vlinkColor;
     };
 
 }

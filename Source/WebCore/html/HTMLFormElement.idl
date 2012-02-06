@@ -31,9 +31,9 @@ module html {
         attribute [Reflect] boolean noValidate;
         attribute [Reflect=accept_charset] DOMString acceptCharset;
         attribute [Reflect, URL] DOMString action;
-        attribute [TreatNullAs=EmptyString] DOMString encoding;
-        attribute [TreatNullAs=EmptyString] DOMString enctype;
-        attribute [TreatNullAs=EmptyString] DOMString method;
+        attribute [TreatNullAs=NullString] DOMString encoding;
+        attribute [TreatNullAs=NullString] DOMString enctype;
+        attribute [TreatNullAs=NullString] DOMString method;
         attribute [Reflect] DOMString target;
         attribute [Reflect] DOMString autocomplete;
         

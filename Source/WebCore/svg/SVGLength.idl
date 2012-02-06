@@ -44,7 +44,7 @@ module svg {
             getter raises(DOMException);
 
         attribute [StrictTypeChecking] float valueInSpecifiedUnits;
-        attribute [TreatNullAs=EmptyString, StrictTypeChecking] DOMString valueAsString
+        attribute [TreatNullAs=NullString, StrictTypeChecking] DOMString valueAsString
             setter raises(DOMException);
 
         [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, 

@@ -3309,13 +3309,15 @@ sub GetNativeTypeFromSignature
     $type = GetNativeType($type, $parameterIndex >= 0 ? 1 : 0);
 
     if ($parameterIndex >= 0 && $type eq "V8Parameter") {
+        # FIXME: This implements [TreatNullAs=NullString] and [TreatUndefinedAs=NullString],
+        # but the Web IDL spec requires [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString].
         my $mode = "";
-        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "EmptyString")) {
+        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString")) {
             $mode = "WithUndefinedOrNullCheck";
-        } elsif (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString") or $signature->extendedAttributes->{"Reflect"}) {
+        } elsif (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") or $signature->extendedAttributes->{"Reflect"}) {
             $mode = "WithNullCheck";
         }
-        # FIXME: Add the case for 'elsif ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "EmptyString"))'.
+        # FIXME: Add the case for 'elsif ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
         $type .= "<$mode>";
     }
 

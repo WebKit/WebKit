@@ -28,17 +28,17 @@ module core {
         // DOM Level 1
 
         [ObjCLegacyUnnamedParameters] boolean hasFeature(in [Optional=CallWithDefaultValue] DOMString feature, 
-                                          in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString version);
+                                          in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString version);
 
         // DOM Level 2
 
-        [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName,
-                                                       in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString publicId,
-                                                       in [TreatNullAs=EmptyString, TreatUndefinedAs=EmptyString,Optional=CallWithDefaultValue] DOMString systemId)
+        [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName,
+                                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString publicId,
+                                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString systemId)
             raises(DOMException);
-        [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
-                                               in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
-                                               in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DocumentType doctype)
+        [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+                                               in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
+                                               in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS

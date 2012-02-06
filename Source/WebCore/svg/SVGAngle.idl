@@ -36,7 +36,7 @@ module svg {
         attribute [StrictTypeChecking] float value;
         attribute [StrictTypeChecking] float valueInSpecifiedUnits;
 
-        attribute [TreatNullAs=EmptyString] DOMString valueAsString
+        attribute [TreatNullAs=NullString] DOMString valueAsString
             setter raises(DOMException);
 
         [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, in float valueInSpecifiedUnits)

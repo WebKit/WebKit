@@ -21,7 +21,7 @@ module core {
 
     interface CharacterData : Node {
 
-        attribute [TreatNullAs=EmptyString] DOMString data
+        attribute [TreatNullAs=NullString] DOMString data
             setter raises(DOMException);
 
         readonly attribute unsigned long length;

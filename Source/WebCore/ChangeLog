@@ -1,5 +1,77 @@
 2012-02-05  Kentaro Hara  <haraken@chromium.org>
 
+        Rename [TreatNullAs=EmptyString] to [TreatNullAs=NullString],
+        [TreatUndefinedAs=EmptyString] to [TreatUndefinedAs=NullString]
+        https://bugs.webkit.org/show_bug.cgi?id=77611
+
+        Reviewed by Adam Barth.
+
+        While the Web IDL spec requires [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString],
+        the current WebKit treats them as (not an empty string but) a null string.
+        To avoid confusion, this patch renames [TreatNullAs=EmptyString] to [TreatNullAs=NullString],
+        and [TreatUndefinedAs=EmptyString] to [TreatUndefinedAs=NullString].
+        (Eventually we should fix WebKit so that it uses an empty string and then
+        rename them to [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString].)
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added FIXME.
+        (JSValueToNative):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GetNativeTypeFromSignature):
+
+        * bindings/scripts/test/TestObj.idl:
+        * css/CSSCharsetRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/ShadowRoot.idl:
+        * fileapi/Blob.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryEntrySync.idl:
+        * fileapi/Entry.idl:
+        * fileapi/EntrySync.idl:
+        * fileapi/WebKitBlobBuilder.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTitleElement.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * page/Console.idl:
+        * page/DOMWindow.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGScriptElement.idl:
+
+2012-02-05  Kentaro Hara  <haraken@chromium.org>
+
         Rename [JSCCustom*] IDL to [JSCustom*] IDL
         https://bugs.webkit.org/show_bug.cgi?id=77844
 

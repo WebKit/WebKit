@@ -43,15 +43,15 @@ module html {
         readonly attribute DOMString protocol;
         readonly attribute DOMString search;
 #else
-        attribute [TreatNullAs=EmptyString] DOMString hash;
-        attribute [TreatNullAs=EmptyString] DOMString host;
-        attribute [TreatNullAs=EmptyString] DOMString hostname;
-        attribute [TreatNullAs=EmptyString] DOMString pathname;
-        attribute [TreatNullAs=EmptyString] DOMString port;
-        attribute [TreatNullAs=EmptyString] DOMString protocol;
-        attribute [TreatNullAs=EmptyString] DOMString search;
+        attribute [TreatNullAs=NullString] DOMString hash;
+        attribute [TreatNullAs=NullString] DOMString host;
+        attribute [TreatNullAs=NullString] DOMString hostname;
+        attribute [TreatNullAs=NullString] DOMString pathname;
+        attribute [TreatNullAs=NullString] DOMString port;
+        attribute [TreatNullAs=NullString] DOMString protocol;
+        attribute [TreatNullAs=NullString] DOMString search;
 
-        readonly attribute [TreatNullAs=EmptyString] DOMString origin;
+        readonly attribute [TreatNullAs=NullString] DOMString origin;
 #endif
 
         readonly attribute DOMString text;
