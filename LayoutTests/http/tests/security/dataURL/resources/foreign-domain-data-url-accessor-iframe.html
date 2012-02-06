@@ -1,8 +1,9 @@
 <html>
 <body>
-    <p>Inner iframe on a foreign domain.</p>
-    <iframe id="aFrame"></iframe>
-    <script>
+<p>Inner iframe on a foreign domain.</p>
+<iframe id="aFrame"></iframe>
+<script>
+    window.onload = function() {
         var url = "data:text/html,<html>"
             + "<head>"
             +     "<scr" + "ipt>"
@@ -27,6 +28,7 @@
 
         var frame = document.getElementById('aFrame');
         frame.src = url;
-    </script>
+    };
+</script>
 </body>
 </html>

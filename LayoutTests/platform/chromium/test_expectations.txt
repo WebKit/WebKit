@@ -772,7 +772,6 @@ BUGCR39423 : security/block-test.html = TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
-BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
 BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 BUGWK65567 DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
@@ -784,6 +783,9 @@ BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PAS
 BUG_LEVIN DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
+
+// Hopefully fixed flakiness (need to verify with dashboard).
+BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = PASS TIMEOUT
 
 // -----------------------------------------------------------------
 // Plugin tests

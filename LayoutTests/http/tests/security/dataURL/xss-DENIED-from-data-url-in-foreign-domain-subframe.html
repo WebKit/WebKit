@@ -1,21 +1,18 @@
 <html>
 <head>
-    <script>
-        window.onload = function()
-        {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.dumpChildFramesAsText();
-                layoutTestController.waitUntilDone();
-            }
-        }
-    </script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>
 </head>
 <body>
     <p>The scenario for this test is that you have an iframe with content from a foreign domain.  In that foreign content
         is an iframe which loads a data: URL.  This tests that the data: URL loaded iframe does not have access
         to the main frame using top.document.</p>
-    <iframe id='aFrame' src="http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html" style="width: 400px; height:200px;"></iframe>
     <p id='accessMe'>Pass: Cross frame access from a data: URL on a different domain was denied.</p>
+    <iframe id='aFrame' src="http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html" style="width: 400px; height:200px;"></iframe>
 </body>
 </html>
