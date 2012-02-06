@@ -859,18 +859,16 @@ static void updateChildAllocationFromPendingAllocation(GtkWidget* child, void*)
     *allocation = IntRect();
 }
 
-static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
+static void resizeWebViewFromAllocation(WebKitWebView* webView, GtkAllocation* allocation)
 {
-    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
-
-    Page* page = core(WEBKIT_WEB_VIEW(widget));
+    Page* page = core(webView);
     IntSize oldSize;
     if (FrameView* frameView = page->mainFrame()->view()) {
         oldSize = frameView->size();
         frameView->resize(allocation->width, allocation->height);
     }
 
-    gtk_container_forall(GTK_CONTAINER(widget), updateChildAllocationFromPendingAllocation, 0);
+    gtk_container_forall(GTK_CONTAINER(webView), updateChildAllocationFromPendingAllocation, 0);
 
     WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));
@@ -879,6 +877,32 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
 #if USE(ACCELERATED_COMPOSITING)
     WEBKIT_WEB_VIEW(widget)->priv->acceleratedCompositingContext->resizeRootLayer(IntSize(allocation->width, allocation->height));
 #endif
+}
+
+static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
+
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    if (!gtk_widget_get_mapped(widget)) {
+        webView->priv->needsResizeOnMap = true;
+        return;
+    }
+    resizeWebViewFromAllocation(webView, allocation);
+}
+
+static void webkitWebViewMap(GtkWidget* widget)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->map(widget);
+
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    if (!webView->priv->needsResizeOnMap)
+        return;
+
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(widget, &allocation);
+    resizeWebViewFromAllocation(webView, &allocation);
+    webView->priv->needsResizeOnMap = false;
 }
 
 static void webkit_web_view_grab_focus(GtkWidget* widget)
@@ -2767,6 +2791,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->query_tooltip = webkit_web_view_query_tooltip;
     widgetClass->show_help = webkit_web_view_show_help;
 #endif
+    widgetClass->map = webkitWebViewMap;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
     containerClass->add = webkit_web_view_container_add;

@@ -61,6 +61,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<GtkIMContext> imContext;
 
     gboolean transparent;
+    bool needsResizeOnMap;
 
 #ifndef GTK_API_VERSION_2
     // GtkScrollablePolicy needs to be checked when

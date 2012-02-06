@@ -71,6 +71,7 @@ struct _WebKitWebViewBasePrivate {
     DragIcon dragIcon;
     IntSize resizerSize;
     GRefPtr<AtkObject> accessible;
+    bool needsResizeOnMap;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -202,20 +203,43 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     return FALSE;
 }
 
-static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
+static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase, GtkAllocation* allocation)
 {
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    if (!priv->pageProxy->drawingArea())
-        return;
+    if (priv->pageProxy->drawingArea())
+        priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
 
-    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->size_allocate(widget, allocation);
-    priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
-
-    GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
+    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webViewBase));
     if (widgetIsOnscreenToplevelWindow(toplevel))
         webkitWebViewBaseNotifyResizerSizeForWindow(webViewBase, GTK_WINDOW(toplevel));
+}
+
+static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->size_allocate(widget, allocation);
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    if (!gtk_widget_get_mapped(GTK_WIDGET(webViewBase)) && !webViewBase->priv->pageProxy->drawingArea()->size().isEmpty()) {
+        webViewBase->priv->needsResizeOnMap = true;
+        return;
+    }
+    resizeWebKitWebViewBaseFromAllocation(webViewBase, allocation);
+}
+
+static void webkitWebViewBaseMap(GtkWidget* widget)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->map(widget);
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    if (!webViewBase->priv->needsResizeOnMap)
+        return;
+
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(widget, &allocation);
+    resizeWebKitWebViewBaseFromAllocation(webViewBase, &allocation);
+    webViewBase->priv->needsResizeOnMap = false;
+
 }
 
 static gboolean webkitWebViewBaseFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
@@ -454,6 +478,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->realize = webkitWebViewBaseRealize;
     widgetClass->draw = webkitWebViewBaseDraw;
     widgetClass->size_allocate = webkitWebViewBaseSizeAllocate;
+    widgetClass->map = webkitWebViewBaseMap;
     widgetClass->focus_in_event = webkitWebViewBaseFocusInEvent;
     widgetClass->focus_out_event = webkitWebViewBaseFocusOutEvent;
     widgetClass->key_press_event = webkitWebViewBaseKeyPressEvent;

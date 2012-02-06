@@ -1,3 +1,21 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] WebKitWebView does a lot of work during size_allocate when not mapped
+        https://bugs.webkit.org/show_bug.cgi?id=77743
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of resizing the guts of a WebView when it's not mapped, wait
+        until it's mapped and do one resize. This prevents unmapped WebViews
+        from adding to a container's resize cost.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate): Added a new member needsResizeOnMap.
+        (resizeWebKitWebViewBaseFromAllocation): Abstracted out this helper.
+        (webkitWebViewBaseSizeAllocate): Wait until map to resize unmapped WebViews.
+        (webkitWebViewBaseMap): Added this vmethod implementation.
+        (webkit_web_view_base_class_init): Added vmethod.
+
 2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         WebGestureEvent can not encode delta and area.
