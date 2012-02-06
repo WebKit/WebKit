@@ -301,7 +301,7 @@ static bool planCounter(RenderObject* object, const AtomicString& identifier, bo
 // reset node.
 // - Non-reset CounterNodes cannot have descendants.
 
-static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& identifier, bool isReset, CounterNode*& parent, CounterNode*& previousSibling)
+static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& identifier, bool isReset, RefPtr<CounterNode>& parent, RefPtr<CounterNode>& previousSibling)
 {
     // We cannot stop searching for counters with the same identifier before we also
     // check this renderer, because it may affect the positioning in the tree of our counter.
@@ -346,7 +346,9 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                     if (!isReset || !areRenderersElementsSiblings(currentRenderer, counterOwner)) {
                         // If the node we are placing is not reset or we have found a counter that is attached
                         // to an ancestor of the placed counter's owner renderer we know we are a sibling of that node.
-                        ASSERT(currentCounter->parent() == previousSiblingProtector->parent());
+                        if (currentCounter->parent() != previousSiblingProtector->parent())
+                            return false;
+
                         parent = currentCounter->parent();
                         previousSibling = previousSiblingProtector.get();
                         return true;
@@ -428,11 +430,11 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
     if (!planCounter(object, identifier, isReset, value) && !alwaysCreateCounter)
         return 0;
 
-    CounterNode* newParent = 0;
-    CounterNode* newPreviousSibling = 0;
+    RefPtr<CounterNode> newParent = 0;
+    RefPtr<CounterNode> newPreviousSibling = 0;
     RefPtr<CounterNode> newNode = CounterNode::create(object, isReset, value);
     if (findPlaceForCounter(object, identifier, isReset, newParent, newPreviousSibling))
-        newParent->insertAfter(newNode.get(), newPreviousSibling, identifier);
+        newParent->insertAfter(newNode.get(), newPreviousSibling.get(), identifier);
     CounterMap* nodeMap;
     if (object->hasCounterNodeMap())
         nodeMap = counterMaps().get(object);
@@ -628,8 +630,8 @@ static void updateCounters(RenderObject* renderer)
             makeCounterNode(renderer, AtomicString(it->first.get()), false);
             continue;
         }
-        CounterNode* newParent = 0;
-        CounterNode* newPreviousSibling;
+        RefPtr<CounterNode> newParent = 0;
+        RefPtr<CounterNode> newPreviousSibling = 0;
         
         findPlaceForCounter(renderer, AtomicString(it->first.get()), node->hasResetType(), newParent, newPreviousSibling);
         if (node != counterMap->get(it->first.get()))
@@ -640,7 +642,7 @@ static void updateCounters(RenderObject* renderer)
         if (parent)
             parent->removeChild(node.get());
         if (newParent)
-            newParent->insertAfter(node.get(), newPreviousSibling, it->first.get());
+            newParent->insertAfter(node.get(), newPreviousSibling.get(), it->first.get());
     }
 }
 

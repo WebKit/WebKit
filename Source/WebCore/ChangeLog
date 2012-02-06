@@ -1,3 +1,17 @@
+2012-02-06  Cris Neckar  <cdn@chromium.org>
+
+        Add RefPtrs for parent and sibling counter nodes
+        https://bugs.webkit.org/show_bug.cgi?id=75212
+
+        Reviewed by Adam Barth.
+
+        Test: fast/css/counters/reparent-table-children-with-counters-crash.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        (WebCore::makeCounterNode):
+        (WebCore::updateCounters):
+
 2012-02-06  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Add missing pango include dir to fix build
