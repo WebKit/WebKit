@@ -2690,7 +2690,6 @@ BUGWK54322 SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html
 BUGWK54322 SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = PASS TEXT
 BUGWK54322 SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = PASS TEXT
-BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
