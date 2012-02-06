@@ -772,7 +772,6 @@ BUGCR39423 : security/block-test.html = TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
-BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 BUGWK65567 DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
