@@ -98,7 +98,6 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
 
     source->setPendingActivity(source.get());
     source->connect();
-    source->suspendIfNeeded();
 
     return source.release();
 }

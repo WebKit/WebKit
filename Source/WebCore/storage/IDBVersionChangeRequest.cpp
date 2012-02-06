@@ -35,10 +35,7 @@ namespace WebCore {
 
 PassRefPtr<IDBVersionChangeRequest> IDBVersionChangeRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, const String& version)
 {
-    RefPtr<IDBVersionChangeRequest> request(adoptRef(new IDBVersionChangeRequest(context, source, version)));
-    request->suspendIfNeeded();
-    return request.release();
-
+    return adoptRef(new IDBVersionChangeRequest(context, source, version));
 }
 
 IDBVersionChangeRequest::IDBVersionChangeRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, const String& version)

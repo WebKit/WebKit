@@ -51,13 +51,6 @@ namespace WebCore {
     public:
         ActiveDOMObject(ScriptExecutionContext*, void* upcastPointer);
 
-        // suspendIfNeeded() should be called exactly once after object construction to synchronize
-        // the suspend state with that in ScriptExecutionContext.
-        void suspendIfNeeded();
-#if !ASSERT_DISABLED
-        bool suspendIfNeededCalled() const { return m_suspendIfNeededCalled; }
-#endif
-
         virtual bool hasPendingActivity() const;
 
         // canSuspend() is used by the caller if there is a choice between suspending and stopping.
@@ -95,9 +88,6 @@ namespace WebCore {
 
     private:
         unsigned m_pendingActivityCount;
-#if !ASSERT_DISABLED
-        bool m_suspendIfNeededCalled;
-#endif
     };
 
 } // namespace WebCore

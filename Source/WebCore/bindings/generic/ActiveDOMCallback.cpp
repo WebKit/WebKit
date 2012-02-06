@@ -122,7 +122,6 @@ static void destroyOnContextThread(PassOwnPtr<ActiveDOMObjectCallbackImpl> impl)
 ActiveDOMCallback::ActiveDOMCallback(ScriptExecutionContext* context)
     : m_impl(adoptPtr(new ActiveDOMObjectCallbackImpl(context)))
 {
-    m_impl->suspendIfNeeded();
 }
 
 ActiveDOMCallback::~ActiveDOMCallback()

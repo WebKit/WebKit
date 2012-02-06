@@ -50,9 +50,7 @@ namespace WebCore {
 
 PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> database)
 {
-    RefPtr<IDBDatabase> idbDatabase(adoptRef(new IDBDatabase(context, database)));
-    idbDatabase->suspendIfNeeded();
-    return idbDatabase.release();
+    return adoptRef(new IDBDatabase(context, database));
 }
 
 IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend)

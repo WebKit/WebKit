@@ -92,7 +92,6 @@ ScriptExecutionContext::ScriptExecutionContext()
     : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
-    , m_activeDOMObjectsAreSuspended(false)
 #if ENABLE(SQL_DATABASE)
     , m_hasOpenDatabases(false)
 #endif
@@ -102,6 +101,7 @@ ScriptExecutionContext::ScriptExecutionContext()
 ScriptExecutionContext::~ScriptExecutionContext()
 {
     m_inDestructor = true;
+
     for (HashSet<ContextDestructionObserver*>::iterator iter = m_destructionObservers.begin(); iter != m_destructionObservers.end(); iter = m_destructionObservers.begin()) {
         ContextDestructionObserver* observer = *iter;
         m_destructionObservers.remove(observer);
@@ -206,12 +206,11 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
         if (!iter->first->canSuspend()) {
             m_iteratingActiveDOMObjects = false;
             return false;
         }
-    }
+    }    
     m_iteratingActiveDOMObjects = false;
     return true;
 }
@@ -223,23 +222,18 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
         iter->first->suspend(why);
     }
     m_iteratingActiveDOMObjects = false;
-    m_activeDOMObjectsAreSuspended = true;
-    m_reasonForSuspendingActiveDOMObjects = why;
 }
 
 void ScriptExecutionContext::resumeActiveDOMObjects()
 {
-    m_activeDOMObjectsAreSuspended = false;
     // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
         iter->first->resume();
     }
     m_iteratingActiveDOMObjects = false;
@@ -252,21 +246,12 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
         iter->first->stop();
     }
     m_iteratingActiveDOMObjects = false;
 
     // Also close MessagePorts. If they were ActiveDOMObjects (they could be) then they could be stopped instead.
     closeMessagePorts();
-}
-
-void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject* object)
-{
-    ASSERT(m_activeDOMObjects.contains(object));
-    // Ensure all ActiveDOMObjects are suspended also newly created ones.
-    if (m_activeDOMObjectsAreSuspended)
-        object->suspend(m_reasonForSuspendingActiveDOMObjects);
 }
 
 void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject* object, void* upcastPointer)
