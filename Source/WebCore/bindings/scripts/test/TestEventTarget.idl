@@ -30,8 +30,8 @@ module events {
 
     interface [
         EventTarget,
-        HasIndexGetter,
-        HasNameGetter,
+        IndexedGetter,
+        NamedGetter,
         MasqueradesAsUndefined
     ] TestEventTarget {
 

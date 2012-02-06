@@ -1,3 +1,82 @@
+2012-02-06  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [HasIndexGetter], [HasNameGetter] and [HasCustomIndexSetter] IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=77848
+
+        Reviewed by Adam Barth.
+
+        For naming consistency with [CustomGetter] and [CustomSetter],
+        this patch renames the following IDLs:
+
+        [HasIndexGetter] => [IndexedGetter]  (Remove "Has". This IDL is for "indexed" properties
+        in the Web IDL: http://dev.w3.org/2006/webapi/WebIDL/#idl-indexed-properties)
+        [HasCustomIndexSetter] => [CustomIndexedSetter]  (Ditto.)
+        [HasNameGetter] => [NamedGetter] (Remove "Has". This IDL is for "named" properties
+        in the Web IDL: http://dev.w3.org/2006/webapi/WebIDL/#idl-named-properties)
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeaderNamedAndIndexedPropertyAccessors):
+        (GenerateImplementationIndexer):
+        (GenerateImplementationNamedPropertyGetter):
+
+        * bindings/scripts/test/TestEventTarget.idl: No change in run-bindings-tests results.
+        * bindings/scripts/test/TestTypedArray.idl: Ditto.
+
+        * Modules/gamepad/GamepadList.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValueList.idl:
+        * css/MediaList.idl:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * css/WebKitCSSTransformValue.idl:
+        * dom/ClientRectList.idl:
+        * dom/DOMStringList.idl:
+        * dom/DOMStringMap.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/NodeList.idl:
+        * dom/TouchList.idl:
+        * fileapi/EntryArray.idl:
+        * fileapi/EntryArraySync.idl:
+        * fileapi/FileList.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLPropertiesCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/TextTrackCueList.idl:
+        * html/canvas/CanvasPixelArray.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * html/track/TextTrackList.idl:
+        * mediastream/MediaStreamList.idl:
+        * mediastream/MediaStreamTrackList.idl:
+        * page/SpeechInputResultList.idl:
+        * page/WebKitAnimationList.idl:
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+        * storage/Storage.idl:
+
 2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Ensure timers and other active DOM objects do not fire in suspended documents.

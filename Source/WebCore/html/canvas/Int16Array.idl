@@ -27,7 +27,7 @@ module html {
     interface [
         CustomConstructor,
         HasNumericIndexGetter,
-        HasCustomIndexSetter,
+        CustomIndexedSetter,
         GenerateNativeConverter,
         JSNoStaticTables,
         JSCustomToJS,

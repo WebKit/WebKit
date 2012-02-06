@@ -563,9 +563,9 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
 {
     my $dataNode = shift;
     my $interfaceName = $dataNode->name;
-    my $hasCustomIndexedGetter = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
-    my $hasCustomIndexedSetter = $dataNode->extendedAttributes->{"HasCustomIndexSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
-    my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasCustomIndexedGetter = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasCustomIndexedSetter = $dataNode->extendedAttributes->{"CustomIndexedSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
+    my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     my $hasCustomDeleters = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
     my $hasCustomEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
@@ -2040,8 +2040,8 @@ sub GenerateImplementationIndexer
     my $interfaceName = $dataNode->name;
 
     # FIXME: Figure out what HasNumericIndexGetter is really supposed to do. Right now, it's only set on WebGL-related files.
-    my $hasCustomSetter = $dataNode->extendedAttributes->{"HasCustomIndexSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
-    my $hasGetter = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasCustomSetter = $dataNode->extendedAttributes->{"CustomIndexedSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
+    my $hasGetter = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
     # FIXME: Find a way to not have to special-case HTMLOptionsCollection.
     if ($interfaceName eq "HTMLOptionsCollection") {
@@ -2142,7 +2142,7 @@ sub GenerateImplementationNamedPropertyGetter
         $hasCustomGetter = 0;
     }
 
-    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $hasCustomGetter;
+    my $hasGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $hasCustomGetter;
     if (!$hasGetter) {
         return;
     }

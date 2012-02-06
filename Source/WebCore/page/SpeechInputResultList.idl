@@ -26,7 +26,7 @@
 module core {
 
     interface [
-        HasIndexGetter,
+        IndexedGetter,
         Conditional=INPUT_SPEECH
     ] SpeechInputResultList {
         readonly attribute unsigned long length;

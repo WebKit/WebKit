@@ -26,8 +26,8 @@
 module html {
 
     interface [
-        HasIndexGetter,
-        HasNameGetter,
+        IndexedGetter,
+        NamedGetter,
         CustomCall,
         MasqueradesAsUndefined,
         JSGenerateIsReachable

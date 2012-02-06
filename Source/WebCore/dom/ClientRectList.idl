@@ -27,7 +27,7 @@
 module view {
 
     interface [
-        HasIndexGetter
+        IndexedGetter
     ] ClientRectList {
         readonly attribute unsigned long length;
         ClientRect item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);

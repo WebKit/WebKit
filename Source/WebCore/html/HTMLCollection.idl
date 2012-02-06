@@ -21,8 +21,8 @@
 module html {
 
     interface [
-        HasIndexGetter,
-        HasNameGetter,
+        IndexedGetter,
+        NamedGetter,
         JSCustomToJS,
         JSGenerateIsReachable,
         ObjCPolymorphic

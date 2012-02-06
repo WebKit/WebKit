@@ -22,8 +22,8 @@ module core {
 
     interface [
         JSCustomIsReachable,
-        HasIndexGetter,
-        HasNameGetter
+        IndexedGetter,
+        NamedGetter
     ] NodeList {
 
         Node item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);

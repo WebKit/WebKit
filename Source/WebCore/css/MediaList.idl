@@ -28,7 +28,7 @@ module stylesheets {
     // Introduced in DOM Level 2:
     interface [
         JSGenerateIsReachable,
-        HasIndexGetter
+        IndexedGetter
     ] MediaList {
 
                  attribute [TreatNullAs=NullString, ConvertNullStringTo=Null] DOMString mediaText

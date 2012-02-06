@@ -32,7 +32,7 @@ module core {
 
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
-        HasIndexGetter,
+        IndexedGetter,
         GenerateNativeConverter,
 #if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,

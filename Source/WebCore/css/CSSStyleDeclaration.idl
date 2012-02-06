@@ -25,8 +25,8 @@ module css {
         JSCustomMarkFunction,
         JSGenerateIsReachable=ImplRoot,
         DelegatingPutFunction,
-        HasNameGetter,
-        HasIndexGetter,
+        NamedGetter,
+        IndexedGetter,
         CustomGetPropertyNames,
         V8DependentLifetime
     ] CSSStyleDeclaration {

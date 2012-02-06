@@ -32,7 +32,7 @@ module html {
         OmitConstructor,
         CustomHeader,
         HasNumericIndexGetter,
-        HasCustomIndexSetter
+        CustomIndexedSetter
     ] CanvasPixelArray {
 #if !defined(V8_BINDING) || !V8_BINDING
         readonly attribute long length;

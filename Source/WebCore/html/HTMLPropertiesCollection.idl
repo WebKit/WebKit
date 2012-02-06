@@ -32,7 +32,7 @@ module html {
 
     interface [
         Conditional=MICRODATA,
-        HasIndexGetter
+        IndexedGetter
     ] HTMLPropertiesCollection : HTMLCollection {
         readonly attribute unsigned long length;
         Node item(in unsigned long index);

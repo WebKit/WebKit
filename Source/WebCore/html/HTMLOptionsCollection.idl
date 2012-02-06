@@ -22,7 +22,7 @@ module html {
 
     interface [
         GenerateNativeConverter,
-        HasCustomIndexSetter
+        CustomIndexedSetter
     ] HTMLOptionsCollection : HTMLCollection {
                  attribute long selectedIndex;
                  attribute [Custom] unsigned long length

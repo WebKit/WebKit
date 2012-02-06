@@ -21,8 +21,8 @@
 module html {
 
     interface [
-        HasIndexGetter,
-        HasCustomIndexSetter
+        IndexedGetter,
+        CustomIndexedSetter
     ] HTMLSelectElement : HTMLElement {
         readonly attribute DOMString type;
         attribute long selectedIndex;

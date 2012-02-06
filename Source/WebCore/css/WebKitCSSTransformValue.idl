@@ -29,7 +29,7 @@
 module css {
 
     interface [
-            HasIndexGetter,
+            IndexedGetter,
             DontCheckEnums
     ] WebKitCSSTransformValue : CSSValueList {
 

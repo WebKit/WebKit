@@ -21,8 +21,8 @@
 module window {
 
     interface [
-        HasNameGetter,
-        HasIndexGetter
+        NamedGetter,
+        IndexedGetter
     ] DOMPlugin {
         readonly attribute DOMString name;
         readonly attribute DOMString filename;

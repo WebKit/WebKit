@@ -30,7 +30,7 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        HasIndexGetter
+        IndexedGetter
     ] WebKitCSSKeyframesRule : CSSRule {
 
         attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString name;

@@ -27,7 +27,7 @@ module dom {
 
     interface [
         Conditional=GAMEPAD,
-        HasIndexGetter
+        IndexedGetter
     ] GamepadList {
         readonly attribute unsigned long length;
         Gamepad item(in [Optional=CallWithDefaultValue] unsigned long index);

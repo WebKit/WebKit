@@ -28,7 +28,7 @@ module html {
     interface [
         Conditional=VIDEO_TRACK,
         V8EnabledAtRuntime=webkitVideoTrack,
-        HasIndexGetter,
+        IndexedGetter,
         EventTarget,
         JSCustomMarkFunction,
         JSCustomIsReachable

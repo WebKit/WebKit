@@ -26,7 +26,7 @@
 module storage {
 
     interface [
-        HasNameGetter,
+        NamedGetter,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,

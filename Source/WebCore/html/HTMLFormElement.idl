@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        HasIndexGetter,
+        IndexedGetter,
         HasOverridingNameGetter
     ] HTMLFormElement : HTMLElement {
         readonly attribute HTMLCollection elements;
