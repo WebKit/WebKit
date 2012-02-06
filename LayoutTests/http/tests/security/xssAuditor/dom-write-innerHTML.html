@@ -9,9 +9,9 @@ if (window.layoutTestController) {
 }
 
 window.onload = function() {
-    // Give the img onerror handler a chance to fire.
-    setTimeout("layoutTestController.notifyDone()", 100);
-}
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+};
 </script>
 </head>
 <body>
