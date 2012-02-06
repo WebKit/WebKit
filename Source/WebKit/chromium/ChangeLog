@@ -1,3 +1,10 @@
+2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium build fix after r106836.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+
 2012-02-06  Eric Uhrhane  <ericu@chromium.org>
 
         [filesystem/Chromium] crackFileSystemURL needs to use innerURL
