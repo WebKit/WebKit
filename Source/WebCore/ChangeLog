@@ -1,3 +1,21 @@
+2012-02-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Implement ImageBuffer::copyImage(ImageBuffer::DontCopyBackingStore)
+        https://bugs.webkit.org/show_bug.cgi?id=77689
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use StillImageQt::createForRendering when using DontCopyBackingStore.
+        Enable DontCopyBackingStore in TextureMapperNode.
+        This removes deep copies resulting from the use of ImageBuffer.
+
+        Instrumentation shows that deep image copies resulted from ImageBuffer are eliminated.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::copyImage):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::renderContent):
+
 2012-02-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         WebGestureEvent can not encode delta and area.

@@ -123,8 +123,10 @@ GraphicsContext* ImageBuffer::context() const
 
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
-    ASSERT(copyBehavior == CopyBackingStore);
-    return StillImage::create(m_data.m_pixmap);
+    if (copyBehavior == CopyBackingStore)
+        return StillImage::create(m_data.m_pixmap);
+
+    return StillImage::createForRendering(&m_data.m_pixmap);
 }
 
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,

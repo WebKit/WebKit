@@ -186,9 +186,14 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
     if (m_currentContent.contentType == DirectImageContentType)
         context->drawImage(m_currentContent.image.get(), ColorSpaceDeviceRGB, m_state.contentsRect);
 
-    // FIXME: Implement ImageBuffer::DontCopyBackingStore in Qt/GTK ports, and then change this.
-    // See https://bugs.webkit.org/show_bug.cgi?id=77689
-    RefPtr<Image> image = imageBuffer->copyImage(CopyBackingStore);
+    RefPtr<Image> image;
+
+#if PLATFORM(QT)
+    image = imageBuffer->copyImage(DontCopyBackingStore);
+#else
+    // FIXME: support DontCopyBackingStore in non-Qt ports that use TextureMapper.
+    image = imageBuffer->copyImage(CopyBackingStore);
+#endif
 
     // Divide the image to tiles.
     for (size_t tileIndex = 0; tileIndex < m_ownedTiles.size(); ++tileIndex) {
