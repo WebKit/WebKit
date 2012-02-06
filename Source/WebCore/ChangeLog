@@ -1,3 +1,19 @@
+2012-02-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Raise exception during add/put call if autoIncrement key insertion will fail
+        https://bugs.webkit.org/show_bug.cgi?id=77374
+
+        If a put request will use a key generator, try inserting a dummy key during the sync
+        put() call to check if the key insertion will succeed so an exception can be raised
+        early, rather than deferring to the asynchronous task.
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/keypath-edges.html
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+
 2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Add a null check for the gdkwindow, that will happen if the window

@@ -153,6 +153,14 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
+            if (autoIncrement && !keyPathKey) {
+                RefPtr<IDBKey> dummyKey = IDBKey::createNumber(-1);
+                RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(dummyKey, value, objectStore->m_keyPath);
+                if (!valueAfterInjection) {
+                    ec = IDBDatabaseException::DATA_ERR;
+                    return;
+                }
+            }
         }
         if (key && !key->valid()) {
             ec = IDBDatabaseException::DATA_ERR;
@@ -208,12 +216,13 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             if (!key) {
                 RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
                 if (hasKeyPath) {
-                    // FIXME: Add checks in put() to ensure this will always succeed (apart from I/O errors).
-                    // https://bugs.webkit.org/show_bug.cgi?id=77374
                     RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
+                    ASSERT(valueAfterInjection);
                     if (!valueAfterInjection) {
                         objectStore->resetAutoIncrementKeyCache();
-                        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The generated key could not be inserted into the object using the keyPath."));
+                        // Checks in put() ensure this should only happen if I/O error occurs.
+                        // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
+                        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error inserting generated key into the object."));
                         return;
                     }
                     value = valueAfterInjection;
