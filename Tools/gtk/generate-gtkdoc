@@ -119,7 +119,8 @@ def get_webkit1_options(gtk_version):
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
-        'ignored_files': glob.glob(src_path('webkit', '*private.*'))
+        'ignored_files': glob.glob(src_path('webkit', '*private.*')) + \
+                         glob.glob(src_path('webkit', 'webkitspellcheckerenchant.*'))
     })
     return options
 

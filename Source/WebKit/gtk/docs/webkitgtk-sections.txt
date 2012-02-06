@@ -292,6 +292,7 @@ WebKitWebInspectorClass
 <FILE>webkitwebnavigationaction</FILE>
 <TITLE>WebKitWebNavigationAction</TITLE>
 WebKitWebNavigationAction
+WebKitWebNavigationReason
 webkit_web_navigation_action_get_button
 webkit_web_navigation_action_get_modifier_state
 webkit_web_navigation_action_get_original_uri
@@ -307,7 +308,6 @@ WEBKIT_WEB_NAVIGATION_ACTION
 WEBKIT_WEB_NAVIGATION_ACTION_CLASS
 WEBKIT_WEB_NAVIGATION_ACTION_GET_CLASS
 <SUBSECTION Private>
-WebKitWebNavigationReason
 WebKitWebNavigationActionClass
 WebKitWebNavigationActionPrivate
 webkit_web_navigation_action_get_type
@@ -636,23 +636,6 @@ WEBKIT_SPELL_CHECKER_GET_IFACE
 <SUBSECTION Private>
 WebKitSpellCheckerInterface
 webkit_spell_checker_get_type
-</SECTION>
-
-<SECTION>
-<FILE>webkitspellcheckerenchant</FILE>
-<TITLE>WebKitSpellCheckerEnchant</TITLE>
-<SUBSECTION Standard>
-WEBKIT_IS_SPELL_CHECKER_ENCHANT
-WEBKIT_IS_SPELL_CHECKER_ENCHANT_CLASS
-WEBKIT_SPELL_CHECKER_ENCHANT
-WEBKIT_SPELL_CHECKER_ENCHANT_CLASS
-WEBKIT_SPELL_CHECKER_ENCHANT_GET_CLASS
-WEBKIT_TYPE_SPELL_CHECKER_ENCHANT
-<SUBSECTION Private>
-WebKitSpellCheckerEnchant
-WebKitSpellCheckerEnchantClass
-WebKitSpellCheckerEnchantPrivate
-webkit_spell_checker_enchant_get_type
 </SECTION>
 
 <SECTION>

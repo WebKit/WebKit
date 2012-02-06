@@ -1,3 +1,13 @@
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix several gtkdoc-fixxref warnings
+        https://bugs.webkit.org/show_bug.cgi?id=77613
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp: Fix a typo, a
+        colon was missing in WebKitWebView::ready-to-show.
+
 2012-02-05  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10809525> WebKit2’s WebFrameLoaderClient::shouldUseCredentialStorage() always returns true

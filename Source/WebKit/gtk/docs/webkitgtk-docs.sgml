@@ -40,7 +40,6 @@
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>
     <xi:include href="xml/webkiticondatabase.xml"/>
     <xi:include href="xml/webkitspellchecker.xml"/>
-    <xi:include href="xml/webkitspellcheckerenchant.xml"/>
   </chapter>
 
   <chapter>

@@ -1,5 +1,24 @@
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix several gtkdoc-fixxref warnings
+        https://bugs.webkit.org/show_bug.cgi?id=77613
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit1_options): Add webkitspellcheckerenchant.* to the list
+        of ignored files, since it's private.
+        * gtk/gtkdoc.py:
+        (GTKDoc._ignored_files_basenames): Helper function that returns a
+        string with the list of ignored files basenames separated by a
+        spaces, as expected by several gtkdoc commands.
+        (GTKDoc._run_gtkdoc_scan): Use _ignored_files_basenames for
+        --ignore-headers option.
+        (GTKDoc._run_gtkdoc_mkdb): Use _ignored_files_basenames for
+        --ignore-files option.
+
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix xrefs after installing API documentation
         https://bugs.webkit.org/show_bug.cgi?id=77551
 

@@ -256,6 +256,9 @@ class GTKDoc(object):
         output_file.write(self.version)
         output_file.close()
 
+    def _ignored_files_basenames(self):
+        return ' '.join([os.path.basename(x) for x in self.ignored_files])
+
     def _run_gtkdoc_scan(self):
         args = ['gtkdoc-scan',
                 '--module=%s' % self.module_name,
@@ -274,10 +277,9 @@ class GTKDoc(object):
         # gtkdoc-scan wants the basenames of ignored headers, so strip the
         # dirname. Different from "--source-dir", the headers should be
         # specified as one long string.
-        if self.ignored_files:
-            ignored_files_basenames = \
-                [os.path.basename(x) for x in self.ignored_files]
-            args.append('--ignore-headers=%s' % ' '.join(ignored_files_basenames))
+        ignored_files_basenames = self._ignored_files_basenames()
+        if ignored_files_basenames:
+            args.append('--ignore-headers=%s' % ignored_files_basenames)
 
         self._run_command(args)
 
@@ -320,6 +322,10 @@ class GTKDoc(object):
                 '--source-suffixes=h,c,cpp,cc',
                 '--output-format=xml',
                 '--sgml-mode']
+
+        ignored_files_basenames = self._ignored_files_basenames()
+        if ignored_files_basenames:
+            args.append('--ignore-files=%s' % ignored_files_basenames)
 
         # Each directory should be have its own "--source-dir=" prefix.
         args.extend(['--source-dir=%s' % path for path in self.source_dirs])

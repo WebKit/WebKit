@@ -1,3 +1,18 @@
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix several gtkdoc-fixxref warnings
+        https://bugs.webkit.org/show_bug.cgi?id=77613
+
+        Reviewed by Martin Robinson.
+
+        * docs/webkitgtk-docs.sgml: Remove webkitspellcheckerenchant
+        section.
+        * docs/webkitgtk-sections.txt: Remove webkitspellcheckerenchant
+        symbols and move WebKitWebNavigationReason from the private
+        section to the global section.
+        * webkit/webkitwebnavigationaction.h: Document
+        WebKitWebNavigationReason enum.
+
 2012-02-02  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Don't use uint
