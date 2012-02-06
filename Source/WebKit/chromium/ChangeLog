@@ -1,3 +1,14 @@
+2012-02-06  Eric Uhrhane  <ericu@chromium.org>
+
+        [filesystem/Chromium] crackFileSystemURL needs to use innerURL
+        https://bugs.webkit.org/show_bug.cgi?id=77881
+
+        Reviewed by Adam Barth.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystem::crackFileSystemURL):
+        Add the new code path, taken only if innerURL is present.
+
 2012-02-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Support detaching TextureManager from ManagedTexture

@@ -63,28 +63,44 @@ bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type&
     if (!url.protocolIs("filesystem"))
         return false;
 
-    KURL originURL(ParsedURLString, url.path());
-    String path = decodeURLEscapeSequences(originURL.path());
-    if (path.isEmpty() || path[0] != '/')
-        return false;
-    path = path.substring(1);
+    if (url.innerURL()) {
+        String typeString = url.innerURL()->path().substring(1);
+        if (typeString == temporaryPathPrefix)
+            type = Temporary;
+        else if (typeString == persistentPathPrefix)
+            type = Persistent;
+        else if (typeString == externalPathPrefix)
+            type = externalType;
+        else
+            return false;
 
-    if (path.startsWith(temporaryPathPrefix)) {
-        type = Temporary;
-        path = path.substring(temporaryPathPrefixLength);
-    } else if (path.startsWith(persistentPathPrefix)) {
-        type = Persistent;
-        path = path.substring(persistentPathPrefixLength);
-    } else if (path.startsWith(externalPathPrefix)) {
-        type = externalType;
-        path = path.substring(externalPathPrefixLength);
-    } else
-        return false;
+        filePath = decodeURLEscapeSequences(url.path());
+    } else {
+        // FIXME: Remove this clause once http://codereview.chromium.org/7811006
+        // lands, which makes this dead code.
+        KURL originURL(ParsedURLString, url.path());
+        String path = decodeURLEscapeSequences(originURL.path());
+        if (path.isEmpty() || path[0] != '/')
+            return false;
+        path = path.substring(1);
 
-    if (path.isEmpty() || path[0] != '/')
-        return false;
+        if (path.startsWith(temporaryPathPrefix)) {
+            type = Temporary;
+            path = path.substring(temporaryPathPrefixLength);
+        } else if (path.startsWith(persistentPathPrefix)) {
+            type = Persistent;
+            path = path.substring(persistentPathPrefixLength);
+        } else if (path.startsWith(externalPathPrefix)) {
+            type = externalType;
+            path = path.substring(externalPathPrefixLength);
+        } else
+            return false;
 
-    filePath.swap(path);
+        if (path.isEmpty() || path[0] != '/')
+            return false;
+
+        filePath.swap(path);
+    }
     return true;
 }
 
