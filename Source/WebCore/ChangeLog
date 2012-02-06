@@ -1,3 +1,16 @@
+2012-02-06  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry]Use extension for a mimetype as the suggested extension
+        if the url file doesn't have an extension.
+        https://bugs.webkit.org/show_bug.cgi?id=76779
+
+        Reviewed by Antonio Gomes.
+
+        No new tests. 
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         Rename [HasIndexGetter], [HasNameGetter] and [HasCustomIndexSetter] IDLs

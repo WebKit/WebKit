@@ -610,12 +610,26 @@ void NetworkJob::sendResponseIfNeeded()
     if (!contentLength.isNull())
         m_response.setExpectedContentLength(contentLength.toInt64());
 
-    // Set suggested filename for downloads from the Content-Disposition header; if this fails, fill it in from the url
-    // skip this for data url's, because they have no Content-Disposition header and the format is wrong to be a filename.
+    // Set suggested filename for downloads from the Content-Disposition header; if this fails,
+    // fill it in from the url and sniffed mime type;Skip this for data and about URLs,
+    // because they have no Content-Disposition header and the format is wrong to be a filename.
     if (!m_isData && !m_isAbout) {
         String suggestedFilename = filenameFromHTTPContentDisposition(m_contentDisposition);
-        if (suggestedFilename.isNull())
-            suggestedFilename = urlFilename;
+        if (suggestedFilename.isEmpty()) {
+            // Check and see if an extension already exists.
+            String mimeExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
+            if (urlFilename.isEmpty()) {
+                if (mimeExtension.isEmpty()) // No extension found for the mimeType.
+                    suggestedFilename = String("Untitled");
+                else
+                    suggestedFilename = String("Untitled") + "." + mimeExtension;
+            } else {
+                if (urlFilename.reverseFind('.') == notFound && !mimeExtension.isEmpty())
+                   suggestedFilename = urlFilename + '.' + mimeExtension;
+                else
+                   suggestedFilename = urlFilename;
+            }
+        }
         m_response.setSuggestedFilename(suggestedFilename);
     }
 
