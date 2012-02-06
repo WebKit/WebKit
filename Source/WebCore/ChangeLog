@@ -1,3 +1,20 @@
+2012-02-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Remove unused disabledComputedProperties from methods in StylesSidebarPane
+        https://bugs.webkit.org/show_bug.cgi?id=77876
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties):
+        (WebInspector.StylesSidebarPane.prototype._refreshSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.ComputedStylePropertiesSection):
+        (WebInspector.ComputedStylePropertiesSection.prototype._isPropertyInherited):
+
 2012-02-06  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Redesign summary view / retaining tree contents

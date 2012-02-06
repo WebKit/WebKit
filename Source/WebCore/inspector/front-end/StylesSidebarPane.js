@@ -333,9 +333,8 @@ WebInspector.StylesSidebarPane.prototype = {
         for (var pseudoId in this.sections) {
             var styleRules = this._refreshStyleRules(this.sections[pseudoId], computedStyle);
             var usedProperties = {};
-            var disabledComputedProperties = {};
-            this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-            this._refreshSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, editedSection);
+            this._markUsedProperties(styleRules, usedProperties);
+            this._refreshSectionsForStyleRules(styleRules, usedProperties, editedSection);
         }
         // Trace the computed style.
         this.sections[0][0].rebuildComputedTrace(this.sections[0]);
@@ -350,9 +349,8 @@ WebInspector.StylesSidebarPane.prototype = {
 
         var styleRules = this._rebuildStyleRules(node, styles);
         var usedProperties = {};
-        var disabledComputedProperties = {};
-        this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-        this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, 0, null);
+        this._markUsedProperties(styleRules, usedProperties);
+        this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, 0, null);
         var anchorElement = this.sections[0].inheritedPropertiesSeparatorElement;
         // Trace the computed style.
         this.sections[0][0].rebuildComputedTrace(this.sections[0]);
@@ -372,9 +370,8 @@ WebInspector.StylesSidebarPane.prototype = {
                 styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
             }
             usedProperties = {};
-            disabledComputedProperties = {};
-            this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-            this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId, anchorElement);
+            this._markUsedProperties(styleRules, usedProperties);
+            this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, pseudoId, anchorElement);
         }
 
         this._nodeStylesUpdatedForTest(node, false);
@@ -490,7 +487,7 @@ WebInspector.StylesSidebarPane.prototype = {
         return styleRules;
     },
 
-    _markUsedProperties: function(styleRules, usedProperties, disabledComputedProperties)
+    _markUsedProperties: function(styleRules, usedProperties)
     {
         var priorityUsed = false;
 
@@ -557,14 +554,13 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    _refreshSectionsForStyleRules: function(styleRules, usedProperties, disabledComputedProperties, editedSection)
+    _refreshSectionsForStyleRules: function(styleRules, usedProperties, editedSection)
     {
         // Walk the style rules and update the sections with new overloaded and used properties.
         for (var i = 0; i < styleRules.length; ++i) {
             var styleRule = styleRules[i];
             var section = styleRule.section;
             if (styleRule.computedStyle) {
-                section._disabledComputedProperties = disabledComputedProperties;
                 section._usedProperties = usedProperties;
                 section.update();
             } else {
@@ -574,7 +570,7 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    _rebuildSectionsForStyleRules: function(styleRules, usedProperties, disabledComputedProperties, pseudoId, anchorElement)
+    _rebuildSectionsForStyleRules: function(styleRules, usedProperties, pseudoId, anchorElement)
     {
         // Make a property section for each style rule.
         var sections = [];
@@ -610,7 +606,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 editable = true;
 
             if (computedStyle)
-                var section = new WebInspector.ComputedStylePropertiesSection(styleRule, usedProperties, disabledComputedProperties);
+                var section = new WebInspector.ComputedStylePropertiesSection(styleRule, usedProperties);
             else
                 var section = new WebInspector.StylePropertiesSection(this, styleRule, editable, styleRule.isInherited, lastWasSeparator);
             section.pane = this;
@@ -1053,9 +1049,6 @@ WebInspector.StylePropertiesSection.prototype = {
         for (var i = 0; i < this.uniqueProperties.length; ++i) {
             var property = this.uniqueProperties[i];
             var disabled = property.disabled;
-            if (!disabled && this.disabledComputedProperties && !(property.name in this.usedProperties) && property.name in this.disabledComputedProperties)
-                disabled = true;
-
             var shorthand = !disabled ? property.shorthand : null;
 
             if (shorthand && shorthand in handledProperties)
@@ -1251,14 +1244,13 @@ WebInspector.StylePropertiesSection.prototype.__proto__ = WebInspector.Propertie
  * @constructor
  * @extends {WebInspector.PropertiesSection}
  */
-WebInspector.ComputedStylePropertiesSection = function(styleRule, usedProperties, disabledComputedProperties)
+WebInspector.ComputedStylePropertiesSection = function(styleRule, usedProperties)
 {
     WebInspector.PropertiesSection.call(this, "");
     this.headerElement.addStyleClass("hidden");
     this.element.className = "styles-section monospace first-styles-section read-only computed-style";
     this.styleRule = styleRule;
     this._usedProperties = usedProperties;
-    this._disabledComputedProperties = disabledComputedProperties;
     this._alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
     this.computedStyle = true;
     this._propertyTreeElements = {};
@@ -1273,7 +1265,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
 
     _isPropertyInherited: function(propertyName)
     {
-        return !(propertyName in this._usedProperties) && !(propertyName in this._alwaysShowComputedProperties) && !(propertyName in this._disabledComputedProperties);
+        return !(propertyName in this._usedProperties) && !(propertyName in this._alwaysShowComputedProperties);
     },
 
     update: function()
