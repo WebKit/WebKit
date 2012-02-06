@@ -318,6 +318,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
            "Source/WebKit2/UIProcess/API/gtk/HelperClass.h",
            "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp",
            "Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h",
+           "Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp",
+           "Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.h",
             ]
 
         for path in paths_not_to_skip:

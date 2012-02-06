@@ -20,9 +20,9 @@
 #ifndef TestMain_h
 #define TestMain_h
 
-#include <glib-object.h>
 #include <JavaScriptCore/GOwnPtr.h>
 #include <JavaScriptCore/HashSet.h>
+#include <glib-object.h>
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
     static void setUp(ClassName* fixture, gconstpointer data) \
@@ -39,8 +39,7 @@
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
-class Test
-{
+class Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(Test);
 

@@ -2414,6 +2414,10 @@ def check_for_null(clean_lines, line_number, file_state, error):
     if search(r'\bgtk_widget_style_get\(\w+\b', line):
         return
 
+    # Don't warn about NULL usage in soup_server_new(). See Bug 77890.
+    if search(r'\bsoup_server_new\(\w+\b', line):
+        return
+
     if search(r'\bNULL\b', line):
         error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return

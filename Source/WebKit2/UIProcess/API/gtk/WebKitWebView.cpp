@@ -27,13 +27,13 @@
 #include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
 #include "WebKitPolicyClient.h"
+#include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragIcon.h>
 #include <WebCore/GtkUtilities.h>

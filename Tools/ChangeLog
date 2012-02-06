@@ -1,3 +1,18 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Fix remaining errors in GTK+ WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=77890
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Verify that WebKit2 GTK+ test files are not skipped during style checks.
+        Skip soup_server_new when checking for NULL versus 0 usage.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherSkipTest.test_should_skip_with_warning):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_null):
+
 2012-02-06  Eric Seidel  <eric@webkit.org>
 
         webkit-patch apply-from-bug should be able to apply non-reviewed patches
