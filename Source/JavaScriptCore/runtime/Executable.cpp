@@ -210,10 +210,6 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
             }
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_evalCodeBlock.get());
         }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_evalCodeBlock->handleBytecodeDiscardingOpportunity();
-#endif
         m_evalCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
     }
 #endif
@@ -354,10 +350,6 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
             }
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_programCodeBlock.get());
         }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_programCodeBlock->handleBytecodeDiscardingOpportunity();
-#endif
         m_programCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
     }
 #endif
@@ -542,10 +534,6 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
             }
             m_jitCodeForCall = JIT::compile(globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
         }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForCall->handleBytecodeDiscardingOpportunity();
-#endif
         
         m_codeBlockForCall->setJITCode(m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
     }
@@ -605,10 +593,6 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
             }
             m_jitCodeForConstruct = JIT::compile(globalData, m_codeBlockForConstruct.get(), &m_jitCodeForConstructWithArityCheck);
         }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForConstruct->handleBytecodeDiscardingOpportunity();
-#endif
         
         m_codeBlockForConstruct->setJITCode(m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
     }

@@ -509,13 +509,6 @@ namespace JSC {
         {
             m_shouldDiscardBytecode = true;
         }
-        void handleBytecodeDiscardingOpportunity()
-        {
-            if (!!alternative())
-                discardBytecode();
-            else
-                discardBytecodeLater();
-        }
         
 #ifndef NDEBUG
         bool usesOpcode(OpcodeID);
@@ -648,6 +641,7 @@ namespace JSC {
 #if ENABLE(VALUE_PROFILER)
         ValueProfile* addValueProfile(int bytecodeOffset)
         {
+            ASSERT(m_valueProfiles.isEmpty() || m_valueProfiles.last().m_bytecodeOffset < bytecodeOffset);
             m_valueProfiles.append(ValueProfile(bytecodeOffset));
             return &m_valueProfiles.last();
         }
