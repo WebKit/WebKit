@@ -1,3 +1,17 @@
+2012-02-06  Wei James  <james.wei@intel.com>
+
+        AudioBus need to support stereo->mono down mix in copyFrom sumFrom etc.
+        https://bugs.webkit.org/show_bug.cgi?id=77609
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/stereo2mono-down-mixing.html
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore):
+        (WebCore::AudioBus::copyFrom):
+        (WebCore::AudioBus::sumFrom):
+
 2012-02-06  Cris Neckar  <cdn@chromium.org>
 
         Add RefPtrs for parent and sibling counter nodes

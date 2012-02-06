@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("This test verifies whether down mixing from stereo to mono will cause assertion error.");
+
+var sampleRate = 44100.0;
+var renderLengthSeconds = 0.1;
+var fftSize = 32;
+
+var context;
+var toneBuffer;
+var bufferSource;
+var analyser;
+
+function createDataBuffer(context, lengthInSeconds) {
+    var audioBuffer = context.createBuffer(1, lengthInSeconds * sampleRate, sampleRate);
+
+    var n = audioBuffer.length;
+    var data = audioBuffer.getChannelData(0);
+
+    for (var i = 0; i < n; ++i) {
+        data[i] = 1.0;
+    }
+
+    return audioBuffer;
+}
+
+function testFinished() {
+    testPassed("Test no ASSERT error.");
+    finishJSTest();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    // Create offline audio context.
+    context = new webkitAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    // Explicitly create a mono AudioContext so that the destination is mono.
+    toneBuffer = createDataBuffer(context, renderLengthSeconds);
+
+    bufferSource = context.createBufferSource();
+    bufferSource.buffer = toneBuffer;
+
+    // We create an analyser here, because it has a hard-coded stereo output.
+    analyser = context.createAnalyser();
+    analyser.fftSize = fftSize;
+
+    bufferSource.connect(analyser);
+    analyser.connect(context.destination);
+
+    bufferSource.noteOn(0);
+
+    context.oncomplete = testFinished;
+    context.startRendering();
+}
+
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
