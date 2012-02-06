@@ -31,8 +31,8 @@ from webkitpy.layout_tests.models.test_expectations import TestExpectations, SKI
 
 
 class ResultSummary(object):
-    def __init__(self, expectations, test_files):
-        self.total = len(test_files)
+    def __init__(self, expectations, test_files, iterations=1):
+        self.total = len(test_files) * iterations
         self.remaining = self.total
         self.expectations = expectations
         self.expected = 0
@@ -40,22 +40,28 @@ class ResultSummary(object):
         self.unexpected_failures = 0
         self.unexpected_crashes = 0
         self.unexpected_timeouts = 0
+        self.total_tests_by_expectation = {}
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
         self.results = {}
         self.unexpected_results = {}
         self.failures = {}
+        self.total_failures = 0
+        self.total_tests_by_expectation[SKIP] = 0
         self.tests_by_expectation[SKIP] = set()
         for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
+            self.total_tests_by_expectation[expectation] = 0
         for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
 
     def add(self, test_result, expected):
+        self.total_tests_by_expectation[test_result.type] += 1
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results[test_result.test_name] = test_result
         self.remaining -= 1
         if len(test_result.failures):
+            self.total_failures += 1
             self.failures[test_result.test_name] = test_result.failures
         if expected:
             self.expected += 1

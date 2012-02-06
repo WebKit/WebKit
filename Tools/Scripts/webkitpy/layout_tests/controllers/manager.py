@@ -503,7 +503,10 @@ class Manager(object):
         if self._options.iterations:
             self._test_files_list = self._test_files_list * self._options.iterations
 
-        result_summary = ResultSummary(self._expectations, self._test_files | skipped)
+        iterations =  \
+            (self._options.repeat_each if self._options.repeat_each else 1) * \
+            (self._options.iterations if self._options.iterations else 1)
+        result_summary = ResultSummary(self._expectations, self._test_files | skipped, iterations)
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
         self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")
         self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
@@ -518,7 +521,11 @@ class Manager(object):
             for test in skipped:
                 result = test_results.TestResult(test)
                 result.type = test_expectations.SKIP
-                result_summary.add(result, expected=True)
+                iterations =  \
+                    (self._options.repeat_each if self._options.repeat_each else 1) * \
+                    (self._options.iterations if self._options.iterations else 1)
+                for iteration in range(iterations):
+                    result_summary.add(result, expected=True)
         self._printer.print_expected('')
 
         # Check to make sure we didn't filter out all of the tests.
@@ -1320,9 +1327,8 @@ class Manager(object):
         Args:
           result_summary: information to log
         """
-        failed = len(result_summary.failures)
-        skipped = len(
-            result_summary.tests_by_expectation[test_expectations.SKIP])
+        failed = result_summary.total_failures
+        skipped = result_summary.total_tests_by_expectation[test_expectations.SKIP]
         total = result_summary.total
         passed = total - failed - skipped
         pct_passed = 0.0

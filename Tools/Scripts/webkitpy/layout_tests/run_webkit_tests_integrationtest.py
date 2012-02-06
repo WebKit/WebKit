@@ -390,6 +390,18 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html', 'passes/image.html', 'passes/text.html'])
 
+    def test_repeat_each_iterations_num_tests(self):
+        # The total number of tests should be: number_of_tests *
+        # repeat_each * iterations
+        host = MockHost()
+        res, out, err, _ = logging_run(['--iterations', '2',
+                                        '--repeat-each', '4',
+                                        '--print', 'everything',
+                                        'passes/text.html', 'failures/expected/text.html'],
+                                       tests_included=True, host=host, record_results=True)
+        self.assertTrue("=> Results: 8/16 tests passed (50.0%)\n" in out.get())
+        self.assertTrue(err.get()[-2] == "All 16 tests ran as expected.\n")
+
     def test_run_chunk(self):
         # Test that we actually select the right chunk
         all_tests_run = get_tests_run(flatten_batches=True)

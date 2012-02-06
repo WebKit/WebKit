@@ -1,3 +1,22 @@
+2012-02-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        Incorrect statistics shown when running run-webkit-tests with --repeat-each or --iterations
+        https://bugs.webkit.org/show_bug.cgi?id=77672
+
+        Reviewed by Dirk Pranke.
+
+        Test repetitions must be taken into account when working out
+        the statistics shown by run-webkit-tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.prepare_lists_and_print_output):
+        (Manager._print_result_summary):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        (ResultSummary.add):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_repeat_each_iterations_num_tests):
+
 2012-02-05  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10809525> WebKit2’s WebFrameLoaderClient::shouldUseCredentialStorage() always returns true
