@@ -1,3 +1,18 @@
+2012-02-06  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in SubframeLoader::loadSubframe.
+        https://bugs.webkit.org/show_bug.cgi?id=77345
+
+        Reviewed by Nate Chapin.
+
+        Mutation event when loading subframe can blow away the
+        main frame. Add a RefPtr to protect against that.
+
+        Test: fast/frames/subframe-load-crash-main.html
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+
 2012-02-06  ChangSeok Oh  <shivamidow@gmail.com>
 
         Initial implementation of GraphicsContext3DOpenGLES.cpp

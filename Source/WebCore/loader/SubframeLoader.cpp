@@ -244,6 +244,8 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElemen
 
 Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const String& name, const String& referrer)
 {
+    RefPtr<Frame> protect(m_frame);
+
     bool allowsScrolling = true;
     int marginWidth = -1;
     int marginHeight = -1;
