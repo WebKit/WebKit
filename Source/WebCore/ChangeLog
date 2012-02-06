@@ -1,3 +1,10 @@
+2012-02-06  Philippe Normand  <pnormand@igalia.com>
+
+        Adding FFTFrameGStreamer.cpp that I forgot to commit
+        in r106537. That new file was reviewed in https://bugs.webkit.org/show_bug.cgi?id=73545.
+
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp: Added.
+
 2012-02-06  Hayato Ito  <hayato@chromium.org>
 
         Add <shadow> element, which is guarded by SHADOW_DOM flag.
