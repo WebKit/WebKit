@@ -105,6 +105,8 @@ public:
     void setShouldDisplayTrackKind(Document*, const String& kind, bool, ExceptionCode&);
     bool shouldDisplayTrackKind(Document*, const String& kind, ExceptionCode&);
 
+    unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
+
     static const char* internalsId;
 
     InternalSettings* settings() const { return m_settings.get(); }

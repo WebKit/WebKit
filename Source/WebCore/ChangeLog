@@ -1,3 +1,23 @@
+2012-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Wheel event handler count not updated when adding handlers to the window
+        https://bugs.webkit.org/show_bug.cgi?id=77895
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/events/wheelevent-handler-count.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        Update the wheel event count.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::wheelEventHandlerCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add wheelEventHandlerCount to window.internals.
+
 2012-02-06  Matthew Delaney  <mdelaney@apple.com>
 
         toDataURL() uses stale data after putImageData()

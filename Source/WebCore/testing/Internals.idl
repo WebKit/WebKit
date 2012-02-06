@@ -79,6 +79,8 @@ module window {
 #endif
         attribute [Custom] Array userPreferredLanguages;
 
+        unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
+
         readonly attribute InternalSettings settings;
     };
 }

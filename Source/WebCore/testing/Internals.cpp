@@ -542,5 +542,15 @@ bool Internals::shouldDisplayTrackKind(Document* document, const String& kind, E
     return false;
 #endif
 }
-    
+
+unsigned Internals::wheelEventHandlerCount(Document* document, ExceptionCode& ec)
+{
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->wheelEventHandlerCount();
+}
+
 }
