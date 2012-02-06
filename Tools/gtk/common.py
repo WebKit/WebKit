@@ -76,3 +76,22 @@ def number_of_cpus():
     process = subprocess.Popen([script_path('num-cpus')], stdout=subprocess.PIPE)
     stdout = process.communicate()[0]
     return int(stdout)
+
+
+def prefix_of_pkg_config_file(package):
+    process = subprocess.Popen(['pkg-config', '--variable=prefix', package],
+                                   stdout=subprocess.PIPE)
+    stdout = process.communicate()[0]
+    if process.returncode != 0:
+        return None
+    return stdout.strip()
+
+
+def gtk_version_of_pkg_config_file(pkg_config_path):
+    process = subprocess.Popen(['pkg-config', pkg_config_path, '--print-requires'],
+                               stdout=subprocess.PIPE)
+    stdout = process.communicate()[0]
+
+    if 'gtk+-3.0' in stdout:
+        return 3
+    return 2

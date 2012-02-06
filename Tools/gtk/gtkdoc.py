@@ -95,6 +95,9 @@ class GTKDoc(object):
         self.doc_dir = ''
         self.main_sgml_file = ''
 
+        # Parameters specific to gtkdoc-fixxref.
+        self.cross_reference_deps = []
+
         self.interactive = False
 
         self.logger = logging.getLogger('gtkdoc')
@@ -340,11 +343,19 @@ class GTKDoc(object):
                           cwd=html_dest_dir)
 
     def _run_gtkdoc_fixxref(self):
-        self._run_command(['gtkdoc-fixxref',
-                           '--module-dir=html',
-                           '--html-dir=html'],
-                          cwd=self.output_dir,
-                          ignore_warnings=True)
+        args = ['gtkdoc-fixxref',
+                '--module-dir=html',
+                '--html-dir=html']
+        args.extend(['--extra-dir=%s' % extra_dir for extra_dir in self.cross_reference_deps])
+        self._run_command(args, cwd=self.output_dir, ignore_warnings=True)
+
+    def rebase_installed_docs(self):
+        html_dir = os.path.join(self.prefix, 'share', 'gtk-doc', 'html', self.module_name)
+        args = ['gtkdoc-rebase',
+                '--relative',
+                '--html-dir=%s' % html_dir]
+        args.extend(['--other-dir=%s' % extra_dir for extra_dir in self.cross_reference_deps])
+        self._run_command(args, cwd=self.output_dir)
 
 
 class PkgConfigGTKDoc(GTKDoc):
@@ -376,3 +387,6 @@ class PkgConfigGTKDoc(GTKDoc):
         self.version = self._run_command(['pkg-config',
                                           pkg_config_path,
                                           '--modversion'], print_output=False)
+        self.prefix = self._run_command(['pkg-config',
+                                         pkg_config_path,
+                                         '--variable=prefix'], print_output=False)

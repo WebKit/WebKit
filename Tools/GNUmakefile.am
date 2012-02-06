@@ -325,6 +325,7 @@ if ENABLE_WEBKIT2
 	  fi; \
 	fi
 endif
+	$(srcdir)/Tools/gtk/generate-gtkdoc --rebase
 
 uninstall-local:
 	@DOC_MODULE_VERSION=`cat ./Documentation/webkitgtk/version.xml`; \

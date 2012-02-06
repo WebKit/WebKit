@@ -1,3 +1,36 @@
+2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix xrefs after installing API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=77551
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Call generate-gtkdoc --rebase after installing
+        api docs.
+        * gtk/common.py:
+        (prefix_of_pkg_config_file): Get the prefix variable of the given
+        pkg-config file.
+        (gtk_version_of_pkg_config_file): Get the gtk version required by
+        the given pkg-config file.
+        * gtk/generate-gtkdoc: Add --rebase command line option to rebase
+        installed documentation.
+        (get_gtkdoc_module_paths): Get paths where API doc is installed
+        for the dependencies of the given pkg-config file.
+        (get_common_xref_deps): Get API doc directories of dependencies
+        common to WebKit1 and WebKit2.
+        (get_webkit2_options): Add cross_reference_deps option.
+        (get_webkit1_options): Ditto
+        (rebase_installed_docs): Helper function to create a generator for
+        the given pkg-config file and options and call rebase_installed_docs.
+        * gtk/gtkdoc.py:
+        (GTKDoc.__init__): Initialize cross_reference_deps.
+        (GTKDoc._run_gtkdoc_fixxref): Add API doc directories of
+        dependencies.
+        (GTKDoc.rebase_installed_docs): Call gtkdoc-rebase to fix xref
+        links of installed documentation.
+        (PkgConfigGTKDoc.__init__): Get the prefix from the pkg-config
+        file.
+
 2012-02-06  Sergio Villar Senin  <svillar@igalia.com>
 
         Incorrect statistics shown when running run-webkit-tests with --repeat-each or --iterations

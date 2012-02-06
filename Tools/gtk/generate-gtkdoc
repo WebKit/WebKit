@@ -34,6 +34,21 @@ def configure_logging():
     else:
         handler.setFormatter(logging.Formatter('%(message)s'))
 
+
+def get_gtkdoc_module_paths(xref_dep_packages):
+    deps = []
+    html_dir = os.path.join('share', 'gtk-doc', 'html')
+
+    for package in xref_dep_packages:
+        prefix = common.prefix_of_pkg_config_file(package)
+        if prefix is None:
+            continue
+        for module in xref_dep_packages[package]:
+            deps.append(os.path.join(prefix, html_dir, module))
+
+    return deps
+
+
 def get_common_options():
     return {
         'decorator': 'WEBKIT_API',
@@ -41,11 +56,23 @@ def get_common_options():
         'library_path' : common.build_path('.libs'),
     }
 
+def get_common_xref_deps():
+    return {
+        'glib-2.0' : ['glib', 'gobject', 'gio'],
+        'libsoup-2.4' : ['libsoup-2.4'],
+        'gdk-pixbuf-2.0': ['gdk-pixbuf']
+    }
+
 def get_webkit2_options():
     def derived_sources_path(*args):
         return common.build_path(*(('DerivedSources', 'WebKit2') + args))
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + args))
+
+    xref_deps = get_common_xref_deps().copy()
+    xref_deps.update({
+        'gtk+-3.0' : ['gtk3', 'gdk3']
+    })
 
     options = get_common_options().copy()
     options.update({
@@ -58,6 +85,7 @@ def get_webkit2_options():
                    ' -I' + derived_sources_path('include') + \
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + src_path(),
+        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(src_path('*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
@@ -65,9 +93,19 @@ def get_webkit2_options():
     })
     return options
 
-def get_webkit1_options():
+def get_webkit1_options(gtk_version):
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
+
+    xref_deps = get_common_xref_deps().copy()
+    if gtk_version == 3:
+        xref_deps.update({
+                'gtk+-3.0' : ['gtk3', 'gdk3']
+        })
+    else:
+        xref_deps.update({
+                'gtk+-2.0' : ['gtk', 'gdk']
+        })
 
     options = get_common_options().copy()
     options.update({
@@ -80,6 +118,7 @@ def get_webkit1_options():
                    ' -I' + src_path() + \
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
+        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(src_path('webkit', '*private.*'))
     })
     return options
@@ -88,6 +127,10 @@ def generate_doc(pkg_config_path, options):
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
     generator.generate(html='--skip-html' not in sys.argv)
     return generator.saw_warnings
+
+def rebase_installed_docs(pkg_config_path, options):
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
+    generator.rebase_installed_docs()
 
 configure_logging()
 
@@ -104,13 +147,23 @@ pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc
 if not os.path.exists(pkg_config_path):
     pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-1.0.pc')
 if os.path.exists(pkg_config_path):
-    print "Generating WebKit1 documentation..."
-    saw_webkit1_warnings = generate_doc(pkg_config_path, get_webkit1_options())
+    options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
+    if '--rebase' not in sys.argv:
+        print "Generating WebKit1 documentation..."
+        saw_webkit1_warnings = generate_doc(pkg_config_path, options)
+    else:
+        print "Rebasing WebKit1 documentation..."
+        rebase_installed_docs(pkg_config_path, options)
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
 pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
 if os.path.exists(pkg_config_path):
-    print "\nGenerating WebKit2 documentation..."
-    saw_webkit2_warnings = generate_doc(pkg_config_path, get_webkit2_options())
+    options = get_webkit2_options()
+    if '--rebase' not in sys.argv:
+        print "\nGenerating WebKit2 documentation..."
+        saw_webkit2_warnings = generate_doc(pkg_config_path, options)
+    else:
+        print "\nRebasing WebKit2 documentation..."
+        rebase_installed_docs(pkg_config_path, options)
 
 sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
