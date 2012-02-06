@@ -12,7 +12,7 @@ function executeTest() {
     var circle = document.getElementById("circle");
     circle.setAttribute("cx", 100);
     circle.setAttribute("cy", 100);
-    
+
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
