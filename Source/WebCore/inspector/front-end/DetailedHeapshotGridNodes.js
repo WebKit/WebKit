@@ -363,7 +363,7 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
     this._referenceName = edge.name;
     this._referenceType = edge.type;
     this._propertyAccessor = edge.propertyAccessor;
-    this._retainerNode = tree.showRetainingEdges;
+    this.showRetainingEdges = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
     this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex, tree);
     this.updateHasChildren(parentGridNode);
@@ -372,7 +372,7 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
 WebInspector.HeapSnapshotObjectNode.prototype = {
     updateHasChildren: function(parentGridNode)
     {
-        if (this._retainerNode) {
+        if (this.showRetainingEdges) {
             this._parentGridNode = parentGridNode;
             var ancestor = parentGridNode;
             while (ancestor) {
@@ -394,10 +394,11 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
     _createProvider: function(snapshot, nodeIndex, tree)
     {
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
-        var filter = "function(edge) {" +
-            "    return !edge.isInvisible" +
-            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
-            "}";
+        var filter = "function(edge) {\n" +
+            "    return !edge.isInvisible\n" +
+            "        && (" + !this.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isArtificial))\n" +
+            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));\n" +
+            "}\n";
         if (tree.showRetainingEdges)
             return snapshot.createRetainingEdgesProvider(nodeIndex, filter);
         else
@@ -453,7 +454,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _prefixObjectCell: function(div, data)
     {
-        if (this._retainerNode) {
+        if (this.showRetainingEdges) {
             if (this._cycledWithAncestorGridNode)
                 div.className += " cycled-ancessor-node";
             var referenceNameSpan = document.createElement("span");

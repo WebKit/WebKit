@@ -1,3 +1,18 @@
+2012-02-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: get rid of artificial heap snapshot nodes from the retaining tree.
+        https://bugs.webkit.org/show_bug.cgi?id=77850
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype.updateHasChildren):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get isArtificial):
+        (WebInspector.HeapSnapshot.prototype._init):
+
 2012-02-05  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: switch domain agents to formal interfaces in BackendDispatcher

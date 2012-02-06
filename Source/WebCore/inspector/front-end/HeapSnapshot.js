@@ -566,6 +566,11 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this._type() === this._snapshot._nodeHiddenType;
     },
 
+    get isArtificial()
+    {
+        return this._type() === this._snapshot._nodeArtificialType;
+    },
+
     get isDOMWindow()
     {
         return this.name.substr(0, 9) === "DOMWindow";
@@ -706,6 +711,7 @@ WebInspector.HeapSnapshot.prototype = {
         this._firstEdgeOffset = meta.fields.indexOf("children");
         this._nodeTypes = meta.types[this._nodeTypeOffset];
         this._nodeHiddenType = this._nodeTypes.indexOf("hidden");
+        this._nodeArtificialType = this._nodeTypes.indexOf("artificial");
         var edgesMeta = meta.types[this._firstEdgeOffset];
         this._edgeFieldsCount = edgesMeta.fields.length;
         this._edgeTypeOffset = edgesMeta.fields.indexOf("type");
