@@ -161,7 +161,7 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject* o) const
     return isEnabled(o);
 }
 
-int RenderThemeGtk::baselinePosition(const RenderObject* o) const
+LayoutUnit RenderThemeGtk::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())
         return 0;

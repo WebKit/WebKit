@@ -181,13 +181,13 @@ void RenderMathMLSubSup::layout()
     }    
 }
 
-int RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+LayoutUnit RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     RenderObject* base = firstChild();
     if (!base) 
         return offsetHeight();
     
-    int baseline = offsetHeight();
+    LayoutUnit baseline = offsetHeight();
     if (!base || !base->isBoxModelObject()) 
         return baseline;
 

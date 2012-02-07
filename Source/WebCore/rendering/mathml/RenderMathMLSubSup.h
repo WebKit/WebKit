@@ -41,7 +41,7 @@ public:
     virtual bool hasBase() const { return true; }
     virtual int nonOperatorHeight() const;
     virtual void stretchToHeight(int pixelHeight);
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
 protected:
     virtual void layout();

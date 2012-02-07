@@ -40,7 +40,7 @@ public:
     virtual void layout();
     virtual bool hasBase() const { return true; }
     virtual int nonOperatorHeight() const;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual void stretchToHeight(int pixelHeight);
 private:
     virtual const char* renderName() const { return "RenderMathMLUnderOver"; }

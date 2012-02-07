@@ -1,3 +1,62 @@
+2012-02-06  Emil A Eklund  <eae@chromium.org>
+
+        Change baselinePosition and lineHeight to LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=77905
+
+        Reviewed by Eric Seidel.
+
+        Change the virtual baselinePosition and lineHeight methods to return
+        LayoutUnits as they are both computed from the height and top/bottom
+        margins (or width and left/right margins for vertical text), all of
+        which are LayoutUnits.
+
+        No new tests.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::baselinePosition):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::baselinePosition):
+        * platform/gtk/RenderThemeGtk.h:
+        (RenderThemeGtk):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::baselinePosition):
+        * platform/qt/RenderThemeQt.h:
+        (RenderThemeQt):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::lineHeight):
+        (WebCore::RenderListMarker::baselinePosition):
+        * rendering/RenderListMarker.h:
+        (RenderListMarker):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::baselinePosition):
+        * rendering/RenderSlider.h:
+        (RenderSlider):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::baselinePosition):
+        (WebCore::RootInlineBox::lineHeight):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::baselinePosition):
+        * rendering/mathml/RenderMathMLFraction.h:
+        (RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::baselinePosition):
+        * rendering/mathml/RenderMathMLOperator.h:
+        (RenderMathMLOperator):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::baselinePosition):
+        * rendering/mathml/RenderMathMLRow.h:
+        (RenderMathMLRow):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::baselinePosition):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::baselinePosition):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (RenderMathMLUnderOver):
+
 2012-02-06  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Avoid Page::updateViewportArguments() if the causing frame is not the main frame

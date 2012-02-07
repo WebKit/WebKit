@@ -37,7 +37,7 @@ public:
     RenderMathMLRow(Node* container);
     virtual bool isRenderMathMLRow() const { return true; }
     virtual int nonOperatorHeight() const;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
     virtual void stretchToHeight(int) {}
 protected:
     virtual void layout();
