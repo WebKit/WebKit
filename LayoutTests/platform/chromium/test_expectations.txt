@@ -3792,7 +3792,7 @@ BUGWK65711 MAC LINUX : svg/custom/js-late-clipPath-and-object-creation.svg = IMA
 BUGWK65711 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT IMAGE
 
-BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT
+BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT
 BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
 
 // Text layout should have changed, kerning should look more natural. We previously didn't relayout
