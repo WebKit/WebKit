@@ -76,5 +76,13 @@ function fetchDashboardManifest(callback)
         cache: true,
     });
 
-    $.getJSON(SERVER + '/api/test/dashboard', callback);
+    $.getJSON(SERVER + '/api/test/dashboard', function (dashboardManifest) {
+        var testToId = dashboardManifest['testToId'];
+        var tests = Object.keys(testToId).sort();
+        var sortedTestToId = {};
+        for (var i = 0; i < tests.length; i++)
+            sortedTestToId[tests[i]] = testToId[tests[i]];
+        dashboardManifest['testToId'] = sortedTestToId;
+        callback(dashboardManifest);
+    });
 }
