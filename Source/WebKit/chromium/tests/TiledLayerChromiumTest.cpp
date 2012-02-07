@@ -565,4 +565,17 @@ TEST(TiledLayerChromiumTest, layerAddsSelfToOccludedRegion)
     EXPECT_EQ(0u, occluded.rects().size());
 }
 
+TEST(TiledLayerChromiumTest, resizeToSmaller)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(60*1024*1024, 60*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+
+    layer->setBounds(IntSize(700, 700));
+    layer->invalidateRect(IntRect(0, 0, 700, 700));
+    layer->prepareToUpdate(IntRect(0, 0, 700, 700));
+
+    layer->setBounds(IntSize(200, 200));
+    layer->invalidateRect(IntRect(0, 0, 200, 200));
+}
+
 } // namespace

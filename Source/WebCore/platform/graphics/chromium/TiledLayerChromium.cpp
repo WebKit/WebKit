@@ -312,6 +312,7 @@ void TiledLayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
 
 void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
 {
+    updateBounds();
     if (m_tiler->isEmpty() || layerRect.isEmpty() || m_skipsDraw)
         return;
 

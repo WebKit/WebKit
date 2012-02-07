@@ -1,3 +1,15 @@
+2012-02-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Drop tiles completely outside of layer bounds when resizing to a smaller size
+        https://bugs.webkit.org/show_bug.cgi?id=77910
+
+        Reviewed by Kenneth Russell.
+
+        Adds test for resizing a layer to cover fewer tiles. Test hits ASSERT()s without any code changes.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (::TEST):
+
 2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r106859. It was completely bogus.

@@ -1,3 +1,21 @@
+2012-02-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Drop tiles completely outside of layer bounds when resizing to a smaller size
+        https://bugs.webkit.org/show_bug.cgi?id=77910
+
+        Reviewed by Kenneth Russell.
+
+        When resizing a tiled layer to a smaller size, drop all tiles that lie completely outside the new layer bounds.
+        This avoids attempting to access out-of-bounds tiles when iterating over all tiles in the tiler, which triggers
+        ASSERT()s, as well as saves some memory.
+
+        New unit test added to TiledLayerChromiumTest.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::invalidateRect):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::setBounds):
+
 2012-02-06  Chris Rogers  <crogers@google.com>
 
         zvmul incorrectly multiplies complex arrays on Windows.
