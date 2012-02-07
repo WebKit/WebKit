@@ -108,7 +108,7 @@ function finishAudioTest(event) {
 
 // Create an impulse in a buffer of length sampleFrameLength
 function createImpulseBuffer(context, sampleFrameLength) {
-    var audioBuffer = context.createBuffer(1, 1000, context.sampleRate);
+    var audioBuffer = context.createBuffer(1, sampleFrameLength, context.sampleRate);
     var n = audioBuffer.length;
     var dataL = audioBuffer.getChannelData(0);
 
