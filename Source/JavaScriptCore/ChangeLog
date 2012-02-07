@@ -1,3 +1,20 @@
+2012-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Crash on http://www.rickshawbags.com/
+        https://bugs.webkit.org/show_bug.cgi?id=78045
+
+        Reviewed by Darin Adler.
+
+        Problem URL is: http://www.rickshawbags.com/customize/custom-bag#!thl=rickshaw/bag()
+        
+        This is a bug introduced by https://bugs.webkit.org/show_bug.cgi?id=71933,
+        isVariableObject() checks were excluding StaticScopeObjects, this patch
+        inadvertently changed them to be included.
+
+        * runtime/JSType.h:
+            - sort JSType enum such that StaticScopeObjectType comes before VariableObjectType,
+              and thus is excluded from isVariableObject() checks.
+
 2012-02-06  Jer Noble  <jer.noble@apple.com>
 
         Use CMClock as a timing source for PlatformClock where available.
