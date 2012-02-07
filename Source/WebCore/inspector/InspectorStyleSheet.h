@@ -131,7 +131,7 @@ public:
     PassRefPtr<InspectorObject> buildObjectForStyle() const;
     PassRefPtr<InspectorArray> buildArrayForComputedStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
-    bool setPropertyText(ErrorString*, unsigned index, const String& text, bool overwrite);
+    bool setPropertyText(ErrorString*, unsigned index, const String& text, bool overwrite, String* oldText);
     bool toggleProperty(ErrorString*, unsigned index, bool disable);
 
 private:
@@ -174,10 +174,10 @@ public:
     PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
     PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
-    bool setPropertyText(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);
+    bool setPropertyText(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText);
     bool toggleProperty(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, bool disable);
 
-    virtual bool text(String* result) const;
+    virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
 
 protected:
@@ -228,7 +228,7 @@ public:
     static PassRefPtr<InspectorStyleSheetForInlineStyle> create(const String& id, PassRefPtr<Element> element, const String& origin);
 
     void didModifyElementAttribute();
-    virtual bool text(String* result) const;
+    virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
 protected:

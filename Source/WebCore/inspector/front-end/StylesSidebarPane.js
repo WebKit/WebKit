@@ -1068,7 +1068,7 @@ WebInspector.StylePropertiesSection.prototype = {
             var inherited = this.isPropertyInherited(property.name);
             var overloaded = this.isPropertyOverloaded(property.name, isShorthand);
 
-            var item = new WebInspector.StylePropertyTreeElement(this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
+            var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
             this.propertiesTreeOutline.appendChild(item);
             handledProperties[property.name] = property;
         }
@@ -1092,7 +1092,7 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         var style = this.styleRule.style;
         var property = style.newBlankProperty();
-        var item = new WebInspector.StylePropertyTreeElement(this._parentPane, this.styleRule, style, property, false, false, false);
+        var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, false, false, false);
         this.propertiesTreeOutline.appendChild(item);
         item.listItemElement.textContent = "";
         item._newProperty = true;
@@ -1298,7 +1298,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
         for (var i = 0; i < uniqueProperties.length; ++i) {
             var property = uniqueProperties[i];
             var inherited = this._isPropertyInherited(property.name);
-            var item = new WebInspector.StylePropertyTreeElement(null, this.styleRule, style, property, false, inherited, false);
+            var item = new WebInspector.StylePropertyTreeElement(this, null, this.styleRule, style, property, false, inherited, false);
             this.propertiesTreeOutline.appendChild(item);
             this._propertyTreeElements[property.name] = item;
         }
@@ -1424,8 +1424,9 @@ WebInspector.BlankStylePropertiesSection.prototype.__proto__ = WebInspector.Styl
  * @extends {TreeElement}
  * @param {?WebInspector.StylesSidebarPane} parentPane
  */
-WebInspector.StylePropertyTreeElement = function(parentPane, styleRule, style, property, shorthand, inherited, overloaded)
+WebInspector.StylePropertyTreeElement = function(section, parentPane, styleRule, style, property, shorthand, inherited, overloaded)
 {
+    this.section = section;
     this._parentPane = parentPane;
     this._styleRule = styleRule;
     this.style = style;
@@ -1819,7 +1820,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             var liveProperty = this.style.getLiveProperty(name);
-            var item = new WebInspector.StylePropertyTreeElement(this._parentPane, this._styleRule, this.style, liveProperty, false, inherited, overloaded);
+            var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this._styleRule, this.style, liveProperty, false, inherited, overloaded);
             this.appendChild(item);
         }
     },

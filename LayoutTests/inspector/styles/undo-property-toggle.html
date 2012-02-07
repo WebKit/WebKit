@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("container", step1);
+
+    function step1(node)
+    {
+        InspectorTest.addResult("Before disable");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+
+        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.waitForStyles("container", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("After disable");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+
+        DOMAgent.undo();
+        InspectorTest.waitForStyles("container", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After undo");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that disabling style is undone properly.
+</p>
+
+<div id="container" style="font-weight:bold">
+</div>
+
+</body>
+</html>

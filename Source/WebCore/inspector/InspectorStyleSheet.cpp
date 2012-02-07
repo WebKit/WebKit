@@ -280,7 +280,7 @@ PassRefPtr<InspectorArray> InspectorStyle::buildArrayForComputedStyle() const
 //
 // The propertyText (if not empty) is checked to be a valid style declaration (containing at least one property). If not,
 // the method returns false (denoting an error).
-bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, const String& propertyText, bool overwrite)
+bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, const String& propertyText, bool overwrite, String* oldText)
 {
     ASSERT(m_parentStyleSheet);
     DEFINE_STATIC_LOCAL(String, bogusPropertyName, ("-webkit-boguz-propertee"));
@@ -328,9 +328,10 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
     }
 
     InspectorStyleTextEditor editor(&allProperties, &m_disabledProperties, text, newLineAndWhitespaceDelimiters());
-    if (overwrite)
+    if (overwrite) {
+        *oldText = allProperties.at(index).rawText;
         editor.replaceProperty(index, propertyText);
-    else
+    } else
         editor.insertProperty(index, propertyText, sourceData->styleSourceData->styleBodyRange.length());
 
     return applyStyleText(editor.styleText());
@@ -385,7 +386,7 @@ bool InspectorStyle::styleText(String* result) const
         return false;
 
     String styleSheetText;
-    bool success = m_parentStyleSheet->text(&styleSheetText);
+    bool success = m_parentStyleSheet->getText(&styleSheetText);
     if (!success)
         return false;
 
@@ -729,7 +730,7 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
 CSSStyleRule* InspectorStyleSheet::addRule(const String& selector)
 {
     String styleSheetText;
-    bool success = text(&styleSheetText);
+    bool success = getText(&styleSheetText);
     if (!success)
         return 0;
 
@@ -777,7 +778,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheet()
     result->setArray("rules", cssRules.release());
 
     String styleSheetText;
-    bool success = text(&styleSheetText);
+    bool success = getText(&styleSheetText);
     if (success)
         result->setString("text", styleSheetText);
 
@@ -857,7 +858,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     // Style text cannot be retrieved without stylesheet, so set cssText here.
     if (sourceData) {
         String sheetText;
-        bool success = text(&sheetText);
+        bool success = getText(&sheetText);
         if (success) {
             const SourceRange& bodyRange = sourceData->styleSourceData->styleBodyRange;
             result->setString("cssText", sheetText.substring(bodyRange.start, bodyRange.end - bodyRange.start));
@@ -867,7 +868,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     return result.release();
 }
 
-bool InspectorStyleSheet::setPropertyText(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite)
+bool InspectorStyleSheet::setPropertyText(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite, String* oldText)
 {
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
     if (!inspectorStyle) {
@@ -875,7 +876,7 @@ bool InspectorStyleSheet::setPropertyText(ErrorString* errorString, const Inspec
         return false;
     }
 
-    return inspectorStyle->setPropertyText(errorString, propertyIndex, text, overwrite);
+    return inspectorStyle->setPropertyText(errorString, propertyIndex, text, overwrite, oldText);
 }
 
 bool InspectorStyleSheet::toggleProperty(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, bool disable)
@@ -896,7 +897,7 @@ bool InspectorStyleSheet::toggleProperty(ErrorString* errorString, const Inspect
     return success;
 }
 
-bool InspectorStyleSheet::text(String* result) const
+bool InspectorStyleSheet::getText(String* result) const
 {
     if (!ensureText())
         return false;
@@ -1241,7 +1242,7 @@ void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
     m_ruleSourceData.clear();
 }
 
-bool InspectorStyleSheetForInlineStyle::text(String* result) const
+bool InspectorStyleSheetForInlineStyle::getText(String* result) const
 {
     if (!m_isStyleTextValid) {
         m_styleText = elementStyleText();

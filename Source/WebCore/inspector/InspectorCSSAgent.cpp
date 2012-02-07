@@ -39,6 +39,7 @@
 #include "DOMWindow.h"
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorHistory.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
@@ -216,6 +217,158 @@ PassRefPtr<InspectorObject> SelectorProfile::toInspectorObject() const
         .setData(selectorProfileData);
     return result.release();
 }
+
+class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
+    WTF_MAKE_NONCOPYABLE(StyleSheetAction);
+public:
+    StyleSheetAction(const String& name, InspectorCSSAgent* cssAgent, const String& styleSheetId)
+        : InspectorHistory::Action(name)
+        , m_cssAgent(cssAgent)
+        , m_styleSheetId(styleSheetId)
+    {
+    }
+
+    virtual bool perform(ErrorString* errorString)
+    {
+        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(errorString, m_styleSheetId);
+        if (!styleSheet)
+            return false;
+        return perform(styleSheet, errorString);
+    }
+
+    virtual bool undo(ErrorString* errorString)
+    {
+        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(errorString, m_styleSheetId);
+        if (!styleSheet)
+            return false;
+        return undo(styleSheet, errorString);
+    }
+
+    virtual bool perform(InspectorStyleSheet*, ErrorString*) = 0;
+
+    virtual bool undo(InspectorStyleSheet*, ErrorString*) = 0;
+
+protected:
+    InspectorCSSAgent* m_cssAgent;
+    String m_styleSheetId;
+};
+
+class InspectorCSSAgent::SetStyleSheetTextAction : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetStyleSheetTextAction);
+public:
+    SetStyleSheetTextAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const String& text)
+        : InspectorCSSAgent::StyleSheetAction("SetStyleSheetText", cssAgent, styleSheetId)
+        , m_text(text)
+    {
+    }
+
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString*)
+    {
+        if (!inspectorStyleSheet->getText(&m_oldText))
+            return false;
+
+        if (inspectorStyleSheet->setText(m_text)) {
+            inspectorStyleSheet->reparseStyleSheet(m_text);
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString*)
+    {
+        if (inspectorStyleSheet->setText(m_oldText)) {
+            inspectorStyleSheet->reparseStyleSheet(m_oldText);
+            return true;
+        }
+        return false;
+    }
+
+private:
+    String m_text;
+    String m_oldText;
+};
+
+class InspectorCSSAgent::SetPropertyTextAction : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetPropertyTextAction);
+public:
+    SetPropertyTextAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const InspectorCSSId& cssId, unsigned propertyIndex, const String& text, bool overwrite)
+        : InspectorCSSAgent::StyleSheetAction("SetPropertyText", cssAgent, styleSheetId)
+        , m_cssId(cssId)
+        , m_propertyIndex(propertyIndex)
+        , m_text(text)
+        , m_overwrite(overwrite)
+    {
+    }
+
+    virtual String toString()
+    {
+        return mergeId() + ": " + m_oldText + " -> " + m_text;
+    }
+
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    {
+        String oldText;
+        bool result = inspectorStyleSheet->setPropertyText(errorString, m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText);
+        m_oldText = oldText.stripWhiteSpace();
+        // FIXME: remove this once the model handles this case.
+        if (!m_oldText.endsWith(";"))
+            m_oldText += ";";
+        return result;
+    }
+
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    {
+        String placeholder;
+        return inspectorStyleSheet->setPropertyText(errorString, m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder);
+    }
+
+    virtual String mergeId()
+    {
+        return String::format("SetPropertyText %s:%u:%s", m_styleSheetId.utf8().data(), m_propertyIndex, m_overwrite ? "true" : "false");
+    }
+
+    virtual void merge(PassOwnPtr<Action> action)
+    {
+        ASSERT(action->mergeId() == mergeId());
+
+        SetPropertyTextAction* other = static_cast<SetPropertyTextAction*>(action.get());
+        m_text = other->m_text;
+    }
+
+private:
+    InspectorCSSId m_cssId;
+    unsigned m_propertyIndex;
+    String m_text;
+    String m_oldText;
+    bool m_overwrite;
+};
+
+class InspectorCSSAgent::TogglePropertyAction : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(TogglePropertyAction);
+public:
+    TogglePropertyAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const InspectorCSSId& cssId, unsigned propertyIndex, bool disable)
+        : InspectorCSSAgent::StyleSheetAction("ToggleProperty", cssAgent, styleSheetId)
+        , m_cssId(cssId)
+        , m_propertyIndex(propertyIndex)
+        , m_disable(disable)
+    {
+    }
+
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    {
+        return inspectorStyleSheet->toggleProperty(errorString, m_cssId, m_propertyIndex, m_disable);
+    }
+
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    {
+      return inspectorStyleSheet->toggleProperty(errorString, m_cssId, m_propertyIndex, !m_disable);
+    }
+
+private:
+    InspectorCSSId m_cssId;
+    unsigned m_propertyIndex;
+    bool m_disable;
+};
 
 // static
 CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
@@ -438,19 +591,13 @@ void InspectorCSSAgent::getStyleSheetText(ErrorString* errorString, const String
     if (!inspectorStyleSheet)
         return;
 
-    inspectorStyleSheet->text(result);
+    inspectorStyleSheet->getText(result);
 }
 
 void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String& styleSheetId, const String& text)
 {
-    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
-    if (!inspectorStyleSheet)
-        return;
-
-    if (inspectorStyleSheet->setText(text))
-        inspectorStyleSheet->reparseStyleSheet(text);
-    else
-        *errorString = "Internal error setting style sheet text";
+    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(this, styleSheetId, text)), errorString);
+    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>& result)
@@ -462,7 +609,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
     if (!inspectorStyleSheet)
         return;
 
-    bool success = inspectorStyleSheet->setPropertyText(errorString, compoundId, propertyIndex, text, overwrite);
+    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, text, overwrite)), errorString);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
@@ -476,9 +623,10 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
     if (!inspectorStyleSheet)
         return;
 
-    bool success = inspectorStyleSheet->toggleProperty(errorString, compoundId, propertyIndex, disable);
+    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, disable)), errorString);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
+    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorObject>& result)

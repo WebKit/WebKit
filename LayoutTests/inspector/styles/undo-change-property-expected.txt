@@ -1,0 +1,45 @@
+Tests that changing a property is undone properly.
+
+Initial value
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (undo-change-property.html:7)
+font-weight: bold;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After changing property
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (undo-change-property.html:7)
+font-weight: normal;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After undo
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (undo-change-property.html:7)
+font-weight: bold;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+

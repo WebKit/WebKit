@@ -1,3 +1,145 @@
+2012-02-07  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add generic support for undo-ing DOM edits.
+        https://bugs.webkit.org/show_bug.cgi?id=77875
+
+        Reviewed by Yury Semikhatsky.
+
+        This change introduces InspectorHistory::Action that encapsulates all DOM modifications
+        initiated by the inspector. There is a way to undo these actions up until the undoable
+        state marker.
+
+        Tests: inspector/elements/undo-dom-edits-2.html
+               inspector/elements/undo-dom-edits.html
+               inspector/styles/undo-add-property.html
+               inspector/styles/undo-change-property.html
+               inspector/styles/undo-property-toggle.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/Inspector.json:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        (InspectorCSSAgent::StyleSheetAction):
+        (WebCore::InspectorCSSAgent::StyleSheetAction::StyleSheetAction):
+        (WebCore::InspectorCSSAgent::StyleSheetAction::perform):
+        (WebCore::InspectorCSSAgent::StyleSheetAction::undo):
+        (WebCore):
+        (InspectorCSSAgent::SetStyleSheetTextAction):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::SetStyleSheetTextAction):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::undo):
+        (InspectorCSSAgent::SetPropertyTextAction):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::SetPropertyTextAction):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::toString):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::mergeId):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::merge):
+        (InspectorCSSAgent::TogglePropertyAction):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::TogglePropertyAction):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::perform):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::undo):
+        (WebCore::InspectorCSSAgent::getStyleSheetText):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.cpp:
+        (InspectorDOMAgent::DOMAction):
+        (WebCore::InspectorDOMAgent::DOMAction::DOMAction):
+        (WebCore::InspectorDOMAgent::DOMAction::perform):
+        (WebCore::InspectorDOMAgent::DOMAction::undo):
+        (WebCore):
+        (InspectorDOMAgent::RemoveChildAction):
+        (WebCore::InspectorDOMAgent::RemoveChildAction::RemoveChildAction):
+        (WebCore::InspectorDOMAgent::RemoveChildAction::perform):
+        (WebCore::InspectorDOMAgent::RemoveChildAction::undo):
+        (InspectorDOMAgent::InsertBeforeAction):
+        (WebCore::InspectorDOMAgent::InsertBeforeAction::InsertBeforeAction):
+        (WebCore::InspectorDOMAgent::InsertBeforeAction::perform):
+        (WebCore::InspectorDOMAgent::InsertBeforeAction::undo):
+        (InspectorDOMAgent::RemoveAttributeAction):
+        (WebCore::InspectorDOMAgent::RemoveAttributeAction::RemoveAttributeAction):
+        (WebCore::InspectorDOMAgent::RemoveAttributeAction::perform):
+        (WebCore::InspectorDOMAgent::RemoveAttributeAction::undo):
+        (InspectorDOMAgent::SetAttributeAction):
+        (WebCore::InspectorDOMAgent::SetAttributeAction::SetAttributeAction):
+        (WebCore::InspectorDOMAgent::SetAttributeAction::perform):
+        (WebCore::InspectorDOMAgent::SetAttributeAction::undo):
+        (InspectorDOMAgent::SetOuterHTMLAction):
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::SetOuterHTMLAction):
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::perform):
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::undo):
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::newNode):
+        (InspectorDOMAgent::ReplaceWholeTextAction):
+        (WebCore::InspectorDOMAgent::ReplaceWholeTextAction::ReplaceWholeTextAction):
+        (WebCore::InspectorDOMAgent::ReplaceWholeTextAction::perform):
+        (WebCore::InspectorDOMAgent::ReplaceWholeTextAction::undo):
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::setAttributeValue):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::moveTo):
+        (WebCore::InspectorDOMAgent::undo):
+        (WebCore::InspectorDOMAgent::markUndoableState):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::history):
+        * inspector/InspectorHistory.cpp: Added.
+        (WebCore::InspectorHistory::Action::Action):
+        (WebCore):
+        (WebCore::InspectorHistory::Action::~Action):
+        (WebCore::InspectorHistory::Action::toString):
+        (WebCore::InspectorHistory::Action::isUndoableStateMark):
+        (WebCore::InspectorHistory::Action::mergeId):
+        (WebCore::InspectorHistory::Action::merge):
+        (WebCore::InspectorHistory::InspectorHistory):
+        (WebCore::InspectorHistory::~InspectorHistory):
+        (WebCore::InspectorHistory::perform):
+        (WebCore::InspectorHistory::markUndoableState):
+        (WebCore::InspectorHistory::undo):
+        (WebCore::InspectorHistory::reset):
+        * inspector/InspectorHistory.h: Added.
+        (WebCore):
+        (InspectorHistory):
+        (Action):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::styleText):
+        (WebCore::InspectorStyleSheet::addRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::setPropertyText):
+        (WebCore::InspectorStyleSheet::getText):
+        (WebCore::InspectorStyleSheetForInlineStyle::getText):
+        * inspector/InspectorStyleSheet.h:
+        (InspectorStyle):
+        (InspectorStyleSheet):
+        (InspectorStyleSheetForInlineStyle):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSProperty.prototype.setText):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._selectedNodeChanged):
+        (WebInspector.ElementsPanel.prototype._updateSidebars):
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertyTreeElement):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106935.
