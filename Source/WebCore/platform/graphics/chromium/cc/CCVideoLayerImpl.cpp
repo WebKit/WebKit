@@ -150,17 +150,8 @@ void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
         CRASH(); // Someone updated convertVFCFormatToGC3DFormat above but update this!
     }
 
-    for (unsigned plane = 0; plane < frame->planes(); ++plane) {
+    for (unsigned plane = 0; plane < frame->planes(); ++plane)
         m_textures[plane].m_texture->unreserve();
-        // FIXME: ManagedTexture's store a raw pointer to their TextureManager,
-        // and the textures we create use layerRenderer->renderSurfaceTextureManager().
-        // Since there is no guarantee layerRenderer will still be alive the
-        // next time we are called, we clear the texture reference. It would
-        // be nice if instead we could rely on textures being invalidated when
-        // their manager was deleted so that new textures didn't always have to
-        // be recreated for each frame.
-        m_textures[plane].m_texture.clear();
-    }
     m_provider->putCurrentFrame(frame);
 }
 
@@ -255,10 +246,15 @@ bool CCVideoLayerImpl::reserveTextures(const VideoFrameChromium* frame, GC3Denum
             if (!m_textures[plane].m_texture)
                 return false;
             m_textures[plane].m_visibleSize = IntSize();
+        } else {
+            // The renderSurfaceTextureManager may have been destroyed and recreated since the last frame, so pass the new one.
+            // This is a no-op if the TextureManager is still around.
+            m_textures[plane].m_texture->setTextureManager(layerRenderer->renderSurfaceTextureManager());
         }
         if (m_textures[plane].m_texture->size() != requiredTextureSize)
             m_textures[plane].m_visibleSize = computeVisibleSize(frame, plane);
-        m_textures[plane].m_texture->reserve(requiredTextureSize, format);
+        if (!m_textures[plane].m_texture->reserve(requiredTextureSize, format))
+            return false;
     }
     return true;
 }

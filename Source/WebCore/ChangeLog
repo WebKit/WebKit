@@ -1,3 +1,21 @@
+2012-02-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Allow retaining texture across frames in composited video playback and correctly handle lost context
+        https://bugs.webkit.org/show_bug.cgi?id=77923
+
+        Reviewed by Kenneth Russell.
+
+        Thanks to r106840, we can improve the video playback mode a bit. Instead of creating a new texture on every
+        frame, this attempts to reuse the texture from the previous frame unless the context is lost. Also improves
+        error checking in case the TextureManager cannot successfully reserve memory for the texture.
+
+        Tested manually by killing the GPU process with an html5 video playing and verifying that the video playback
+        continues and that we don't create a new set of textures for each plane on each frame.
+
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+        (WebCore::CCVideoLayerImpl::reserveTextures):
+
 2012-02-07  Matthew Delaney  <mdelaney@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77912
