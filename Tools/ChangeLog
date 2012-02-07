@@ -1,3 +1,12 @@
+2012-02-07  Chris Rogers  <crogers@google.com>
+
+        Add Chris Rogers to reviewers section
+        https://bugs.webkit.org/show_bug.cgi?id=78016
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         layoutTestController.display() is flaky for SVG tests
