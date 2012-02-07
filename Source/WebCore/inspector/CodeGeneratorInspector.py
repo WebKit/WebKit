@@ -422,7 +422,11 @@ class RawTypes(object):
 
         @staticmethod
         def get_validate_method_params():
-            raise Exception("TODO")
+            class ValidateMethodParams:
+                name = "Boolean"
+                var_type = "bool"
+                as_method_name = "Boolean"
+            return ValidateMethodParams
 
         @staticmethod
         def get_output_pass_model():
@@ -1122,7 +1126,7 @@ class TypeBindings:
     }
 """ % class_name)
 
-                                writer.newline("    typedef StructItemTraits ItemTraits;\n")
+                                writer.newline("    typedef TypeBuilder::StructItemTraits ItemTraits;\n")
 
                                 for prop_data in resolve_data.optional_properties:
                                     prop_name = prop_data.p["name"]
@@ -1167,22 +1171,29 @@ class TypeBindings:
                                     validator_writer.newline("    RefPtr<InspectorObject> object;\n")
                                     validator_writer.newline("    bool castRes = value->asObject(&object);\n")
                                     validator_writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
-                                    validator_writer.newline("    InspectorObject::iterator it;\n")
                                     for prop_data in resolve_data.main_properties:
-                                        validator_writer.newline("    it = object->find(\"%s\");\n" % prop_data.p["name"])
-                                        validator_writer.newline("    ASSERT(it != object->end());\n")
-                                        validator_writer.newline("    %s(it->second.get());\n" % prop_data.param_type_binding.get_validator_call_text())
-
-                                    validator_writer.newline("    int count = %s;\n" % len(resolve_data.main_properties))
-
-                                    for prop_data in resolve_data.optional_properties:
-                                        validator_writer.newline("    it = object->find(\"%s\");\n" % prop_data.p["name"])
-                                        validator_writer.newline("    if (it != object->end()) {\n")
-                                        validator_writer.newline("        %s(it->second.get());\n" % prop_data.param_type_binding.get_validator_call_text())
-                                        validator_writer.newline("        ++count;\n")
+                                        validator_writer.newline("    {\n")
+                                        it_name = "%sPos" % prop_data.p["name"]
+                                        validator_writer.newline("        InspectorObject::iterator %s;\n" % it_name)
+                                        validator_writer.newline("        %s = object->find(\"%s\");\n" % (it_name, prop_data.p["name"]))
+                                        validator_writer.newline("        ASSERT(%s != object->end());\n" % it_name)
+                                        validator_writer.newline("        %s(%s->second.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
                                         validator_writer.newline("    }\n")
 
-                                    validator_writer.newline("    ASSERT(count == object->size());\n")
+                                    validator_writer.newline("    int foundPropertiesCount = %s;\n" % len(resolve_data.main_properties))
+
+                                    for prop_data in resolve_data.optional_properties:
+                                        validator_writer.newline("    {\n")
+                                        it_name = "%sPos" % prop_data.p["name"]
+                                        validator_writer.newline("        InspectorObject::iterator %s;\n" % it_name)
+                                        validator_writer.newline("        %s = object->find(\"%s\");\n" % (it_name, prop_data.p["name"]))
+                                        validator_writer.newline("        if (%s != object->end()) {\n" % it_name)
+                                        validator_writer.newline("            %s(%s->second.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
+                                        validator_writer.newline("            ++foundPropertiesCount;\n")
+                                        validator_writer.newline("        }\n")
+                                        validator_writer.newline("    }\n")
+
+                                    validator_writer.newline("    ASSERT(foundPropertiesCount == object->size());\n")
                                     validator_writer.newline("}\n\n\n")
 
                                 writer.newline("};\n\n")
@@ -2143,8 +2154,28 @@ public:
         return adoptRef(new Array<T>());
     }
 
+    static PassRefPtr<Array<T> > runtimeCast(PassRefPtr<InspectorValue> value)
+    {
+        RefPtr<InspectorArray> array;
+        bool castRes = value->asArray(&array);
+        ASSERT_UNUSED(castRes, castRes);
+#if !ASSERT_DISABLED
+        assertCorrectValue(array.get());
+#endif  // !ASSERT_DISABLED
+        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
+        return static_cast<Array<T>*>(array.get());
+    }
+
 #if """ + VALIDATOR_IFDEF_NAME + """
-    static void assertCorrectValue(InspectorValue* value);
+    static void assertCorrectValue(InspectorValue* value)
+    {
+        RefPtr<InspectorArray> array;
+        bool castRes = value->asArray(&array);
+        ASSERT_UNUSED(castRes, castRes);
+        for (unsigned i = 0; i < array->length(); i++)
+            ArrayItemHelper<T>::Traits::template assertCorrectValue<T>(array->get(i).get());
+    }
+
 #endif // """ + VALIDATOR_IFDEF_NAME + """
 };
 
@@ -2218,16 +2249,6 @@ String getEnumConstantValue(int code) {
 } // namespace TypeBuilder
 
 #if """ + VALIDATOR_IFDEF_NAME + """
-
-template<typename T>
-void TypeBuilder::Array<T>::assertCorrectValue(InspectorValue* value)
-{
-    RefPtr<InspectorArray> array;
-    bool castRes = value->asArray(&array);
-    ASSERT_UNUSED(castRes, castRes);
-    for (unsigned i = 0; i < array->length(); i++)
-        ArrayItemHelper<T>::Traits::template assertCorrectValue<T>(array->get(i).get());
-}
 
 $validatorCode
 

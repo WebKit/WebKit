@@ -1,3 +1,20 @@
+2012-02-07  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: extend Array validator functionality
+        https://bugs.webkit.org/show_bug.cgi?id=77919
+
+        Patch by Peter Rybin <peter.rybin@gmail.com> on 2012-02-07
+        Reviewed by Yury Semikhatsky.
+
+        Array validator method runtimeCast is added, internal backing method
+        is moved from .cpp to .h (it's template anyway), boolean validator is
+        supported.
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.Bool.get_validate_method_params.ValidateMethodParams):
+        (RawTypes.Bool.get_validate_method_params):
+        (TypeBuilder):
+
 2012-02-07  Dean Jackson  <dino@apple.com>
 
         Apple/Safari: Enable WebGL multisampling on ATI cards
