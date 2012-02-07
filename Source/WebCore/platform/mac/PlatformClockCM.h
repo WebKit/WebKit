@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef PlatformClockCM_h
+#define PlatformClockCM_h
+
+#if USE(COREMEDIA)
+
 #include "Clock.h"
+#include <wtf/RetainPtr.h>
 
-#if USE(COREMEDIA)
-    #include "PlatformClockCM.h"
-#elif USE(COREAUDIO)
-    #include "PlatformClockCA.h"
-#else
-    #include "ClockGeneric.h"
-#endif
+typedef struct OpaqueCMTimebase* CMTimebaseRef;
+typedef struct OpaqueCMClock* CMClockRef;
 
-using namespace WebCore;
+namespace WebCore {
 
-PassRefPtr<Clock> Clock::create()
-{
-#if USE(COREMEDIA)
-    return adoptRef(new PlatformClockCM());
-#elif USE(COREAUDIO)
-    return adoptRef(new PlatformClockCA());
-#else
-    return adoptRef(new ClockGeneric());
-#endif
+class PlatformClockCM : public Clock {
+public:
+    PlatformClockCM();
+    PlatformClockCM(CMClockRef);
+
+private:
+    void initializeWithTimingSource(CMClockRef);
+
+    virtual void setCurrentTime(float);
+    virtual float currentTime() const;
+
+    virtual void setPlayRate(float);
+    virtual float playRate() const { return m_rate; }
+
+    virtual void start();
+    virtual void stop();
+    virtual bool isRunning() const { return m_running; }
+
+    RetainPtr<CMTimebaseRef> m_timebase;
+    float m_rate;
+    bool m_running;
+};
+
 }
+
+#endif
+
+#endif

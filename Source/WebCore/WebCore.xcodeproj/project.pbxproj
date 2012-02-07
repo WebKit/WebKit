@@ -5598,6 +5598,7 @@
 		CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */; };
 		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; };
 		CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */; };
+		CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */; };
 		CDD525D7145B6DD0008D204D /* JSHTMLMediaElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */; };
 		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
 		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
@@ -12550,6 +12551,8 @@
 		CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
 		CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWindowAnimation.h; sourceTree = "<group>"; };
 		CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebWindowAnimation.mm; sourceTree = "<group>"; };
+		CDAA8D0714D385600061EA60 /* PlatformClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCM.h; sourceTree = "<group>"; };
+		CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformClockCM.mm; sourceTree = "<group>"; };
 		CDBD93BA1333BD4B002570E3 /* fullscreenQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreenQuickTime.css; sourceTree = "<group>"; };
 		CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventTargetFactory.in; sourceTree = "<group>"; };
 		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
@@ -15035,6 +15038,8 @@
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
 				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
+				CDAA8D0714D385600061EA60 /* PlatformClockCM.h */,
+				CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */,
 				BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */,
 				BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
@@ -27092,6 +27097,7 @@
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
 				1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */,
 				7A54857F14E02D51006AE05A /* InspectorHistory.cpp in Sources */,
+				CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

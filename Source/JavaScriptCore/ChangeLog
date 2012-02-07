@@ -1,3 +1,12 @@
+2012-02-06  Jer Noble  <jer.noble@apple.com>
+
+        Use CMClock as a timing source for PlatformClock where available.
+        https://bugs.webkit.org/show_bug.cgi?id=77885
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Platform.h: Added WTF_USE_COREMEDIA.
+
 2012-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         ValueToNumber and ValueToDouble nodes don't do anything and should be removed
