@@ -1339,6 +1339,7 @@ svg/W3C-SVG-1.1/text-align-04-b.svg
 svg/zoom/page/zoom-mask-with-percentages.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 svg/dom/css-transforms.xhtml
+svg/carto.net/tabgroup.svg
 
 # [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
 # https://bugs.webkit.org/show_bug.cgi?id=52810
