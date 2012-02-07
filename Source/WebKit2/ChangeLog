@@ -1,3 +1,11 @@
+2012-02-07  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] [WK2] Fix the debug build after r106920
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        Remove unnecessary assert.
+
 2012-02-03  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Add the componentComplete method to WebView

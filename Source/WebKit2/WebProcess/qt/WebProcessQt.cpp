@@ -96,7 +96,6 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     QNetworkDiskCache* diskCache = qobject_cast<QNetworkDiskCache*>(m_networkAccessManager->cache());
     ASSERT(diskCache);
 
-    ASSERT(WebCore::platformInfo());
     uint64_t physicalMemorySizeInMegabytes = physicalMemorySizeInBytes() / 1024 / 1024;
 
     // The Mac port of WebKit2 uses a fudge factor of 1000 here to account for misalignment, however,
