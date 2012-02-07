@@ -1,3 +1,18 @@
+2012-02-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Give emulated touch-point a radius
+        https://bugs.webkit.org/show_bug.cgi?id=77985
+        
+        Increase the radius of touch-point and show the actual size of the touch point in the touch-point mockup.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/qml/MockTouchPoint.qml:
+
 2012-02-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Include gdk-pixbuf in the jhbuild modules

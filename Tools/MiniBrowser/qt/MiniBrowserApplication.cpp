@@ -125,7 +125,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
 
         QWindowSystemInterface::TouchPoint touchPoint;
-        touchPoint.area = QRectF(mouseEvent->globalPos(), QSizeF(1, 1));
+        touchPoint.area = QRectF(mouseEvent->globalPos() - QPointF(30, 40), QSizeF(60, 80));
         touchPoint.pressure = 1;
 
         switch (mouseEvent->type()) {

@@ -108,12 +108,14 @@ void BrowserWindow::updateVisualMockTouchPoints(const QList<QWindowSystemInterfa
             mockTouchPointItem->setParentItem(rootObject());
         }
 
-        QPointF position = touchPoint.area.topLeft();
+        QPointF position = touchPoint.area.center();
         position.rx() -= geometry().x();
         position.ry() -= geometry().y();
 
         mockTouchPointItem->setX(position.x());
         mockTouchPointItem->setY(position.y());
+        mockTouchPointItem->setWidth(touchPoint.area.width());
+        mockTouchPointItem->setHeight(touchPoint.area.height());
         mockTouchPointItem->setProperty("pressed", QVariant(touchPoint.state != Qt::TouchPointReleased));
     }
 }

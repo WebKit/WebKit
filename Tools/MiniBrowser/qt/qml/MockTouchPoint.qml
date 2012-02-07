@@ -37,7 +37,9 @@ Item {
         source: "../icons/touchpoint.png"
         x: -(width / 2)
         y: -(height / 2)
-        opacity: parent.pressed ? 0.8 : 0.0
+        height: parent.height
+        width: parent.width
+        opacity: parent.pressed ? 0.6 : 0.0
 
         Behavior on opacity {
             NumberAnimation { duration: 200 }
