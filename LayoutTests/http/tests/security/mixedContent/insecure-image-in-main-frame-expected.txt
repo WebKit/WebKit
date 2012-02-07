@@ -1,12 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
-main frame - didCommitLoadForFrame
 CONSOLE MESSAGE: The page at https://127.0.0.1:8443/security/mixedContent/resources/frame-with-insecure-image.html displayed insecure content from http://127.0.0.1:8080/security/resources/compass.jpg.
 
-didDisplayInsecureContent
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
 This test opens a window that loads an insecure image. We should trigger a mixed content callback because the main frame in the window is HTTPS but is displaying insecure content.

@@ -4,14 +4,13 @@
 if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
     layoutTestController.dumpAsText();
-    layoutTestController.dumpFrameLoadCallbacks();
     layoutTestController.setCanOpenWindows();
     layoutTestController.setCloseRemainingWindowsWhenComplete(true);
 }
 
 window.addEventListener("message", function (e) {
-  if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }, false);
 
 </script>
