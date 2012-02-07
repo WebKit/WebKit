@@ -43,7 +43,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, JSCustomGetter] History history;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, JSCustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;
@@ -115,7 +115,7 @@ module window {
 
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] unsigned long length;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] unsigned long length;
 
         attribute DOMString name;
 
@@ -127,13 +127,13 @@ module window {
 #endif
 
         // Self referential attributes
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow self;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow self;
         readonly attribute [DoNotCheckDomainSecurity, V8Unforgeable] DOMWindow window;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow frames;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow frames;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8CustomSetter] DOMWindow opener;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow parent;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGet, V8Unforgeable, V8ReadOnly] DOMWindow top;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, V8CustomSetter] DOMWindow opener;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow parent;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, V8Unforgeable, V8ReadOnly] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;

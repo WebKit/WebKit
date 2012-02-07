@@ -1,3 +1,95 @@
+2012-02-06  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [DontCheckEnums], [ReturnsNew], [DoNotCheckDomainSecurityOnGet],
+        [DoNotCheckDomainSecurityOnSet] and [ImplementationFunction] IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=77852
+
+        Reviewed by Adam Barth.
+
+        This patch renames [DontCheckEnums], [ReturnsNew], [DoNotCheckDomainSecurityOnGet],
+        [DoNotCheckDomainSecurityOnSet] and [ImplementationFunction] IDLs for clarification.
+
+        [DontCheckEnums] => [DoNotCheckConstants]  (This IDL inserts assertions to check if a
+        constant value is equal to the expected constant value)
+        [ReturnsNew] => [ReturnNewObject] (For clarification)
+        [DoNotCheckDomainSecurityOnGet] => [DoNotCheckDomainSecurityOnGetter] (For naming consistency
+        with other [*Getter] IDLs)
+        [DoNotCheckDomainSecurityOnSet] => [DoNotCheckDomainSecurityOnSetter] (For naming consistency
+        with other [*Setter] IDLs)
+        [ImplementationFunction=] => [ImplementedAs=] (For clarification. This IDL specifies a method
+        name in implementation)
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ShouldCheckEnums):
+        (GenerateCompileTimeCheckForEnumsIfNeeded):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateSingleBatchedAttribute):
+        (GenerateFunctionCallString):
+        (NativeToJSValue):
+
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedArray.idl:
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSTransformValue.idl:
+        * dom/DOMCoreException.idl:
+        * dom/Document.idl:
+        * dom/EventException.idl:
+        * dom/RangeException.idl:
+        * fileapi/FileException.idl:
+        * fileapi/OperationNotAllowedException.idl:
+        * html/HTMLFormElement.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * html/canvas/WebGLCompressedTextures.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * inspector/JavaScriptCallFrame.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/Console.idl:
+        * page/DOMWindow.idl:
+        * page/Location.idl:
+        * storage/IDBCursor.idl:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBObjectStore.idl:
+        * storage/SQLException.idl:
+        * svg/SVGComponentTransferFunctionElement.idl:
+        * svg/SVGException.idl:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEConvolveMatrixElement.idl:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGGradientElement.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XPathException.idl:
+
 2012-02-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] canvas demo is slow due to unnecessary resource cleanups

@@ -27,7 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        DontCheckEnums
+        DoNotCheckConstants
     ] SVGFEConvolveMatrixElement : SVGElement,
                                    SVGFilterPrimitiveStandardAttributes {
         // Edge Mode Values

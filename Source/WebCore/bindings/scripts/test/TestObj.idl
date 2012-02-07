@@ -199,7 +199,7 @@ module test {
         SVGPoint mutablePointFunction();
         [Immutable] SVGPoint immutablePointFunction();
 
-        [ImplementationFunction=banana] void orange();
+        [ImplementedAs=banana] void orange();
 
         attribute [StrictTypeChecking] float strictFloat;
         [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in int b)

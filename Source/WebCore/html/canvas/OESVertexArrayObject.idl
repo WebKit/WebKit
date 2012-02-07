@@ -28,7 +28,7 @@ module html {
         Conditional=WEBGL, 
         JSGenerateIsReachable=ImplContext,
         OmitConstructor, 
-        DontCheckEnums
+        DoNotCheckConstants
     ] OESVertexArrayObject {
         const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
         

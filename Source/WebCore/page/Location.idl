@@ -43,7 +43,7 @@ module window {
         OmitConstructor
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-                 attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8Unforgeable] DOMString href;
+                 attribute [DoNotCheckDomainSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
         [Custom, V8OnInstance] void assign(in [Optional=CallWithDefaultValue] DOMString url);
@@ -64,7 +64,7 @@ module window {
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly, ImplementationFunction=toStringFunction] DOMString toString();
+        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 #if defined(V8_BINDING) && V8_BINDING
         [NotEnumerable, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
