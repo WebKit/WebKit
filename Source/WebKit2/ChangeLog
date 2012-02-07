@@ -1,3 +1,18 @@
+2012-02-07  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [EFL][WK2] Add ModuleEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=63608
+
+        Reviewed by Andreas Kling.
+
+        Add first version of ModuleEfl.cpp including load(), unload() and platformFunctionPointer().
+
+        * Platform/Module.h:
+        * Platform/efl/ModuleEfl.cpp: Added.
+        (WebKit::Module::load):
+        (WebKit::Module::unload):
+        (WebKit::Module::platformFunctionPointer):
+
 2012-02-07  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

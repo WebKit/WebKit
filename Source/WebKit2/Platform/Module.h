@@ -41,6 +41,10 @@
 typedef struct _GModule GModule;
 #endif
 
+#if PLATFORM(EFL)
+#include <Eina.h>
+#endif
+
 namespace WebKit {
 
 class Module {
@@ -79,6 +83,8 @@ private:
     QLibrary m_lib;
 #elif PLATFORM(GTK)
     GModule* m_handle;
+#elif PLATFORM(EFL)
+    OwnPtr<Eina_Module> m_module;
 #endif
 };
 
