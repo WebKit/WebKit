@@ -422,3 +422,16 @@ http/tests/loading/progress-finished-callback.html
 fast/history/form-submit-in-frame-via-onclick.html
 fast/history/form-submit-in-frame.html
 http/tests/loading/state-object-security-exception.html
+
+# REGRESSION(r106920) - https://bugs.webkit.org/show_bug.cgi?id=73918
+canvas/philip/tests/2d.pattern.modify.image1.html
+fast/events/pagehide-timeout.html
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+fast/events/pageshow-pagehide-on-back-cached.html
+fast/harness/page-cache-crash-on-data-urls.html
+fast/harness/use-page-cache.html
+http/tests/cache/post-redirect-get.php
+http/tests/security/xhr-cors-redirect.html
+http/tests/xmlhttprequest/access-control-and-redirects.html
+http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html
+svg/animations/animate-color-fill-from-by.html
