@@ -19,17 +19,22 @@
 #ifndef GeolocationControllerClientBlackBerry_h
 #define GeolocationControllerClientBlackBerry_h
 
-#include "WebPage.h"
 #include <BlackBerryPlatformGeoTracker.h>
 #include <BlackBerryPlatformGeoTrackerListener.h>
 #include <GeolocationClient.h>
 #include <GeolocationPosition.h>
 
+namespace BlackBerry {
+namespace WebKit {
+class WebPagePrivate;
+}
+}
+
 namespace WebCore {
 
 class GeolocationControllerClientBlackBerry : public GeolocationClient, public BlackBerry::Platform::GeoTrackerListener {
 public:
-    GeolocationControllerClientBlackBerry(BlackBerry::WebKit::WebPage*);
+    GeolocationControllerClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
 
     virtual void geolocationDestroyed();
     virtual void startUpdating();
@@ -46,7 +51,7 @@ public:
     BlackBerry::Platform::GeoTracker* tracker() const { return m_tracker; }
 
 private:
-    BlackBerry::WebKit::WebPage* m_webPage;
+    BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     BlackBerry::Platform::GeoTracker* m_tracker;
     RefPtr<GeolocationPosition> m_lastPosition;
     bool m_accuracy;

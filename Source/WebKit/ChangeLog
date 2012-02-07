@@ -1,3 +1,26 @@
+2012-02-06  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Use WebPagePrivate instead of WebPage in GeolocationControllerClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=77927
+
+        Reviewed by Antonio Gomes.
+
+        WebKit/blackberry/Api/WebPage which has a d pointer is designed for public API.
+        GeolocationControllerClientBlackBerry in WebKit/blackberry/WebCoreSupport should
+        use the d pointer directly because the client is internal implementation.
+
+        No functionalities changed, no new tests.
+
+        * blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp:
+        (GeolocationControllerClientBlackBerry::GeolocationControllerClientBlackBerry):
+        (GeolocationControllerClientBlackBerry::requestPermission):
+        (GeolocationControllerClientBlackBerry::cancelPermissionRequest):
+        (GeolocationControllerClientBlackBerry::onLocationUpdate):
+        (GeolocationControllerClientBlackBerry::onLocationError):
+        * blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.h:
+        (WebKit):
+        (GeolocationControllerClientBlackBerry):
+
 2012-02-06  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Remove unused variable in BackingStore
