@@ -1,3 +1,21 @@
+2012-02-07  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Add setNeedsRedraw to WebWidget
+        https://bugs.webkit.org/show_bug.cgi?id=77555
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::resetDamageTrackerOnImplThread):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-02-07  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

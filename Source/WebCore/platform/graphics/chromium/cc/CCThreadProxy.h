@@ -103,6 +103,7 @@ private:
     void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
+    void resetDamageTrackerOnImplThread();
 
     // Accessed on main thread only.
     bool m_animateRequested;

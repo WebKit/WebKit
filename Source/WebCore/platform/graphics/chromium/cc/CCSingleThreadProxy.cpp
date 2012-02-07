@@ -29,6 +29,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
+#include "cc/CCDamageTracker.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>
@@ -194,6 +195,10 @@ void CCSingleThreadProxy::setNeedsCommit()
 
 void CCSingleThreadProxy::setNeedsRedraw()
 {
+    CCRenderSurface* renderSurface = m_layerTreeHostImpl->rootLayer()->renderSurface();
+    if (renderSurface)
+        renderSurface->damageTracker()->forceFullDamageNextUpdate();
+
     // FIXME: Once we move render_widget scheduling into this class, we can
     // treat redraw requests more efficiently than commitAndRedraw requests.
     setNeedsCommit();

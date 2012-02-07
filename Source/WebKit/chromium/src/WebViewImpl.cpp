@@ -1271,6 +1271,14 @@ void WebViewImpl::composite(bool)
 #endif
 }
 
+void WebViewImpl::setNeedsRedraw()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost && isAcceleratedCompositingActive())
+        m_layerTreeHost->setNeedsRedraw();
+#endif
+}
+
 void WebViewImpl::loseCompositorContext(int numTimes)
 {
 #if USE(ACCELERATED_COMPOSITING)

@@ -28,6 +28,7 @@
 
 #include "GraphicsContext3D.h"
 #include "TraceEvent.h"
+#include "cc/CCDamageTracker.h"
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCFrameRateController.h"
 #include "cc/CCInputHandler.h"
@@ -248,6 +249,7 @@ void CCThreadProxy::setNeedsRedraw()
 {
     ASSERT(isMainThread());
     TRACE_EVENT("CCThreadProxy::setNeedsRedraw", this, 0);
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::resetDamageTrackerOnImplThread));
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsRedrawOnImplThread));
 }
 
@@ -272,6 +274,14 @@ void CCThreadProxy::setVisibleOnImplThread(CCCompletionEvent* completion, bool v
     } else
         m_schedulerOnImplThread->setNeedsRedraw();
     completion->signal();
+}
+
+void CCThreadProxy::resetDamageTrackerOnImplThread()
+{
+    ASSERT(isImplThread());
+    CCRenderSurface* renderSurface = m_layerTreeHostImpl->rootLayer()->renderSurface();
+    if (renderSurface)
+        renderSurface->damageTracker()->forceFullDamageNextUpdate();
 }
 
 void CCThreadProxy::setNeedsRedrawOnImplThread()

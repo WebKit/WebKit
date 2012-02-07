@@ -113,6 +113,7 @@ public:
     virtual void paint(WebCanvas*, const WebRect&);
     virtual void themeChanged();
     virtual void composite(bool finish);
+    virtual void setNeedsRedraw();
     virtual bool handleInputEvent(const WebInputEvent&);
     virtual void mouseCaptureLost();
     virtual void setFocus(bool enable);
