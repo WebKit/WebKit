@@ -2513,7 +2513,7 @@ String WebGLRenderingContext::getProgramInfoLog(WebGLProgram* program, Exception
     if (!validateWebGLObject("getProgramInfoLog", program))
         return "";
     WebGLStateRestorer(this, false);
-    return m_context->getProgramInfoLog(objectOrZero(program));
+    return ensureNotNull(m_context->getProgramInfoLog(objectOrZero(program)));
 }
 
 WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode& ec)
@@ -2613,7 +2613,7 @@ String WebGLRenderingContext::getShaderInfoLog(WebGLShader* shader, ExceptionCod
     if (!validateWebGLObject("getShaderInfoLog", shader))
         return "";
     WebGLStateRestorer(this, false);
-    return m_context->getShaderInfoLog(objectOrZero(shader));
+    return ensureNotNull(m_context->getShaderInfoLog(objectOrZero(shader)));
 }
 
 String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode& ec)
@@ -2623,7 +2623,7 @@ String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode
         return String();
     if (!validateWebGLObject("getShaderSource", shader))
         return "";
-    return shader->getSource();
+    return ensureNotNull(shader->getSource());
 }
 
 Vector<String> WebGLRenderingContext::getSupportedExtensions()
@@ -5121,6 +5121,13 @@ void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
     m_contextLost = false;
     initializeNewContext();
     canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, ""));
+}
+
+String WebGLRenderingContext::ensureNotNull(const String& text) const
+{
+    if (text.isNull())
+        return WTF::emptyString();
+    return text;
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)

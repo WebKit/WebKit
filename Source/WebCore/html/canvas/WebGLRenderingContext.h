@@ -662,6 +662,8 @@ public:
     // to the JavaScript console.
     void synthesizeGLError(GC3Denum, const char* functionName, const char* description);
 
+    String ensureNotNull(const String&) const;
+
     friend class WebGLStateRestorer;
 };
 

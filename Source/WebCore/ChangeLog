@@ -1,3 +1,24 @@
+2012-02-06  Ehsan Akhgari  <ehsan.akhgari@gmail.com>
+
+        WebGL conformance test misc/functions-returning-strings.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=77149
+
+        Make sure that WebGL methods returning strings don't return null when
+        they run successfully.
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/functions-returning-strings.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::ensureNotNull):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-02-06  Enrica Casucci  <enrica@apple.com>
 
         Refactor Mac platform implementation of the Pasteboard class.
