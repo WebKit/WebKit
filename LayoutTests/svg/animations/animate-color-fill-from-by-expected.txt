@@ -1,0 +1,44 @@
+SVG 1.1 dynamic animation tests
+
+Tests animation on 'currentColor'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Initial condition:
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('fill') is "#d00000"
+PASS (fillPaint = document.defaultView.getComputedStyle(rect).getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+
+Half-time condition:
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('fill') is "#d00068"
+PASS (fillPaint = document.defaultView.getComputedStyle(rect).getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 104
+
+End condition:
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('fill') is "#d000d0"
+PASS (fillPaint = document.defaultView.getComputedStyle(rect).getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

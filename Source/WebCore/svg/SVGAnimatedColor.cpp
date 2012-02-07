@@ -60,6 +60,8 @@ void SVGAnimatedColorAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>&
 
     from = constructFromString(fromString);
     to = constructFromString(byString);
+
+    to->color() = ColorDistance::addColorsAndClamp(from->color(), to->color());
 }
 
 void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned,

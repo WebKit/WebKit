@@ -1,3 +1,15 @@
+2012-02-06  Philip Rogers  <pdr@google.com>
+
+        Fix color animations by value
+        https://bugs.webkit.org/show_bug.cgi?id=77812
+
+        Reviewed by Darin Adler.
+
+        Test: svg/animations/animate-color-fill-from-by.html
+
+        * svg/SVGAnimatedColor.cpp:
+        (WebCore::SVGAnimatedColorAnimator::calculateFromAndByValues):
+
 2012-02-03  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r104303): Clicking inline video controls gives the video a focus ring
