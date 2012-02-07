@@ -2386,6 +2386,8 @@
             'inspector/InspectorFrontendClientLocal.cpp',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',
+            'inspector/InspectorHistory.cpp',
+            'inspector/InspectorHistory.h',
             'inspector/InspectorIndexedDBAgent.cpp',
             'inspector/InspectorIndexedDBAgent.h',
             'inspector/InspectorInstrumentation.cpp',

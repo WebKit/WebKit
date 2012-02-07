@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var testSuite = [];
+
+    function testSetUp(next)
+    {
+        InspectorTest.expandElementsTree(next);
+    }
+    testSuite.push(testSetUp);
+
+
+    function testSetAttribute(callback)
+    {
+        var node = InspectorTest.expandedNodeWithId("node-to-set-attribute"); 
+        node.setAttribute("foo", "bar=\"edited attribute\"", callback);
+    }
+    testSuite.push(InspectorTest.generateUndoTest(testSetAttribute));
+
+
+    function testRemoveAttribute(callback)
+    {
+        var node = InspectorTest.expandedNodeWithId("node-to-remove-attribute"); 
+        node.removeAttribute("foo", callback);
+    }
+    testSuite.push(InspectorTest.generateUndoTest(testRemoveAttribute));
+
+
+    function testAddAttribute(callback)
+    {
+        var node = InspectorTest.expandedNodeWithId("node-to-add-attribute"); 
+        node.setAttribute("", "newattr=\"new-value\"", callback);
+    }
+    testSuite.push(InspectorTest.generateUndoTest(testAddAttribute));
+
+
+    InspectorTest.runTestSuite(testSuite);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that DOM modifications done in the Elements panel are undoable (Part 2).
+</p>
+
+<div style="display:none">
+    <div id="testSetAttribute">
+        <div foo="attribute value" id="node-to-set-attribute"></div>
+    </div>
+
+    <div id="testRemoveAttribute">
+        <div foo="attribute value" id="node-to-remove-attribute"></div>
+    </div>
+
+    <div id="testAddAttribute">
+        <div id="node-to-add-attribute"></div>
+    </div>
+</div>
+
+</body>
+</html>

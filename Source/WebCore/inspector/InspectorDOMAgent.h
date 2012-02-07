@@ -35,6 +35,7 @@
 #include "InjectedScriptManager.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
+#include "InspectorHistory.h"
 #include "InspectorValues.h"
 #include "Timer.h"
 
@@ -143,6 +144,8 @@ public:
     virtual void highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
     virtual void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId);
     virtual void setTouchEmulationEnabled(ErrorString*, bool);
+    virtual void undo(ErrorString*);
+    virtual void markUndoableState(ErrorString*);
 
     Node* highlightedNode() const;
 
@@ -175,6 +178,8 @@ public:
 
     void drawHighlight(GraphicsContext&) const;
     void getHighlight(Highlight*) const;
+
+    InspectorHistory* history() { return m_history.get(); }
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -240,6 +245,7 @@ private:
     OwnPtr<HighlightData> m_highlightData;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
+    OwnPtr<InspectorHistory> m_history;
 };
 
 #endif // ENABLE(INSPECTOR)

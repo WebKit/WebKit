@@ -643,6 +643,8 @@ WebInspector.CSSProperty.prototype = {
 
         // An index past all the properties adds a new property to the style.
         CSSAgent.setPropertyText(this.ownerStyle.id, this.index, propertyText, this.index < this.ownerStyle.pastLastSourcePropertyIndex(), callback.bind(this));
+        if (majorChange)
+            DOMAgent.markUndoableState();
     },
 
     setValue: function(newValue, majorChange, userCallback)

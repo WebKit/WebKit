@@ -381,6 +381,37 @@ InspectorTest.rangeText = function(range)
     if (!range)
         return "[undefined-undefined]";
     return "[" + range.start + "-" + range.end + "]";
-};
+}
+
+InspectorTest.generateUndoTest = function(testBody)
+{
+    function result(next)
+    {
+        var testNode = InspectorTest.expandedNodeWithId(/function\s([^(]*)/.exec(testBody)[1]);
+        InspectorTest.addResult("Initial:");
+        InspectorTest.dumpElementsTree(testNode);
+
+        testBody(step1);
+
+        function step1()
+        {
+            InspectorTest.addResult("Post-action:");
+            InspectorTest.dumpElementsTree(testNode);
+            DOMAgent.undo(step2);
+        }
+
+        function step2()
+        {
+            InspectorTest.addResult("Post-undo (initial):");
+            InspectorTest.dumpElementsTree(testNode);
+            next();
+        }
+    }
+    result.toString = function()
+    {
+        return testBody.toString();
+    }
+    return result;
+}
 
 };
