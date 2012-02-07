@@ -200,7 +200,7 @@ uint64_t getVolumeFreeSizeForPath(const char* path)
     BOOL result = GetDiskFreeSpaceExW((LPCWSTR)path, &freeBytesToCaller, 0, 0);
     if (!result)
         return 0;
-    return static_cast<uint64_t>freeBytesToCaller.QuadPart;
+    return static_cast<uint64_t>(freeBytesToCaller.QuadPart);
 #else
     struct statvfs volumeInfo;
     if (statvfs(path, &volumeInfo))
