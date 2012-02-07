@@ -109,6 +109,7 @@ void WebConnectionToWebProcess::didClose(CoreIPC::Connection* connection)
 
 void WebConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID)
 {
+    RefPtr<WebConnectionToWebProcess> protector = this;
     RefPtr<WebProcessProxy> process = m_process;
 
     // This will invalidate the CoreIPC::Connection and the WebProcessProxy member

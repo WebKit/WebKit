@@ -1,3 +1,13 @@
+2012-02-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Keep a reference in didReceiveInvalidMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=78024
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::didReceiveInvalidMessage):
+
 2012-02-06  Anders Carlsson  <andersca@apple.com>
 
         ScrollableAreaSet should be moved from Page to FrameView
