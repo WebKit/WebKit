@@ -34,6 +34,8 @@
 #include "PlatformColor.h"
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
+class SkDevice;
+
 namespace WebCore {
 
 // This class records the contentRect into an SkPicture, then software rasterizes
@@ -50,7 +52,7 @@ public:
     private:
         BitmapSkPictureCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
 
-        OwnArrayPtr<uint8_t> m_pixelData;
+        OwnPtr<SkDevice> m_device;
         BitmapSkPictureCanvasLayerTextureUpdater* m_textureUpdater;
     };
 

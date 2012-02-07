@@ -1,3 +1,23 @@
+2012-02-07  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Crash when using per-tile painting on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=75715
+
+        Reviewed by James Robinson.
+
+        PlatformCanvas constructor on win32 expects forth argument to be a
+        shared section handle. Passing a pointer to a system memory causes
+        it to crash. Fix this by not using the PlatformCanvas API for
+        SkCanvas construction in per-tile texture uploader.
+
+        Tested with manual tests.
+
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+
 2012-02-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; make OSStatus the explicit return type for CMTimebase functions.

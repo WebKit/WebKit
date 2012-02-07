@@ -33,7 +33,7 @@
 
 #include "LayerPainterChromium.h"
 #include "SkCanvas.h"
-#include "skia/ext/platform_canvas.h"
+#include "SkDevice.h"
 
 namespace WebCore {
 
@@ -45,18 +45,21 @@ BitmapSkPictureCanvasLayerTextureUpdater::Texture::Texture(BitmapSkPictureCanvas
 
 void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRect& sourceRect)
 {
-    size_t bufferSize = TextureManager::memoryUseBytes(sourceRect.size(), texture()->format());
-    m_pixelData = adoptArrayPtr(new uint8_t[bufferSize]);
-    OwnPtr<SkCanvas> canvas = adoptPtr(new skia::PlatformCanvas(sourceRect.width(), sourceRect.height(), false, m_pixelData.get()));
+    m_device = adoptPtr(new SkDevice(SkBitmap::kARGB_8888_Config, sourceRect.width(), sourceRect.height()));
+    OwnPtr<SkCanvas> canvas = adoptPtr(new SkCanvas(m_device.get()));
     textureUpdater()->paintContentsRect(canvas.get(), sourceRect);
 }
 
 void BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
 {
     texture()->bindTexture(context, allocator);
-    ASSERT(m_pixelData.get());
-    textureUpdater()->updateTextureRect(context, texture()->format(), destRect, m_pixelData.get());
-    m_pixelData.clear();
+
+    ASSERT(m_device);
+    const SkBitmap* bitmap = &m_device->accessBitmap(false);
+    bitmap->lockPixels();
+    textureUpdater()->updateTextureRect(context, texture()->format(), destRect, static_cast<uint8_t*>(bitmap->getPixels()));
+    bitmap->unlockPixels();
+    m_device.clear();
 }
 
 PassRefPtr<BitmapSkPictureCanvasLayerTextureUpdater> BitmapSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
