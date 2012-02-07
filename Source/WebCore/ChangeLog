@@ -1,3 +1,15 @@
+2012-02-06  Hayato Ito  <hayato@chromium.org>
+
+        Implement querySelector on ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=77714
+
+        Reviewed by Dimitri Glazkov.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::nodeIsRootNodeOfTreeScope):
+        (WebCore):
+        (WebCore::SelectorDataList::execute):
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com> and Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK] Add TextureMapperGL implementation

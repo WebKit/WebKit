@@ -98,14 +98,20 @@ bool SelectorDataList::canUseIdLookup(Node* rootNode) const
     return true;
 }
 
+static inline bool isTreeScopeRoot(Node* node)
+{
+    ASSERT(node);
+    return node->isDocumentNode() || node->isShadowRoot();
+}
+
 template <bool firstMatchOnly>
 void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
 {
     if (canUseIdLookup(rootNode)) {
         ASSERT(m_selectors.size() == 1);
         CSSSelector* selector = m_selectors[0].selector;
-        Element* element = rootNode->document()->getElementById(selector->value());
-        if (!element || !(rootNode->isDocumentNode() || element->isDescendantOf(rootNode)))
+        Element* element = rootNode->treeScope()->getElementById(selector->value());
+        if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;
         if (selectorChecker.checkSelector(m_selectors[0].selector, element, m_selectors[0].isFastCheckable))
             matchedElements.append(element);

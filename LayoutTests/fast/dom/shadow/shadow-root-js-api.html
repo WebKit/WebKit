@@ -5,6 +5,10 @@
 </head>
 <body>
 <div id="console"></div>
+<!-- These elements should not be selected in ShadowRoot's querySelector. -->
+<div id="foo"></div>
+<div class="foo"></div>
+<foo></foo>
 <script>
 description("Tests for ShadowRoot JS APIs. Can only run within DRT");
 
@@ -47,6 +51,12 @@ shouldBe("shadowRoot.getElementsByTagNameNS('*', 'div')", "[div1, div2]");
 shouldBe("shadowRoot.getElementsByTagNameNS('', 'div')", "[]");
 shouldBe("shadowRoot.getElementsByTagNameNS('*', 'foo')", "[]");
 
+shouldBe("shadowRoot.querySelector('#div1')", "div1");
+shouldBeNull("shadowRoot.querySelector('#foo')");
+shouldBe("shadowRoot.querySelector('.class2')", "div2");
+shouldBeNull("shadowRoot.querySelector('.foo')");
+shouldBe("shadowRoot.querySelectorAll('div')", "[div1, div2]");
+shouldBe("shadowRoot.querySelectorAll('foo')", "[]");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -20,6 +20,12 @@ PASS shadowRoot.getElementsByTagName('foo') is []
 PASS shadowRoot.getElementsByTagNameNS('*', 'div') is [div1, div2]
 PASS shadowRoot.getElementsByTagNameNS('', 'div') is []
 PASS shadowRoot.getElementsByTagNameNS('*', 'foo') is []
+PASS shadowRoot.querySelector('#div1') is div1
+PASS shadowRoot.querySelector('#foo') is null
+PASS shadowRoot.querySelector('.class2') is div2
+PASS shadowRoot.querySelector('.foo') is null
+PASS shadowRoot.querySelectorAll('div') is [div1, div2]
+PASS shadowRoot.querySelectorAll('foo') is []
 PASS successfullyParsed is true
 
 TEST COMPLETE
