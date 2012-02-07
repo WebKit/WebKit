@@ -1,3 +1,13 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com> and Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Add TextureMapperGL implementation
+        https://bugs.webkit.org/show_bug.cgi?id=75308
+
+        Reviewed by Alejandro G. Castro.
+
+        * GNUmakefile.am: TextureMapperGL implies USE(TEXTURE_MAPPER)
+        * configure.ac: Only allow enabling the GL version of TextureMapper on X11.
+
 2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf-o-matic should show min/max/stdev on graphs

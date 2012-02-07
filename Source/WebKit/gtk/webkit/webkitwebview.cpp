@@ -648,6 +648,12 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
+#if USE(TEXTURE_MAPPER_GL)
+    if (priv->acceleratedCompositingContext->renderLayersToWindow(clipRect))
+        return FALSE;
+#endif
+
     cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
     if (rectList->status || !rectList->num_rectangles) {
         cairo_rectangle_list_destroy(rectList);
@@ -656,8 +662,8 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
 
     Vector<IntRect> rects;
     for (int i = 0; i < rectList->num_rectangles; i++) {
-        copyRectFromCairoSurfaceToContext(WEBKIT_WEB_VIEW(widget)->priv->backingStore->cairoSurface(),
-                                          cr, IntSize(), enclosingIntRect(FloatRect(rectList->rectangles[i])));
+        copyRectFromCairoSurfaceToContext(priv->backingStore->cairoSurface(), cr, IntSize(),
+                                          enclosingIntRect(FloatRect(rectList->rectangles[i])));
     }
     cairo_rectangle_list_destroy(rectList);
 
@@ -875,7 +881,7 @@ static void resizeWebViewFromAllocation(WebKitWebView* webView, GtkAllocation* a
     chromeClient->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
 
 #if USE(ACCELERATED_COMPOSITING)
-    WEBKIT_WEB_VIEW(widget)->priv->acceleratedCompositingContext->resizeRootLayer(IntSize(allocation->width, allocation->height));
+    webView->priv->acceleratedCompositingContext->resizeRootLayer(IntSize(allocation->width, allocation->height));
 #endif
 }
 
@@ -965,6 +971,8 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
 
 static void webkit_web_view_realize(GtkWidget* widget)
 {
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
+
     gtk_widget_set_realized(widget, TRUE);
 
     GtkAllocation allocation;
@@ -1003,6 +1011,10 @@ static void webkit_web_view_realize(GtkWidget* widget)
     attributes_mask |= GDK_WA_COLORMAP;
 #endif
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributes_mask);
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+    priv->hasNativeWindow = gdk_window_ensure_native(window);
+#endif
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
@@ -1017,8 +1029,6 @@ static void webkit_web_view_realize(GtkWidget* widget)
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 #endif
 
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = webView->priv;
     gtk_im_context_set_client_window(priv->imContext.get(), window);
 }
 
@@ -3236,6 +3246,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setWebGLEnabled(settingsPrivate->enableWebgl);
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+    coreSettings->setAcceleratedCompositingEnabled(settingsPrivate->enableAcceleratedCompositing);
+#endif
+
 #if ENABLE(WEB_AUDIO)
     coreSettings->setWebAudioEnabled(settingsPrivate->enableWebAudio);
 #endif
@@ -3366,6 +3380,11 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 #if ENABLE(WEBGL)
     else if (name == g_intern_string("enable-webgl"))
         settings->setWebGLEnabled(g_value_get_boolean(&value));
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    else if (name == g_intern_string("enable-accelerated-compositing"))
+        settings->setAcceleratedCompositingEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(WEB_AUDIO)

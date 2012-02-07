@@ -1,3 +1,27 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com> and Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Add TextureMapperGL implementation
+        https://bugs.webkit.org/show_bug.cgi?id=75308
+
+        Reviewed by Alejandro G. Castro.
+
+        * GNUmakefile.am: Add AcceleratedCompositingContextGL to the list.
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext): Added some members for AcceleratedCompositingContextGL.
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp: Added empty implementations
+        for GraphicsLayerClient. This is only used for the GL variant.
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp: Added.
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::performAllPendingScrolls): Update the root layer while scrolling.
+        (WebKit::ChromeClient::paint): Update the root layer after painting.
+        * webkit/webkitwebsettings.cpp: Added an enable-accelerated-compositing setting.
+        * webkit/webkitwebsettingsprivate.h: Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_draw): Call into TextureMapper now.
+        (webkit_web_view_realize): Use gdk_window_ensure_native here.
+        (webkit_web_view_update_settings): Support the new enable-accelerated-compositing setting.
+        (webkit_web_view_settings_notify): Ditto.
+
 2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Do not try to chdir to the directory where the executable is in

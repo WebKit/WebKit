@@ -434,6 +434,10 @@ AC_ARG_WITH(accelerated_compositing,
             [], [with_accelerated_compositing="no"])
 AC_MSG_RESULT([$with_accelerated_compositing])
 
+if test "$with_accelerated_compositing" = "opengl" && test "$with_target" != "x11" ; then
+    AC_MSG_ERROR([OpenGL accelerated compositing is only available on X11 currently.])
+fi
+
 if test "$enable_webgl" = "yes" ||  test "$with_accelerated_compositing" = "opengl" ; then
     AC_CHECK_HEADERS([GL/gl.h], [], AC_MSG_ERROR([OpenGL header not found]))
     AC_CHECK_HEADERS([GL/glx.h], [], AC_MSG_ERROR([GLX header not found]))

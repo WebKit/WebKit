@@ -119,7 +119,8 @@ enum {
     PROP_ENABLE_FULLSCREEN,
     PROP_ENABLE_DNS_PREFETCHING,
     PROP_ENABLE_WEBGL,
-    PROP_ENABLE_WEB_AUDIO
+    PROP_ENABLE_WEB_AUDIO,
+    PROP_ENABLE_ACCELERATED_COMPOSITING
 };
 
 // Create a default user agent string
@@ -899,6 +900,23 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether WebGL content should be rendered"),
                                                          FALSE,
                                                          flags));
+
+    /**
+    * WebKitWebSettings:enable-accelerated-compositing:
+    *
+    * Enable or disable support for accelerated compositing on pages. Accelerated
+    * compositing uses the GPU to render animations on pages smoothly and also allows
+    * proper rendering of 3D CSS transforms.
+    *
+    * Since: 1.7.5
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_ACCELERATED_COMPOSITING,
+                                    g_param_spec_boolean("enable-accelerated-compositing",
+                                                         _("Enable accelerated compositing"),
+                                                         _("Whether accelerated compositing should be enabled"),
+                                                         FALSE,
+                                                         flags));
     /**
     * WebKitWebSettings:enable-webaudio:
     *
@@ -1107,6 +1125,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_WEB_AUDIO:
         priv->enableWebAudio = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_ACCELERATED_COMPOSITING:
+        priv->enableAcceleratedCompositing = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1268,6 +1289,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_WEB_AUDIO:
         g_value_set_boolean(value, priv->enableWebAudio);
+        break;
+    case PROP_ENABLE_ACCELERATED_COMPOSITING:
+        g_value_set_boolean(value, priv->enableAcceleratedCompositing);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

@@ -1139,6 +1139,24 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return platformContext()->imageInterpolationQuality();
 }
 
+#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+TransformationMatrix GraphicsContext::get3DTransform() const
+{
+    notImplemented();
+    return TransformationMatrix();
+}
+
+void GraphicsContext::concat3DTransform(const TransformationMatrix& transform)
+{
+    notImplemented();
+}
+
+void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
+{
+    notImplemented();
+}
+#endif
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)

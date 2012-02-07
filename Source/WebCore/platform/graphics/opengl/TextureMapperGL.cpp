@@ -18,7 +18,6 @@
  */
 
 #include "config.h"
-
 #include "TextureMapperGL.h"
 
 #include "GraphicsContext.h"
@@ -30,11 +29,13 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(QT) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if PLATFORM(QT)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QPlatformPixmap>
 #endif
+#endif
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || USE(CAIRO)
 #include <cairo/OpenGLShims.h>
 #elif defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>
@@ -55,7 +56,14 @@
 #include <GL/glx.h>
 #endif
 
-#if !defined(TEXMAP_OPENGL_ES_2) && !PLATFORM(QT)
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#include "RefPtrCairo.h"
+#include <cairo.h>
+#include <wtf/ByteArray.h>
+#endif
+
+#if !defined(TEXMAP_OPENGL_ES_2) && !PLATFORM(QT) && !PLATFORM(GTK)
 extern "C" {
     void glUniform1f(GLint, GLfloat);
     void glUniform1i(GLint, GLint);
@@ -608,7 +616,7 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
     m_surfaceNeedsReset = true;
 }
 
-
+#if PLATFORM(QT) || (USE(CAIRO) && defined(TEXMAP_OPENGL_ES_2))
 static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
 {
     int width = size.width();
@@ -619,6 +627,7 @@ static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
 }
+#endif
 
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect)
 {
@@ -652,6 +661,29 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     if (format == BGRAFormat || format == BGRFormat)
         swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
     GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, qtImage.constBits()))
+
+#elif USE(CAIRO)
+
+#if !CPU(BIG_ENDIAN)
+#if defined(TEXMAP_OPENGL_ES_2)
+    swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(cairo_image_surface_get_data(frameImage)),
+                      cairo_image_surface_get_stride(frameImage) * cairo_image_surface_get_height(frameImage));
+#else
+    glFormat = isOpaque() ? GL_BGR : GL_BGRA;
+#endif
+#endif
+
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, cairo_image_surface_get_stride(frameImage) / 4);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceRect.y());
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceRect.x());
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0,
+                           targetRect.x(), targetRect.y(),
+                           targetRect.width(), targetRect.height(),
+                           glFormat, GL_UNSIGNED_BYTE,
+                           cairo_image_surface_get_data(frameImage)));
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 #endif
 }
 

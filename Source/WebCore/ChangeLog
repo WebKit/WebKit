@@ -1,3 +1,20 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com> and Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Add TextureMapperGL implementation
+        https://bugs.webkit.org/show_bug.cgi?id=75308
+
+        Reviewed by Alejandro G. Castro.
+
+        No new tests. This will be covered by accelerated compositing and
+        3D CSS transform tests eventually.
+
+        * GNUmakefile.list.am: Added some files necessary to build TextureMapperGL.
+        * platform/graphics/cairo/TextureMapperGLCairo.cpp: Added implementations.
+        * platform/graphics/cairo/TextureMapperGLCairo.h: Updated member list.
+        * platform/graphics/gtk/WindowGLContext.h: Added.
+        * platform/graphics/gtk/WindowGLContextGLX.cpp: Added.
+        * platform/graphics/opengl/TextureMapperGL.cpp: Use the GL shims on GTK.
+
 2012-02-06  Emil A Eklund  <eae@chromium.org>
 
         Change baselinePosition and lineHeight to LayoutUnit

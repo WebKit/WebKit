@@ -45,6 +45,11 @@ AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
 }
 
+bool AcceleratedCompositingContext::enabled()
+{
+    return m_rootGraphicsLayer;
+}
+
 bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* widgetCr, const IntRect& clipRect)
 {
     notImplemented();
@@ -114,6 +119,32 @@ void AcceleratedCompositingContext::markForSync()
 void AcceleratedCompositingContext::syncLayersTimeout(Timer<AcceleratedCompositingContext>*)
 {
     core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+}
+
+void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+{
+    ASSERT_NOT_REACHED();
+}
+void AcceleratedCompositingContext::notifySyncRequired(const WebCore::GraphicsLayer*)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool AcceleratedCompositingContext::showDebugBorders(const WebCore::GraphicsLayer*) const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AcceleratedCompositingContext::showRepaintCounter(const WebCore::GraphicsLayer*) const
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

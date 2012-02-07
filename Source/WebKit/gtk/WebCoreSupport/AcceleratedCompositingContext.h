@@ -19,6 +19,7 @@
 #ifndef AcceleratedCompositingContext_h
 #define AcceleratedCompositingContext_h
 
+#include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -26,15 +27,16 @@
 #include "webkitwebview.h"
 #include <wtf/PassOwnPtr.h>
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(TEXTURE_MAPPER_GL)
+#include "TextureMapperNode.h"
+#include "WindowGLContext.h"
+#endif
 
-namespace WebCore {
-class GraphicsLayer;
-}
+#if USE(ACCELERATED_COMPOSITING)
 
 namespace WebKit {
 
-class AcceleratedCompositingContext {
+class AcceleratedCompositingContext : public WebCore::GraphicsLayerClient {
     WTF_MAKE_NONCOPYABLE(AcceleratedCompositingContext);
 public:
     static PassOwnPtr<AcceleratedCompositingContext> create(WebKitWebView* webView)
@@ -47,7 +49,17 @@ public:
     void scheduleRootLayerRepaint(const WebCore::IntRect&);
     void markForSync();
     void syncLayersTimeout(WebCore::Timer<AcceleratedCompositingContext>*);
+    void syncLayersNow();
     void resizeRootLayer(const WebCore::IntSize&);
+    bool renderLayersToWindow(const WebCore::IntRect& clipRect);
+    bool enabled();
+
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& rectToPaint);
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 
 private:
     WebKitWebView* m_webView;
@@ -56,6 +68,13 @@ private:
 
 #if USE(CLUTTER)
     GtkWidget* m_rootLayerEmbedder;
+#elif USE(TEXTURE_MAPPER_GL)
+    void initializeIfNecessary();
+
+    bool m_initialized;
+    WebCore::TextureMapperNode* m_rootTextureMapperNode;
+    OwnPtr<WebCore::WindowGLContext> m_context;
+    OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif
 
     AcceleratedCompositingContext(WebKitWebView*);

@@ -1,5 +1,26 @@
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Add TextureMapperGL implementation
+        https://bugs.webkit.org/show_bug.cgi?id=75308
+
+        Reviewed by Alejandro G. Castro.
+
+        Fix the WebKit2 + AC build for GTK+.
+
+        * GNUmakefile.am: Add some missing source files.
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit): Add USE(TILED_BACKING_STORE) to the guard.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Ditto.
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea): Ditto.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit): Ditto.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl): Ditto.
+
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
         Fix some miscellaneous 'make dist' error for WebKitGTK+.
 
         * GNUmakefile.am: Do not distribute generated files.

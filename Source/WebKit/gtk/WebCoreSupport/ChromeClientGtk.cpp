@@ -525,6 +525,20 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegio
     gc.restore();
 }
 
+void ChromeClient::invalidateWidgetRect(const IntRect& rect)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
+    if (acContext->enabled()) {
+        acContext->scheduleRootLayerRepaint(rect);
+        return;
+    }
+#endif
+    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView),
+                               rect.x(), rect.y(),
+                               rect.width(), rect.height());
+}
+
 void ChromeClient::performAllPendingScrolls()
 {
     if (!m_webView->priv->backingStore)
@@ -534,15 +548,12 @@ void ChromeClient::performAllPendingScrolls()
     for (size_t i = 0; i < m_rectsToScroll.size(); i++) {
         IntRect& scrollRect = m_rectsToScroll[i];
         m_webView->priv->backingStore->scroll(scrollRect, m_scrollOffsets[i]);
-        gtk_widget_queue_draw_area(GTK_WIDGET(m_webView),
-                                   scrollRect.x(), scrollRect.y(),
-                                   scrollRect.width(), scrollRect.height());
+        invalidateWidgetRect(scrollRect);
     }
 
     m_rectsToScroll.clear();
     m_scrollOffsets.clear();
 }
-
 
 void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
 {
@@ -559,12 +570,9 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     if (!frame || !frame->contentRenderer() || !frame->view())
         return;
 
-    performAllPendingScrolls();
     frame->view()->updateLayoutAndStyleIfNeededRecursive();
+    performAllPendingScrolls();
     paintWebView(m_webView, frame, m_dirtyRegion);
-
-    const IntRect& rect = m_dirtyRegion.bounds();
-    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), rect.x(), rect.y(), rect.width(), rect.height());
 
     HashSet<GtkWidget*> children = m_webView->priv->children;
     HashSet<GtkWidget*>::const_iterator end = children.end();
@@ -574,6 +582,14 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
             break;
         }
     }
+
+    const IntRect& rect = m_dirtyRegion.bounds();
+    invalidateWidgetRect(rect);
+
+#if USE(ACCELERATED_COMPOSITING)
+    m_webView->priv->acceleratedCompositingContext->syncLayersNow();
+    m_webView->priv->acceleratedCompositingContext->renderLayersToWindow(rect);
+#endif
 
     m_dirtyRegion = Region();
     m_lastDisplayTime = currentTime();
