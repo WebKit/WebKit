@@ -1,9 +1,7 @@
-<body onload="frameLoaded()">
-<script>
-function frameLoaded() {
-  if (window.opener)
-    window.opener.postMessage('done', '*');
-}
-</script>
 <script src="http://127.0.0.1:8080/security/mixedContent/resources/script.js"></script>
-</body>
+<script>
+window.onload = function() {
+    if (window.opener)
+        window.opener.postMessage('done', '*');
+};
+</script>
