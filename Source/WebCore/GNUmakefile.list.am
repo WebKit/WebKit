@@ -5362,6 +5362,7 @@ webcore_sources += \
 	Source/WebCore/platform/audio/AudioResamplerKernel.cpp \
 	Source/WebCore/platform/audio/AudioResamplerKernel.h \
 	Source/WebCore/platform/audio/AudioSourceProvider.h \
+	Source/WebCore/platform/audio/AudioSourceProviderClient.h \
 	Source/WebCore/platform/audio/AudioUtilities.cpp \
 	Source/WebCore/platform/audio/AudioUtilities.h \
 	Source/WebCore/platform/audio/Biquad.cpp \
