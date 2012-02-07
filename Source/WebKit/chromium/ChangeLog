@@ -1,3 +1,17 @@
+2012-02-07  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Unit test for bug #77996
+        https://bugs.webkit.org/show_bug.cgi?id=78019
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestManySurfaces):
+        (WTF::CCLayerTreeHostTestManySurfaces::CCLayerTreeHostTestManySurfaces):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::afterTest):
+        (WTF):
+
 2012-02-07  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Process Scroll-gesture events from the compositor.

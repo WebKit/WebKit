@@ -1472,4 +1472,61 @@ public:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerOcclusion)
 
+class CCLayerTreeHostTestManySurfaces : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestManySurfaces() { }
+
+    virtual void beginTest()
+    {
+        // We create enough RenderSurfaces that it will trigger Vector reallocation while computing occlusion.
+        Region occluded;
+        const TransformationMatrix identityMatrix;
+        Vector<RefPtr<TestLayerChromium> > layers;
+        Vector<RefPtr<TestLayerChromium> > children;
+        int numSurfaces = 20;
+        RefPtr<TestLayerChromium> replica = TestLayerChromium::create();
+
+        for (int i = 0; i < numSurfaces; ++i) {
+            layers.append(TestLayerChromium::create());
+            if (!i) {
+                setLayerPropertiesForTesting(layers.last().get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+                layers.last()->createRenderSurface();
+            } else {
+                setLayerPropertiesForTesting(layers.last().get(), layers[layers.size()-2].get(), identityMatrix, FloatPoint(0, 0), FloatPoint(1, 1), IntSize(100-i, 100-i), true);
+                layers.last()->setMasksToBounds(true);
+                layers.last()->setReplicaLayer(replica.get()); // Make it have a RenderSurface
+            }
+        }
+
+        for (int i = 1; i < numSurfaces; ++i) {
+            children.append(TestLayerChromium::create());
+            setLayerPropertiesForTesting(children.last().get(), layers[i].get(), identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+        }
+
+        m_layerTreeHost->setRootLayer(layers[0].get());
+        m_layerTreeHost->setViewportSize(layers[0]->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        for (int i = 0; i < numSurfaces-1; ++i) {
+            IntRect expectedOcclusion(i+1, i+1, 100-i-1, 100-i-1);
+
+            EXPECT_EQ_RECT(expectedOcclusion, layers[i]->occludedScreenSpace().bounds());
+            EXPECT_EQ(1u, layers[i]->occludedScreenSpace().rects().size());
+        }
+
+        // Kill the layerTreeHost immediately.
+        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost.clear();
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestManySurfaces)
+
 } // namespace
