@@ -79,9 +79,9 @@ store = transaction.objectStore('storeName')
 Try to insert data with a Date key:
 store.add({x: 'foo'}, testDate)
 Try to insert a value not handled by structured clone:
-store.add({x: 'bar', y: document.getElementById('console')}, 'bar')
+store.add({x: 'bar', y: self}, 'bar')
 PASS Exception thrown
-PASS code is DOMException.DATA_CLONE_ERR
+PASS code is 25
 Try to insert data where key path yields a Date key:
 store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():

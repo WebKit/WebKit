@@ -1,0 +1,98 @@
+[Worker] Test the basics of IndexedDB's webkitIDBIndex.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/index-basics.js
+[Worker] webkitIndexedDB.open('index-basics')
+[Worker] db = event.target.result
+[Worker] db.setVersion('new version')
+[Worker] setVersionSuccess():
+[Worker] trans = event.target.result
+PASS [Worker] trans !== null is true
+[Worker] Deleted all object stores.
+[Worker] db.createObjectStore('storeName', null)
+[Worker] store.createIndex('indexName', 'x')
+[Worker] store.createIndex('indexName2', 'y', {unique: false})
+[Worker] store.createIndex('zIndex', 'z', {unique: true})
+PASS [Worker] 'name' in indexObject is true
+PASS [Worker] indexObject.name is "indexName"
+PASS [Worker] 'objectStore' in indexObject is true
+PASS [Worker] indexObject.objectStore.name is "storeName"
+PASS [Worker] 'keyPath' in indexObject is true
+PASS [Worker] indexObject.keyPath is "x"
+PASS [Worker] 'unique' in indexObject is true
+PASS [Worker] 'multiEntry' in indexObject is true
+PASS [Worker] indexObject.unique is false
+PASS [Worker] indexObject.multiEntry is false
+PASS [Worker] 'openKeyCursor' in indexObject is true
+PASS [Worker] typeof indexObject.openKeyCursor is "function"
+PASS [Worker] 'openCursor' in indexObject is true
+PASS [Worker] typeof indexObject.openCursor is "function"
+PASS [Worker] 'getKey' in indexObject is true
+PASS [Worker] typeof indexObject.getKey is "function"
+PASS [Worker] 'get' in indexObject is true
+PASS [Worker] typeof indexObject.get is "function"
+PASS [Worker] 'count' in indexObject is true
+PASS [Worker] typeof indexObject.count is "function"
+[Worker] store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
+[Worker] event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
+[Worker] store.createIndex('indexWhileAddIsInFlight', 'x')
+[Worker] store.createIndex('indexWithWeirdKeyPath', 'foobar')
+[Worker] event.target.source.add({x: 'value3', y: '456'}, 'key3')
+[Worker] indexObject.getKey('value')
+PASS [Worker] event.target.result is "key"
+[Worker] indexObject2.getKey('zzz')
+PASS [Worker] event.target.result is "key"
+[Worker] indexObject3.get(2.71)
+PASS [Worker] event.target.result.x is "value2"
+[Worker] indexObject.get('value')
+PASS [Worker] event.target.result.x is "value"
+PASS [Worker] event.target.result.y is "zzz"
+[Worker] indexObject.getKey('does not exist')
+PASS [Worker] event.target.result is undefined
+[Worker] indexObject.get('does not exist')
+PASS [Worker] event.target.result is undefined
+[Worker] indexObject4.getKey('value2')
+PASS [Worker] event.target.result is "key2"
+[Worker] indexObject.openKeyCursor()
+PASS [Worker] event.target.source is indexObject
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value"
+PASS [Worker] event.target.result.primaryKey is "key"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value2"
+PASS [Worker] event.target.result.primaryKey is "key2"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value3"
+PASS [Worker] event.target.result.primaryKey is "key3"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is true
+[Worker] indexObject.openCursor()
+PASS [Worker] event.target.source is indexObject
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value"
+PASS [Worker] event.target.result.value.x is "value"
+PASS [Worker] event.target.result.value.y is "zzz"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value2"
+PASS [Worker] event.target.result.value.x is "value2"
+PASS [Worker] event.target.result.value.y is "zzz2"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result.key is "value3"
+PASS [Worker] event.target.result.value.x is "value3"
+PASS [Worker] event.target.result.value.y is "456"
+[Worker] event.target.result.continue()
+PASS [Worker] event.target.result === null is true
+[Worker] Passing an invalid key into indexObject.get({}).
+PASS [Worker] Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+[Worker] Passing an invalid key into indexObject.getKey({}).
+PASS [Worker] Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
