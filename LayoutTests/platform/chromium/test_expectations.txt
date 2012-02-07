@@ -1660,10 +1660,6 @@ BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
 
-// WebKit 45431:45444
-BUGCR10384 MAC : fast/events/frame-tab-focus.html = FAIL
-BUGCR11613 LINUX : fast/forms/tabbing-input-iframe.html = FAIL
-
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
 BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
@@ -4001,7 +3997,7 @@ BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1
 BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html = IMAGE+TEXT
 BUGWK77736 RELEASE : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK77736 : svg/carto.net/tabgroup.svg = IMAGE+TEXT
-BUGWK77736 MAC LINUX: svg/carto.net/window.svg = IMAGE+TEXT
+BUGWK77736 MAC LINUX : svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK77736 MAC LINUX : svg/css/shadow-changes.svg = IMAGE
 BUGWK77736 : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT
 BUGWK77736 : svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml = IMAGE
