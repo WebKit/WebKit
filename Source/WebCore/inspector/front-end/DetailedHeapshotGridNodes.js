@@ -404,7 +404,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
         var filter = "function(edge) {\n" +
             "    return !edge.isInvisible\n" +
-            "        && (" + !this.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isArtificial))\n" +
+            "        && (" + !this.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isSynthetic))\n" +
             "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));\n" +
             "}\n";
         if (tree.showRetainingEdges)

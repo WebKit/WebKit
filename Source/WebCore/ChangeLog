@@ -1,3 +1,12 @@
+2012-02-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Web Inspector: rename Artificial to Synthetic according to v8 patch r10614.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get isSynthetic):
+        (WebInspector.HeapSnapshot.prototype._init):
+
 2012-02-06  Hayato Ito  <hayato@chromium.org>
 
         Implement querySelector on ShadowRoot.
