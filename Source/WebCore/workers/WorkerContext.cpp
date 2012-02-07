@@ -377,15 +377,6 @@ EventTargetData* WorkerContext::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
-#if ENABLE(BLOB)
-DOMURL* WorkerContext::webkitURL() const
-{
-    if (!m_domURL)
-        m_domURL = DOMURL::create(this->scriptExecutionContext());
-    return m_domURL.get();
-}
-#endif
-
 #if ENABLE(FILE_SYSTEM)
 void WorkerContext::webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {

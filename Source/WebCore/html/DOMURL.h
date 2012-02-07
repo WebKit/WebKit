@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Motorola Mobility Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +27,7 @@
 #ifndef DOMURL_h
 #define DOMURL_h
 
-#if ENABLE(BLOB)
-
-#include "ActiveDOMObject.h"
+#include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -40,30 +39,22 @@ class Blob;
 class MediaStream;
 class ScriptExecutionContext;
 
-class DOMURL : public RefCounted<DOMURL>, public ContextDestructionObserver {
+class DOMURL : public RefCounted<DOMURL> {
+
 public:
-    static PassRefPtr<DOMURL> create(ScriptExecutionContext* scriptExecutionContext) { return adoptRef(new DOMURL(scriptExecutionContext)); }
-    ~DOMURL();
+    static PassRefPtr<DOMURL> create() { return adoptRef(new DOMURL); }
 
+#if ENABLE(BLOB)
+    static void contextDestroyed(ScriptExecutionContext*);
+
+    static String createObjectURL(ScriptExecutionContext*, Blob*);
+    static void revokeObjectURL(ScriptExecutionContext*, const String&);
 #if ENABLE(MEDIA_STREAM)
-    String createObjectURL(MediaStream*);
+    static String createObjectURL(ScriptExecutionContext*, MediaStream*);
 #endif
-    String createObjectURL(Blob*);
-    void revokeObjectURL(const String&);
-
-private:
-    explicit DOMURL(ScriptExecutionContext*);
-
-    virtual void contextDestroyed();
-
-    HashSet<String> m_publicBlobURLs;
-#if ENABLE(MEDIA_STREAM)
-    HashSet<String> m_publicStreamURLs;
 #endif
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // DOMURL_h
