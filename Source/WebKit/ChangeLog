@@ -1,3 +1,35 @@
+2012-02-07  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream DumpRenderTreeSupport
+        https://bugs.webkit.org/show_bug.cgi?id=77991
+
+        Reviewed by Antonio Gomes.
+
+        No functionalities changed, no new tests.
+
+        * blackberry/WebKitSupport/DumpRenderTreeSupport.cpp: Added.
+        (toGeolocationClientMock):
+        (DumpRenderTreeSupport::DumpRenderTreeSupport):
+        (DumpRenderTreeSupport::~DumpRenderTreeSupport):
+        (DumpRenderTreeSupport::javaScriptObjectsCount):
+        (DumpRenderTreeSupport::garbageCollectorCollect):
+        (DumpRenderTreeSupport::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupport::setLinksIncludedInFocusChain):
+        (DumpRenderTreeSupport::linksIncludedInFocusChain):
+        (DumpRenderTreeSupport::dumpConfigurationForViewport):
+        (DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests):
+        (DumpRenderTreeSupport::resetGeolocationMock):
+        (DumpRenderTreeSupport::setMockGeolocationError):
+        (DumpRenderTreeSupport::setMockGeolocationPermission):
+        (DumpRenderTreeSupport::setMockGeolocationPosition):
+        (DumpRenderTreeSupport::scalePageBy):
+        (DumpRenderTreeSupport::computedStyleIncludingVisitedInfo):
+        * blackberry/WebKitSupport/DumpRenderTreeSupport.h: Added.
+        (WebKit):
+        (WebCore):
+        (WTF):
+        (DumpRenderTreeSupport):
+
 2012-02-07  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry WebCoreSupport DeviceOrientationClientBlackBerry and DeviceMotionClientBlackBerry classes
