@@ -1940,30 +1940,6 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case ValueToNumber: {
-        if (at(node.child1()).shouldNotSpeculateInteger()) {
-            SpeculateDoubleOperand op1(this, node.child1());
-            FPRTemporary result(this, op1);
-            m_jit.moveDouble(op1.fpr(), result.fpr());
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-        
-        SpeculateIntegerOperand op1(this, node.child1());
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
-        break;
-    }
-
-    case ValueToDouble: {
-        SpeculateDoubleOperand op1(this, node.child1());
-        FPRTemporary result(this, op1);
-        m_jit.moveDouble(op1.fpr(), result.fpr());
-        doubleResult(result.fpr(), m_compileIndex);
-        break;
-    }
-
     case ValueAdd:
     case ArithAdd:
         compileAdd(node);

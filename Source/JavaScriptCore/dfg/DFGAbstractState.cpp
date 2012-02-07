@@ -262,22 +262,6 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(nodeIndex).set(PredictInt32);
         break;
             
-    case ValueToNumber:
-        if (m_graph[node.child1()].shouldNotSpeculateInteger()) {
-            forNode(node.child1()).filter(PredictNumber);
-            forNode(nodeIndex).set(PredictDouble);
-            break;
-        }
-            
-        forNode(node.child1()).filter(PredictInt32);
-        forNode(nodeIndex).set(PredictInt32);
-        break;
-            
-    case ValueToDouble:
-        forNode(node.child1()).filter(PredictNumber);
-        forNode(nodeIndex).set(PredictDouble);
-        break;
-            
     case ValueAdd:
     case ArithAdd: {
         if (m_graph.addShouldSpeculateInteger(node, m_codeBlock)) {

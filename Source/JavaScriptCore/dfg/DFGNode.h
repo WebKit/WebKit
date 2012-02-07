@@ -211,11 +211,6 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(ArithMin, NodeResultNumber) \
     macro(ArithMax, NodeResultNumber) \
     macro(ArithSqrt, NodeResultNumber) \
-    /* Arithmetic operators call ToNumber on their operands. */\
-    macro(ValueToNumber, NodeResultNumber | NodeMustGenerate) \
-    \
-    /* A variant of ValueToNumber, which a hint that the parents will always use this as a double. */\
-    macro(ValueToDouble, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
@@ -522,8 +517,6 @@ struct Node {
     bool hasArithNodeFlags()
     {
         switch (op) {
-        case ValueToNumber:
-        case ValueToDouble:
         case UInt32ToNumber:
         case ArithAdd:
         case ArithSub:

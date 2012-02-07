@@ -138,8 +138,6 @@ private:
             break;
         }
             
-        case ValueToNumber:
-        case ValueToDouble:
         case UInt32ToNumber: {
             changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
@@ -360,19 +358,6 @@ private:
                 changed |= setPrediction(PredictInt32);
             else
                 changed |= setPrediction(PredictNumber);
-            break;
-        }
-
-        case ValueToNumber: {
-            PredictedType prediction = m_graph[node.child1()].prediction();
-            
-            if (prediction) {
-                if (!(prediction & PredictDouble) && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                    changed |= mergePrediction(PredictInt32);
-                else
-                    changed |= mergePrediction(PredictNumber);
-            }
-            
             break;
         }
 
@@ -597,7 +582,6 @@ private:
             break;
         }
             
-        case ValueToDouble:
         case GetArrayLength:
         case GetByteArrayLength:
         case GetInt8ArrayLength:
@@ -679,8 +663,6 @@ private:
     void vote(NodeUse nodeUse, VariableAccessData::Ballot ballot)
     {
         switch (m_graph[nodeUse].op) {
-        case ValueToNumber:
-        case ValueToDouble:
         case ValueToInt32:
         case UInt32ToNumber:
             nodeUse = m_graph[nodeUse].child1();
@@ -775,11 +757,6 @@ private:
                 vote(node.child1(), VariableAccessData::VoteDouble);
                 break;
                 
-            case ValueToNumber:
-            case ValueToDouble:
-                // Don't vote.
-                break;
-                
             case SetLocal: {
                 PredictedType prediction = m_graph[node.child1()].prediction();
                 if (isDoublePrediction(prediction))
@@ -835,16 +812,6 @@ private:
         } while (m_changed);
     }
     
-    void toDouble(NodeUse nodeUse)
-    {
-        if (m_graph[nodeUse].op == ValueToNumber) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("  @%u -> ValueToDouble", nodeUse.index());
-#endif
-            m_graph[nodeUse].op = ValueToDouble;
-        }
-    }
-
     void fixupNode(Node& node)
     {
         if (!node.shouldGenerate())
@@ -857,60 +824,6 @@ private:
 #endif
         
         switch (op) {
-        case ValueAdd:
-        case ArithAdd:
-        case ArithSub: {
-            PredictedType left = m_graph[node.child1()].prediction();
-            PredictedType right = m_graph[node.child2()].prediction();
-            
-            if (left && right
-                && isNumberPrediction(left) && isNumberPrediction(right)
-                && !m_graph.addShouldSpeculateInteger(node, m_codeBlock)) {
-                toDouble(node.child1());
-                toDouble(node.child2());
-            }
-            break;
-        }
-            
-        case ArithMul:
-        case ArithMin:
-        case ArithMax:
-        case ArithMod:
-        case ArithDiv: {
-            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
-                toDouble(node.child1());
-                toDouble(node.child2());
-                break;
-            }
-            
-            PredictedType left = m_graph[node.child1()].prediction();
-            PredictedType right = m_graph[node.child2()].prediction();
-            
-            if (left && right
-                && ((left & PredictDouble) || (right & PredictDouble))) {
-                toDouble(node.child1());
-                toDouble(node.child2());
-            }
-            break;
-        }
-            
-        case ArithAbs: {
-            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
-                toDouble(node.child1());
-                break;
-            }
-            
-            PredictedType prediction = m_graph[node.child1()].prediction();
-            if (prediction & PredictDouble)
-                toDouble(node.child1());
-            break;
-        }
-            
-        case ArithSqrt: {
-            toDouble(node.child1());
-            break;
-        }
-            
         case GetById: {
             if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
                 break;
@@ -1003,9 +916,6 @@ private:
     {
         if (nodeIndex == NoNode)
             return NoNode;
-        
-        if (m_graph[nodeIndex].op == ValueToNumber)
-            nodeIndex = m_graph[nodeIndex].child1().index();
         
         if (m_graph[nodeIndex].op == ValueToInt32)
             nodeIndex = m_graph[nodeIndex].child1().index();

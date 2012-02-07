@@ -313,10 +313,6 @@ private:
     {
         return toInt32(get(operand));
     }
-    NodeIndex getToNumber(int operand)
-    {
-        return toNumber(get(operand));
-    }
 
     // Perform an ES5 ToInt32 operation - returns a node of type NodeResultInt32.
     NodeIndex toInt32(NodeIndex index)
@@ -341,23 +337,6 @@ private:
         return addToGraph(ValueToInt32, index);
     }
 
-    // Perform an ES5 ToNumber operation - returns a node of type NodeResultDouble.
-    NodeIndex toNumber(NodeIndex index)
-    {
-        Node& node = m_graph[index];
-
-        if (node.hasNumberResult())
-            return index;
-
-        if (node.op == JSConstant) {
-            JSValue v = valueOfJSConstant(index);
-            if (v.isNumber())
-                return getJSConstant(node.constantNumber());
-        }
-
-        return addToGraph(ValueToNumber, OpInfo(NodeUseBottom), index);
-    }
-    
     NodeIndex getJSConstantForValue(JSValue constantValue)
     {
         unsigned constantIndex = m_codeBlock->addOrFindConstant(constantValue);
@@ -1198,12 +1177,12 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
     }
      
     if (argumentCountIncludingThis == 2) { // Math.min(x)
-        set(resultOperand, getToNumber(registerOffset + argumentToOperand(1)));
+        set(resultOperand, get(registerOffset + argumentToOperand(1)));
         return true;
     }
     
     if (argumentCountIncludingThis == 3) { // Math.min(x, y)
-        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)), getToNumber(registerOffset + argumentToOperand(2))));
+        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1231,7 +1210,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointAbs())
             return false;
 
-        NodeIndex nodeIndex = addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)));
+        NodeIndex nodeIndex = addToGraph(ArithAbs, OpInfo(NodeUseBottom), get(registerOffset + argumentToOperand(1)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
         set(resultOperand, nodeIndex);
@@ -1256,7 +1235,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointSqrt())
             return false;
         
-        set(resultOperand, addToGraph(ArithSqrt, getToNumber(registerOffset + argumentToOperand(1))));
+        set(resultOperand, addToGraph(ArithSqrt, get(registerOffset + argumentToOperand(1))));
         return true;
     }
         
@@ -1512,7 +1491,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_pre_inc: {
             unsigned srcDst = currentInstruction[1].u.operand;
-            NodeIndex op = getToNumber(srcDst);
+            NodeIndex op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op, one())));
             NEXT_OPCODE(op_pre_inc);
         }
@@ -1521,7 +1500,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
             ASSERT(result != srcDst); // Required for assumptions we make during OSR.
-            NodeIndex op = getToNumber(srcDst);
+            NodeIndex op = get(srcDst);
             set(result, op);
             set(srcDst, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op, one())));
             NEXT_OPCODE(op_post_inc);
@@ -1529,7 +1508,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_pre_dec: {
             unsigned srcDst = currentInstruction[1].u.operand;
-            NodeIndex op = getToNumber(srcDst);
+            NodeIndex op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op, one())));
             NEXT_OPCODE(op_pre_dec);
         }
@@ -1537,7 +1516,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_post_dec: {
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
-            NodeIndex op = getToNumber(srcDst);
+            NodeIndex op = get(srcDst);
             set(result, op);
             set(srcDst, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op, one())));
             NEXT_OPCODE(op_post_dec);
@@ -1549,37 +1528,37 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             if (m_graph[op1].hasNumberResult() && m_graph[op2].hasNumberResult())
-                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), toNumber(op1), toNumber(op2))));
+                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op1, op2)));
             else
                 set(currentInstruction[1].u.operand, makeSafe(addToGraph(ValueAdd, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_add);
         }
 
         case op_sub: {
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_sub);
         }
 
         case op_mul: {
             // Multiply requires that the inputs are not truncated, unfortunately.
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMul, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_mul);
         }
 
         case op_mod: {
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMod, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_mod);
         }
 
         case op_div: {
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, makeDivSafe(addToGraph(ArithDiv, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_div);
         }

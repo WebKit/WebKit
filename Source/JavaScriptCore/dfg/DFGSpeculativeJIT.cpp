@@ -1268,15 +1268,8 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             // Try to see if there is an alternate node that would contain the value we want.
             // There are four possibilities:
             //
-            // ValueToNumber: If the only live version of the value is a ValueToNumber node
-            //    then it means that all remaining uses of the value would have performed a
-            //    ValueToNumber conversion anyway. Thus, we can substitute ValueToNumber.
-            //
-            // ValueToInt32: Likewise, if the only remaining live version of the value is
-            //    ValueToInt32, then we can use it. But if there is both a ValueToInt32
-            //    and a ValueToNumber, then we better go with ValueToNumber because it
-            //    means that some remaining uses would have converted to number while
-            //    others would have converted to Int32.
+            // ValueToInt32: If the only remaining live version of the value is
+            //    ValueToInt32, then we can use it.
             //
             // UInt32ToNumber: If the only live version of the value is a UInt32ToNumber
             //    then the only remaining uses are ones that want a properly formed number
@@ -1297,7 +1290,6 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             }
         
             if (!found) {
-                NodeIndex valueToNumberIndex = NoNode;
                 NodeIndex valueToInt32Index = NoNode;
                 NodeIndex uint32ToNumberIndex = NoNode;
             
@@ -1311,10 +1303,6 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     if (node.child1Unchecked() != valueSource.nodeIndex())
                         continue;
                     switch (node.op) {
-                    case ValueToNumber:
-                    case ValueToDouble:
-                        valueToNumberIndex = info.nodeIndex();
-                        break;
                     case ValueToInt32:
                         valueToInt32Index = info.nodeIndex();
                         break;
@@ -1327,9 +1315,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                 }
             
                 NodeIndex nodeIndexToUse;
-                if (valueToNumberIndex != NoNode)
-                    nodeIndexToUse = valueToNumberIndex;
-                else if (valueToInt32Index != NoNode)
+                if (valueToInt32Index != NoNode)
                     nodeIndexToUse = valueToInt32Index;
                 else if (uint32ToNumberIndex != NoNode)
                     nodeIndexToUse = uint32ToNumberIndex;

@@ -1,3 +1,43 @@
+2012-02-06  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueToNumber and ValueToDouble nodes don't do anything and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=77855
+        <rdar://problem/10811325>
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed ValueToNumber and ValueToDouble, because the only thing they were doing
+        was wasting registers.
+        
+        This looks like a 1% win on V8 (with a 5% win on crypto) and a 2-3% win on Kraken,
+        mostly due to a >10% win on gaussian-blur. No win anywhere else.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getToInt32):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::Node::hasArithNodeFlags):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::vote):
+        (JSC::DFG::Propagator::doRoundOfDoubleVoting):
+        (Propagator):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::canonicalize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-02-06  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r106197.
