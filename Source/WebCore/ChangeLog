@@ -1,3 +1,21 @@
+2012-02-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in ContainerNode functions due to mutation events.
+        https://bugs.webkit.org/show_bug.cgi?id=77999
+
+        Reviewed by Ryosuke Niwa.
+
+        Add RefPtr to protect premature deletion of this due to mutation events.
+
+        Tests: fast/dom/remove-body-during-body-replacement.html
+               fast/dom/remove-body-during-body-replacement2.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::appendChild):
+
 2012-02-07  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Memory bug during occlusion tracking if Vector::append() needs to reallocate the buffer
