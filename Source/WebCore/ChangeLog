@@ -1,3 +1,10 @@
+2012-02-06  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::optionsObjectCallback):
+
 2012-02-06  Levi Weintraub  <leviw@chromium.org>
 
         Correct usage of LayoutUnits in dom, editing, page, accessibility, inspector, and loader

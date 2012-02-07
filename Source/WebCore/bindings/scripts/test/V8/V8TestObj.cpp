@@ -972,11 +972,21 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(OptionsObject, oo, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    if (args.Length() > 0 && !oo.isUndefinedOrNull() && !oo.isObject()) {
+        ec = TYPE_MISMATCH_ERR;
+        V8Proxy::setDOMException(ec);
+        return throwError("Not an object.", V8Proxy::TypeError);
+    }
     if (args.Length() <= 1) {
         imp->optionsObject(oo);
         return v8::Handle<v8::Value>();
     }
     EXCEPTION_BLOCK(OptionsObject, ooo, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
+    if (args.Length() > 1 && !ooo.isUndefinedOrNull() && !ooo.isObject()) {
+        ec = TYPE_MISMATCH_ERR;
+        V8Proxy::setDOMException(ec);
+        return throwError("Not an object.", V8Proxy::TypeError);
+    }
     imp->optionsObject(oo, ooo);
     return v8::Handle<v8::Value>();
 }
