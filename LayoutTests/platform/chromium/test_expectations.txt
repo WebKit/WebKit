@@ -769,15 +769,14 @@ BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 // Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
 BUGCR39423 : security/block-test.html = TIMEOUT
 
+BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
+BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
+
+BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
+BUGDPRANKE WIN : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
+BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
-
-BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
-BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
-BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
-BUGDPRANKE WIN : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
-BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
-BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 
 // -----------------------------------------------------------------
 // Plugin tests

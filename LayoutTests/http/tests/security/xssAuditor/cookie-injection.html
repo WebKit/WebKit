@@ -9,7 +9,7 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?alert-cookie=1&q=<meta%20http-equiv=%22Set-Cookie%22%20content=%22testcookie=FAIL%22%20/>"></iframe>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?alert-cookie=1&q=<meta%20http-equiv=%22Set-Cookie%22%20content=%22xssAuditorTestCookie=FAIL%22%20/>"></iframe>
 </iframe>
 </body>
 </html>
