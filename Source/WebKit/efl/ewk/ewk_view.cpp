@@ -216,54 +216,54 @@ struct _Ewk_View_Private_Data {
 #ifndef EWK_TYPE_CHECK
 #define EWK_VIEW_TYPE_CHECK(ewkView, ...) do { } while (0)
 #else
-#define EWK_VIEW_TYPE_CHECK(ewkView, ...)                                     \
-    do {                                                                \
-        const char* _tmp_otype = evas_object_type_get(ewkView);               \
-        const Evas_Smart* _tmp_s = evas_object_smart_smart_get(ewkView);      \
-        if (EINA_UNLIKELY(!_tmp_s)) {                                   \
-            EINA_LOG_CRIT                                               \
-                ("%p (%s) is not a smart object!", ewkView,                   \
-                _tmp_otype ? _tmp_otype : "(null)");                   \
-            return __VA_ARGS__;                                         \
-        }                                                               \
+#define EWK_VIEW_TYPE_CHECK(ewkView, ...) \
+    do { \
+        const char* _tmp_otype = evas_object_type_get(ewkView); \
+        const Evas_Smart* _tmp_s = evas_object_smart_smart_get(ewkView); \
+        if (EINA_UNLIKELY(!_tmp_s)) { \
+            EINA_LOG_CRIT \
+                ("%p (%s) is not a smart object!", ewkView, \
+                _tmp_otype ? _tmp_otype : "(null)"); \
+            return __VA_ARGS__; \
+        } \
         const Evas_Smart_Class* _tmp_sc = evas_smart_class_get(_tmp_s); \
-        if (EINA_UNLIKELY(!_tmp_sc)) {                                  \
-            EINA_LOG_CRIT                                               \
-                ("%p (%s) is not a smart object!", ewkView,                   \
-                _tmp_otype ? _tmp_otype : "(null)");                   \
-            return __VA_ARGS__;                                         \
-        }                                                               \
-        if (EINA_UNLIKELY(_tmp_sc->data != ewkViewTypeString)) {        \
-            EINA_LOG_CRIT                                               \
-                ("%p (%s) is not of an ewk_view (need %p, got %p)!",    \
-                ewkView, _tmp_otype ? _tmp_otype : "(null)",                 \
-                ewkViewTypeString, _tmp_sc->data);                     \
-            return __VA_ARGS__;                                         \
-        }                                                               \
+        if (EINA_UNLIKELY(!_tmp_sc)) { \
+            EINA_LOG_CRIT \
+                ("%p (%s) is not a smart object!", ewkView, \
+                _tmp_otype ? _tmp_otype : "(null)"); \
+            return __VA_ARGS__; \
+        } \
+        if (EINA_UNLIKELY(_tmp_sc->data != ewkViewTypeString)) { \
+            EINA_LOG_CRIT \
+                ("%p (%s) is not of an ewk_view (need %p, got %p)!", \
+                ewkView, _tmp_otype ? _tmp_otype : "(null)", \
+                ewkViewTypeString, _tmp_sc->data); \
+            return __VA_ARGS__; \
+        } \
     } while (0)
 #endif
 
-#define EWK_VIEW_SD_GET(ewkView, ptr)                                 \
-    Ewk_View_Smart_Data* ptr = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView))
+#define EWK_VIEW_SD_GET(ewkView, pointer) \
+    Ewk_View_Smart_Data* pointer = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView))
 
-#define EWK_VIEW_SD_GET_OR_RETURN(ewkView, ptr, ...)          \
-    EWK_VIEW_TYPE_CHECK(ewkView, __VA_ARGS__);                \
-    EWK_VIEW_SD_GET(ewkView, ptr);                            \
-    if (!ptr) {                                         \
-        CRITICAL("no smart data for object %p (%s)",    \
-                 ewkView, evas_object_type_get(ewkView));           \
-        return __VA_ARGS__;                             \
+#define EWK_VIEW_SD_GET_OR_RETURN(ewkView, pointer, ...) \
+    EWK_VIEW_TYPE_CHECK(ewkView, __VA_ARGS__); \
+    EWK_VIEW_SD_GET(ewkView, pointer); \
+    if (!pointer) { \
+        CRITICAL("no smart data for object %p (%s)", \
+                 ewkView, evas_object_type_get(ewkView)); \
+        return __VA_ARGS__; \
     }
 
-#define EWK_VIEW_PRIV_GET(smartData, ptr)              \
-    Ewk_View_Private_Data *ptr = smartData->_priv
+#define EWK_VIEW_PRIV_GET(smartData, pointer) \
+    Ewk_View_Private_Data* pointer = smartData->_priv
 
-#define EWK_VIEW_PRIV_GET_OR_RETURN(smartData, ptr, ...)               \
-    EWK_VIEW_PRIV_GET(smartData, ptr);                                 \
-    if (!ptr) {                                                 \
-        CRITICAL("no private data for object %p (%s)",          \
-                 smartData->self, evas_object_type_get(smartData->self));     \
-        return __VA_ARGS__;                                     \
+#define EWK_VIEW_PRIV_GET_OR_RETURN(smartData, pointer, ...) \
+    EWK_VIEW_PRIV_GET(smartData, pointer); \
+    if (!pointer) { \
+        CRITICAL("no private data for object %p (%s)", \
+                 smartData->self, evas_object_type_get(smartData->self)); \
+        return __VA_ARGS__; \
     }
 
 #define EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView, ...) \
@@ -410,12 +410,12 @@ static void _ewk_view_scrolls_flush(Ewk_View_Private_Data* priv)
 static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET(smartData, priv);
-    WebCore::FocusController* fc = priv->page->focusController();
-    DBG("ewkView=%p, fc=%p", smartData->self, fc);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(fc, false);
+    WebCore::FocusController* focusController = priv->page->focusController();
+    DBG("ewkView=%p, focusController=%p", smartData->self, focusController);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(focusController, false);
 
-    fc->setActive(true);
-    fc->setFocused(true);
+    focusController->setActive(true);
+    focusController->setFocused(true);
     return true;
 }
 
@@ -995,7 +995,7 @@ static void _ewk_view_smart_flush(Ewk_View_Smart_Data* smartData)
 
 static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* smartData, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
 {
-    WRN("not supported by engine. smartDAta=%p area=%d,%d+%dx%d, zoom=%f",
+    WRN("not supported by engine. smartData=%p area=%d,%d+%dx%d, zoom=%f",
         smartData, x, y, width, height, zoom);
     return false;
 }
@@ -1791,7 +1791,7 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Co
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_region, false);
-    float cur_zoom;
+    float currentZoom;
     Evas_Coord contentsWidth, contentsHeight;
 
     /* When doing animated zoom it's not possible to call pre-render since it
@@ -1800,15 +1800,15 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Co
     if (priv->animatedZoom.animator)
         return false;
 
-    cur_zoom = ewk_frame_page_zoom_get(smartData->main_frame);
+    currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
 
-    if (cur_zoom < 0.00001)
+    if (currentZoom < 0.00001)
         return false;
     if (!ewk_frame_contents_size_get(smartData->main_frame, &contentsWidth, &contentsHeight))
         return false;
 
-    contentsWidth *= zoom / cur_zoom;
-    contentsHeight *= zoom / cur_zoom;
+    contentsWidth *= zoom / currentZoom;
+    contentsHeight *= zoom / currentZoom;
     DBG("region %d,%d+%dx%d @ %f contents=%dx%d", x, y, width, height, zoom, contentsWidth, contentsHeight);
 
     if (x + width > contentsWidth)
@@ -2958,8 +2958,8 @@ void ewk_view_restore_state(Evas_Object* ewkView, Evas_Object* frame)
  * @param ewkView Current view.
  * @param javascript @c true if the new window is originated from javascript,
  * @c false otherwise
- * @param widthindow_features Features of the new window being created. If it's @c
- * NULL, it will be created a window with default features.
+ * @param window_features Features of the new window being created. If it's @c
+ * 0, it will be created a window with default features.
  *
  * @return New view, in case smart class implements the creation of new windows;
  * else, current view @param ewkView or @c 0 on failure.
@@ -3051,7 +3051,7 @@ void ewk_view_toolbars_visible_set(Evas_Object* ewkView, bool visible)
  */
 void ewk_view_toolbars_visible_get(Evas_Object* ewkView, bool* visible)
 {
-    DBG("%s, o=%p", __func__, ewkView);
+    DBG("%s, ewkView=%p", __func__, ewkView);
     *visible = false;
     evas_object_smart_callback_call(ewkView, "toolbars,visible,get", visible);
 }
@@ -3084,7 +3084,7 @@ void ewk_view_statusbar_visible_set(Evas_Object* ewkView, bool  visible)
  */
 void ewk_view_statusbar_visible_get(Evas_Object* ewkView, bool* visible)
 {
-    DBG("%s, o=%p", __func__, ewkView);
+    DBG("%s, ewkView=%p", __func__, ewkView);
     *visible = false;
     evas_object_smart_callback_call(ewkView, "statusbar,visible,get", visible);
 }
@@ -3133,7 +3133,7 @@ void ewk_view_scrollbars_visible_set(Evas_Object* ewkView, bool visible)
  */
 void ewk_view_scrollbars_visible_get(Evas_Object* ewkView, bool* visible)
 {
-    DBG("%s, o=%p", __func__, ewkView);
+    DBG("%s, ewkView=%p", __func__, ewkView);
     *visible = false;
     evas_object_smart_callback_call(ewkView, "scrollbars,visible,get", visible);
 }
@@ -3166,7 +3166,7 @@ void ewk_view_menubar_visible_set(Evas_Object* ewkView, bool visible)
  */
 void ewk_view_menubar_visible_get(Evas_Object* ewkView, bool* visible)
 {
-    DBG("%s, o=%p", __func__, ewkView);
+    DBG("%s, ewkView=%p", __func__, ewkView);
     *visible = false;
     evas_object_smart_callback_call(ewkView, "menubar,visible,get", visible);
 }
@@ -3594,7 +3594,7 @@ Eina_Bool ewk_view_zoom_range_set(Evas_Object* ewkView, float minScale, float ma
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     if (maxScale < minScale) {
-        WRN("min_scale is larger than max_scale");
+        WRN("minScale is larger than maxScale");
         return false;
     }
 

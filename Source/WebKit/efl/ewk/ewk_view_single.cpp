@@ -9,7 +9,7 @@
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERchANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public License
@@ -216,8 +216,8 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     Evas_Coord ow, oh;
     void* pixels;
     Eina_Rectangle* rect;
-    const Eina_Rectangle* pr;
-    const Eina_Rectangle* pr_end;
+    const Eina_Rectangle* paintRequest;
+    const Eina_Rectangle* paintRequestEnd;
     Eina_Tiler* tiler;
     Eina_Iterator* iterator;
     cairo_status_t status;
@@ -284,10 +284,10 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
 
     ewk_view_layout_if_needed_recursive(smartData->_priv);
 
-    pr = ewk_view_repaints_pop(smartData->_priv, &count);
-    pr_end = pr + count;
-    for (; pr < pr_end; pr++)
-        eina_tiler_rect_add(tiler, pr);
+    paintRequest = ewk_view_repaints_pop(smartData->_priv, &count);
+    paintRequestEnd = paintRequest + count;
+    for (; paintRequest < paintRequestEnd; paintRequest++)
+        eina_tiler_rect_add(tiler, paintRequest);
 
     iterator = eina_tiler_iterator_new(tiler);
     if (!iterator) {

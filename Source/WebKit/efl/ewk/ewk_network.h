@@ -119,7 +119,7 @@ EAPI void             ewk_network_tls_ca_certificates_path_set(const char *path)
  * @return The default @c SoupSession in use, or @c NULL if another network
  *         backend was used.
  */
-EAPI SoupSession*     ewk_network_default_soup_session_get(void);
+EAPI SoupSession     *ewk_network_default_soup_session_get(void);
 
 #ifdef __cplusplus
 }

@@ -255,9 +255,9 @@ Ewk_History_Item* ewk_history_item_new_from_core(WebCore::HistoryItem* core)
 
 Ewk_History_Item* ewk_history_item_new(const char* uri, const char* title)
 {
-    WTF::String u = WTF::String::fromUTF8(uri);
-    WTF::String t = WTF::String::fromUTF8(title);
-    WTF::RefPtr<WebCore::HistoryItem> core = WebCore::HistoryItem::create(u, t, 0);
+    WTF::String historyUri = WTF::String::fromUTF8(uri);
+    WTF::String historyTitle = WTF::String::fromUTF8(title);
+    WTF::RefPtr<WebCore::HistoryItem> core = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
     Ewk_History_Item* item = ewk_history_item_new_from_core(core.release().leakRef());
     return item;
 }
@@ -287,19 +287,19 @@ const char* ewk_history_item_title_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* item1 = const_cast<Ewk_History_Item*>(item);
-    eina_stringshare_replace(&item1->title, core->title().utf8().data());
-    return item1->title;
+    Ewk_History_Item* historyItem = const_cast<Ewk_History_Item*>(item);
+    eina_stringshare_replace(&historyItem->title, core->title().utf8().data());
+    return historyItem->title;
 }
 
 const char* ewk_history_item_title_alternate_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* item1 = const_cast<Ewk_History_Item*>(item);
-    eina_stringshare_replace(&item1->alternateTitle,
+    Ewk_History_Item* historyItem = const_cast<Ewk_History_Item*>(item);
+    eina_stringshare_replace(&historyItem->alternateTitle,
                              core->alternateTitle().utf8().data());
-    return item1->alternateTitle;
+    return historyItem->alternateTitle;
 }
 
 void ewk_history_item_title_alternate_set(Ewk_History_Item* item, const char* title)
@@ -314,19 +314,19 @@ const char* ewk_history_item_uri_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = const_cast<Ewk_History_Item*>((item));
-    eina_stringshare_replace(&i->uri, core->urlString().utf8().data());
-    return i->uri;
+    Ewk_History_Item* historyItem = const_cast<Ewk_History_Item*>((item));
+    eina_stringshare_replace(&historyItem->uri, core->urlString().utf8().data());
+    return historyItem->uri;
 }
 
 const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     // hide the following optimzation from outside
-    Ewk_History_Item* i = const_cast<Ewk_History_Item*>(item);
-    eina_stringshare_replace(&i->originalUri,
+    Ewk_History_Item* historyItem = const_cast<Ewk_History_Item*>(item);
+    eina_stringshare_replace(&historyItem->originalUri,
                              core->originalURLString().utf8().data());
-    return i->originalUri;
+    return historyItem->originalUri;
 }
 
 double ewk_history_item_time_last_visited_get(const Ewk_History_Item* item)

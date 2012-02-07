@@ -95,7 +95,7 @@ EAPI void               ewk_cookies_clear(void);
  *
  * @return an @c Eina_List with all the cookies in the cookie jar
  */
-EAPI Eina_List*         ewk_cookies_get_all(void);
+EAPI Eina_List          *ewk_cookies_get_all(void);
 
 /**
  * Deletes a cookie from the cookie jar.

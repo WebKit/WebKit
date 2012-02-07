@@ -1442,7 +1442,7 @@ EAPI Eina_Bool    ewk_view_setting_enable_plugins_set(Evas_Object *o, Eina_Bool 
  * @return @c EINA_TRUE if the frame flattening feature is enabled,
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object *o);
 
 /**
  * Enables/disables the frame flattening feature.
@@ -1453,7 +1453,7 @@ EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
-EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object *o, Eina_Bool enable);
 
 /**
  * Queries if the scripts can open the new windows.
@@ -2288,7 +2288,7 @@ typedef enum _Ewk_Page_Visibility_State Ewk_Page_Visibility_State;
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure.
  */
-EAPI Eina_Bool ewk_view_visibility_state_set(Evas_Object* o, Ewk_Page_Visibility_State page_visible_state, Eina_Bool initial_state);
+EAPI Eina_Bool ewk_view_visibility_state_set(Evas_Object *o, Ewk_Page_Visibility_State page_visible_state, Eina_Bool initial_state);
 
 /**
  * Gets the visibility state of the page.

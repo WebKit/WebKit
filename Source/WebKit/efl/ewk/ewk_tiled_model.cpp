@@ -345,16 +345,16 @@ void ewk_tile_updates_process(Ewk_Tile* tile, void (*callback)(void* data, Ewk_T
         rect.h = tile->height;
 #ifdef TILE_STATS_ACCOUNT_RENDER_TIME
         struct timeval timev;
-        double render_start;
+        double renderStartTime;
         gettimeofday(&timev, 0);
-        render_startile = (double)timev.tv_sec +
+        renderStartTime = (double)timev.tv_sec +
                        (((double)timev.tv_usec) / 1000000);
 #endif
         callback((void*)data, tile, &rect);
 #ifdef TILE_STATS_ACCOUNT_RENDER_TIME
         gettimeofday(&timev, 0);
         tile->stats.render_time = (double)timev.tv_sec +
-                               (((double)timev.tv_usec) / 1000000) - render_start;
+                               (((double)timev.tv_usec) / 1000000) - renderStartTime;
 #endif
     } else if (tile->updates) {
         Eina_Iterator* itr = eina_tiler_iterator_new(tile->updates);
@@ -520,7 +520,7 @@ void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache* tileUnusedCache)
 }
 
 /**
- * heightold reference to cache.
+ * Hold reference to cache.
  *
  * @return same pointer as taken.
  *
@@ -630,7 +630,7 @@ void ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache* tileUnusedCache)
  * Freeze cache to not do maintenance tasks.
  *
  * Maintenance tasks optimize cache usage, but maybe we know we should
- * heightold on them until we do the last operation, in this case we freeze
+ * hold on them until we do the last operation, in this case we freeze
  * while operating and then thaw when we're done.
  *
  * @see ewk_tile_unused_cache_thaw()
@@ -707,8 +707,8 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
  * because usually we want a lazy operation for better performance.
  *
  * @param tileUnusedCache cache of unused tiles
- * @param t tile to be added to cache.
- * @param tile_free_cb function used to free tiles.
+ * @param tile tile to be added to cache.
+ * @param tileFreeCallback function used to free tiles.
  * @param data context to give back to @a tile_free_cb as first argument.
  *
  * @return #true on success, #false otherwise. If @c tile->visible
@@ -716,7 +716,7 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
  *
  * @see ewk_tile_unused_cache_auto_flush()
  */
-Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile, void (* tileFreeCb)(void* data, Ewk_Tile* tile), const void* data)
+Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile, void (* tileFreeCallback)(void* data, Ewk_Tile* tile), const void* data)
 {
     Ewk_Tile_Unused_Cache_Entry* unusedCacheEntry;
 
@@ -737,7 +737,7 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
 
     unusedCacheEntry->tile = tile;
     unusedCacheEntry->weight = 0; /* calculated just before sort */
-    unusedCacheEntry->tile_free.callback = tileFreeCb;
+    unusedCacheEntry->tile_free.callback = tileFreeCallback;
     unusedCacheEntry->tile_free.data = (void*)data;
 
     tileUnusedCache->entries.count++;
@@ -758,7 +758,7 @@ void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache* tileUnusedCache)
     EINA_LIST_FOREACH(tileUnusedCache->entries.list, list, item) {
         const Ewk_Tile* tile = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item)->tile;
         printf(" [%3lu,%3lu + %dx%d @ %0.3f]%c",
-               tile->col, tile->row, tile->width, tile->height, tile->zoom,
+               tile->column, tile->row, tile->width, tile->height, tile->zoom,
                tile->visible ? '*' : ' ');
 
         if (!(count % 4))

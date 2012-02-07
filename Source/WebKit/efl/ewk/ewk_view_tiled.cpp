@@ -77,12 +77,12 @@ static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* ewkVie
 
 static Evas_Object* _ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data* smartData)
 {
-    Evas_Object* bs = ewk_tiled_backing_store_add(smartData->base.evas);
+    Evas_Object* backingStore = ewk_tiled_backing_store_add(smartData->base.evas);
     ewk_tiled_backing_store_render_cb_set
-        (bs, _ewk_view_tiled_render_cb, smartData->_priv);
+        (backingStore, _ewk_view_tiled_render_cb, smartData->_priv);
     ewk_tiled_backing_store_updates_process_pre_set
-        (bs, _ewk_view_tiled_updates_process_pre, smartData->_priv);
-    return bs;
+        (backingStore, _ewk_view_tiled_updates_process_pre, smartData->_priv);
+    return backingStore;
 }
 
 static void
@@ -97,17 +97,17 @@ _ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* ewkView, void*
 
 static void _ewk_view_tiled_smart_add(Evas_Object* ewkView)
 {
-    Ewk_View_Smart_Data* sd;
+    Ewk_View_Smart_Data* smartData;
 
     _parent_sc.sc.add(ewkView);
 
-    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView));
-    if (!sd)
+    smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView));
+    if (!smartData)
         return;
 
     evas_object_smart_callback_add(
-        sd->main_frame, "contents,size,changed",
-        _ewk_view_tiled_contents_size_changed_cb, sd);
+        smartData->main_frame, "contents,size,changed",
+        _ewk_view_tiled_contents_size_changed_cb, smartData);
 }
 
 static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
@@ -392,14 +392,14 @@ Evas_Object* ewk_view_tiled_add(Evas* canvas)
 
 Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* ewkView)
 {
-    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkView);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, 0);
-    return ewk_tiled_backing_store_tile_unused_cache_get(sd->backing_store);
+    Ewk_View_Smart_Data* smartData = ewk_view_smart_data_get(ewkView);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData, 0);
+    return ewk_tiled_backing_store_tile_unused_cache_get(smartData->backing_store);
 }
 
 void ewk_view_tiled_unused_cache_set(Evas_Object* ewkView, Ewk_Tile_Unused_Cache* cache)
 {
-    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkView);
-    EINA_SAFETY_ON_NULL_RETURN(sd);
-    ewk_tiled_backing_store_tile_unused_cache_set(sd->backing_store, cache);
+    Ewk_View_Smart_Data* smartData = ewk_view_smart_data_get(ewkView);
+    EINA_SAFETY_ON_NULL_RETURN(smartData);
+    ewk_tiled_backing_store_tile_unused_cache_set(smartData->backing_store, cache);
 }

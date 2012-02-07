@@ -1,3 +1,110 @@
+2012-02-06  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Adopt C++ style using camelCase and full variable names.
+        https://bugs.webkit.org/show_bug.cgi?id=76378
+
+        Reviewed by Andreas Kling.
+
+        Modify the code to use camelCase and spell out variable names instead of using abbreviations.
+        Modify the comments which do not match with actual parameters and correct misspelled words.
+        Adopt EFL Coding style in header files.
+        The logic of the code is not changed.
+
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_selection_get):
+        (ewk_frame_feed_focus_in):
+        (EWKPrivate::coreFrame):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_new):
+        (ewk_history_item_title_get):
+        (ewk_history_item_title_alternate_get):
+        (ewk_history_item_uri_get):
+        (ewk_history_item_uri_original_get):
+        * ewk/ewk_network.h:
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_Ewk_Tiled_Backing_Store_Item):
+        (_Ewk_Tiled_Backing_Store_Data):
+        (_ewk_tiled_backing_store_tile_associate):
+        (_ewk_tiled_backing_store_tile_dissociate):
+        (_ewk_tiled_backing_store_pre_render_request_clear):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_smooth_scale_set):
+        (_ewk_tiled_backing_store_view_cols_end_add):
+        (_ewk_tiled_backing_store_view_rows_all_del):
+        (_ewk_tiled_backing_store_render):
+        (_ewk_tiled_backing_store_mem_dbg):
+        (_ewk_tiled_backing_store_sig_usr):
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_smart_del):
+        (_ewk_tiled_backing_store_smart_move):
+        (_ewk_tiled_backing_store_smart_resize):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_view_dbg):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_refill):
+        (_ewk_tiled_backing_store_view_pos_apply):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate_pos):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (_ewk_tiled_backing_store_scroll_full_offset_set_internal):
+        (ewk_tiled_backing_store_scroll_full_offset_set):
+        (ewk_tiled_backing_store_scroll_full_offset_add):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_set):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_flush):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        * ewk/ewk_tiled_backing_store.h:
+        (_Ewk_Tile):
+        * ewk/ewk_tiled_matrix.cpp:
+        (_Ewk_Tile_Matrix):
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_unused_cache_get):
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_put):
+        (ewk_tile_matrix_dbg):
+        (ewk_tile_matrix_freeze):
+        (ewk_tile_matrix_thaw):
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.cpp:
+        (tile_account):
+        (ewk_tile_updates_process):
+        (ewk_tile_unused_cache_tile_put):
+        (ewk_tile_unused_cache_dbg):
+        * ewk/ewk_tiled_model.h:
+        * ewk/ewk_util.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_smart_focus_in):
+        (_ewk_view_smart_pre_render_region):
+        (ewk_view_pre_render_region):
+        (ewk_view_toolbars_visible_get):
+        (ewk_view_statusbar_visible_get):
+        (ewk_view_scrollbars_visible_get):
+        (ewk_view_menubar_visible_get):
+        (ewk_view_zoom_range_set):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_smart_backing_store_add):
+        (_ewk_view_tiled_smart_add):
+        (ewk_view_tiled_unused_cache_get):
+        (ewk_view_tiled_unused_cache_set):
+
 2012-02-05  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Enable WebGL with glx backend

@@ -857,7 +857,7 @@ EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
  * @return A newly allocated string (which must be freed by the caller with @c free())
  *         or @c 0 in case of failure.
  */
-EAPI char* ewk_frame_plain_text_get(const Evas_Object* o);
+EAPI char *ewk_frame_plain_text_get(const Evas_Object *o);
 
 /**
  * Returns whether the frame has displayed mixed content.
