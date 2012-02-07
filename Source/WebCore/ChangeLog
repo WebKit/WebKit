@@ -1,3 +1,20 @@
+2012-02-07  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Compute and set cache capacities using the current CacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=73918
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests. (Not applicable)
+
+        Added OS-specific implementation for retrieving the free disk space.
+
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::getVolumeFreeSizeForPath):
+        (WebCore):
+
 2012-02-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Inspector] Add the Nokia N9 user agent
