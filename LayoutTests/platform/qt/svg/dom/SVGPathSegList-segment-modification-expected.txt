@@ -1,8 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x300
-  RenderSVGRoot {svg} at (10,4) size 275x76
-    RenderSVGPath {path} at (78,38) size 84x42 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 80 40 C 80 40 120 80 160 40"]
-    RenderSVGText {text} at (10,4) size 275x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 275x21
-        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 36 width 275.00: "There should be a smooth curve below"
+  RenderSVGRoot {svg} at (10,4) size 239x126
+    RenderSVGPath {path} at (49,38) size 113x42 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
+    RenderSVGContainer {g} at (49,88) size 113x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+      RenderSVGPath {path} at (49,88) size 113x42 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
+    RenderSVGText {text} at (10,4) size 239x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 239x21
+        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 33 width 239.00: "Both shapes should look identical"

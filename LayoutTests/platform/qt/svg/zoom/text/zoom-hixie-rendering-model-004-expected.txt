@@ -14,3 +14,4 @@ layer at (0,0) size 800x342
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

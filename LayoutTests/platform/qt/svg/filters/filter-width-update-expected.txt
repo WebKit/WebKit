@@ -11,4 +11,3 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (0,134) size 534x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 534x21
         chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 74 width 534.00: "You should see a green, blurred rectangle from 20x20 with width/height 100"
-caret: position 0 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

@@ -44,3 +44,4 @@ layer at (0,0) size 800x378
         text run at (0,353) width 239: "The image of Tux should fill the entire red square."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
