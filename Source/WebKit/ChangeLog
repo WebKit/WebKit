@@ -1,3 +1,17 @@
+2012-02-07  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebCoreSupport DeviceOrientationClientBlackBerry and DeviceMotionClientBlackBerry classes
+        https://bugs.webkit.org/show_bug.cgi?id=77993
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.h: Added.
+        * blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.h: Added.
+
 2012-02-06  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Use WebPagePrivate instead of WebPage in GeolocationControllerClientBlackBerry
