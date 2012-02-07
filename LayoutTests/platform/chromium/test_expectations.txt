@@ -4042,3 +4042,6 @@ BUGWK77736 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-mixed-008.xml = IMAGE+TEXT
 BUGWK77736 MAC WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-rendering-model-004.xhtml = IMAGE+TEXT
+
+BUGWK78038 DEBUG : compositing/iframes/invisible-nested-iframe-show.html = PASS CRASH
+BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS CRASH
