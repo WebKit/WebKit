@@ -1,3 +1,18 @@
+2012-02-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Prevent early test termination with newer Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=77945
+
+        Reviewed by Csaba Osztrogonác.
+
+        QTBUG-24120 tracks a regression in Qt that would make layout tests
+        terminate early. This patch works around it in a Qt 4 + 5 safe manner
+        by disabling the quitOnLastWindowClosed feature, which we don't want/need
+        for DRT anyway.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main): Don't quit on last window closed.
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         Fix some miscellaneous 'make dist' error for WebKitGTK+.

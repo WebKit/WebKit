@@ -149,6 +149,7 @@ int main(int argc, char* argv[])
     QApplication::setStyle(new QWindowsStyle);
 
     QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
 
 #if QT_VERSION <= QT_VERSION_CHECK(5, 0, 0) // FIXME: need a way to port this to Qt5.
 #ifdef Q_WS_X11
