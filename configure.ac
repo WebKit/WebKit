@@ -742,7 +742,7 @@ AC_MSG_RESULT([$enable_file_system])
 
 # check whether to enable HTML5 <style scoped> support
 AC_MSG_CHECKING([whether to enable HTML5 <style scoped> support])
-AC_ARG_ENABLE(file_system,
+AC_ARG_ENABLE(style_scoped,
               AC_HELP_STRING([--enable-style-scoped],
                              [enable support for HTML5 <style scoped> [default=no]]),
               [], [enable_style_scoped="no"])
