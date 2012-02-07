@@ -1,3 +1,23 @@
+2012-02-06  Emil A Eklund  <eae@chromium.org>
+
+        Convert PopupMenuClient::clientPadding over to new layout abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=77798
+
+        Reviewed by Eric Seidel.
+
+        Change PopupMenuClient and all classes inheriting from it to use the new
+        layout types for padding.
+
+        No new tests.
+
+        * platform/PopupMenuClient.h:
+        (PopupMenuClient):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        * rendering/RenderTextControlSingleLine.h:
+
 2012-02-06  Philip Rogers  <pdr@google.com>
 
         Fix color animations by value

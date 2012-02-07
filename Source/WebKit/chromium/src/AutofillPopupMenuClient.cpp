@@ -196,7 +196,7 @@ PopupMenuStyle AutofillPopupMenuClient::menuStyle() const
     return *m_regularStyle;
 }
 
-int AutofillPopupMenuClient::clientPaddingLeft() const
+WebCore::LayoutUnit AutofillPopupMenuClient::clientPaddingLeft() const
 {
     // Bug http://crbug.com/7708 seems to indicate the style can be 0.
     RenderStyle* style = textFieldStyle();
@@ -206,7 +206,7 @@ int AutofillPopupMenuClient::clientPaddingLeft() const
     return RenderTheme::defaultTheme()->popupInternalPaddingLeft(style);
 }
 
-int AutofillPopupMenuClient::clientPaddingRight() const
+WebCore::LayoutUnit AutofillPopupMenuClient::clientPaddingRight() const
 {
     // Bug http://crbug.com/7708 seems to indicate the style can be 0.
     RenderStyle* style = textFieldStyle();

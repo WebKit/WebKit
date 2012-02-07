@@ -91,8 +91,8 @@ private:
     virtual PopupMenuStyle menuStyle() const OVERRIDE;
     virtual int clientInsetLeft() const OVERRIDE;
     virtual int clientInsetRight() const OVERRIDE;
-    virtual int clientPaddingLeft() const OVERRIDE;
-    virtual int clientPaddingRight() const OVERRIDE;
+    virtual LayoutUnit clientPaddingLeft() const OVERRIDE;
+    virtual LayoutUnit clientPaddingRight() const OVERRIDE;
     virtual int listSize() const OVERRIDE;
     virtual int selectedIndex() const OVERRIDE;
     virtual void popupDidHide() OVERRIDE;

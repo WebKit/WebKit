@@ -84,8 +84,8 @@ public:
     virtual WebCore::PopupMenuStyle menuStyle() const;
     virtual int clientInsetLeft() const { return 0; }
     virtual int clientInsetRight() const { return 0; }
-    virtual int clientPaddingLeft() const;
-    virtual int clientPaddingRight() const;
+    virtual WebCore::LayoutUnit clientPaddingLeft() const;
+    virtual WebCore::LayoutUnit clientPaddingRight() const;
     virtual int listSize() const { return getSuggestionsCount(); }
     virtual int selectedIndex() const { return m_selectedIndex; }
     virtual void popupDidHide();

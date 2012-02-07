@@ -100,8 +100,8 @@ public:
     virtual PopupMenuStyle menuStyle() const { return itemStyle(0); }
     virtual int clientInsetLeft() const { return 0; }
     virtual int clientInsetRight() const { return 0; }
-    virtual int clientPaddingLeft() const { return 0; }
-    virtual int clientPaddingRight() const { return 0; }
+    virtual LayoutUnit clientPaddingLeft() const { return 0; }
+    virtual LayoutUnit clientPaddingRight() const { return 0; }
     virtual int listSize() const { return 10; }
     virtual int selectedIndex() const { return m_selectIndex; }
     virtual void popupDidHide() { }
