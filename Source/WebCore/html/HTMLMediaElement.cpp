@@ -315,6 +315,11 @@ bool HTMLMediaElement::supportsFocus() const
     return controls() ||  HTMLElement::supportsFocus();
 }
 
+bool HTMLMediaElement::isMouseFocusable() const
+{
+    return false;
+}
+
 void HTMLMediaElement::attributeChanged(Attribute* attr)
 {
     HTMLElement::attributeChanged(attr);

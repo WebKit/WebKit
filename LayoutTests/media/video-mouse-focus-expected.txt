@@ -1,0 +1,5 @@
+This tests that a mouse click event will not cause a media element to gain focus.
+
+EXPECTED (document.activeElement.id != 'video') OK
+END OF TEST
+

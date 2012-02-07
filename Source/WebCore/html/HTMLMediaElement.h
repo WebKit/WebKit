@@ -336,6 +336,7 @@ private:
     void createMediaPlayer();
 
     virtual bool supportsFocus() const;
+    virtual bool isMouseFocusable() const;
     virtual void attributeChanged(Attribute*) OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

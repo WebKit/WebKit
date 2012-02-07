@@ -1,3 +1,19 @@
+2012-02-03  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r104303): Clicking inline video controls gives the video a focus ring
+        https://bugs.webkit.org/show_bug.cgi?id=77288
+
+        Reviewed by Darin Adler.
+
+        Test: media/video-mouse-focus.html
+
+        Do not allow media elements to be focused by mouse click by overriding isMouseFocusable
+        and returning false.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isMouseFocusable):
+        * html/HTMLMediaElement.h:
+
 2012-02-06  Anders Carlsson  <andersca@apple.com>
 
         Overlay scrollbars flash when window is simply activated
