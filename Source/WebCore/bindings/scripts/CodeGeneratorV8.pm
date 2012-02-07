@@ -505,17 +505,17 @@ sub GetInternalFields
 {
     my $dataNode = shift;
     my $name = $dataNode->name;
-    
+
     my @customInternalFields = ();
- 
-    # We can't ask whether a parent type has a given extendedAttribute, so special-case AbstractWorker and WorkerContext to include all sub-types.
+    # We can't ask whether a parent type has a given extendedAttribute,
+    # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
     # FIXME: SVGElementInstance should probably have the EventTarget extended attribute, but doesn't.
-    if (!IsNodeSubType($dataNode) &&
-        ($dataNode->extendedAttributes->{"EventTarget"} ||
-         IsSubType($dataNode, "AbstractWorker") ||
-         IsSubType($dataNode, "WorkerContext") ||
-         $name eq "SVGElementInstance")) {
+    if (!IsNodeSubType($dataNode)
+        && ($dataNode->extendedAttributes->{"EventTarget"}
+            || $dataNode->extendedAttributes->{"IsWorkerContext"}
+            || IsSubType($dataNode, "AbstractWorker")
+            || $name eq "SVGElementInstance")) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
@@ -735,6 +735,7 @@ END
 
 sub GenerateConstructorGetter
 {
+    my $dataNode = shift;
     my $implClassName = shift;
 
     push(@implContentDecls, <<END);
@@ -753,7 +754,7 @@ END
     // context of the DOMWindow and not in the context of the caller.
     return V8DOMWrapper::getConstructor(type, V8DOMWindow::toNative(info.Holder()));
 END
-    } elsif ($implClassName eq "DedicatedWorkerContext" or $implClassName eq "WorkerContext" or $implClassName eq "SharedWorkerContext") {
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContentDecls, <<END);
     return V8DOMWrapper::getConstructor(type, V8WorkerContext::toNative(info.Holder()));
 END
@@ -2310,7 +2311,7 @@ sub GenerateImplementation
     }
 
     if ($hasConstructors) {
-        GenerateConstructorGetter($implClassName);
+        GenerateConstructorGetter($dataNode, $implClassName);
     }
 
     my $indexer;
