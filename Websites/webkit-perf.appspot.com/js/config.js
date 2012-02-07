@@ -15,9 +15,11 @@ var SERVER = location.protocol.indexOf('http') == 0 ? location.protocol + '//' +
 // server for static dashboard images
 var IMAGE_SERVER = SERVER;
 
-var LIGHT_COLORS = $.map(COLORS, function(color) {
-    return $.color.parse(color).add('a', -.5).toString();
-});
+if ($.color) {
+    var LIGHT_COLORS = $.map(COLORS, function(color) {
+        return $.color.parse(color).add('a', -.5).toString();
+    });
+}
 
 var PLOT_OPTIONS = {
     xaxis: { mode: 'time' },

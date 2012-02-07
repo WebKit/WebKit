@@ -85,9 +85,14 @@ class RunsHandler(webapp2.RequestHandler):
             for result in results:
                 builderId = build.builder.key().id()
                 posixTimestamp = mktime(build.timestamp.timetuple())
+                statistics = None
+                if result.valueStdev != None and result.valueMin != None and result.valueMax != None:
+                    statistics = {'stdev': result.valueStdev, 'min': result.valueMin, 'max': result.valueMax}
                 test_runs.append([result.key().id(),
                     [build.key().id(), build.buildNumber, build.revision],
-                    posixTimestamp, result.value, 0, [], builderId])
+                    posixTimestamp, result.value, 0,  # runNumber
+                    [],  # annotations
+                    builderId, statistics])
                 # FIXME: Calculate the average; in practice, we wouldn't have more than one value for a given revision
                 averages[build.revision] = result.value
                 values.append(result.value)

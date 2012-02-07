@@ -1,3 +1,19 @@
+2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic should show min/max/stdev on graphs
+        https://bugs.webkit.org/show_bug.cgi?id=77702
+
+        Reviewed by Andreas Kling.
+
+        Include min/max/stdev in test runs when available to be shown on the perf-o-matic.
+
+        Also merge a change to config.js and increment the version number by 1 (unreviewed).
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+        * Websites/webkit-perf.appspot.com/js/config.js:
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.get):
+
 2012-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.7.5 release
