@@ -3947,7 +3947,6 @@ BUGWK76572 : http/tests/download = FAIL
 
 BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
-BUGABARTH : media/audio-garbage-collect.html = PASS TIMEOUT
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77047 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS TIMEOUT
@@ -3965,7 +3964,6 @@ BUGWK77315 WIN MAC : fast/events/touch/touch-gesture-scroll.html = PASS TEXT
 BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 
 BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT
-BUGWK77412 LEOPARD : media/media-blocked-by-beforeload.html = TEXT
 BUGWK77416 LINUX : inspector/timeline/timeline-receive-response-event.html = PASS TEXT
 
 // Started failing at WK r106383 or r106384.
