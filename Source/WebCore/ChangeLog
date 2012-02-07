@@ -1,3 +1,13 @@
+2012-02-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Inspector] Add the Nokia N9 user agent
+        https://bugs.webkit.org/show_bug.cgi?id=77949
+
+        Reviewed by Simon Hausmann.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.get const):
+
 2012-02-07  Alexander Pavlov  <apavlov@chromium.org>
 
         [CRASH] bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& event) references a NULL pointer
