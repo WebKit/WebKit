@@ -1,3 +1,15 @@
+2012-02-07  Hans Wennborg  <hans@chromium.org>
+
+        Chromium: remove WebSpeechInputResult::set
+        https://bugs.webkit.org/show_bug.cgi?id=77977
+
+        Reviewed by Darin Fisher.
+
+        It was renamed to assign() in r106475.
+
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        (makeRectResult):
+
 2012-02-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Give emulated touch-point a radius

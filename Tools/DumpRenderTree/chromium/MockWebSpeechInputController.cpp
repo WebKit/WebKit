@@ -124,7 +124,7 @@ static WebSpeechInputResultArray makeRectResult(const WebRect& rect)
     sb.append(String::number(rect.height));
 
     WebSpeechInputResult res;
-    res.set(WebString(sb.characters(), sb.length()), 1.0);
+    res.assign(WebString(sb.characters(), sb.length()), 1.0);
 
     WebSpeechInputResultArray results;
     results.assign(&res, 1);

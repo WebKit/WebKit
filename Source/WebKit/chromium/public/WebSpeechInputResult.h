@@ -45,9 +45,6 @@ public:
     WebSpeechInputResult(const WebSpeechInputResult& other) { assign(other); }
     ~WebSpeechInputResult() { reset(); }
 
-    // FIXME: Remove this when Chromium has been updated.
-    void set(const WebString& utterance, double confidence) { assign(utterance, confidence); }
-
     WEBKIT_EXPORT void assign(const WebString& utterance, double confidence);
     WEBKIT_EXPORT void assign(const WebSpeechInputResult& other);
     WEBKIT_EXPORT void reset();
