@@ -1,3 +1,16 @@
+2012-02-06  Greg Simon  <gregsimon@chromium.org>
+
+        postMessage leaks MemoryEvent object
+        https://bugs.webkit.org/show_bug.cgi?id=77893
+
+        Reviewed by Adam Barth.
+
+        Changed from PassRefPtr().leakRef() to RefPtr.get() when 
+        calling into FrameLoaderClient to stop +1 extra ref.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+
 2012-02-06  Ehsan Akhgari  <ehsan.akhgari@gmail.com>
 
         WebGL conformance test misc/functions-returning-strings.html fails
