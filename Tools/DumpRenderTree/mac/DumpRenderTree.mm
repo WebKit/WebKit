@@ -1146,10 +1146,8 @@ void dump()
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             resultString = HardAutorelease(createXMLStringFromWebArchiveData((CFDataRef)[webArchive data]));
             resultMimeType = @"application/x-webarchive";
-        } else {
-            sizeWebViewForCurrentTest();
+        } else
             resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting:gLayoutTestController->isPrinting()];
-        }
 
         if (resultString && !resultData)
             resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
@@ -1303,6 +1301,7 @@ static void runTest(const string& testPathOrURL)
     releaseAndZero(&draggingInfo);
     done = NO;
 
+    sizeWebViewForCurrentTest();
     gLayoutTestController->setIconDatabaseEnabled(false);
 
     if (disallowedURLs)

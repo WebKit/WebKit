@@ -1,3 +1,21 @@
+2012-02-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        layoutTestController.display() is flaky for SVG tests
+        https://bugs.webkit.org/show_bug.cgi?id=78021
+
+        Reviewed by Dan Bernstein.
+
+        Fix race condition in repaint rect tracking. When running a test using the repaint.js
+        harness right after a test starting with "svg/W3C-SVG-1.1" the repaint test will fail,
+        the gray overlay isn't contained in the pixel dump anymore. This is because of a specific
+        hack that forces 480x360 instead of 800x600 pixel test dumps for any test starting with
+        svg/W3C-SVG-1.1. The resizing of the web view was done when dumping the render tree, after
+        the repaint test already run, thus invalidating the previously tracked repaint rects.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        (runTest):
+
 2012-02-07  Hans Wennborg  <hans@chromium.org>
 
         Chromium: remove WebSpeechInputResult::set
