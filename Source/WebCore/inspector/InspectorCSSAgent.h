@@ -98,11 +98,6 @@ public:
     void didProcessRule();
 
 private:
-    class StyleSheetAction;
-    class SetStyleSheetTextAction;
-    class SetPropertyTextAction;
-    class TogglePropertyAction;
-
     InspectorCSSAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*);
 
     typedef HashMap<String, RefPtr<InspectorStyleSheet> > IdToInspectorStyleSheet;

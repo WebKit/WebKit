@@ -167,16 +167,6 @@ WebInspector.ElementsPanel.prototype = {
 
         this.updateBreadcrumb(false);
 
-        this._updateSidebars();
-
-        if (selectedNode) {
-            ConsoleAgent.addInspectedNode(selectedNode.id);
-            this._lastValidSelectedNode = selectedNode;
-        }
-    },
-
-    _updateSidebars: function()
-    {
         for (var pane in this.sidebarPanes)
            this.sidebarPanes[pane].needsUpdate = true;
 
@@ -184,6 +174,11 @@ WebInspector.ElementsPanel.prototype = {
         this.updateMetrics();
         this.updateProperties();
         this.updateEventListeners();
+
+        if (selectedNode) {
+            ConsoleAgent.addInspectedNode(selectedNode.id);
+            this._lastValidSelectedNode = selectedNode;
+        }
     },
 
     _reset: function()
@@ -912,7 +907,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         // Cmd/Control + Shift + C should be a shortcut to clicking the Node Search Button.
         // This shortcut matches Firebug.
-        if (event.keyIdentifier === "U+0043") { // C key
+        if (event.keyIdentifier === "U+0043") {     // C key
             if (WebInspector.isMac())
                 var isNodeSearchKey = event.metaKey && !event.ctrlKey && !event.altKey && event.shiftKey;
             else
@@ -923,10 +918,7 @@ WebInspector.ElementsPanel.prototype = {
                 event.handled = true;
                 return;
             }
-            return;
         }
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+005A")  // Z key
-            DOMAgent.undo(this._updateSidebars.bind(this));
     },
 
     handleCopyEvent: function(event)

@@ -95,243 +95,6 @@
 
 namespace WebCore {
 
-namespace {
-
-class DOMAction : public InspectorHistory::Action {
-public:
-    DOMAction(const String& name) : InspectorHistory::Action(name) { }
-
-    virtual bool perform(ErrorString* errorString)
-    {
-        ExceptionCode ec = 0;
-        bool result = perform(ec);
-        if (ec) {
-            ExceptionCodeDescription description(ec);
-            *errorString = description.name;
-        }
-        return result && !ec;
-    }
-
-    virtual bool undo(ErrorString* errorString)
-    {
-        ExceptionCode ec = 0;
-        bool result = undo(ec);
-        if (ec) {
-            ExceptionCodeDescription description(ec);
-            *errorString = description.name;
-        }
-        return result && !ec;
-    }
-
-    virtual bool perform(ExceptionCode&) = 0;
-
-    virtual bool undo(ExceptionCode&) = 0;
-
-private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_node;
-    RefPtr<Node> m_anchorNode;
-};
-
-class RemoveChildAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(RemoveChildAction);
-public:
-    RemoveChildAction(Node* parentNode, Node* node)
-        : DOMAction("RemoveChild")
-        , m_parentNode(parentNode)
-        , m_node(node)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        m_anchorNode = m_node->nextSibling();
-        return m_parentNode->removeChild(m_node.get(), ec);
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
-    }
-
-private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_node;
-    RefPtr<Node> m_anchorNode;
-};
-
-class InsertBeforeAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(InsertBeforeAction);
-public:
-    InsertBeforeAction(Node* parentNode, Node* node, Node* anchorNode)
-        : DOMAction("InsertBefore")
-        , m_parentNode(parentNode)
-        , m_node(node)
-        , m_anchorNode(anchorNode)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        if (m_node->parentNode()) {
-            m_removeChildAction = adoptPtr(new RemoveChildAction(m_node->parentNode(), m_node.get()));
-            if (!m_removeChildAction->perform(ec))
-                return false;
-        }
-        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        if (m_removeChildAction)
-            return m_removeChildAction->undo(ec);
-
-        return m_parentNode->removeChild(m_node.get(), ec);
-    }
-
-private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_node;
-    RefPtr<Node> m_anchorNode;
-    OwnPtr<RemoveChildAction> m_removeChildAction;
-};
-
-class RemoveAttributeAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(RemoveAttributeAction);
-public:
-    RemoveAttributeAction(Element* element, const String& name)
-        : DOMAction("RemoveAttribute")
-        , m_element(element)
-        , m_name(name)
-    {
-    }
-
-    virtual bool perform(ExceptionCode&)
-    {
-        m_value = m_element->getAttribute(m_name);
-        m_element->removeAttribute(m_name);
-        return true;
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        m_element->setAttribute(m_name, m_value, ec);
-        return true;
-    }
-
-private:
-    RefPtr<Element> m_element;
-    String m_name;
-    String m_value;
-};
-
-class SetAttributeAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(SetAttributeAction);
-public:
-    SetAttributeAction(Element* element, const String& name, const String& value)
-        : DOMAction("SetAttribute")
-        , m_element(element)
-        , m_name(name)
-        , m_value(value)
-        , m_hadAttribute(false)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        m_hadAttribute = m_element->hasAttribute(m_name);
-        if (m_hadAttribute)
-            m_oldValue = m_element->getAttribute(m_name);
-        m_element->setAttribute(m_name, m_value, ec);
-        return !ec;
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        if (m_hadAttribute)
-            m_element->setAttribute(m_name, m_oldValue, ec);
-        else
-            m_element->removeAttribute(m_name);
-        return true;
-    }
-
-private:
-    RefPtr<Element> m_element;
-    String m_name;
-    String m_value;
-    bool m_hadAttribute;
-    String m_oldValue;
-};
-
-class SetOuterHTMLAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(SetOuterHTMLAction);
-public:
-    SetOuterHTMLAction(Node* node, const String& html)
-        : DOMAction("SetOuterHTML")
-        , m_node(node)
-        , m_html(html)
-        , m_newNode(0)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        m_oldHTML = createMarkup(m_node.get());
-        DOMEditor domEditor(m_node->ownerDocument());
-        m_newNode = domEditor.patchNode(m_node.get(), m_html, ec);
-        return !ec;
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        DOMEditor domEditor(m_node->ownerDocument());
-        domEditor.patchNode(m_node.get(), m_oldHTML, ec);
-        return !ec;
-    }
-
-    Node* newNode()
-    {
-        return m_newNode;
-    }
-
-private:
-    RefPtr<Node> m_node;
-    String m_html;
-    String m_oldHTML;
-    Node* m_newNode;
-};
-
-class ReplaceWholeTextAction : public DOMAction {
-    WTF_MAKE_NONCOPYABLE(ReplaceWholeTextAction);
-public:
-    ReplaceWholeTextAction(Text* textNode, const String& text)
-        : DOMAction("ReplaceWholeText")
-        , m_textNode(textNode)
-        , m_text(text)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        m_oldText = m_textNode->wholeText();
-        m_textNode->replaceWholeText(m_text, ec);
-        return true;
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        m_textNode->replaceWholeText(m_oldText, ec);
-        return true;
-    }
-
-private:
-    RefPtr<Text> m_textNode;
-    String m_text;
-    String m_oldText;
-};
-
-}
-
 namespace DOMAgentState {
 static const char documentRequested[] = "documentRequested";
 
@@ -423,7 +186,6 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, I
     , m_domListener(0)
     , m_lastNodeId(1)
     , m_searchingForNode(false)
-    , m_history(adoptPtr(new InspectorHistory()))
 {
 }
 
@@ -491,7 +253,7 @@ Node* InspectorDOMAgent::highlightedNode() const
 
 void InspectorDOMAgent::reset()
 {
-    m_history->reset();
+    ErrorString error;
     m_searchResults.clear();
     discardBindings();
     if (m_revalidateStyleAttrTask)
@@ -756,8 +518,10 @@ void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementI
     if (!element)
         return;
 
-    m_history->perform(adoptPtr(new SetAttributeAction(element, name, value)), errorString);
-    m_history->markUndoableState();
+    ExceptionCode ec = 0;
+    element->setAttribute(name, value, ec);
+    if (ec)
+        *errorString = "Internal error: could not set attribute value";
 }
 
 void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elementId, const String& text, const String* const name)
@@ -787,7 +551,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
 
     Element* childElement = toElement(child);
     if (!childElement->hasAttributes() && name) {
-        m_history->perform(adoptPtr(new RemoveAttributeAction(element, *name)), errorString);
+        element->removeAttribute(*name);
         return;
     }
 
@@ -797,24 +561,20 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         // Add attribute pair
         const Attribute* attribute = childElement->attributeItem(i);
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
-        if (!m_history->perform(adoptPtr(new SetAttributeAction(element, attribute->name().toString(), attribute->value())), errorString))
-            return;
+        element->setAttribute(attribute->name(), attribute->value());
     }
 
-    if (!foundOriginalAttribute && name && !name->stripWhiteSpace().isEmpty())
-        m_history->perform(adoptPtr(new RemoveAttributeAction(element, *name)), errorString);
-
-    m_history->markUndoableState();
+    if (!foundOriginalAttribute && name) {
+        element->removeAttribute(*name);
+        return;
+    }
 }
 
 void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId, const String& name)
 {
     Element* element = assertElement(errorString, elementId);
-    if (!element)
-        return;
-
-    m_history->perform(adoptPtr(new RemoveAttributeAction(element, name)), errorString);
-    m_history->markUndoableState();
+    if (element)
+        element->removeAttribute(name);
 }
 
 void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
@@ -829,11 +589,13 @@ void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
         return;
     }
 
-    m_history->perform(adoptPtr(new RemoveChildAction(parentNode, node)), errorString);
-    m_history->markUndoableState();
+    ExceptionCode ec = 0;
+    parentNode->removeChild(node, ec);
+    if (ec)
+        *errorString = "Could not remove node due to DOM exception";
 }
 
-void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const String& tagName, int* newId)
+void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagName, int* newId)
 {
     *newId = 0;
 
@@ -851,18 +613,16 @@ void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const 
 
     // Copy over the original node's children.
     Node* child;
-    while ((child = oldNode->firstChild())) {
-        if (!m_history->perform(adoptPtr(new InsertBeforeAction(newElem.get(), child, 0)), errorString))
-            return;
-    }
+    while ((child = oldNode->firstChild()))
+        newElem->appendChild(child, ec);
 
     // Replace the old node with the new node
     ContainerNode* parent = oldNode->parentNode();
-    if (!m_history->perform(adoptPtr(new InsertBeforeAction(parent, newElem.get(), oldNode->nextSibling())), errorString))
+    parent->insertBefore(newElem, oldNode->nextSibling(), ec);
+    parent->removeChild(oldNode, ec);
+
+    if (ec)
         return;
-    if (!m_history->perform(adoptPtr(new RemoveChildAction(parent, oldNode)), errorString))
-        return;
-    m_history->markUndoableState();
 
     *newId = pushNodePathToFrontend(newElem.get());
     if (m_childrenRequested.contains(nodeId))
@@ -898,14 +658,13 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
 
     DOMEditor domEditor(document);
 
-    OwnPtr<SetOuterHTMLAction> action = adoptPtr(new SetOuterHTMLAction(node, outerHTML));
-    SetOuterHTMLAction* rawAction = action.get();
-    Node* newNode = 0;
-    if (!m_history->perform(action.release(), errorString))
+    ExceptionCode ec = 0;
+    Node* newNode = domEditor.patchNode(node, outerHTML, ec);
+    if (ec) {
+        ExceptionCodeDescription description(ec);
+        *errorString = description.name;
         return;
-    m_history->markUndoableState();
-
-    newNode = rawAction->newNode();
+    }
 
     if (!newNode) {
         // The only child node has been deleted.
@@ -930,7 +689,11 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    m_history->perform(adoptPtr(new ReplaceWholeTextAction(static_cast<Text*>(node), value)), errorString);
+    Text* textNode = static_cast<Text*>(node);
+    ExceptionCode ec = 0;
+    textNode->replaceWholeText(value, ec);
+    if (ec)
+        *errorString = "DOM Error while setting the node value";
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray)
@@ -1267,31 +1030,33 @@ void InspectorDOMAgent::hideHighlight(ErrorString*)
     m_client->hideHighlight();
 }
 
-void InspectorDOMAgent::moveTo(ErrorString* errorString, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
+void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
 {
-    Node* node = assertNode(errorString, nodeId);
+    Node* node = assertNode(error, nodeId);
     if (!node)
         return;
 
-    Element* targetElement = assertElement(errorString, targetElementId);
+    Element* targetElement = assertElement(error, targetElementId);
     if (!targetElement)
         return;
 
     Node* anchorNode = 0;
     if (anchorNodeId && *anchorNodeId) {
-        anchorNode = assertNode(errorString, *anchorNodeId);
+        anchorNode = assertNode(error, *anchorNodeId);
         if (!anchorNode)
             return;
         if (anchorNode->parentNode() != targetElement) {
-            *errorString = "Anchor node must be child of the target element";
+            *error = "Anchor node must be child of the target element";
             return;
         }
     }
 
-    if (!m_history->perform(adoptPtr(new InsertBeforeAction(targetElement, node, anchorNode)), errorString))
+    ExceptionCode ec = 0;
+    bool success = targetElement->insertBefore(node, anchorNode, ec);
+    if (ec || !success) {
+        *error = "Could not drop node";
         return;
-    m_history->markUndoableState();
-
+    }
     *newNodeId = pushNodePathToFrontend(node);
 }
 
@@ -1306,16 +1071,6 @@ void InspectorDOMAgent::setTouchEmulationEnabled(ErrorString* error, bool enable
     *error = "Touch events emulation not supported";
     UNUSED_PARAM(enabled);
 #endif
-}
-
-void InspectorDOMAgent::undo(ErrorString* errorString)
-{
-    m_history->undo(errorString);
-}
-
-void InspectorDOMAgent::markUndoableState(ErrorString*)
-{
-    m_history->markUndoableState();
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>& result)

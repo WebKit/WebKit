@@ -1,3 +1,66 @@
+2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106932.
+        http://trac.webkit.org/changeset/106932
+        https://bugs.webkit.org/show_bug.cgi?id=77988
+
+        Breaks Mac bots (Requested by pfeldman on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/Inspector.json:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStyleSheetText):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::setAttributeValue):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::moveTo):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorHistory.cpp: Removed.
+        * inspector/InspectorHistory.h: Removed.
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::styleText):
+        (WebCore::InspectorStyleSheet::addRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::setPropertyText):
+        (WebCore::InspectorStyleSheet::text):
+        (WebCore::InspectorStyleSheetForInlineStyle::text):
+        * inspector/InspectorStyleSheet.h:
+        (InspectorStyle):
+        (InspectorStyleSheet):
+        (InspectorStyleSheetForInlineStyle):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSProperty.prototype.setText):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._selectedNodeChanged):
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertyTreeElement):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-02-07  Priit Laes  <plaes@plaes.org>
 
         [GTK] Build failure with --enable-web-audio

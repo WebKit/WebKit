@@ -42,7 +42,6 @@
 #include "InspectorFileSystemAgent.cpp"
 #include "InspectorFrontendClientLocal.cpp"
 #include "InspectorFrontendHost.cpp"
-#include "InspectorHistory.cpp"
 #include "InspectorIndexedDBAgent.cpp"
 #include "InspectorInstrumentation.cpp"
 #include "InspectorMemoryAgent.cpp"

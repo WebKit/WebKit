@@ -71658,30 +71658,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorHistory.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorHistory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorIndexedDBAgent.cpp"
 				>
 				<FileConfiguration

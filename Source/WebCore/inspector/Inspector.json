@@ -1516,16 +1516,6 @@
                 ],
                 "description": "Toggles mouse event-based touch event emulation.",
                 "hidden": true
-            },
-            {
-                "name": "undo",
-                "description": "Undoes the last performed action.",
-                "hidden": true
-            },
-            {
-                "name": "markUndoableState",
-                "description": "Marks last undoable state.",
-                "hidden": true
             }
         ],
         "events": [
