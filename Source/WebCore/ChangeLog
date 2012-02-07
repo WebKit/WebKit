@@ -1,3 +1,12 @@
+2012-02-07  Hayato Ito  <hayato@chromium.org>
+
+        Fix build on Mac with '--shadow-dom'.
+        https://bugs.webkit.org/show_bug.cgi?id=77940
+
+        Reviewed by Hajime Morita.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-02-06  Shinya Kawanaka  <shinyak@google.com>
 
         Stop calling Element::ensureShadowRoot() if it is used in construction phase.
