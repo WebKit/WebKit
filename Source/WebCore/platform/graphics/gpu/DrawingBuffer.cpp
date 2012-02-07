@@ -49,6 +49,7 @@ static int s_maximumResourceUsePixels = 16 * 1024 * 1024;
 static int s_maximumResourceUsePixels = 0;
 #endif
 static int s_currentResourceUsePixels = 0;
+static const float s_resourceAdjustedRatio = 0.5;
 
 PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size, bool separateBackingTexture)
 {
@@ -236,19 +237,28 @@ bool DrawingBuffer::reset(const IntSize& newSize)
     }
 
     int pixelDelta = newSize.width() * newSize.height();
-    if (!m_size.isEmpty())
-        pixelDelta -= m_size.width() * m_size.height();
-
-    if (s_maximumResourceUsePixels && (s_currentResourceUsePixels + pixelDelta) > s_maximumResourceUsePixels) {
-        clear();
-        return false;
+    int oldSize = 0;
+    if (!m_size.isEmpty()) {
+        oldSize = m_size.width() * m_size.height();
+        pixelDelta -= oldSize;
     }
-    s_currentResourceUsePixels += pixelDelta;
+
+    IntSize adjustedSize = newSize;
+    if (s_maximumResourceUsePixels) {
+        while ((s_currentResourceUsePixels + pixelDelta) > s_maximumResourceUsePixels) {
+            adjustedSize.scale(s_resourceAdjustedRatio);
+            if (adjustedSize.isEmpty()) {
+                clear();
+                return false;
+            }
+            pixelDelta = adjustedSize.width() * adjustedSize.height();
+            pixelDelta -= oldSize;
+        }
+     }
 
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
 
-    if (newSize != m_size) {
-        m_size = newSize;
+    if (adjustedSize != m_size) {
 
         unsigned internalColorFormat, colorFormat, internalRenderbufferFormat;
         if (attributes.alpha) {
@@ -262,46 +272,56 @@ bool DrawingBuffer::reset(const IntSize& newSize)
         }
 
 
-        // resize multisample FBO
-        if (multisample()) {
-            int maxSampleCount = 0;
-            
-            m_context->getIntegerv(Extensions3D::MAX_SAMPLES, &maxSampleCount);
-            int sampleCount = std::min(4, maxSampleCount);
+        do {
+            m_size = adjustedSize;
+            // resize multisample FBO
+            if (multisample()) {
+                int maxSampleCount = 0;
 
-            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+                m_context->getIntegerv(Extensions3D::MAX_SAMPLES, &maxSampleCount);
+                int sampleCount = std::min(4, maxSampleCount);
 
-            m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
-            m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalRenderbufferFormat, m_size.width(), m_size.height());
-            m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
-            resizeDepthStencil(sampleCount);
-            if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-                // Cleanup
-                clear();
-                return false;
+                m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+
+                m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
+                m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalRenderbufferFormat, m_size.width(), m_size.height());
+                m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
+                resizeDepthStencil(sampleCount);
+                if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+                    adjustedSize.scale(s_resourceAdjustedRatio);
+                    continue;
+                }
             }
-        }
 
-        // resize regular FBO
-        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+            // resize regular FBO
+            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
 
-        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
-        m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
-
-        m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
-
-        // resize the backing color buffer
-        if (m_separateBackingTexture) {
-            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_backingColorBuffer);
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
             m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
-        }
 
-        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+            m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
 
-        if (!multisample())
-            resizeDepthStencil(0);
-        if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-            // Cleanup
+            // resize the backing color buffer
+            if (m_separateBackingTexture) {
+                m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_backingColorBuffer);
+                m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
+            }
+
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+
+            if (!multisample())
+                resizeDepthStencil(0);
+            if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+                break;
+            adjustedSize.scale(s_resourceAdjustedRatio);
+
+        } while (!adjustedSize.isEmpty());
+
+        pixelDelta = m_size.width() * m_size.height();
+        pixelDelta -= oldSize;
+        s_currentResourceUsePixels += pixelDelta;
+
+        if (!newSize.isEmpty() && adjustedSize.isEmpty()) {
             clear();
             return false;
         }

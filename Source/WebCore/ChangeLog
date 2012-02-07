@@ -1,3 +1,17 @@
+2012-02-06  Yongsheng Zhu  <yongsheng.zhu@intel.com>
+
+        WebGL must allocate smaller drawing buffer when the allocation fails. 
+        https://bugs.webkit.org/show_bug.cgi?id=76654
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/drawingbuffer-test.html
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore):
+        (WebCore::DrawingBuffer::create):
+        (WebCore::DrawingBuffer::reset):
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
