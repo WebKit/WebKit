@@ -1,3 +1,15 @@
+2012-02-07  Matthew Delaney  <mdelaney@apple.com>
+
+        Remove redundant checks in CanvasRenderingContext2D.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=78000
+
+        Reviewed by Dan Bernstein.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadowColor):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2012-02-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in ContainerNode functions due to mutation events.

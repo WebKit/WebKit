@@ -496,7 +496,6 @@ void CanvasRenderingContext2D::setShadowColor(const String& color)
 {
     if (!parseColorOrCurrentColor(state().m_shadowColor, color, canvas()))
         return;
-
     applyShadow();
 }
 
@@ -1145,11 +1144,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     state().m_shadowOffset = FloatSize(width, height);
     state().m_shadowBlur = blur;
     state().m_shadowColor = makeRGBA32FromFloats(grayLevel, grayLevel, grayLevel, 1.0f);
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
     applyShadow();
 }
 
@@ -1163,11 +1157,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     state().m_shadowColor = colorWithOverrideAlpha(rgba, alpha);
     state().m_shadowOffset = FloatSize(width, height);
     state().m_shadowBlur = blur;
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
     applyShadow();
 }
 
@@ -1176,11 +1165,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     state().m_shadowOffset = FloatSize(width, height);
     state().m_shadowBlur = blur;
     state().m_shadowColor = makeRGBA32FromFloats(grayLevel, grayLevel, grayLevel, alpha);
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
     applyShadow();
 }
 
@@ -1189,11 +1173,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     state().m_shadowOffset = FloatSize(width, height);
     state().m_shadowBlur = blur;
     state().m_shadowColor = makeRGBA32FromFloats(r, g, b, a);
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
     applyShadow();
 }
 
@@ -1294,10 +1273,6 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     float sx, float sy, float sw, float sh,
     float dx, float dy, float dw, float dh, ExceptionCode& ec)
 {
-    if (!image) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
     drawImage(image, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh), ec);
 }
 
@@ -1366,21 +1341,12 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, float x, float y, ExceptionCode& ec)
 {
-    if (!sourceCanvas) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
     drawImage(sourceCanvas, 0, 0, sourceCanvas->width(), sourceCanvas->height(), x, y, sourceCanvas->width(), sourceCanvas->height(), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas,
     float x, float y, float width, float height, ExceptionCode& ec)
 {
-    if (!sourceCanvas) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
     drawImage(sourceCanvas, FloatRect(0, 0, sourceCanvas->width(), sourceCanvas->height()), FloatRect(x, y, width, height), ec);
 }
 
