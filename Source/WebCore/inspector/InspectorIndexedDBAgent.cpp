@@ -172,7 +172,7 @@ void ExecutableWithDatabase::start(IDBFactoryBackendInterface* idbFactory, Secur
 
 static PassRefPtr<IDBTransactionBackendInterface> transactionForDatabase(IDBDatabaseBackendInterface* idbDatabase, const String& objectStoreName)
 {
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     RefPtr<DOMStringList> transactionObjectStoreNamesList = DOMStringList::create();
     transactionObjectStoreNamesList->append(objectStoreName);
     RefPtr<IDBTransactionBackendInterface> idbTransaction = idbDatabase->transaction(transactionObjectStoreNamesList.get(), IDBTransaction::READ_ONLY, ec);
@@ -183,7 +183,7 @@ static PassRefPtr<IDBTransactionBackendInterface> transactionForDatabase(IDBData
 
 static PassRefPtr<IDBObjectStoreBackendInterface> objectStoreForTransaction(IDBTransactionBackendInterface* idbTransaction, const String& objectStoreName)
 {
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     RefPtr<IDBObjectStoreBackendInterface> idbObjectStore = idbTransaction->objectStore(objectStoreName, ec);
     if (ec)
         return 0;
@@ -192,7 +192,7 @@ static PassRefPtr<IDBObjectStoreBackendInterface> objectStoreForTransaction(IDBT
 
 static PassRefPtr<IDBIndexBackendInterface> indexForObjectStore(IDBObjectStoreBackendInterface* idbObjectStore, const String& indexName)
 {
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     RefPtr<IDBIndexBackendInterface> idbIndex = idbObjectStore->index(indexName, ec);
     if (ec)
         return 0;

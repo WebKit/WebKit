@@ -1,3 +1,13 @@
+2012-02-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        http/tests/inspector/indexeddb/database-structure.html failing on chromium win/linux
+        https://bugs.webkit.org/show_bug.cgi?id=77661
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-02-07  Hayato Ito  <hayato@chromium.org>
 
         Fix build on Mac with '--shadow-dom'.
