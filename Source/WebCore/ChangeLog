@@ -1,3 +1,20 @@
+2012-02-06  Stephen Chenney  <schenney@chromium.org>
+
+        RenderSVGShape::strokeContains will fail for some strokes
+        https://bugs.webkit.org/show_bug.cgi?id=76931
+
+        Reviewed by Darin Adler.
+
+        Adding support for rounded zero-length endcaps for SVG path hit
+        testing.
+
+        Tests: svg/hittest/zero-length-butt-cap-path.xhtml
+               svg/hittest/zero-length-round-cap-path.xhtml
+               svg/hittest/zero-length-square-cap-path.xhtml
+
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::strokeContains):
+
 2012-02-06  Gregg Tavares  <gman@google.com>
 
         Add webGLErrorsToConsoleEnabled Settings flag

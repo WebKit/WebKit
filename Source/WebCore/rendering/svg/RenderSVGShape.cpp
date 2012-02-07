@@ -136,13 +136,21 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
     if (requiresStroke && !RenderSVGResource::strokePaintingResource(this, style(), fallbackColor))
         return false;
 
-    // FIXME: This is not correct for round linecaps. https://bugs.webkit.org/show_bug.cgi?id=76931
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        if (zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], this->strokeWidth()).contains(point))
-            return true;
+        ASSERT(style()->svgStyle()->hasStroke());
+        float strokeWidth = this->strokeWidth();
+        if (style()->svgStyle()->capStyle() == SquareCap) {
+            if (zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth).contains(point))
+                return true;
+        } else {
+            ASSERT(style()->svgStyle()->capStyle() == RoundCap);
+            FloatPoint radiusVector(point.x() - m_zeroLengthLinecapLocations[i].x(), point.y() -  m_zeroLengthLinecapLocations[i].y());
+            if (radiusVector.lengthSquared() < strokeWidth * strokeWidth * .25f)
+                return true;
+        }
     }
 
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
     if (!svgStyle->strokeDashArray().isEmpty() || svgStyle->strokeMiterLimit() != svgStyle->initialStrokeMiterLimit()
         || svgStyle->joinStyle() != svgStyle->initialJoinStyle() || svgStyle->capStyle() != svgStyle->initialCapStyle() || static_cast<SVGElement*>(node())->isStyled()) {
         if (!m_path)
