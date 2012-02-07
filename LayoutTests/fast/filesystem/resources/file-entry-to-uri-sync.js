@@ -1,4 +1,5 @@
 importScripts('fs-worker-common.js');
+importScripts('../../js/resources/js-test-pre.js');
 
 description("Obtaining URL from FileEntry.");
 

@@ -1,6 +1,5 @@
 if (this.importScripts) {
     importScripts('../../../fast/js/resources/js-test-pre.js');
-    importScripts('idb-worker-common.js');
     importScripts('shared.js');
 }
 
