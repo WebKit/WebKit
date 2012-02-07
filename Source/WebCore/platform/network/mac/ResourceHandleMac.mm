@@ -562,7 +562,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    CredentialStorage::set(credential, challenge.protectionSpace(), firstRequest().url());
+                    CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
                 return;
@@ -620,7 +620,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         Credential webCredential(credential, CredentialPersistenceNone);
         KURL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
-            urlToStore = firstRequest().url();
+            urlToStore = challenge.failureResponse().url();
         CredentialStorage::set(webCredential, core([d->m_currentMacChallenge protectionSpace]), urlToStore);
         [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
