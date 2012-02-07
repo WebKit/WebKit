@@ -1,3 +1,16 @@
+2011-10-10  Jer Noble  <jer.noble@apple.com>
+
+        media/audio-data-url.html test broken on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=69779
+
+        Reviewed by Eric Carlson.
+
+        Do not use "OpenForPlayback" attribute on data:// urls, as CoreMedia/QuickTime X cannot
+        handle those URLs.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+
 2012-02-07  Anders Carlsson  <andersca@apple.com>
 
         Scrolling tree should keep track of region we can't do fast scrolling for

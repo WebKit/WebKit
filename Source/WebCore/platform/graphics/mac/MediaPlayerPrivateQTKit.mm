@@ -259,7 +259,8 @@ NSMutableDictionary *MediaPlayerPrivateQTKit::commonMovieAttributes()
 
 void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
 {
-    NSURL *cocoaURL = KURL(ParsedURLString, url);
+    KURL kURL(ParsedURLString, url);
+    NSURL *cocoaURL = kURL;
     NSMutableDictionary *movieAttributes = commonMovieAttributes();    
     [movieAttributes setValue:cocoaURL forKey:QTMovieURLAttribute];
 
@@ -282,9 +283,9 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
             willUseProxy = NO;
     }
 
-    if (!willUseProxy) {
+    if (!willUseProxy && !kURL.protocolIsData()) {
         // Only pass the QTMovieOpenForPlaybackAttribute flag if there are no proxy servers, due
-        // to rdar://problem/7531776.
+        // to rdar://problem/7531776, or if not loading a data:// url due to rdar://problem/8103801.
         [movieAttributes setObject:[NSNumber numberWithBool:YES] forKey:@"QTMovieOpenForPlaybackAttribute"];
     }
     
