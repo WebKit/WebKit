@@ -1,3 +1,13 @@
+2012-02-07  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: fix objects duplication when switching filter in heap profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=77974
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype.populateChildren):
+
 2012-02-07  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Add setNeedsRedraw to WebWidget
