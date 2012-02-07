@@ -1,3 +1,12 @@
+2012-02-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Include gdk-pixbuf in the jhbuild modules
+        https://bugs.webkit.org/show_bug.cgi?id=77980
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/jhbuild.modules: Add gdk-pixbuf to the jhbuild moduleset.
+
 2012-02-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Prevent early test termination with newer Qt 5

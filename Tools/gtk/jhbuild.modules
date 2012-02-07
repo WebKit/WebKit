@@ -9,6 +9,7 @@
       <dep package="fonts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="gdk-pixbuf"/>
       <dep package="gtk+"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
@@ -93,10 +94,21 @@
              md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
   </autotools>
 
+  <autotools id="gdk-pixbuf" autogen-sh="configure">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.23/gdk-pixbuf-2.23.5.tar.xz" version="2.23.5"
+            repo="ftp.gnome.org"
+            hash="sha256:7a6c3550426f38f6b0eeeb49295654d9e706ce8f1786a4d0932f9d2c0d0bc500"
+            md5sum="066e30277cadc225a7cef4c258da830b"/>
+  </autotools>
+
   <autotools id="gtk+">
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
+      <dep package="gdk-pixbuf"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.0/gtk+-3.0.12.tar.xz" version="3.0.12"
             repo="ftp.gnome.org"
