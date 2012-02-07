@@ -8,12 +8,13 @@ div {
 }
 </style>
 </head>
-<body style='margin: 0px'>
+<body style='margin: 0px' onload="runRepaintTest()">
 <div>
   <img src='../../as-image/resources/green-relative-size-rect.svg'>
 </div>
 
 <script>var zoomCount = 1; window.shouldZoomOut = true;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 
 </body>

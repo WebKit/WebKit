@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
 <svg style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px">
     <title>You should see the word PASS two times</title>
     <text id="text" transform="translate(10, 50) scale(10 10)" font-size="12">
@@ -12,13 +15,8 @@
 </svg>
 </body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-setTimeout(function() {
+function repaintTest() {
     document.getElementById("text").removeChild(document.getElementById("remove"));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}, 0);
+}
 </script>
 </html>

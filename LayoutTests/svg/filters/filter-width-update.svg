@@ -1,27 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <defs>
 <filter filterUnits="userSpaceOnUse" id="blur" x="0" y="0" width="40" height="140">
     <feGaussianBlur stdDeviation="10"/>
 </filter>
 </defs>
-<rect x="20" y="20" width="100" height="100" style="fill:green;filter:url(#blur);" onclick="changeFilterWidth()"/>
+<rect x="20" y="20" width="100" height="100" style="fill:green;filter:url(#blur);"/>
 <text y="150">You should see a green, blurred rectangle from 20x20 with width/height 100</text>
 
 <script>
-    function changeFilterWidth() {
+    function repaintTest() {
         document.getElementsByTagName("filter")[0].setAttribute("width", "140");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-
-        if (window.eventSender) {
-            eventSender.mouseMoveTo(25, 25);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-        }
     }
 </script>
 </svg>

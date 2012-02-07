@@ -2,8 +2,47 @@
 <head>
 <script>window.enablePixelTesting = true;</script>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+<script type="text/javascript">
+    function completeTest() {
+        var script = document.createElement("script");
+
+        script.onload = function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        };
+
+        script.src = "../../fast/js/resources/js-test-post.js";
+        document.body.appendChild(script);
+    }
+
+    function repaintTest() {
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
+        path = document.getElementById("path");
+        shouldBe("path.pathSegList.numberOfItems", "3");
+
+        // Check initial 'd' attribute value.
+        shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 200 0 L 100 0 L 100 100");
+
+        // Append one item, check 'd' attribute changed.
+        path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(0, 100));
+        shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 200 0 L 100 0 L 100 100 L 0 100");
+
+        // Modify first item, check 'd' attribute changed.
+        path.pathSegList.getItem(0).x -= 100;
+        shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 100 0 L 100 0 L 100 100 L 0 100");
+
+        // Modify first item, check 'd' attribute changed, now a green rectangle should be visible. 
+        path.pathSegList.getItem(0).x -= 100;
+        shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 0 0 L 100 0 L 100 100 L 0 100");
+        
+        completeTest();
+    }
+</script>
 </head>
-<body>
+<body onload="runRepaintTest()">
 <svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
     <path id="path" fill="green" transform="translate(10 10)" d="M 200 0 L 100 0 L 100 100"/>
 </svg>
@@ -14,34 +53,14 @@
 <![CDATA[
     description("This is a test how SVGLengthList reacts to XML DOM modifications.");
 
-    // Extend String prototype, to offer a function, that formas the d attribute in the same way across browsers
+    // Extend String prototype, to offer a function, that formats the d attribute in the same way across browsers
     String.prototype.formatDAttribute = function() {
         return this.replace(/,/g, " ")          // Remove Firefox commas
                    .replace(/([A-Z])/g, " $1 ") // "M 100 0L 50 0" -> " M 100 0 L 50 0"
                    .replace(/^\s/, "")          // " M 100 0" -> "M 100 0" 
                    .replace(/\s\s/g, " ");      // If there was already whitespace between coordinates & commands, fix it up again.      
     }
-
-    var path = document.getElementById("path");
-    shouldBe("path.pathSegList.numberOfItems", "3");
-
-    // Check initial 'd' attribute value.
-    shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 200 0 L 100 0 L 100 100");
-
-    // Append one item, check 'd' attribute changed.
-    path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(0, 100));
-    shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 200 0 L 100 0 L 100 100 L 0 100");
-
-    // Modify first item, check 'd' attribute changed.
-    path.pathSegList.getItem(0).x -= 100;
-    shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 100 0 L 100 0 L 100 100 L 0 100");
-
-    // Modify first item, check 'd' attribute changed, now a green rectangle should be visible.
-    path.pathSegList.getItem(0).x -= 100;
-    shouldBeEqualToString("path.getAttribute('d').formatDAttribute()", "M 0 0 L 100 0 L 100 100 L 0 100");
-
 ]]>
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

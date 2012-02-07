@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  style="width:300px;height:400px">
+  style="width:300px;height:400px" onload="runSVGRepaintTest()">
 
+<script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <!-- This tests filters failing to refresh after the initial rendering
 (https://bugs.webkit.org/show_bug.cgi?id=53088).
 There should be no red squares in the output. -->
@@ -102,27 +103,16 @@ There should be no red squares in the output. -->
     for (var i=0; i<elements.length; ++i) {
       elements[i] = document.getElementById(elements[i]);
     }
-    window.onload = wait;
-    
-    function wait() {
-      // OnLoad doesn't seem to wait for the initial painting, wait again.
-      setTimeout(change, 0);
-    }
 
-    function change() {
+    function repaintTest() {
       for (var i=0; i<elements.length; ++i) {
         elements[i].setAttribute('fill', 'green');
       }
+
       document.getElementById('filtered').setAttribute('filter', 'url(#toGreen)');
 
-      if (window.layoutTestController) {
-          // Let it repaint and get screenshot.
-          setTimeout(function() { layoutTestController.notifyDone(); }, 0);
-      }
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
     }
 ]]></script>
 

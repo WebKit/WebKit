@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+    <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
     <title>The rectangle should rapidly animate to green.</title>
 <defs>
     <filter id="filt">
@@ -7,19 +8,11 @@
 </defs>
 <rect id="rect" width="100px" height="100px" x="0" y="0" fill="red" filter="url(#filt)" />
 <script>
-    function finish()
-    {
+    function repaintTest() {
         document.getElementById('rect').setAttribute('fill', 'green');
 
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
-
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.display();
-    }
-    
-    setTimeout(finish, 0);
 </script>
 </svg>

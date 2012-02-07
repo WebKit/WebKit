@@ -1,34 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<svg width="600" height="500" xmlns="http://www.w3.org/2000/svg">
-  <script type="text/javascript">
-  <![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-
-        window.onload = function() {
-            var path = document.getElementsByTagName('path')[0];
-            var start = document.getElementById('d_start');
-            var end = document.getElementById('d_end');
-
-            var start_d = path.getAttribute('d');
-            start.textContent = start_d;
-            var list = path.pathSegList;
-            var seg = path.createSVGPathSegLinetoRel(50, 50);
-
-            setTimeout(function() {
-                list.insertItemBefore(seg, 2); 
-                var end_d = path.getAttribute('d');
-                end.textContent = end_d;
-                if(start_d == end_d) {
-                    end.textContent += ' (failed)';
-                }
-
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 0);
-        }
-]]>
-</script>
+<svg width="600" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+  <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
   <path d="M50,150 l45,-43 l24,64 l-69,-21z" fill="#FF0000" stroke="#000000" stroke-width="5"/>
   <text x="10" y="20" style="font-weight:bold">Right after loading, a segment is added to the path.</text>
   <text x="10" y="40" style="font-weight:bold">The path and its attribute should be updated to include the new segment.</text>
@@ -38,4 +10,29 @@
 
   <text x="10" y="90">"d" after: </text>
   <text id="d_end" x="90" y="90"></text>
+
+  <script type="text/javascript">
+  <![CDATA[
+    function repaintTest() {
+        var path = document.getElementsByTagName('path')[0];
+        var start = document.getElementById('d_start');
+        var end = document.getElementById('d_end');
+
+        var start_d = path.getAttribute('d');
+        start.textContent = start_d;
+        var list = path.pathSegList;
+        var seg = path.createSVGPathSegLinetoRel(50, 50);
+
+        list.insertItemBefore(seg, 2);
+        var end_d = path.getAttribute('d');
+        end.textContent = end_d;
+        if(start_d == end_d) {
+            end.textContent += ' (failed)';
+        }
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+]]>
+</script>
 </svg>

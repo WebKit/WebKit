@@ -6,13 +6,14 @@
    div { margin: 1em 0; height: 100px; width: 100px; background: navy; }
   </style>
  </head>
- <body>
+ <body onload="runRepaintTest()">
   <p>Zoom in and out. The following two squares should always be the same size.</p>
   <div></div>
   <svg height="100px" width="100px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
    <rect x="0" y="0" width="100" height="100" fill="navy"/>
   </svg>
   <script>var zoomCount = 2;</script>
+  <script src="../../../fast/repaint/resources/repaint.js"/>
   <script src="../resources/testTextZoom.js"></script>
  </body>
 </html>

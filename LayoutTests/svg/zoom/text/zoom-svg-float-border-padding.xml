@@ -1,5 +1,5 @@
 <html xmlns='http://www.w3.org/1999/xhtml'>
-  <body>
+  <body onload="runRepaintTest()">
   The two blocks should look identical.  One uses an SVG, and the other just uses a normal HTML div.
   
     <p>There should be a red, white and blue pattern below this</p>
@@ -17,6 +17,7 @@
     <p style='clear: left'>There should be a red, white and blue pattern above this</p>
     
     <script>var zoomCount = 2;</script>
+    <script src="../../../fast/repaint/resources/repaint.js"/>
     <script src="../resources/testTextZoom.js"/>
   </body>
 </html>

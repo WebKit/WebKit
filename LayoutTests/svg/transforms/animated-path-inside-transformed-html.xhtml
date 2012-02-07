@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>SVG inside transformed div</title>
+  <script src="../../fast/repaint/resources/repaint.js"></script>
   <style>
     body {
       background-color: white;
@@ -14,7 +15,7 @@
     }
   </style>
 </head>
-<body>
+<body onload="runRepaintTest()">
   <p>CSS Transformed HTML div with SVG inside it. Animated SVG should repaint correctly.</p>
   <div class="box">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 480 360">
@@ -25,20 +26,11 @@
   </div>
 </body>
 <script>
-function doTheMoves() {
+function repaintTest() {
     document.getElementById("rect").setAttribute("x", "300");
     document.getElementById("text").setAttribute("y", "300");
     document.getElementById("image").setAttribute("x", "350");
     document.getElementById("image").setAttribute("y", "320");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.onload = function() {
-    // Delay until after the first paint
-    setTimeout(doTheMoves, 100);
 }
 </script>
 </html>

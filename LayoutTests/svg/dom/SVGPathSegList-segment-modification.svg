@@ -1,23 +1,20 @@
 <?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' width="300px" height="300px" viewBox="0 0 300 300" onload="test()">
-    <script type="text/ecmascript"><![CDATA[
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' width="300px" height="300px" viewBox="0 0 300 300" onload="runSVGRepaintTest()">
+    <script xlink:href="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    function repaintTest() {
+        var smile = document.getElementById('smile');
+        var segList = smile.pathSegList;
+        var moveSeg = segList.getItem(0);    // This represents the M 80 40 segment (Move to)
+        moveSeg.x = 50;
+        moveSeg.y = 50;
         if (window.layoutTestController)
             layoutTestController.notifyDone();
-
-        function test() {
-            var smile = document.getElementById('smile');
-            var segList = smile.pathSegList;
-            var moveSeg = segList.getItem(0);    // This represents the M 80 40 segment (Move to)
-            var smoothCurveSeg = segList.getItem(1); // This represents the S 20 80 80 40 segment (Smooth Curveto)
-            setTimeout(function() {
-                moveSeg.x = 50;
-                moveSeg.y = 50;
-        
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 0);
-        }
-    ]]></script>
+    }
+    </script>
     <path id="smile" d="M 80 40 S 120 80 160 40" stroke="black" stroke-width="3" fill="none"/>
-    <text x="10" y="20">There should be a smooth curve below</text>
+    <g transform="translate(0 50)">
+        <path d="M 50 50 S 120 80 160 40" stroke="black" stroke-width="3" fill="none"/>
+    </g>
+    <text x="10" y="20">Both shapes should look identical</text>
 </svg>

@@ -3,10 +3,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 </head>
-<body>
+<body onload="runRepaintTest()">
 <!-- FIXME: This is broken, text doesn't correctly zoom, its font size remains the same upon scaling -->
 <object data="resources/text.svg" width="85" height="20"/>
 <script>var zoomCount = 2; window.shouldZoomOut = true;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 </head>
-<body style="margin:0; border:0; padding:0;">
+<body style="margin:0; border:0; padding:0;" onload="runRepaintTest()">
 
 <div style="width:500px;height=100px">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
@@ -69,6 +69,7 @@ function executeTest() {
 
 <script>
 if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
     window.postZoomCallback = executeTest;
 } else {
     debug("This test only works in DRT.");
@@ -77,6 +78,7 @@ if (window.layoutTestController) {
 
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>var zoomCount = 2;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 
 </body>

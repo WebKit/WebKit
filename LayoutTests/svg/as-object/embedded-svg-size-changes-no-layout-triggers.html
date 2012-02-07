@@ -1,12 +1,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body style="margin: 0px">
-
-<!-- This test is the same as embedded-svg-size-changes.html but doesn't do any query of the computed style to avoid triggering any layouts -->
-<object style="border: 1px red solid" data="resources/embedded-svg-size-changes-no-layout-triggers.svg"></object>
-
-<script>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+<script type="text/javascript">
+function repaintTest() {
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
+    var object1 = document.getElementsByTagName("object")[0];
+    object1.setAttribute("data", "resources/embedded-svg-size-changes-no-layout-triggers.svg");
+    object1.setAttribute("style", "border: 1px red solid");
+}
 </script>
+</head>
+<body onload="runRepaintTest()" style="margin: 0px">
+
+<!-- This test is the same as embedded-svg-size-changes.html but doesn't do any query of the computed style to avoid triggering any layouts -->
+<object></object>
 </body>
 </html>

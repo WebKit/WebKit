@@ -11,10 +11,11 @@ div {
 </style>
 </head>
 <!-- The background shouldn't be red in a debug build -->
-<body style='margin: 0px'>
+<body style='margin: 0px' onload="runRepaintTest()">
 <div>&nbsp;</div>
 
 <script>var zoomCount = 1; window.shouldZoomOut = true;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 </body>
 </html>

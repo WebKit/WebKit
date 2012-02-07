@@ -1,5 +1,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+<script type="text/javascript">
+function repaintTest() {
+    document.getElementById("contentBox").style.setProperty("width", "600px");
+}
+</script>
 <style>
     img, div {
         width: 420px;
@@ -10,29 +16,10 @@
     }
 </style>
 </head>
-<body>
+<body onload="runRepaintTest()">
     <p>The svg image contained in the div element (red box) should not change its appearance when width is resized to be larger</p>
-    <div id="contentBox" onclick="resizeBox()">
+    <div id="contentBox">
         <img src="../as-background-image/resources/butterfly.svg"/>
     </div>
-
-    <script type="JavaScript">
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
-
-        if (window.eventSender) {
-            window.setTimeout(function() {
-                eventSender.mouseMoveTo(50, 250);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-            }, 0);
-        }
-
-        function resizeBox() {
-            document.getElementById("contentBox").style.setProperty("width", "600px");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-    </script>
 </body>
 </html>

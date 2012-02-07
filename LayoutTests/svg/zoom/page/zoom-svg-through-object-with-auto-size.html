@@ -18,13 +18,14 @@
         }
     </style>
 </head>
-<body>
+<body onload="runRepaintTest()">
     <!-- All objects need to look identical -->
     <object class="object1" data="resources/circle.svg"></object>
     <object class="object2" data="resources/circle.svg"></object>
 
     <!-- After zooming the circles should still fill the boxes, it remains the same image as before, just smaller as whole -->
     <script>var zoomCount = 2; window.shouldZoomOut = true;</script>
+    <script src="../../../fast/repaint/resources/repaint.js"></script>
     <script src="../resources/testPageZoom.js"></script>
 </body>
 </html>

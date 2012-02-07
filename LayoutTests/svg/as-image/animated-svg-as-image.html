@@ -1,28 +1,29 @@
 <html>
 <head>
+  <script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  function repaintTest() {
+    if (!window.layoutTestController)
+      return;
+
+    // The animation lasts 100ms. Wait 200ms for the repaint.
+    layoutTestController.waitUntilDone();
+    setTimeout(function() {
+      layoutTestController.notifyDone();
+    }, 200);
+  }
+  </script>
   <style type="text/css" media="screen">
     img {
       margin: 10px;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
-    
-    function pageLoaded() 
-    {
-      window.setTimeout(function() {
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
-      }, 400);    // empirically determined delay. SVG animation has 100ms duration.
-    }
-
-    window.addEventListener('load', pageLoaded, false);
-  </script>
 </head>
-<body>
+<body onload="runRepaintTest()">
   <p>Images should redraw correctly when SVG animation runs</p>
-  <img height="250px" width="350px" border="2" src="resources/animated-rect-fixed-size.svg"><br>
+  <!-- Don't load animated-rect-fixed-size.svg, it will already be loaded, and the animation already ran if animated-svg-as-image-no-fixed-intrinsic-size.html runs before this test! -->
+  <img height="250px" width="350px" border="2" src="resources/animated-rect-fixed-size-2.svg"><br>
+  <!-- animated-rect-relative-size.svg is not loaded by any other test, so there's no problem here -->
   <img height="250px" width="350px" border="2" src="resources/animated-rect-relative-size.svg">
 </body>
 </html>

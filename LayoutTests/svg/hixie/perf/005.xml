@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+ <script xlink:href="../../../fast/repaint/resources/repaint.js"></script>
  <script type="text/javascript">
   var start = new Date();
  </script>
@@ -46,13 +47,13 @@
     222, 273, 37, 26, 331, 302, 57, 55, 171, 347, 319, 54, 83, 189,
     281, 79, 75, 138, 223, 138, 238, 69);
 
-  var delay = 100;
-  var idealTime = 5000;
+  var delay = 1;
+  var idealTime = 50;
   var maxPerBlock = Xs.length / (idealTime / delay);
   var maxBlocks = Xs.length / maxPerBlock;
   var count = 0;
 
-  function runTest() {
+  function repaintTest() {
     for (var subcount = 0; subcount < maxPerBlock; subcount += 1) {
       var index = count * maxPerBlock + subcount;
       var newI = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -67,15 +68,19 @@
     }
     ++count;
     if (count < maxBlocks) {
-      window.setTimeout(runTest, delay);
+      window.setTimeout(repaintTest, delay);
       t.firstChild.data = 'Test in progress... ' + count + ' of ' + maxBlocks;
     } else {
-      var end = new Date();
-      var elapsed = (end - start) / 1000;
-      t.firstChild.data = 'Test completed in ' + elapsed.toFixed(2) + 's.';
-      if (parent.reportResults) parent.reportResults(end - start);
+      if (window.layoutTestController) {
+        t.firstChild.data = 'Test completed';
+        layoutTestController.notifyDone();
+      } else {
+        var end = new Date();
+        var elapsed = (end - start) / 1000;
+        t.firstChild.data = 'Test completed in ' + elapsed.toFixed(2) + 's.';
+        if (parent.reportResults) parent.reportResults(end - start);
+      }
     }
   }
-  window.setTimeout(runTest, delay);
  ]]></script>
 </svg>

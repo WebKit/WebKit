@@ -1,14 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <script>
 <![CDATA[
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.display();
-}
-
-setTimeout(executeTest, 0);
-
-function executeTest() {
+function repaintTest() {
     var circle = document.getElementById("circle");
     circle.setAttribute("cx", 100);
     circle.setAttribute("cy", 100);

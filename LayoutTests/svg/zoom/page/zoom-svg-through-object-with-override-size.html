@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body onload="runRepaintTest()">
 <object style="border: 1px solid red" data="resources/tux.svg" width="500" height="500"></object>
 <br/>
 The image of Tux should fill the entire red square.
 <script>var zoomCount = 2; window.shouldZoomOut = true;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 </body>
 </html>

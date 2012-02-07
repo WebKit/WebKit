@@ -2,9 +2,7 @@
 <head>
 <script>window.enablePixelTesting = true;</script>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
-</head>
-<body style="margin: 0px">
-
+<script src="../../fast/repaint/resources/repaint.js"></script>
 <script type="text/javascript">
     function completeTest() {
         var script = document.createElement("script");
@@ -17,35 +15,39 @@
         script.src = "../../fast/js/resources/js-test-post.js";
         document.body.appendChild(script);
     }
+
+    function repaintTest() {
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
+        // Test initial reported offsetWidth is 0, as we're not in the tree yet.
+        newObject = document.createElement("object");
+        newObject.setAttribute("style", "border: 1px black solid; background: red");
+        shouldBe("newObject.offsetWidth", "0");
+        shouldBe("newObject.offsetWidth", "0");
+
+        // Test that the initial width is 300px + 1px border on each side.
+        document.body.insertBefore(newObject, document.getElementById("description"));
+        shouldBe("newObject.offsetWidth", "302");
+        shouldBe("newObject.offsetWidth", "302");
+
+        // Switch to document: "<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect width="400" height="200" fill="green"/></svg>".
+        // FIXME: This currently fails in WebKit trunk. We don't react on dataAttr changes at all. When manually relayouting using eg. zoom in/out it takes affect.
+        newObject.setAttribute("data", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iZ3JlZW4iLz48L3N2Zz4=");
+        shouldBe("newObject.offsetWidth", "502");
+        shouldBe("newObject.offsetWidth", "502");
+
+        completeTest();
+    }
 </script>
+</head>
+<body style="margin: 0px" onload="runRepaintTest()">
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-
     description("Tests that querying offsetWidth twice leads to the same result - no red background should be visible.");
-
-    // Test initial reported offsetWidth is 0, as we're not in the tree yet.
-    var newObject = document.createElement("object");
-    newObject.setAttribute("style", "border: 1px black solid; background: red");
-    shouldBe("newObject.offsetWidth", "0");
-    shouldBe("newObject.offsetWidth", "0");
-
-    // Test that the initial width is 300px + 1px border on each side.
-    document.body.insertBefore(newObject, document.getElementById("description"));
-    shouldBe("newObject.offsetWidth", "302");
-    shouldBe("newObject.offsetWidth", "302");
-
-    // Switch to document: "<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect width="400" height="200" fill="green"/></svg>".
-    // FIXME: This currently fails in WebKit trunk. We don't react on dataAttr changes at all. When manually relayouting using eg. zoom in/out it takes affect.
-    newObject.setAttribute("data", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iZ3JlZW4iLz48L3N2Zz4=");
-    shouldBe("newObject.offsetWidth", "502");
-    shouldBe("newObject.offsetWidth", "502");
-
-    completeTest();
 </script>
 </body>
 </html>

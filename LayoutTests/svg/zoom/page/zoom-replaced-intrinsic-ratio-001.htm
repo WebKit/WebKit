@@ -29,7 +29,7 @@
    .inst { height: auto; margin: 1em 0; }
   </style>
  </head>
- <body>
+ <body onload="runRepaintTest()">
   <p class="inst">The following six blue boxes must be of the same width. There must be no red.</p>
   <p class="control">&nbsp;</p>
   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -41,6 +41,7 @@
   <p id="p3"><object id="img3" type="image/svg+xml" data="resources/intrinsic-ratio.svg">This test won't work because you do not have images enabled.</object></p>
 
   <script>var zoomCount = 3; window.shouldZoomOut = true;</script>
+  <script src="../../../fast/repaint/resources/repaint.js"></script>
   <script src="../resources/testPageZoom.js"></script>
  </body>
 </html>

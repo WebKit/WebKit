@@ -26,7 +26,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="runRepaintTest()">
     <table>
         <tr>
             <th>
@@ -137,6 +137,7 @@
     </table>
 
     <script>var zoomCount = 2; window.shouldZoomOut = true;</script>
+    <script src="../../../fast/repaint/resources/repaint.js"></script>
     <script src="../resources/testPageZoom.js"></script>
 </body>
 </html>

@@ -1,13 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 600 600">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 600 600" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+ <script xlink:href="../../../fast/repaint/resources/repaint.js"></script>
  <script type="text/javascript">
   var start = new Date();
   var max = 75;
  
   // When running in DRT only bounce ten times otherwhise this test takes way too long
-  if (window.layoutTestController) {
+  if (window.layoutTestController)
     max = 10;
-    layoutTestController.waitUntilDone();
-  }
  </script>
  <rect fill="none" stroke="black" x="-190" y="-190" width="580" height="580" rx="40"/>
  <text x="-150" y="-150" font-size="10">SVG Performance test.</text>
@@ -265,7 +264,7 @@
   var dx = 5;
   var dy = -5;
   var count = 0;
-  function bounce() {
+  function repaintTest() {
    if ((cx + r + dx > 390) || (cx - r + dx < -190))
      dx =- dx;
    cx += dx;
@@ -276,7 +275,7 @@
    c.setAttribute('cy', cy);
    ++count;
    if (count < max) {
-     window.setTimeout(bounce, 0);
+     window.setTimeout(repaintTest, 0);
      t.firstChild.data = 'Test in progress... ' + count + ' of ' + max;
    } else {
      if (window.layoutTestController) {
@@ -290,6 +289,5 @@
      }
    }
   }
-  window.setTimeout(bounce, 0);
  ]]></script>
 </svg>

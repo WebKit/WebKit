@@ -9,7 +9,7 @@ function changeSize() {
     svgWindow.changeSize();
 
     if (window.layoutTestController)
-        setTimeout(function() { layoutTestController.notifyDone(); }, 0);
+        layoutTestController.notifyDone();
 }
 </script>
 <object onload="changeSize()" data="embedded-svg-size-changes.svg"></object>

@@ -21,7 +21,7 @@
             <text font-size="36" x="20" y="140">6</text>
             <line x1="30" y1="0" x2="30" y2="100" fill="none" stroke="#880000" />
             <rect x="0" y="0" width="300" height="80" fill="#44AAFF" stroke="#880088" stroke-width="4" >
-               <set attributeName="width" to="30" begin="0s" fill="freeze"/> 
+               <set attributeName="width" to="30" begin="0.1s" fill="freeze"/> 
             </rect>
          </g>
       </g>

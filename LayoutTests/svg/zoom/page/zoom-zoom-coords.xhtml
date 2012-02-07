@@ -17,7 +17,7 @@
     }
 </style>
 </head>
-<body>
+<body onload="runRepaintTest()">
 
 <div id="div1" style="width:100px;height:50px;background-color:gray;"></div>
 <div id="div2" style="width:100px;height:50px;background-color:green;"></div>
@@ -183,6 +183,7 @@ function executeTest() {
 
 <script>
 if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
     window.postZoomCallback = executeTest;
 } else {
     debug("This test only works in DRT.");
@@ -191,6 +192,7 @@ if (window.layoutTestController) {
 
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>var zoomCount = 2;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
 
 </body>

@@ -1,5 +1,18 @@
 <html>
 <head>
+  <script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  function repaintTest() {
+    if (!window.layoutTestController)
+      return;
+
+    // The animation lasts 100ms. Wait 200ms for the repaint.
+    layoutTestController.waitUntilDone();
+    setTimeout(function() {
+      layoutTestController.notifyDone();
+    }, 200);
+  }
+  </script>
   <style type="text/css" media="screen">
     div {
       background: red;
@@ -9,23 +22,8 @@
       width: 800px;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
-    
-    function pageLoaded() 
-    {
-      window.setTimeout(function() {
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
-      }, 400);    // empirically determined delay. SVG animation has 100ms duration.
-    }
-
-    window.addEventListener('load', pageLoaded, false);
-  </script>
-  </script>
 </head>
-<body style='margin: 0px'>
+<body style='margin: 0px' onload="runRepaintTest()">
 <div>&nbsp;</div>
 </body>
 </html>

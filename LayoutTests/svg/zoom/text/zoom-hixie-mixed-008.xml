@@ -6,7 +6,7 @@
    div { text-align: center; }
   </style>
  </head>
- <body>
+ <body onload="runRepaintTest()">
   <p>There should be a blue circle with the word "TEST" in it below.</p>
   <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
    <rect x="0" y="0" width="400" height="400" fill="blue"/>
@@ -17,6 +17,7 @@
   </svg>
  
   <script>var zoomCount = 2;</script>
+  <script src="../../../fast/repaint/resources/repaint.js"/>
   <script src="../resources/testTextZoom.js"/>
  </body>
 </html>

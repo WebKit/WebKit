@@ -2,6 +2,12 @@
 <html>
 <head>
   <title>SVG img and bg test</title>
+  <script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  function repaintTest() {
+    document.getElementById('test').className = 'revealed';
+  }
+  </script>
   <style type="text/css" media="screen">
     div {
       -webkit-box-sizing: border-box;
@@ -33,19 +39,8 @@
       display: block;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
-    
-    function doTest()
-    {
-        document.body.offsetTop;
-        if (window.layoutTestController)
-          layoutTestController.display();
-        document.getElementById('test').className = 'revealed';
-    }
-    window.addEventListener('load', doTest, false)
-  </script>
 </head>
-<body>
+<body onload="runRepaintTest()">
 
 <p>You should continue see a full blue circle when part of the element is redrawn (hover to test interactively).</p>
 <div id="test">
