@@ -368,7 +368,7 @@ void ClipboardMac::writeRange(Range* range, Frame* frame)
     ASSERT(range);
     ASSERT(frame);
     Pasteboard pasteboard([m_pasteboard.get() name]);
-    pasteboard.writeSelectionForTypes(nil, range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
+    pasteboard.writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
 }
 
 void ClipboardMac::writePlainText(const String& text)
@@ -382,7 +382,7 @@ void ClipboardMac::writeURL(const KURL& url, const String& title, Frame* frame)
     ASSERT(frame);
     ASSERT(m_pasteboard);
     Pasteboard pasteboard([m_pasteboard.get() name]);
-    pasteboard.writeURLForTypes(nil, url, title, frame);
+    pasteboard.writeURL(url, title, frame);
 }
     
 #if ENABLE(DRAG_SUPPORT)

@@ -210,15 +210,9 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     writeSelectionForTypes(nil, selectedRange, canSmartCopyOrDelete, frame);
 }
 
-void Pasteboard::writeURLForTypes(NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
+static void writeURLForTypes(NSArray* types, NSPasteboard* pasteboard, const KURL& url, const String& titleStr, Frame* frame)
 {
-    if (!WebArchivePboardType)
-        Pasteboard::generalPasteboard(); // Initializes pasteboard types.
-   
-    if (!types) {
-        types = writableTypesForURL();
-        [m_pasteboard.get() declareTypes:types owner:nil];
-    }
+    [pasteboard declareTypes:types owner:nil];
     
     ASSERT(!url.isEmpty());
     
@@ -233,23 +227,23 @@ void Pasteboard::writeURLForTypes(NSArray* types, const KURL& url, const String&
     }
         
     if ([types containsObject:WebURLsWithTitlesPboardType])
-        [m_pasteboard.get() setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
+        [pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
                                      [NSArray arrayWithObject:(NSString*)titleStr.stripWhiteSpace()], 
                                      nil]
                             forType:WebURLsWithTitlesPboardType];
     if ([types containsObject:NSURLPboardType])
-        [cocoaURL writeToPasteboard:m_pasteboard.get()];
+        [cocoaURL writeToPasteboard:pasteboard];
     if ([types containsObject:WebURLPboardType])
-        [m_pasteboard.get() setString:userVisibleString forType:WebURLPboardType];
+        [pasteboard setString:userVisibleString forType:WebURLPboardType];
     if ([types containsObject:WebURLNamePboardType])
-        [m_pasteboard.get() setString:title forType:WebURLNamePboardType];
+        [pasteboard setString:title forType:WebURLNamePboardType];
     if ([types containsObject:NSStringPboardType])
-        [m_pasteboard.get() setString:userVisibleString forType:NSStringPboardType];
+        [pasteboard setString:userVisibleString forType:NSStringPboardType];
 }
     
 void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 {
-    writeURLForTypes(nil, url, titleStr, frame);
+    writeURLForTypes(writableTypesForURL(), m_pasteboard.get(), url, titleStr, frame);
 }
 
 static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *url)
@@ -265,7 +259,7 @@ static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *url)
     return wrapper;
 }
 
-void Pasteboard::writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper)
+static void writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper, NSPasteboard* pasteboard)
 {
     NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
     
@@ -273,7 +267,7 @@ void Pasteboard::writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper)
     [attachment release];
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
-    [m_pasteboard.get() setData:RTFDData forType:NSRTFDPboardType];
+    [pasteboard setData:RTFDData forType:NSRTFDPboardType];
 }
 
 void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
@@ -293,9 +287,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
-    NSArray* types = writableTypesForImage();
-    [m_pasteboard.get() declareTypes:types owner:nil];
-    writeURLForTypes(types, cocoaURL, nsStringNilIfEmpty(title), frame);
+    writeURLForTypes(writableTypesForImage(), m_pasteboard.get(), cocoaURL, nsStringNilIfEmpty(title), frame);
     
     Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
@@ -305,7 +297,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     String MIMEType = cachedImage->response().mimeType();
     ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
 
-    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, cocoaURL));
+    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, cocoaURL), m_pasteboard.get());
 }
 
 void Pasteboard::writeClipboard(Clipboard* clipboard)
@@ -365,7 +357,7 @@ String Pasteboard::plainText(Frame* frame)
     return String(); 
 }
     
-PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource)
+static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource)
 {
     if (DocumentLoader* loader = frame->loader()->documentLoader())
         loader->addArchiveResource(resource.get());
@@ -385,16 +377,16 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithImageResource(Frame
     return 0;
 }
 
-PassRefPtr<DocumentFragment> Pasteboard::documentFragmentWithRtf(Frame* frame, NSString* pboardType)
+static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSString *pasteboardType, NSPasteboard *pasteboard)
 {
     if (!frame || !frame->document() || !frame->document()->isHTMLDocument())
         return 0;
 
     NSAttributedString *string = nil;
-    if (pboardType == NSRTFDPboardType)
-        string = [[NSAttributedString alloc] initWithRTFD:[m_pasteboard.get() dataForType:NSRTFDPboardType] documentAttributes:NULL];
+    if (pasteboardType == NSRTFDPboardType)
+        string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
     if (string == nil)
-        string = [[NSAttributedString alloc] initWithRTF:[m_pasteboard.get() dataForType:NSRTFPboardType] documentAttributes:NULL];
+        string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
     if (string == nil)
         return nil;
 
@@ -430,49 +422,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     CFRelease(UUIDString);
 
     return URL;
-}
-
-NSURL *Pasteboard::getBestURL(Frame* frame)
-{
-    NSArray *types = [m_pasteboard.get() types];
-
-    // FIXME: using the editorClient to call into webkit, for now, since 
-    // calling webkit_canonicalize from WebCore involves migrating a sizable amount of 
-    // helper code that should either be done in a separate patch or figured out in another way.
-    
-    if ([types containsObject:NSURLPboardType]) {
-        NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:m_pasteboard.get()];
-        NSString *scheme = [URLFromPasteboard scheme];
-        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-            return frame->editor()->client()->canonicalizeURL(URLFromPasteboard);
-        }
-    }
-    
-    if ([types containsObject:NSStringPboardType]) {
-        NSString *URLString = [m_pasteboard.get() stringForType:NSStringPboardType];
-        NSURL *URL = frame->editor()->client()->canonicalizeURLString(URLString);
-        if (URL)
-            return URL;
-    }
-    
-    if ([types containsObject:NSFilenamesPboardType]) {
-        NSArray *files = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
-        // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
-        if ([files count] == 1) {
-            NSString *file = [files objectAtIndex:0];
-            BOOL isDirectory;
-            if ([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && isDirectory)
-                return nil;
-            return frame->editor()->client()->canonicalizeURL([NSURL fileURLWithPath:file]);
-        }
-    }
-    
-    return nil;    
-}
-
-String Pasteboard::asURL(Frame* frame)
-{
-    return [getBestURL(frame) absoluteString];
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
@@ -540,11 +489,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     }
 
     if ([types containsObject:NSRTFDPboardType] &&
-        (fragment = documentFragmentWithRtf(frame, NSRTFDPboardType)))
+        (fragment = documentFragmentWithRTF(frame, NSRTFDPboardType, m_pasteboard.get())))
        return fragment.release();
 
     if ([types containsObject:NSRTFPboardType] &&
-        (fragment = documentFragmentWithRtf(frame, NSRTFPboardType)))
+        (fragment = documentFragmentWithRTF(frame, NSRTFPboardType, m_pasteboard.get())))
         return fragment.release();
 
     if ([types containsObject:NSTIFFPboardType] &&

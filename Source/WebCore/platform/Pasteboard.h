@@ -80,9 +80,8 @@ class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if PLATFORM(MAC)
+    // This is required to support OS X services.
     void writeSelectionForTypes(NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame*);
-    void writeURLForTypes(NSArray* types, const KURL&, const String& titleStr, Frame*);
-
     Pasteboard(const String& pasteboardName);
 #endif
     
@@ -91,10 +90,6 @@ public:
     void writePlainText(const String&);
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(Node*, const KURL&, const String& title);
-#if PLATFORM(MAC)
-    void writeFileWrapperAsRTFDAttachment(NSFileWrapper*);
-    String asURL(Frame*);
-#endif
     void writeClipboard(Clipboard*);
     void clear();
     bool canSmartReplace();
@@ -115,9 +110,6 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
-    PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource);
-    PassRefPtr<DocumentFragment> documentFragmentWithRtf(Frame* frame, NSString* pboardType);
-    NSURL *getBestURL(Frame *);
 #endif
 
 #if PLATFORM(WIN)

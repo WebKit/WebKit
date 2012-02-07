@@ -1,3 +1,39 @@
+2012-02-06  Enrica Casucci  <enrica@apple.com>
+
+        Refactor Mac platform implementation of the Pasteboard class.
+        https://bugs.webkit.org/show_bug.cgi?id=77567
+        
+        The goal of this change is to remove the majority of the methods in
+        the class interface that are Mac specific.
+        writeSelectionForTypes has been left to support OS X services.
+        Some of the methods have been turned into static functions.
+        The method asURL was being used only by the DragData class and its
+        implementation has been moved there.
+        This is a first step in the direction of removing NSPasteboard access from
+        the WebProcess for WebKit2 (https://bugs.webkit.org/show_bug.cgi?id=77259)
+        leaving the WebKit1 behavior unchanged.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. No changes in behavior.
+
+        * platform/Pasteboard.h: Removed most of the Mac specific methods.
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writeRange):
+        (WebCore::ClipboardMac::writeURL):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asURL): Moved code from PasteboardMac.mm. Removed FIXME
+        because we only want to handle the case of single file, otherwise the user
+        doesn't know which of the files has been chosen.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeURLForTypes):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::writeFileWrapperAsRTFDAttachment): Now a static function.
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::documentFragmentWithImageResource): Ditto.
+        (WebCore::documentFragmentWithRTF): Ditto.
+        (WebCore::Pasteboard::documentFragment):
+
 2012-02-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Drop tiles completely outside of layer bounds when resizing to a smaller size
