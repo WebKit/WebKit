@@ -1,3 +1,12 @@
+2012-02-07  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
+
+        Update .gitignore for Qt Creator/KDevelop.
+        https://bugs.webkit.org/show_bug.cgi?id=77984
+
+        Reviewed by Simon Hausmann.
+
+        * .gitignore: Ignore temp files created by Qt Creator and KDevelop.
+
 2012-02-07  Priit Laes  <plaes@plaes.org>
 
         [GTK] Broken "HTML5 <scoped style>" detection
