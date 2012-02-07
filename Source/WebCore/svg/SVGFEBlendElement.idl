@@ -27,7 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        DoNotCheckConstants
+        DontCheckEnums
     ] SVGFEBlendElement : SVGElement,
                           SVGFilterPrimitiveStandardAttributes {
         // Blend Mode Types

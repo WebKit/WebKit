@@ -31,40 +31,32 @@ module core {
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        [ReturnNewObject] Element createElement(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString tagName)
+        [ReturnsNew] Element createElement(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
-        [ReturnNewObject] Text createTextNode(in [Optional=CallWithDefaultValue] DOMString data);
-        [ReturnNewObject] Comment createComment(in [Optional=CallWithDefaultValue] DOMString data);
-        [ReturnNewObject] CDATASection createCDATASection(in [Optional=CallWithDefaultValue] DOMString data)
+        [ReturnsNew] Text createTextNode(in [Optional=CallWithDefaultValue] DOMString data);
+        [ReturnsNew] Comment createComment(in [Optional=CallWithDefaultValue] DOMString data);
+        [ReturnsNew] CDATASection createCDATASection(in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
                                                                                      in [Optional=CallWithDefaultValue] DOMString data)
             raises (DOMException);
-        [ReturnNewObject] Attr createAttribute(in [Optional=CallWithDefaultValue] DOMString name)
+        [ReturnsNew] Attr createAttribute(in [Optional=CallWithDefaultValue] DOMString name)
             raises (DOMException);
-        [ReturnNewObject] EntityReference createEntityReference(in [Optional=CallWithDefaultValue] DOMString name)
+        [ReturnsNew] EntityReference createEntityReference(in [Optional=CallWithDefaultValue] DOMString name)
             raises(DOMException);
         NodeList           getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString tagname);
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
+        [ObjCLegacyUnnamedParameters, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
                                                    in [Optional] boolean deep)
             raises (DOMException);
-<<<<<<< HEAD
         [ObjCLegacyUnnamedParameters, ReturnsNew] Element createElementNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                            in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
             raises (DOMException);
         [ObjCLegacyUnnamedParameters, ReturnsNew] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                           in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
-=======
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Element createElementNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                           in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
-            raises (DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS(in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                          in [TreatNullAs=EmptyString,Optional=CallWithDefaultValue] DOMString qualifiedName)
->>>>>>> temp
             raises (DOMException);
         [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                        in [Optional=CallWithDefaultValue] DOMString localName);
@@ -333,7 +325,7 @@ module core {
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-        [ReturnNewObject, V8EnabledAtRuntime] Touch createTouch(in [Optional=CallWithDefaultValue] DOMWindow window,
+        [ReturnsNew, V8EnabledAtRuntime] Touch createTouch(in [Optional=CallWithDefaultValue] DOMWindow window,
                                                          in [Optional=CallWithDefaultValue] EventTarget target,
                                                          in [Optional=CallWithDefaultValue] long identifier,
                                                          in [Optional=CallWithDefaultValue] long pageX,
@@ -345,7 +337,7 @@ module core {
                                                          in [Optional=CallWithDefaultValue] float webkitRotationAngle,
                                                          in [Optional=CallWithDefaultValue] float webkitForce)
             raises (DOMException);
-        [ReturnNewObject, V8EnabledAtRuntime, Custom] TouchList createTouchList()
+        [ReturnsNew, V8EnabledAtRuntime, Custom] TouchList createTouchList()
             raises (DOMException);
 #endif
 

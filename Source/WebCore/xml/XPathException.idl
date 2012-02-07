@@ -29,7 +29,7 @@
 module xpath {
 
     interface [
-        DoNotCheckConstants
+        DontCheckEnums
     ] XPathException {
 
         readonly attribute unsigned short   code;

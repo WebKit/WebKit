@@ -31,7 +31,7 @@
 module html {
     interface [
         Conditional=BLOB|FILE_SYSTEM,
-        DoNotCheckConstants,
+        DontCheckEnums,
         JSNoStaticTables
     ] OperationNotAllowedException {
         readonly attribute unsigned short   code;

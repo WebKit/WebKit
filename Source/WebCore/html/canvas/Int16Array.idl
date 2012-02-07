@@ -31,7 +31,7 @@ module html {
         GenerateNativeConverter,
         JSNoStaticTables,
         JSCustomToJS,
-        DoNotCheckConstants
+        DontCheckEnums
     ] Int16Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 2;
 

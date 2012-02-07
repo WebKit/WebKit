@@ -28,7 +28,7 @@ module offline {
     interface [
         EventTarget,
         OmitConstructor,
-        DoNotCheckConstants,
+        DontCheckEnums,
         JSGenerateIsReachable=ImplFrame
     ] DOMApplicationCache {
         // update status

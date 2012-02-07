@@ -27,7 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG,
-        DoNotCheckConstants
+        DontCheckEnums
     ] SVGGradientElement : SVGElement,
                            SVGURIReference,
                            SVGExternalResourcesRequired,

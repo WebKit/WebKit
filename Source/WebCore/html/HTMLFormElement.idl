@@ -38,7 +38,7 @@ module html {
         attribute [Reflect] DOMString autocomplete;
         
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [ImplementedAs=submitFromJavaScript] void submit();
+        [ImplementationFunction=submitFromJavaScript] void submit();
 #else
         void submit();
 #endif

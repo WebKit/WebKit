@@ -28,7 +28,7 @@ module html {
     interface [
         Conditional=WEBGL,
         JSCustomMarkFunction,
-        DoNotCheckConstants
+        DontCheckEnums
     ] WebGLRenderingContext : CanvasRenderingContext {
 
         /* ClearBufferMask */

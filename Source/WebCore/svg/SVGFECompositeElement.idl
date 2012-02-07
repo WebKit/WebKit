@@ -27,7 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        DoNotCheckConstants
+        DontCheckEnums
     ] SVGFECompositeElement : SVGElement,
                               SVGFilterPrimitiveStandardAttributes {
         // Composite Operators

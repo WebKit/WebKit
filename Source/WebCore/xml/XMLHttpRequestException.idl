@@ -30,7 +30,7 @@ module xml {
 
     interface [
         JSNoStaticTables,
-        DoNotCheckConstants
+        DontCheckEnums
     ] XMLHttpRequestException {
 
         readonly attribute unsigned short   code;

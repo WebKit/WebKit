@@ -28,7 +28,7 @@ module html {
         Conditional=WEBGL,
         JSGenerateIsReachable=ImplContext,
         OmitConstructor,
-        DoNotCheckConstants
+        DontCheckEnums
     ] WebGLCompressedTextures {
         /* Compressed Texture Formats */
         const unsigned int COMPRESSED_RGB_S3TC_DXT1_EXT        = 0x83F0;

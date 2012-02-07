@@ -37,7 +37,7 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] IDBKey key)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKey key)
+        [CallWith=ScriptExecutionContext, ImplementationFunction=deleteFunction] IDBRequest delete(in IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest clear()
             raises (IDBDatabaseException);

@@ -28,7 +28,7 @@ module inspector {
     interface [
         Conditional=JAVASCRIPT_DEBUGGER,
         OmitConstructor,
-        DoNotCheckConstants
+        DontCheckEnums
     ] JavaScriptCallFrame {
 
         // Scope type
