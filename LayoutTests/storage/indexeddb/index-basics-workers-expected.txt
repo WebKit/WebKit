@@ -15,6 +15,14 @@ PASS [Worker] trans !== null is true
 [Worker] store.createIndex('indexName', 'x')
 [Worker] store.createIndex('indexName2', 'y', {unique: false})
 [Worker] store.createIndex('zIndex', 'z', {unique: true})
+PASS [Worker] indexObject2.unique is false
+PASS [Worker] indexObject3.unique is true
+[Worker] Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', true)
+PASS [Worker] Exception was thrown.
+PASS [Worker] store.createIndex('failureIndex', 'zzz', true) threw TypeError: Not an object.
+[Worker] Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', 'string')
+PASS [Worker] Exception was thrown.
+PASS [Worker] store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Not an object.
 PASS [Worker] 'name' in indexObject is true
 PASS [Worker] indexObject.name is "indexName"
 PASS [Worker] 'objectStore' in indexObject is true
