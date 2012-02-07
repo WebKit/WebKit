@@ -1,3 +1,16 @@
+2012-02-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to column style not updated on post block
+        in splitInlines.
+        https://bugs.webkit.org/show_bug.cgi?id=77939
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/multicol/span/split-inline-wrong-post-block-crash.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow):
+
 2012-02-07  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: extend Array validator functionality
