@@ -3456,7 +3456,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
 bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& event)
 {
-    if (!m_frame->document()->settings()->isTouchEventEmulationEnabled())
+    if (!m_frame || !m_frame->settings() || !m_frame->settings()->isTouchEventEmulationEnabled())
         return false;
 
     PlatformEvent::Type eventType = event.type();
