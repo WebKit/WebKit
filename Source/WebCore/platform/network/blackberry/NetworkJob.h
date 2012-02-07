@@ -56,9 +56,10 @@ public:
                     int deferLoadingCount,
                     int redirectCount);
     PassRefPtr<ResourceHandle> handle() const { return m_handle; }
+#ifndef NDEBUG
     bool isRunning() const { return m_isRunning; }
+#endif
     bool isCancelled() const { return m_cancelled; }
-    bool clientIsOk() const { return !m_cancelled && m_handle && m_handle->client(); }
     void loadDataURL() { m_loadDataTimer.startOneShot(0); }
     void loadAboutURL();
     int cancelJob();
@@ -81,12 +82,15 @@ public:
     void handleNotifyDataSent(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void notifyClose(int status);
     void handleNotifyClose(int status);
+
+private:
+    bool isClientAvailable() const { return !m_cancelled && m_handle && m_handle->client(); }
+
     virtual void notifyDataReceived(BlackBerry::Platform::NetworkBuffer* buffer)
     {
         notifyDataReceivedPlain(BlackBerry::Platform::networkBufferData(buffer), BlackBerry::Platform::networkBufferDataLength(buffer));
     }
 
-private:
     virtual void setWasDiskCached(bool value)
     {
        m_response.setWasCached(value);
@@ -161,7 +165,9 @@ private:
     bool m_isAbout;
     bool m_isFTP;
     bool m_isFTPDir;
+#ifndef NDEBUG
     bool m_isRunning;
+#endif
     bool m_cancelled;
     bool m_statusReceived;
     bool m_dataReceived;

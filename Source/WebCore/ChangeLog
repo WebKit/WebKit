@@ -1,3 +1,28 @@
+2012-02-07  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] Clean up Networkjob and Networkmanger: remove unused variables in release build and change some public functions into be private ones
+        https://bugs.webkit.org/show_bug.cgi?id=77926
+
+        Reviewed by Rob Buis.
+
+        1. rename clientIsOk to isClientAvailable.
+        2. m_isRunning is only for an ASSERT in NetWorkManager, So move out from
+        release build but keep available in debug build.
+        
+        No changes in behavior, so no new tests.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::handleNotifyDataReceived):
+        (WebCore::NetworkJob::handleNotifyDataSent):
+        (WebCore::NetworkJob::handleNotifyClose):
+        (WebCore::NetworkJob::startNewJobWithRequest):
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+        (WebCore::NetworkJob::sendMultipartResponseIfNeeded):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        (WebCore::NetworkJob::isClientAvailable):
+
 2012-02-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: don't mark object is queriable if it is only reachable by internal reference

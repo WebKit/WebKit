@@ -97,7 +97,9 @@ NetworkJob::NetworkJob()
     , m_isAbout(false)
     , m_isFTP(false)
     , m_isFTPDir(true)
+#ifndef NDEBUG
     , m_isRunning(true) // Always started immediately after creation.
+#endif
     , m_cancelled(false)
     , m_statusReceived(false)
     , m_dataReceived(false)
@@ -379,7 +381,7 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
     if (shouldSendClientData()) {
         sendResponseIfNeeded();
         sendMultipartResponseIfNeeded();
-        if (clientIsOk()) {
+        if (isClientAvailable()) {
             RecursionGuard guard(m_callingClient);
             m_handle->client()->didReceiveData(m_handle.get(), buf, len, len);
         }
@@ -404,7 +406,7 @@ void NetworkJob::handleNotifyDataSent(unsigned long long bytesSent, unsigned lon
     // Protect against reentrancy.
     updateDeferLoadingCount(1);
 
-    if (clientIsOk()) {
+    if (isClientAvailable()) {
         RecursionGuard guard(m_callingClient);
         m_handle->client()->didSendData(m_handle.get(), bytesSent, totalBytesToBeSent);
     }
@@ -422,8 +424,9 @@ void NetworkJob::notifyClose(int status)
 
 void NetworkJob::handleNotifyClose(int status)
 {
+#ifndef NDEBUG
     m_isRunning = false;
-
+#endif
     if (!m_cancelled) {
         if (!m_statusReceived) {
             // Connection failed before sending notifyStatusReceived: use generic NetworkError.
@@ -443,7 +446,7 @@ void NetworkJob::handleNotifyClose(int status)
                 m_extendedStatusCode = BlackBerry::Platform::FilterStream::StatusTooManyRedirects;
 
             sendResponseIfNeeded();
-            if (clientIsOk()) {
+            if (isClientAvailable()) {
 
                 RecursionGuard guard(m_callingClient);
                 if (isError(m_extendedStatusCode) && !m_dataReceived) {
@@ -498,7 +501,7 @@ bool NetworkJob::retryAsFTPDirectory()
 
 bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increasRedirectCount)
 {
-    if (clientIsOk()) {
+    if (isClientAvailable()) {
         RecursionGuard guard(m_callingClient);
         m_handle->client()->willSendRequest(m_handle.get(), newRequest, m_response);
 
@@ -616,7 +619,7 @@ void NetworkJob::sendResponseIfNeeded()
     if (m_isFile || m_isData || m_isAbout)
         m_response.setHTTPHeaderField("Cache-Control", "no-cache");
 
-    if (clientIsOk()) {
+    if (isClientAvailable()) {
         RecursionGuard guard(m_callingClient);
         m_handle->client()->didReceiveResponse(m_handle.get(), m_response);
     }
@@ -624,7 +627,7 @@ void NetworkJob::sendResponseIfNeeded()
 
 void NetworkJob::sendMultipartResponseIfNeeded()
 {
-    if (m_multipartResponse && clientIsOk()) {
+    if (m_multipartResponse && isClientAvailable()) {
         m_handle->client()->didReceiveResponse(m_handle.get(), *m_multipartResponse);
         m_multipartResponse = nullptr;
     }
