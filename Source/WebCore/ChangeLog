@@ -1,5 +1,23 @@
 2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r106935.
+        http://trac.webkit.org/changeset/106935
+        https://bugs.webkit.org/show_bug.cgi?id=77994
+
+        "Crashes runMultiThread webkit_unit_test" (Requested by tonyg-
+        cr on #webkit).
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
+2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r106932.
         http://trac.webkit.org/changeset/106932
         https://bugs.webkit.org/show_bug.cgi?id=77988

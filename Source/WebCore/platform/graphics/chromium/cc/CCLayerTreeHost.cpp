@@ -251,8 +251,9 @@ void CCLayerTreeHost::setNeedsCommit()
 
 void CCLayerTreeHost::setNeedsRedraw()
 {
-    m_proxy->setNeedsRedraw();
-    if (!CCThreadProxy::implThread())
+    if (CCThreadProxy::implThread())
+        m_proxy->setNeedsRedraw();
+    else
         m_client->scheduleComposite();
 }
 
