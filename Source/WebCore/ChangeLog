@@ -1,3 +1,25 @@
+2012-02-07  Matthew Delaney  <mdelaney@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77912
+        Removing old CG shadow code.
+        
+        A CG-specific shadow offset hack was added in http://trac.webkit.org/changeset/34317
+        for this particular setShadow method. However, this shadow offset adjustment for CG
+        has since moved down into platform specific code. Thus, this offset adjustment here
+        is now redundant.
+
+        The CG-only shadow setting code block in this setShadow method is now redundant.
+        Since it sets the shadow values to the CGContext directly - and not to the State object -
+        it will be overwritten later by any subsequent calls to setting shadow values such as
+        blur, offset, or shadow color.
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Current canvas tests cover this path.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+
 2012-02-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Gracefully handle compositor initialization failure in single-threaded proxy

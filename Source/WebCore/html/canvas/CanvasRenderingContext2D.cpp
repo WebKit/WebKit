@@ -1101,26 +1101,6 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     didDraw(boundingRect);
 }
 
-#if USE(CG)
-static inline CGSize adjustedShadowSize(CGFloat width, CGFloat height)
-{
-    // Work around <rdar://problem/5539388> by ensuring that shadow offsets will get truncated
-    // to the desired integer.
-    static const CGFloat extraShadowOffset = narrowPrecisionToCGFloat(1.0 / 128);
-    if (width > 0)
-        width += extraShadowOffset;
-    else if (width < 0)
-        width -= extraShadowOffset;
-
-    if (height > 0)
-        height += extraShadowOffset;
-    else if (height < 0)
-        height -= extraShadowOffset;
-
-    return CGSizeMake(width, height);
-}
-#endif
-
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur)
 {
     state().m_shadowOffset = FloatSize(width, height);
@@ -1181,20 +1161,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     state().m_shadowOffset = FloatSize(width, height);
     state().m_shadowBlur = blur;
     state().m_shadowColor = makeRGBAFromCMYKA(c, m, y, k, a);
-
-    GraphicsContext* dc = drawingContext();
-    if (!dc)
-        return;
-#if USE(CG)
-    const CGFloat components[5] = { c, m, y, k, a };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceCMYK();
-    CGColorRef shadowColor = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
-    CGContextSetShadowWithColor(dc->platformContext(), adjustedShadowSize(width, -height), blur, shadowColor);
-    CGColorRelease(shadowColor);
-#else
     applyShadow();
-#endif
 }
 
 void CanvasRenderingContext2D::clearShadow()
