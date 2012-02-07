@@ -1,3 +1,26 @@
+2012-02-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Gracefully handle compositor initialization failure in single-threaded proxy
+        https://bugs.webkit.org/show_bug.cgi?id=78013
+
+        Reviewed by Kenneth Russell.
+
+        If compositor initialization fails it's not safe to proceed through the rest of the frame process. This adds
+        some early outs.
+
+        Tested manually by forcing the first makeContextCurrent() call fail.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::compositeAndReadback):
+        (WebCore::CCSingleThreadProxy::compositeImmediately):
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+
 2012-02-07  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/9567286> and https://bugs.webkit.org/show_bug.cgi?id=78003

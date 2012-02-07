@@ -397,7 +397,8 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
     // updateLayers.
     m_commitRequested = false;
 
-    m_layerTreeHost->updateLayers();
+    if (!m_layerTreeHost->updateLayers())
+        return;
 
     // Before applying scrolls and calling animate, we set m_animateRequested to false.
     // If it is true now, it means setNeedAnimate was called again. Call setNeedsCommit

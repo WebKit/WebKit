@@ -184,7 +184,8 @@ public:
 
     void setHaveWheelEventHandlers(bool);
 
-    void updateLayers();
+    // Returns false if we should abort this frame due to initialization failure.
+    bool updateLayers();
 
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     void applyScrollAndScale(const CCScrollAndScaleSet&);

@@ -371,22 +371,23 @@ void CCLayerTreeHost::composite()
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 
-void CCLayerTreeHost::updateLayers()
+bool CCLayerTreeHost::updateLayers()
 {
     if (!m_layerRendererInitialized) {
         initializeLayerRenderer();
         // If we couldn't initialize, then bail since we're returning to software mode.
         if (!m_layerRendererInitialized)
-            return;
+            return false;
     }
 
     if (!rootLayer())
-        return;
+        return true;
 
     if (viewportSize().isEmpty())
-        return;
+        return true;
 
     updateLayers(rootLayer());
+    return true;
 }
 
 void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
