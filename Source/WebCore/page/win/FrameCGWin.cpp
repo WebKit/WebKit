@@ -97,7 +97,7 @@ DragImageRef Frame::nodeImage(Node* node)
     if (!renderer)
         return 0;
 
-    IntRect topLevelRect;
+    LayoutRect topLevelRect;
     IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
     document()->updateLayout();

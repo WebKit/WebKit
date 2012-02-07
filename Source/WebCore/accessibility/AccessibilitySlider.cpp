@@ -101,7 +101,7 @@ const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attri
     return element()->getAttribute(attribute);
 }
     
-AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const LayoutPoint& point) const
 {
     if (m_children.size()) {
         ASSERT(m_children.size() == 1);

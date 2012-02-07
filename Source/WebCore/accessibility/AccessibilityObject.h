@@ -584,7 +584,7 @@ public:
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const;
 
     String stringForVisiblePositionRange(const VisiblePositionRange&) const;
-    virtual LayoutRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return LayoutRect(); }
+    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const { }
 
@@ -615,7 +615,7 @@ public:
     PlainTextRange doAXStyleRangeForIndex(unsigned) const;
 
     virtual String doAXStringForRange(const PlainTextRange&) const { return String(); }
-    virtual LayoutRect doAXBoundsForRange(const PlainTextRange&) const { return LayoutRect(); }
+    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const { return IntRect(); }
     String listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&) const;
 
     unsigned doAXLineForIndex(unsigned);

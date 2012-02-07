@@ -2605,7 +2605,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return;
 
     // Simulate a click in the middle of the object.
-    LayoutPoint clickPoint = m_object->clickPoint();
+    IntPoint clickPoint = m_object->clickPoint();
     
     PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
     bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);

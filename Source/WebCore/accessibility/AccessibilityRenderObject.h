@@ -154,7 +154,7 @@ public:
     void updateAccessibilityRole();
     
     // Should be called on the root accessibility object to kick off a hit test.
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const;
 
     virtual Element* actionElement() const;
     Element* mouseButtonListener() const;
@@ -166,7 +166,7 @@ public:
     virtual LayoutRect boundingBoxRect() const;
     virtual LayoutRect elementRect() const;
     virtual LayoutSize size() const;
-    virtual LayoutPoint clickPoint();
+    virtual IntPoint clickPoint();
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     virtual RenderObject* renderer() const { return m_renderer; }
@@ -228,7 +228,7 @@ public:
     
     virtual VisiblePositionRange visiblePositionRange() const;
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const;
-    virtual LayoutRect boundsForVisiblePositionRange(const VisiblePositionRange&) const;
+    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const;
     virtual bool supportsARIAFlowTo() const;
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const;
@@ -250,7 +250,7 @@ public:
     virtual PlainTextRange doAXRangeForIndex(unsigned) const;
     
     virtual String doAXStringForRange(const PlainTextRange&) const;
-    virtual LayoutRect doAXBoundsForRange(const PlainTextRange&) const;
+    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const;
     
     virtual String stringValueForMSAA() const;
     virtual String stringRoleForMSAA() const;

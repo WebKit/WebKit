@@ -1,3 +1,67 @@
+2012-02-06  Levi Weintraub  <leviw@chromium.org>
+
+        Correct usage of LayoutUnits in dom, editing, page, accessibility, inspector, and loader
+        https://bugs.webkit.org/show_bug.cgi?id=77891
+
+        Reviewed by Darin Adler.
+
+        Updating the usage of LayoutUnits in the dom, editing, page, accessibility, inspector, and loader
+        directories to properly use LayoutUnits vs ints.
+
+        No new tests. No new behavior.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::elementAccessibilityHitTest):
+        * accessibility/AccessibilitySlider.h:
+        (AccessibilitySlider):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::dragLocation):
+        (Clipboard):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/Element.cpp:
+        (WebCore::Element::screenRect):
+        * dom/Element.h:
+        (Element):
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeForPoint):
+        (WebCore::Editor::firstRectForRange):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::absoluteRect):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::absoluteRect):
+        (RenderedPosition):
+        * editing/VisiblePosition.h:
+        (VisiblePosition):
+        * inspector/DOMNodeHighlighter.cpp:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        * loader/SubframeLoader.h:
+        (SubframeLoader):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameCGWin.cpp:
+        (WebCore::Frame::nodeImage):
+
 2012-02-05  Kentaro Hara  <haraken@chromium.org>
 
         Rename [DontCheckEnums], [ReturnsNew], [DoNotCheckDomainSecurityOnGet],

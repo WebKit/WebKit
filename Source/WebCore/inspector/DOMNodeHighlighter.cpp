@@ -288,8 +288,8 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     titleRect.inflate(rectInflatePx);
 
     // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
-    LayoutUnit dx = -borderWidthPx;
-    LayoutUnit dy = borderWidthPx;
+    int dx = -borderWidthPx;
+    int dy = borderWidthPx;
 
     // If the tip sticks beyond the right of visibleRect, right-align the tip with the said boundary.
     if (titleRect.maxX() + dx > visibleRect.maxX())

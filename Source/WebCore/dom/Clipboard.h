@@ -69,13 +69,13 @@ namespace WebCore {
         virtual HashSet<String> types() const = 0;
         virtual PassRefPtr<FileList> files() const = 0;
 
-        LayoutPoint dragLocation() const { return m_dragLoc; }
+        IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }
-        virtual void setDragImage(CachedImage*, const LayoutPoint&) = 0;
+        virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
         Node* dragImageElement() const { return m_dragImageElement.get(); }
-        virtual void setDragImageElement(Node*, const LayoutPoint&) = 0;
+        virtual void setDragImageElement(Node*, const IntPoint&) = 0;
         
-        virtual DragImageRef createDragImage(LayoutPoint& dragLocation) const = 0;
+        virtual DragImageRef createDragImage(IntPoint& dragLocation) const = 0;
 #if ENABLE(DRAG_SUPPORT)
         virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) = 0;
 #endif
@@ -117,7 +117,7 @@ namespace WebCore {
         ClipboardType m_clipboardType;
         
     protected:
-        LayoutPoint m_dragLoc;
+        IntPoint m_dragLoc;
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Node> m_dragImageElement;
     };

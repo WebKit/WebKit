@@ -93,7 +93,7 @@ public:
     }
 
     // Rect is local to the returned renderer
-    IntRect localCaretRect(RenderObject*&) const;
+    LayoutRect localCaretRect(RenderObject*&) const;
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds() const;
     // Abs x/y position of the caret ignoring transforms.

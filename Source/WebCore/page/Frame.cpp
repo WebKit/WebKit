@@ -1071,7 +1071,7 @@ DragImageRef Frame::nodeImage(Node* node)
     m_doc->updateLayout();
     m_view->setNodeToDraw(node); // Enable special sub-tree drawing mode.
 
-    IntRect topLevelRect;
+    LayoutRect topLevelRect;
     IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));

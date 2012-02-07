@@ -32,6 +32,7 @@
 #define SubframeLoader_h
 
 #include "FrameLoaderTypes.h"
+#include "LayoutTypes.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -71,7 +72,7 @@ public:
     PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 #endif
 
-    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
+    PassRefPtr<Widget> createJavaAppletWidget(const LayoutSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
     bool allowPlugins(ReasonForCallingAllowPlugins);
 

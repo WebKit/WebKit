@@ -668,7 +668,7 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
     if (!renderer || style->transform().operations().isEmpty())
         return cssValuePool->createIdentifierValue(CSSValueNone);
 
-    IntRect box = sizingBox(renderer);
+    LayoutRect box = sizingBox(renderer);
 
     TransformationMatrix transform;
     style->applyTransform(transform, box.size(), RenderStyle::ExcludeTransformOrigin);
@@ -2113,7 +2113,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitPerspectiveOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
-                IntRect box = sizingBox(renderer);
+                LayoutRect box = sizingBox(renderer);
                 list->append(zoomAdjustedPixelValue(style->perspectiveOriginX().calcMinValue(box.width()), style.get(), cssValuePool));
                 list->append(zoomAdjustedPixelValue(style->perspectiveOriginY().calcMinValue(box.height()), style.get(), cssValuePool));
             }

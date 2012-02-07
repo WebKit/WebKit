@@ -224,7 +224,7 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     return createLegacyEditingPosition(prevLeafChild()->renderer()->node(), prevLeafChild()->caretRightmostOffset());
 }
 
-LayoutRect RenderedPosition::absoluteRect(int* extraWidthToEndOfLine) const
+LayoutRect RenderedPosition::absoluteRect(LayoutUnit* extraWidthToEndOfLine) const
 {
     if (isNull())
         return LayoutRect();

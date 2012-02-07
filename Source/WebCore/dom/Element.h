@@ -187,7 +187,7 @@ public:
     PassRefPtr<ClientRect> getBoundingClientRect();
     
     // Returns the absolute bounding box translated into screen coordinates:
-    LayoutRect screenRect() const;
+    IntRect screenRect() const;
 
     void removeAttribute(const String& name);
     void removeAttributeNS(const String& namespaceURI, const String& localName);
