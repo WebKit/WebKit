@@ -19,8 +19,8 @@
 
 #include "config.h"
 
-#include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
+#include "WebViewTest.h"
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <string.h>
@@ -46,7 +46,7 @@ static void serverCallback(SoupServer* server, SoupMessage* msg, const char* pat
     soup_message_body_complete(msg->response_body);
 }
 
-class BackForwardListTest: public LoadTrackingTest {
+class BackForwardListTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(BackForwardListTest);
 
@@ -130,7 +130,7 @@ public:
     void waitUntilLoadFinished()
     {
         m_hasChanged = false;
-        LoadTrackingTest::waitUntilLoadFinished();
+        WebViewTest::waitUntilLoadFinished();
         g_assert(m_hasChanged);
     }
 

@@ -41,6 +41,7 @@ public:
     void goToBackForwardListItem(WebKitBackForwardListItem*);
 
     void wait(double seconds);
+    void waitUntilLoadFinished();
 
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;

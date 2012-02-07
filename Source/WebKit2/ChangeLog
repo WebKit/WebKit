@@ -1,3 +1,41 @@
+2012-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add cut, copy and paste methods to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=76998
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add WebKitEditingCommands.h.
+        * UIProcess/API/gtk/WebKitEditingCommands.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (didValidateCommand): Callback called by the C API when an editor
+        command has been validated.
+        (webkit_web_view_can_execute_editing_command): Asynchronously
+        validate the given editing command.
+        (webkit_web_view_can_execute_editing_command_finish): Finish async
+        operation started by webkit_web_view_can_execute_editing_command().
+        (webkit_web_view_execute_editing_command): Execute the given
+        command.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (LoadTrackingTest::provisionalLoadFailed): Do not finish the main
+        loop on load failure, now finished is always called.
+        * UIProcess/API/gtk/tests/TestBackForwardList.cpp: Use WebViewTest
+        instead of LoadTrackingTest.
+        * UIProcess/API/gtk/tests/TestWebViewEditor.cpp: Added.
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (loadChanged):
+        (WebViewTest::waitUntilLoadFinished): Run a main loop until load
+        finished.
+        * UIProcess/API/gtk/tests/WebViewTest.h: Add waitUntilLoadFinished().
+        * UIProcess/API/gtk/webkit2.h: Include WebKitEditingCommands.h.
+
 2012-02-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Encode radius, force and rotationAngle in WebPlatformTouchPoint.

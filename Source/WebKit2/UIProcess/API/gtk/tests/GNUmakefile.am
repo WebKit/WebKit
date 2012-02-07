@@ -5,7 +5,8 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitSettings \
 	Programs/WebKit2APITests/TestBackForwardList \
 	Programs/WebKit2APITests/TestDownloads \
-	Programs/WebKit2APITests/TestWebKitPolicyClient
+	Programs/WebKit2APITests/TestWebKitPolicyClient \
+	Programs/WebKit2APITests/TestWebViewEditor
 
 noinst_PROGRAMS += $(TEST_PROGS)
 
@@ -111,3 +112,9 @@ Programs_WebKit2APITests_TestDownloads_SOURCES = \
 Programs_WebKit2APITests_TestDownloads_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestDownloads_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestDownloads_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebViewEditor_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestWebViewEditor.cpp
+Programs_WebKit2APITests_TestWebViewEditor_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebViewEditor_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebViewEditor_LDFLAGS = $(webkit2_tests_ldflags)

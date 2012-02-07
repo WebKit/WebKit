@@ -110,8 +110,6 @@ void LoadTrackingTest::provisionalLoadReceivedServerRedirect()
 void LoadTrackingTest::provisionalLoadFailed(const gchar* failingURI, GError* error)
 {
     m_loadEvents.append(ProvisionalLoadFailed);
-    if (m_runLoadUntilCompletion)
-        g_main_loop_quit(m_mainLoop);
 }
 
 void LoadTrackingTest::loadCommitted()

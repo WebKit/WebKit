@@ -116,3 +116,17 @@ void WebViewTest::wait(double seconds)
     g_timeout_add_seconds(seconds, reinterpret_cast<GSourceFunc>(testLoadTimeoutFinishLoop), m_mainLoop);
     g_main_loop_run(m_mainLoop);
 }
+
+static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(loadChanged), test);
+    g_main_loop_quit(test->m_mainLoop);
+}
+
+void WebViewTest::waitUntilLoadFinished()
+{
+    g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChanged), this);
+    g_main_loop_run(m_mainLoop);
+}

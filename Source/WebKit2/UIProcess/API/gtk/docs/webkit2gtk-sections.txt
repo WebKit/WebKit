@@ -49,6 +49,13 @@ webkit_web_context_get_type
 WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
+
+<SUBSECTION Editing Commands>
+WEBKIT_EDITING_COMMAND_CUT
+WEBKIT_EDITING_COMMAND_COPY
+WEBKIT_EDITING_COMMAND_PASTE
+
+<SUBSECTION>
 webkit_web_view_new
 webkit_web_view_new_with_context
 webkit_web_view_get_context
@@ -76,6 +83,9 @@ webkit_web_view_get_settings
 webkit_web_view_get_window_properties
 webkit_web_view_set_zoom_level
 webkit_web_view_get_zoom_level
+webkit_web_view_can_execute_editing_command
+webkit_web_view_can_execute_editing_command_finish
+webkit_web_view_execute_editing_command
 
 <SUBSECTION Standard>
 WebKitWebViewClass

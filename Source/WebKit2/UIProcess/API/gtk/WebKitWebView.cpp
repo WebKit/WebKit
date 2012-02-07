@@ -1267,3 +1267,77 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     return WKPageGetPageZoomFactor(wkPage);
 }
+
+
+static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context)
+{
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
+    g_simple_async_result_set_op_res_gboolean(result.get(), isEnabled);
+    g_simple_async_result_complete(result.get());
+}
+
+/**
+ * webkit_web_view_can_execute_editing_command:
+ * @web_view: a #WebKitWebView
+ * @command: the command to check
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously execute the given editing command.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_can_execute_editing_command_finish() to get the result of the operation.
+ */
+void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const char* command, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(command);
+
+    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+                                                           reinterpret_cast<gpointer>(webkit_web_view_can_execute_editing_command));
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> wkCommand(AdoptWK, WKStringCreateWithUTF8CString(command));
+    WKPageValidateCommand(toAPI(page), wkCommand.get(), result, didValidateCommand);
+}
+
+/**
+ * webkit_web_view_can_execute_editing_command_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_can_execute_editing_command().
+ *
+ * Returns: %TRUE if a selection can be cut or %FALSE otherwise
+ */
+gboolean webkit_web_view_can_execute_editing_command_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), FALSE);
+
+    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_can_execute_editing_command);
+
+    if (g_simple_async_result_propagate_error(simple, error))
+        return FALSE;
+    return g_simple_async_result_get_op_res_gboolean(simple);
+}
+
+/**
+ * webkit_web_view_execute_editing_command:
+ * @web_view: a #WebKitWebView
+ * @command: the command to execute
+ *
+ * Request to execute the given @command for @web_view. You can use
+ * webkit_web_view_can_execute_editing_command() to check whether
+ * it's possible to execute the command.
+ */
+void webkit_web_view_execute_editing_command(WebKitWebView* webView, const char* command)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(command);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> wkCommand(AdoptWK, WKStringCreateWithUTF8CString(command));
+    WKPageExecuteCommand(toAPI(page), wkCommand.get());
+}
