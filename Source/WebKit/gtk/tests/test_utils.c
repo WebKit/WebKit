@@ -29,10 +29,8 @@ int testutils_relative_chdir(const gchar *targetFilename, const gchar *executabl
     if (repoPath) {
         if (g_chdir(repoPath))
             return -1;
-    } else if (g_path_is_absolute(executablePath)) {
-        if (g_chdir(g_path_get_dirname(executablePath)))
+    } else if (g_chdir(g_path_get_dirname(executablePath)))
             return -1;
-    }
 
     while (!g_file_test(targetFilename, G_FILE_TEST_EXISTS)) {
         gchar *pathName;

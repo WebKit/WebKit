@@ -1,5 +1,16 @@
 2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Do not try to chdir to the directory where the executable is in
+        only if the path is absolute. This makes tests runnable from
+        anywhere.
+
+        Reviewed by Martin Robinson.
+
+        * tests/test_utils.c:
+        (testutils_relative_chdir):
+
+2012-02-06  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed fix for the new API test that is failing -
         WEBKIT_INSPECTOR_PATH needs to be set, since we do not install our
         builds.
