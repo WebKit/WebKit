@@ -3272,6 +3272,8 @@ BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
+BUGWK65862 MAC DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
+
 // Performance issues with border radius clipping on Chromium not yet resolved
 BUGCR97716 : fast/clip/overflow-border-radius-composited.html = IMAGE
 // Consistently failing as of about r95590
