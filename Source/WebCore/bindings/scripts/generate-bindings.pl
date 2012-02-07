@@ -50,8 +50,6 @@ my $writeDependencies;
 my $verbose;
 my $supplementalDependencyFile;
 my $additionalIdlFilesList;
-my $idlNeedsRebuildFile;
-my $newBuildFlow;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
@@ -64,28 +62,12 @@ GetOptions('include=s@' => \@idlDirectories,
            'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
-           'additionalIdlFilesList=s' => \$additionalIdlFilesList,
-           'idlNeedsRebuildFile=s' => \$idlNeedsRebuildFile,
-           # FIXME: After supporting the new build flow in all build systems (bug 76970),
-           # we should remove the --newBuildFlow option.
-           'newBuildFlow' => \$newBuildFlow);
+           'additionalIdlFilesList=s' => \$additionalIdlFilesList);
 
 my $targetIdlFile = $ARGV[0];
 
-if ($idlNeedsRebuildFile) {
-    open FH, "<", $idlNeedsRebuildFile or die "Couldn't open $idlNeedsRebuildFile: $!";
-    while (<FH>) {
-        chomp;
-        if (/^IDLFile=(.*)$/) {
-            $targetIdlFile = $1;
-            last;
-        }
-    }
-    close FH;
-}
-
 die('Must specify input file.') unless defined($targetIdlFile);
-die('Must specify generator.') unless defined($generator);
+die('Must specify generator') unless defined($generator);
 die('Must specify output directory.') unless defined($outputDirectory);
 
 if (!$outputHeadersDirectory) {
@@ -100,55 +82,25 @@ my $targetInterfaceName = fileparse(basename($targetIdlFile), ".idl");
 my $idlFound = 0;
 my @supplementedIdlFiles;
 if ($supplementalDependencyFile) {
-    # FIXME: After supporting the new build flow in all build systems (bug 76970),
-    # we should remove this if statement.
-    if ($newBuildFlow) {
-        # The format of a supplemental dependency file:
-        #
-        # DOMWindow.idl(1000) P.idl(800) Q.idl(1200) R.idl(1000)
-        # Document.idl(1000) S.idl(800)
-        # Event.idl(1200)
-        # ...
-        #
-        # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
-        # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-        # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-        # The number in () is the last access timestamp of the file.
-        open FH, "<", $supplementalDependencyFile or die "Cannot open $supplementalDependencyFile\n";
-        while (my $line = <FH>) {
-            my ($idlFileEntry, @supplementalIdlFileEntries) = split(/\s+/, $line);
-            die "The format of supplemental.dep is wrong\n" unless $idlFileEntry =~ /^([^\(]*)\(\d+\)$/;
-            my $idlFile = $1;
-            if (basename($idlFile) eq basename($targetIdlFile)) {
-                $idlFound = 1;
-                for my $supplementalIdlFileEntry (@supplementalIdlFileEntries) {
-                    die "The format of supplemental.dep is wrong\n" unless $supplementalIdlFileEntry =~ /^([^\(]*)\(\d+\)$/;
-                    push @supplementedIdlFiles, $1;
-                }
-            }
+    # The format of a supplemental dependency file:
+    #
+    # DOMWindow.idl P.idl Q.idl R.idl
+    # Document.idl S.idl
+    # Event.idl
+    # ...
+    #
+    # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
+    # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
+    # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
+    open FH, "< $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
+    while (my $line = <FH>) {
+        my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
+        if ($idlFile and basename($idlFile) eq basename($targetIdlFile)) {
+            $idlFound = 1;
+            @supplementedIdlFiles = @followingIdlFiles;
         }
-        close FH;
-    } else {
-        # The format of a supplemental dependency file:
-        #
-        # DOMWindow.idl P.idl Q.idl R.idl
-        # Document.idl S.idl
-        # Event.idl
-        # ...
-        #
-        # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
-        # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-        # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-        open FH, "<", $supplementalDependencyFile or die "Cannot open $supplementalDependencyFile\n";
-        while (my $line = <FH>) {
-            my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
-            if ($idlFile and basename($idlFile) eq basename($targetIdlFile)) {
-                $idlFound = 1;
-                @supplementedIdlFiles = @followingIdlFiles;
-            }
-        }
-        close FH;
     }
+    close FH;
 
     # The file $additionalIdlFilesList contains one IDL file per line:
     # P.idl
@@ -158,7 +110,7 @@ if ($supplementalDependencyFile) {
     # (i.e. they are not described in the supplemental dependency file)
     # but should generate .h and .cpp files.
     if (!$idlFound and $additionalIdlFilesList) {
-        open FH, "<", $additionalIdlFilesList or die "Cannot open $additionalIdlFilesList\n";
+        open FH, "< $additionalIdlFilesList" or die "Cannot open $additionalIdlFilesList\n";
         my @idlFiles = <FH>;
         chomp(@idlFiles);
         $idlFound = grep { $_ and basename($_) eq basename($targetIdlFile) } @idlFiles;
@@ -255,11 +207,11 @@ sub generateEmptyHeaderAndCpp
     $cppName at every build. This file must not be tried to compile.
 */
 ";
-    open FH, ">", "${outputHeadersDirectory}/${headerName}" or die "Cannot open $headerName\n";
+    open FH, "> ${outputHeadersDirectory}/${headerName}" or die "Cannot open $headerName\n";
     print FH $contents;
     close FH;
 
-    open FH, ">", "${outputDirectory}/${cppName}" or die "Cannot open $cppName\n";
+    open FH, "> ${outputDirectory}/${cppName}" or die "Cannot open $cppName\n";
     print FH $contents;
     close FH;
 }

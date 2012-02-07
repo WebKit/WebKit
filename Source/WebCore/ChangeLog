@@ -1,3 +1,17 @@
+2012-02-07  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r106862.
+        http://trac.webkit.org/changeset/106862
+        https://bugs.webkit.org/show_bug.cgi?id=77510
+
+        Mac build fails if we manually remove generated code
+
+        * DerivedSources.make:
+        * bindings/scripts/generate-bindings.pl:
+        (generateEmptyHeaderAndCpp):
+        * bindings/scripts/resolve-supplemental.pl:
+        * bindings/scripts/update-idl-needs-rebuild.pl: Removed.
+
 2012-02-07  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Migrate createObjectURL & revokeObjectURL to static (Class) methods.

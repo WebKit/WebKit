@@ -31,16 +31,12 @@ my $preprocessor;
 my $verbose;
 my $idlFilesList;
 my $supplementalDependencyFile;
-my $newBuildFlow;
 
 GetOptions('defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor,
            'verbose' => \$verbose,
            'idlFilesList=s' => \$idlFilesList,
-           'supplementalDependencyFile=s' => \$supplementalDependencyFile,
-           # FIXME: After supporting the new build flow in all build systems (bug 76970),
-           # we should remove the --newBuildFlow option.
-           'newBuildFlow' => \$newBuildFlow);
+           'supplementalDependencyFile=s' => \$supplementalDependencyFile);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
@@ -50,7 +46,7 @@ if ($verbose) {
     print "Resolving [Supplemental=XXX] dependencies in all IDL files.\n";
 }
 
-open FH, "<", $idlFilesList or die "Cannot open $idlFilesList\n";
+open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
 my @idlFiles = <FH>;
 chomp(@idlFiles);
 close FH;
@@ -81,50 +77,19 @@ foreach my $idlFile (keys %documents) {
     }
 }
 
-# FIXME: After supporting the new build flow in all build systems (bug 76970),
-# we should remove this if statement.
-if ($newBuildFlow) {
-    # The format of a supplemental dependency file:
-    #
-    # DOMWindow.idl(1000) P.idl(800) Q.idl(1200) R.idl(1000)
-    # Document.idl(1000) S.idl(800)
-    # Event.idl(1200)
-    # ...
-    #
-    # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
-    # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-    # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-    # The number in () is the last access timestamp of the file.
-    open FH, ">", $supplementalDependencyFile or die "Cannot open $supplementalDependencyFile\n";
-    foreach my $idlFile (sort keys %supplementals) {
-        print FH $idlFile . "(" . timestamp($idlFile) . ")";
-        for my $supplementalIdlFile (@{$supplementals{$idlFile}}) {
-            print FH " " . $supplementalIdlFile . "(" . timestamp($supplementalIdlFile) . ")";
-        }
-        print FH "\n";
-    }
-    close FH;
-} else {
-    # The format of a supplemental dependency file:
-    #
-    # DOMWindow.idl P.idl Q.idl R.idl
-    # Document.idl S.idl
-    # Event.idl
-    # ...
-    #
-    # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
-    # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-    # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-    open FH, ">", $supplementalDependencyFile or die "Cannot open $supplementalDependencyFile\n";
-    foreach my $idlFile (sort keys %supplementals) {
-        print FH $idlFile, " @{$supplementals{$idlFile}}\n";
-    }
-    close FH;
+# Outputs the dependency.
+# The format of a supplemental dependency file:
+#
+# DOMWindow.idl P.idl Q.idl R.idl
+# Document.idl S.idl
+# Event.idl
+# ...
+#
+# The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
+# Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
+# The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
+open FH, "> $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
+foreach my $idlFile (sort keys %supplementals) {
+    print FH $idlFile, " @{$supplementals{$idlFile}}\n";
 }
-
-sub timestamp
-{
-    my $file = shift;
-    return 0 if ! -e $file;
-    return (stat $file)[9];
-}
+close FH;
