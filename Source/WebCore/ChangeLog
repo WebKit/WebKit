@@ -1,3 +1,25 @@
+2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106909.
+        http://trac.webkit.org/changeset/106909
+        https://bugs.webkit.org/show_bug.cgi?id=77965
+
+        ~20 tests are crashing on chromium win release bot. (Requested
+        by loislo on #webkit).
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createShadowSubtree):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createShadowSubtree):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createShadowSubtree):
+
 2012-02-07  Andreas Kling  <awesomekling@apple.com>
 
         REGRESSION(r106819): ~28% or so performance regression on the ManInBlue HTML benchmark

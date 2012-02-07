@@ -73,10 +73,9 @@ RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle
 
 void HTMLSummaryElement::createShadowSubtree()
 {
-    ASSERT(!shadowRoot());
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
-    root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, true);
-    root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
+    ExceptionCode ec = 0;
+    ensureShadowRoot()->appendChild(DetailsMarkerControl::create(document()), ec, true);
+    ensureShadowRoot()->appendChild(SummaryContentElement::create(document()), ec, true);
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

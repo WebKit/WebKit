@@ -109,10 +109,8 @@ RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle
 void HTMLDetailsElement::createShadowSubtree()
 {
     ASSERT(!shadowRoot());
-
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
-    root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, true);
-    root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
+    ensureShadowRoot()->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, true);
+    ensureShadowRoot()->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
 }
 
 Element* HTMLDetailsElement::findMainSummary() const
