@@ -60,6 +60,21 @@
 
 namespace WebCore {
 
+static bool systemAllowsMultisamplingOnATICards()
+{
+#if PLATFORM(MAC)
+    static SInt32 version;
+    if (!version) {
+        if (Gestalt(gestaltSystemVersion, &version) != noErr)
+            return false;
+    }
+    // See https://bugs.webkit.org/show_bug.cgi?id=77922 for more details
+    return version > 0x1072;
+#else
+    return false;
+#endif
+}
+
 void GraphicsContext3D::validateAttributes()
 {
     Extensions3D* extensions = getExtensions();
@@ -74,9 +89,10 @@ void GraphicsContext3D::validateAttributes()
     }
     if (m_attrs.antialias) {
         bool isValidVendor = true;
-        // Currently in Mac we only turn on antialias if vendor is NVIDIA.
+        // Currently in Mac we only turn on antialias if vendor is NVIDIA,
+        // or if ATI and on 10.7.2 and above.
         const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
-        if (!std::strstr(vendor, "NVIDIA"))
+        if (!std::strstr(vendor, "NVIDIA") && !(std::strstr(vendor, "ATI") && systemAllowsMultisamplingOnATICards()))
             isValidVendor = false;
         if (!isValidVendor || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
             m_attrs.antialias = false;
