@@ -48,11 +48,11 @@ public:
     void invalidateStyleAttribute();
 
     StylePropertySet* inlineStyleDecl() const { return attributeData() ? attributeData()->inlineStyleDecl() : 0; }
-    StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeData()->ensureInlineStyleDecl(this); }
+    StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeDataWithoutUpdate()->ensureInlineStyleDecl(this); }
     virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
 
     StylePropertySet* attributeStyle() const { return attributeData() ? attributeData()->attributeStyle() : 0; }
-    StylePropertySet* ensureAttributeStyle() { return ensureAttributeData()->ensureAttributeStyle(this); }
+    StylePropertySet* ensureAttributeStyle() { return ensureAttributeDataWithoutUpdate()->ensureAttributeStyle(this); }
 
     const SpaceSplitString& classNames() const;
 

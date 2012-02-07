@@ -242,6 +242,9 @@ public:
     ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
     ElementAttributeData* ensureAttributeData() const { return ensureUpdatedAttributes()->attributeData(); }
 
+    // FIXME: This method should be removed once AttributeData is moved to Element.
+    ElementAttributeData* ensureAttributeDataWithoutUpdate() const { return ensureAttributeMap()->attributeData(); }
+
     void setAttributesFromElement(const Element&);
 
     virtual void copyNonAttributeProperties(const Element* source);

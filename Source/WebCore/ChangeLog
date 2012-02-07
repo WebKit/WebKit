@@ -1,3 +1,24 @@
+2012-02-07  Andreas Kling  <awesomekling@apple.com>
+
+        REGRESSION(r106819): ~28% or so performance regression on the ManInBlue HTML benchmark
+        <http://webkit.org/b/77952>
+
+        Reviewed by Andreas Kling.
+        Patch by Ryosuke Niwa.
+
+        The performance regression was caused by using ensureAttributeData() which forces the
+        regeneration of invalidated attributes ("style" and SVG animatable attributes.)
+        Added an ensureAttributeDataWithoutUpdate() helper that only ensures the presence
+        of ElementAttributeData, not the validity of its contents. Use that when grabbing
+        at an element's inline and attribute styles.
+
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::ensureAttributeDataWithoutUpdate):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::ensureAttributeStyle):
+
 2012-02-07  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel
