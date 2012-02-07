@@ -62,6 +62,13 @@ struct _Ewk_JS_Object {
 const char ewkViewTiledName[] = "Ewk_View_Tiled";
 const char ewkViewSingleName[] = "Ewk_View_Single";
 
+// Define to prevent an application using different view type from calling the function.
+#define EWK_VIEW_TYPE_CHECK_OR_RETURN(ewkView, viewName, ...) \
+    if (!evas_object_smart_type_check(ewkView, viewName)) { \
+        INF("ewkView isn't an instance of %s", viewName); \
+        return __VA_ARGS__; \
+    }
+
 // forward declarations
 namespace WebCore {
 struct PopupMenuClient;

@@ -392,6 +392,7 @@ Evas_Object* ewk_view_tiled_add(Evas* canvas)
 
 Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* ewkView)
 {
+    EWK_VIEW_TYPE_CHECK_OR_RETURN(ewkView, ewkViewTiledName, 0);
     Ewk_View_Smart_Data* smartData = ewk_view_smart_data_get(ewkView);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData, 0);
     return ewk_tiled_backing_store_tile_unused_cache_get(smartData->backing_store);
@@ -399,6 +400,7 @@ Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* ewkVie
 
 void ewk_view_tiled_unused_cache_set(Evas_Object* ewkView, Ewk_Tile_Unused_Cache* cache)
 {
+    EWK_VIEW_TYPE_CHECK_OR_RETURN(ewkView, ewkViewTiledName);
     Ewk_View_Smart_Data* smartData = ewk_view_smart_data_get(ewkView);
     EINA_SAFETY_ON_NULL_RETURN(smartData);
     ewk_tiled_backing_store_tile_unused_cache_set(smartData->backing_store, cache);

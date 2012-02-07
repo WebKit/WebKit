@@ -266,12 +266,6 @@ struct _Ewk_View_Private_Data {
         return __VA_ARGS__; \
     }
 
-#define EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView, ...) \
-    if (!evas_object_smart_type_check(ewkView, ewkViewTiledName)) { \
-        INF("object isn't an instance of %s", ewkViewTiledName); \
-        return __VA_ARGS__; \
-    }
-
 static void _ewk_view_smart_changed(Ewk_View_Smart_Data* smartData)
 {
     if (smartData->changed.any)
@@ -3216,7 +3210,7 @@ void ewk_view_add_console_message(Evas_Object* ewkView, const char* message, uns
  */
 void ewk_view_frame_view_creation_notify(Evas_Object* ewkView)
 {
-    EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView);
+    EWK_VIEW_TYPE_CHECK_OR_RETURN(ewkView, ewkViewTiledName);
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     ewk_frame_paint_full_set(smartData->main_frame, true);
 }
