@@ -21,6 +21,17 @@
         for OS X 10.7.2 and above.
         https://bugs.webkit.org/show_bug.cgi?id=77922
 
+        Address review comments by Alexey Proskuryakov and Mark Rowe.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::systemAllowsMultisamplingOnATICards):
+
+2012-02-07  Dean Jackson  <dino@apple.com>
+
+        Apple/Safari: Enable WebGL multisampling on ATI cards
+        for OS X 10.7.2 and above.
+        https://bugs.webkit.org/show_bug.cgi?id=77922
+
         Reviewed by Chris Marrin.
 
         Follow Chrome's lead to allow WebGL antialiasing

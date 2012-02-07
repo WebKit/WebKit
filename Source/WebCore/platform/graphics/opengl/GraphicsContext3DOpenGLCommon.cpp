@@ -63,16 +63,21 @@ namespace WebCore {
 static bool systemAllowsMultisamplingOnATICards()
 {
 #if PLATFORM(MAC)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    return true;
+#else
+    ASSERT(isMainThread());
     static SInt32 version;
     if (!version) {
         if (Gestalt(gestaltSystemVersion, &version) != noErr)
             return false;
     }
     // See https://bugs.webkit.org/show_bug.cgi?id=77922 for more details
-    return version > 0x1072;
+    return version >= 0x1072;
+#endif // SNOW_LEOPARD and LION
 #else
     return false;
-#endif
+#endif // PLATFORM(MAC)
 }
 
 void GraphicsContext3D::validateAttributes()
