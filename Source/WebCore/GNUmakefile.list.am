@@ -5767,6 +5767,9 @@ endif  # USE_ACCELERATED_COMPOSITING
 # Shadow DOM support
 # ---
 if ENABLE_SHADOW_DOM
+webcore_sources += \
+	Source/WebCore/html/shadow/HTMLShadowElement.cpp \
+	Source/WebCore/html/shadow/HTMLShadowElement.h
 webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLShadowElement.cpp \
 	DerivedSources/WebCore/JSHTMLShadowElement.h

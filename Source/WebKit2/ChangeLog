@@ -1,3 +1,9 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix some miscellaneous 'make dist' error for WebKitGTK+.
+
+        * GNUmakefile.am: Do not distribute generated files.
+
 2012-02-06  Anders Carlsson  <andersca@apple.com>
 
         Overlay scrollbars flash when window is simply activated

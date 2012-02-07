@@ -1,3 +1,10 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix some miscellaneous 'make dist' error for WebKitGTK+.
+
+        * GNUmakefile.list.am: Add some missing Shadow DOM files to the
+        source list.
+
 2012-02-06  Dana Jansens  <danakj@chromium.org>
 
         Add contains() test to Region

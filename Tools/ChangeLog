@@ -1,3 +1,10 @@
+2012-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix some miscellaneous 'make dist' error for WebKitGTK+.
+
+        * MiniBrowser/gtk/GNUmakefile.am: The MiniBrowser generated
+        files should not be distributed.
+
 2012-02-02  Hajime Morrita  <morrita@chromium.org>
 
         [PerformanceTests] Each Dromaeo test needs its landing html.

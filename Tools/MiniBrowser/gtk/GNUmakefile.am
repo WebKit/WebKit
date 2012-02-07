@@ -1,10 +1,6 @@
 noinst_PROGRAMS += \
 	Programs/MiniBrowser
 
-minibrowser_built_sources += \
-	DerivedSources/WebKit2/BrowserMarshal.h \
-	DerivedSources/WebKit2/BrowserMarshal.c
-
 Programs_MiniBrowser_CPPFLAGS = \
 	-I$(srcdir)/Source \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
@@ -16,7 +12,6 @@ Programs_MiniBrowser_CPPFLAGS = \
 	$(GTK_CFLAGS)
 
 Programs_MiniBrowser_SOURCES = \
-	$(minibrowser_built_sources) \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.h \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.c \
 	Tools/MiniBrowser/gtk/BrowserSettingsDialog.h \
@@ -24,6 +19,12 @@ Programs_MiniBrowser_SOURCES = \
 	Tools/MiniBrowser/gtk/BrowserWindow.h \
 	Tools/MiniBrowser/gtk/BrowserWindow.c \
 	Tools/MiniBrowser/gtk/main.c
+
+minibrowser_built_sources += \
+	DerivedSources/WebKit2/BrowserMarshal.h \
+	DerivedSources/WebKit2/BrowserMarshal.c
+nodist_Programs_MiniBrowser_SOURCES = \
+	$(minibrowser_built_sources)
 
 Programs_MiniBrowser_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \

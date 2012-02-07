@@ -78,8 +78,10 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
+nodist_libwebkit2gtkinclude_HEADERS = \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.h
+
 libwebkit2gtkinclude_HEADERS = \
-	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
