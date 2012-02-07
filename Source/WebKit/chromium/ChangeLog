@@ -1,3 +1,15 @@
+2012-02-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] canvas demo is slow due to unnecessary resource cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=77135
+
+        Reviewed by Kenneth Russell.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        * tests/TextureManagerTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-02-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.

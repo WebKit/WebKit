@@ -92,15 +92,6 @@ PassRefPtr<CCLayerImpl> TiledLayerChromium::createCCLayerImpl()
     return CCTiledLayerImpl::create(id());
 }
 
-void TiledLayerChromium::cleanupResources()
-{
-    LayerChromium::cleanupResources();
-
-    m_tiler->reset();
-    m_paintRect = IntRect();
-    m_requestedUpdateTilesRect = IntRect();
-}
-
 void TiledLayerChromium::updateTileSizeAndTilingOption()
 {
     const IntSize tileSize(min(defaultTileSize, contentBounds().width()), min(defaultTileSize, contentBounds().height()));
@@ -275,6 +266,17 @@ TextureManager* TiledLayerChromium::textureManager() const
     return layerTreeHost()->contentsTextureManager();
 }
 
+void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
+{
+    if (host && host != layerTreeHost()) {
+        for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
+            UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+            tile->managedTexture()->setTextureManager(host->contentsTextureManager());
+        }
+    }
+    LayerChromium::setLayerTreeHost(host);
+}
+
 UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 {
     return static_cast<UpdatableTile*>(m_tiler->tileAt(i, j));
@@ -385,7 +387,9 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                     // layer so that checkerboarded tiles will still draw.
                     if (!backgroundCoversViewport())
                         m_skipsDraw = true;
-                    cleanupResources();
+                    m_tiler->reset();
+                    m_paintRect = IntRect();
+                    m_requestedUpdateTilesRect = IntRect();
                 }
                 return;
             }

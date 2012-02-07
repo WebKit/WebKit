@@ -58,6 +58,8 @@ public:
 
     virtual void setIsNonCompositedContent(bool);
 
+    virtual void setLayerTreeHost(CCLayerTreeHost*);
+
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& layerRect);
@@ -69,7 +71,6 @@ public:
 protected:
     TiledLayerChromium();
 
-    virtual void cleanupResources();
     void updateTileSizeAndTilingOption();
     void updateBounds();
 

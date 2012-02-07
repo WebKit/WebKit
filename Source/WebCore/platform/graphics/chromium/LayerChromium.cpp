@@ -92,10 +92,6 @@ LayerChromium::~LayerChromium()
     removeAllChildren();
 }
 
-void LayerChromium::cleanupResources()
-{
-}
-
 void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
 {
     m_isNonCompositedContent = isNonCompositedContent;
@@ -105,11 +101,6 @@ void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     if (m_layerTreeHost == host)
         return;
-
-    // If we're changing hosts then we need to free up any resources
-    // allocated by the old host.
-    if (m_layerTreeHost)
-        cleanupResources();
 
     m_layerTreeHost = host;
 

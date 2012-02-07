@@ -51,7 +51,6 @@ public:
 
     bool prepareContentsTexture();
     void releaseContentsTexture();
-    void cleanupResources();
     void draw(const IntRect& targetSurfaceRect);
 
     // Returns the rect that encloses the RenderSurface including any reflection.

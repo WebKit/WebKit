@@ -1,3 +1,42 @@
+2012-02-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] canvas demo is slow due to unnecessary resource cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=77135
+
+        Reviewed by Kenneth Russell.
+
+        This defers dropping a ManagedTexture until it is evicted by the manager, the layer is destroyed, the
+        TextureManager is destroyed, or the layer is added to a CCLayerTreeHost that has a different texture manager. In
+        particular, removing a layer from a CCLayerTreeHost and then adding it back to the same host does not drop any
+        ManagedTextures unless the manager has to evict it for other reasons. This provides a big speedup on sites that
+        rebuild the compositing tree frequently.
+
+        New unit test added for ManagedTexture / TextureManager interaction.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::setLayerTreeHost):
+        (WebCore::Canvas2DLayerChromium::setTextureManager):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        (Canvas2DLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::setTextureManager):
+        (WebCore):
+        (WebCore::ManagedTexture::steal):
+        (WebCore::ManagedTexture::clear):
+        * platform/graphics/chromium/ManagedTexture.h:
+        (ManagedTexture):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r106883.

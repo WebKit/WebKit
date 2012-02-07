@@ -459,6 +459,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     EXPECT_FALSE(childLayer->skipsDraw());
 
     ccLayerTreeHost->commitComplete();
+    textureManager->unprotectAllTextures(); // CCLayerTreeHost::commitComplete() normally does this, but since we're mocking out the manager we have to do it.
 
     // Remove the child layer.
     rootLayer->removeAllChildren();

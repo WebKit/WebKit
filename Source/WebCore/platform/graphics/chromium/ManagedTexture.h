@@ -46,6 +46,7 @@ public:
     }
     ~ManagedTexture();
 
+    void setTextureManager(TextureManager*);
     void clearManager() { m_textureManager = 0; }
 
     bool isValid(const IntSize&, unsigned format);
@@ -71,6 +72,8 @@ public:
 private:
     explicit ManagedTexture(TextureManager*);
     ManagedTexture(TextureManager*, TextureToken, IntSize, unsigned format, unsigned textureId);
+
+    void clear();
 
     TextureManager* m_textureManager;
     TextureToken m_token;

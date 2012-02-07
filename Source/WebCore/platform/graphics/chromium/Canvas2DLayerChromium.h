@@ -61,14 +61,12 @@ public:
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void pushPropertiesTo(CCLayerImpl*);
     virtual void unreserveContentsTexture();
-    virtual void cleanupResources();
 
     void setCanvas(SkCanvas*);
 
 private:
     Canvas2DLayerChromium(GraphicsContext3D*, const IntSize&);
 
-    // Visible for testing so we can bypass setLayerTreeHost.
     friend class Canvas2DLayerChromiumTest;
     void setTextureManager(TextureManager*);
 
