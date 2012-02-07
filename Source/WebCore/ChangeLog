@@ -1,3 +1,36 @@
+2012-02-07  Levi Weintraub  <leviw@chromium.org>
+
+        unicode-bidi:plaintext is supposed to be effective on display:inline elements too
+        https://bugs.webkit.org/show_bug.cgi?id=73310
+
+        Reviewed by Eric Seidel.
+
+        Adding support for unicode-bidi: plaintext as a property on inlines. These are treated
+        like unicode-bidi: isolate with the addition of their directionality being determined
+        by the UBA.
+
+        Tests: fast/text/international/inline-plaintext-is-isolated-expected.html
+               fast/text/international/inline-plaintext-is-isolated.html
+               fast/text/international/inline-plaintext-relayout-with-leading-neutrals-expected.html
+               fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html
+               fast/text/international/inline-plaintext-with-generated-content-expected.html
+               fast/text/international/inline-plaintext-with-generated-content.html
+
+        * platform/text/UnicodeBidi.h:
+        (WebCore::isIsolated): Added this convenience function as Plaintext and Isolate Unicode-Bidi values
+        are both treated as isolated content.
+        * rendering/InlineIterator.h:
+        (WebCore::notifyObserverEnteredObject): Inline now supports Unicode-Bidi Plaintext.
+        (WebCore::notifyObserverWillExitObject): Ditto.
+        (WebCore::bidiFirstSkippingEmptyInlines): Changed to support being called without a resolver.
+        (WebCore::isIsolatedInline): Inline now supports Unicode-Bidi: Plaintext.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::determineDirectionality): Generalized for inlines.
+        (WebCore::constructBidiRuns): Added support for Unicode-Bidi: Plaintext as an isolated inline.
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Fixed comment.
+        (WebCore::RenderBlock::determineStartPosition): Fixed comment and switched to updated
+        bidiFirstSkippingEmptyInlines.
+
 2012-02-07  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Use the [IsWorkerContext] IDL in CodeGeneratorV8.pm

@@ -131,14 +131,13 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
         // Thus we ignore any possible dir= attribute on the span.
         return;
     }
-    if (unicodeBidi == Isolate) {
+    if (isIsolated(unicodeBidi)) {
         observer->enterIsolate();
         // Embedding/Override characters implied by dir= are handled when
         // we process the isolated span, not when laying out the "parent" run.
         return;
     }
 
-    // FIXME: Should unicode-bidi: plaintext really be embedding override/embed characters here?
     if (!observer->inIsolate())
         observer->embed(embedCharFromDirection(style->direction(), unicodeBidi), FromStyleOrDOM);
 }
@@ -152,7 +151,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
     EUnicodeBidi unicodeBidi = object->style()->unicodeBidi();
     if (unicodeBidi == UBNormal)
         return; // Nothing to do for unicode-bidi: normal
-    if (unicodeBidi == Isolate) {
+    if (isIsolated(unicodeBidi)) {
         observer->exitIsolate();
         return;
     }
@@ -255,9 +254,8 @@ static inline RenderObject* bidiNextIncludingEmptyInlines(RenderObject* root, Re
     return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
 }
 
-static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderObject* root, InlineBidiResolver* resolver)
+static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderObject* root, InlineBidiResolver* resolver = 0)
 {
-    ASSERT(resolver);
     RenderObject* o = root->firstChild();
     if (!o)
         return 0;
@@ -278,7 +276,8 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderObject* root, In
     if (o && !isIteratorTarget(o))
         o = bidiNextSkippingEmptyInlines(root, o, resolver);
 
-    resolver->commitExplicitEmbedding();
+    if (resolver)
+        resolver->commitExplicitEmbedding();
     return o;
 }
 
@@ -392,7 +391,7 @@ inline void InlineBidiResolver::increment()
 static inline bool isIsolatedInline(RenderObject* object)
 {
     ASSERT(object);
-    return object->isRenderInline() && object->style()->unicodeBidi() == Isolate;
+    return object->isRenderInline() && isIsolated(object->style()->unicodeBidi());
 }
 
 static inline RenderObject* containingIsolate(RenderObject* object, RenderObject* root)
