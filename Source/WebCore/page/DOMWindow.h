@@ -351,6 +351,10 @@ namespace WebCore {
         using RefCounted<DOMWindow>::ref;
         using RefCounted<DOMWindow>::deref;
 
+#if ENABLE(BLOB)
+        DOMURL* webkitURL() const;
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION)
         DEFINE_ATTRIBUTE_EVENT_LISTENER(devicemotion);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(deviceorientation);

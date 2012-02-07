@@ -1897,6 +1897,15 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
     dialogFrame->page()->chrome()->runModal();
 }
 
+#if ENABLE(BLOB)
+DOMURL* DOMWindow::webkitURL() const
+{
+    if (!m_domURL && isCurrentlyDisplayedInFrame())
+        m_domURL = DOMURL::create(this->scriptExecutionContext());
+    return m_domURL.get();
+}
+#endif
+
 #if ENABLE(QUOTA)
 StorageInfo* DOMWindow::webkitStorageInfo() const
 {

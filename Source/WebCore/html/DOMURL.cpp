@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2012 Motorola Mobility Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +29,11 @@
 
 #include "DOMURL.h"
 
-#include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
 #include "KURL.h"
-#include "PublicURLManager.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/MainThread.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -48,13 +43,37 @@
 
 namespace WebCore {
 
-#if ENABLE(MEDIA_STREAM)
-String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, MediaStream* stream)
+DOMURL::DOMURL(ScriptExecutionContext* scriptExecutionContext)
+    : ContextDestructionObserver(scriptExecutionContext)
 {
-    if (!scriptExecutionContext || !stream)
+}
+
+DOMURL::~DOMURL()
+{
+}
+
+void DOMURL::contextDestroyed()
+{
+    ContextDestructionObserver::contextDestroyed();
+
+    HashSet<String>::iterator publicBlobURLsEnd = m_publicBlobURLs.end();
+    for (HashSet<String>::iterator iter = m_publicBlobURLs.begin(); iter != publicBlobURLsEnd; ++iter)
+        ThreadableBlobRegistry::unregisterBlobURL(KURL(ParsedURLString, *iter));
+
+#if ENABLE(MEDIA_STREAM)
+    HashSet<String>::iterator publicStreamURLsEnd = m_publicStreamURLs.end();
+    for (HashSet<String>::iterator iter = m_publicStreamURLs.begin(); iter != publicStreamURLsEnd; ++iter)
+        MediaStreamRegistry::registry().unregisterMediaStreamURL(KURL(ParsedURLString, *iter));
+#endif
+}
+
+#if ENABLE(MEDIA_STREAM)
+String DOMURL::createObjectURL(MediaStream* stream)
+{
+    if (!m_scriptExecutionContext || !stream)
         return String();
 
-    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext()->securityOrigin());
     if (publicURL.isEmpty())
         return String();
 
@@ -62,48 +81,46 @@ String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, M
     ASSERT(isMainThread());
 
     MediaStreamRegistry::registry().registerMediaStreamURL(publicURL, stream);
-    scriptExecutionContext->publicURLManager().streamURLs().add(publicURL.string());
+    m_publicStreamURLs.add(publicURL.string());
 
     return publicURL.string();
 }
 #endif
 
-String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, Blob* blob)
+String DOMURL::createObjectURL(Blob* blob)
 {
-    if (!scriptExecutionContext || !blob)
+    if (!m_scriptExecutionContext || !blob)
         return String();
 
-    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext()->securityOrigin());
     if (publicURL.isEmpty())
         return String();
 
     ThreadableBlobRegistry::registerBlobURL(publicURL, blob->url());
-    scriptExecutionContext->publicURLManager().blobURLs().add(publicURL.string());
+    m_publicBlobURLs.add(publicURL.string());
 
     return publicURL.string();
 }
 
-void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, const String& urlString)
+void DOMURL::revokeObjectURL(const String& urlString)
 {
-    if (!scriptExecutionContext)
+    if (!m_scriptExecutionContext)
         return;
 
     KURL url(KURL(), urlString);
 
-    HashSet<String>& blobURLs = scriptExecutionContext->publicURLManager().blobURLs();
-    if (blobURLs.contains(url.string())) {
+    if (m_publicBlobURLs.contains(url.string())) {
         ThreadableBlobRegistry::unregisterBlobURL(url);
-        blobURLs.remove(url.string());
+        m_publicBlobURLs.remove(url.string());
     }
 
 #if ENABLE(MEDIA_STREAM)
-    HashSet<String>& streamURLs = scriptExecutionContext->publicURLManager().streamURLs();
-    if (streamURLs.contains(url.string())) {
+    if (m_publicStreamURLs.contains(url.string())) {
         // FIXME: make sure of this assertion below. Raise a spec question if required.
         // Since WebWorkers cannot obtain Stream objects, we should be on the main thread.
         ASSERT(isMainThread());
         MediaStreamRegistry::registry().unregisterMediaStreamURL(url);
-        streamURLs.remove(url.string());
+        m_publicStreamURLs.remove(url.string());
     }
 #endif
 }

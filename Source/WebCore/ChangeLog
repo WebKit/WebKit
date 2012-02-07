@@ -1,3 +1,43 @@
+2012-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106912.
+        http://trac.webkit.org/changeset/106912
+        https://bugs.webkit.org/show_bug.cgi?id=77947
+
+        "AppleWebKit build is broken" (Requested by haraken on
+        #webkit).
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore):
+        * dom/ScriptExecutionContext.h:
+        (WebCore):
+        (ScriptExecutionContext):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::DOMURL):
+        (WebCore):
+        (WebCore::DOMURL::~DOMURL):
+        (WebCore::DOMURL::contextDestroyed):
+        (WebCore::DOMURL::createObjectURL):
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/DOMURL.h:
+        (WebCore::DOMURL::create):
+        (DOMURL):
+        * html/DOMURL.idl:
+        * html/PublicURLManager.h: Removed.
+        * page/DOMWindow.cpp:
+        (WebCore):
+        (WebCore::DOMWindow::webkitURL):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.cpp:
+        (WebCore):
+        (WebCore::WorkerContext::webkitURL):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+        * workers/WorkerContext.idl:
+
 2012-02-07  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r106862.

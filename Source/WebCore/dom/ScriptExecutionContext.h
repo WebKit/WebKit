@@ -30,7 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
 #include "KURL.h"
-#include "PublicURLManager.h"
 #include "ScriptCallStack.h"
 #include "SecurityContext.h"
 #include <wtf/Forward.h>
@@ -54,9 +53,6 @@ class EventQueue;
 class EventTarget;
 class MessagePort;
 
-#if ENABLE(BLOB)
-class PublicURLManager;
-#endif
 #if ENABLE(SQL_DATABASE)
 class Database;
 class DatabaseTaskSynchronizer;
@@ -107,9 +103,6 @@ public:
     virtual void resumeActiveDOMObjects();
     virtual void stopActiveDOMObjects();
 
-#if ENABLE(BLOB)
-    PublicURLManager& publicURLManager();
-#endif
     void didCreateActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
     void willDestroyActiveDOMObject(ActiveDOMObject*);
 
@@ -212,9 +205,6 @@ private:
     bool m_inDispatchErrorEvent;
     class PendingException;
     OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
-#if ENABLE(BLOB)
-    OwnPtr<PublicURLManager> m_publicURLManager;
-#endif
 
 #if ENABLE(SQL_DATABASE)
     RefPtr<DatabaseThread> m_databaseThread;
