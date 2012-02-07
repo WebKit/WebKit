@@ -81,6 +81,10 @@ WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl(CCInputHandlerClien
     : m_client(0)
     , m_identifier(s_nextAvailableIdentifier++)
     , m_inputHandlerClient(inputHandlerClient)
+#ifndef NDEBUG
+    , m_expectScrollUpdateEnd(false)
+#endif
+    , m_scrollStarted(false)
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -130,6 +134,44 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
             return;
         case CCInputHandlerClient::ScrollFailed:
             break;
+        }
+    } else if (event.type == WebInputEvent::GestureScrollBegin) {
+        ASSERT(!m_scrollStarted);
+        ASSERT(!m_expectScrollUpdateEnd);
+#ifndef NDEBUG
+        m_expectScrollUpdateEnd = true;
+#endif
+        const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
+        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y));
+        switch (scrollStatus) {
+        case CCInputHandlerClient::ScrollStarted:
+            m_scrollStarted = true;
+            m_client->didHandleInputEvent();
+            return;
+        case CCInputHandlerClient::ScrollIgnored:
+            m_client->didNotHandleInputEvent(false /* sendToWidget */);
+            return;
+        case CCInputHandlerClient::ScrollFailed:
+            break;
+        }
+    } else if (event.type == WebInputEvent::GestureScrollUpdate) {
+        ASSERT(m_expectScrollUpdateEnd);
+        if (m_scrollStarted) {
+            const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
+            m_inputHandlerClient->scrollBy(IntSize(-gestureEvent.deltaX, -gestureEvent.deltaY));
+            m_client->didHandleInputEvent();
+            return;
+        }
+    } else if (event.type == WebInputEvent::GestureScrollEnd) {
+        ASSERT(m_expectScrollUpdateEnd);
+#ifndef NDEBUG
+        m_expectScrollUpdateEnd = false;
+#endif
+        if (m_scrollStarted) {
+            m_inputHandlerClient->scrollEnd();
+            m_client->didHandleInputEvent();
+            m_scrollStarted = false;
+            return;
         }
     }
     m_client->didNotHandleInputEvent(true /* sendToWidget */);

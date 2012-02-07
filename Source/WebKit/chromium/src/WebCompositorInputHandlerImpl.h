@@ -70,6 +70,11 @@ private:
     int m_identifier;
     WebCore::CCInputHandlerClient* m_inputHandlerClient;
 
+#ifndef NDEBUG
+    bool m_expectScrollUpdateEnd;
+#endif
+    bool m_scrollStarted;
+
     static int s_nextAvailableIdentifier;
     static HashSet<WebCompositorInputHandlerImpl*>* s_compositors;
 };

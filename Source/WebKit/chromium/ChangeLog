@@ -1,3 +1,16 @@
+2012-02-07  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Process Scroll-gesture events from the compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=77477
+
+        Reviewed by James Robinson.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl):
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEvent):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+
 2012-02-07  Anders Carlsson  <andersca@apple.com>
 
         ScrollableAreaSet should be moved from Page to FrameView
