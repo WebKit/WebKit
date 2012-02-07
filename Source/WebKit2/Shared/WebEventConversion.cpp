@@ -274,6 +274,10 @@ public:
 
         m_screenPos = webTouchPoint.screenPosition();
         m_pos = webTouchPoint.position();
+        m_radiusX = webTouchPoint.radius().width();
+        m_radiusY = webTouchPoint.radius().height();
+        m_force = webTouchPoint.force();
+        m_rotationAngle = webTouchPoint.rotationAngle();
     }
 };
 

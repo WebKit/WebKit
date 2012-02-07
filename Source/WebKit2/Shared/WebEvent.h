@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -291,16 +292,21 @@ public:
         TouchCancelled
     };
 
-    WebPlatformTouchPoint() { }
+    WebPlatformTouchPoint() : m_rotationAngle(0.0), m_force(0.0) { }
 
     WebPlatformTouchPoint(uint32_t id, TouchPointState, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position);
 
+    WebPlatformTouchPoint(uint32_t id, TouchPointState, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position, const WebCore::IntSize& radius, float rotationAngle = 0.0, float force = 0.0);
+    
     uint32_t id() const { return m_id; }
     TouchPointState state() const { return static_cast<TouchPointState>(m_state); }
 
     const WebCore::IntPoint& screenPosition() const { return m_screenPosition; }
     const WebCore::IntPoint& position() const { return m_position; }
-          
+    const WebCore::IntSize& radius() const { return m_radius; }
+    float rotationAngle() const { return m_rotationAngle; }
+    float force() const { return m_force; }
+
     void setState(TouchPointState state) { m_state = state; }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -311,7 +317,9 @@ private:
     uint32_t m_state;
     WebCore::IntPoint m_screenPosition;
     WebCore::IntPoint m_position;
-
+    WebCore::IntSize m_radius;
+    float m_rotationAngle;
+    float m_force;
 };
 
 // FIXME: Move this class to its own header file.

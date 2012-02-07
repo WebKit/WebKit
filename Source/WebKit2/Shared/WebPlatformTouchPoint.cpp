@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,17 +41,30 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
     , m_state(state)
     , m_screenPosition(screenPosition)
     , m_position(position)
+    , m_rotationAngle(0.0)
+    , m_force(0.0)
+{
+}
+
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const IntPoint& screenPosition, const IntPoint& position, const WebCore::IntSize& radius, float rotationAngle, float force)
+    : m_id(id)
+    , m_state(state)
+    , m_screenPosition(screenPosition)
+    , m_position(position)
+    , m_radius(radius)
+    , m_rotationAngle(rotationAngle)
+    , m_force(force)
 {
 }
 
 void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_id, m_state, m_screenPosition, m_position));
+    encoder->encode(CoreIPC::In(m_id, m_state, m_screenPosition, m_position, m_radius, m_rotationAngle, m_force));
 }
 
 bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& t)
 {
-    return decoder->decode(CoreIPC::Out(t.m_id, t.m_state, t.m_screenPosition, t.m_position));
+    return decoder->decode(CoreIPC::Out(t.m_id, t.m_state, t.m_screenPosition, t.m_position, t.m_radius, t.m_rotationAngle, t.m_force));
 }
 
 } // namespace WebKit
