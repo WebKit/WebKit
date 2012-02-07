@@ -29,9 +29,6 @@
 #include <QtCore/QVariant>
 #include <QtDeclarative/QtDeclarative>
 
-namespace WebCore {
-class ViewportAttributes;
-}
 class QQuickWebViewPrivate;
 
 class QWEBKIT_EXPORT QWebViewportInfo : public QObject {

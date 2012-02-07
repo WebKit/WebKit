@@ -1,3 +1,55 @@
+2012-02-03  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Add the componentComplete method to WebView
+        https://bugs.webkit.org/show_bug.cgi?id=77111
+
+        Reviewed by Simon Hausmann.
+
+        Move the initialization of the interaction engine to componentComplete
+        in preparation of switching to a Flickable based content positioning
+        for the touch based WebView.
+        Suspend the page and delay the dispatch of load success on startup until
+        the component finished initialization. With this patch instantiating the
+        WebView in C++ is only possible by creating a QDeclarativeComponent as
+        the initialization depends on the componentComplete method being called.
+        Also return valid default values in the viewport info functions if the
+        interaction engine is not yet initialized because the viewport info
+        component could finish initialization earlier than the WebView, which
+        results in QML warnings during MiniBrowser startup.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::loadDidSucceed):
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::initialize):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::loadDidSucceed):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::componentComplete):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::currentScale):
+        (QWebViewportInfo::devicePixelRatio):
+        (QWebViewportInfo::initialScale):
+        (QWebViewportInfo::minimumScale):
+        (QWebViewportInfo::maximumScale):
+        (QWebViewportInfo::isScalable):
+        (QWebViewportInfo::layoutSize):
+        * UIProcess/API/qt/tests/qquickwebview/qquickwebview.pro:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::tst_QQuickWebView):
+        (tst_QQuickWebView::init):
+        (tst_QQuickWebView::multipleWebViewWindows):
+        (tst_QQuickWebView::multipleWebViews):
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::dispatchLoadSucceeded):
+
 2012-02-07  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [EFL][WK2] Add ModuleEfl.cpp

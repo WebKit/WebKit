@@ -115,7 +115,6 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();
-    updateViewportSize();
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -130,6 +129,13 @@ void QQuickWebViewPrivate::disableMouseEvents()
     Q_Q(QQuickWebView);
     q->setAcceptedMouseButtons(Qt::NoButton);
     q->setAcceptHoverEvents(false);
+}
+
+void QQuickWebViewPrivate::loadDidSucceed()
+{
+    Q_Q(QQuickWebView);
+    emit q->navigationStateChanged();
+    emit q->loadSucceeded();
 }
 
 void QQuickWebViewPrivate::setNeedsDisplay()
@@ -444,15 +450,11 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
-    , interactionEngine(new QtViewportInteractionEngine(viewport, pageView.data()))
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , isTransitioningToNewPage(false)
-    , pageIsSuspended(false)
+    , pageIsSuspended(true)
+    , loadSuccessDispatchIsPending(false)
 {
-    QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
-    QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
-    QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
-    QObject::connect(interactionEngine.data(), SIGNAL(visibleContentRectAndScaleChanged()), viewport, SLOT(_q_updateVisibleContentRectAndScale()));
 }
 
 QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate()
@@ -464,10 +466,37 @@ void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGr
 {
     QQuickWebViewPrivate::initialize(contextRef, pageGroupRef);
     webPageProxy->setUseFixedLayout(true);
+}
+
+void QQuickWebViewFlickablePrivate::onComponentComplete()
+{
+    Q_Q(QQuickWebView);
+    interactionEngine.reset(new QtViewportInteractionEngine(q, pageView.data()));
     pageView->eventHandler()->setViewportInteractionEngine(interactionEngine.data());
+
+    QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
+    QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), q, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
+    QObject::connect(interactionEngine.data(), SIGNAL(visibleContentRectAndScaleChanged()), q, SLOT(_q_updateVisibleContentRectAndScale()));
+
+    _q_resume();
+
+    if (loadSuccessDispatchIsPending) {
+        QQuickWebViewPrivate::loadDidSucceed();
+        loadSuccessDispatchIsPending = false;
+    }
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
+}
+
+void QQuickWebViewFlickablePrivate::loadDidSucceed()
+{
+    if (interactionEngine)
+        QQuickWebViewPrivate::loadDidSucceed();
+    else
+        loadSuccessDispatchIsPending = true;
+
 }
 
 void QQuickWebViewFlickablePrivate::loadDidCommit()
@@ -501,7 +530,7 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     Q_Q(QQuickWebView);
     QSize viewportSize = q->boundingRect().size().toSize();
 
-    if (viewportSize.isEmpty())
+    if (viewportSize.isEmpty() || !interactionEngine)
         return;
 
     // Let the WebProcess know about the new viewport size, so that
@@ -537,6 +566,9 @@ void QQuickWebViewFlickablePrivate::_q_suspend()
 
 void QQuickWebViewFlickablePrivate::_q_resume()
 {
+    if (!interactionEngine)
+        return;
+
     pageIsSuspended = false;
 
     if (isTransitioningToNewPage) {
@@ -1067,6 +1099,15 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
         d->updateViewportSize();
+}
+
+void QQuickWebView::componentComplete()
+{
+    Q_D(QQuickWebView);
+    QQuickItem::componentComplete();
+
+    d->onComponentComplete();
+    d->updateViewportSize();
 }
 
 void QQuickWebView::keyPressEvent(QKeyEvent* event)

@@ -60,6 +60,10 @@ class QPainter;
 class QUrl;
 QT_END_NAMESPACE
 
+
+// Instantiating the WebView in C++ is only possible by creating
+// a QDeclarativeComponent as the initialization depends on the
+// componentComplete method being called.
 class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
@@ -135,7 +139,7 @@ Q_SIGNALS:
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
-
+    virtual void componentComplete();
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
     virtual void inputMethodEvent(QInputMethodEvent*);

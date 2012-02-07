@@ -85,8 +85,7 @@ void QtWebPageLoadClient::didChangeBackForwardList()
 
 void QtWebPageLoadClient::dispatchLoadSucceeded()
 {
-    emit m_webView->navigationStateChanged();
-    emit m_webView->loadSucceeded();
+    m_webView->d_func()->loadDidSucceed();
 }
 
 void QtWebPageLoadClient::dispatchLoadFailed(WKErrorRef error)

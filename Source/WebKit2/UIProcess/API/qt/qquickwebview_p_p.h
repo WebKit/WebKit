@@ -68,6 +68,8 @@ public:
     void enableMouseEvents();
     void disableMouseEvents();
 
+    virtual void loadDidSucceed();
+    virtual void onComponentComplete() { }
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args) { }
@@ -164,6 +166,8 @@ public:
     virtual ~QQuickWebViewFlickablePrivate();
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
+    virtual void loadDidSucceed();
+    virtual void onComponentComplete();
     virtual void loadDidCommit();
     virtual void didFinishFirstNonEmptyLayout();
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args);
@@ -199,6 +203,7 @@ private:
     OwnPtr<PostTransitionState> postTransitionState;
     bool isTransitioningToNewPage;
     bool pageIsSuspended;
+    bool loadSuccessDispatchIsPending;
 };
 
 #endif // qquickwebview_p_p_h

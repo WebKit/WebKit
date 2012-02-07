@@ -20,6 +20,7 @@
 #include "../testwindow.h"
 #include "../util.h"
 
+#include <QDeclarativeEngine>
 #include <QScopedPointer>
 #include <QtTest/QtTest>
 #include <qquickwebpage_p.h>
@@ -55,19 +56,42 @@ private slots:
     void multipleWebViews();
 
 private:
+    void prepareWebViewComponent();
+    inline QQuickWebView* newWebView();
     inline QQuickWebView* webView() const;
     QScopedPointer<TestWindow> m_window;
+    QScopedPointer<QDeclarativeComponent> m_component;
 };
 
 tst_QQuickWebView::tst_QQuickWebView()
 {
     addQtWebProcessToPath();
-    qRegisterMetaType<QQuickWebPage*>("QQuickWebPage*");
+    prepareWebViewComponent();
+}
+
+void tst_QQuickWebView::prepareWebViewComponent()
+{
+    static QDeclarativeEngine* engine = new QDeclarativeEngine(this);
+    engine->addImportPath(QString::fromUtf8(IMPORT_DIR));
+
+    m_component.reset(new QDeclarativeComponent(engine, this));
+
+    m_component->setData(QByteArrayLiteral("import QtQuick 2.0\n"
+                                           "import QtWebKit 3.0\n"
+                                           "WebView {}")
+                         , QUrl());
+}
+
+QQuickWebView* tst_QQuickWebView::newWebView()
+{
+    QObject* viewInstance = m_component->create();
+
+    return qobject_cast<QQuickWebView*>(viewInstance);
 }
 
 void tst_QQuickWebView::init()
 {
-    m_window.reset(new TestWindow(new QQuickWebView()));
+    m_window.reset(new TestWindow(newWebView()));
 }
 
 void tst_QQuickWebView::cleanup()
@@ -277,9 +301,9 @@ void tst_QQuickWebView::multipleWebViewWindows()
     showWebView();
 
     // This should not crash.
-    QQuickWebView* webView1 = new QQuickWebView();
+    QQuickWebView* webView1 = newWebView();
     QScopedPointer<TestWindow> window1(new TestWindow(webView1));
-    QQuickWebView* webView2 = new QQuickWebView();
+    QQuickWebView* webView2 = newWebView();
     QScopedPointer<TestWindow> window2(new TestWindow(webView2));
 
     webView1->setSize(QSizeF(300, 400));
@@ -301,9 +325,9 @@ void tst_QQuickWebView::multipleWebViews()
     showWebView();
 
     // This should not crash.
-    QScopedPointer<QQuickWebView> webView1(new QQuickWebView());
+    QScopedPointer<QQuickWebView> webView1(newWebView());
     webView1->setParentItem(m_window->rootItem());
-    QScopedPointer<QQuickWebView> webView2(new QQuickWebView());
+    QScopedPointer<QQuickWebView> webView2(newWebView());
     webView2->setParentItem(m_window->rootItem());
 
     webView1->setSize(QSizeF(300, 400));
