@@ -1378,6 +1378,11 @@ svg/custom/getBBox-path.svg
 # https://bugs.webkit.org/show_bug.cgi?id=69511
 svg/as-image/svg-nested.html
 
+#[Qt] New svg/hittest tests introduced in r106882 fail
+#https://bugs.webkit.org/show_bug.cgi?id=77964
+svg/hittest/zero-length-round-cap-path.xhtml
+svg/hittest/zero-length-square-cap-path.xhtml
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
