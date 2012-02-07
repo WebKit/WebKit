@@ -35,11 +35,11 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
-SOFT_LINK(CoreMedia, CMAudioDeviceClockCreate, int32_t, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
-SOFT_LINK(CoreMedia, CMTimebaseCreateWithMasterClock, int32_t, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
-SOFT_LINK(CoreMedia, CMTimebaseSetTime, int32_t, (CMTimebaseRef timebase, CMTime time), (timebase, time))
+SOFT_LINK(CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
+SOFT_LINK(CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
+SOFT_LINK(CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
 SOFT_LINK(CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
-SOFT_LINK(CoreMedia, CMTimebaseSetRate, int32_t, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
+SOFT_LINK(CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
 SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 

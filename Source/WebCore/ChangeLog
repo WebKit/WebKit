@@ -1,3 +1,9 @@
+2012-02-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; make OSStatus the explicit return type for CMTimebase functions.
+
+        * platform/mac/PlatformClockCM.mm:
+
 2012-02-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Allow retaining texture across frames in composited video playback and correctly handle lost context
