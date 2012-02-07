@@ -120,6 +120,7 @@ private:
     virtual bool isOnActivePage() const;
 
     virtual ScrollableArea* enclosingScrollableArea() const;
+    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);

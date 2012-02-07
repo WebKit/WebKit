@@ -63,6 +63,15 @@ void ScrollingTreeState::setContentsSize(const IntSize& contentsSize)
     m_changedProperties |= ContentsSize;
 }
 
+void ScrollingTreeState::setNonFastScrollableRegion(const Region& nonFastScrollableRegion)
+{
+    if (m_nonFastScrollableRegion == nonFastScrollableRegion)
+        return;
+
+    m_nonFastScrollableRegion = nonFastScrollableRegion;
+    m_changedProperties |= NonFastScrollableRegion;
+}
+
 void ScrollingTreeState::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
 {
     if (m_wheelEventHandlerCount == wheelEventHandlerCount)

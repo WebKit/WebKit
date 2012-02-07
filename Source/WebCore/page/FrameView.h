@@ -371,6 +371,7 @@ private:
     virtual void setVisibleScrollerThumbRect(const IntRect&);
     virtual bool isOnActivePage() const;
     virtual ScrollableArea* enclosingScrollableArea() const;
+    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;

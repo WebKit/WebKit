@@ -886,6 +886,11 @@ RenderLayer* RenderLayer::enclosingScrollableLayer() const
     return 0;
 }
 
+IntRect RenderLayer::scrollableAreaBoundingBox() const
+{
+    return renderer()->absoluteBoundingBoxRect();
+}
+
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();

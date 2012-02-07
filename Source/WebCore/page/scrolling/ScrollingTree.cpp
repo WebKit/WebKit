@@ -89,10 +89,13 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingT
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
-    if (scrollingTreeState->changedProperties() & ScrollingTreeState::WheelEventHandlerCount) {
+    if (scrollingTreeState->changedProperties() & (ScrollingTreeState::WheelEventHandlerCount | ScrollingTreeState::NonFastScrollableRegion)) {
         MutexLocker lock(m_mutex);
 
-        m_hasWheelEventHandlers = scrollingTreeState->wheelEventHandlerCount();
+        if (scrollingTreeState->changedProperties() & ScrollingTreeState::WheelEventHandlerCount)
+            m_hasWheelEventHandlers = scrollingTreeState->wheelEventHandlerCount();
+        if (scrollingTreeState->changedProperties() & ScrollingTreeState::NonFastScrollableRegion)
+            m_nonFastScrollableRegion = scrollingTreeState->nonFastScrollableRegion();
     }
 
     m_rootNode->update(scrollingTreeState.get());

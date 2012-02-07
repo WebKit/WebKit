@@ -821,6 +821,11 @@ ScrollableArea* RenderListBox::enclosingScrollableArea() const
     return 0;
 }
 
+IntRect RenderListBox::scrollableAreaBoundingBox() const
+{
+    return absoluteBoundingBoxRect();
+}
+
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

@@ -2549,6 +2549,12 @@ ScrollableArea* FrameView::enclosingScrollableArea() const
     return 0;
 }
 
+IntRect FrameView::scrollableAreaBoundingBox() const
+{
+    // FIXME: This isn't correct for transformed frames. We probably need to ask the renderer instead.
+    return frameRect();
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;

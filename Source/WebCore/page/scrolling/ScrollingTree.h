@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "Region.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -71,6 +72,7 @@ private:
     OwnPtr<ScrollingTreeNode> m_rootNode;
 
     Mutex m_mutex;
+    Region m_nonFastScrollableRegion;
     bool m_hasWheelEventHandlers;
 };
 

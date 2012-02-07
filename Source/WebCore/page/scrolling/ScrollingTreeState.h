@@ -30,6 +30,7 @@
 
 #include "GraphicsLayer.h"
 #include "IntRect.h"
+#include "Region.h"
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
@@ -50,8 +51,9 @@ public:
     enum ChangedProperty {
         ViewportRect = 1 << 0,
         ContentsSize = 1 << 1,
-        WheelEventHandlerCount = 1 << 2,
-        ScrollLayer = 1 << 3,
+        NonFastScrollableRegion = 1 << 2,
+        WheelEventHandlerCount = 1 << 3,
+        ScrollLayer = 1 << 4,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -62,6 +64,9 @@ public:
 
     const IntSize& contentsSize() const { return m_contentsSize; }
     void setContentsSize(const IntSize&);
+
+    const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
+    void setNonFastScrollableRegion(const Region&);
 
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
@@ -79,6 +84,8 @@ private:
 
     IntRect m_viewportRect;
     IntSize m_contentsSize;
+
+    Region m_nonFastScrollableRegion;
 
     unsigned m_wheelEventHandlerCount;
 

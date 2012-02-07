@@ -664,6 +664,7 @@ private:
     virtual IntPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
+    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
     // Rectangle encompassing the scroll corner and resizer rect.
     IntRect scrollCornerAndResizerRect() const;

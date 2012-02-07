@@ -1,3 +1,42 @@
+2012-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Scrolling tree should keep track of region we can't do fast scrolling for
+        https://bugs.webkit.org/show_bug.cgi?id=78050
+
+        Reviewed by Dan Bernstein.
+
+        We currently won't do fast scrolling for subframes and other types of scrollable areas.
+        Because of this, we'll have the scrolling tree keep a region of the page for which we can't
+        do fast scrolling. This region will be updated after layout.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollableAreaBoundingBox):
+        Return the bounding box.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        Go through all the scrollable areas in this frame view and compute the region which we can't do
+        fast scrolling for.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        Update the non-fast-scrollable region.
+
+        * page/scrolling/ScrollingTreeState.cpp:
+        (WebCore::ScrollingTreeState::setNonFastScrollableRegion):
+        Set the non-fast-scrollable region if it's changed.
+
+        * platform/ScrollableArea.h:
+        Add scrollableAreaBoundingBox member function.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollableAreaBoundingBox):
+        Return the bounding box.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollableAreaBoundingBox):
+        Return the bounding box.
+
 2012-02-07  Levi Weintraub  <leviw@chromium.org>
 
         unicode-bidi:plaintext is supposed to be effective on display:inline elements too
