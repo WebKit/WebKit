@@ -1,3 +1,21 @@
+2012-02-07  Anders Carlsson  <andersca@apple.com>
+
+        ScrollableAreaSet should be moved from Page to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=62762
+
+        Reviewed by Beth Dakin.
+
+        Update for changes to WebCore now that the scrollable area set is kept per frame view.
+
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::ScrollbarGroup):
+        (WebKit::ScrollbarGroup::~ScrollbarGroup):
+        * src/ScrollbarGroup.h:
+        (WebCore):
+        (ScrollbarGroup):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::scrollbarGroup):
+
 2012-02-07  Hans Wennborg  <hans@chromium.org>
 
         Chromium: remove WebSpeechInputResult::set

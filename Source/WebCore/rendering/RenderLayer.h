@@ -668,8 +668,6 @@ private:
     // Rectangle encompassing the scroll corner and resizer rect.
     IntRect scrollCornerAndResizerRect() const;
 
-    virtual void disconnectFromPage() { m_scrollableAreaPage = 0; }
-
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int, int);
 
@@ -868,8 +866,6 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;
 #endif
-
-    Page* m_scrollableAreaPage; // Page on which this is registered as a scrollable area.
 };
 
 inline void RenderLayer::updateZOrderLists()

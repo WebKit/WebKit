@@ -1,3 +1,96 @@
+2012-02-06  Anders Carlsson  <andersca@apple.com>
+
+        ScrollableAreaSet should be moved from Page to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=62762
+
+        Reviewed by Beth Dakin.
+
+        It makes more sense for the set of scrollable areas to be per frame view instead of per page;
+        scrollable areas are associated with a containing frame view and their lifecycle follows the lifecycle of the
+        frame view much more closely. This could even fix a bunch of crashes where a scrollable area outlived its containing page.
+
+        * WebCore.exp.in:
+        Replace the Page member functions with FrameView member functions instead.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved):
+        Check if the frame view contains the given layer.
+
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        Ditto.
+
+        * page/FocusController.cpp:
+        (WebCore::contentAreaDidShowOrHide):
+        Add helper function.
+
+        (WebCore::FocusController::setContainingWindowIsVisible):
+        Call contentAreaDidShowOrHide for the main frame view, and for all scrollable areas
+        inside all subframe views.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        Use early returns to make the code more clear. Also, don't add the scrollable area to the set here.
+
+        (WebCore::FrameView::~FrameView):
+        Don't remove the scrollable area here.
+
+        (WebCore::FrameView::zoomAnimatorTransformChanged):
+        m_page is gone so use m_frame->page() instead.
+
+        (WebCore::FrameView::setAnimatorsAreActive):
+        Call ScrollAnimator::setIsActive for all the scrollable areas in this frame view. Previously we used to do
+        this for all scrollable areas on the page, but since setAnimatorsAreActive will be called for each document,
+        this will be done implicitly.
+
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+        Call ScrollableArea::contentDidPaint for this frame view and all its immediate scrollable areas. Previously, we used
+        to do this for all scrollable areas on the page, but we only need to do it for this frame view.
+
+        (WebCore::FrameView::scrollAnimatorEnabled):
+        Get the page from m_frame since m_page is gone.
+
+        (WebCore::FrameView::addScrollableArea):
+        (WebCore::FrameView::removeScrollableArea):
+        (WebCore::FrameView::containsScrollableArea):
+        Move these member functions here from Page.
+
+        (WebCore::FrameView::addChild):
+        If we are adding a frame view, add it to the scrollable area set.
+
+        (WebCore::FrameView::removeChild):
+        If we are removing a frame view, remove it from the scrollable area set.
+
+        * page/FrameView.h:
+        Move the member function declarations and the scrollable area set member variable here from Page.
+
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        Don't call disconnectPage on the scrollable areas anymore.
+
+        * platform/ScrollView.h:
+        (ScrollView):
+        Make addChild and removeChild virtual.
+
+        * platform/ScrollableArea.h:
+        Remove disconnectFromPage.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::styleChanged):
+        The frame view now keeps track of the scrollable areas.
+
+        * rendering/RenderLayer.h:
+        Remove the page member variable and disconnectFromPage.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        The frame view now keeps track of the scrollable areas.
+
+        * rendering/RenderListBox.h:
+        Remove the page member variable and disconnectFromPage.
+
 2012-02-07  Matthew Delaney  <mdelaney@apple.com>
 
         Remove redundant checks in CanvasRenderingContext2D.cpp

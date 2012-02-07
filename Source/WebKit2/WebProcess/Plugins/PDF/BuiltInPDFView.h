@@ -138,7 +138,6 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar() const  { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
     virtual bool isOnActivePage() const;
-    virtual void disconnectFromPage() { m_frame = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState) { }

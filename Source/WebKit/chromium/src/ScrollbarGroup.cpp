@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollbarGroup.h"
 
-#include "Page.h"
+#include "FrameView.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "platform/WebRect.h"
@@ -36,20 +36,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ScrollbarGroup::ScrollbarGroup(Page* page)
-    : m_page(page)
+ScrollbarGroup::ScrollbarGroup(FrameView* frameView)
+    : m_frameView(frameView)
     , m_horizontalScrollbar(0)
     , m_verticalScrollbar(0)
 {
-    m_page->addScrollableArea(this);
+    m_frameView->addScrollableArea(this);
 }
 
 ScrollbarGroup::~ScrollbarGroup()
 {
     ASSERT(!m_horizontalScrollbar);
     ASSERT(!m_verticalScrollbar);
-    if (m_page)
-        m_page->removeScrollableArea(this);
+    m_frameView->removeScrollableArea(this);
 }
 
 void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
@@ -247,11 +246,6 @@ void ScrollbarGroup::scrollbarStyleChanged(int, bool forceUpdate)
 bool ScrollbarGroup::isOnActivePage() const
 {
     return true;
-}
-
-void ScrollbarGroup::disconnectFromPage()
-{
-    m_page = 0;
 }
 
 } // namespace WebKit

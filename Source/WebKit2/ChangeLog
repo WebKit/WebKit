@@ -1,3 +1,20 @@
+2012-02-06  Anders Carlsson  <andersca@apple.com>
+
+        ScrollableAreaSet should be moved from Page to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=62762
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::initialize):
+        Call FrameView::addScrollableArea instead.
+
+        (WebKit::BuiltInPDFView::destroy):
+        Call FrameView::removeScrollableArea instead.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        Remove disconnectFromPage since it no longer exists on ScrollableArea.
+
 2012-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add cut, copy and paste methods to WebKit2 GTK+ API

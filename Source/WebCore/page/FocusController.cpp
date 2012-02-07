@@ -582,6 +582,14 @@ void FocusController::setActive(bool active)
         dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), active);
 }
 
+static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
+{
+    if (didShow)
+        scrollableArea->contentAreaDidShow();
+    else
+        scrollableArea->contentAreaDidHide();
+}
+
 void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisible)
 {
     if (m_containingWindowIsVisible == containingWindowIsVisible)
@@ -593,13 +601,22 @@ void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisibl
     if (!view)
         return;
 
-    if (const HashSet<ScrollableArea*>* scrollableAreas = m_page->scrollableAreaSet()) {
-        HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
-            if (!containingWindowIsVisible)
-                (*it)->contentAreaDidHide();
-            else
-                (*it)->contentAreaDidShow();
+    contentAreaDidShowOrHide(view, containingWindowIsVisible);
+
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView)
+            continue;
+
+        const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+        if (!scrollableAreas)
+            continue;
+
+        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+            ScrollableArea* scrollableArea = *it;
+            ASSERT(scrollableArea->isOnActivePage());
+
+            contentAreaDidShowOrHide(scrollableArea, containingWindowIsVisible);
         }
     }
 }

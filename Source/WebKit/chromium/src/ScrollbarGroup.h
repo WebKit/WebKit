@@ -31,7 +31,7 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class Page;
+class FrameView;
 }
 
 namespace WebKit {
@@ -40,7 +40,7 @@ class WebScrollbarImpl;
 
 class ScrollbarGroup : public WebCore::ScrollableArea {
 public:
-    explicit ScrollbarGroup(WebCore::Page*);
+    explicit ScrollbarGroup(WebCore::FrameView*);
     ~ScrollbarGroup();
 
     void scrollbarCreated(WebScrollbarImpl*);
@@ -72,10 +72,9 @@ public:
     virtual bool shouldSuspendScrollAnimations() const;
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
     virtual bool isOnActivePage() const;
-    virtual void disconnectFromPage();
 
 private:
-    WebCore::Page* m_page;
+    WebCore::FrameView* m_frameView;
     WebCore::IntPoint m_lastMousePosition;
     WebScrollbarImpl* m_horizontalScrollbar;
     WebScrollbarImpl* m_verticalScrollbar;

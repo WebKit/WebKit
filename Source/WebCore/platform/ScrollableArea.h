@@ -161,8 +161,6 @@ public:
 
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 
-    virtual void disconnectFromPage() { }
-
     virtual bool scrollAnimatorEnabled() const { return false; }
 
     // NOTE: Only called from Internals for testing.

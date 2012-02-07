@@ -308,6 +308,15 @@ public:
     void resetTrackedRepaints() { m_trackedRepaintRects.clear(); }
     const Vector<IntRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
 
+    typedef HashSet<ScrollableArea*> ScrollableAreaSet;
+    void addScrollableArea(ScrollableArea*);
+    void removeScrollableArea(ScrollableArea*);
+    bool containsScrollableArea(ScrollableArea*) const;
+    const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
+
+    virtual void addChild(PassRefPtr<Widget>) OVERRIDE;
+    virtual void removeChild(Widget*) OVERRIDE;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -373,7 +382,6 @@ private:
 #endif
 
     virtual void notifyPageThatContentAreaWillPaint() const;
-    virtual void disconnectFromPage() { m_page = 0; }
 
     virtual bool scrollAnimatorEnabled() const;
 
@@ -476,8 +484,6 @@ private:
     // Renderer to hold our custom scroll corner.
     RenderScrollbarPart* m_scrollCorner;
 
-    Page* m_page;
-
     // If true, automatically resize the frame view around its content.
     bool m_shouldAutoSize;
     bool m_inAutoSize;
@@ -485,6 +491,8 @@ private:
     IntSize m_minAutoSize;
     // The upper bound on the size when autosizing.
     IntSize m_maxAutoSize;
+
+    OwnPtr<ScrollableAreaSet> m_scrollableAreas;
 
     static double s_deferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

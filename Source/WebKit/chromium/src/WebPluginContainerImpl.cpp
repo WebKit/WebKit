@@ -493,7 +493,7 @@ WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 ScrollbarGroup* WebPluginContainerImpl::scrollbarGroup()
 {
     if (!m_scrollbarGroup)
-        m_scrollbarGroup = adoptPtr(new ScrollbarGroup(m_element->document()->frame()->page()));
+        m_scrollbarGroup = adoptPtr(new ScrollbarGroup(m_element->document()->frame()->view()));
     return m_scrollbarGroup.get();
 }
 
