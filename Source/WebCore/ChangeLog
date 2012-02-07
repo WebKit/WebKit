@@ -1,3 +1,19 @@
+2012-02-06  Dana Jansens  <danakj@chromium.org>
+
+        Add contains() test to Region
+        https://bugs.webkit.org/show_bug.cgi?id=72294
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/Region.cpp:
+        (WebCore::Region::contains):
+        (WebCore):
+        * platform/graphics/Region.h:
+        (Region):
+        (Shape):
+        (WebCore::operator==):
+        (WebCore):
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         Rename [DontCheckEnums], [ReturnsNew], [DoNotCheckDomainSecurityOnGet],

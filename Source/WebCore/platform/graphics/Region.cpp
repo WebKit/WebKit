@@ -65,6 +65,11 @@ Vector<IntRect> Region::rects() const
     return rects;
 }
 
+bool Region::contains(const Region& region) const
+{
+    return WebCore::intersect(region, *this) == region;
+}
+
 Region::Shape::Shape()
 {
 }
@@ -279,7 +284,7 @@ Region::Shape Region::Shape::shapeOperation(const Shape& shape1, const Shape& sh
         SegmentIterator s1 = segments1;
         SegmentIterator s2 = segments2;
 
-        Vector<int> segments;
+        Vector<int, 32> segments;
 
         // Now iterate over the segments in each span and construct a new vector of segments.
         while (s1 != segments1End && s2 != segments2End) {
