@@ -1,3 +1,16 @@
+2012-02-06  Shinya Kawanaka  <shinyak@google.com>
+
+        Remove Element::ensureShadowRoot export.
+        https://bugs.webkit.org/show_bug.cgi?id=77932
+
+        Reviewed by Hajime Morita.
+
+        Removes Element::ensureShadowRoot export.
+
+        No new tests, no change in behavior.
+
+        * WebCore.exp.in:
+
 2012-02-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Web Inspector: rename Artificial to Synthetic according to v8 patch r10614.

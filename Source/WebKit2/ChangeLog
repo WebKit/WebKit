@@ -1,3 +1,13 @@
+2012-02-06  Shinya Kawanaka  <shinyak@google.com>
+
+        Remove Element::ensureShadowRoot export.
+        https://bugs.webkit.org/show_bug.cgi?id=77932
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add TextureMapperGL implementation
