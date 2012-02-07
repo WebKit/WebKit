@@ -1129,14 +1129,14 @@ WebInspector.HeapSnapshot.prototype = {
             for (var iter = node.edges; iter.hasNext(); iter.next()) {
                 var edge = iter.edge;
                 var node = edge.node;
-                if (this._flags[node.nodeIndex])
+                if (this._flags[node.nodeIndex] & flag)
                     continue;
                 if (edge.isHidden || edge.isInvisible)
                     continue;
                 var name = edge.name;
                 if (!name)
                     continue;
-                if (edge.isInternal && name !== "native")
+                if (edge.isInternal)
                     continue;
                 list.push(node);
             }
