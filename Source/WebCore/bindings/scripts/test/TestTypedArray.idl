@@ -32,7 +32,7 @@ module html {
         GenerateNativeConverter,
         JSNoStaticTables,
         JSCustomToJS,
-        DontCheckEnums
+        DoNotCheckConstants
     ] Float64Array : ArrayBufferView {
         Int32Array foo(in Float32Array array);
     };

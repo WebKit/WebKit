@@ -20,7 +20,7 @@
 module ranges {
 
     interface [
-        DontCheckEnums
+        DoNotCheckConstants
     ] RangeException {
 
         readonly attribute unsigned short   code;

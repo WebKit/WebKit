@@ -30,7 +30,7 @@ module core {
 
     interface [
         JSNoStaticTables,
-        DontCheckEnums
+        DoNotCheckConstants
     ] DOMCoreException {
 
         readonly attribute unsigned short   code;

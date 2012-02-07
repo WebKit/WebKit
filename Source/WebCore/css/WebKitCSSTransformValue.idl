@@ -30,7 +30,7 @@ module css {
 
     interface [
             IndexedGetter,
-            DontCheckEnums
+            DoNotCheckConstants
     ] WebKitCSSTransformValue : CSSValueList {
 
         // OperationTypes

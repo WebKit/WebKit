@@ -31,7 +31,7 @@
 module html {
     interface [
         Conditional=BLOB|FILE_SYSTEM,
-        DontCheckEnums,
+        DoNotCheckConstants,
         JSNoStaticTables
     ] FileException {
 

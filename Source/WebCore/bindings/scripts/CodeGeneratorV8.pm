@@ -1932,9 +1932,9 @@ sub GenerateSingleBatchedAttribute
     my $attrExt = $attribute->signature->extendedAttributes;
 
     my $accessControl = "v8::DEFAULT";
-    if ($attrExt->{"DoNotCheckDomainSecurityOnGet"}) {
+    if ($attrExt->{"DoNotCheckDomainSecurityOnGetter"}) {
         $accessControl = "v8::ALL_CAN_READ";
-    } elsif ($attrExt->{"DoNotCheckDomainSecurityOnSet"}) {
+    } elsif ($attrExt->{"DoNotCheckDomainSecurityOnSetter"}) {
         $accessControl = "v8::ALL_CAN_WRITE";
     } elsif ($attrExt->{"DoNotCheckDomainSecurity"}) {
         $accessControl = "v8::ALL_CAN_READ";
@@ -3184,8 +3184,8 @@ sub GenerateFunctionCallString()
     my $isSVGTearOffType = ($codeGenerator->IsSVGTypeNeedingTearOff($returnType) and not $implClassName =~ /List$/);
     $nativeReturnType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($returnType) if $isSVGTearOffType;
 
-    if ($function->signature->extendedAttributes->{"ImplementationFunction"}) {
-        $name = $function->signature->extendedAttributes->{"ImplementationFunction"};
+    if ($function->signature->extendedAttributes->{"ImplementedAs"}) {
+        $name = $function->signature->extendedAttributes->{"ImplementedAs"};
     }
 
     my $index = 0;
@@ -3738,7 +3738,7 @@ sub NativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnsNew"} ? ", true)" : ")");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", true)" : ")");
     }
 
     if ($type eq "EventTarget") {

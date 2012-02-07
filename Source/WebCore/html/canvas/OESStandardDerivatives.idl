@@ -28,7 +28,7 @@ module html {
         Conditional=WEBGL,
         JSGenerateIsReachable=ImplContext,
         OmitConstructor,
-        DontCheckEnums
+        DoNotCheckConstants
     ] OESStandardDerivatives {
         const unsigned int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
     };

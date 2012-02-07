@@ -27,7 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        DontCheckEnums
+        DoNotCheckConstants
     ] SVGFEDisplacementMapElement : SVGElement,
                                     SVGFilterPrimitiveStandardAttributes {
         // Channel Selectors

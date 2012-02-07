@@ -32,7 +32,7 @@ module html {
         GenerateNativeConverter,
         JSNoStaticTables,
         JSCustomToJS,
-        DontCheckEnums
+        DoNotCheckConstants
     ] Uint32Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 4;
 
