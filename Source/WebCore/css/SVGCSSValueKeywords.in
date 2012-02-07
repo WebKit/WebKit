@@ -1,14 +1,5 @@
-// These are all values accepted for CSS2.
 //
-// WARNING:
-// --------
-//
-// The Values are sorted according to the properties they belong to,
-// and have to be in the same order as the enums in RenderStyle.h.
-//
-// If not, the optimizations in the cssparser and style selector will fail,
-// and produce incorrect results.
-//
+// SVG CSS value names
 //
 // CSS_PROP_*_COLOR
 //

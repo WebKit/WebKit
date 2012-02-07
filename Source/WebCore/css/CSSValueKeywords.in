@@ -1,13 +1,5 @@
-// These are all values accepted for CSS2.
 //
-// WARNING:
-// --------
-//
-// The Values are sorted according to the properties they belong to,
-// and have to be in the same order as the enums in RenderStyleConstants.h.
-//
-// If not, the optimizations in the cssparser and style selector will fail,
-// and produce incorrect results.
+// CSS value names
 //
 inherit
 initial
@@ -16,6 +8,7 @@ initial
 // CSS_PROP_BORDER_TOP_STYLE
 // CSS_PROP_BORDER_BOTTOM_STYLE
 // CSS_PROP_BORDER_LEFT_STYLE
+// The order here must match the order of the EBorderStyle enum in RenderStyleConstants.h.
 none
 hidden
 inset
@@ -215,6 +208,7 @@ bottom
 -webkit-baseline-middle
 //
 // CSS_PROP_TEXT_ALIGN:
+// The order here must match the order of the ETextAlign enum in RenderStyleConstants.h.
 //
 -webkit-auto
 left
@@ -232,6 +226,7 @@ outside
 inside
 //
 // CSS_PROP_LIST_STYLE_TYPE:
+// The order here must match the order of the EListStyleType enum in RenderStyleConstants.h.
 //
 disc
 circle
@@ -316,6 +311,7 @@ katakana-iroha
 //none
 //
 // CSS_PROP_DISPLAY:
+// The order here must match the order of the EDisplay enum in RenderStyleConstants.h.
 //
 inline
 block
@@ -344,6 +340,7 @@ table-caption
 //none
 //
 // CSS_PROP_CURSOR:
+// The order here must match the order of the ECursor enum in RenderStyleConstants.h.
 //
 auto
 crosshair
@@ -603,7 +600,7 @@ space
 after-white-space
 
 // -webkit-appearance
-// The order here should match the order in the ControlPart enum in ThemeTypes.h.
+// The order here must match the order in the ControlPart enum in ThemeTypes.h.
 // All appearance values that should be accepted by the parser should be listed between 'checkbox' and 'textarea':
 checkbox
 radio

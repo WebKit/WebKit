@@ -1396,7 +1396,15 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStylePosition e)
 
 template<> inline CSSPrimitiveValue::operator EListStylePosition() const
 {
-    return (EListStylePosition)(m_value.ident - CSSValueOutside);
+    switch (m_value.ident) {
+    case CSSValueOutside:
+        return OUTSIDE;
+    case CSSValueInside:
+        return INSIDE;
+    default:
+        ASSERT_NOT_REACHED();
+        return OUTSIDE;
+    }
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
@@ -2285,7 +2293,17 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserModify e)
 
 template<> inline CSSPrimitiveValue::operator EUserModify() const
 {
-    return static_cast<EUserModify>(m_value.ident - CSSValueReadOnly);
+    switch (m_value.ident) {
+    case CSSValueReadOnly:
+        return READ_ONLY;
+    case CSSValueReadWrite:
+        return READ_WRITE;
+    case CSSValueReadWritePlaintextOnly:
+        return READ_WRITE_PLAINTEXT_ONLY;
+    default:
+        ASSERT_NOT_REACHED();
+        return READ_ONLY;
+    }
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserSelect e)
