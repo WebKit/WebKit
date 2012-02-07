@@ -1,5 +1,12 @@
 2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert r106859. It was completely bogus.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+
+2012-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium build fix after r106836.
 
         * src/WebViewImpl.cpp:
