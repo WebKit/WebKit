@@ -52,6 +52,8 @@ BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading.html = FAIL
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.html = FAIL
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = FAIL
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = FAIL
+// The test needs a rebaseline after BUGWK77736.
+BUGWK77997 DEBUG SLOW : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -4002,7 +4004,7 @@ BUGWK77736 : svg/as-object/embedded-svg-size-changes-no-layout-triggers.html = I
 BUGWK77736 : svg/as-object/embedded-svg-size-changes.html = IMAGE
 BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1.html = IMAGE+TEXT
 BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html = IMAGE+TEXT
-BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
+BUGWK77736 RELEASE : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK77736 : svg/carto.net/tabgroup.svg = IMAGE+TEXT
 BUGWK77736 MAC LINUX: svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK77736 MAC LINUX : svg/css/shadow-changes.svg = IMAGE
