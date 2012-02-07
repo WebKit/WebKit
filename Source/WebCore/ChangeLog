@@ -1,3 +1,17 @@
+2012-02-07  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Memory bug during occlusion tracking if Vector::append() needs to reallocate the buffer
+        https://bugs.webkit.org/show_bug.cgi?id=77996
+
+        Reviewed by James Robinson.
+
+        We're holding onto the last element in the Vector and then calling
+        append(). If append() reallocates the Vector's buffer, the pointer
+        is no longer valid.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::enterTargetRenderSurface):
+
 2012-02-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to column style not updated on post block
