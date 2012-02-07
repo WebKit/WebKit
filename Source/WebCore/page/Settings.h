@@ -357,6 +357,9 @@ namespace WebCore {
         void setWebGLEnabled(bool);
         bool webGLEnabled() const { return m_webGLEnabled; }
 
+        void setWebGLErrorsToConsoleEnabled(bool);
+        bool webGLErrorsToConsoleEnabled() const { return m_webGLErrorsToConsoleEnabled; }
+
         void setOpenGLMultisamplingEnabled(bool);
         bool openGLMultisamplingEnabled() const { return m_openGLMultisamplingEnabled; }
 
@@ -623,6 +626,7 @@ namespace WebCore {
         bool m_showRepaintCounter : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
+        bool m_webGLErrorsToConsoleEnabled : 1;
         bool m_openGLMultisamplingEnabled : 1;
         bool m_privilegedWebGLExtensionsEnabled : 1;
         bool m_webAudioEnabled : 1;

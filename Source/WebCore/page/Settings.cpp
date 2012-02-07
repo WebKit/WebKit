@@ -189,6 +189,7 @@ Settings::Settings(Page* page)
     , m_showRepaintCounter(false)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
+    , m_webGLErrorsToConsoleEnabled(false)
     , m_openGLMultisamplingEnabled(true)
     , m_privilegedWebGLExtensionsEnabled(false)
     , m_webAudioEnabled(false)
@@ -804,6 +805,11 @@ void Settings::setWebAudioEnabled(bool enabled)
 void Settings::setWebGLEnabled(bool enabled)
 {
     m_webGLEnabled = enabled;
+}
+
+void Settings::setWebGLErrorsToConsoleEnabled(bool enabled)
+{
+    m_webGLErrorsToConsoleEnabled = enabled;
 }
 
 void Settings::setOpenGLMultisamplingEnabled(bool enabled)

@@ -517,6 +517,10 @@ void WebGLRenderingContext::setupFlags()
 {
     ASSERT(m_context);
 
+    Page* p = canvas()->document()->page();
+    if (p && p->settings()->webGLErrorsToConsoleEnabled())
+        m_synthesizedErrorsToConsole = true;
+
     m_isGLES2Compliant = m_context->isGLES2Compliant();
     m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->isEnabled("GL_CHROMIUM_strict_attribs");
     m_isResourceSafe = m_context->getExtensions()->isEnabled("GL_CHROMIUM_resource_safe");

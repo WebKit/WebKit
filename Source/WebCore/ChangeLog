@@ -1,3 +1,21 @@
+2012-02-06  Gregg Tavares  <gman@google.com>
+
+        Add webGLErrorsToConsoleEnabled Settings flag
+        https://bugs.webkit.org/show_bug.cgi?id=77696
+
+        Reviewed by Kenneth Russell.
+
+        No new tests as there is no change in behavior.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::setupFlags):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::webGLErrorsToConsoleEnabled):
+
 2012-02-06  Emil A Eklund  <eae@chromium.org>
 
         Convert PopupMenuClient::clientPadding over to new layout abstraction
