@@ -1,3 +1,26 @@
+2012-02-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Avoid Page::updateViewportArguments() if the causing frame is not the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=77387
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+        (WebCore::Document::updateViewportArguments):
+        (WebCore::Document::setInPageCache):
+        * dom/Document.h:
+        (Document):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedIntoDocument):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/Page.cpp:
+        (WebCore::Page::viewportArguments):
+        (WebCore):
+        * page/Page.h:
+        (Page):
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         Fix some miscellaneous 'make dist' error for WebKitGTK+.

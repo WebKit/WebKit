@@ -803,6 +803,7 @@ public:
      */
     void processHttpEquiv(const String& equiv, const String& content);
     void processViewport(const String& features);
+    void updateViewportArguments();
     void processReferrerPolicy(const String& policy);
 
     // Returns the owning element in the parent document.

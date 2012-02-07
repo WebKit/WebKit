@@ -163,6 +163,8 @@ void HTMLBodyElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
 
+    ASSERT(document());
+
     // FIXME: Perhaps this code should be in attach() instead of here.
     Element* ownerElement = document()->ownerElement();
     if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
@@ -180,8 +182,7 @@ void HTMLBodyElement::insertedIntoDocument()
     if (FrameView* view = document()->view())
         view->scheduleRelayout();
 
-    if (document() && document()->page())
-        document()->page()->updateViewportArguments();
+    document()->updateViewportArguments();
 }
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const

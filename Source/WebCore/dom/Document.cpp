@@ -2794,11 +2794,13 @@ void Document::processViewport(const String& features)
     m_viewportArguments = ViewportArguments(ViewportArguments::ViewportMeta);
     processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
 
-    Frame* frame = this->frame();
-    if (!frame || !frame->page())
-        return;
+    updateViewportArguments();
+}
 
-    frame->page()->updateViewportArguments();
+void Document::updateViewportArguments()
+{
+    if (page() && page()->mainFrame() == frame())
+        page()->chrome()->dispatchViewportPropertiesDidChange(m_viewportArguments);
 }
 
 void Document::processReferrerPolicy(const String& policy)
@@ -4076,8 +4078,7 @@ void Document::setInPageCache(bool flag)
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
 
-        if (frame() && frame()->page())
-            frame()->page()->updateViewportArguments();
+        updateViewportArguments();
 
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();

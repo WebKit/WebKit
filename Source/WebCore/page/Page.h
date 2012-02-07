@@ -133,8 +133,7 @@ namespace WebCore {
 
         RenderTheme* theme() const { return m_theme.get(); };
 
-        ViewportArguments viewportArguments() const { return m_viewportArguments; }
-        void updateViewportArguments();
+        ViewportArguments viewportArguments() const;
 
         static void refreshPlugins(bool reload);
         PluginData* pluginData() const;
@@ -463,8 +462,6 @@ namespace WebCore {
 #endif
 
         ViewMode m_viewMode;
-
-        ViewportArguments m_viewportArguments;
 
         double m_minimumTimerInterval;
 
