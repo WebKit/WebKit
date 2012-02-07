@@ -88,6 +88,7 @@ FocusController::FocusController(Page* page)
     , m_isActive(false)
     , m_isFocused(false)
     , m_isChangingFocusedFrame(false)
+    , m_containingWindowIsVisible(false)
 {
 }
 
@@ -573,22 +574,34 @@ void FocusController::setActive(bool active)
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
         }
-
-        if (const HashSet<ScrollableArea*>* scrollableAreas = m_page->scrollableAreaSet()) {
-            HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-            for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
-                if (!active)
-                    (*it)->contentAreaDidHide();
-                else
-                    (*it)->contentAreaDidShow();
-            }
-        }
     }
 
     focusedOrMainFrame()->selection()->pageActivationChanged();
     
     if (m_focusedFrame && isFocused())
         dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), active);
+}
+
+void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisible)
+{
+    if (m_containingWindowIsVisible == containingWindowIsVisible)
+        return;
+
+    m_containingWindowIsVisible = containingWindowIsVisible;
+
+    FrameView* view = m_page->mainFrame()->view();
+    if (!view)
+        return;
+
+    if (const HashSet<ScrollableArea*>* scrollableAreas = m_page->scrollableAreaSet()) {
+        HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
+        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
+            if (!containingWindowIsVisible)
+                (*it)->contentAreaDidHide();
+            else
+                (*it)->contentAreaDidShow();
+        }
+    }
 }
 
 static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate, FocusCandidate& closest)

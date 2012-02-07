@@ -1,3 +1,22 @@
+2012-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Overlay scrollbars flash when window is simply activated
+        https://bugs.webkit.org/show_bug.cgi?id=77911
+
+        Reviewed by Kenneth Russell.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowVisibility]):
+        Use -[NSWindow isVisible] here, since we also want to consider the window hidden if the application itself is hidden.
+
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+        Call -[WKView updateWindowVisibility].
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setWindowIsVisible):
+        Call FocusController::setContainingWindowIsVisible.
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com>
 
          [GTK] Fix remaining errors in GTK+ WebKit2 API

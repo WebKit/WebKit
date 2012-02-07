@@ -1,3 +1,17 @@
+2012-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Overlay scrollbars flash when window is simply activated
+        https://bugs.webkit.org/show_bug.cgi?id=77911
+        <rdar://problem/10211995>
+
+        Reviewed by Kenneth Russell.
+
+        * WebView/WebView.mm:
+        (-[WebView _windowWillOrderOnScreen:]):
+        (-[WebView _windowWillOrderOffScreen:]):
+        Call FocusController::setContainingWindowIsVisible.
+
+
 2012-02-06  Matthew Delaney  <mdelaney@apple.com>
 
         toDataURL() uses stale data after putImageData()

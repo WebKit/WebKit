@@ -253,6 +253,14 @@ static NSSize abs(NSSize size)
 {
     UNUSED_PARAM(scrollerImpPair);
     UNUSED_PARAM(rect);
+
+    if (!_scrollableArea)
+        return;
+
+    if (!_scrollableArea->isOnActivePage())
+        return;
+
+    _scrollableArea->scrollAnimator()->contentAreaWillPaint();
 }
 
 - (void)scrollerImpPair:(id)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle
