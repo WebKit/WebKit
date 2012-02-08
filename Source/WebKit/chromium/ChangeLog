@@ -1,3 +1,15 @@
+2012-02-08  Nico Weber  <nicolasweber@gmx.de>
+
+        [chromium] Make dependency on Accelerate.framework explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=78131
+
+        It's used by platform/audio/mac/FFTFrameMac.cpp. The explicit
+        dependency is needed to build a libwebkit.dylib.
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+
 2012-02-08  Bernhard Bauer  <bauerb@google.com>
 
         [Chromium] Don't add selection from password fields to context menu.
