@@ -29,6 +29,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "Color.h"
 #include "ClassList.h"
 #include "ContentSecurityPolicy.h"
@@ -142,9 +143,9 @@ void StyledElement::addCSSProperty(int id, const String &value)
         removeCSSProperty(id);
 }
 
-void StyledElement::addCSSProperty(int id, int value)
+void StyledElement::addCSSProperty(int propertyID, int identifier)
 {
-    ensureAttributeStyle()->setProperty(id, value);
+    ensureAttributeStyle()->setProperty(CSSProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier)));
 }
 
 void StyledElement::addCSSImageProperty(int id, const String& url)

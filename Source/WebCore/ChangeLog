@@ -1,3 +1,16 @@
+2012-02-07  Andreas Kling  <awesomekling@apple.com>
+
+        REGRESSION(r106668-r106889): Chromium page cycler tests (Intl2) performance regressions.
+        <http://webkit.org/b/78068>
+
+        Reviewed by Ryosuke Niwa.
+
+        Create CSS_IDENT values for attribute styles in the document's CSSValuePool.
+        This regressed in r106756 and I suspect it'll fix up the cycler regression.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSProperty):
+
 2012-02-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Remove TextureMapperQt from the gyp projects
