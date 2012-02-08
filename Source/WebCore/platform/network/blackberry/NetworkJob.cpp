@@ -506,7 +506,8 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
         m_handle->client()->willSendRequest(m_handle.get(), newRequest, m_response);
 
         // m_cancelled can become true if the url fails the policy check.
-        if (m_cancelled)
+        // newRequest can be cleared when the redirect is rejected.
+        if (m_cancelled || newRequest.isEmpty())
             return false;
     }
 

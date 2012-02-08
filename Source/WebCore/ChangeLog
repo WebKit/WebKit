@@ -1,3 +1,20 @@
+2012-02-07  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] NetworkJob should stop redirecting when the request is cleared by client
+        https://bugs.webkit.org/show_bug.cgi?id=78029
+
+        Reviewed by Rob Buis.
+
+        When a redirect is rejected by security origin check, the ResourceRequest
+        will be cleared (see DocumentThreadableLoader::redirectReceived()). In this
+        case, we should stop handling the request.
+
+        No new tests because existing tests (like http:/tests/xmlhttprequest/redirect-cross
+        -origin-tripmine.html) can cover this.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::startNewJobWithRequest):
+
 2012-02-07  David Barton  <dbarton@mathscribe.com>
 
         Remove extraneous MathML code before bug 52444 fix
