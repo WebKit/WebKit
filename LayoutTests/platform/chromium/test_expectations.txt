@@ -1075,8 +1075,8 @@ BUGCR10322 SKIP : accessibility/th-as-title-ui.html = TEXT
 BUGCR10322 SKIP : accessibility/transformed-element.html = TEXT
 BUGCR10322 SKIP : accessibility/visible-elements.html = TEXT
 
-BUGWK73912 WIN LINUX SNOWLEOPARD : accessibility/aria-checkbox-text.html = TIMEOUT PASS
-BUGWK73912 LEOPARD : accessibility/aria-checkbox-text.html = CRASH PASS
+BUGWK73912 SKIP : accessibility/aria-checkbox-text.html = TIMEOUT PASS
+
 BUGWK73912 LEOPARD : accessibility/aria-checkbox-sends-notification.html = CRASH TEXT PASS
 BUGWK73912 SNOWLEOPARD : accessibility/aria-checkbox-sends-notification.html = TEXT PASS
 
