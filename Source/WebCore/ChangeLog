@@ -1,3 +1,36 @@
+2012-02-07  Emil A Eklund  <eae@chromium.org>
+
+        Revert TableSection cell and border calculations to integers
+        https://bugs.webkit.org/show_bug.cgi?id=77918
+
+        Reviewed by Eric Seidel.
+
+        Change RenderTableSection cell width, row height and border calculations
+        back to use integers. Table layout is done on integer bounds to comply
+        with the specification and to ensure that columns given the same width,
+        including percentage widths, are rendered with identical widths. The same
+        applies to heights.
+
+        No new tests.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderBefore):
+        (WebCore::RenderTableSection::calcOuterBorderAfter):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+        (WebCore::RenderTableSection::RowStruct::RowStruct):
+        (WebCore::RenderTableSection::outerBorderBefore):
+        (WebCore::RenderTableSection::outerBorderAfter):
+        (WebCore::RenderTableSection::outerBorderStart):
+        (WebCore::RenderTableSection::outerBorderEnd):
+
 2012-02-07  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Remove the no longer necessary Chromium gesture recognizer.

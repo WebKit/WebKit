@@ -55,8 +55,8 @@ public:
     void addCell(RenderTableCell*, RenderTableRow* row);
 
     void setCellLogicalWidths();
-    LayoutUnit calcRowLogicalHeight();
-    LayoutUnit layoutRows(LayoutUnit logicalHeight);
+    int calcRowLogicalHeight();
+    int layoutRows(int logicalHeight);
 
     RenderTable* table() const { return toRenderTable(parent()); }
 
@@ -87,7 +87,7 @@ public:
     struct RowStruct {
         RowStruct()
             : rowRenderer(0)
-            , baseline(0)
+            , baseline()
         {
         }
 
@@ -108,16 +108,16 @@ public:
     void appendColumn(unsigned pos);
     void splitColumn(unsigned pos, unsigned first);
 
-    LayoutUnit calcOuterBorderBefore() const;
-    LayoutUnit calcOuterBorderAfter() const;
-    LayoutUnit calcOuterBorderStart() const;
-    LayoutUnit calcOuterBorderEnd() const;
+    int calcOuterBorderBefore() const;
+    int calcOuterBorderAfter() const;
+    int calcOuterBorderStart() const;
+    int calcOuterBorderEnd() const;
     void recalcOuterBorder();
 
-    LayoutUnit outerBorderBefore() const { return m_outerBorderBefore; }
-    LayoutUnit outerBorderAfter() const { return m_outerBorderAfter; }
-    LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
-    LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
+    int outerBorderBefore() const { return m_outerBorderBefore; }
+    int outerBorderAfter() const { return m_outerBorderAfter; }
+    int outerBorderStart() const { return m_outerBorderStart; }
+    int outerBorderEnd() const { return m_outerBorderEnd; }
 
     unsigned numRows() const { return m_grid.size(); }
     unsigned numColumns() const;
@@ -173,16 +173,16 @@ private:
     RenderObjectChildList m_children;
 
     Vector<RowStruct> m_grid;
-    Vector<LayoutUnit> m_rowPos;
+    Vector<int> m_rowPos;
 
     // the current insertion position
     unsigned m_cCol;
     unsigned m_cRow;
 
-    LayoutUnit m_outerBorderStart;
-    LayoutUnit m_outerBorderEnd;
-    LayoutUnit m_outerBorderBefore;
-    LayoutUnit m_outerBorderAfter;
+    int m_outerBorderStart;
+    int m_outerBorderEnd;
+    int m_outerBorderBefore;
+    int m_outerBorderAfter;
 
     bool m_needsCellRecalc;
 
