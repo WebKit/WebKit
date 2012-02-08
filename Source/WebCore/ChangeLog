@@ -1,3 +1,23 @@
+2012-02-07  Tony Chang  <tony@chromium.org>
+
+        merge DashboardSupportCSSPropertyNames.in into CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=78036
+
+        Reviewed by Darin Adler.
+
+        In r89362, we started running the preprocessor through CSSPropertyNames.in.
+        Now we can move DashboardSupportCSSPropertyNames.in into CSSPropertyNames.in
+        and wrap it in an #if.
+
+        No new tests, build refactoring.
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_DASHBOARD_SUPPORT to FEATURE_DEFINES.
+        * DerivedSources.make: Remove DashboardSupportCSSPropertyNames.in.
+        * DerivedSources.pri: Remove DashboardSupportCSSPropertyNames.in.
+        * WebCore.xcodeproj/project.pbxproj: Remove DashboardSupportCSSPropertyNames.in.
+        * css/CSSPropertyNames.in: Wrap -webkit-dashboard-region in an #if.
+        * css/DashboardSupportCSSPropertyNames.in: Removed.
+
 2012-02-07  Xingnan Wang  <xingnan.wang@intel.com>
 
         Enable IPP for FFTFrame

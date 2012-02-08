@@ -376,3 +376,6 @@ z-index
 -webkit-grid-columns
 -webkit-grid-rows
 #endif
+#if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
+-webkit-dashboard-region
+#endif
