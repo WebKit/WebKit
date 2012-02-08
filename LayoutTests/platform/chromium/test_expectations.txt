@@ -3995,7 +3995,6 @@ BUGWK77736 : svg/as-object/embedded-svg-size-changes-no-layout-triggers.html = I
 BUGWK77736 : svg/as-object/embedded-svg-size-changes.html = IMAGE
 BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1.html = IMAGE+TEXT
 BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html = IMAGE+TEXT
-BUGWK77736 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK77736 : svg/carto.net/tabgroup.svg = IMAGE+TEXT
 BUGWK77736 MAC LINUX : svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK77736 MAC LINUX : svg/css/shadow-changes.svg = IMAGE
@@ -4044,6 +4043,7 @@ BUGWK77736 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-mixed-008.xml = IMAGE+TEXT
 BUGWK77736 MAC WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-rendering-model-004.xhtml = IMAGE+TEXT
+BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE TIMEOUT
 
 BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-e.html = IMAGE
 BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-se.html = IMAGE
