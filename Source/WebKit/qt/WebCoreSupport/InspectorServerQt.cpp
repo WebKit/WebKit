@@ -209,7 +209,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
             // switch to websocket-style WebSocketService messaging
             if (m_tcpConnection) {
                 m_tcpConnection->disconnect(SIGNAL(readyRead()));
-                connect(m_tcpConnection, SIGNAL(readyRead()), SLOT(webSocketReadyRead()));
+                connect(m_tcpConnection, SIGNAL(readyRead()), SLOT(webSocketReadyRead()), Qt::QueuedConnection);
 
                 QByteArray key3 = m_tcpConnection->read(8);
 
@@ -357,6 +357,10 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
 
         QByteArray payload = m_data.mid(1, length);
 
+        // Remove this WebSocket message from m_data (payload, start-of-frame byte, end-of-frame byte).
+        // Truncate data before delivering message in case of re-entrancy.
+        m_data = m_data.mid(length + 2);
+        
 #if ENABLE(INSPECTOR)
         if (m_inspectorClient) {
           InspectorController* inspectorController = m_inspectorClient->m_inspectedWebPage->d->page->inspectorController();
@@ -364,8 +368,6 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
         }
 #endif
 
-        // Remove this WebSocket message from m_data (payload, start-of-frame byte, end-of-frame byte).
-        m_data = m_data.mid(length + 2);
     }
 }
 

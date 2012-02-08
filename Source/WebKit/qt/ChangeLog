@@ -1,3 +1,14 @@
+2012-02-08  Leo Franchi  <lfranchi@kde.org>
+
+        Remote web inspector reentrancy fixes
+        https://bugs.webkit.org/show_bug.cgi?id=77022
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/InspectorServerQt.cpp:
+        (WebCore::InspectorServerRequestHandlerQt::tcpReadyRead):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketReadyRead):
+
 2012-02-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Provide more attribute methods in Element
