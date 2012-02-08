@@ -180,9 +180,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
 
     switch (propId) {
-    case PROP_WEB_CONTEXT:
-        webView->priv->context = WEBKIT_WEB_CONTEXT(g_value_get_object(value));
+    case PROP_WEB_CONTEXT: {
+        gpointer webContext = g_value_get_object(value);
+        webView->priv->context = webContext ? WEBKIT_WEB_CONTEXT(webContext) : webkit_web_context_get_default();
         break;
+    }
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;

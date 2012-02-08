@@ -1,3 +1,18 @@
+2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix a crash when WebKitWebView is created without a WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=78104
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetProperty): Make sure WebKitWebView:web-context
+        property is initialized to the default web context when a web
+        context is not passed to g_object_new().
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewDefaultContext): Check that a web view created with
+        g_object_new has the default context.
+
 2012-02-08  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

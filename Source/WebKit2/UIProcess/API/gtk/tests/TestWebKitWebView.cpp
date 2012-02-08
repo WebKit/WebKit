@@ -26,6 +26,10 @@
 static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
 {
     g_assert(webkit_web_view_get_context(test->m_webView) == webkit_web_context_get_default());
+
+    // Check that a web view created with g_object_new has the default context.
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, NULL));
+    g_assert(webkit_web_view_get_context(webView.get()) == webkit_web_context_get_default());
 }
 
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
