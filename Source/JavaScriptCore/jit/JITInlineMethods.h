@@ -264,6 +264,9 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
+    ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
+    if (m_bytecodeOffset)
+        store32(Imm32(m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
 }
 

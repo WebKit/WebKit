@@ -1,3 +1,30 @@
+2012-02-08  Oliver Hunt  <oliver@apple.com>
+
+        updateTopCallframe in the baseline JIT doesn't provide enough information to the stubs
+        https://bugs.webkit.org/show_bug.cgi?id=78145
+
+        Reviewed by Gavin Barraclough.
+
+        Fix the updateTopCallFrame helper to store additional information
+        that becomes necessary when we are trying to provide more stack
+        frame information.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::bytecodeOffsetForBaselineJIT):
+        (ExecState):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::updateTopCallFrame):
+
 2012-02-07  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Remove the enable marcro for the no longer necessary Chromium

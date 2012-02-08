@@ -106,6 +106,8 @@ namespace JSC  {
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
 #endif
         AbstractPC abstractReturnPC(JSGlobalData& globalData) { return AbstractPC(globalData, this); }
+        unsigned bytecodeOffsetForBaselineJIT() { return this[RegisterFile::ArgumentCount].tag(); }
+
 #if ENABLE(DFG_JIT)
         InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].asInlineCallFrame(); }
         unsigned codeOriginIndexForDFGWithInlining() const { return this[RegisterFile::ArgumentCount].tag(); }

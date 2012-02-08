@@ -606,7 +606,11 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         load32(payloadFor(RegisterFile::ArgumentCount), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
 
+        m_bytecodeOffset = 0;
         JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(callFrameRegister);
+#if !ASSERT_DISABLED
+        m_bytecodeOffset = (unsigned)-1; // Reset this, in order to guard its use with ASSERTs.
+#endif
 
         jump(beginLabel);
     }
