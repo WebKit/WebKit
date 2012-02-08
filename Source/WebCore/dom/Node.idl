@@ -21,7 +21,7 @@
 module core {
 
     interface [
-        CustomHeader,
+        JSCustomHeader,
         JSCustomMarkFunction,
         JSCustomPushEventHandlerScope,
         JSCustomIsReachable,

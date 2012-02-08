@@ -1,3 +1,23 @@
+2012-02-08  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [CustomHeader] from CanvasPixelArray and rename [CustomHeader] to [JSCustomHeader]
+        https://bugs.webkit.org/show_bug.cgi?id=78089
+
+        Reviewed by Adam Barth.
+
+        This patch removes [CustomHeader] from CanvasPixelArray.idl, since CanvasPixelArrayCustom.h
+        does not exist. (The reason why missing CanvasPixelArrayCustom.h has not caused build failure
+        is that [CustomHeader] has been JSC-specific and JSC has not enabled CanvasPixelArray.)
+        Also, this patch renames [CustomHeader] to [JSCustomHeader], since whether a given class
+        should have custom header or not will depend on JavaScript bindings.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * dom/Node.idl:
+        * html/canvas/CanvasPixelArray.idl:
+
 2012-02-08  Zalan Bujtas  <zbujtas@gmail.com>
 
         Dispatch updateViewportArguments(), when Document is finished
