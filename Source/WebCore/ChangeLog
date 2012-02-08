@@ -1,3 +1,42 @@
+2012-02-08  Dirk Schulze  <krit@webkit.org>
+
+        viewBox on nested SVG causes wrong content size for relative values
+        https://bugs.webkit.org/show_bug.cgi?id=69459
+
+        Reviewed by Nikolas.
+
+        In the past we just checked the change of the viewport size of the root SVG element. If the size changed, all childs
+        with relative length values needed a relayout. We did not consider that we might have other viewports in the document.
+        Childs with relative lengths had a strange zooming, if just the viewport size of an inner SVG element changed.
+
+        With this patch we check if the size of the nearest viewport changes. Is this the case, childs with relative lengths
+        need a relayout.
+
+        Test: inner-svg-change-viewBox.svg
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/svg/RenderSVGContainer.h:
+        (RenderSVGContainer):
+        (WebCore::RenderSVGContainer::determineIfLayoutSizeChanged): Check if we need layout and have relative length values.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout): Remove resetting 'viewport size changed' flag for code operability. No influence on the layout.
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer): Add a flag that indicates that the viewport size changes.
+        (WebCore::RenderSVGViewportContainer::determineIfLayoutSizeChanged): The flag gets set during the layout phase of the SVG element if the size changes.
+        (WebCore):
+        * rendering/svg/RenderSVGViewportContainer.h:
+        (WebCore::RenderSVGViewportContainer::isLayoutSizeChanged): Added getter to get flag status.
+        (RenderSVGViewportContainer):
+        (WebCore::toRenderSVGViewportContainer): Added casting function for constant RenderObjects.
+        (WebCore):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::layoutSizeOfNearestViewportChanged): Search the nearest viewport and check if the size changed.
+        (WebCore):
+        (WebCore::SVGRenderSupport::layoutChildren): Don't check the roots viewport for size changes, but the nearest viewport.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged): Added viewBoxAttr to the list of attributes that cause relayout.
+
 2012-02-08  Gregg Tavares  <gman@google.com>
 
         Implement new WEBGL compressed texture extensions

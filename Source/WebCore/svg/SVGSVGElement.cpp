@@ -303,7 +303,8 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     if (updateRelativeLengths
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGZoomAndPan::isKnownAttribute(attrName)) {
+        || SVGZoomAndPan::isKnownAttribute(attrName)
+        || attrName == SVGNames::viewBoxAttr) {
         if (renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
         return;

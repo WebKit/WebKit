@@ -67,6 +67,8 @@ protected:
     virtual void applyViewportClip(PaintInfo&) { }
     virtual bool pointIsInsideViewportClip(const FloatPoint& /*pointInParent*/) { return true; }
 
+    virtual void determineIfLayoutSizeChanged() { }
+
     bool selfWillPaint();
     void updateCachedBoundaries();
 

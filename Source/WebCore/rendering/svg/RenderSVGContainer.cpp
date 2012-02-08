@@ -63,6 +63,9 @@ void RenderSVGContainer::layout()
     // Allow RenderSVGTransformableContainer to update its transform.
     bool updatedTransform = calculateLocalTransform();
 
+    // RenderSVGViewportContainer needs to set the 'layout size changed' flag.
+    determineIfLayoutSizeChanged();
+
     SVGRenderSupport::layoutChildren(this, selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(this));
 
     // Invalidate all resources of this client if our layout changed.

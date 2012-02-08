@@ -214,7 +214,6 @@ void RenderSVGRoot::layout()
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     m_isLayoutSizeChanged = needsLayout || (svg->hasRelativeLengths() && oldSize != size());
     SVGRenderSupport::layoutChildren(this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(this));
-    m_isLayoutSizeChanged = false;
 
     // At this point LayoutRepainter already grabbed the old bounds,
     // recalculate them now so repaintAfterLayout() uses the new bounds.

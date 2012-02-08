@@ -35,6 +35,10 @@ public:
     explicit RenderSVGViewportContainer(SVGStyledElement*);
     FloatRect viewport() const { return m_viewport; }
 
+    bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
+
+    virtual void determineIfLayoutSizeChanged();
+
 private:
     virtual bool isSVGContainer() const { return true; }
     virtual bool isSVGViewportContainer() const { return true; }
@@ -50,12 +54,19 @@ private:
 
     FloatRect m_viewport;
     mutable AffineTransform m_localToParentTransform;
+    bool m_isLayoutSizeChanged : 1;
 };
   
 inline RenderSVGViewportContainer* toRenderSVGViewportContainer(RenderObject* object)
 {
     ASSERT(!object || !strcmp(object->renderName(), "RenderSVGViewportContainer"));
     return static_cast<RenderSVGViewportContainer*>(object);
+}
+
+inline const RenderSVGViewportContainer* toRenderSVGViewportContainer(const RenderObject* object)
+{
+    ASSERT(!object || !strcmp(object->renderName(), "RenderSVGViewportContainer"));
+    return static_cast<const RenderSVGViewportContainer*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

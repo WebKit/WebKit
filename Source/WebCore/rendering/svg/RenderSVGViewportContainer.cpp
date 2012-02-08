@@ -34,7 +34,16 @@ namespace WebCore {
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
     : RenderSVGContainer(node)
+    , m_isLayoutSizeChanged(false)
 {
+}
+
+void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
+{
+    if (!node()->hasTagName(SVGNames::svgTag))
+        return;
+
+    m_isLayoutSizeChanged = static_cast<SVGSVGElement*>(node())->hasRelativeLengths() && selfNeedsLayout();
 }
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)

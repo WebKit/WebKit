@@ -39,6 +39,7 @@
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGViewportContainer.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
@@ -231,9 +232,22 @@ static inline void invalidateResourcesOfChildren(RenderObject* start)
         invalidateResourcesOfChildren(child);
 }
 
+static inline bool layoutSizeOfNearestViewportChanged(const RenderObject* start)
+{
+    while (start && !start->isSVGRoot() && !start->isSVGViewportContainer())
+        start = start->parent();
+
+    ASSERT(start);
+    ASSERT(start->isSVGRoot() || start->isSVGViewportContainer());
+    if (start->isSVGViewportContainer())
+        return toRenderSVGViewportContainer(start)->isLayoutSizeChanged();
+
+    return toRenderSVGRoot(start)->isLayoutSizeChanged();
+}
+
 void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
-    bool layoutSizeChanged = findTreeRootObject(start)->isLayoutSizeChanged();
+    bool layoutSizeChanged = layoutSizeOfNearestViewportChanged(start);
     HashSet<RenderObject*> notlayoutedObjects;
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
