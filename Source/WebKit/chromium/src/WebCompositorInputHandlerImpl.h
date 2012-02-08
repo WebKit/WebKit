@@ -72,6 +72,7 @@ private:
 
 #ifndef NDEBUG
     bool m_expectScrollUpdateEnd;
+    bool m_expectPinchUpdateEnd;
 #endif
     bool m_scrollStarted;
 

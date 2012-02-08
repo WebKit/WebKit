@@ -83,6 +83,7 @@ WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl(CCInputHandlerClien
     , m_inputHandlerClient(inputHandlerClient)
 #ifndef NDEBUG
     , m_expectScrollUpdateEnd(false)
+    , m_expectPinchUpdateEnd(false)
 #endif
     , m_scrollStarted(false)
 {
@@ -173,6 +174,28 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
             m_scrollStarted = false;
             return;
         }
+    } else if (event.type == WebInputEvent::GesturePinchBegin) {
+        ASSERT(!m_expectPinchUpdateEnd);
+#ifndef NDEBUG
+        m_expectPinchUpdateEnd = true;
+#endif
+        m_inputHandlerClient->pinchGestureBegin();
+        m_client->didHandleInputEvent();
+        return;
+    } else if (event.type == WebInputEvent::GesturePinchEnd) {
+        ASSERT(m_expectPinchUpdateEnd);
+#ifndef NDEBUG
+        m_expectPinchUpdateEnd = false;
+#endif
+        m_inputHandlerClient->pinchGestureEnd();
+        m_client->didHandleInputEvent();
+        return;
+    } else if (event.type == WebInputEvent::GesturePinchUpdate) {
+        ASSERT(m_expectPinchUpdateEnd);
+        const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
+        m_inputHandlerClient->pinchGestureUpdate(gestureEvent.deltaX, IntPoint(gestureEvent.x, gestureEvent.y));
+        m_client->didHandleInputEvent();
+        return;
     }
     m_client->didNotHandleInputEvent(true /* sendToWidget */);
 }

@@ -275,6 +275,12 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::MouseEnter:
     case WebInputEvent::ContextMenu:
         return false;
+
+    case WebInputEvent::GesturePinchBegin:
+    case WebInputEvent::GesturePinchEnd:
+    case WebInputEvent::GesturePinchUpdate:
+        // FIXME: Once PlatformGestureEvent is updated to support pinch, this should call handleGestureEvent, just like it currently does for gesture scroll.
+        return false;
     }
     return false;
 }

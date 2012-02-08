@@ -46,11 +46,24 @@ class MockInputHandlerClient : public WebCore::CCInputHandlerClient {
 public:
     MockInputHandlerClient()
         : m_scrollStatus(ScrollStarted)
+        , m_pinchStarted(false)
+        , m_pinchEnded(false)
+        , m_pinchMagnification(0)
     {
     }
     virtual ~MockInputHandlerClient() { }
 
     void setScrollStatus(ScrollStatus status) { m_scrollStatus = status; }
+
+    bool pinchStarted() const { return m_pinchStarted; }
+    bool pinchEnded() const { return m_pinchEnded; }
+    float pinchMaginifcation() const { return m_pinchMagnification; }
+
+    void resetPinch()
+    {
+        m_pinchStarted = m_pinchStarted = false;
+        m_pinchMagnification = 0;
+    }
 
 private:
     virtual void setNeedsRedraw() OVERRIDE { }
@@ -62,9 +75,18 @@ private:
     virtual void scrollEnd() OVERRIDE { }
 
     virtual bool haveWheelEventHandlers() OVERRIDE { return false; }
-    virtual void pinchGestureBegin() OVERRIDE { }
-    virtual void pinchGestureUpdate(float magnifyDelta, const WebCore::IntPoint& anchor) OVERRIDE { }
-    virtual void pinchGestureEnd() OVERRIDE { }
+    virtual void pinchGestureBegin() OVERRIDE
+    {
+        m_pinchStarted = true;
+    }
+    virtual void pinchGestureUpdate(float magnifyDelta, const WebCore::IntPoint& anchor) OVERRIDE
+    {
+        m_pinchMagnification = magnifyDelta;
+    }
+    virtual void pinchGestureEnd() OVERRIDE
+    {
+        m_pinchEnded = true;
+    }
     virtual void startPageScaleAnimation(const WebCore::IntSize& targetPosition,
                                          bool anchorPoint,
                                          float pageScale,
@@ -72,6 +94,9 @@ private:
                                          double durationMs) OVERRIDE { }
 
     ScrollStatus m_scrollStatus;
+    bool m_pinchStarted;
+    bool m_pinchEnded;
+    float m_pinchMagnification;
 };
 
 class MockWebCompositorInputHandlerClient : public WebKit::WebCompositorInputHandlerClient {
@@ -194,6 +219,62 @@ TEST(WebCompositorInputHandlerImpl, gestureScroll)
     EXPECT_FALSE(mockClient.handled());
     EXPECT_TRUE(mockClient.sendToWidget());
     mockClient.reset();
+
+    inputHandler->setClient(0);
+
+    WebKit::WebCompositor::shutdown();
+}
+
+TEST(WebCompositorInputHandlerImpl, gesturePinch)
+{
+    WebKit::WebCompositor::initialize(0);
+#ifndef NDEBUG
+    // WebCompositorInputHandler APIs can only be called from the compositor thread.
+    WebCore::DebugScopedSetImplThread alwaysImplThread;
+#endif
+
+    MockInputHandlerClient mockInputHandler;
+    OwnPtr<WebCompositorInputHandlerImpl> inputHandler = WebCompositorInputHandlerImpl::create(&mockInputHandler);
+    MockWebCompositorInputHandlerClient mockClient;
+    inputHandler->setClient(&mockClient);
+
+    WebKit::WebGestureEvent gesture;
+
+    gesture.type = WebKit::WebInputEvent::GesturePinchBegin;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    EXPECT_TRUE(mockInputHandler.pinchStarted());
+    mockClient.reset();
+    mockInputHandler.resetPinch();
+
+    gesture.type = WebKit::WebInputEvent::GesturePinchUpdate;
+    gesture.deltaX = 1.5;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    EXPECT_FALSE(mockInputHandler.pinchEnded());
+    EXPECT_EQ(1.5, mockInputHandler.pinchMaginifcation());
+    mockClient.reset();
+    mockInputHandler.resetPinch();
+
+    gesture.type = WebKit::WebInputEvent::GesturePinchUpdate;
+    gesture.deltaX = 0.5;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    EXPECT_FALSE(mockInputHandler.pinchEnded());
+    EXPECT_EQ(0.5, mockInputHandler.pinchMaginifcation());
+    mockClient.reset();
+    mockInputHandler.resetPinch();
+
+    gesture.type = WebKit::WebInputEvent::GesturePinchEnd;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    EXPECT_TRUE(mockInputHandler.pinchEnded());
+    mockClient.reset();
+    mockInputHandler.resetPinch();
 
     inputHandler->setClient(0);
 

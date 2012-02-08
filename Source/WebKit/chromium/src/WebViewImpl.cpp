@@ -1416,6 +1416,15 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         break;
 #endif
 
+#if ENABLE(GESTURE_EVENTS)
+    case WebInputEvent::GesturePinchBegin:
+    case WebInputEvent::GesturePinchEnd:
+    case WebInputEvent::GesturePinchUpdate:
+        // FIXME: Once PlatformGestureEvent is updated to support pinch, this should call handleGestureEvent, just like it currently does for gesture scroll.
+        handled = false;
+        break;
+#endif
+
     default:
         handled = false;
     }
