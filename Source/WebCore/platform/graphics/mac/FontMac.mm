@@ -222,7 +222,16 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     ColorSpace fillColorSpace = context->fillColorSpace();
     context->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
 
-    bool hasSimpleShadow = context->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context->shadowsIgnoreTransforms() || context->getCTM().isIdentityOrTranslationOrFlipped()) && !context->isInTransparencyLayer();
+    AffineTransform contextCTM = context->getCTM();
+    float syntheticBoldOffset = font->syntheticBoldOffset();
+    if (syntheticBoldOffset && !contextCTM.isIdentityOrTranslationOrFlipped()) {
+        FloatSize horizontalUnitSizeInDevicePixels = contextCTM.mapSize(FloatSize(1, 0));
+        float horizontalUnitLengthInDevicePixels = sqrtf(horizontalUnitSizeInDevicePixels.width() * horizontalUnitSizeInDevicePixels.width() + horizontalUnitSizeInDevicePixels.height() * horizontalUnitSizeInDevicePixels.height());
+        if (horizontalUnitLengthInDevicePixels)
+            syntheticBoldOffset /= horizontalUnitLengthInDevicePixels;
+    };
+
+    bool hasSimpleShadow = context->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context->shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context->isInTransparencyLayer();
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();
@@ -233,14 +242,14 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (context->shadowsIgnoreTransforms() ? -1 : 1);
         showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
-        if (font->syntheticBoldOffset())
-            showGlyphsWithAdvances(FloatPoint(shadowTextX + font->syntheticBoldOffset(), shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        if (syntheticBoldOffset)
+            showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         context->setFillColor(fillColor, fillColorSpace);
     }
 
     showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
-    if (font->syntheticBoldOffset())
-        showGlyphsWithAdvances(FloatPoint(point.x() + font->syntheticBoldOffset(), point.y()), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+    if (syntheticBoldOffset)
+        showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
 
     if (hasSimpleShadow)
         context->setShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);

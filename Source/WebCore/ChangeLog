@@ -1,3 +1,16 @@
+2012-02-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10475450> Synthetic bold is illegible under some scaling transforms
+        https://bugs.webkit.org/show_bug.cgi?id=78044
+
+        Reviewed by Beth Dakin.
+
+        Tests: fast/text/synthetic-bold-transformed-expected.html
+               fast/text/synthetic-bold-transformed.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): Changed to interpret syntheticBoldOffset as a length in device pixels.
+
 2012-02-07  Levi Weintraub  <leviw@chromium.org>
 
         Update LayoutUnit usage in ColumnInfo and RenderFrameSet
