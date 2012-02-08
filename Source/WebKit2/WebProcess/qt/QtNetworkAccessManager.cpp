@@ -111,8 +111,14 @@ void QtNetworkAccessManager::onSslErrors(QNetworkReply* reply, const QList<QSslE
     if (webPage->sendSync(
         Messages::WebPageProxy::CertificateVerificationRequest(hostname),
         Messages::WebPageProxy::CertificateVerificationRequest::Reply(ignoreErrors))) {
-        if (ignoreErrors)
+        if (ignoreErrors) {
+#ifndef QT_NO_OPENSSL
             reply->ignoreSslErrors(qSslErrors);
+#else
+            Q_UNUSED(qSslErrors);
+            reply->ignoreSslErrors();
+#endif
+        }
     }
 }
 

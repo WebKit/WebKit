@@ -1,3 +1,15 @@
+2012-02-08  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        [Qt] Build broken if qt missing openssl
+        https://bugs.webkit.org/show_bug.cgi?id=77894
+
+        Reviewed by Chang Shu.
+
+        Build fix. No new test content. 
+
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::onSslErrors):
+
 2012-02-08  Yael Aharon  <yael.aharon@nokia.com>
 
         [WK2] Text notifications should have an iconURL
