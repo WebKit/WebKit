@@ -1,3 +1,10 @@
+2012-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollableAreaBoundingBox):
+
 2012-02-07  Levi Weintraub  <leviw@chromium.org>
 
         [SVG] Use element disappears after scripted change
