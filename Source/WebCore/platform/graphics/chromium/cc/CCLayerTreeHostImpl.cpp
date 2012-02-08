@@ -148,7 +148,7 @@ void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, 
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-        renderSurface->damageTracker()->updateDamageRectForNextFrame(renderSurface->layerList(), renderSurfaceLayer->id(), renderSurfaceLayer->maskLayer());
+        renderSurface->damageTracker()->updateDamageTrackingState(renderSurface->layerList(), renderSurfaceLayer->id(), renderSurfaceLayer->maskLayer());
     }
 }
 

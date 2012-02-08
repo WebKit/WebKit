@@ -44,20 +44,20 @@ public:
     ~CCDamageTracker();
 
     void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
-    void updateDamageRectForNextFrame(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer);
+    void updateDamageTrackingState(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer);
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
 private:
     CCDamageTracker();
 
-    FloatRect computeDamageFromActiveLayers(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID);
-    FloatRect computeDamageFromSurfaceMask(CCLayerImpl* targetSurfaceMaskLayer);
-    FloatRect computeDamageFromLeftoverRects();
+    FloatRect trackDamageFromActiveLayers(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID);
+    FloatRect trackDamageFromSurfaceMask(CCLayerImpl* targetSurfaceMaskLayer);
+    FloatRect trackDamageFromLeftoverRects();
 
     FloatRect removeRectFromCurrentFrame(int layerID);
     void saveRectForNextFrame(int layerID, const FloatRect& targetSpaceRect);
 
-    // These helper functions are used only in computeDamageFromActiveLayers().
+    // These helper functions are used only in trackDamageFromActiveLayers().
     void extendDamageForLayer(CCLayerImpl*, FloatRect& targetDamageRect);
     void extendDamageForRenderSurface(CCLayerImpl*, FloatRect& targetDamageRect);
 

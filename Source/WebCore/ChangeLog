@@ -1,3 +1,28 @@
+2012-02-08  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove incorrect early exit in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=76924
+
+        Reviewed by James Robinson.
+
+        New unit test added to CCDamageTrackerTest.cpp
+
+        This patch does three things: (1) adds unit test that demonstrates
+        that early exiting in CCDamageTracker is wrong, (2) removes the
+        early exit and cleans up the surrounding code, and (3) re-names
+        several functions in CCDamageTracker so that state updating is
+        implied by the name, and not just a bad side-effect of the functions.
+
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::updateDamageTrackingState):
+        (WebCore::CCDamageTracker::trackDamageFromActiveLayers):
+        (WebCore::CCDamageTracker::trackDamageFromSurfaceMask):
+        (WebCore::CCDamageTracker::trackDamageFromLeftoverRects):
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (CCDamageTracker):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::trackDamageForAllSurfaces):
+
 2012-02-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Check that we can make the SharedGraphicsContext3D current before returning

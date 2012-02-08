@@ -70,7 +70,7 @@ void emulateDrawingOneFrame(CCLayerImpl* root)
     // Iterate back-to-front, so that damage correctly propagates from descendant surfaces to ancestors.
     for (int i = renderSurfaceLayerList.size() - 1; i >= 0; --i) {
         CCRenderSurface* targetSurface = renderSurfaceLayerList[i]->renderSurface();
-        targetSurface->damageTracker()->updateDamageRectForNextFrame(targetSurface->layerList(), targetSurface->owningLayerId(), renderSurfaceLayerList[i]->maskLayer());
+        targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), renderSurfaceLayerList[i]->maskLayer());
     }
 
     root->resetAllChangeTrackingForSubtree();
