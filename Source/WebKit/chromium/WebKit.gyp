@@ -762,6 +762,9 @@
                                     # and we pull in the test files into the webkit target in the
                                     # shared build.
                                     'cflags!': ['-Wglobal-constructors'],
+                                    'xcode_settings': {
+                                      'WARNING_CFLAGS!': ['-Wglobal-constructors'],
+                                    },
                                 }],
                             ],
                             'msvs_settings': {
