@@ -1,3 +1,33 @@
+2012-02-08  Pablo Flouret  <pablof@motorola.com>
+
+        Add state attribute to history's dom interface.
+        https://bugs.webkit.org/show_bug.cgi?id=76035
+
+        Reviewed by Kentaro Hara.
+
+        Tests: fast/loader/stateobjects/state-attribute-object-types.html
+               fast/loader/stateobjects/state-attribute-only-one-deserialization.html
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::state):
+        (WebCore):
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::stateAccessorGetter):
+        (WebCore):
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * page/History.cpp:
+        (WebCore::History::History):
+        (WebCore::History::state):
+        (WebCore):
+        (WebCore::History::stateInternal):
+        (WebCore::History::stateChanged):
+        * page/History.h:
+        (History):
+        * page/History.idl:
+
 2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVGLoad event fires too early

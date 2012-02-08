@@ -1,0 +1,19 @@
+Make sure the same deserialization of the state object is used every time (both in the history object and popstate events).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS history.state is defined.
+PASS history.state === history.state is true
+PASS history.state !== stateObject is true
+PASS history.state === stateObject is true
+
+Inside popstate event
+
+PASS history.state !== stateObject is true
+PASS popStateEvent.state !== stateObject is true
+FAIL popStateEvent.state === history.state should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

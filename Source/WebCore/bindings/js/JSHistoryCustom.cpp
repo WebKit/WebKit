@@ -164,6 +164,20 @@ void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
+JSValue JSHistory::state(ExecState *exec) const
+{
+    History* history = static_cast<History*>(impl());
+
+    JSValue cachedValue = m_state.get();
+    if (!cachedValue.isEmpty() && !history->stateChanged())
+        return cachedValue;
+
+    SerializedScriptValue* serialized = history->state();
+    JSValue result = serialized ? serialized->deserialize(exec, globalObject(), 0) : jsNull();
+    const_cast<JSHistory*>(this)->m_state.set(exec->globalData(), this, result);
+    return result;
+}
+
 JSValue JSHistory::pushState(ExecState* exec)
 {
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(exec, exec->argument(0), 0);
@@ -184,6 +198,8 @@ JSValue JSHistory::pushState(ExecState* exec)
     ExceptionCode ec = 0;
     impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectPush, ec);
     setDOMException(exec, ec);
+
+    m_state.clear();
 
     return jsUndefined();
 }
@@ -208,6 +224,8 @@ JSValue JSHistory::replaceState(ExecState* exec)
     ExceptionCode ec = 0;
     impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
     setDOMException(exec, ec);
+
+    m_state.clear();
 
     return jsUndefined();
 }

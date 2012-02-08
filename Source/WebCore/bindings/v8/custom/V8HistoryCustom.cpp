@@ -41,6 +41,24 @@
 
 namespace WebCore {
 
+v8::Handle<v8::Value> V8History::stateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.History.state");
+    History* history = V8History::toNative(info.Holder());
+
+    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("state");
+    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
+
+    if (!value.IsEmpty() && !history->stateChanged())
+        return value;
+
+    SerializedScriptValue* serialized = history->state();
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
+    info.Holder()->SetHiddenValue(propertyName, value);
+
+    return value;
+}
+
 v8::Handle<v8::Value> V8History::pushStateCallback(const v8::Arguments& args)
 {
     bool didThrow = false;
@@ -62,6 +80,7 @@ v8::Handle<v8::Value> V8History::pushStateCallback(const v8::Arguments& args)
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
     history->stateObjectAdded(historyState.release(), title, url, History::StateObjectPush, ec);
+    args.Holder()->DeleteHiddenValue(v8::String::NewSymbol("state"));
     return throwError(ec);
 }
 
@@ -86,6 +105,7 @@ v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
     history->stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
+    args.Holder()->DeleteHiddenValue(v8::String::NewSymbol("state"));
     return throwError(ec);
 }
 

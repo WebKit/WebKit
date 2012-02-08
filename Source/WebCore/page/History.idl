@@ -37,6 +37,7 @@ module window {
         OmitConstructor
     ] History {
         readonly attribute unsigned long length;
+        readonly attribute [CachedAttribute, Custom] SerializedScriptValue state;
 
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void back();
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
