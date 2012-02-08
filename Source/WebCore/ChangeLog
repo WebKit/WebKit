@@ -1,3 +1,19 @@
+2012-02-07  Adrienne Walker  <enne@google.com>
+
+        Properly detect top level frames when propogating compositing
+        https://bugs.webkit.org/show_bug.cgi?id=78033
+
+        Reviewed by James Robinson.
+
+        There's no need to enumerate all tag names when searching for a
+        top-level frame. If a render view's document has a frame, then that
+        frame is not the top-level one.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-02-07  Chris Palmer  <palmer@google.com>
 
         Resolve crash in FrameLoader::checkTimerFired.
