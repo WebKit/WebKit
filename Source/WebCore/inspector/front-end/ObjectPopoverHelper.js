@@ -37,6 +37,7 @@ WebInspector.ObjectPopoverHelper = function(panelElement, getAnchor, queryObject
     WebInspector.PopoverHelper.call(this, panelElement, getAnchor, this._showObjectPopover.bind(this), this._onHideObjectPopover.bind(this), disableOnClick);
     this._queryObject = queryObject;
     this._onHideCallback = onHide;
+    this._popoverObjectGroup = "popover";
     panelElement.addEventListener("scroll", this.hidePopover.bind(this), true);
 };
 
@@ -110,7 +111,7 @@ WebInspector.ObjectPopoverHelper.prototype = {
                 popover.show(popoverContentElement, element, popoverWidth, popoverHeight);
             }
         }
-        this._queryObject(element, showObjectPopover.bind(this));
+        this._queryObject(element, showObjectPopover.bind(this), this._popoverObjectGroup);
     },
 
     _onHideObjectPopover: function()
@@ -121,6 +122,7 @@ WebInspector.ObjectPopoverHelper.prototype = {
         }
         if (this._onHideCallback)
             this._onHideCallback();
+        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
     },
 
     _updateHTMLId: function(properties, rootTreeElementConstructor, rootPropertyComparer)

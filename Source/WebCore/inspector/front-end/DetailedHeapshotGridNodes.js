@@ -308,7 +308,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         return this._enhanceData ? this._enhanceData(data) : data;
     },
 
-    queryObjectContent: function(callback)
+    queryObjectContent: function(callback, objectGroupName)
     {
         if (this._type === "string")
             callback(WebInspector.RemoteObject.fromPrimitiveValue(this._name));
@@ -320,7 +320,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
                 else
                     callback(WebInspector.RemoteObject.fromPrimitiveValue(WebInspector.UIString("Not available")));
             }
-            ProfilerAgent.getObjectByHeapObjectId(this.snapshotNodeId, formatResult);
+            ProfilerAgent.getObjectByHeapObjectId(this.snapshotNodeId, objectGroupName, formatResult);
         }
     },
 

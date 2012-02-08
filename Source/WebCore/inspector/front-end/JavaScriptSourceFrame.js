@@ -40,13 +40,12 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
     this._scriptsPanel = scriptsPanel;
     this._model = model;
     this._uiSourceCode = uiSourceCode;
-    this._popoverObjectGroup = "popover";
     this._breakpoints = {};
 
     WebInspector.SourceFrame.call(this, uiSourceCode.url);
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
-            this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this), true);
+            this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
 
     this.textViewer.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
@@ -279,7 +278,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         return element;
     },
 
-    _onShowPopover: function(element, showCallback)
+    _resolveObjectForPopover: function(element, showCallback, objectGroupName)
     {
         if (!this.readOnly) {
             this._popoverHelper.hidePopover();
@@ -300,7 +299,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         var selectedCallFrame = this._model.selectedCallFrame;
-        selectedCallFrame.evaluate(this._highlightElement.textContent, this._popoverObjectGroup, false, false, showObjectPopover.bind(this));
+        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, false, showObjectPopover.bind(this));
     },
 
     _onHidePopover: function()
@@ -322,7 +321,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             parentElement.removeChild(highlightElement);
         }
         delete this._highlightElement;
-        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
     },
 
     _highlightExpression: function(element)

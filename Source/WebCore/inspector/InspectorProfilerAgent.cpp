@@ -33,6 +33,7 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "Console.h"
+#include "InjectedScript.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
@@ -42,6 +43,7 @@
 #include "Page.h"
 #include "PageScriptDebugServer.h"
 #include "ScriptHeapSnapshot.h"
+#include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <wtf/OwnPtr.h>
@@ -389,13 +391,21 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
         m_frontend->setRecordingProfile(isProfiling);
 }
 
-void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, RefPtr<InspectorObject>& result)
+void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, const String* objectGroup, RefPtr<InspectorObject>& result)
 {
-    RefPtr<InspectorValue> heapObject = ScriptProfiler::objectByHeapObjectId(id, m_injectedScriptManager);
-    if (!heapObject->isNull())
-        heapObject->asObject(&result);
-    else
+    ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
+    if (heapObject.hasNoValue()) {
         *error = "Object is not available.";
+        return;
+    }
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(heapObject.scriptState());
+    if (injectedScript.hasNoValue()) {
+        *error = "Object is not available. Inspected context is gone.";
+        return;
+    }
+    result = injectedScript.wrapObject(heapObject, objectGroup ? *objectGroup : "");
+    if (!result)
+        *error = "Failed to wrap object.";
 }
 
 } // namespace WebCore

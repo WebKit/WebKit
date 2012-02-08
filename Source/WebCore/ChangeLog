@@ -1,3 +1,43 @@
+2012-02-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: inspected object wrapper should be released by InjectedScript when popover closes
+        https://bugs.webkit.org/show_bug.cgi?id=77972
+
+        When object popover is shown the object under cursor is resolved and its
+        wrapper is put into 'popover' object wrapper group. The group is discarded
+        when the popover closes.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+        * bindings/js/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+        (WebCore):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * inspector/Inspector.json:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getObjectByHeapObjectId):
+        * inspector/InspectorProfilerAgent.h:
+        (InspectorProfilerAgent):
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.queryObjectContent):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._resolveObjectForPopover):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._resolveObjectForPopover):
+        (WebInspector.JavaScriptSourceFrame.prototype._onHidePopover):
+        * inspector/front-end/ObjectPopoverHelper.js:
+        (WebInspector.ObjectPopoverHelper):
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover):
+        (WebInspector.ObjectPopoverHelper.prototype._onHideObjectPopover):
+
 2012-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for list items whose text wraps

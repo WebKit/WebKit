@@ -92,7 +92,7 @@ public:
     virtual void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 
-    virtual void getObjectByHeapObjectId(ErrorString*, int id, RefPtr<InspectorObject>& result);
+    virtual void getObjectByHeapObjectId(ErrorString*, int id, const String* objectGroup, RefPtr<InspectorObject>& result);
 
 private:
     typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;

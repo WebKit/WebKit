@@ -28,7 +28,6 @@
 #define ScriptProfiler_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "InspectorValues.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
@@ -38,7 +37,7 @@
 namespace WebCore {
 
 class DOMWrapperVisitor;
-class InjectedScriptManager;
+class ScriptObject;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -53,7 +52,7 @@ public:
     };
 
     static void collectGarbage();
-    static PassRefPtr<InspectorValue> objectByHeapObjectId(unsigned id, InjectedScriptManager*);
+    static ScriptObject objectByHeapObjectId(unsigned id);
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }

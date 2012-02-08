@@ -31,8 +31,8 @@
 #include "ScriptProfiler.h"
 
 #include "GCController.h"
-#include "InspectorValues.h"
 #include "JSDOMBinding.h"
+#include "ScriptObject.h"
 #include <profiler/Profiler.h>
 
 namespace WebCore {
@@ -42,9 +42,9 @@ void ScriptProfiler::collectGarbage()
     gcController().garbageCollectNow();
 }
 
-PassRefPtr<InspectorValue> ScriptProfiler::objectByHeapObjectId(unsigned, InjectedScriptManager*)
+ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned)
 {
-    return InspectorValue::null();
+    return ScriptObject();
 }
 
 void ScriptProfiler::start(ScriptState* state, const String& title)
