@@ -316,7 +316,7 @@ max 1120
         add_file('test1.html')
         add_file('test2.html')
         add_file('test3.html')
-        runner._host.filesystem.chdir(runner._port.webkit_base())
+        runner._host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
         tests = [runner._port.relative_perf_test_filename(test) for test in runner._collect_tests()]
         self.assertEqual(sorted(tests), ['test1.html', 'test2.html'])
 

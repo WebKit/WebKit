@@ -1,3 +1,10 @@
+2012-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r107053.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_collect_tests):
+
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
         Remove simplejson because it's no longer used by webkitpy
