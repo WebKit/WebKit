@@ -1,3 +1,15 @@
+2012-02-08  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream DumpRenderTreeBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=78042
+
+        Reviewed by Antonio Gomes.
+
+        Add implementation for our DumpRenderTree solution.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp: Added.
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h: Added.
+
 2012-02-08  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r106681): Null check missing in [WebFrame(WebInternal) _typingStyle]
