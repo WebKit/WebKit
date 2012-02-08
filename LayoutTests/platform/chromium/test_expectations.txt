@@ -3951,7 +3951,6 @@ BUGWK77303 : fast/js/keywords-and-reserved_words.html = TEXT
 BUGWK77310 : fast/js/navigator-language.html = PASS TEXT
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
-BUGWK77315 WIN MAC : fast/events/touch/touch-gesture-scroll.html = PASS TEXT
 BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 
 BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT
