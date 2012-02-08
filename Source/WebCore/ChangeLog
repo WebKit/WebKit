@@ -1,3 +1,13 @@
+2012-02-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Avoid an avalanche of "class" attribute modifications in WatchExpressionsSidebarPane
+        https://bugs.webkit.org/show_bug.cgi?id=78102
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype._updateHoveredElement):
+
 2012-02-08  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         CSS2 overflow: scrollbar not visible on SELECT elements when overflow: scroll is set.
