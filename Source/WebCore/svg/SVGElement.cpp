@@ -85,6 +85,7 @@ SVGElement::~SVGElement()
         rareDataMap.remove(it);
     }
     document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
+    document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
 }
 
 SVGElementRareData* SVGElement::rareSVGData() const
@@ -159,6 +160,7 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 void SVGElement::removedFromDocument()
 {
     document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
+    document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
     StyledElement::removedFromDocument();
 }
 
@@ -407,8 +409,10 @@ void SVGElement::attributeChanged(Attribute* attr)
     if (isSynchronizingSVGAttributes())
         return;
 
-    if (isIdAttributeName(attr->name()))
+    if (isIdAttributeName(attr->name())) {
         document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
+        document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+    }
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.

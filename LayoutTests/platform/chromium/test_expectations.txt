@@ -4050,5 +4050,18 @@ BUGWK78084 : svg/custom/repaint-on-image-bounds-change.svg = IMAGE+TEXT
 BUGWK78084 : svg/custom/text-ctm.svg = IMAGE+TEXT
 BUGWK78084 : svg/custom/text-hit-test.svg = IMAGE+TEXT
 
+// feImage now supports dynamic invalidations if the target changes.
+BUGWK73860 : svg/filters/feImage-animated-transform-on-target-rect.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-change-target-id.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-late-indirect-update.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-multiple-targets-id-change.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-remove-target.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-attribute-change-with-use-indirection.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-attribute-change.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-inline-style-change.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-property-change.svg = IMAGE+TEXT
+BUGWK73860 : svg/filters/feImage-target-style-change.svg = IMAGE+TEXT
+
 BUGWK78038 DEBUG : compositing/iframes/invisible-nested-iframe-show.html = PASS CRASH
 BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS CRASH

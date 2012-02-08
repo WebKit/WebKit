@@ -68,12 +68,18 @@ public:
 
     SVGResourcesCache* resourcesCache() const { return m_resourcesCache.get(); }
 
+    HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement* referencedElement) const;
+    void addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement);
+    void removeAllTargetReferencesForElement(SVGElement* referencingElement);
+    void removeAllElementReferencesForTarget(SVGElement* referencedElement);
+
 private:
     Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     HashMap<SVGElement*, HashSet<SVGSMILElement*>* > m_animatedElements;
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, SVGPendingElements*> m_pendingResources;
+    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > > m_elementDependencies;
     OwnPtr<SVGResourcesCache> m_resourcesCache;
 
 public:

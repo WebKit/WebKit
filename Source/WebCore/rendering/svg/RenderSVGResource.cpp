@@ -161,37 +161,42 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
-void RenderSVGResource::removeFromFilterCache(RenderObject* object)
+static inline void removeFromFilterCacheAndInvalidateDependencies(RenderObject* object, bool needsLayout)
 {
-#if ENABLE(FILTERS)
     ASSERT(object);
-
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
-    if (!resources)
-        return;
-
-    RenderSVGResourceFilter* filter = resources->filter();
-    if (!filter)
-        return;
-
-    filter->removeClientFromCache(object);
-#else
-    UNUSED_PARAM(object);
+#if ENABLE(FILTERS)
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object)) {
+        if (RenderSVGResourceFilter* filter = resources->filter())
+            filter->removeClientFromCache(object);
+    }
 #endif
+    if (!object->node() || !object->node()->isSVGElement())
+        return;
+    HashSet<SVGElement*>* dependencies = object->document()->accessSVGExtensions()->setOfElementsReferencingTarget(static_cast<SVGElement*>(object->node()));
+    if (!dependencies)
+        return;
+    HashSet<SVGElement*>::iterator end = dependencies->end();
+    for (HashSet<SVGElement*>::iterator it = dependencies->begin(); it != end; ++it) {
+        if (RenderObject* renderer = (*it)->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, needsLayout);
+    }
 }
 
 void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject* object, bool needsLayout)
 {
     ASSERT(object);
+    ASSERT(object->document());
+    ASSERT(object->node());
+
     if (needsLayout)
         object->setNeedsLayout(true);
 
-    removeFromFilterCache(object);
+    removeFromFilterCacheAndInvalidateDependencies(object, needsLayout);
 
     // Invalidate resources in ancestor chain, if needed.
     RenderObject* current = object->parent();
     while (current) {
-        removeFromFilterCache(current);
+        removeFromFilterCacheAndInvalidateDependencies(current, needsLayout);
 
         if (current->isSVGResourceContainer()) {
             // This will process the rest of the ancestors.

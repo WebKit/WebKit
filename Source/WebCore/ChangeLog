@@ -1,3 +1,52 @@
+2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        feImage doesn't invalidate when its target SVG element is animated
+        https://bugs.webkit.org/show_bug.cgi?id=73860
+
+        Reviewed by Dirk Schulze.
+
+        Consider following testcase:
+        <defs>
+            <rect id="rect" fill="red" width="50" height="50"/>
+            <filter id="filter">
+                <feImage xlink:href="#rect"/>
+            </filter>
+        </defs>
+        <rect width="50" height="50" filter="url(#filter)"/>
+
+        If the <rect id="rect"> gets changed dynamically (attribute/property/style change) the <feImage>
+        doesn't notice this, as there's no link between the <rect> and the <feImage>, as the <rect> is not
+        a child of the <feImage/>. To get invalidations working for these situations, we have to track
+        the referencingElement & referencedElement in SVGDocumentExtensions.
+
+        Fixes parts the SVG-Wow twirl testcase and David Daileys SVG waves example.
+
+        Tests: svg/filters/feImage-animated-transform-on-target-rect.svg
+               svg/filters/feImage-late-indirect-update.svg
+               svg/filters/feImage-mutliple-targets-id-change.svg
+               svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg
+               svg/filters/feImage-target-attribute-change-with-use-indirection.svg
+               svg/filters/feImage-target-attribute-change.svg
+               svg/filters/feImage-target-inline-style-change.svg
+               svg/filters/feImage-target-property-change.svg
+               svg/filters/feImage-target-style-change.svg
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromFilterCacheAndInvalidateDependencies): Renamed from removeFromFilterCache, as it has another purpose now.
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation): s/removeFromFilterCache/removeFromFilterCacheAndInvalidateDependencies/.
+        * rendering/svg/RenderSVGResource.h: Removed removeFromFilterCache, it got inlined.
+        * svg/SVGDocumentExtensions.cpp: Add a new HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > > used for dependency tracking.
+        (WebCore::SVGDocumentExtensions::setOfElementsReferencingTarget): Returns all elements the passed in element depends on.
+        (WebCore::SVGDocumentExtensions::addElementReferencingTarget): Register element 'a' referencing target 'b'.
+        (WebCore::SVGDocumentExtensions::removeAllTargetReferencesForElement): Called by element 'a' on destruction or any target change.
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget): Called by element 'b' on destruction.
+        * svg/SVGDocumentExtensions.h: Expose new methods.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement): Call remove removeAllElementReferencesForTarget on destruction.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::clearResourceReferences):
+        (WebCore::SVGFEImageElement::buildPendingResource):
+
 2012-02-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Using string method instead of char* operation in the platformLanguage().
