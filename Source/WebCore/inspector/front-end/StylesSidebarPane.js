@@ -81,6 +81,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.titleElement.appendChild(addButton);
 
     this._computedStylePane = computedStylePane;
+    computedStylePane._stylesSidebarPane = this;
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
     WebInspector.settings.colorFormat.addChangeListener(this._colorFormatSettingChanged.bind(this));
 
@@ -252,9 +253,15 @@ WebInspector.StylesSidebarPane.prototype = {
             resultStyles.computedStyle = computedStyle;
         }
 
-        WebInspector.cssModel.getComputedStyleAsync(node.id, this._forcedPseudoClasses, computedCallback.bind(this));
+        if (this._computedStylePane.expanded)
+            WebInspector.cssModel.getComputedStyleAsync(node.id, this._forcedPseudoClasses, computedCallback.bind(this));
         WebInspector.cssModel.getInlineStylesAsync(node.id, inlineCallback.bind(this));
         WebInspector.cssModel.getMatchedStylesAsync(node.id, this._forcedPseudoClasses, true, true, stylesCallback.bind(this));
+    },
+
+    _refreshComputedStyleSection: function(callback)
+    {
+        this._innerUpdate(true, null, callback);
     },
 
     /**
@@ -840,6 +847,20 @@ WebInspector.ComputedStyleSidebarPane = function()
     showInheritedCheckbox.addEventListener(showInheritedToggleFunction.bind(this));
 }
 
+WebInspector.ComputedStyleSidebarPane.prototype = {
+
+    // Overriding expand() rather than onexpand() to eliminate the visual slowness due to a possible backend trip.
+    expand: function()
+    {
+        function callback()
+        {
+            WebInspector.SidebarPane.prototype.expand.call(this);
+        }
+
+        this._stylesSidebarPane._refreshComputedStyleSection(callback.bind(this));
+    }
+}
+
 WebInspector.ComputedStyleSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
 /**
@@ -1288,6 +1309,9 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
         }
 
         var style = this.styleRule.style;
+        if (!style)
+            return;
+
         var uniqueProperties = [];
         var allProperties = style.allProperties;
         for (var i = 0; i < allProperties.length; ++i)

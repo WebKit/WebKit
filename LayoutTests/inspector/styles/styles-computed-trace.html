@@ -37,20 +37,20 @@ div {
 
 function test()
 {
-    InspectorTest.selectNodeAndWaitForStyles("id1", step1);
+    InspectorTest.selectNodeAndWaitForStylesWithComputed("id1", step1);
 
     function step1()
     {
         InspectorTest.addResult("==== Computed style for ID1 ====");
         InspectorTest.dumpSelectedElementStyles(false, true);
-        InspectorTest.selectNodeAndWaitForStyles("id2", step2);
+        InspectorTest.selectNodeAndWaitForStylesWithComputed("id2", step2);
     }
 
     function step2()
     {
         InspectorTest.addResult("==== Computed style for ID2 ====");
         InspectorTest.dumpSelectedElementStyles(false, true);
-        InspectorTest.selectNodeAndWaitForStyles("id3", step3);
+        InspectorTest.selectNodeAndWaitForStylesWithComputed("id3", step3);
     }
 
     function step3()

@@ -105,6 +105,19 @@ InspectorTest.selectNodeAndWaitForStyles = function(idValue, callback)
     }
 }
 
+InspectorTest.selectNodeAndWaitForStylesWithComputed = function(idValue, callback)
+{
+    callback = InspectorTest.safeWrap(callback);
+
+    function stylesCallback(targetNode)
+    {
+        InspectorTest.addSniffer(WebInspector.SidebarPane.prototype, "expand", callback);
+        WebInspector.panels.elements.sidebarPanes.computedStyle.expand();
+    }
+
+    InspectorTest.selectNodeAndWaitForStyles(idValue, stylesCallback);
+}
+
 InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)
 {
     function extractText(element)

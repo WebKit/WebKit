@@ -1,3 +1,19 @@
+2012-02-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Closed computed style sidebar pane rebuilds, resulting in slowness
+        https://bugs.webkit.org/show_bug.cgi?id=77865
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/styles/lazy-computed-style.html
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype._executeRebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._refreshComputedStyleSection):
+        (WebInspector.ComputedStyleSidebarPane.prototype.expand):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+
 2012-02-08  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding the onstatechange callback to PeerConnection
