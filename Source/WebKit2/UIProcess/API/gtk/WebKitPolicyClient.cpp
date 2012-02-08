@@ -23,6 +23,7 @@
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitPolicyDecision.h"
 #include "WebKitPrivate.h"
+#include "WebKitResponsePolicyDecisionPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/gobject/GRefPtr.h>
@@ -57,6 +58,15 @@ static void decidePolicyForNewWindowActionCallback(WKPageRef page, WKFrameRef fr
                                     WEBKIT_POLICY_DECISION(decision.get()));
 }
 
+static void decidePolicyForResponseCallback(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    GRefPtr<WebKitResponsePolicyDecision> decision =
+        adoptGRef(webkitResponsePolicyDecisionCreate(request, response, listener));
+    webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
+                                    WEBKIT_POLICY_DECISION_TYPE_RESPONSE,
+                                    WEBKIT_POLICY_DECISION(decision.get()));
+}
+
 void attachPolicyClientToPage(WebKitWebView* webView)
 {
     WKPagePolicyClient policyClient = {
@@ -64,7 +74,7 @@ void attachPolicyClientToPage(WebKitWebView* webView)
         webView, // clientInfo
         decidePolicyForNavigationActionCallback,
         decidePolicyForNewWindowActionCallback,
-        0, // decidePolicyForResponseCallback,
+        decidePolicyForResponseCallback,
         0, // unableToImplementPolicy
     };
     WKPageSetPagePolicyClient(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))), &policyClient);

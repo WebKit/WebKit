@@ -90,6 +90,7 @@ libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPolicyDecision.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitResponsePolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitSettings.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
@@ -549,6 +550,9 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitPolicyClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPolicyClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettingsPrivate.h \

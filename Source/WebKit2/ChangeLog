@@ -1,3 +1,29 @@
+2012-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WK2] Add WebKitResponsePolicyDecision
+        https://bugs.webkit.org/show_bug.cgi?id=76789
+
+        Reviewed by Philippe Normand.
+
+        Add a WebKitResponsePolicyDecision GObject, use it for response
+        policy decisions and add a test.
+
+        * GNUmakefile.am: Added new source files to the list.
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        (decidePolicyForResponseCallback): Added this callback which creates the request
+        and fires the signal.
+        (attachPolicyClientToPage): Added new callback to the C API policy client.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp: Added.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.h: Added.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Added new docs.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp:
+        (testResponsePolicy): Added this test for response policy decisions.
+        (serverCallback): Added a SoupServer to test policy response policy decisions.
+        (beforeAll): Ditto.
+        (afterAll): Ditto.
+
 2012-02-07  Timothy Hatcher  <timothy@apple.com>
 
         Avoid making a window for the Web Inspector when it is docked.

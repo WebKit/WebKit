@@ -23,6 +23,7 @@
     <xi:include href="xml/WebKitDownload.xml"/>
     <xi:include href="xml/WebKitPolicyDecision.xml"/>
     <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>
     <xi:include href="xml/WebKitError.xml"/>
   </chapter>
 

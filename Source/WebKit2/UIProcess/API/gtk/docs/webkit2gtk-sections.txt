@@ -368,6 +368,26 @@ webkit_navigation_policy_decision_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitResponsePolicyDecision</FILE>
+WebKitResponsePolicyDecision
+webkit_response_policy_decision_get_request
+webkit_response_policy_decision_get_response
+
+<SUBSECTION Standard>
+WebKitResponsePolicyDecisionClass
+WEBKIT_TYPE_RESPONSE_POLICY_DECISION
+WEBKIT_RESPONSE_POLICY_DECISION
+WEBKIT_IS_RESPONSE_POLICY_DECISION
+WEBKIT_RESPONSE_POLICY_DECISION_CLASS
+WEBKIT_IS_RESPONSE_POLICY_DECISION_CLASS
+WEBKIT_RESPONSE_POLICY_DECISION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitResponsePolicyDecisionPrivate
+webkit_response_policy_decision_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR

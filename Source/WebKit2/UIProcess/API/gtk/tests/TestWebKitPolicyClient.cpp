@@ -20,8 +20,11 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
+#include "WebKitTestServer.h"
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+
+static WebKitTestServer* kServer;
 
 class PolicyClientTest: public LoadTrackingTest {
 public:
@@ -142,6 +145,37 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(test->m_loadEvents.size(), ==, 0);
 }
 
+static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_RESPONSE;
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+
+    test->m_respondToPolicyDecisionAsynchronously = true;
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+
+    test->m_respondToPolicyDecisionAsynchronously = false;
+    test->m_policyDecisionResponse = PolicyClientTest::Ignore;
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+}
+
 struct CreateCallbackData {
     bool triedToOpenWindow;
     GMainLoop* mainLoop;
@@ -191,12 +225,31 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     g_assert(!data.triedToOpenWindow);
 }
 
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+
+    static const char* responseString = "<html><body>Testing!</body></html>";
+    soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+    soup_message_body_complete(message->response_body);
+}
+
 void beforeAll()
 {
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
+
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy", testNavigationPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "new-window-policy", testNewWindowPolicy);
 }
 
 void afterAll()
 {
+    delete kServer;
 }
