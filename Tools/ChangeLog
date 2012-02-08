@@ -1,3 +1,16 @@
+2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Open links in a new window when clicking with the middle button in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=78099
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewDecidePolicy): Check whether it's a link clicked with the
+        middle mouse button and load the request in a new window.
+        (browserWindowConstructed): Connect to
+        WebKitWebView::decide-policy signal.
+
 2012-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert a part of the change in r106687 as a build fix.
