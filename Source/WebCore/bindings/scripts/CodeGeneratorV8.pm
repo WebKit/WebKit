@@ -810,7 +810,7 @@ END
 END
             }
         }
-    } elsif ($attrExt->{"v8OnProto"} || $attrExt->{"V8Unforgeable"}) {
+    } elsif ($attrExt->{"V8OnProto"} || $attrExt->{"V8Unforgeable"}) {
         if ($interfaceName eq "DOMWindow") {
             push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
@@ -1054,7 +1054,7 @@ END
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
             push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
         }
-    } elsif ($attrExt->{"v8OnProto"}) {
+    } elsif ($attrExt->{"V8OnProto"}) {
       if ($interfaceName eq "DOMWindow") {
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
@@ -2030,7 +2030,7 @@ sub GenerateSingleBatchedAttribute
     }
 
     # An accessor can be installed on the proto
-    if ($attrExt->{"v8OnProto"}) {
+    if ($attrExt->{"V8OnProto"}) {
         $on_proto = "1 /* on proto */";
     }
 
@@ -2281,7 +2281,7 @@ sub GenerateImplementation
         }
 
         if ($attrType eq "EventListener" && $interfaceName eq "DOMWindow") {
-            $attribute->signature->extendedAttributes->{"v8OnProto"} = 1;
+            $attribute->signature->extendedAttributes->{"V8OnProto"} = 1;
         }
 
         if ($attrType eq "SerializedScriptValue") {

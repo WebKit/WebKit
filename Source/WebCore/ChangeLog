@@ -1,3 +1,21 @@
+2012-02-07  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [v8OnProto] IDL attribute to [V8OnProto] IDL attribute
+        https://bugs.webkit.org/show_bug.cgi?id=77973
+
+        Reviewed by Adam Barth.
+
+        This patch renames [v8OnProto] to [V8OnProto], since V8 specific IDL
+        attributes should be prefixed by "V8".
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateSingleBatchedAttribute):
+        (GenerateImplementation):
+
 2011-10-10  Jer Noble  <jer.noble@apple.com>
 
         media/audio-data-url.html test broken on Lion
