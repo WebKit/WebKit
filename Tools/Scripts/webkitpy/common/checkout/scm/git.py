@@ -34,7 +34,6 @@ import re
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.system import ospath
 
 from .commitmessage import CommitMessage
 from .scm import AuthenticationError, SCM, commit_error_handler

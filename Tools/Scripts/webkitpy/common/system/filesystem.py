@@ -39,8 +39,6 @@ import sys
 import tempfile
 import time
 
-from webkitpy.common.system import ospath
-
 class FileSystem(object):
     """FileSystem interface for webkitpy.
 
@@ -227,7 +225,7 @@ class FileSystem(object):
         return hashlib.sha1(contents).hexdigest()
 
     def relpath(self, path, start='.'):
-        return ospath.relpath(path, start)
+        return os.path.relpath(path, start)
 
     class _WindowsError(exceptions.OSError):
         """Fake exception for Linux and Mac."""

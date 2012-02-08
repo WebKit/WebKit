@@ -33,7 +33,6 @@ import os
 import re
 
 from webkitpy.common.system import path
-from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
@@ -303,7 +302,33 @@ class MockFileSystem(object):
         return hashlib.sha1(contents).hexdigest()
 
     def relpath(self, path, start='.'):
-        return ospath.relpath(path, start, self.abspath, self.sep)
+        # Since os.path.relpath() calls os.path.normpath()
+        # (see http://docs.python.org/library/os.path.html#os.path.abspath )
+        # it also removes trailing slashes and converts forward and backward
+        # slashes to the preferred slash os.sep.
+        start = self.abspath(start)
+        path = self.abspath(path)
+
+        if not path.lower().startswith(start.lower()):
+            # Then path is outside the directory given by start.
+            return None  # FIXME: os.relpath still returns a path here.
+
+        rel_path = path[len(start):]
+
+        if not rel_path:
+            # Then the paths are the same.
+            pass
+        elif rel_path[0] == self.sep:
+            # It is probably sufficient to remove just the first character
+            # since os.path.normpath() collapses separators, but we use
+            # lstrip() just to be sure.
+            rel_path = rel_path.lstrip(self.sep)
+        else:
+            # We are in the case typified by the following example:
+            # path = "/tmp/foobar", start = "/tmp/foo" -> rel_path = "bar"
+            return None
+
+        return rel_path
 
     def remove(self, path):
         if self.files[path] is None:
