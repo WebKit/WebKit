@@ -662,6 +662,7 @@ svg/text/caret-in-svg-text.xhtml
 # No authentication challenge handling
 # https://bugs.webkit.org/show_bug.cgi?id=51104
 http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
 http/tests/cache/subresource-fragment-identifier.html
 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
@@ -1625,3 +1626,7 @@ fast/multicol/span/span-as-immediate-columns-child-removal.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=77633
 fast/forms/listbox-clear-restore.html
+
+# Synthetic bold is illegible under some scaling transforms
+# https://bugs.webkit.org/show_bug.cgi?id=78044
+fast/text/synthetic-bold-transformed.html
