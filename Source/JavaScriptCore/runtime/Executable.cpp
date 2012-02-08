@@ -137,7 +137,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
     , m_name(name)
-    , m_inferredName(inferredName)
+    , m_inferredName(inferredName.isNull() ? exec->globalData().propertyNames->emptyIdentifier : inferredName)
     , m_symbolTable(0)
 {
 }
@@ -148,7 +148,7 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
     , m_name(name)
-    , m_inferredName(inferredName)
+    , m_inferredName(inferredName.isNull() ? exec->globalData().propertyNames->emptyIdentifier : inferredName)
     , m_symbolTable(0)
 {
 }

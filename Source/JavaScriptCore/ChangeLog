@@ -1,5 +1,18 @@
 2012-02-08  Oliver Hunt  <oliver@apple.com>
 
+        Fix issue encountered while debugging stacktraces
+        https://bugs.webkit.org/show_bug.cgi?id=78147
+
+        Reviewed by Gavin Barraclough.
+
+        Debugging is easier if we always ensure that we have a non-null
+        inferred name.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+
+2012-02-08  Oliver Hunt  <oliver@apple.com>
+
         updateTopCallframe in the baseline JIT doesn't provide enough information to the stubs
         https://bugs.webkit.org/show_bug.cgi?id=78145
 

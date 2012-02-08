@@ -370,7 +370,7 @@ UString getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
         return function->calculatedDisplayName(callFrame);
     if (InternalFunction* function = jsDynamicCast<InternalFunction*>(object))
         return function->calculatedDisplayName(callFrame);
-    return UString();
+    return callFrame->globalData().propertyNames->emptyIdentifier.ustring();
 }
 
 } // namespace JSC
