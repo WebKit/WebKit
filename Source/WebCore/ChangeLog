@@ -1,3 +1,18 @@
+2012-02-08  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=78122
+        
+        Add support for the "contains" value for line-grid-snap. This value centers the line box in between the
+        text-top and text-bottom of the minimum number of grid lines that enclose the line box. This is useful for
+        centering headers in a line grid.
+
+        Reviewed by Adam Roben.
+
+        Added a new test in fast/line-grid.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineGridSnapAdjustment):
+
 2012-02-08  Cary Clark  <caryclark@google.com>
 
         [Skia Mac] Make misspelling underline dots unclipped
