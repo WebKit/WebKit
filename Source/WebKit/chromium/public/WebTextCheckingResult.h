@@ -50,7 +50,16 @@ struct WebTextCheckingResult {
         ErrorGrammar = 1 << 1
     };
 
-    explicit WebTextCheckingResult(Error e = ErrorSpelling, int p = 0, int l = 0)
+    WebTextCheckingResult()
+        : type(WebTextCheckingTypeSpelling)
+        , error(ErrorSpelling)
+        , position(0)
+        , location(0)
+        , length(0)
+    {
+    }
+
+    explicit WebTextCheckingResult(Error e, int p = 0, int l = 0)
         : type(WebTextCheckingTypeSpelling)
         , error(e)
         , position(p)

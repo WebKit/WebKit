@@ -1,3 +1,17 @@
+2012-02-07  MORITA Hajime  <morrita@google.com>
+
+        [Chromium] WebTextCheckingResult should have new default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=78066
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a new default constructor. ex-default constructor will be removed
+        in an upcoming change.
+
+        * public/WebTextCheckingResult.h:
+        (WebKit::WebTextCheckingResult::WebTextCheckingResult):
+        (WebTextCheckingResult):
+
 2012-02-07  Gregg Tavares  <gman@google.com>
 
         Plumb through webGLErrorsToConsoleEnable in WebSettings
