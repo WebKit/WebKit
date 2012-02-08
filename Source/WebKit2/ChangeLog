@@ -1,3 +1,31 @@
+2012-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106920, r106924, r106933, r106939,
+        and r107090.
+        http://trac.webkit.org/changeset/106920
+        http://trac.webkit.org/changeset/106924
+        http://trac.webkit.org/changeset/106933
+        http://trac.webkit.org/changeset/106939
+        http://trac.webkit.org/changeset/107090
+        https://bugs.webkit.org/show_bug.cgi?id=78124
+
+        Something is completely wrong this change (Requested by
+        Ossy_gardener on #webkit).
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit):
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix a crash when WebKitWebView is created without a WebContext

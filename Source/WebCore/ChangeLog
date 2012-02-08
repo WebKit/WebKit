@@ -1,3 +1,21 @@
+2012-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106920, r106924, r106933, r106939,
+        and r107090.
+        http://trac.webkit.org/changeset/106920
+        http://trac.webkit.org/changeset/106924
+        http://trac.webkit.org/changeset/106933
+        http://trac.webkit.org/changeset/106939
+        http://trac.webkit.org/changeset/107090
+        https://bugs.webkit.org/show_bug.cgi?id=78124
+
+        Something is completely wrong this change (Requested by
+        Ossy_gardener on #webkit).
+
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/qt/FileSystemQt.cpp:
+
 2012-02-08  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78122
