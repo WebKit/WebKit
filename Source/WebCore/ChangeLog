@@ -1,3 +1,15 @@
+2012-02-07  Chris Palmer  <palmer@google.com>
+
+        Resolve crash in FrameLoader::checkTimerFired.
+        https://bugs.webkit.org/show_bug.cgi?id=77907
+
+        Reviewed by Eric Seidel.
+
+        Test is LayoutTests/http/tests/appcache/deferred-events-delete-while-raising-timer.html.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkTimerFired):
+
 2012-02-07  Yong Li  <yoli@rim.com>
 
         [BlackBerry] NetworkJob should stop redirecting when the request is cleared by client

@@ -1,0 +1,4 @@
+Test the destruction of an iframe while deferred events are being raised does not crash the system.
+
+SUCCESS
+
