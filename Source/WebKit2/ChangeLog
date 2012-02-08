@@ -1,3 +1,18 @@
+2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix WebKitWebView::decide-policy API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=78101
+
+        Reviewed by Martin Robinson.
+
+        - It refers to WebKitPolicyClient instead of WebKitWebView
+        - Trailing ':' is missing
+        - References @decision as WebKitNavigationPolicyDecision instead
+        of WebKitPolicyDecision
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+
 2012-02-08  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         [Qt] Build broken if qt missing openssl

@@ -554,9 +554,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                          G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
     /**
-     * WebKitPolicyClient::decide-policy
+     * WebKitWebView::decide-policy:
      * @web_view: the #WebKitWebView on which the signal is emitted
-     * @decision: the #WebKitNavigationPolicyDecision
+     * @decision: the #WebKitPolicyDecision
      * @decision_type: a #WebKitPolicyDecisionType denoting the type of @decision
      *
      * This signal is emitted when WebKit is requesting the client to decide a policy
