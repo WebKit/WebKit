@@ -1,3 +1,27 @@
+2012-02-07  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc() - simple parse time evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=77960
+
+        Adds simple number/percent expression evaluation. rgb() and hsl() functions now
+        allow simple calc() expressions.
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore):
+        (WebCore::CSSCalcValue::doubleValue):
+        (WebCore::CSSCalcPrimitiveValue::doubleValue):
+        (WebCore::CSSCalcBinaryOperation::doubleValue):
+        (CSSCalcBinaryOperation):
+        (WebCore::CSSCalcBinaryOperation::evaluate):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+        (WebCore::CSSCalcValue::isInt):
+        (CSSCalcValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parsedDouble):
+
 2012-02-07  Andreas Kling  <awesomekling@apple.com>
 
         REGRESSION(r106668-r106889): Chromium page cycler tests (Intl2) performance regressions.

@@ -76,6 +76,11 @@ String CSSCalcValue::customCssText() const
 {
     return "";
 }
+
+double CSSCalcValue::doubleValue() const 
+{ 
+    return m_expression->doubleValue();
+}
     
 CSSCalcExpressionNode::~CSSCalcExpressionNode() 
 {
@@ -94,7 +99,21 @@ public:
         return m_value->cssText();
     }
 
-    
+    virtual double doubleValue() const
+    {
+        switch (m_category) {
+        case CalcNumber:
+        case CalcPercent:                
+            return m_value->getDoubleValue();
+        case CalcLength:
+        case CalcPercentLength:
+        case CalcPercentNumber:
+        case CalcOther:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        return 0;
+    }    
 private:
     explicit CSSCalcPrimitiveValue(CSSPrimitiveValue* value, bool isInteger)
         : CSSCalcExpressionNode(unitCategory((CSSPrimitiveValue::UnitTypes)value->primitiveType()), isInteger)
@@ -152,6 +171,11 @@ public:
         return adoptRef(new CSSCalcBinaryOperation(leftSide, rightSide, op, newCategory));
     }
     
+    virtual double doubleValue() const 
+    {
+        return evaluate(m_leftSide->doubleValue(), m_rightSide->doubleValue());
+    }
+
 private:
     CSSCalcBinaryOperation(PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide, CalcOperator op, CalculationCategory category)
         : CSSCalcExpressionNode(category, leftSide->isInteger() && rightSide->isInteger())
@@ -159,6 +183,27 @@ private:
         , m_rightSide(rightSide)
         , m_operator(op)
     {
+    }
+    
+    double evaluate(double leftValue, double rightValue) const
+    {
+        switch (m_operator) {
+        case CalcAdd:
+            return leftValue + rightValue;
+        case CalcSubtract:
+            return leftValue - rightValue;
+        case CalcMultiply:
+            return leftValue * rightValue;
+        case CalcDivide:
+            if (rightValue)
+                return leftValue / rightValue;
+            return std::numeric_limits<double>::quiet_NaN();
+        case CalcMod:
+            // FIXME calc() : mod has been removed from the spec, need to remove
+            // this enum value
+            return 0;
+        }
+        return 0;
     }
     
     const RefPtr<CSSCalcExpressionNode> m_leftSide;

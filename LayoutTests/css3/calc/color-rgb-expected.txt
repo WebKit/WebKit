@@ -6,4 +6,4 @@ C. These two sentences should be the same color (alpha)
 C. These two sentences should be the same color (alpha)
 These two sentences should be the same color (percent alpha)
 These two sentences should be the same color (percent alpha)
-FAIL
+PASS

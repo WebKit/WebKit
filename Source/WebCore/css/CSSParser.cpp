@@ -4949,9 +4949,7 @@ bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
     
 inline double CSSParser::parsedDouble(CSSParserValue *v, ReleaseParsedCalcValueCondition releaseCalc)
 {
-    // FIXME calc (http://webkit.org/b/16662): evaluate calc here, eg
-    // const double result = m_parsedCalculation ? m_parsedCalculation->doubleValue() : v->fValue;
-    const double result = m_parsedCalculation ? 0 : v->fValue;
+    const double result = m_parsedCalculation ? m_parsedCalculation->doubleValue() : v->fValue;
     if (releaseCalc == ReleaseParsedCalcValue)
         m_parsedCalculation.release();
     return result;

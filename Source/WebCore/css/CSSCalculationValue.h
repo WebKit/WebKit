@@ -58,7 +58,8 @@ enum CalculationCategory {
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     
-    virtual ~CSSCalcExpressionNode() = 0;    
+    virtual ~CSSCalcExpressionNode() = 0;  
+    virtual double doubleValue() const = 0;  
     
     CalculationCategory category() const { return m_category; }    
     bool isInteger() const { return m_isInteger; }
@@ -80,7 +81,8 @@ public:
     static PassRefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList*);
 
     CalculationCategory category() const { return m_expression->category(); }
-    bool isInt() const { return m_expression->isInteger(); }
+    bool isInt() const { return m_expression->isInteger(); }    
+    double doubleValue() const;
         
     String customCssText() const;
     
