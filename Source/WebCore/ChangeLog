@@ -1,3 +1,25 @@
+2012-02-07  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Allow bindings for attributes on DOM nodes to also set a named hidden reference
+        https://bugs.webkit.org/show_bug.cgi?id=78052
+
+        Reviewed by Nate Chapin.
+
+        Before this patch the code generator did not add the named hidden reference when the data node
+        was a DOM Node. This lead to us having to create custom toV8 bindings in a few places.
+
+        Covered by existing tests
+
+        * Target.pri:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (HasCustomToV8Implementation):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        * bindings/v8/custom/V8DOMTokenListCustom.cpp: Removed.
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+
 2012-02-07  Kentaro Hara  <haraken@chromium.org>
 
         [GTK] Ignore [Custom] attributes in CodeGeneratorGObject.pm

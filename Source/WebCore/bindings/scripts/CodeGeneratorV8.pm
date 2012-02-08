@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
-# Copyright (C) 2007, 2008, 2009 Google Inc.
+# Copyright (C) 2007-2012 Google Inc.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -922,7 +922,7 @@ END
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get
     # garbage-collected prematurely when their lifetime is strongly tied to their owner. We accomplish this by inserting a reference to
     # the newly created wrapper into an internal field of the holder object.
-    if (!IsNodeSubType($dataNode) && $attrName ne "self" && (IsWrapperType($returnType) && ($attribute->type =~ /^readonly/ || $attribute->signature->extendedAttributes->{"Replaceable"})
+    if ($attrName ne "self" && (IsWrapperType($returnType) && ($attribute->type =~ /^readonly/ || $attribute->signature->extendedAttributes->{"Replaceable"})
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))) {
         AddIncludesForType($returnType);
@@ -3119,14 +3119,11 @@ sub HasCustomToV8Implementation {
     # We generate a custom converter (but JSC doesn't) for the following:
     return 1 if $interfaceName eq "CSSStyleSheet";
     return 1 if $interfaceName eq "CanvasPixelArray";
-    return 1 if $interfaceName eq "DOMStringMap";
     return 1 if $interfaceName eq "DOMWindow";
-    return 1 if $interfaceName eq "DOMTokenList";
     return 1 if $interfaceName eq "Element";
     return 1 if $interfaceName eq "HTMLDocument";
     return 1 if $interfaceName eq "HTMLElement";
     return 1 if $interfaceName eq "Location";
-    return 1 if $interfaceName eq "NamedNodeMap";
     return 1 if $interfaceName eq "SVGDocument";
     return 1 if $interfaceName eq "SVGElement";
     return 1 if $interfaceName eq "ScriptProfile";
@@ -3142,8 +3139,6 @@ sub HasCustomToV8Implementation {
     return 0 if $interfaceName eq "MediaList";
     return 0 if $interfaceName eq "StyleSheetList";
     return 0 if $interfaceName eq "DOMImplementation";
-    return 0 if $interfaceName eq "DOMStringMap";
-    return 0 if $interfaceName eq "DOMTokenList";
     return 0 if $interfaceName eq "TextTrack";
 
     # For everything else, do what JSC does.

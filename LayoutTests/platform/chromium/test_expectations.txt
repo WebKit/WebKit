@@ -585,7 +585,6 @@ BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // -----------------------------------------------------------------
 // PENDING TESTS (forked to pending/, need to be sent upstream)

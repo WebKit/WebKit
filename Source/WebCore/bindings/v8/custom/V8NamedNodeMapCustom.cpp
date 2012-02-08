@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2007-2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -69,18 +69,6 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
         return notHandledByInterceptor();
 
     return toV8(result.release());
-}
-
-v8::Handle<v8::Value> toV8(NamedNodeMap* impl)
-{
-    if (!impl)
-        return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl);
-    // Add a hidden reference from named node map to its owner node.
-    Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element)
-        V8DOMWrapper::setNamedHiddenReference(wrapper, "ownerNode", toV8(element));
-    return wrapper;
 }
 
 } // namespace WebCore
