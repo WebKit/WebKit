@@ -22,13 +22,8 @@
 
 """Checks WebKit style for JSON files."""
 
+import json
 import re
-
-try:
-    import json
-except ImportError:
-    # python 2.5 compatibility
-    import webkitpy.thirdparty.simplejson as json
 
 
 class JSONChecker(object):

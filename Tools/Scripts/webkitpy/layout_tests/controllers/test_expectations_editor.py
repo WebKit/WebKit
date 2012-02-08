@@ -32,14 +32,9 @@ for layout tests.
 """
 
 import itertools
+import json
 import logging
 import re
-
-try:
-    import json
-except ImportError:
-    # python 2.5 compatibility
-    import webkitpy.thirdparty.simplejson as json
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration, TestConfigurationConverter
 from webkitpy.layout_tests.models import test_expectations

@@ -1,3 +1,25 @@
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
+        webkitpy still imports simplejson
+        https://bugs.webkit.org/show_bug.cgi?id=78161
+
+        Reviewed by Eric Seidel.
+
+        We no longer support Python 2.5, so we can rely upon Python's built-in
+        JSON package.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+
 2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Fails to build docs with non-standard build directories

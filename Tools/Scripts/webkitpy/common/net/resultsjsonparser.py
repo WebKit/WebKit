@@ -27,11 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-try:
-    import json
-except ImportError:
-    # python 2.5 compatibility
-    import webkitpy.thirdparty.simplejson as json
+import json
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log

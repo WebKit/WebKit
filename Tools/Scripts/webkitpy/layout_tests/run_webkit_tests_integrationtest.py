@@ -31,6 +31,7 @@
 
 import codecs
 import itertools
+import json
 import logging
 import Queue
 import re
@@ -46,12 +47,6 @@ try:
     import multiprocessing
 except ImportError:
     multiprocessing = None
-
-try:
-    import json
-except ImportError:
-    # python 2.5 compatibility
-    import webkitpy.thirdparty.simplejson as json
 
 # FIXME: remove this when we fix test-webkitpy to work properly on cygwin
 # (bug 63846).
