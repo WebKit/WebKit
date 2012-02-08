@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 300x400
+  RenderSVGRoot {svg} at (10,10) size 76x36
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="simple"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGRect {rect} at (0,10) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
+    RenderSVGContainer {g} at (10,10) size 76x36
+      RenderSVGContainer {use} at (10,10) size 30x30
+        RenderSVGContainer {g} at (10,10) size 30x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+          RenderSVGRect {rect} at (10,10) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
+      RenderSVGContainer {use} at (50,10) size 36x36
+        [filter="simple"] RenderSVGResourceFilter {filter} at (50,10) size 36x36
+        RenderSVGContainer {g} at (50,10) size 30x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+          RenderSVGRect {rect} at (50,10) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
