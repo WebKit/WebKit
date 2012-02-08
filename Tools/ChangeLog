@@ -1,3 +1,17 @@
+2012-02-08  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r106681): Null check missing in [WebFrame(WebInternal) _typingStyle]
+        https://bugs.webkit.org/show_bug.cgi?id=78080
+
+        Reviewed by Andreas Kling, Darin Adler and Dan Bernstein.
+        
+        Add API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/TypingStyleCrash.mm: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Fails to build docs with non-standard build directories

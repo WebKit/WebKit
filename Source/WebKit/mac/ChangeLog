@@ -1,3 +1,13 @@
+2012-02-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r106681): Null check missing in [WebFrame(WebInternal) _typingStyle]
+        https://bugs.webkit.org/show_bug.cgi?id=78080
+
+        Reviewed by Reviewed by Andreas Kling, Darin Adler and Dan Bernstein.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _typingStyle]):
+
 2012-02-07  Tony Chang  <tony@chromium.org>
 
         merge DashboardSupportCSSPropertyNames.in into CSSPropertyNames.in

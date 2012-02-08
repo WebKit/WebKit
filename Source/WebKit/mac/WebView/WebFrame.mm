@@ -791,10 +791,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return nil;
-    RefPtr<CSSStyleDeclaration> typingStyle = _private->coreFrame->selection()->copyTypingStyle()->ensureCSSStyleDeclaration();
+    RefPtr<StylePropertySet> typingStyle = _private->coreFrame->selection()->copyTypingStyle();
     if (!typingStyle)
         return nil;
-    return kit(typingStyle.get());
+    return kit(typingStyle->ensureCSSStyleDeclaration());
 }
 
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
