@@ -1,3 +1,15 @@
+2012-02-07  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream ChromeClientBlackBerry.{h, cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=77843
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/ChromeClientBlackBerry.h: Added.
+
 2012-02-07  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Upstream DumpRenderTreeSupport
