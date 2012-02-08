@@ -3539,8 +3539,6 @@
             'platform/graphics/qt/SimpleFontDataQt.cpp',
             'platform/graphics/qt/StillImageQt.cpp',
             'platform/graphics/qt/StillImageQt.h',
-            'platform/graphics/qt/TextureMapperQt.cpp',
-            'platform/graphics/qt/TextureMapperQt.h',
             'platform/graphics/qt/TileQt.cpp',
             'platform/graphics/qt/TransformationMatrixQt.cpp',
             'platform/graphics/qt/TransparencyLayer.h',
