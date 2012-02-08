@@ -1,3 +1,16 @@
+2012-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for list items whose text wraps
+        https://bugs.webkit.org/show_bug.cgi?id=73431
+
+        Reviewed by Chris Fleizach.
+
+        Updated unit test to check text wrapping accross different lines
+        inside list items with bullet markers.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetTextAtOffsetWithSpecialCharacters): Updated test.
+
 2012-02-06  Martin Robinson  <mrobinson@igalia.com> and Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK] Add TextureMapperGL implementation

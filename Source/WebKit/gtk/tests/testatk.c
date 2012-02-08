@@ -35,7 +35,7 @@ static const char* contentsWithNewlines = "<html><body><p>This is a test. \n\nTh
 
 static const char* contentsWithPreformattedText = "<html><body><pre>\n\t\n\tfirst line\n\tsecond line\n</pre></body></html>";
 
-static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p></body></html>";
+static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p><ul><li style='max-width:100px;'>List item with some text that wraps across different lines.</li></ul></body></html>";
 
 static const char* contentsInTextarea = "<html><body><textarea cols='80'>This is a test. This is the second sentence. And this the third.</textarea></body></html>";
 
@@ -810,23 +810,44 @@ static void testWebkitAtkGetTextAtOffsetWithSpecialCharacters()
     /* Get to the inner AtkText object. */
     AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
 
-    AtkText* textObject = ATK_TEXT(object);
-    g_assert(ATK_IS_TEXT(textObject));
+    AtkObject* paragraph = atk_object_ref_accessible_child(object, 0);
+    g_assert(ATK_IS_TEXT(paragraph));
 
-    const gchar* expectedText = "\302\253\302\240This is a paragraph with \342\200\234special\342\200\235 characters inside.\302\240\302\273";
-    char* text = atk_text_get_text(textObject, 0, -1);
+    gchar* expectedText = g_strdup("\302\253\302\240This is a paragraph with \342\200\234special\342\200\235 characters inside.\302\240\302\273");
+    char* text = atk_text_get_text(ATK_TEXT(paragraph), 0, -1);
     g_assert_cmpstr(text, ==, expectedText);
     g_free(text);
 
     /* Check that getting the text with ATK_TEXT_BOUNDARY_LINE_START
        and ATK_TEXT_BOUNDARY_LINE_END does not crash because of not
        properly handling characters inside the UTF-8 string. */
-    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 0, expectedText, 0, 57);
-    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, expectedText, 0, 57);
+    testGetTextFunction(ATK_TEXT(paragraph), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 0, expectedText, 0, 57);
+    testGetTextFunction(ATK_TEXT(paragraph), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, expectedText, 0, 57);
+    g_free(expectedText);
 
+    AtkObject* list = atk_object_ref_accessible_child(object, 1);
+    g_assert(ATK_OBJECT(list));
+
+    AtkText* listItem = ATK_TEXT(atk_object_ref_accessible_child(list, 0));
+    g_assert(ATK_IS_TEXT(listItem));
+
+    text = atk_text_get_text(ATK_TEXT(listItem), 0, -1);
+    g_assert_cmpstr(text, ==, "\342\200\242 List item with some text that wraps across different lines.");
+    g_free(text);
+
+    /* Check that getting the text with ATK_TEXT_BOUNDARY_LINE_START
+       and ATK_TEXT_BOUNDARY_LINE_END for line items with bullets
+       (special character) and wrapped text always return the right
+       piece of text for each line. */
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 3, "\342\200\242 List item ", 0, 12);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 13, "with some ", 12, 22);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, "\342\200\242 List item", 0, 11);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 12, " with some", 11, 21);
+
+    g_object_unref(list);
+    g_object_unref(listItem);
+    g_object_unref(paragraph);
     g_object_unref(webView);
 }
 

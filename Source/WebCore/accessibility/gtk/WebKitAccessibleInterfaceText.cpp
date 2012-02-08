@@ -77,7 +77,9 @@ static gchar* textForRenderer(RenderObject* renderer)
         if (object->isText())
             renderText = toRenderText(object);
         else {
-            if (object->isReplaced())
+            // List item's markers will be treated in an special way
+            // later on this function, so ignore them here.
+            if (object->isReplaced() && !renderer->isListItem())
                 g_string_append_unichar(resultText, objectReplacementCharacter);
 
             // We need to check children, if any, to consider when

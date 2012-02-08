@@ -1,3 +1,17 @@
+2012-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for list items whose text wraps
+        https://bugs.webkit.org/show_bug.cgi?id=73431
+
+        Reviewed by Chris Fleizach.
+
+        Don't replace item's markers with the objectReplacementCharacter
+        character, as they will be treated in an special way later on.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp:
+        (textForRenderer): Don't append the objectReplacementCharacter
+        character for list item's markers.
+
 2012-02-08  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not clear entire tree map upon last element deletion.
