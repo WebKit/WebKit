@@ -1,3 +1,23 @@
+2012-02-08  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        CSS2 overflow: scrollbar not visible on SELECT elements when overflow: scroll is set.
+        https://bugs.webkit.org/show_bug.cgi?id=69993
+
+        Reviewed by Simon Fraser.
+
+        The issue was that for overflow:scroll, currently webkit always places the horizontal
+        and vertical scrollbar. But Since the listbox renderer handles its scrolling,
+        we should not set scrollbar for list-box.
+
+        Tests: fast/css/getComputedStyle/computed-style-select-overflow.html
+               fast/forms/select-overflow-scroll-inherited.html
+               fast/forms/select-overflow-scroll.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         feImage doesn't invalidate when its target SVG element is animated

@@ -1326,7 +1326,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     }
 
     // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-    if (scrollsOverflow()) {
+    if (scrollsOverflow() && style()->appearance() != ListboxPart) {
         if (styleToUse->overflowX() == OSCROLL)
             layer()->setHasHorizontalScrollbar(true);
         if (styleToUse->overflowY() == OSCROLL)
