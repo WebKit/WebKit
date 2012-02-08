@@ -75,8 +75,8 @@ public:
     LayoutUnit minimumColumnHeight() const { return m_minimumColumnHeight; }
 
     int forcedBreaks() const { return m_forcedBreaks; }
-    int forcedBreakOffset() const { return m_forcedBreakOffset; }
-    int maximumDistanceBetweenForcedBreaks() const { return m_maximumDistanceBetweenForcedBreaks; }
+    LayoutUnit forcedBreakOffset() const { return m_forcedBreakOffset; }
+    LayoutUnit maximumDistanceBetweenForcedBreaks() const { return m_maximumDistanceBetweenForcedBreaks; }
     void clearForcedBreaks()
     { 
         m_forcedBreaks = 0;
@@ -107,8 +107,8 @@ private:
     LayoutUnit m_columnHeight;
     LayoutUnit m_minimumColumnHeight;
     int m_forcedBreaks; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
-    int m_maximumDistanceBetweenForcedBreaks;
-    int m_forcedBreakOffset;
+    LayoutUnit m_maximumDistanceBetweenForcedBreaks;
+    LayoutUnit m_forcedBreakOffset;
     PaginationUnit m_paginationUnit;
 };
 

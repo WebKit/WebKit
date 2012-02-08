@@ -119,8 +119,8 @@ private:
     void startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
 
-    void paintRowBorder(const PaintInfo&, const IntRect&);
-    void paintColumnBorder(const PaintInfo&, const IntRect&);
+    void paintRowBorder(const PaintInfo&, const LayoutRect&);
+    void paintColumnBorder(const PaintInfo&, const LayoutRect&);
 
     RenderObjectChildList m_children;
 
