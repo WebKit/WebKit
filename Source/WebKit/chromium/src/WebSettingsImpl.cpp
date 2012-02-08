@@ -298,6 +298,11 @@ void WebSettingsImpl::setPrivilegedWebGLExtensionsEnabled(bool enabled)
     m_settings->setPrivilegedWebGLExtensionsEnabled(enabled);
 }
 
+void WebSettingsImpl::setWebGLErrorsToConsoleEnabled(bool enabled)
+{
+    m_settings->setWebGLErrorsToConsoleEnabled(enabled);
+}
+
 void WebSettingsImpl::setShowDebugBorders(bool show)
 {
     m_settings->setShowDebugBorders(show);
