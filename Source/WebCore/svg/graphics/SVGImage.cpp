@@ -75,7 +75,8 @@ private:
 
     virtual void invalidateContentsAndRootView(const IntRect& r, bool)
     {
-        if (m_image && m_image->imageObserver())
+        // If m_image->m_page is null, we're being destructed, don't fire changedInRect() in that case.
+        if (m_image && m_image->imageObserver() && m_image->m_page)
             m_image->imageObserver()->changedInRect(m_image, r);
     }
 
@@ -90,12 +91,9 @@ SVGImage::SVGImage(ImageObserver* observer)
 SVGImage::~SVGImage()
 {
     if (m_page) {
-        m_page->mainFrame()->loader()->frameDetached(); // Break both the loader and view references to the frame
-
-        // Clear explicitly because we want to delete the page before the ChromeClient.
-        // FIXME: I believe that's already guaranteed by C++ object destruction rules,
-        // so this may matter only for the assertion below.
-        m_page.clear();
+        // Store m_page in a local variable, clearing m_page, so that SVGImageChromeClient knows we're destructed.
+        OwnPtr<Page> currentPage = m_page.release();
+        currentPage->mainFrame()->loader()->frameDetached(); // Break both the loader and view references to the frame
     }
 
     // Verify that page teardown destroyed the Chrome

@@ -2538,8 +2538,3 @@ fast/events/touch/emulate-touch-events.html
 # [Qt] REGRESSION(r106918): It made svg/as-object/nested-embedded-svg-size-changes.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=78026
 svg/as-object/nested-embedded-svg-size-changes.html
-
-# [Qt] REGRESSION(r106918): It made svg/zoom/page/zoom-foreignObject.svg crash with Qt5-WK1
-# https://bugs.webkit.org/show_bug.cgi?id=77995
-svg/zoom/page/zoom-background-images.html
-svg/zoom/page/zoom-coords-viewattr-01-b.svg

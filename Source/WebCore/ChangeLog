@@ -1,3 +1,21 @@
+2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        [Qt] REGRESSION(r106918): It made svg/zoom/page/zoom-foreignObject.svg crash with Qt5-WK1
+        https://bugs.webkit.org/show_bug.cgi?id=77995
+
+        Reviewed by Csaba Osztrogonác.
+
+        From the stack traces it's obvious that SVGImageChromeClient tried to invalidate the root view,
+        while its SVGImage was being destructed, due to an updateStyleIfNeeded() call, coming
+        from frameDetached(). There's no point in redrawing there, so we should just stop it.
+
+        Covered by existing tests on the Qt but, unfortunately I couldn't reproduce it on Mac.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::invalidateContentsAndRootView): Stop invalidating if m_page is 0.
+        (WebCore::SVGImage::~SVGImage): Clear m_page, so that SVGImageChromeClient knows we're destructing.
+        * svg/graphics/SVGImage.h:
+
 2012-02-08  Pablo Flouret  <pablof@motorola.com>
 
         Add state attribute to history's dom interface.

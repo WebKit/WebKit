@@ -61,6 +61,7 @@ public:
     virtual bool hasRelativeHeight() const;
 
 private:
+    friend class SVGImageChromeClient;
     virtual ~SVGImage();
 
     virtual String filenameExtension() const;
