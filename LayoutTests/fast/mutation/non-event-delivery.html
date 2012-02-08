@@ -116,9 +116,13 @@ function runNextTest() {
 
 description('Test that Mutation Records are delivered following non-event async callbacks.');
 
-if (!window.WebKitMutationObserver)
+if (!window.WebKitMutationObserver) {
     testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
-else
+    finishJSTest();
+} else if (!window.webkitRequestFileSystem) {
+    testFailed('This test requires ENABLE(FILE_SYSTEM)');
+    finishJSTest();
+} else
     runNextTest();
 
 </script>

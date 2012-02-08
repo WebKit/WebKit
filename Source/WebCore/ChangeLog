@@ -1,3 +1,49 @@
+2012-02-07  Adam Klein  <adamk@chromium.org>
+
+        Add JSC support for delivering mutations when the outermost script context exits
+        https://bugs.webkit.org/show_bug.cgi?id=70289
+
+        Reviewed by Eric Seidel.
+
+        The meat of this change is in JSMainThreadExecState, where a counter
+        is incremented every time WebCore calls into JSC and decremented every
+        time it returns. When the counter reaches zero, any pending mutations
+        are delivered (this mirrors very similar code in V8Proxy and V8RecursionScope).
+
+        The rest of the changes are of two sorts: compilation/logic fixes for
+        JSC code when ENABLE(MUTATION_OBSERVERS) is true, and additional
+        usages of JSMainThreadExecState so as to trigger the above
+        increment/decrements at the appropriate times.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        Use JSMainThreadExecState instead of JSC::call.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Add support
+        for tryGetProperty with a HashMap<AtomicString>.
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        Use JSMainThreadExecState instead of JSC::call.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        Use JSMainThreadExecState instead of JSC::call.
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::JSMainThreadExecState):
+        Increment a static recursion level counter.
+        (WebCore::JSMainThreadExecState::~JSMainThreadExecState):
+        Decrement a static recursion level counter and, if we are
+        at zero (the outermost script invocation), deliver any
+        outstanding mutation records.
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        Use JSMainThreadExecState instead of JSC::call.
+        * bindings/js/JSWebKitMutationObserverCustom.cpp:
+        (WebCore::JSWebKitMutationObserver::observe):
+        Fix JSDictionary logic, add support for attributeFilter.
+
 2012-02-07  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

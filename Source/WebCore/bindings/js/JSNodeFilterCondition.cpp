@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSNodeFilterCondition.h"
 
+#include "JSMainThreadExecState.h"
 #include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "NodeFilter.h"
@@ -72,7 +73,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    JSValue result = JSC::call(exec, function, callType, callData, m_filter.get(), args);
+    JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, m_filter.get(), args);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 

@@ -285,7 +285,7 @@ function testOrderingWrtDOMSubtreeModified() {
         shouldBe('mutations[0].attributeName', '"foo"');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"baz"');
-        div.removeEventListener(listener);
+        div.removeEventListener('DOMSubtreeModified', listener);
         document.body.removeChild(div);
         observer.disconnect();
         debug('');

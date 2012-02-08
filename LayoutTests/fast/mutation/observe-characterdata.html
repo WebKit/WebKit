@@ -182,7 +182,7 @@ function testOrderingWrtDOMSubtreeModified() {
         shouldBe('mutations.length', '2');
         shouldBe('mutations[0].type', '"characterData"');
         shouldBe('mutations[1].type', '"attributes"');
-        div.removeEventListener(listener);
+        div.removeEventListener('DOMSubtreeModified', listener);
         document.body.removeChild(div);
         observer.disconnect();
         debug('');

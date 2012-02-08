@@ -38,6 +38,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
+#include "JSMainThreadExecState.h"
 #include "SegmentedString.h"
 #include "DocumentParser.h"
 #include <runtime/Error.h>
@@ -113,7 +114,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
                 CallType callType = ::getCallData(function, callData);
                 if (callType == CallTypeNone)
                     return throwTypeError(exec);
-                return JSC::call(exec, function, callType, callData, wrapper, ArgList(exec));
+                return JSMainThreadExecState::call(exec, function, callType, callData, wrapper, ArgList(exec));
             }
         }
         return jsUndefined();

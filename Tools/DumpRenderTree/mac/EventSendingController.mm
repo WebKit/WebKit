@@ -131,6 +131,7 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(mouseUp:withModifiers:)
             || aSelector == @selector(scheduleAsynchronousClick)
+            || aSelector == @selector(scheduleAsynchronousKeyDown:withModifiers:withLocation:)
             || aSelector == @selector(textZoomIn)
             || aSelector == @selector(textZoomOut)
             || aSelector == @selector(zoomPageIn)
@@ -161,6 +162,8 @@ BOOL replayingSavedEvents;
         return @"fireKeyboardEventsToElement";
     if (aSelector == @selector(keyDown:withModifiers:withLocation:))
         return @"keyDown";
+    if (aSelector == @selector(scheduleAsynchronousKeyDown:withModifiers:withLocation:))
+        return @"scheduleAsynchronousKeyDown";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
     if (aSelector == @selector(mouseDown:withModifiers:))
@@ -720,6 +723,23 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         keyCode:keyCode];
 
     [[[[mainFrame webView] window] firstResponder] keyUp:event];
+}
+
+- (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
+{
+    [self keyDown:character withModifiers:modifiers withLocation:keyLocation];
+}
+
+- (void)scheduleAsynchronousKeyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
+{
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(keyDownWrapper:withModifiers:withLocation:)]];
+    [invocation retainArguments];
+    [invocation setTarget:self];
+    [invocation setSelector:@selector(keyDownWrapper:withModifiers:withLocation:)];
+    [invocation setArgument:&character atIndex:2];
+    [invocation setArgument:&modifiers atIndex:3];
+    [invocation setArgument:&keyLocation atIndex:4];
+    [invocation performSelector:@selector(invoke) withObject:nil afterDelay:0];
 }
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node

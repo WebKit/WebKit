@@ -195,9 +195,6 @@ my @features = (
     { option => "directory-upload", desc => "Toogle Directory upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
 
-    { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
-      define => "ENABLE_MUTATION_OBSERVERS", default => 0, value => \$mutationObserversSupport },
-
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
 
@@ -272,6 +269,9 @@ my @features = (
 
     { option => "microdata", desc => "Toggle Microdata support",
       define => "ENABLE_MICRODATA", default => 0, value => \$microdataSupport },
+
+    { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
+      define => "ENABLE_MUTATION_OBSERVERS", default => 0, value => \$mutationObserversSupport },
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },

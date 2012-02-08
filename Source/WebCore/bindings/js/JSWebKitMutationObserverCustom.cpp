@@ -41,6 +41,8 @@
 #include "Node.h"
 #include "WebKitMutationObserver.h"
 #include <runtime/Error.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
@@ -62,6 +64,22 @@ EncodedJSValue JSC_HOST_CALL JSWebKitMutationObserverConstructor::constructJSWeb
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitMutationObserver::create(callback.release()))));
 }
 
+struct BooleanOption {
+    const char* name;
+    MutationObserverOptions value;
+};
+
+static const BooleanOption booleanOptions[] = {
+    { "childList", WebKitMutationObserver::ChildList },
+    { "attributes", WebKitMutationObserver::Attributes },
+    { "characterData", WebKitMutationObserver::CharacterData },
+    { "subtree", WebKitMutationObserver::Subtree },
+    { "attributeOldValue", WebKitMutationObserver::AttributeOldValue },
+    { "characterDataOldValue", WebKitMutationObserver::CharacterDataOldValue }
+};
+
+static const size_t numBooleanOptions = sizeof(booleanOptions) / sizeof(BooleanOption);
+
 JSValue JSWebKitMutationObserver::observe(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
@@ -78,24 +96,22 @@ JSValue JSWebKitMutationObserver::observe(ExecState* exec)
 
     JSDictionary dictionary(exec, optionsObject);
     MutationObserverOptions options = 0;
-    // FIXME: Add support for parsing of the attributeFilter option.
-    bool option;
-    if (dictionary.tryGetProperty("childList", option) && option)
-        options |= WebKitMutationObserver::ChildList;
-    if (dictionary.tryGetProperty("attributes", option) && option)
-        options |= WebKitMutationObserver::Attributes;
-    if (dictionary.tryGetProperty("subtree", option) && option)
-        options |= WebKitMutationObserver::Subtree;
-    if (dictionary.tryGetProperty("attributeOldValue", option) && option)
-        options |= WebKitMutationObserver::AttributeOldValue;
-    if (dictionary.tryGetProperty("characterDataOldValue", option) && option)
-        options |= WebKitMutationObserver::CharacterDataOldValue;
+    for (unsigned i = 0; i < numBooleanOptions; ++i) {
+        bool option = false;
+        if (!dictionary.tryGetProperty(booleanOptions[i].name, option))
+            return jsUndefined();
+        if (option)
+            options |= booleanOptions[i].value;
+    }
 
-    if (exec->hadException())
+    HashSet<AtomicString> attributeFilter;
+    if (!dictionary.tryGetProperty("attributeFilter", attributeFilter))
         return jsUndefined();
+    if (!attributeFilter.isEmpty())
+        options |= WebKitMutationObserver::AttributeFilter;
 
     ExceptionCode ec = 0;
-    impl()->observe(target, options, ec);
+    impl()->observe(target, options, attributeFilter, ec);
     if (ec)
         setDOMException(exec, ec);
     return jsUndefined();

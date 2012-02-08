@@ -34,7 +34,9 @@
 #include "JSTrackCustom.h"
 #include "SerializedScriptValue.h"
 #include "ScriptValue.h"
+#include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
@@ -133,6 +135,28 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& result)
 {
     result = toTrack(value);
+}
+#endif
+
+#if ENABLE(MUTATION_OBSERVERS)
+void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicString>& result)
+{
+    result.clear();
+
+    if (value.isUndefinedOrNull())
+        return;
+
+    unsigned length;
+    JSObject* object = toJSSequence(exec, value, length);
+    if (exec->hadException())
+        return;
+
+    for (unsigned i = 0 ; i < length; ++i) {
+        JSValue itemValue = object->get(exec, i);
+        if (exec->hadException())
+            return;
+        result.add(ustringToAtomicString(itemValue.toString(exec)->value(exec)));
+    }
 }
 #endif
 

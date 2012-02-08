@@ -87,6 +87,9 @@ private:
 #if ENABLE(VIDEO_TRACK)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
 #endif
+#if ENABLE(MUTATION_OBSERVERS)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, HashSet<AtomicString>& result);
+#endif
 
     JSC::ExecState* m_exec;
     JSC::JSObject* m_initializerObject;

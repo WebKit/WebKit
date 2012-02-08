@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "JSEvent.h"
+#include "JSMainThreadExecState.h"
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -94,7 +95,9 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         JSValue thisValue = globalObject->methodTable()->toThisObject(globalObject, exec);
 
         globalData.timeoutChecker.start();
-        JSValue returnValue = JSC::call(exec, jsFunction, callType, callData, thisValue, args);
+        JSValue returnValue = scriptExecutionContext->isDocument()
+            ? JSMainThreadExecState::call(exec, jsFunction, callType, callData, thisValue, args)
+            : JSC::call(exec, jsFunction, callType, callData, thisValue, args);
         globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);

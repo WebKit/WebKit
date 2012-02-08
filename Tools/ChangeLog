@@ -1,3 +1,18 @@
+2012-02-07  Adam Klein  <adamk@chromium.org>
+
+        Add JSC support for delivering mutations when the outermost script context exits
+        https://bugs.webkit.org/show_bug.cgi?id=70289
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/mac/EventSendingController.mm: Add support for
+        eventSender.scheduleAsynchronousKeyDown.
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController keyDownWrapper:withModifiers:withLocation:]):
+        (-[EventSendingController scheduleAsynchronousKeyDown:withModifiers:withLocation:]):
+        * Scripts/build-webkit: Properly alphabetize --mutation-observers in the --help output.
+
 2012-02-07  Chris Rogers  <crogers@google.com>
 
         Add Chris Rogers to reviewers section

@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
+#include "JSMainThreadExecState.h"
 #include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
 
@@ -89,7 +90,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     args.append(jsString(exec, prefix));
 
     m_globalObject->globalData().timeoutChecker.start();
-    JSValue retval = JSC::call(exec, function, callType, callData, m_customResolver, args);
+    JSValue retval = JSMainThreadExecState::call(exec, function, callType, callData, m_customResolver, args);
     m_globalObject->globalData().timeoutChecker.stop();
 
     String result;

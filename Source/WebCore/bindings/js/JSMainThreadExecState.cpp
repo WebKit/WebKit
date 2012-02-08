@@ -25,9 +25,19 @@
 
 #include "config.h"
 #include "JSMainThreadExecState.h"
+#include "WebKitMutationObserver.h"
 
 namespace WebCore {
 
 JSC::ExecState* JSMainThreadExecState::s_mainThreadState = 0;
+
+#if ENABLE(MUTATION_OBSERVERS)
+int JSMainThreadExecState::s_recursionLevel = 0;
+
+void JSMainThreadExecState::didLeaveScriptContext()
+{
+    WebKitMutationObserver::deliverAllMutations();
+}
+#endif
 
 } // namespace WebCore
