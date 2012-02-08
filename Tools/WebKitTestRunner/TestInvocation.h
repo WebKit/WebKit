@@ -39,7 +39,8 @@ public:
     ~TestInvocation();
 
     void setIsPixelTest(const std::string& expectedPixelHash);
-    
+    void setSkipPixelTestOption(bool option) { m_skipPixelTestOption = option; }
+
     void invoke();
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
@@ -54,6 +55,7 @@ private:
     
     bool m_dumpPixels;
     std::string m_expectedPixelHash;
+    bool m_skipPixelTestOption;
 
     // Invocation state
     bool m_gotInitialResponse;

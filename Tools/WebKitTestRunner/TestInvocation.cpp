@@ -93,6 +93,7 @@ TestInvocation::TestInvocation(const std::string& pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL.c_str()))
     , m_pathOrURL(pathOrURL)
     , m_dumpPixels(false)
+    , m_skipPixelTestOption(false)
     , m_gotInitialResponse(false)
     , m_gotFinalMessage(false)
     , m_gotRepaint(false)
@@ -106,6 +107,8 @@ TestInvocation::~TestInvocation()
 
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
 {
+    if (m_skipPixelTestOption && !expectedPixelHash.length())
+        return;
     m_dumpPixels = true;
     m_expectedPixelHash = expectedPixelHash;
 }

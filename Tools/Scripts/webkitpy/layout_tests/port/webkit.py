@@ -467,6 +467,8 @@ class WebKitDriver(Driver):
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
+        if self._port.get_option('skip_pixel_test_if_no_baseline'):
+            cmd.append('--skip-pixel-test-if-no-baseline')
         if self._pixel_tests:
             cmd.append('--pixel-tests')
         if self._port.get_option('gc_between_tests'):

@@ -1,3 +1,37 @@
+2012-02-08  Fehér Zsolt  <feherzs@inf.u-szeged.hu>
+
+        nrwt: make --skip-pixel-test-if-no-baseline option
+        https://bugs.webkit.org/show_bug.cgi?id=70484
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        (SingleTestRunner._should_fetch_expected_checksum):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.handle_test_list):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.cmd_line):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_skip_pixel_test_if_no_baseline_option):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::setIsPixelTest):
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::setSkipPixelTestOption):
+        (TestInvocation):
+
 2012-02-08  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Upstream DumpRenderTreeBlackBerry
