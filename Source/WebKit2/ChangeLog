@@ -1,3 +1,16 @@
+2012-02-07  Timothy Hatcher  <timothy@apple.com>
+
+        Initilize the WebPageProxy intrinsicDeviceScaleFactor on creation of the WKView.
+
+        If WKView was created and loaded a page with canvas elements before beinging moved
+        to a window, the canvas elements would be locked in at a pixel ratio of 1. With this
+        change the WKView will use the main screen's pixel ratio until it moves to a window.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Call setIntrinsicDeviceScaleFactor.
+
 2012-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         Keep a reference in didReceiveInvalidMessage.
