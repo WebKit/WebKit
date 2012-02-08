@@ -1,5 +1,12 @@
 2012-02-08  Oliver Hunt  <oliver@apple.com>
 
+        Whoops, fix the build.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+
+2012-02-08  Oliver Hunt  <oliver@apple.com>
+
         Fix issue encountered while debugging stacktraces
         https://bugs.webkit.org/show_bug.cgi?id=78147
 
