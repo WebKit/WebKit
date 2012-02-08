@@ -53,6 +53,8 @@ BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.htm
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = FAIL
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = FAIL
 
+BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
+
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
