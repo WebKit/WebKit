@@ -1,5 +1,34 @@
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
+        Rename [DelegatingPutFunction] IDL to [CustomNamedSetter] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=77963
+
+        Reviewed by Adam Barth.
+
+        This patch renames [DelegatingPutFunction] IDL to [CustomNamedSetter] IDL,
+        for clarification and for naming consistency with [NamedGetter] and [CustomIndexedSetter].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeaderNamedAndIndexedPropertyAccessors):
+        (GenerateImplementationIndexer):
+        (GenerateImplementationNamedPropertyGetter):
+        * bindings/scripts/test/TestInterface.idl:
+        * css/CSSStyleDeclaration.idl:
+        * dom/DOMStringMap.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * storage/Storage.idl:
+
+2012-02-08  Kentaro Hara  <haraken@chromium.org>
+
         Replace [CheckNodeSecurity] with [CheckAccessToNode]
         https://bugs.webkit.org/show_bug.cgi?id=77971
 

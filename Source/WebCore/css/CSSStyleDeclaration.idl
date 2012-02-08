@@ -24,7 +24,7 @@ module css {
     interface [
         JSCustomMarkFunction,
         JSGenerateIsReachable=ImplRoot,
-        DelegatingPutFunction,
+        CustomNamedSetter,
         NamedGetter,
         IndexedGetter,
         CustomGetPropertyNames,

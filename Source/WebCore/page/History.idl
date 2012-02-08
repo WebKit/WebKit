@@ -30,7 +30,7 @@ module window {
         CheckDomainSecurity,
 #endif
         JSCustomGetOwnPropertySlotDelegate,
-        DelegatingPutFunction,
+        CustomNamedSetter,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,

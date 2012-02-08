@@ -30,7 +30,7 @@ module storage {
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        DelegatingPutFunction,
+        CustomNamedSetter,
     ] Storage {
         readonly attribute [NotEnumerable] unsigned long length;
         [NotEnumerable, ConvertNullStringTo=Null] DOMString key(in unsigned long index);

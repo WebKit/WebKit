@@ -30,7 +30,7 @@ module core {
         NamedGetter,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        DelegatingPutFunction,
+        CustomNamedSetter,
     ] DOMStringMap {
     };
 

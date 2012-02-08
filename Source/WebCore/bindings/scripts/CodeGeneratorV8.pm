@@ -566,7 +566,7 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
     my $hasCustomIndexedGetter = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     my $hasCustomIndexedSetter = $dataNode->extendedAttributes->{"CustomIndexedSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
     my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
-    my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
+    my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"CustomNamedSetter"};
     my $hasCustomDeleters = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
     my $hasCustomEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
     if ($interfaceName eq "HTMLOptionsCollection") {
@@ -2062,7 +2062,7 @@ sub GenerateImplementationIndexer
     my $isSpecialCase = exists $indexerSpecialCases{$interfaceName};
     if ($isSpecialCase) {
         $hasGetter = 1;
-        if ($dataNode->extendedAttributes->{"DelegatingPutFunction"}) {
+        if ($dataNode->extendedAttributes->{"CustomNamedSetter"}) {
             $hasCustomSetter = 1;
         }
     }
@@ -2168,7 +2168,7 @@ END
         return;
     }
 
-    my $hasSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
+    my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"CustomNamedSetter"};
     my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
     my $hasEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
     my $setOn = "Instance";
@@ -2184,7 +2184,7 @@ END
     }
 
     push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(V8${interfaceName}::namedPropertyGetter, ");
-    push(@implContent, $hasSetter ? "V8${interfaceName}::namedPropertySetter, " : "0, ");
+    push(@implContent, $hasCustomNamedSetter ? "V8${interfaceName}::namedPropertySetter, " : "0, ");
     # If there is a custom enumerator, there MUST be custom query to properly communicate property attributes.
     push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyQuery, " : "0, ");
     push(@implContent, $hasDeleter ? "V8${interfaceName}::namedPropertyDeleter, " : "0, ");

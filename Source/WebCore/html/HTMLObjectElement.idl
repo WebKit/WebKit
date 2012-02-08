@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        DelegatingPutFunction,
+        CustomNamedSetter,
         JSCustomGetOwnPropertySlotDelegate,
         CustomCall
     ] HTMLObjectElement : HTMLElement {

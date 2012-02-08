@@ -751,7 +751,7 @@ sub GenerateHeader
 
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"};
 
-    $implIncludes{"${className}Custom.h"} = 1 if !$dataNode->extendedAttributes->{"CustomHeader"} && ($dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"DelegatingPutFunction"});
+    $implIncludes{"${className}Custom.h"} = 1 if !$dataNode->extendedAttributes->{"CustomHeader"} && ($dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"CustomNamedSetter"});
 
     my $hasGetter = $numAttributes > 0
                  || !$dataNode->extendedAttributes->{"OmitConstructor"}
@@ -782,14 +782,14 @@ sub GenerateHeader
 
     my $hasSetter = $hasReadWriteProperties
                  || $dataNode->extendedAttributes->{"CustomPutFunction"}
-                 || $dataNode->extendedAttributes->{"DelegatingPutFunction"}
+                 || $dataNode->extendedAttributes->{"CustomNamedSetter"}
                  || $dataNode->extendedAttributes->{"CustomIndexedSetter"};
 
     # Getters
     if ($hasSetter) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"CustomIndexedSetter"};
-        push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPutFunction"};
+        push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomNamedSetter"};
     }
 
     if (!$hasParent) {
@@ -1825,7 +1825,7 @@ sub GenerateImplementation
         }
 
         my $hasSetter = $hasReadWriteProperties
-                     || $dataNode->extendedAttributes->{"DelegatingPutFunction"}
+                     || $dataNode->extendedAttributes->{"CustomNamedSetter"}
                      || $dataNode->extendedAttributes->{"CustomIndexedSetter"};
 
         if ($hasSetter) {
@@ -1842,7 +1842,7 @@ sub GenerateImplementation
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
                 }
-                if ($dataNode->extendedAttributes->{"DelegatingPutFunction"}) {
+                if ($dataNode->extendedAttributes->{"CustomNamedSetter"}) {
                     push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
                     push(@implContent, "        return;\n");
                 }
