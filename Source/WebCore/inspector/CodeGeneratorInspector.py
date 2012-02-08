@@ -2682,8 +2682,9 @@ class Generator:
                 param = ", %sout_%s" % (raw_type.get_output_pass_model().get_argument_prefix(), json_return_name)
                 cook = "        result->set%s(\"%s\", out_%s);\n" % (setter_type, json_return_name, json_return_name)
                 if optional:
-                        # FIXME: support optional properly. Probably an additional output parameter should be in each case.
-                    if var_type.get_text() == "bool":
+                    # FIXME: support optional properly. Probably an additional output parameter should be in each case.
+                    # FIXME: refactor this condition; it's a hack now.
+                    if var_type.get_text() == "bool" or var_type.get_text().startswith("RefPtr<"):
                         cook = ("        if (out_%s)\n    " % json_return_name) + cook
                     else:
                         cook = "        // FIXME: support optional here.\n" + cook

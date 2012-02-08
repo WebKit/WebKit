@@ -1,3 +1,16 @@
+2012-02-08  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Optional out arguments are not supported in the Web Inspector protocol, which breaks the implementation
+        https://bugs.webkit.org/show_bug.cgi?id=77967
+
+        Reviewed by Yury Semikhatsky.
+
+        Condition for RefPtr-based types added. This is more-or-less a hack
+        and it's should be redone together with the switch to type-safe API.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.process_command):
+
 2012-02-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: inspected object wrapper should be released by InjectedScript when popover closes
