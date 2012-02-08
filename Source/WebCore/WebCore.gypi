@@ -5375,6 +5375,7 @@
             'html/PasswordInputType.h',
             'html/PluginDocument.cpp',
             'html/PluginDocument.h',
+            'html/PublicURLManager.h',
             'html/RadioInputType.cpp',
             'html/RadioInputType.h',
             'html/RangeInputType.cpp',

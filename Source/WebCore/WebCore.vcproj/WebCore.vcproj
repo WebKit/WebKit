@@ -60494,6 +60494,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\PublicURLManager.h"
+				>
+			</File>
+            <File
 				RelativePath="..\html\RadioInputType.cpp"
 				>
 			</File>

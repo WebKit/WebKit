@@ -1880,6 +1880,7 @@ HEADERS += \
     html/MediaFragmentURIParser.h \
     html/MicroDataItemValue.h \
     html/PluginDocument.h \
+    html/PublicURLManager.h \
     html/StepRange.h \
     html/TextDocument.h \
     html/TextTrack.h \

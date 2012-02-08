@@ -1,3 +1,60 @@
+2012-02-08  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Migrate createObjectURL & revokeObjectURL to static (Class) methods.
+        https://bugs.webkit.org/show_bug.cgi?id=74386
+
+        Reviewed by Kentaro Hara.
+
+        Move createObjectURL & revokeObjectURL from DOMURL implementation to
+        static methods as per specs - http://www.w3.org/TR/FileAPI/#creating-revoking
+
+        Test: fast/dom/DOMURL/check-instanceof-domurl-functions.html
+        Already Existing:
+            fast/files/revoke-blob-url.html
+            fast/dom/window-domurl-crash.html
+            fast/files/apply-blob-url-to-img.html
+            fast/files/create-blob-url-crash.html
+            fast/files/workers/inline-worker-via-blob-url.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::fileThread):
+        (WebCore):
+        (WebCore::ScriptExecutionContext::publicURLManager):
+        * dom/ScriptExecutionContext.h:
+        (WebCore):
+        (ScriptExecutionContext):
+        * html/DOMURL.cpp:
+        (WebCore):
+        (WebCore::DOMURL::createObjectURL): Changed to static.
+        (WebCore::DOMURL::revokeObjectURL): ditto.
+        * html/DOMURL.h:
+        (DOMURL):
+        (WebCore::DOMURL::create):
+        * html/DOMURL.idl:
+        * html/PublicURLManager.h: Added.
+        (WebCore):
+        (PublicURLManager):
+        (WebCore::PublicURLManager::create):
+        (WebCore::PublicURLManager::contextDestroyed):
+        (WebCore::PublicURLManager::blobURLs):
+        (WebCore::PublicURLManager::streamURLs):
+        * page/DOMWindow.cpp: Removed object initialization for DOMURL.
+        (WebCore):
+        * page/DOMWindow.h: ditto.
+        (DOMWindow):
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.cpp:
+        (WebCore):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+        * workers/WorkerContext.idl:
+
 2012-02-01  Brian Grinstead  <briangrinstead@gmail.com>
 
         Web Inspector: Add changes for Spectrum colorpicker

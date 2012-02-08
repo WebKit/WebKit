@@ -101,7 +101,7 @@ module threads {
         attribute FileReaderSyncConstructor FileReaderSync;
 #endif
 
-        readonly attribute [Conditional=BLOB] DOMURL webkitURL;
+        attribute [Conditional=BLOB] DOMURLConstructor webkitURL;
 
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         const unsigned short TEMPORARY = 0;

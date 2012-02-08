@@ -38,6 +38,7 @@
 #include "EventTarget.h"
 #include "FileThread.h"
 #include "MessagePort.h"
+#include "PublicURLManager.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -125,6 +126,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
         m_fileThread->stop();
         m_fileThread = 0;
     }
+#endif
+#if ENABLE(BLOB)
+    if (m_publicURLManager)
+        m_publicURLManager->contextDestroyed();
 #endif
 }
 
@@ -382,6 +387,15 @@ FileThread* ScriptExecutionContext::fileThread()
             m_fileThread = 0;
     }
     return m_fileThread.get();
+}
+#endif
+
+#if ENABLE(BLOB)
+PublicURLManager& ScriptExecutionContext::publicURLManager()
+{
+    if (!m_publicURLManager)
+        m_publicURLManager = PublicURLManager::create();
+    return *m_publicURLManager;
 }
 #endif
 
