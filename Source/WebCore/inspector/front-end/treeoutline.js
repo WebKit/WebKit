@@ -237,7 +237,7 @@ TreeOutline.prototype._forgetChildrenRecursive = function(parentElement)
     var child = parentElement.children[0];
     while (child) {
         this._forgetTreeElement(child);
-        child = child.traverseNextTreeElement(false, this, true);
+        child = child.traverseNextTreeElement(false, parentElement, true);
     }
 }
 

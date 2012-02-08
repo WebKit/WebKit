@@ -1,3 +1,13 @@
+2012-02-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not clear entire tree map upon last element deletion.
+        https://bugs.webkit.org/show_bug.cgi?id=78112
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype._forgetChildrenRecursive):
+
 2012-02-08  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Migrate createObjectURL & revokeObjectURL to static (Class) methods.
