@@ -1,3 +1,13 @@
+2012-02-08  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        Initial upstreaming of input handling for BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=77992
+
+        Reviewed by Rob Buis.
+
+        * blackberry/WebKitSupport/InputHandler.cpp: Added.
+        * blackberry/WebKitSupport/InputHandler.h: Added.
+
 2012-02-07  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Remove no longer necessary Chromium gesture recognizer code.
