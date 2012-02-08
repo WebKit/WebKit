@@ -371,6 +371,7 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
     this._referenceName = edge.name;
     this._referenceType = edge.type;
     this._propertyAccessor = edge.propertyAccessor;
+    this._distanceToWindow = edge.distanceToWindow;
     this.showRetainingEdges = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
     this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex, tree);
@@ -415,12 +416,14 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _childHashForEntity: function(edge)
     {
-        return edge.type + "#" + edge.name;
+        var prefix = this.showRetainingEdges ? edge.node.id + "#" : "";
+        return prefix + edge.type + "#" + edge.name;
     },
 
     _childHashForNode: function(childNode)
     {
-        return childNode._referenceType + "#" + childNode._referenceName;
+        var prefix = this.showRetainingEdges ? childNode.snapshotNodeId + "#" : "";
+        return prefix + childNode._referenceType + "#" + childNode._referenceName;
     },
 
     comparator: function()
@@ -431,7 +434,8 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
             object: ["!edgeName", sortAscending, "retainedSize", false],
             count: ["!edgeName", true, "retainedSize", false],
             shallowSize: ["selfSize", sortAscending, "!edgeName", true],
-            retainedSize: ["retainedSize", sortAscending, "!edgeName", true]
+            retainedSize: ["retainedSize", sortAscending, "!edgeName", true],
+            distanceToWindow: ["distanceToWindow", sortAscending, "_name", true]
         }[sortColumnIdentifier] || ["!edgeName", true, "retainedSize", false];
         return WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(sortFields);
     },
@@ -460,6 +464,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         }
         data["object"].nameClass = nameClass;
         data["object"].name = name;
+        data["distanceToWindow"] = this._distanceToWindow;
         return data;
     },
 

@@ -112,9 +112,9 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
 
-WebInspector.HeapSnapshotContainmentDataGrid = function()
+WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 {
-    var columns = {
+    columns = columns || {
         object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true },
         shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true, sort: "descending" }
@@ -183,10 +183,27 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.
 WebInspector.HeapSnapshotRetainmentDataGrid = function()
 {
     this.showRetainingEdges = true;
-    WebInspector.HeapSnapshotContainmentDataGrid.call(this);
+    var columns = {
+        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true },
+        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
+        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true },
+        distanceToWindow: { title: WebInspector.UIString("Distance"), width: "80px", sortable: true, sort: "ascending" }
+    };
+    WebInspector.HeapSnapshotContainmentDataGrid.call(this, columns);
 }
 
 WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
+    _sortFields: function(sortColumn, sortAscending)
+    {
+        return {
+            object: ["_name", sortAscending, "_count", false],
+            count: ["_count", sortAscending, "_name", true],
+            shallowSize: ["_shallowSize", sortAscending, "_name", true],
+            retainedSize: ["_retainedSize", sortAscending, "_name", true],
+            distanceToWindow: ["_distanceToWindow", sortAscending, "_name", true]
+        }[sortColumn];
+    },
+
     reset: function()
     {
         this.removeChildren();

@@ -115,6 +115,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     text-align: right;
 }
 
+.detailed-heapshot-view .data-grid td.distanceToWindow-column {
+    text-align: right;
+}
+
 .detailed-heapshot-view .data-grid span.percent-column {
     color: grey;
     width: 42px;

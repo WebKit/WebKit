@@ -1,3 +1,47 @@
+2012-02-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: heap snapshot: implement Distance column in Object's retaining tree.
+        https://bugs.webkit.org/show_bug.cgi?id=78113
+
+        Retaining path list was replaced with Retaining tree some time ago.
+        But it was not so useful when we want to track the retaining path from an object to a DOM Window node.
+
+        Drive by fix: sort doesn't work in retaining tree panel.
+        Drive by fix: save/load child nodes doesn't work for the retaining tree panel.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._childHashForEntity): save/load children fix
+        (WebInspector.HeapSnapshotObjectNode.prototype._childHashForNode): save/load children fix
+        (WebInspector.HeapSnapshotObjectNode.prototype.comparator):
+        (WebInspector.HeapSnapshotObjectNode.prototype._enhanceData):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid):
+        (WebInspector.HeapSnapshotRetainmentDataGrid):
+        (WebInspector.HeapSnapshotRetainmentDataGrid.prototype._sortFields):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.set retainerIndex):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.set edgeIndex):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.get _node):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.get _edge):
+        (WebInspector.HeapSnapshotNode.prototype.get distanceToWindow):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype._buildRetainers):
+        (WebInspector.HeapSnapshot.prototype._calculateObjectToWindowDistance):
+        (WebInspector.HeapSnapshot.prototype._bfs):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype._serialize):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareEdgeFieldName):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareNodeField):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareEdgeAndNode):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareNodeAndEdge):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareNodeAndNode):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort):
+        (WebInspector.HeapSnapshotNodesProvider.prototype._serialize):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view .data-grid td.distanceToWindow-column):
+
 2012-02-08  Anders Carlsson  <andersca@apple.com>
 
         Fix assertion in svg/dom/SVGStyledElement-pendingResource-crash.html
