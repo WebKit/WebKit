@@ -1,3 +1,21 @@
+2012-02-07  Priit Laes  <plaes@plaes.org>
+
+        Get rid of Source/autotools/webkit.m4
+        https://bugs.webkit.org/show_bug.cgi?id=77833
+
+        Reviewed by Martin Robinson.
+
+        Move checks from webkit.m4 to configure.ac and modernize macros:
+          . Check for visibility flags after CXX has been defined
+          . Use PKG_PROG_PKG_CONFIG for pkg-config lookup
+          . Drop unused LIBFFTW_REQUIRED_VERSION
+          . Update ICU libs for mingw (bug 77837).
+          . Require Pango 1.21.0 (as per unicode backend)
+          . Bump minimum glib version due to g_thread_init changes
+
+        * Source/autotools/webkit.m4: Removed.
+        * configure.ac:
+
 2012-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dashboard on perf-o-matic should be sorted
