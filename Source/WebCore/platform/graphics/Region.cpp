@@ -70,6 +70,13 @@ bool Region::contains(const Region& region) const
     return WebCore::intersect(region, *this) == region;
 }
 
+bool Region::contains(const IntPoint& point) const
+{
+    // FIXME: This is inefficient. We should be able to iterate over the spans and find
+    // out if the region contains the point.
+    return contains(IntRect(point, IntSize(1, 1)));
+}
+
 Region::Shape::Shape()
 {
 }

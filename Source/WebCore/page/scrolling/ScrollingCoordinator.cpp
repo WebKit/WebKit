@@ -117,6 +117,7 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
 
     m_scrollingTreeState->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
     m_scrollingTreeState->setContentsSize(frameView->contentsSize());
+    m_scrollingTreeState->setNonFastScrollableRegion(nonScrollableRegion);
     scheduleTreeStateCommit();
 }
 

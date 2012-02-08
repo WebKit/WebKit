@@ -61,9 +61,15 @@ bool ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
 
         if (m_hasWheelEventHandlers)
             return false;
-    }
 
-    // FIXME: Check if we're over a subframe or overflow div.
+        if (!m_nonFastScrollableRegion.isEmpty()) {
+            // FIXME: This is not correct for non-default scroll origins.
+            IntPoint position = wheelEvent.position();
+            position.moveBy(m_mainFrameScrollPosition);
+            if (m_nonFastScrollableRegion.contains(position))
+                return false;
+        }
+    }
 
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
     return true;
@@ -105,6 +111,11 @@ void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition
 {
     if (!m_scrollingCoordinator)
         return;
+
+    {
+        MutexLocker lock(m_mutex);
+        m_mainFrameScrollPosition = scrollPosition;
+    }
 
     callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition));
 }

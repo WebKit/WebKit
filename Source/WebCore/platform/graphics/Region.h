@@ -50,6 +50,8 @@ public:
     // Returns true if the query region is a subset of this region.
     bool contains(const Region&) const;
 
+    bool contains(const IntPoint&) const;
+
 #ifndef NDEBUG
     void dump() const;
 #endif

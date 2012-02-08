@@ -73,6 +73,7 @@ private:
 
     Mutex m_mutex;
     Region m_nonFastScrollableRegion;
+    IntPoint m_mainFrameScrollPosition;
     bool m_hasWheelEventHandlers;
 };
 

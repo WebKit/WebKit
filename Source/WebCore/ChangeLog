@@ -1,3 +1,27 @@
+2012-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Use the non-fast-scrollable region to detect when we can't do fast scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=78056
+        <rdar://problem/10247932>
+
+        Reviewed by Sam Weinig.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        Actually set the non-fast scrollable region on the scrolling tree state.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::tryToHandleWheelEvent):
+        Check if the wheel event's position is inside the non-fast-scrollable region
+        and return false if it is.
+
+        (WebCore::ScrollingTree::updateMainFrameScrollPosition):
+        Store the cached main frame scroll position so we can use it in tryToHandleWheelEvent.
+
+        * platform/graphics/Region.cpp:
+        * platform/graphics/Region.h:
+        Add a simple contains(const IntPoint&) member function.
+
 2012-02-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10475450> Synthetic bold is illegible under some scaling transforms
