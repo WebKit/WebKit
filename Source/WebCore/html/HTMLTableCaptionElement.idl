@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] HTMLTableCaptionElement : HTMLElement {
         attribute [Reflect] DOMString align;
     };

@@ -31,7 +31,7 @@
 module html {
     interface [
         Constructor,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSNoStaticTables
     ] WebKitBlobBuilder {
 #if !defined(LANGUAGE_OBJECTIVE_C)

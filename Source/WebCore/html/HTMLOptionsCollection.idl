@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         CustomIndexedSetter
     ] HTMLOptionsCollection : HTMLCollection {
                  attribute long selectedIndex;

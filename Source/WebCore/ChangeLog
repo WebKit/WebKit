@@ -1,3 +1,78 @@
+2012-02-06  Kentaro Hara  <haraken@chromium.org>
+
+        Add "JS" prefix to JSC-specific IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=77846
+
+        Reviewed by Darin Adler.
+
+        In bug 77693, we have added "JS" prefix to several JSC specific IDLs.
+        This patch adds "JS" prefix to the remaining JSC specific IDLs.
+        Specifically, this patch renames IDLs as follows:
+
+        [CustomDefineOwnProperty] => [JSCustomDefineOwnProperty]
+        [CustomPrototypeDefineOwnProperty] => [JSCustomPrototypeDefineOwnProperty]
+        [GenerateNativeConverter] => [JSGenerateToNativeObject]  (Note: For naming consistency
+        with [JSGenerateToJS] and [JSCustomToNativeObject])
+        [DelegatingGetOwnPropertySlot] => [JSCustomGetOwnPropertySlotDelegate]  (Note: Should be prefixed "JS",
+        should be prefixed with "Custom", and for naming consistency with [CustomGetOwnPropertySlot])
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/TestTypedArray.idl:
+        * dom/Attr.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/Document.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryEntrySync.idl:
+        * fileapi/File.idl:
+        * fileapi/FileEntry.idl:
+        * fileapi/FileEntrySync.idl:
+        * fileapi/WebKitBlobBuilder.idl:
+        * html/DOMFormData.idl:
+        * html/DOMURL.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/TextTrackCue.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * mediastream/LocalMediaStream.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * storage/StorageInfo.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGElementInstance.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/SharedWorker.idl:
+        * workers/SharedWorkerContext.idl:
+        * workers/Worker.idl:
+        * workers/WorkerContext.idl:
+
 2012-02-07  Kentaro Hara  <haraken@chromium.org>
 
         Rename [HasOverridingNameGetter] attribute to [CustomNamedGetter] attribute

@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         NamedConstructor=Option(in [Optional=CallWithNullValue] DOMString data, in [Optional=CallWithNullValue] DOMString value, in [Optional=CallWithDefaultValue] boolean defaultSelected, in [Optional=CallWithDefaultValue] boolean selected),
         ConstructorRaisesException
     ] HTMLOptionElement : HTMLElement {

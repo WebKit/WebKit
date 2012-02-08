@@ -27,7 +27,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] HTMLCanvasElement : HTMLElement {
 
         attribute long width;

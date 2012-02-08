@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] HTMLTableSectionElement : HTMLElement {
         attribute [Reflect] DOMString align;
         attribute [Reflect=char] DOMString ch;

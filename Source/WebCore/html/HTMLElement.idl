@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         CustomPushEventHandlerScope
     ] HTMLElement : Element {
                  // iht.com relies on id returning the empty string when no id is present. 

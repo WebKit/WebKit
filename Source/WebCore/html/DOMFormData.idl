@@ -32,7 +32,7 @@ module html {
 
     interface [
         CustomConstructor,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSGenerateToJS
     ] DOMFormData {
         // void append(DOMString name, DOMString value);

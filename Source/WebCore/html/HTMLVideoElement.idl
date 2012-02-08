@@ -26,7 +26,7 @@
 module html {
     interface [
         Conditional=VIDEO,
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] HTMLVideoElement : HTMLMediaElement {
         attribute [Reflect] unsigned long width;
         attribute [Reflect] unsigned long height;

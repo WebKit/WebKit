@@ -28,7 +28,7 @@ module window {
 
     interface [
         CheckDomainSecurity,
-        CustomDefineOwnProperty,
+        JSCustomDefineOwnProperty,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
         CustomGetPropertyNames,
@@ -37,7 +37,7 @@ module window {
         CustomPutFunction,
         EventTarget,
         ExtendsDOMGlobalObject,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         ReplaceableConstructor,
         JSLegacyParent=JSDOMWindowBase
     ] DOMWindow {

@@ -28,7 +28,7 @@ module core {
         JSCustomFinalize,
         JSCustomToJS,
         EventTarget,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSInlineGetOwnPropertySlot,
         ObjCPolymorphic,
         V8DependentLifetime

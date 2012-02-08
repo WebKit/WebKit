@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] HTMLImageElement : HTMLElement {
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString align;

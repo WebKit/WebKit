@@ -28,7 +28,7 @@ module html {
         CustomConstructor,
         HasNumericIndexGetter,
         CustomIndexedSetter,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSNoStaticTables,
         JSCustomToJS,
         DoNotCheckConstants

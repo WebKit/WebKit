@@ -22,7 +22,7 @@ module core {
 
     interface [
         JSCustomToJS,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSInlineGetOwnPropertySlot
     ] Document : Node {
 

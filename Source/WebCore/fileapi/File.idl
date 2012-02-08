@@ -26,7 +26,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSGenerateToJS,
         JSNoStaticTables
     ] File : Blob {

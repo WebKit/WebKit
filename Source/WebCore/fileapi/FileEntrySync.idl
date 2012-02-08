@@ -31,7 +31,7 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSGenerateToJS,
         JSNoStaticTables
     ] FileEntrySync : EntrySync {

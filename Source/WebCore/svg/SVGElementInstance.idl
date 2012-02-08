@@ -29,7 +29,7 @@ module svg {
     interface [
         Conditional=SVG,
         JSCustomMarkFunction,
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget

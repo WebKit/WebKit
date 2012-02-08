@@ -23,7 +23,7 @@
 module svg {
 
     interface [
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         Conditional=SVG
     ] SVGElement : Element {
         attribute [Reflect] DOMString id;

@@ -469,7 +469,7 @@ sub GenerateGetOwnPropertySlotBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}) {
         push(@getOwnPropertySlotImpl, "    if (thisObject->getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
     }
@@ -570,7 +570,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (thisObject->getOwnPropertyDescriptorDelegate(exec, propertyName, descriptor))\n");
         push(@getOwnPropertyDescriptorImpl, "        return true;\n");
     }
@@ -679,7 +679,7 @@ sub GenerateHeader
         $headerIncludes{"<wtf/AlwaysInline.h>"} = 1;
     }
 
-    if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+    if ($hasParent && $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if (IsTypedArrayType($implClassName)) {
             $headerIncludes{"<wtf/$implClassName.h>"} = 1;
         } else {
@@ -758,7 +758,7 @@ sub GenerateHeader
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
                  || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
-                 || $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}
+                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
                  || $dataNode->extendedAttributes->{"CustomNamedGetter"};
 
@@ -767,8 +767,8 @@ sub GenerateHeader
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);\n");
         push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomNamedGetter"};
-        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"};
-        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"};
+        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
+        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
 
@@ -834,7 +834,7 @@ sub GenerateHeader
     }
 
     # Custom defineOwnProperty function
-    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"CustomDefineOwnProperty"};
+    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"JSCustomDefineOwnProperty"};
 
     # Override toBoolean to return false for objects that want to 'MasqueradesAsUndefined'.
     if ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"}) {
@@ -902,7 +902,7 @@ sub GenerateHeader
         push(@headerContent, "    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    $implType* m_impl;\n");
-    } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+    } elsif ($dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
         push(@headerContent, "    $implClassName* impl() const\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        return static_cast<$implClassName*>(Base::impl());\n");
@@ -1006,7 +1006,7 @@ sub GenerateHeader
     if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToJS"} || $dataNode->extendedAttributes->{"JSCustomToJS"}) {
         push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
-    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+    if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($interfaceName eq "NodeFilter") {
             push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSGlobalData&, JSC::JSValue);\n");
         } else {
@@ -1055,7 +1055,7 @@ sub GenerateHeader
     }
 
     # Custom defineOwnProperty function
-    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineOwnProperty"};
+    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"JSCustomPrototypeDefineOwnProperty"};
 
     push(@headerContent, "\nprivate:\n");
     push(@headerContent, "    ${className}Prototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }\n");
@@ -1624,7 +1624,7 @@ sub GenerateImplementation
                  || !$dataNode->extendedAttributes->{"OmitConstructor"} 
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
                  || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
-                 || $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}
+                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
                  || $dataNode->extendedAttributes->{"CustomNamedGetter"};
@@ -2328,7 +2328,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"JSCustomToNativeObject"}) {
+    if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) and !$dataNode->extendedAttributes->{"JSCustomToNativeObject"}) {
         push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return value.inherits(&${className}::s_info) ? static_cast<$className*>(asObject(value))->impl() : 0");

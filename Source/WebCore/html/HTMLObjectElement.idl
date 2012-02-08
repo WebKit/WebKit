@@ -22,7 +22,7 @@ module html {
 
     interface [
         DelegatingPutFunction,
-        DelegatingGetOwnPropertySlot,
+        JSCustomGetOwnPropertySlotDelegate,
         CustomCall
     ] HTMLObjectElement : HTMLElement {
         readonly attribute HTMLFormElement form;

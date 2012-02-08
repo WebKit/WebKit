@@ -33,7 +33,7 @@ module core {
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
         IndexedGetter,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
 #if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,
 #endif

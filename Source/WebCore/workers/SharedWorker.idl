@@ -40,7 +40,7 @@ module threads {
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
         JSCustomMarkFunction,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSGenerateToJS
     ] SharedWorker : AbstractWorker {
         readonly attribute MessagePort port;

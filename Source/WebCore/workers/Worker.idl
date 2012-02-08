@@ -35,7 +35,7 @@ module threads {
         Constructor(in DOMString scriptUrl),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
-        GenerateNativeConverter,
+        JSGenerateToNativeObject,
         JSGenerateToJS
     ] Worker : AbstractWorker {
 

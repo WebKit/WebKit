@@ -32,14 +32,14 @@ module window {
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
-        DelegatingGetOwnPropertySlot,
+        JSCustomGetOwnPropertySlotDelegate,
         DelegatingPutFunction,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        CustomDefineOwnProperty,
+        JSCustomDefineOwnProperty,
         JSCustomPrototypePutDelegate,
-        CustomPrototypeDefineOwnProperty,
+        JSCustomPrototypeDefineOwnProperty,
         OmitConstructor
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

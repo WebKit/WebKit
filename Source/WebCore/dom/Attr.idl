@@ -22,7 +22,7 @@ module core {
 
     interface [
         JSCustomMarkFunction,
-        GenerateNativeConverter
+        JSGenerateToNativeObject
     ] Attr : Node {
 
         // DOM Level 1
