@@ -1,3 +1,19 @@
+2012-02-01  Brian Grinstead  <briangrinstead@gmail.com>
+
+        Web Inspector: Add changes for Spectrum colorpicker
+        https://bugs.webkit.org/show_bug.cgi?id=75454
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Color.js:
+        (WebInspector.Color.fromRGB):
+        * inspector/front-end/utilities.js:
+        (Element.prototype.totalOffsetLeft):
+        (Element.prototype.totalOffsetTop):
+        (Element.prototype.totalOffset):
+        (Element.prototype.scrollOffset):
+        ():
+
 2012-02-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Avoid an avalanche of "class" attribute modifications in WatchExpressionsSidebarPane

@@ -44,6 +44,11 @@ WebInspector.Color.fromRGBA = function(r, g, b, a)
     return new WebInspector.Color("rgba(" + r + "," + g + "," + b + "," + (typeof a === "undefined" ? 1 : a) + ")");
 }
 
+WebInspector.Color.fromRGB = function(r, g, b)
+{
+    return new WebInspector.Color("rgb(" + r + "," + g + "," + b + ")");
+}
+
 WebInspector.Color.prototype = {
     /**
      * @return {string}

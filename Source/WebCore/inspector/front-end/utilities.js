@@ -256,14 +256,7 @@ DocumentFragment.prototype.createChild = Element.prototype.createChild;
  */
 Element.prototype.totalOffsetLeft = function()
 {
-    var total = 0;
-    for (var element = this; element; element = element.offsetParent) {
-        total += element.offsetLeft 
-        if (this !== element)
-            total += element.clientLeft - element.scrollLeft;
-    }
-        
-    return total;
+    return this.totalOffset().left;
 }
 
 /**
@@ -271,14 +264,36 @@ Element.prototype.totalOffsetLeft = function()
  */
 Element.prototype.totalOffsetTop = function()
 {
-    var total = 0;
+    return this.totalOffset().top;
+
+}
+
+Element.prototype.totalOffset = function()
+{
+    var totalLeft = 0;
+    var totalTop = 0;
+
     for (var element = this; element; element = element.offsetParent) {
-        total += element.offsetTop 
-        if (this !== element)
-            total += element.clientTop - element.scrollTop;
+        totalLeft += element.offsetLeft;
+        totalTop += element.offsetTop;
+        if (this !== element) {
+            totalLeft += element.clientLeft - element.scrollLeft;
+            totalTop += element.clientTop - element.scrollTop;
+        }
     }
-        
-    return total;
+
+    return { left: totalLeft, top: totalTop };
+}
+
+Element.prototype.scrollOffset = function()
+{
+    var curLeft = 0;
+    var curTop = 0;
+    for (var element = this; element; element = element.scrollParent) {
+        curLeft += element.scrollLeft;
+        curTop += element.scrollTop;
+    }
+    return { left: curLeft, top: curTop };
 }
 
 /**
@@ -899,6 +914,11 @@ String.format = function(format, substitutions, formatters, initialValue, append
 function isEnterKey(event) {
     // Check if in IME.
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
+}
+
+function stopPropagation(e)
+{
+    e.stopPropagation();
 }
 
 /**
