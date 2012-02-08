@@ -438,7 +438,7 @@ SET(WebKit2_LIBRARIES
     ${WebCore_LIBRARY_NAME}
 )
 
-SET(WebProcess_NAME ../Programs/WebProcess)
+SET(WebProcess_NAME ../bin/WebProcess)
 SET(WebProcess_SOURCES "")
 
 SET(WebProcess_LIBRARIES

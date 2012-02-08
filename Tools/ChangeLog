@@ -1,3 +1,23 @@
+2012-02-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Use *bin* and *lib* directories for executable and libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=77928
+
+        Reviewed by Daniel Bates.
+
+        CMake has used *Programs* directory for executable. In addition, shared libraries are being
+        built in source directory. It is better to set common places in order to maintain executable
+        and libraries. *bin* is for executable and *lib* is for library.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * EWebLauncher/CMakeLists.txt:
+        * Scripts/run-launcher:
+        * Scripts/webkitdirs.pm:
+        (jscProductDir):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._path_to_driver):
+        (EflPort._path_to_image_diff):
+
 2012-02-07  Adam Klein  <adamk@chromium.org>
 
         Add JSC support for delivering mutations when the outermost script context exits

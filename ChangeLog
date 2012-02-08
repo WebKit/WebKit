@@ -1,3 +1,17 @@
+2012-02-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Use *bin* and *lib* directories for executable and libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=77928
+
+        Reviewed by Daniel Bates.
+
+        CMake has used *Programs* directory for executable. In addition, shared libraries are being
+        built in source directory. It is better to set common places in order to maintain executable
+        and libraries. *bin* is for executable and *lib* is for library.
+
+        * CMakeLists.txt: Set library output path.
+        * Source/cmake/WebKitFS.cmake: Remove *Programs* creation.
+
 2012-02-07  Priit Laes  <plaes@plaes.org>
 
         Get rid of Source/autotools/webkit.m4

@@ -72,7 +72,7 @@ if (isQt()) {
     }
     
     if (isEfl()) {
-        $launcherPath = catdir($launcherPath, "Programs", "EWebLauncher");
+        $launcherPath = catdir($launcherPath, "bin", "EWebLauncher");
     }
     
     if (isWx()) {

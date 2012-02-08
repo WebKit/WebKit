@@ -453,8 +453,8 @@ sub productDir
 sub jscProductDir
 {
     my $productDir = productDir();
-    $productDir .= "/bin" if isQt();
-    $productDir .= "/Programs" if (isGtk() || isEfl());
+    $productDir .= "/bin" if (isQt() || isEfl());
+    $productDir .= "/Programs" if isGtk();
 
     return $productDir;
 }
