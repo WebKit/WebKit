@@ -1,3 +1,92 @@
+2012-02-07  Emil A Eklund  <eae@chromium.org>
+
+        Add pixelSnappedX/Y/Width/Height methods
+        https://bugs.webkit.org/show_bug.cgi?id=78040
+
+        Reviewed by Eric Seidel.
+
+        Add pixel snapped versions of x/y/width/height methods. These return the
+        same value as the x/w/width/height methods for now but once we move over
+        to sub pixel layout they will snap the subpixel value to a device pixel
+        and return an integer value.
+
+        When snapping the left and top edge is simply rounded to the nearest
+        device pixel.
+        The right and bottom edges are computed by subtracting the rounded left/
+        top edge from the precise location and size. This ensures that the edges
+        all line up with device pixels and that the total size of an object,
+        including borders, is at most one pixel off.
+
+        In summary, the values are computed as follows:
+                x: round(x)
+                y: round(y)
+                maxX: round(x + width)
+                maxY: round(y + height)
+                width: round(x + width) - round(x)
+                height: round(y + height) - round(y)
+
+        We use the term pixel snapped to indicate that the numbers are not merely
+        rounded. This also matches the naming used by the line box tree.
+
+        No new tests, no functionality changes.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageNumberForElement):
+        * rendering/RenderBlock.cpp:
+        (WebCore::::collectIfNeeded):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::pixelSnappedLogicalRightOffsetForLine):
+        (WebCore::RenderBlock::pixelSnappedLogicalLeftOffsetForLine):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedX):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedMaxX):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedY):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedMaxY):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedWidth):
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedHeight):
+        (FloatingObject):
+        (WebCore::RenderBlock::pixelSnappedLogicalTopForFloat):
+        (WebCore::RenderBlock::pixelSnappedLogicalBottomForFloat):
+        (WebCore::RenderBlock::pixelSnappedLogicalLeftForFloat):
+        (WebCore::RenderBlock::pixelSnappedLogicalRightForFloat):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pixelSnappedClientWidth):
+        (WebCore):
+        (WebCore::RenderBox::pixelSnappedClientHeight):
+        (WebCore::RenderBox::scrollHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::pixelSnappedWidth):
+        (WebCore::RenderBox::pixelSnappedHeight):
+        (RenderBox):
+        (WebCore::RenderBox::pixelSnappedOffsetWidth):
+        (WebCore::RenderBox::pixelSnappedOffsetHeight):
+        (WebCore::RenderBox::clientLogicalWidth):
+        (WebCore::RenderBox::clientLogicalHeight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetWidth):
+        (WebCore):
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetHeight):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetLeft):
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetTop):
+        (RenderBoxModelObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::pixelSnappedScrollWidth):
+        (WebCore):
+        (WebCore::RenderLayer::pixelSnappedScrollHeight):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollHeight):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2012-02-07  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc() - simple parse time evaluation

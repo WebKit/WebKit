@@ -617,10 +617,10 @@ static void write(TextStream& ts, RenderLayer& l,
             ts << " scrollX " << l.scrollXOffset();
         if (l.scrollYOffset())
             ts << " scrollY " << l.scrollYOffset();
-        if (l.renderBox() && l.renderBox()->clientWidth() != l.scrollWidth())
-            ts << " scrollWidth " << l.scrollWidth();
-        if (l.renderBox() && l.renderBox()->clientHeight() != l.scrollHeight())
-            ts << " scrollHeight " << l.scrollHeight();
+        if (l.renderBox() && l.renderBox()->pixelSnappedClientWidth() != l.pixelSnappedScrollWidth())
+            ts << " scrollWidth " << l.pixelSnappedScrollWidth();
+        if (l.renderBox() && l.renderBox()->pixelSnappedClientHeight() != l.pixelSnappedScrollHeight())
+            ts << " scrollHeight " << l.pixelSnappedScrollHeight();
     }
 
     if (paintPhase == LayerPaintPhaseBackground)

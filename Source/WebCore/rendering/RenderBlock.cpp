@@ -3673,7 +3673,7 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
     const FloatingObject* r = interval.data();
     if (r->type() == FloatTypeValue && interval.low() <= m_value && m_value < interval.high()) {
         // All the objects returned from the tree should be already placed.
-        ASSERT(r->isPlaced() && m_renderer->logicalTopForFloat(r) <= m_value && m_renderer->logicalBottomForFloat(r) > m_value);
+        ASSERT(r->isPlaced() && m_renderer->pixelSnappedLogicalTopForFloat(r) <= m_value && m_renderer->pixelSnappedLogicalBottomForFloat(r) > m_value);
 
         if (FloatTypeValue == FloatingObject::FloatLeft 
             && m_renderer->logicalRightForFloat(r) > m_offset) {

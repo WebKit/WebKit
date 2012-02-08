@@ -512,6 +512,16 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
     return yPos;
 }
 
+int RenderBoxModelObject::pixelSnappedOffsetWidth() const
+{
+    return offsetWidth();
+}
+
+int RenderBoxModelObject::pixelSnappedOffsetHeight() const
+{
+    return offsetHeight();
+}
+
 LayoutUnit RenderBoxModelObject::paddingTop(bool) const
 {
     LayoutUnit w = 0;

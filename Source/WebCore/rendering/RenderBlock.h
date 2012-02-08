@@ -163,6 +163,17 @@ public:
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine)
             : logicalWidth() - logicalRightOffsetForLine(position, firstLine);
     }
+
+    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
+    int pixelSnappedLogicalRightOffsetForLine(LayoutUnit position, bool firstLine) const
+    {
+        return logicalRightOffsetForLine(position, logicalRightOffsetForContent(position), firstLine, 0);
+    }
+
+    int pixelSnappedLogicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const
+    {
+        return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine, 0);
+    }
     
     LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
     LayoutUnit textIndentOffset() const;
@@ -561,6 +572,14 @@ private:
         LayoutUnit width() const { return m_frameRect.width(); }
         LayoutUnit height() const { return m_frameRect.height(); }
 
+        // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
+        int pixelSnappedX() const { return x(); }
+        int pixelSnappedMaxX() const { return maxX(); }
+        int pixelSnappedY() const { return y(); }
+        int pixelSnappedMaxY() const { return maxY(); }
+        int pixelSnappedWidth() const { return width(); }
+        int pixelSnappedHeight() const { return height(); }
+
         void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
         void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
         void setWidth(LayoutUnit width) { ASSERT(!isInPlacedTree()); m_frameRect.setWidth(width); }
@@ -594,6 +613,12 @@ private:
     LayoutUnit logicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() : child->y(); }
     LayoutUnit logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
     LayoutUnit logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
+
+    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
+    int pixelSnappedLogicalTopForFloat(const FloatingObject* child) const { return logicalTopForFloat(child); }
+    int pixelSnappedLogicalBottomForFloat(const FloatingObject* child) const { return logicalBottomForFloat(child); }
+    int pixelSnappedLogicalLeftForFloat(const FloatingObject* child) const { return logicalLeftForFloat(child); }
+    int pixelSnappedLogicalRightForFloat(const FloatingObject* child) const { return logicalRightForFloat(child); }
 
     void setLogicalTopForFloat(FloatingObject* child, LayoutUnit logicalTop)
     {

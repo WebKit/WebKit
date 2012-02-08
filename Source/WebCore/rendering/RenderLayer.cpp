@@ -2226,6 +2226,16 @@ LayoutUnit RenderLayer::scrollHeight()
     return m_scrollSize.height();
 }
 
+int RenderLayer::pixelSnappedScrollWidth()
+{
+    return scrollWidth();
+}
+
+int RenderLayer::pixelSnappedScrollHeight()
+{
+    return scrollHeight();
+}
+
 LayoutUnit RenderLayer::overflowTop() const
 {
     RenderBox* box = renderBox();
@@ -2274,9 +2284,9 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     setScrollOrigin(IntPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height()));
 
     if (needHBar)
-        *needHBar = m_scrollSize.width() > box->clientWidth();
+        *needHBar = pixelSnappedScrollWidth() > box->pixelSnappedClientWidth();
     if (needVBar)
-        *needVBar = m_scrollSize.height() > box->clientHeight();
+        *needVBar = pixelSnappedScrollHeight() > box->pixelSnappedClientHeight();
 }
 
 void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
@@ -2381,14 +2391,14 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
     // Set up the range (and page step/line step).
     if (m_hBar) {
-        LayoutUnit clientWidth = box->clientWidth();
-        LayoutUnit pageStep = max<LayoutUnit>(max<LayoutUnit>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
+        int clientWidth = box->pixelSnappedClientWidth();
+        int pageStep = max(max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_hBar->setProportion(clientWidth, m_scrollSize.width());
     }
     if (m_vBar) {
-        LayoutUnit clientHeight = box->clientHeight();
-        LayoutUnit pageStep = max<LayoutUnit>(max<LayoutUnit>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
+        int clientHeight = box->pixelSnappedClientHeight();
+        int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }

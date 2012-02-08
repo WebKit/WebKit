@@ -478,6 +478,16 @@ LayoutUnit RenderBox::clientHeight() const
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
+int RenderBox::pixelSnappedClientWidth() const
+{
+    return clientWidth();
+}
+
+int RenderBox::pixelSnappedClientHeight() const
+{
+    return clientHeight();
+}
+
 int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())
@@ -495,7 +505,7 @@ int RenderBox::scrollHeight() const
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
-    return max(clientHeight(), maxYLayoutOverflow() - borderTop());
+    return max(pixelSnappedClientHeight(), maxYLayoutOverflow() - borderTop());
 }
 
 int RenderBox::scrollLeft() const

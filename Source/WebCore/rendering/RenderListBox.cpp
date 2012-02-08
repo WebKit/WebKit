@@ -651,7 +651,7 @@ LayoutUnit RenderListBox::scrollWidth() const
 
 int RenderListBox::scrollHeight() const
 {
-    return max(clientHeight(), listHeight());
+    return max(pixelSnappedClientHeight(), listHeight());
 }
 
 int RenderListBox::scrollLeft() const

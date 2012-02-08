@@ -60,6 +60,12 @@ public:
     virtual LayoutUnit offsetWidth() const = 0;
     virtual LayoutUnit offsetHeight() const = 0;
 
+    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
+    int pixelSnappedOffsetLeft() const { return offsetLeft(); }
+    int pixelSnappedOffsetTop() const { return offsetTop(); }
+    int pixelSnappedOffsetWidth() const;
+    int pixelSnappedOffsetHeight() const;
+
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();

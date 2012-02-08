@@ -282,6 +282,8 @@ public:
 
     LayoutUnit scrollWidth();
     LayoutUnit scrollHeight();
+    int pixelSnappedScrollWidth();
+    int pixelSnappedScrollHeight();
 
     void panScrollFromPoint(const LayoutPoint&);
 

@@ -128,11 +128,11 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
         return;
 
     if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
-        m_left = m_block->logicalRightForFloat(newFloat);
+        m_left = m_block->pixelSnappedLogicalRightForFloat(newFloat);
         if (m_isFirstLine && m_block->style()->isLeftToRightDirection())
             m_left += m_block->textIndentOffset();
     } else {
-        m_right = m_block->logicalLeftForFloat(newFloat);
+        m_right = m_block->pixelSnappedLogicalLeftForFloat(newFloat);
         if (m_isFirstLine && !m_block->style()->isLeftToRightDirection())
             m_right -= m_block->textIndentOffset();
     }

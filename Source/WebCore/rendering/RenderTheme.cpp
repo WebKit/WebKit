@@ -503,7 +503,7 @@ String RenderTheme::formatMediaControlsRemainingTime(float currentTime, float du
 LayoutPoint RenderTheme::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const LayoutSize& size) const
 {
     LayoutUnit y = -size.height();
-    FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->offsetLeft(), y), true, true);
+    FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->pixelSnappedOffsetLeft(), y), true, true);
     if (absPoint.y() < 0)
         y = muteButtonBox->height();
     return LayoutPoint(0, y);
