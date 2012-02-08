@@ -1,3 +1,16 @@
+2012-02-08  James Robinson  <jamesr@chromium.org>
+
+        r107042 caused compile breakages on chromium try bots
+        https://bugs.webkit.org/show_bug.cgi?id=78125
+
+        Reviewed by Adam Barth.
+
+        Replace the copy script with a copies GYP action since the MSVS generator tracks dependencies on a per-file
+        basis.
+
+        * Platform.gyp/Platform.gyp:
+        * Platform.gyp/copy_webcore_headers.py: Removed.
+
 2012-02-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move geometry headers in Platform API to Platform directory

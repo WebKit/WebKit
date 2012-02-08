@@ -86,22 +86,12 @@
                     ],
                 }],
             ],
-            'actions': [
+            'copies': [
                 {
-                    'action_name': 'platform_api_copy_webcore_headers',
-                    'inputs': [
+                    'destination': '<(output_dir)',
+                    'files': [
                         '<@(webcore_headers)'
-                    ],
-                    'outputs': [
-                        '<(output_dir)/IntPoint.h' # Just have to depend on any one copied header
-                    ],
-                    'action': [
-                        'python',
-                        'copy_webcore_headers.py',
-                        '<(SHARED_INTERMEDIATE_DIR)/webcore_headers',
-                        '<@(webcore_headers)'
-                    ],
-                    'message': 'Copying WebCore headers needed by Platform API'
+                    ]
                 }
             ]
         }
