@@ -632,7 +632,7 @@ void Node::normalize()
             continue;
         }
 
-        Text* text = static_cast<Text*>(node.get());
+        RefPtr<Text> text = static_cast<Text*>(node.get());
 
         // Remove empty text nodes.
         if (!text->length()) {
