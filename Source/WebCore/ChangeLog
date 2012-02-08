@@ -1,5 +1,19 @@
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
+        Replace [CheckNodeSecurity] with [CheckAccessToNode]
+        https://bugs.webkit.org/show_bug.cgi?id=77971
+
+        Reviewed by Adam Barth.
+
+        [CheckNodeSecurity] is not implemented by code generators.
+        This patch replaces [CheckNodeSecurity] with [CheckAccessToNode].
+
+        Test: http/tests/security/cross-frame-access-frameelement.html
+
+        * page/DOMWindow.idl:
+
+2012-02-08  Kentaro Hara  <haraken@chromium.org>
+
         Rename [CustomPushEventHandlerScope] to [JSCustomPushEventHandlerScope]
         https://bugs.webkit.org/show_bug.cgi?id=78081
 

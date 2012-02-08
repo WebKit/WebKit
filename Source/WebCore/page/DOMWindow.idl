@@ -60,7 +60,7 @@ module window {
 
         DOMSelection getSelection();
 
-        readonly attribute [CheckNodeSecurity] Element frameElement;
+        readonly attribute [CheckAccessToNode] Element frameElement;
 
         [DoNotCheckDomainSecurity] void focus();
         [DoNotCheckDomainSecurity] void blur();
