@@ -1,3 +1,13 @@
+2012-02-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [CRASH] InspectorDOMAgent::updateTouchEventEmulationInPage()
+        https://bugs.webkit.org/show_bug.cgi?id=78090
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::updateTouchEventEmulationInPage):
+
 2012-02-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Closed computed style sidebar pane rebuilds, resulting in slowness

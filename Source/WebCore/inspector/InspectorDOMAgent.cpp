@@ -640,7 +640,8 @@ void InspectorDOMAgent::discardBindings()
 void InspectorDOMAgent::updateTouchEventEmulationInPage(bool enabled)
 {
     m_state->setBoolean(DOMAgentState::touchEventEmulationEnabled, enabled);
-    m_pageAgent->mainFrame()->settings()->setTouchEventEmulationEnabled(enabled);
+    if (m_pageAgent->mainFrame() && m_pageAgent->mainFrame()->settings())
+        m_pageAgent->mainFrame()->settings()->setTouchEventEmulationEnabled(enabled);
 }
 #endif
 
