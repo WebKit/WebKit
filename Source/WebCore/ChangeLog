@@ -1,3 +1,16 @@
+2012-02-08  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Disable root layer clears on release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=77478
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::clearRenderSurface):
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+
 2012-02-08  Anders Carlsson  <andersca@apple.com>
 
         Add a content shadow layer to the render layer compositor

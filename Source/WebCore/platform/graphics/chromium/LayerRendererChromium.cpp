@@ -306,9 +306,9 @@ void LayerRendererChromium::viewportChanged()
     m_currentRenderSurface = 0;
 }
 
-void LayerRendererChromium::clearSurfaceForDebug(CCRenderSurface* renderSurface, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect)
+void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect)
 {
-    // Non-root layers should clear their entire contents to transparent. The root layer
+    // Non-root layers should clear their entire contents to transparent. On DEBUG builds, the root layer
     // is cleared to blue to easily see regions that were not drawn on the screen. If we
     // are using partial swap / scissor optimization, then the surface should only
     // clear the damaged region, so that we don't accidentally clear un-changed portions
@@ -324,7 +324,11 @@ void LayerRendererChromium::clearSurfaceForDebug(CCRenderSurface* renderSurface,
     else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+#if defined(NDEBUG)
+    if (renderSurface != rootRenderSurface)
+#endif
+        m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 }
 
@@ -374,8 +378,7 @@ void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass)
     if (!useRenderSurface(renderSurface))
         return;
 
-    // FIXME: eventually we should place this under a debug flag.
-    clearSurfaceForDebug(renderSurface, m_defaultRenderSurface, renderPass->surfaceDamageRect());
+    clearRenderSurface(renderSurface, m_defaultRenderSurface, renderPass->surfaceDamageRect());
 
     const CCQuadList& quadList = renderPass->quadList();
     for (size_t i = 0; i < quadList.size(); ++i)
