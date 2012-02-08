@@ -558,6 +558,10 @@ http/tests/misc/xslt-bad-import.html
 # https://bugs.webkit.org/show_bug.cgi?id=72491
 http/tests/misc/onload-remove-iframe-crash-2.html
 
+# Needs rebaselining
+# https://bugs.webkit.org/show_bug.cgi?id=77971
+http/tests/security/cross-frame-access-put.html
+
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
 # =========================================================================== #
