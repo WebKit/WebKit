@@ -1383,6 +1383,10 @@ svg/as-image/svg-nested.html
 svg/hittest/zero-length-round-cap-path.xhtml
 svg/hittest/zero-length-square-cap-path.xhtml
 
+# [Qt] svg/zoom/page/zoom-coords-viewattr-01-b.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=78128
+svg/zoom/page/zoom-coords-viewattr-01-b.svg
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
