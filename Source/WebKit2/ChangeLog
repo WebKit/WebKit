@@ -1,3 +1,30 @@
+2012-02-07  Timothy Hatcher  <timothy@apple.com>
+
+        Avoid making a window for the Web Inspector when it is docked.
+
+        This also makes sure the inspector WKView is in a window before the page is loaded.
+        This avoids some redundant work caused by moving it to a window later.
+
+        https://webkit.org/b/78064
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): Set m_isAttached here...
+        (WebKit::WebInspectorProxy::didLoadInspectorPage): ... instead of here.
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow): Added. Factored out of platformOpen.
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle): Added. Factored out of platformInspectedURLChanged.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Call platformAttach or createInspectorWindow.
+        (WebKit::WebInspectorProxy::platformOpen): Make the view or window visible.
+        (WebKit::WebInspectorProxy::platformDidClose): Only message m_inspectorWindow if it isn't nil.
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Store the urlString and call updateInspectorWindowTitle.
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Return early if not visible.
+        (WebKit::WebInspectorProxy::platformAttach): Start out hidden if we are not visible yet. Destroy the window.
+        (WebKit::WebInspectorProxy::platformDetach): Use createInspectorWindow to create it again.
+
 2012-02-07  Tony Chang  <tony@chromium.org>
 
         merge DashboardSupportCSSPropertyNames.in into CSSPropertyNames.in

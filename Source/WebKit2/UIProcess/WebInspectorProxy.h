@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -82,6 +83,8 @@ public:
     void close();
     
 #if PLATFORM(MAC)
+    void createInspectorWindow();
+    void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange();
 #elif PLATFORM(GTK)
     void windowDestroyed();
@@ -175,6 +178,7 @@ private:
     RetainPtr<WKWebInspectorWKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
+    String m_urlString;
 #elif PLATFORM(WIN)
     HWND m_inspectorWindow;
     RefPtr<WebView> m_inspectorView;

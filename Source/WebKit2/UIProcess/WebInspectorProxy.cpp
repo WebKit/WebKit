@@ -207,6 +207,8 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     if (!m_page)
         return;
 
+    m_isAttached = shouldOpenAttached();
+
     WebPageProxy* inspectorPage = platformCreateInspectorPage();
     ASSERT(inspectorPage);
     if (!inspectorPage)
@@ -216,7 +218,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPageParameters = inspectorPage->creationParameters();
 
     String url = inspectorPageURL();
-    if (shouldOpenAttached())
+    if (m_isAttached)
         url += "?docked=true";
     m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
     inspectorPage->loadURL(url);
@@ -225,7 +227,6 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
 void WebInspectorProxy::didLoadInspectorPage()
 {
     m_isVisible = true;
-    m_isAttached = shouldOpenAttached();
 
     // platformOpen is responsible for rendering attached mode depending on m_isAttached.
     platformOpen();
