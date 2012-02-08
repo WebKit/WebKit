@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  style="width:300px;height:400px">
+
+<!-- This tests filters failing to refresh after the initial rendering
+(https://bugs.webkit.org/show_bug.cgi?id=53088).
+There should be two green squares in the output. -->
+
+<defs>
+<filter id="simple" x="0" y="0">
+  <feOffset in="SourceGraphic" dx="0" dy="0" />
+</filter>
+
+<rect id="rect" width="30" y="10" height="30" fill="red" />
+
+</defs>
+
+<g>
+
+<use xlink:href="#rect" x="10" />
+
+<use filter="url(#simple)" xlink:href="#rect" x="50" />
+
+</g>
+
+<script><![CDATA[
+    var elements = ['rect'];
+    for (var i=0; i<elements.length; ++i) {
+      elements[i] = document.getElementById(elements[i]);
+    }
+    setTimeout(wait, 0);
+    
+    function wait() {
+      // Single timeout doesn't seem to wait for the initial painting, wait again.
+      setTimeout(change, 0);
+    }
+
+    function change() {
+      for (var i=0; i<elements.length; ++i) {
+        elements[i].setAttribute('fill', 'green');
+      }
+
+      if (window.layoutTestController) {
+          // Let it repaint and get screenshot.
+          setTimeout("layoutTestController.notifyDone()", 0);
+      }
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+    }
+]]></script>
+
+</svg>

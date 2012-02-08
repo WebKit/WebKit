@@ -1,3 +1,19 @@
+2012-02-07  Levi Weintraub  <leviw@chromium.org>
+
+        [SVG] Use element disappears after scripted change
+        https://bugs.webkit.org/show_bug.cgi?id=74392
+
+        Reviewed by Eric Seidel.
+
+        Solution uncovered by Nikolas Zimmermann. Removing an early return that caused
+        SVGUseElements to not update the shadow root's style, and therefor not render
+        correctly.
+
+        Test: svg/custom/use-disappears-after-style-update.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::didRecalcStyle):
+
 2012-02-07  Kentaro Hara  <haraken@chromium.org>
 
         Rename [v8OnProto] IDL attribute to [V8OnProto] IDL attribute

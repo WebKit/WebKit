@@ -358,17 +358,12 @@ void SVGUseElement::didRecalcStyle(StyleChange change)
     if (!shadowRoot)
         return;
     
-    bool needsStyleUpdate = !m_needsShadowTreeRecreation;
     if (m_needsShadowTreeRecreation) {
         shadowRoot->markShadowTreeForRecreation();
         m_needsShadowTreeRecreation = false;
     }
 
     shadowRoot->updateFromElement();
-
-    if (!needsStyleUpdate)
-        return;
-
     shadowRoot->updateStyle(change);
 }
 
