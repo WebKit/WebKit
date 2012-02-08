@@ -1,3 +1,26 @@
+2012-02-07  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Remove no longer necessary Chromium gesture recognizer code.
+        https://bugs.webkit.org/show_bug.cgi?id=77492
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gypi:
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::handleTouchEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::touchEvent):
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+        * tests/InnerGestureRecognizerTest.cpp: Removed.
+
 2012-02-07  David Reveman  <reveman@chromium.org>
 
         [Chromium] REGRESSION(r101854): Causing large amounts of unnecessary repainting.

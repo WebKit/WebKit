@@ -1,3 +1,25 @@
+2012-02-07  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Remove the no longer necessary Chromium gesture recognizer.
+        https://bugs.webkit.org/show_bug.cgi?id=77492
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gypi:
+        * platform/PlatformGestureRecognizer.h: Removed.
+        * platform/chromium/FramelessScrollView.h:
+        (WebCore):
+        (FramelessScrollView):
+        * platform/chromium/GestureRecognizerChromium.cpp: Removed.
+        * platform/chromium/GestureRecognizerChromium.h: Removed.
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore):
+        * platform/chromium/PopupContainer.h:
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore):
+        * platform/chromium/PopupListBox.h:
+        (PopupListBox):
+
 2012-02-07  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Allow bindings for attributes on DOM nodes to also set a named hidden reference

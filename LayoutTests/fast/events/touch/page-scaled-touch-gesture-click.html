@@ -19,7 +19,6 @@
 <script>
 var clickEventsReceived = 0;
 var expectedMouseEvents = 4;
-var touchEventsReceived = 0;
 var mouseEventsReceived = 0;
 var eventTypes = [ 'mousemove', 'mousedown', 'mouseup', 'click' ];
 
@@ -29,8 +28,8 @@ function gestureEventCallback(event)
         shouldBeEqualToString('event.type', eventTypes[mouseEventsReceived]);
         shouldBe('event.clientX', '20');
         shouldBe('event.clientY', '24');
-        shouldBe("event.shiftKey", "true");
-        shouldBe("event.altKey", "true");
+        shouldBe("event.shiftKey", "false");
+        shouldBe("event.altKey", "false");
         shouldBe("event.ctrlKey", "false");
         shouldBe("event.metaKey", "false");
         mouseEventsReceived++;
@@ -54,24 +53,6 @@ function touchEventCallback(event) {
     return true;
 }
 
-function singleTouchSequence()
-{
-    eventSender.clearTouchPoints();
-    // Coordinates passed to eventSender.addTouchPoint are in screen pixels,
-    // relative to the top left of the window.
-    eventSender.addTouchPoint(10, 12);
-    eventSender.touchStart();
-
-    // Insert some delay. NB: this value depends on minClickDownTime,
-    // maxClickDownTime from GestureRecognizerChromium.cpp
-    eventSender.leapForward(20);
-    eventSender.setTouchModifier("shift", true);
-    eventSender.setTouchModifier("alt", true);
-
-    eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
-}
-
 function endTest()
 {
     if (mouseEventsReceived < expectedMouseEvents) {
@@ -93,9 +74,6 @@ function runTest() {
     div.addEventListener("mouseup", gestureEventCallback, false);
     div.addEventListener("mousemove", gestureEventCallback, false);
     document.addEventListener("keydown", quitKeyToEndTest, false);
-    div.addEventListener("touchstart", touchEventCallback, false);
-    div.addEventListener("touchmove", touchEventCallback, false);
-    div.addEventListener("touchend", touchEventCallback, false);
 
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
@@ -103,7 +81,7 @@ function runTest() {
     if (window.eventSender) {
         description("This tests basic single touch gesture generation.");
         if (eventSender.clearTouchPoints) {
-            singleTouchSequence();
+            eventSender.gestureTap(10, 12);
             eventSender.leapForward(10);
             eventSender.keyDown(' ');
         } else {

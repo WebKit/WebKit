@@ -292,7 +292,7 @@ bool PopupContainer::handleTouchEvent(const PlatformTouchEvent&)
 }
 #endif
 
-#if ENABLE(GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_EVENTS)
 // FIXME: Refactor this code to share functionality with EventHandler::handleGestureEvent.
 bool PopupContainer::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {

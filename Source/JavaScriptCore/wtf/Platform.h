@@ -859,10 +859,6 @@
 #define ENABLE_GEOLOCATION 0
 #endif
 
-#if !defined(ENABLE_GESTURE_RECOGNIZER)
-#define ENABLE_GESTURE_RECOGNIZER 0
-#endif
-
 #if !defined(ENABLE_VIEWPORT)
 #define ENABLE_VIEWPORT 0
 #endif

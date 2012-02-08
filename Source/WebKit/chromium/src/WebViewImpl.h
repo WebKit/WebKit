@@ -68,9 +68,6 @@ class PopupMenuClient;
 class Range;
 class RenderTheme;
 class Widget;
-#if ENABLE(GESTURE_RECOGNIZER)
-class PlatformGestureRecognizer;
-#endif
 }
 
 namespace WebKit {
@@ -458,10 +455,6 @@ public:
     // a plugin can update its own zoom, say because of its own UI.
     void fullFramePluginZoomLevelChanged(double zoomLevel);
 
-#if ENABLE(GESTURE_RECOGNIZER)
-    void resetGestureRecognizer();
-#endif
-
     void loseCompositorContext(int numTimes);
 
     void enterFullScreenForElement(WebCore::Element*);
@@ -689,10 +682,6 @@ private:
     RefPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    OwnPtr<WebCore::PlatformGestureRecognizer> m_gestureRecognizer;
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaClientImpl m_userMediaClientImpl;

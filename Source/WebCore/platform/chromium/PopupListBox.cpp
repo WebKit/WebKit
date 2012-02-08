@@ -186,7 +186,7 @@ bool PopupListBox::handleTouchEvent(const PlatformTouchEvent&)
 }
 #endif
 
-#if ENABLE(GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_EVENTS)
 bool PopupListBox::handleGestureEvent(const PlatformGestureEvent&)
 {
     return false;

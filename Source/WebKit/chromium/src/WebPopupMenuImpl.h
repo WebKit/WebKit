@@ -139,10 +139,6 @@ public:
     // This is a non-owning ref. The popup will notify us via popupClosed()
     // before it is destroyed.
     WebCore::FramelessScrollView* m_widget;
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    OwnPtr<WebCore::PlatformGestureRecognizer> m_gestureRecognizer;
-#endif
 };
 
 } // namespace WebKit

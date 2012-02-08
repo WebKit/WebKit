@@ -36,7 +36,7 @@
 namespace WebCore {
 
     class FramelessScrollViewClient;
-#if ENABLE(GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_EVENTS)
     class PlatformGestureEvent;
 #endif
     class PlatformKeyboardEvent;
@@ -69,7 +69,7 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         virtual bool handleTouchEvent(const PlatformTouchEvent&) = 0;
 #endif
-#if ENABLE(GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_EVENTS)
         virtual bool handleGestureEvent(const PlatformGestureEvent&) = 0;
 #endif
 

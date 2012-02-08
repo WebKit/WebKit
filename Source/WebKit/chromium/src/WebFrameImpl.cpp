@@ -2105,10 +2105,6 @@ void WebFrameImpl::createFrameView()
     m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
     if (webView->shouldAutoResize() && isMainFrame)
         m_frame->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    webView->resetGestureRecognizer();
-#endif
 }
 
 WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)
