@@ -42,13 +42,8 @@ static String platformLanguage()
 
     if (!localeDefault)
         return String("c");
- 
-    char* ptr = strchr(localeDefault, '_');
 
-    if (ptr)
-        *ptr = '-';
-  
-    return String(localeDefault);
+    return String(localeDefault).replace('_', '-');
 }
 
 Vector<String> platformUserPreferredLanguages()
