@@ -1,3 +1,16 @@
+2012-02-08  Antoine Labour  <piman@chromium.org>
+
+        Make WebGL context current early to check validity
+        https://bugs.webkit.org/show_bug.cgi?id=78141
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::create):
+
 2012-02-08  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Disable root layer clears on release builds.
