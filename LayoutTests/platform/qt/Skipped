@@ -2526,15 +2526,6 @@ fast/multicol/span/span-as-immediate-columns-child-removal.html
 # new test introduced in http://trac.webkit.org/changeset/106072 - need more investigation
 fast/parser/nested-fragment-parser-crash.html
 
-# REGRESSION(r106554): It made 4 tests assert
-# Hovered node gets stuck on touch events
-# https://bugs.webkit.org/show_bug.cgi?id=77620
-fast/events/touch/basic-multi-touch-events.html
-fast/events/touch/touch-target.html
-fast/events/touch/touch-before-pressing-spin-button.html
-fast/events/touch/touch-coords-in-zoom-and-scroll.html
-fast/events/touch/touch-inside-iframe.html
-
 # new test introduced in http://trac.webkit.org/changeset/106642 failes on Qt Release
 # https://bugs.webkit.org/show_bug.cgi?id=77729
 fast/events/touch/emulate-touch-events.html 
@@ -2542,3 +2533,11 @@ fast/events/touch/emulate-touch-events.html
 # [Qt] REGRESSION(r106918): It made svg/as-object/nested-embedded-svg-size-changes.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=78026
 svg/as-object/nested-embedded-svg-size-changes.html
+
+# [Qt] fast/text/international/inline-plaintext-is-isolated.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=78092
+fast/text/international/inline-plaintext-is-isolated.html
+
+# Synthetic bold is illegible under some scaling transforms
+# https://bugs.webkit.org/show_bug.cgi?id=78044
+fast/text/synthetic-bold-transformed.html
