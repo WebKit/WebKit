@@ -1,3 +1,14 @@
+2012-02-08  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Compute and set cache capacities using the current CacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=73918
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Set default cacheModel for Qt platform to
+        CacheModelPrimaryWebBrowser.
+
 2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix WebKitWebView::decide-policy API documentation

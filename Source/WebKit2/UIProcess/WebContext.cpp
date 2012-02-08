@@ -122,7 +122,11 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_visitedLinkProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
+#if PLATFORM(QT)
+    , m_cacheModel(CacheModelPrimaryWebBrowser)
+#else
     , m_cacheModel(CacheModelDocumentViewer)
+#endif
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_applicationCacheManagerProxy(WebApplicationCacheManagerProxy::create(this))
