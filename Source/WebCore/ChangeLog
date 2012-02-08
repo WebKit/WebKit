@@ -1,3 +1,20 @@
+2012-02-08  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [CustomPushEventHandlerScope] to [JSCustomPushEventHandlerScope]
+        https://bugs.webkit.org/show_bug.cgi?id=78081
+
+        Reviewed by Adam Barth.
+
+        [CustomPushEventHandlerScope] is a JSC-specific IDL attribute.
+        This patch renames it to [JSCustomPushEventHandlerScope]
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * dom/Node.idl:
+        * html/HTMLElement.idl:
+
 2012-02-06  Kentaro Hara  <haraken@chromium.org>
 
         Add "JS" prefix to JSC-specific IDLs
