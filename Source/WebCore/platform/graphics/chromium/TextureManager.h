@@ -79,7 +79,7 @@ public:
     void releaseToken(TextureToken);
     bool hasTexture(TextureToken);
 
-    bool requestTexture(TextureToken, IntSize, GC3Denum textureFormat, unsigned& textureId);
+    bool requestTexture(TextureToken, IntSize, GC3Denum textureFormat);
 
     void protectTexture(TextureToken);
     void unprotectTexture(TextureToken);
@@ -109,7 +109,6 @@ private:
 
     void addTexture(TextureToken, TextureInfo);
     void removeTexture(TextureToken, TextureInfo);
-    unsigned replaceTexture(TextureToken, TextureInfo);
 
     HashSet<ManagedTexture*> m_registeredTextures;
 

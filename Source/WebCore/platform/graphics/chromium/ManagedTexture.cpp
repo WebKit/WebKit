@@ -92,7 +92,7 @@ bool ManagedTexture::reserve(const IntSize& size, unsigned format)
         m_textureManager->protectTexture(m_token);
     else {
         m_textureId = 0;
-        reserved = m_textureManager->requestTexture(m_token, size, format, m_textureId);
+        reserved = m_textureManager->requestTexture(m_token, size, format);
         if (reserved) {
             m_size = size;
             m_format = format;

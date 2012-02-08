@@ -65,8 +65,7 @@ public:
 
     bool requestTexture(TextureManager* manager, TextureToken token)
     {
-        unsigned textureId;
-        bool result = manager->requestTexture(token, m_textureSize, m_textureFormat, textureId);
+        bool result = manager->requestTexture(token, m_textureSize, m_textureFormat);
         if (result)
             manager->allocateTexture(&m_fakeTextureAllocator, token);
         return result;
@@ -117,8 +116,16 @@ TEST_F(TextureManagerTest, requestTextureExceedingPreferredLimit)
         tokens[i] = textureManager->getToken();
         EXPECT_TRUE(requestTexture(textureManager.get(), tokens[i]));
         EXPECT_TRUE(textureManager->hasTexture(tokens[i]));
-        textureManager->unprotectTexture(tokens[i]);
     }
+
+    textureManager->unprotectTexture(tokens[4]);
+    textureManager->unprotectTexture(tokens[5]);
+
+    // These textures should be valid before the reduceMemoryToLimit call.
+    EXPECT_TRUE(textureManager->hasTexture(tokens[0]));
+    EXPECT_TRUE(textureManager->hasTexture(tokens[2]));
+
+    textureManager->reduceMemoryToLimit(texturesMemorySize(preferredTextures));
 
     EXPECT_FALSE(textureManager->hasTexture(tokens[0]));
     EXPECT_TRUE(textureManager->hasTexture(tokens[1]));
