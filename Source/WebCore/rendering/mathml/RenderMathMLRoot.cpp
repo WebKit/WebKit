@@ -252,5 +252,3 @@ void RenderMathMLRoot::layout()
 }
 
 #endif // ENABLE(MATHML)
-
-

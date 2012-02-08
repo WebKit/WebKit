@@ -189,5 +189,3 @@ void RenderMathMLSquareRoot::layout()
 }
 
 #endif // ENABLE(MATHML)
-
-        

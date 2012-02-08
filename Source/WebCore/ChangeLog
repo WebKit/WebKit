@@ -1,3 +1,41 @@
+2012-02-07  David Barton  <dbarton@mathscribe.com>
+
+        Remove extraneous MathML code before bug 52444 fix
+        https://bugs.webkit.org/show_bug.cgi?id=78034
+
+        Reviewed by Eric Seidel.
+        
+        Per Darin Adler, I am breaking up the patch fixing bug 52444 into smaller pieces.
+        This patch removes a couple unused functions, some extra blank lines, unused #include
+        directives, etc., and adds a very few WebKit-standard changes to these files.
+
+        No new tests.
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::getBoxModelObjectHeight):
+            - changed to a static member function since 'this' is unused;
+              removed redundant non-const version
+        (WebCore::RenderMathMLBlock::getBoxModelObjectWidth):
+            - changed to a static member function since 'this' is unused;
+              removed redundant non-const version
+        (WebCore):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        * rendering/mathml/RenderMathMLMath.cpp:
+        * rendering/mathml/RenderMathMLMath.h:
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        * rendering/mathml/RenderMathMLSubSup.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        * rendering/mathml/RenderMathMLUnderOver.h:
+
 2012-02-07  David Reveman  <reveman@chromium.org>
 
         [Chromium] REGRESSION(r101854): Causing large amounts of unnecessary repainting.

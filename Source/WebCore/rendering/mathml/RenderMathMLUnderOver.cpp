@@ -292,5 +292,4 @@ int RenderMathMLUnderOver::nonOperatorHeight() const
 
 }
 
-
 #endif // ENABLE(MATHML)

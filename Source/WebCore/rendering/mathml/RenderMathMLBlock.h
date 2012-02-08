@@ -52,16 +52,7 @@ public:
 #endif
     
 protected:
-    int getBoxModelObjectHeight(RenderObject* object) 
-    {
-        if (object && object->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(object);
-            return box->offsetHeight();
-        }
-        
-        return 0;
-    }
-    int getBoxModelObjectHeight(const RenderObject* object) 
+    static LayoutUnit getBoxModelObjectHeight(const RenderObject* object)
     {
         if (object && object->isBoxModelObject()) {
             const RenderBoxModelObject* box = toRenderBoxModelObject(object);
@@ -70,16 +61,7 @@ protected:
         
         return 0;
     }
-    int getBoxModelObjectWidth(RenderObject* object) 
-    {
-        if (object && object->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(object);
-            return box->offsetWidth();
-        }
-        
-        return 0;
-    }
-    int getBoxModelObjectWidth(const RenderObject* object) 
+    static LayoutUnit getBoxModelObjectWidth(const RenderObject* object)
     {
         if (object && object->isBoxModelObject()) {
             const RenderBoxModelObject* box = toRenderBoxModelObject(object);
@@ -106,8 +88,10 @@ inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
     return static_cast<const RenderMathMLBlock*>(object);
 }
 
-}
+// This will catch anyone doing an unnecessary cast.
+void toRenderMathMLBlock(const RenderMathMLBlock*);
 
+}
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLBlock_h

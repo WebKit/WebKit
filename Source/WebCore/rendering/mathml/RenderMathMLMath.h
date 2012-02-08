@@ -43,6 +43,5 @@ private:
     
 }
 
-
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLMath_h

@@ -48,6 +48,5 @@ private:
     
 }
 
-
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLRow_h

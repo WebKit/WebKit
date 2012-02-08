@@ -29,14 +29,7 @@
 
 #include "RenderMathMLSubSup.h"
 
-#include "FontSelector.h"
 #include "MathMLNames.h"
-#include "RenderInline.h"
-#include "RenderTable.h"
-#include "RenderTableCell.h"
-#include "RenderTableRow.h"
-#include "RenderTableSection.h"
-#include "RenderText.h"
 
 namespace WebCore {
     

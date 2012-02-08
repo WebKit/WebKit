@@ -182,5 +182,4 @@ LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, 
 
 }
 
-
 #endif // ENABLE(MATHML)

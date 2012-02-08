@@ -133,4 +133,3 @@ LayoutUnit RenderMathMLRow::baselinePosition(FontBaseline, bool firstLine, LineD
 }
 
 #endif // ENABLE(MATHML)
-

@@ -1,9 +1,9 @@
-layer at (0,0) size 785x614
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x614
-  RenderBlock {html} at (0,0) size 785x614
-    RenderBody {body} at (8,16) size 769x582
-      RenderBlock {p} at (0,0) size 769x19
+layer at (0,0) size 800x614
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x614
+  RenderBlock {html} at (0,0) size 800x614
+    RenderBody {body} at (8,16) size 784x582
+      RenderBlock {p} at (0,0) size 784x19
         RenderMathMLMath {math} at (0,3) size 27x16
           RenderInline {mi} at (0,0) size 7x16
             RenderText {#text} at (1,0) size 7x16
@@ -16,7 +16,7 @@ layer at (0,0) size 785x614
             RenderText {#text} at (18,0) size 8x16
               text run at (18,0) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,35) size 769x21
+      RenderBlock {p} at (0,35) size 784x21
         RenderText {#text} at (0,2) size 40x18
           text run at (0,2) width 40: "16px: "
         RenderMathMLMath {math} at (40,0) size 45x21
@@ -94,7 +94,7 @@ layer at (0,0) size 785x614
                 text run at (6,5) width 7: "x"
             RenderBlock {div} at (13,5) size 16x16 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,72) size 769x36
+      RenderBlock {p} at (0,72) size 784x36
         RenderText {#text} at (0,8) size 40x18
           text run at (0,8) width 40: "24px: "
         RenderMathMLMath {math} at (40,0) size 49x36
@@ -145,7 +145,7 @@ layer at (0,0) size 785x614
                 text run at (11,11) width 7: "x"
             RenderBlock {div} at (18,5) size 24x24 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,124) size 769x50
+      RenderBlock {p} at (0,124) size 784x50
         RenderText {#text} at (0,19) size 40x18
           text run at (0,19) width 40: "32px: "
         RenderMathMLMath {math} at (40,0) size 57x50
@@ -196,7 +196,7 @@ layer at (0,0) size 785x614
                 text run at (11,22) width 7: "x"
             RenderBlock {div} at (18,11) size 32x32 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,190) size 769x80
+      RenderBlock {p} at (0,190) size 784x80
         RenderText {#text} at (0,41) size 40x18
           text run at (0,41) width 40: "48px: "
         RenderMathMLMath {math} at (40,0) size 73x80
@@ -247,7 +247,7 @@ layer at (0,0) size 785x614
                 text run at (11,44) width 7: "x"
             RenderBlock {div} at (18,22) size 48x48 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,286) size 769x215
+      RenderBlock {p} at (0,286) size 784x215
         RenderText {#text} at (0,140) size 48x18
           text run at (0,140) width 48: "120px: "
         RenderMathMLMath {math} at (48,0) size 73x215
@@ -298,7 +298,7 @@ layer at (0,0) size 785x614
                 text run at (11,143) width 7: "x"
             RenderBlock {div} at (18,73) size 48x120 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,517) size 769x65
+      RenderBlock {p} at (0,517) size 784x65
         RenderMathMLMath {math} at (0,0) size 156x65
           RenderMathMLRow {mrow} at (1,0) size 154x65
             RenderMathMLOperator {mo} at (0,16) size 6x49 [bgcolor=#C8C8C8]

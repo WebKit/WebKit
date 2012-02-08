@@ -109,7 +109,6 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
 
-
 }    
 
 #endif

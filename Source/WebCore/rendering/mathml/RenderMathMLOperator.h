@@ -68,6 +68,9 @@ inline const RenderMathMLOperator* toRenderMathMLOperator(const RenderMathMLBloc
     return static_cast<const RenderMathMLOperator*>(block);
 }
 
+// This will catch anyone doing an unnecessary cast.
+void toRenderMathMLOperator(const RenderMathMLOperator*);
+
 inline UChar convertHyphenMinusToMinusSign(UChar glyph)
 {
     // When rendered as a mathematical operator, minus glyph should be larger.

@@ -23,14 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef RenderMathMLSubSup_h
 #define RenderMathMLSubSup_h
 
 #if ENABLE(MATHML)
 
 #include "RenderMathMLBlock.h"
-#include "RenderTable.h"
 
 namespace WebCore {
     

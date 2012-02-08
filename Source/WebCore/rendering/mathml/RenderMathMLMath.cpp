@@ -43,4 +43,3 @@ RenderMathMLMath::RenderMathMLMath(Node* math)
 }
 
 #endif // ENABLE(MATHML)
-

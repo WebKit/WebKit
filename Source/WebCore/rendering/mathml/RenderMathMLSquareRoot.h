@@ -48,6 +48,3 @@ private:
 #endif // ENABLE(MATHML)
 
 #endif // RenderMathMLSquareRoot_h
-
-
-
