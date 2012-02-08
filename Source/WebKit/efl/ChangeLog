@@ -1,3 +1,15 @@
+2012-02-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Add missing initialization of editable variable.
+        https://bugs.webkit.org/show_bug.cgi?id=77948
+
+        Reviewed by Eric Seidel.
+
+        The value of editable in Ewk_Frame_Smart_Data struct is not set.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_editable_set):
+
 2012-02-06  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Define to prevent a single backing-store application from calling the tiled view function.

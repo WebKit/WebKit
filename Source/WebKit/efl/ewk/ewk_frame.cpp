@@ -459,6 +459,7 @@ Eina_Bool ewk_frame_editable_set(Evas_Object* ewkFrame, Eina_Bool editable)
     editable = !!editable;
     if (smartData->editable == editable)
         return true;
+    smartData->editable = editable;
     if (editable)
         smartData->frame->editor()->applyEditingStyleToBodyElement();
     return true;
