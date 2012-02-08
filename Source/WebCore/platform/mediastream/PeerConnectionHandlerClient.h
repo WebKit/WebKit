@@ -42,6 +42,14 @@ class MediaStreamDescriptor;
 
 class PeerConnectionHandlerClient {
 public:
+    // Name and values of the enum must match the corressponding constants in the PeerConnection.idl file.
+    enum ReadyState {
+        NEW = 0,
+        NEGOTIATING = 1,
+        ACTIVE = 2,
+        CLOSED = 3
+    };
+
     virtual ~PeerConnectionHandlerClient() { }
 
     virtual void didCompleteICEProcessing() = 0;
@@ -49,6 +57,7 @@ public:
     virtual void didReceiveDataStreamMessage(const char* data, size_t length) = 0;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) = 0;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) = 0;
+    virtual void didChangeState(ReadyState) = 0;
 };
 
 } // namespace WebCore

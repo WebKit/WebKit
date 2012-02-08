@@ -58,6 +58,7 @@ module p2p {
         attribute EventListener onconnecting;
         attribute EventListener onopen;
         attribute EventListener onmessage;
+        attribute EventListener onstatechange;
         attribute EventListener onaddstream;
         attribute EventListener onremovestream;
 

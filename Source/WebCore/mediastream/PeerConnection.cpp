@@ -367,6 +367,8 @@ void PeerConnection::changeReadyState(ReadyState readyState)
     case CLOSED:
         break;
     }
+
+    dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
 } // namespace WebCore

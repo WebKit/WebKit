@@ -194,6 +194,7 @@ namespace WebCore {
     macro(connecting) \
     macro(addstream) \
     macro(removestream) \
+    macro(statechange) \
     \
     macro(show) \
     \

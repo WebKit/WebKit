@@ -58,14 +58,6 @@ public:
 
     void processSignalingMessage(const String& message, ExceptionCode&);
 
-    // Name and values of the enum must match the corressponding constants in the .idl file.
-    enum ReadyState {
-        NEW = 0,
-        NEGOTIATING = 1,
-        ACTIVE = 2,
-        CLOSED = 3
-    };
-
     ReadyState readyState() const;
 
     void send(const String& text, ExceptionCode&);
@@ -78,6 +70,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(connecting);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
 
@@ -87,6 +80,7 @@ public:
     virtual void didReceiveDataStreamMessage(const char* data, size_t length);
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>);
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*);
+    virtual void didChangeState(ReadyState state) { changeReadyState(state); }
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;

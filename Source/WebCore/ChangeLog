@@ -1,3 +1,25 @@
+2012-02-08  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding the onstatechange callback to PeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=77954
+
+        When readyState changes a callback should be triggered.
+
+        Reviewed by Adam Barth.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
+        * dom/EventNames.h:
+        (WebCore):
+        * mediastream/PeerConnection.cpp:
+        (WebCore::PeerConnection::changeReadyState):
+        * mediastream/PeerConnection.h:
+        (PeerConnection):
+        (WebCore::PeerConnection::didChangeState):
+        * mediastream/PeerConnection.idl:
+        * platform/mediastream/PeerConnectionHandlerClient.h:
+        (PeerConnectionHandlerClient):
+
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
         Rename [DelegatingPutFunction] IDL to [CustomNamedSetter] IDL
