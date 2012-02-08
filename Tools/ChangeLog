@@ -1,3 +1,19 @@
+2012-02-08  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream DumpRenderTreeBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=78042
+
+        Reviewed by Antonio Gomes.
+
+        Upstream more parts of our DRT implementation.
+
+        * DumpRenderTree/blackberry/AccessibilityControllerBlackBerry.cpp: Added.
+        * DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp: Added.
+        * DumpRenderTree/blackberry/EventSender.cpp: Added.
+        * DumpRenderTree/blackberry/EventSender.h: Added.
+        * DumpRenderTree/blackberry/GCControllerBlackBerry.cpp: Added.
+        * DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp: Added.
+
 2012-02-08  Dirk Pranke  <dpranke@chromium.org>
 
         check-webkit-style failing with "Path does not exist."
