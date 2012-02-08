@@ -83,6 +83,7 @@ protected:
 
 #if !PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
     virtual void setUpOverhangAreasLayerContents(GraphicsLayer*) OVERRIDE;
+    virtual void setUpContentShadowLayer(GraphicsLayer*) OVERRIDE;
 #endif
 };
 

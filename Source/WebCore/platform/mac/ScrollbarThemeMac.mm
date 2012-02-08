@@ -624,6 +624,27 @@ void ScrollbarThemeMac::setUpOverhangAreasLayerContents(GraphicsLayer* graphicsL
     graphicsLayer->platformLayer().backgroundColor = cachedLinenBackgroundColor;
 }
 
+void ScrollbarThemeMac::setUpContentShadowLayer(GraphicsLayer* graphicsLayer)
+{
+    // We operate on the CALayer directly here, since GraphicsLayer doesn't have the concept
+    // of shadows, and we know that WebCore won't touch this layer.
+    CALayer *contentShadowLayer = graphicsLayer->platformLayer();
+
+    static const CGFloat shadowOpacity = 0.66;
+    static const CGFloat shadowRadius = 3;
+
+    // We only need to set these shadow properties once.
+    if (!contentShadowLayer.shadowOpacity) {
+        contentShadowLayer.shadowColor = CGColorGetConstantColor(kCGColorBlack);
+        contentShadowLayer.shadowOffset = CGSizeZero;
+        contentShadowLayer.shadowOpacity = shadowOpacity;
+        contentShadowLayer.shadowRadius = shadowRadius;
+    }
+
+    RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, graphicsLayer->size().width(), graphicsLayer->size().height()), NULL));
+    contentShadowLayer.shadowPath = shadowPath.get();
+}
+
 #endif
 
 } // namespace WebCore

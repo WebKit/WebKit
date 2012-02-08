@@ -90,6 +90,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
     virtual void setUpOverhangAreasLayerContents(GraphicsLayer*) { }
+    virtual void setUpContentShadowLayer(GraphicsLayer*) { }
 #endif
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }

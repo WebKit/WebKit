@@ -1,3 +1,30 @@
+2012-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a content shadow layer to the render layer compositor
+        https://bugs.webkit.org/show_bug.cgi?id=78133
+        <rdar://problem/10797742>
+
+        Reviewed by Beth Dakin.
+
+        Have the render layer compositor optionally create a content shadow layer,
+        and add a ScrollbarTheme::setUpContentShadowLayer member function that subclasses
+        can use to set content shadow properties.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::setUpContentShadowLayer):
+        Set the layer properties once, and set the shadow path on every call, since we know that this
+        function will be called every time the size of the content shadow layer changes.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        Reposition the content shadow layer, and call ScrollbarTheme::setUpContentShadowLayer if the size changes.
+
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        Add new helper function.
+
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        Create a content shadow layer if needed.
+
 2012-02-07  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r102983): ClicktoFlash drawing of old style youtube embeds missing until resize
