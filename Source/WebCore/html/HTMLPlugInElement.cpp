@@ -112,7 +112,11 @@ PassScriptInstance HTMLPlugInElement::getInstance()
 
 bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
 {
-    ASSERT(!m_inBeforeLoadEventHandler);
+    // FIXME: Our current plug-in loading design can't guarantee the following
+    // assertion is true, since plug-in loading can be initiated during layout,
+    // and synchronous layout can be initiated in a beforeload event handler!
+    // See <http://webkit.org/b/71264>.
+    // ASSERT(!m_inBeforeLoadEventHandler);
     m_inBeforeLoadEventHandler = true;
     // static_cast is used to avoid a compile error since dispatchBeforeLoadEvent
     // is intentionally undefined on this class.

@@ -1,3 +1,42 @@
+2012-02-07  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r102983): ClicktoFlash drawing of old style youtube embeds missing until resize
+        https://bugs.webkit.org/show_bug.cgi?id=77167
+
+        Reviewed by Eric Seidel.
+
+        Test: plugins/layout-in-beforeload-listener-affects-plugin-loading.html
+
+        r102983 made FrameView::updateWidgets() check if the DOM node actually
+        needs a widget update before calling updateWidget(). Due to historical
+        reasons, however, updateWidget() can be legitimately called twice: once
+        at attach time for non-Netscape plug-ins and once at layout time for
+        Netscape plug-ins.
+
+        If the widget represents a Netscape plug-in, but updateWidget() is
+        called for the CreateOnlyNonNetscapePlugins case after the DOM node was
+        marked as needing an update, updateWidget() will clear the update flag
+        and prevent a second call to updateWidget() at layout time for the
+        CreateAnyWidgetType case.
+
+        As much as I loathe adding to the code duplication between
+        HTMLEmbedElement::updateWidget() and HTMLObjectElement::updateWidget(),
+        the simplest solution seems to be marking the DOM node as needing
+        update in the case where we are calling updateWidget() for the
+        CreateOnlyNonNetscapePlugins case and we know we will be loading a
+        Netscape plug-in.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget): Call
+        setNeedsWidgetUpdate(true) if pluginCreationOption is
+        CreateOnlyNonNetscapePlugins but we will load a Netscape plug-in.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget): Ditto.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::guardedDispatchBeforeLoadEvent): Remove an
+        invalid assertion that prevents the layout test from running in a Debug
+        configuration.
+
 2012-02-07  Ojan Vafai  <ojan@chromium.org>
 
         Floated flexboxes render as regular RenderBlocks

@@ -285,8 +285,14 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     bool fallbackContent = hasFallbackContent();
     renderEmbeddedObject()->setHasFallbackContent(fallbackContent);
 
-    if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
+    // FIXME: It's sadness that we have this special case here.
+    //        See http://trac.webkit.org/changeset/25128 and
+    //        plugins/netscape-plugin-setwindow-size.html
+    if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType)) {
+        // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
+        setNeedsWidgetUpdate(true);
         return;
+    }
 
     RefPtr<HTMLObjectElement> protect(this); // beforeload and plugin loading can make arbitrary DOM mutations.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
