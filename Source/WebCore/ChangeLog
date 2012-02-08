@@ -1,3 +1,30 @@
+2012-02-07  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Enable IPP for FFTFrame
+        https://bugs.webkit.org/show_bug.cgi?id=75522
+
+        Reviewed by Tony Chang.
+
+        Add the FFTFrame implementation using Intel IPP's DFT algorithm.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/audio/FFTFrame.h:
+        (FFTFrame):
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/ipp/FFTFrameIPP.cpp: Added.
+        (WebCore):
+        (WebCore::FFTFrame::FFTFrame):
+        (WebCore::FFTFrame::initialize):
+        (WebCore::FFTFrame::cleanup):
+        (WebCore::FFTFrame::~FFTFrame):
+        (WebCore::FFTFrame::multiply):
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+        (WebCore::FFTFrame::realData):
+        (WebCore::FFTFrame::imagData):
+        (WebCore::FFTFrame::getUpToDateComplexData):
+
 2012-02-07  Adrienne Walker  <enne@google.com>
 
         Properly detect top level frames when propogating compositing

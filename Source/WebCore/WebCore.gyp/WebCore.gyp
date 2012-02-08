@@ -1145,6 +1145,11 @@
             'include_dirs+++': ['../dom'],
           },
         }],
+        ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+          'cflags': [
+            '<!@(pkg-config --cflags-only-I ipp)',
+          ],
+        }],
       ],
     },
     {
@@ -1345,6 +1350,13 @@
             # This is needed because Event.h in this directory is blocked
             # by a system header on windows.
             'include_dirs++': ['../dom'],
+          },
+        }],
+        ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+          'direct_dependent_settings': {
+            'cflags': [
+              '<!@(pkg-config --cflags-only-I ipp)',
+            ],
           },
         }],
         ['OS != "android" and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
@@ -1983,6 +1995,16 @@
         ['OS=="win"', {
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
+          },
+        }],
+        ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+          'link_settings': {
+            'ldflags': [
+              '<!@(pkg-config --libs-only-L ipp)',
+            ],
+            'libraries': [
+              '-lipps -lippcore',
+            ],
           },
         }],
         ['enable_svg!=0', {

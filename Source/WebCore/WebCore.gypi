@@ -2872,6 +2872,7 @@
             'platform/audio/ffmpeg/FFTFrameFFMPEG.cpp',
             'platform/audio/mac/FFTFrameMac.cpp',
             'platform/audio/mkl/FFTFrameMKL.cpp',
+            'platform/audio/ipp/FFTFrameIPP.cpp',
             'platform/cf/BinaryPropertyList.cpp',
             'platform/cf/FileSystemCF.cpp',
             'platform/cf/KURLCFNet.cpp',

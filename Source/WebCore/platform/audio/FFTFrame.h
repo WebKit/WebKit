@@ -60,6 +60,10 @@ struct RDFTContext;
 
 #endif // !USE_ACCELERATE_FFT
 
+#if USE(WEBAUDIO_IPP)
+#include <ipps.h>
+#endif // USE(WEBAUDIO_IPP)
+
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/Threading.h>
@@ -160,6 +164,16 @@ private:
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_GSTREAMER)
+
+#if USE(WEBAUDIO_IPP)
+    Ipp8u* m_buffer;
+    IppsDFTSpec_R_32f* m_DFTSpec;
+
+    float* getUpToDateComplexData();
+    AudioFloatArray m_complexData;
+    AudioFloatArray m_realData;
+    AudioFloatArray m_imagData;
+#endif // USE(WEBAUDIO_IPP)
 
 #endif // !USE_ACCELERATE_FFT
 };
