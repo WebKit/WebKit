@@ -11,5 +11,5 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (10.00,130.00) startOffset 0 endOffset 7 width 50.00: "Status:"
       RenderSVGText {text} at (90,114) size 54x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 54x21
-          chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 53.50: "Passed"
+          chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 54.00: "Passed"
 caret: position 0 of child 0 {#text} of child 1 {text} of child 3 {g} of child 1 {svg} of document

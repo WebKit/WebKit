@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (20,55) size 101x158
     RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}]
-    RenderSVGContainer {g} at (20,55) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,15.00)}]
-      RenderSVGText {text} at (50,120) size 100x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 100x40
-          chunk 1 text run 1 at (50.00,150.00) startOffset 0 endOffset 6 width 100.00: "Passed"
+    RenderSVGContainer {g} at (20,55) size 51x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,15.00)}]
+      RenderSVGText {text} at (50,121) size 101x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x38
+          chunk 1 text run 1 at (50.00,150.00) startOffset 0 endOffset 6 width 101.00: "Passed"
     RenderSVGContainer {g} at (49,141) size 72x72 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
       RenderSVGRect {rect} at (49,141) size 72x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [x=50.00] [y=50.00] [width=70.00] [height=30.00]

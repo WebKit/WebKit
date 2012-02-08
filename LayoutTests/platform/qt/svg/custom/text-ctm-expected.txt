@@ -6,4 +6,4 @@ layer at (0,0) size 800x600
       RenderSVGViewportContainer {svg} at (100,68) size 108x42
         RenderSVGText {text} at (70,54) size 54x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 54x21
-            chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 6 width 53.50: "Passed"
+            chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 6 width 54.00: "Passed"
