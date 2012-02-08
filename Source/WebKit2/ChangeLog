@@ -1,3 +1,23 @@
+2012-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WK2] enable-webaudio WebSetting
+        https://bugs.webkit.org/show_bug.cgi?id=77959
+
+        Reviewed by Martin Robinson.
+
+        Add a new WebKitGTK WebSetting to enable/disable WebAudio at
+        runtime.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_webaudio):
+        (webkit_settings_set_enable_webaudio):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2012-02-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WK2] Add WebKitResponsePolicyDecision

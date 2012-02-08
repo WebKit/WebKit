@@ -293,6 +293,13 @@ WEBKIT_API void
 webkit_settings_set_print_backgrounds                          (WebKitSettings *settings,
                                                                 gboolean        print_backgrounds);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_webaudio                            (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_webaudio                            (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

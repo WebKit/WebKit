@@ -216,6 +216,8 @@ webkit_settings_get_enable_fullscreen
 webkit_settings_set_enable_fullscreen
 webkit_settings_get_print_backgrounds
 webkit_settings_set_print_backgrounds
+webkit_settings_get_enable_webaudio
+webkit_settings_set_enable_webaudio
 
 <SUBSECTION Standard>
 WebKitSettingsClass

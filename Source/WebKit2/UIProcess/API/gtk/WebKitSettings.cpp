@@ -101,7 +101,8 @@ enum {
     PROP_ENABLE_DNS_PREFETCHING,
     PROP_ENABLE_CARET_BROWSING,
     PROP_ENABLE_FULLSCREEN,
-    PROP_PRINT_BACKGROUNDS
+    PROP_PRINT_BACKGROUNDS,
+    PROP_ENABLE_WEBAUDIO
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -201,6 +202,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_PRINT_BACKGROUNDS:
         webkit_settings_set_print_backgrounds(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_WEBAUDIO:
+        webkit_settings_set_enable_webaudio(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -305,6 +309,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_PRINT_BACKGROUNDS:
         g_value_set_boolean(value, webkit_settings_get_print_backgrounds(settings));
+        break;
+    case PROP_ENABLE_WEBAUDIO:
+        g_value_set_boolean(value, webkit_settings_get_enable_webaudio(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -766,6 +773,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Print Backgrounds"),
                                                          _("Whether background images should be drawn during printing"),
                                                          TRUE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-webaudio:
+     *
+     *
+     * Enable or disable support for WebAudio on pages. WebAudio is an
+     * experimental proposal for allowing web pages to generate Audio
+     * WAVE data from JavaScript. The standard is currently a
+     * work-in-progress by the W3C Audio Working Group.
+     *
+     * See also https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_WEBAUDIO,
+                                    g_param_spec_boolean("enable-webaudio",
+                                                         _("Enable WebAudio"),
+                                                         _("Whether WebAudio content should be handled"),
+                                                         FALSE,
                                                          readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
@@ -1954,4 +1980,39 @@ void webkit_settings_set_print_backgrounds(WebKitSettings* settings, gboolean pr
 
     WKPreferencesSetShouldPrintBackgrounds(priv->preferences.get(), printBackgrounds);
     g_object_notify(G_OBJECT(settings), "print-backgrounds");
+}
+
+/**
+ * webkit_settings_get_enable_webaudio:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-webaudio property.
+ *
+ * Returns: %TRUE If webaudio support is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_webaudio(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetWebAudioEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_webaudio:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-webaudio property.
+ */
+void webkit_settings_set_enable_webaudio(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetWebAudioEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetWebAudioEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-webaudio");
 }
