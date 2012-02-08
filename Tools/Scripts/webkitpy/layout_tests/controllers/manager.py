@@ -35,8 +35,6 @@ objects to the Manager. The Manager then aggregates the TestFailures to
 create a final report.
 """
 
-from __future__ import with_statement
-
 import errno
 import logging
 import math

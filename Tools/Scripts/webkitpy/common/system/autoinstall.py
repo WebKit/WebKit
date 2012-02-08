@@ -31,8 +31,6 @@
 """Support for automatically downloading Python packages from an URL."""
 
 
-from __future__ import with_statement
-
 import codecs
 import logging
 import new

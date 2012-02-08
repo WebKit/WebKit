@@ -27,9 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Dummy Port implementation used for testing."""
-from __future__ import with_statement
-
 import base64
 import sys
 import time

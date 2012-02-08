@@ -31,8 +31,6 @@
 # important; without it, Python will choke while trying to parse the file,
 # since it includes non-ASCII characters.
 
-from __future__ import with_statement
-
 import os
 import stat
 import sys

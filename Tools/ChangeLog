@@ -1,3 +1,40 @@
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
+        Stop importing with_statement from the mysterious future
+        https://bugs.webkit.org/show_bug.cgi?id=78156
+
+        Reviewed by Eric Seidel.
+
+        The future is now!  (Well, at least 2008, when Python 2.6 was released,
+        is no longer the __future__.)
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        * Scripts/webkitpy/common/newstringio_unittest.py:
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        * Scripts/webkitpy/common/system/fileset.py:
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        * Scripts/webkitpy/common/system/path.py:
+        * Scripts/webkitpy/common/thread/threadedmessagequeue.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (of):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+
 2012-02-08  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Upstream DumpRenderTreeBlackBerry

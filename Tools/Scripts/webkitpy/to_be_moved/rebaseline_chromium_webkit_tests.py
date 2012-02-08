@@ -41,8 +41,6 @@ The script does the following for each platform specified:
 At the end, the script generates a html that compares old and new baselines.
 """
 
-from __future__ import with_statement
-
 import copy
 import logging
 import optparse

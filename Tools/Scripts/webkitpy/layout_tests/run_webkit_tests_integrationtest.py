@@ -29,10 +29,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for run_webkit_tests."""
-
-from __future__ import with_statement
-
 import codecs
 import itertools
 import logging

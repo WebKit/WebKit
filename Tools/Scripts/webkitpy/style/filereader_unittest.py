@@ -20,10 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Contains unit tests for filereader.py."""
-
-from __future__ import with_statement
-
 import unittest
 
 from webkitpy.common.system.filesystem import FileSystem

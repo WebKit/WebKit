@@ -28,8 +28,6 @@
 
 """Wrapper object for the file system / source tree."""
 
-from __future__ import with_statement
-
 import codecs
 import errno
 import exceptions

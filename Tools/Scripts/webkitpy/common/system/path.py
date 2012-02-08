@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """generic routines to convert platform-specific paths to URIs."""
-from __future__ import with_statement
 
 import atexit
 import subprocess

@@ -27,10 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Abstract base class of Port-specific entrypoints for the layout tests
+"""Abstract base class of Port-specific entry points for the layout tests
 test infrastructure (the Port and Driver classes)."""
-
-from __future__ import with_statement
 
 import cgi
 import difflib
