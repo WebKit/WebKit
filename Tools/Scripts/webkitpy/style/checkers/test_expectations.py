@@ -47,17 +47,14 @@ class TestExpectationsChecker(object):
 
     categories = set(['test/expectations'])
 
-    def _determine_port_from_exepectations_path(self, host, expectations_path):
-        try:
-            port_name = expectations_path.split(host.filesystem.sep)[-2]
-            if not port_name:
-                return None
-
-            # Pass a configuration to avoid calling default_configuration() when initializing the port (takes 0.5 seconds on a Mac Pro!).
-            return host.port_factory.get(port_name, options=DummyOptions(configuration="Release"))
-        except Exception, e:
-            _log.warn("Exception while getting port for path %s" % expectations_path)
-            return None
+    def _determine_port_from_expectations_path(self, host, expectations_path):
+        # Pass a configuration to avoid calling default_configuration() when initializing the port (takes 0.5 seconds on a Mac Pro!).
+        options = DummyOptions(configuration='Release')
+        for port_name in host.port_factory.all_port_names():
+            port = host.port_factory.get(port_name, options=options)
+            if port.path_to_test_expectations_file().replace(port.path_from_webkit_base() + host.filesystem.sep, '') == expectations_path:
+                return port
+        return None
 
     def __init__(self, file_path, handle_style_error, host=None):
         self._file_path = file_path
@@ -70,15 +67,8 @@ class TestExpectationsChecker(object):
         host = host or Host()
         host._initialize_scm()
 
-        # Determining the port of this expectations.
-        self._port_obj = self._determine_port_from_exepectations_path(host, file_path)
-        # Using 'test' port when we couldn't determine the port for this
-        # expectations.
-        if not self._port_obj:
-            _log.warn("Could not determine the port for %s. "
-                      "Using 'test' port, but platform-specific expectations "
-                      "will fail the check." % self._file_path)
-            self._port_obj = host.port_factory.get('test')
+        self._port_obj = self._determine_port_from_expectations_path(host, file_path)
+
         # Suppress error messages of test_expectations module since they will be reported later.
         log = logging.getLogger("webkitpy.layout_tests.layout_package.test_expectations")
         log.setLevel(logging.CRITICAL)
@@ -112,8 +102,12 @@ class TestExpectationsChecker(object):
     def check(self, lines):
         overrides = self._port_obj.test_expectations_overrides()
         expectations = '\n'.join(lines)
-        self.check_test_expectations(expectations_str=expectations,
-                                     tests=None,
-                                     overrides=overrides)
+        if self._port_obj:
+            self.check_test_expectations(expectations_str=expectations,
+                                         tests=None,
+                                         overrides=overrides)
+        else:
+            self._handle_style_error(1, 'test/expectations', 5,
+                                     'No port uses path %s for test_expectations' % self._file_path)
         # Warn tabs in lines as well
         self.check_tabs(lines)

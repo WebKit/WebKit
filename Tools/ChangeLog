@@ -1,3 +1,22 @@
+2012-02-08  Dirk Pranke  <dpranke@chromium.org>
+
+        check-webkit-style failing with "Path does not exist."
+        https://bugs.webkit.org/show_bug.cgi?id=77873
+
+        Reviewed by Ojan Vafai.
+
+        This change fixes the way the style checker determines which
+        Port class to use for a given test_expectations.txt path; the
+        previous version used a heuristic that didn't really work in the
+        first place.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._determine_port_from_expectations_path):
+        (TestExpectationsChecker.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase._expect_port_for_expectations_path):
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+
 2012-02-08  Fehér Zsolt  <feherzs@inf.u-szeged.hu>
 
         nrwt: make --skip-pixel-test-if-no-baseline option

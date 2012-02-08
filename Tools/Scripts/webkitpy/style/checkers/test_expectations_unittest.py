@@ -63,23 +63,34 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._error_collector = ErrorCollector()
         self._test_file = 'passes/text.html'
 
-    def _expect_port_for_expectations_path(self, expected_port_or_port_class, expectations_path):
+    def _expect_port_for_expectations_path(self, expected_port_implementation, expectations_path):
         host = MockHost()
         checker = TestExpectationsChecker(expectations_path, ErrorCollector(), host=host)
-        port = checker._determine_port_from_exepectations_path(host, expectations_path)
+        port = checker._determine_port_from_expectations_path(host, expectations_path)
         if port:
-            self.assertEquals(port.__class__.__name__, expected_port_or_port_class)
+            self.assertTrue(port.name().startswith(expected_port_implementation))
         else:
-            self.assertEquals(port, expected_port_or_port_class)
+            self.assertEquals(None, expected_port_implementation)
 
-    def test_determine_port_from_exepectations_path(self):
-        self._expect_port_for_expectations_path(None, "/")
-        self._expect_port_for_expectations_path("ChromiumMacPort", "/mock-checkout/LayoutTests/chromium-mac/test_expectations.txt")
+    def test_determine_port_from_expectations_path(self):
+        self._expect_port_for_expectations_path(None, '/')
+        self._expect_port_for_expectations_path(None, 'LayoutTests/chromium-mac/test_expectations.txt')
+        self._expect_port_for_expectations_path('chromium', 'LayoutTests/platform/chromium/test_expectations.txt')
+        self._expect_port_for_expectations_path(None, '/mock-checkout/LayoutTests/platform/win/test_expectations.txt')
+        self._expect_port_for_expectations_path('win', 'LayoutTests/platform/win/test_expectations.txt')
 
     def assert_lines_lint(self, lines, should_pass, expected_output=None):
         self._error_collector.reset_errors()
+
+        host = MockHost()
         checker = TestExpectationsChecker('test/test_expectations.txt',
-                                          self._error_collector, host=MockHost())
+                                          self._error_collector, host=host)
+
+        # We should have failed to find a valid port object for that path.
+        self.assertEquals(checker._port_obj, None)
+
+        # Now use a test port so we can check the lines.
+        checker._port_obj = host.port_factory.get('test-mac-leopard')
         checker.check_test_expectations(expectations_str='\n'.join(lines),
                                         tests=[self._test_file],
                                         overrides=None)
