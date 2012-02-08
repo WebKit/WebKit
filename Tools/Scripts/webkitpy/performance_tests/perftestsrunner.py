@@ -46,7 +46,6 @@ _log = logging.getLogger(__name__)
 
 
 class PerfTestsRunner(object):
-    _perf_tests_base_dir = 'PerformanceTests'
     _test_directories_for_chromium_style_tests = ['inspector']
     _default_branch = 'webkit-trunk'
     _EXIT_CODE_BAD_BUILD = -1
@@ -107,8 +106,15 @@ class PerfTestsRunner(object):
         def _is_test_file(filesystem, dirname, filename):
             return filename.endswith('.html')
 
+        paths = []
+        for arg in self._args:
+            paths.append(arg)
+            relpath = self._host.filesystem.relpath(arg, self._base_path)
+            if relpath:
+                paths.append(relpath)
+
         skipped_directories = set(['.svn', 'resources'])
-        tests = find_files.find(self._host.filesystem, self._base_path, self._args, skipped_directories, _is_test_file)
+        tests = find_files.find(self._host.filesystem, self._base_path, paths, skipped_directories, _is_test_file)
         return [test for test in tests if not self._port.skips_perf_test(self._port.relative_perf_test_filename(test))]
 
     def run(self):

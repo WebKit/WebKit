@@ -307,6 +307,19 @@ max 1120
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
 
+    def test_collect_tests(self):
+        runner = self.create_runner(args=['PerformanceTests/test1.html', 'test2.html'])
+
+        def add_file(filename):
+            runner._host.filesystem.files[runner._host.filesystem.join(runner._base_path, filename)] = 'some content'
+
+        add_file('test1.html')
+        add_file('test2.html')
+        add_file('test3.html')
+        runner._host.filesystem.chdir(runner._port.webkit_base())
+        tests = [runner._port.relative_perf_test_filename(test) for test in runner._collect_tests()]
+        self.assertEqual(sorted(tests), ['test1.html', 'test2.html'])
+
     def test_collect_tests_with_skipped_list(self):
         runner = self.create_runner()
 
