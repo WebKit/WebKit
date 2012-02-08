@@ -152,9 +152,10 @@ sub GetCoreObject {
 
 sub SkipAttribute {
     my $attribute = shift;
-    
-    if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-        $attribute->signature->extendedAttributes->{"CustomSetter"}) {
+
+    if ($attribute->signature->extendedAttributes->{"Custom"}
+        || $attribute->signature->extendedAttributes->{"CustomGetter"}
+        || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
         return 1;
     }
 

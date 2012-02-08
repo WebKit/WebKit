@@ -1,3 +1,21 @@
+2012-02-07  Kentaro Hara  <haraken@chromium.org>
+
+        [GTK] Ignore [Custom] attributes in CodeGeneratorGObject.pm
+        https://bugs.webkit.org/show_bug.cgi?id=78059
+
+        Reviewed by Adam Barth.
+
+        CodeGeneratorGObject.pm does not support custom attributes.
+        We can skip generating code for attributes with [Custom].
+        The change would make sense, since CodeGeneratorGObject.pm already
+        skips attributes with [CustomGetter] or [CustomSetter].
+
+        Test: bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipAttribute):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+
 2012-02-07  Emil A Eklund  <eae@chromium.org>
 
         Add pixelSnappedX/Y/Width/Height methods
