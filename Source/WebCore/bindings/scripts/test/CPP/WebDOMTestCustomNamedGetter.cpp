@@ -19,62 +19,62 @@
  */
 
 #include "config.h"
-#include "WebDOMTestOverridingNameGetter.h"
+#include "WebDOMTestCustomNamedGetter.h"
 
 #include "KURL.h"
-#include "TestOverridingNameGetter.h"
+#include "TestCustomNamedGetter.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-struct WebDOMTestOverridingNameGetter::WebDOMTestOverridingNameGetterPrivate {
-    WebDOMTestOverridingNameGetterPrivate(WebCore::TestOverridingNameGetter* object = 0)
+struct WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetterPrivate {
+    WebDOMTestCustomNamedGetterPrivate(WebCore::TestCustomNamedGetter* object = 0)
         : impl(object)
     {
     }
 
-    RefPtr<WebCore::TestOverridingNameGetter> impl;
+    RefPtr<WebCore::TestCustomNamedGetter> impl;
 };
 
-WebDOMTestOverridingNameGetter::WebDOMTestOverridingNameGetter()
+WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetter()
     : WebDOMObject()
     , m_impl(0)
 {
 }
 
-WebDOMTestOverridingNameGetter::WebDOMTestOverridingNameGetter(WebCore::TestOverridingNameGetter* impl)
+WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetter(WebCore::TestCustomNamedGetter* impl)
     : WebDOMObject()
-    , m_impl(new WebDOMTestOverridingNameGetterPrivate(impl))
+    , m_impl(new WebDOMTestCustomNamedGetterPrivate(impl))
 {
 }
 
-WebDOMTestOverridingNameGetter::WebDOMTestOverridingNameGetter(const WebDOMTestOverridingNameGetter& copy)
+WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetter(const WebDOMTestCustomNamedGetter& copy)
     : WebDOMObject()
 {
-    m_impl = copy.impl() ? new WebDOMTestOverridingNameGetterPrivate(copy.impl()) : 0;
+    m_impl = copy.impl() ? new WebDOMTestCustomNamedGetterPrivate(copy.impl()) : 0;
 }
 
-WebDOMTestOverridingNameGetter& WebDOMTestOverridingNameGetter::operator=(const WebDOMTestOverridingNameGetter& copy)
+WebDOMTestCustomNamedGetter& WebDOMTestCustomNamedGetter::operator=(const WebDOMTestCustomNamedGetter& copy)
 {
     delete m_impl;
-    m_impl = copy.impl() ? new WebDOMTestOverridingNameGetterPrivate(copy.impl()) : 0;
+    m_impl = copy.impl() ? new WebDOMTestCustomNamedGetterPrivate(copy.impl()) : 0;
     return *this;
 }
 
-WebCore::TestOverridingNameGetter* WebDOMTestOverridingNameGetter::impl() const
+WebCore::TestCustomNamedGetter* WebDOMTestCustomNamedGetter::impl() const
 {
     return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
-WebDOMTestOverridingNameGetter::~WebDOMTestOverridingNameGetter()
+WebDOMTestCustomNamedGetter::~WebDOMTestCustomNamedGetter()
 {
     delete m_impl;
     m_impl = 0;
 }
 
-void WebDOMTestOverridingNameGetter::anotherFunction(const WebDOMString& str)
+void WebDOMTestCustomNamedGetter::anotherFunction(const WebDOMString& str)
 {
     if (!impl())
         return;
@@ -82,12 +82,12 @@ void WebDOMTestOverridingNameGetter::anotherFunction(const WebDOMString& str)
     impl()->anotherFunction(str);
 }
 
-WebCore::TestOverridingNameGetter* toWebCore(const WebDOMTestOverridingNameGetter& wrapper)
+WebCore::TestCustomNamedGetter* toWebCore(const WebDOMTestCustomNamedGetter& wrapper)
 {
     return wrapper.impl();
 }
 
-WebDOMTestOverridingNameGetter toWebKit(WebCore::TestOverridingNameGetter* value)
+WebDOMTestCustomNamedGetter toWebKit(WebCore::TestCustomNamedGetter* value)
 {
-    return WebDOMTestOverridingNameGetter(value);
+    return WebDOMTestCustomNamedGetter(value);
 }

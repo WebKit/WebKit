@@ -27,7 +27,7 @@
 #import "config.h"
 #import "DOMInternal.h"
 
-#import "DOMTestOverridingNameGetter.h"
+#import "DOMTestCustomNamedGetter.h"
 
 #import "DOMBlobInternal.h"
 #import "DOMCSSRuleInternal.h"
@@ -35,23 +35,23 @@
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
-#import "DOMTestOverridingNameGetterInternal.h"
+#import "DOMTestCustomNamedGetterInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
-#import "TestOverridingNameGetter.h"
+#import "TestCustomNamedGetter.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::TestOverridingNameGetter*>(_internal)
+#define IMPL reinterpret_cast<WebCore::TestCustomNamedGetter*>(_internal)
 
-@implementation DOMTestOverridingNameGetter
+@implementation DOMTestCustomNamedGetter
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMTestOverridingNameGetter class], self))
+    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMTestCustomNamedGetter class], self))
         return;
 
     if (_internal)
@@ -74,19 +74,19 @@
 
 @end
 
-WebCore::TestOverridingNameGetter* core(DOMTestOverridingNameGetter *wrapper)
+WebCore::TestCustomNamedGetter* core(DOMTestCustomNamedGetter *wrapper)
 {
-    return wrapper ? reinterpret_cast<WebCore::TestOverridingNameGetter*>(wrapper->_internal) : 0;
+    return wrapper ? reinterpret_cast<WebCore::TestCustomNamedGetter*>(wrapper->_internal) : 0;
 }
 
-DOMTestOverridingNameGetter *kit(WebCore::TestOverridingNameGetter* value)
+DOMTestCustomNamedGetter *kit(WebCore::TestCustomNamedGetter* value)
 {
     { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
     if (!value)
         return nil;
-    if (DOMTestOverridingNameGetter *wrapper = getDOMWrapper(value))
+    if (DOMTestCustomNamedGetter *wrapper = getDOMWrapper(value))
         return [[wrapper retain] autorelease];
-    DOMTestOverridingNameGetter *wrapper = [[DOMTestOverridingNameGetter alloc] _init];
+    DOMTestCustomNamedGetter *wrapper = [[DOMTestCustomNamedGetter alloc] _init];
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
     addDOMWrapper(wrapper, value);

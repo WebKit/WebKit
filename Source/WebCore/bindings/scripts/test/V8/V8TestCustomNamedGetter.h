@@ -18,10 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef V8TestOverridingNameGetter_h
-#define V8TestOverridingNameGetter_h
+#ifndef V8TestCustomNamedGetter_h
+#define V8TestCustomNamedGetter_h
 
-#include "TestOverridingNameGetter.h"
+#include "TestCustomNamedGetter.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -30,51 +30,51 @@
 
 namespace WebCore {
 
-class V8TestOverridingNameGetter {
+class V8TestCustomNamedGetter {
 public:
     static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestOverridingNameGetter* toNative(v8::Handle<v8::Object> object)
+    static TestCustomNamedGetter* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestOverridingNameGetter*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestCustomNamedGetter*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestOverridingNameGetter*);
+    inline static v8::Handle<v8::Object> wrap(TestCustomNamedGetter*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestOverridingNameGetter*);
+    static v8::Handle<v8::Object> existingWrapper(TestCustomNamedGetter*);
 
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestOverridingNameGetter*);
+    static v8::Handle<v8::Object> wrapSlow(TestCustomNamedGetter*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestOverridingNameGetter::existingWrapper(TestOverridingNameGetter* impl)
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestCustomNamedGetter::existingWrapper(TestCustomNamedGetter* impl)
 {
     return getDOMObjectMap().get(impl);
 }
 
-v8::Handle<v8::Object> V8TestOverridingNameGetter::wrap(TestOverridingNameGetter* impl)
+v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl)
 {
         v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestOverridingNameGetter::wrapSlow(impl);
+    return V8TestCustomNamedGetter::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestOverridingNameGetter* impl)
+inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl)
 {
     if (!impl)
         return v8::Null();
-    return V8TestOverridingNameGetter::wrap(impl);
+    return V8TestCustomNamedGetter::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestOverridingNameGetter > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl)
 {
     return toV8(impl.get());
 }
 
 }
 
-#endif // V8TestOverridingNameGetter_h
+#endif // V8TestCustomNamedGetter_h

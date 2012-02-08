@@ -22,7 +22,7 @@ module html {
 
     interface [
         IndexedGetter,
-        HasOverridingNameGetter
+        CustomNamedGetter
     ] HTMLFormElement : HTMLElement {
         readonly attribute HTMLCollection elements;
         readonly attribute long length;

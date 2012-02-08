@@ -29,8 +29,8 @@
 module events {
 
     interface [
-        HasOverridingNameGetter
-    ] TestOverridingNameGetter {
+        CustomNamedGetter
+    ] TestCustomNamedGetter {
         void anotherFunction(in DOMString str);
     };
 

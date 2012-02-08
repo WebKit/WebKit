@@ -26,50 +26,50 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "TestOverridingNameGetter.h"
+#include "TestCustomNamedGetter.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMTestOverridingNameGetter.h"
-#include "webkit/WebKitDOMTestOverridingNameGetterPrivate.h"
+#include "webkit/WebKitDOMTestCustomNamedGetter.h"
+#include "webkit/WebKitDOMTestCustomNamedGetterPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 
 namespace WebKit {
     
-WebKitDOMTestOverridingNameGetter* kit(WebCore::TestOverridingNameGetter* obj)
+WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 {
     g_return_val_if_fail(obj, 0);
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestOverridingNameGetter*>(ret);
+        return static_cast<WebKitDOMTestCustomNamedGetter*>(ret);
 
-    return static_cast<WebKitDOMTestOverridingNameGetter*>(DOMObjectCache::put(obj, WebKit::wrapTestOverridingNameGetter(obj)));
+    return static_cast<WebKitDOMTestCustomNamedGetter*>(DOMObjectCache::put(obj, WebKit::wrapTestCustomNamedGetter(obj)));
 }
     
 } // namespace WebKit //
 
 void
-webkit_dom_test_overriding_name_getter_another_function(WebKitDOMTestOverridingNameGetter* self, const gchar* str)
+webkit_dom_test_custom_named_getter_another_function(WebKitDOMTestCustomNamedGetter* self, const gchar* str)
 {
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestOverridingNameGetter * item = WebKit::core(self);
+    WebCore::TestCustomNamedGetter * item = WebKit::core(self);
     g_return_if_fail(str);
     WTF::String converted_str = WTF::String::fromUTF8(str);
     item->anotherFunction(converted_str);
 }
 
 
-G_DEFINE_TYPE(WebKitDOMTestOverridingNameGetter, webkit_dom_test_overriding_name_getter, WEBKIT_TYPE_DOM_OBJECT)
+G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_getter, WEBKIT_TYPE_DOM_OBJECT)
 
 namespace WebKit {
 
-WebCore::TestOverridingNameGetter* core(WebKitDOMTestOverridingNameGetter* request)
+WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::TestOverridingNameGetter* coreObject = static_cast<WebCore::TestOverridingNameGetter*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    WebCore::TestCustomNamedGetter* coreObject = static_cast<WebCore::TestCustomNamedGetter*>(WEBKIT_DOM_OBJECT(request)->coreObject);
     g_return_val_if_fail(coreObject, 0);
 
     return coreObject;
@@ -81,12 +81,12 @@ enum {
 };
 
 
-static void webkit_dom_test_overriding_name_getter_finalize(GObject* object)
+static void webkit_dom_test_custom_named_getter_finalize(GObject* object)
 {
     WebKitDOMObject* dom_object = WEBKIT_DOM_OBJECT(object);
     
     if (dom_object->coreObject) {
-        WebCore::TestOverridingNameGetter* coreObject = static_cast<WebCore::TestOverridingNameGetter *>(dom_object->coreObject);
+        WebCore::TestCustomNamedGetter* coreObject = static_cast<WebCore::TestCustomNamedGetter *>(dom_object->coreObject);
 
         WebKit::DOMObjectCache::forget(coreObject);
         coreObject->deref();
@@ -94,10 +94,10 @@ static void webkit_dom_test_overriding_name_getter_finalize(GObject* object)
         dom_object->coreObject = NULL;
     }
 
-    G_OBJECT_CLASS(webkit_dom_test_overriding_name_getter_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_overriding_name_getter_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_custom_named_getter_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
     switch (prop_id) {
@@ -108,7 +108,7 @@ static void webkit_dom_test_overriding_name_getter_set_property(GObject* object,
 }
 
 
-static void webkit_dom_test_overriding_name_getter_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_dom_test_custom_named_getter_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
     switch (prop_id) {
@@ -119,31 +119,31 @@ static void webkit_dom_test_overriding_name_getter_get_property(GObject* object,
 }
 
 
-static void webkit_dom_test_overriding_name_getter_constructed(GObject* object)
+static void webkit_dom_test_custom_named_getter_constructed(GObject* object)
 {
 
-    if (G_OBJECT_CLASS(webkit_dom_test_overriding_name_getter_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_overriding_name_getter_parent_class)->constructed(object);
+    if (G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->constructed)
+        G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->constructed(object);
 }
 
-static void webkit_dom_test_overriding_name_getter_class_init(WebKitDOMTestOverridingNameGetterClass* requestClass)
+static void webkit_dom_test_custom_named_getter_class_init(WebKitDOMTestCustomNamedGetterClass* requestClass)
 {
     GObjectClass *gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->finalize = webkit_dom_test_overriding_name_getter_finalize;
-    gobjectClass->set_property = webkit_dom_test_overriding_name_getter_set_property;
-    gobjectClass->get_property = webkit_dom_test_overriding_name_getter_get_property;
-    gobjectClass->constructed = webkit_dom_test_overriding_name_getter_constructed;
+    gobjectClass->finalize = webkit_dom_test_custom_named_getter_finalize;
+    gobjectClass->set_property = webkit_dom_test_custom_named_getter_set_property;
+    gobjectClass->get_property = webkit_dom_test_custom_named_getter_get_property;
+    gobjectClass->constructed = webkit_dom_test_custom_named_getter_constructed;
 
 
 
 }
 
-static void webkit_dom_test_overriding_name_getter_init(WebKitDOMTestOverridingNameGetter* request)
+static void webkit_dom_test_custom_named_getter_init(WebKitDOMTestCustomNamedGetter* request)
 {
 }
 
 namespace WebKit {
-WebKitDOMTestOverridingNameGetter* wrapTestOverridingNameGetter(WebCore::TestOverridingNameGetter* coreObject)
+WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
 
@@ -153,7 +153,7 @@ WebKitDOMTestOverridingNameGetter* wrapTestOverridingNameGetter(WebCore::TestOve
      */
     coreObject->ref();
 
-    return  WEBKIT_DOM_TEST_OVERRIDING_NAME_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_OVERRIDING_NAME_GETTER,
+    return  WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER,
                                                "core-object", coreObject, NULL));
 }
 } // namespace WebKit

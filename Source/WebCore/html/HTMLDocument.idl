@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        HasOverridingNameGetter
+        CustomNamedGetter
     ] HTMLDocument : Document {
         [JSCustom, V8Custom] void open();
         void close();

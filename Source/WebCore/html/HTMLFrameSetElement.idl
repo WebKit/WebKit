@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        HasOverridingNameGetter
+        CustomNamedGetter
     ] HTMLFrameSetElement : HTMLElement {
         attribute [Reflect] DOMString cols;
         attribute [Reflect] DOMString rows;

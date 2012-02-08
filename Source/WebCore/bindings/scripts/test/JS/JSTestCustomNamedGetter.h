@@ -18,23 +18,23 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestOverridingNameGetter_h
-#define JSTestOverridingNameGetter_h
+#ifndef JSTestCustomNamedGetter_h
+#define JSTestCustomNamedGetter_h
 
 #include "JSDOMBinding.h"
-#include "TestOverridingNameGetter.h"
+#include "TestCustomNamedGetter.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class JSTestOverridingNameGetter : public JSDOMWrapper {
+class JSTestCustomNamedGetter : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
-    static JSTestOverridingNameGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestOverridingNameGetter> impl)
+    static JSTestCustomNamedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestCustomNamedGetter> impl)
     {
-        JSTestOverridingNameGetter* ptr = new (NotNull, JSC::allocateCell<JSTestOverridingNameGetter>(globalObject->globalData().heap)) JSTestOverridingNameGetter(structure, globalObject, impl);
+        JSTestCustomNamedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetter>(globalObject->globalData().heap)) JSTestCustomNamedGetter(structure, globalObject, impl);
         ptr->finishCreation(globalObject->globalData());
         return ptr;
     }
@@ -51,48 +51,48 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestOverridingNameGetter* impl() const { return m_impl; }
+    TestCustomNamedGetter* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }
 
 private:
-    TestOverridingNameGetter* m_impl;
+    TestCustomNamedGetter* m_impl;
 protected:
-    JSTestOverridingNameGetter(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestOverridingNameGetter>);
+    JSTestCustomNamedGetter(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestCustomNamedGetter>);
     void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 private:
-    static bool canGetItemsForName(JSC::ExecState*, TestOverridingNameGetter*, const JSC::Identifier&);
+    static bool canGetItemsForName(JSC::ExecState*, TestCustomNamedGetter*, const JSC::Identifier&);
     static JSC::JSValue nameGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 };
 
-class JSTestOverridingNameGetterOwner : public JSC::WeakHandleOwner {
+class JSTestCustomNamedGetterOwner : public JSC::WeakHandleOwner {
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestOverridingNameGetter*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestCustomNamedGetter*)
 {
-    DEFINE_STATIC_LOCAL(JSTestOverridingNameGetterOwner, jsTestOverridingNameGetterOwner, ());
-    return &jsTestOverridingNameGetterOwner;
+    DEFINE_STATIC_LOCAL(JSTestCustomNamedGetterOwner, jsTestCustomNamedGetterOwner, ());
+    return &jsTestCustomNamedGetterOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld* world, TestOverridingNameGetter*)
+inline void* wrapperContext(DOMWrapperWorld* world, TestCustomNamedGetter*)
 {
     return world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestOverridingNameGetter*);
-TestOverridingNameGetter* toTestOverridingNameGetter(JSC::JSValue);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCustomNamedGetter*);
+TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue);
 
-class JSTestOverridingNameGetterPrototype : public JSC::JSNonFinalObject {
+class JSTestCustomNamedGetterPrototype : public JSC::JSNonFinalObject {
 public:
     typedef JSC::JSNonFinalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
-    static JSTestOverridingNameGetterPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestCustomNamedGetterPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestOverridingNameGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverridingNameGetterPrototype>(globalData.heap)) JSTestOverridingNameGetterPrototype(globalData, globalObject, structure);
+        JSTestCustomNamedGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetterPrototype>(globalData.heap)) JSTestCustomNamedGetterPrototype(globalData, globalObject, structure);
         ptr->finishCreation(globalData);
         return ptr;
     }
@@ -106,21 +106,21 @@ public:
     }
 
 private:
-    JSTestOverridingNameGetterPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
+    JSTestCustomNamedGetterPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
-class JSTestOverridingNameGetterConstructor : public DOMConstructorObject {
+class JSTestCustomNamedGetterConstructor : public DOMConstructorObject {
 private:
-    JSTestOverridingNameGetterConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestCustomNamedGetterConstructor(JSC::Structure*, JSDOMGlobalObject*);
     void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestOverridingNameGetterConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestCustomNamedGetterConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestOverridingNameGetterConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestOverridingNameGetterConstructor>(*exec->heap())) JSTestOverridingNameGetterConstructor(structure, globalObject);
+        JSTestCustomNamedGetterConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetterConstructor>(*exec->heap())) JSTestCustomNamedGetterConstructor(structure, globalObject);
         ptr->finishCreation(exec, globalObject);
         return ptr;
     }
@@ -138,10 +138,10 @@ protected:
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestOverridingNameGetterPrototypeFunctionAnotherFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(JSC::ExecState*);
 // Attributes
 
-JSC::JSValue jsTestOverridingNameGetterConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore
 

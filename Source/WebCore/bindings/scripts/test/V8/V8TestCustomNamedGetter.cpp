@@ -19,7 +19,7 @@
 */
 
 #include "config.h"
-#include "V8TestOverridingNameGetter.h"
+#include "V8TestCustomNamedGetter.h"
 
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
@@ -33,51 +33,51 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestOverridingNameGetter::info = { V8TestOverridingNameGetter::GetTemplate, V8TestOverridingNameGetter::derefObject, 0, 0 };
+WrapperTypeInfo V8TestCustomNamedGetter::info = { V8TestCustomNamedGetter::GetTemplate, V8TestCustomNamedGetter::derefObject, 0, 0 };
 
-namespace TestOverridingNameGetterInternal {
+namespace TestCustomNamedGetterInternal {
 
 template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> anotherFunctionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverridingNameGetter.anotherFunction");
+    INC_STATS("DOM.TestCustomNamedGetter.anotherFunction");
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestOverridingNameGetter* imp = V8TestOverridingNameGetter::toNative(args.Holder());
+    TestCustomNamedGetter* imp = V8TestCustomNamedGetter::toNative(args.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
     imp->anotherFunction(str);
     return v8::Handle<v8::Value>();
 }
 
-} // namespace TestOverridingNameGetterInternal
+} // namespace TestCustomNamedGetterInternal
 
-static const BatchedCallback TestOverridingNameGetterCallbacks[] = {
-    {"anotherFunction", TestOverridingNameGetterInternal::anotherFunctionCallback},
+static const BatchedCallback TestCustomNamedGetterCallbacks[] = {
+    {"anotherFunction", TestCustomNamedGetterInternal::anotherFunctionCallback},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestOverridingNameGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestOverridingNameGetter", v8::Persistent<v8::FunctionTemplate>(), V8TestOverridingNameGetter::internalFieldCount,
+    defaultSignature = configureTemplate(desc, "TestCustomNamedGetter", v8::Persistent<v8::FunctionTemplate>(), V8TestCustomNamedGetter::internalFieldCount,
         0, 0,
-        TestOverridingNameGetterCallbacks, WTF_ARRAY_LENGTH(TestOverridingNameGetterCallbacks));
+        TestCustomNamedGetterCallbacks, WTF_ARRAY_LENGTH(TestCustomNamedGetterCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     UNUSED_PARAM(instance); // In some cases, it will not be used.
     UNUSED_PARAM(proto); // In some cases, it will not be used.
     
-    desc->InstanceTemplate()->SetNamedPropertyHandler(V8TestOverridingNameGetter::namedPropertyGetter, 0, 0, 0, 0);
+    desc->InstanceTemplate()->SetNamedPropertyHandler(V8TestCustomNamedGetter::namedPropertyGetter, 0, 0, 0, 0);
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestOverridingNameGetter::GetRawTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestCustomNamedGetter::GetRawTemplate()
 {
     V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
     V8BindingPerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
@@ -90,7 +90,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestOverridingNameGetter::GetRawTemplate(
     return templ;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestOverridingNameGetter::GetTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestCustomNamedGetter::GetTemplate()
 {
     V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
     V8BindingPerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
@@ -99,18 +99,18 @@ v8::Persistent<v8::FunctionTemplate> V8TestOverridingNameGetter::GetTemplate()
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestOverridingNameGetterTemplate(GetRawTemplate());
+        ConfigureV8TestCustomNamedGetterTemplate(GetRawTemplate());
     data->templateMap().add(&info, templ);
     return templ;
 }
 
-bool V8TestOverridingNameGetter::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestCustomNamedGetter::HasInstance(v8::Handle<v8::Value> value)
 {
     return GetRawTemplate()->HasInstance(value);
 }
 
 
-v8::Handle<v8::Object> V8TestOverridingNameGetter::wrapSlow(TestOverridingNameGetter* impl)
+v8::Handle<v8::Object> V8TestCustomNamedGetter::wrapSlow(TestCustomNamedGetter* impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
@@ -127,9 +127,9 @@ v8::Handle<v8::Object> V8TestOverridingNameGetter::wrapSlow(TestOverridingNameGe
     return wrapper;
 }
 
-void V8TestOverridingNameGetter::derefObject(void* object)
+void V8TestCustomNamedGetter::derefObject(void* object)
 {
-    static_cast<TestOverridingNameGetter*>(object)->deref();
+    static_cast<TestCustomNamedGetter*>(object)->deref();
 }
 
 } // namespace WebCore

@@ -1,3 +1,131 @@
+2012-02-07  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [HasOverridingNameGetter] attribute to [CustomNamedGetter] attribute
+        https://bugs.webkit.org/show_bug.cgi?id=78076
+
+        Reviewed by Adam Barth.
+
+        This patch renames the [HasOverridingNameGetter] attribute to the
+        [CustomNamedGetter] attribute, for naming consistency with [CustomNamedSetter].
+
+        Test: bindings/scripts/test/TestCustomNamedGetter.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeaderNamedAndIndexedPropertyAccessors):
+        (GenerateImplementationNamedPropertyGetter):
+
+        * html/HTMLDocument.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameSetElement.idl:
+
+        * bindings/scripts/test/TestCustomNamedGetter.idl: Renamed from Source/WebCore/bindings/scripts/test/TestOverridingNameGetter.idl.
+
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.cpp: Updated run-bindings-tests results.
+        (WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetterPrivate::WebDOMTestCustomNamedGetterPrivate):
+        (WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetterPrivate):
+        (WebDOMTestCustomNamedGetter::WebDOMTestCustomNamedGetter):
+        (WebDOMTestCustomNamedGetter::operator=):
+        (WebDOMTestCustomNamedGetter::impl):
+        (WebDOMTestCustomNamedGetter::~WebDOMTestCustomNamedGetter):
+        (WebDOMTestCustomNamedGetter::anotherFunction):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.h: Ditto.
+        (WebCore):
+        (WebDOMTestCustomNamedGetter):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp: Ditto.
+        (WebKit):
+        (WebKit::kit):
+        (webkit_dom_test_custom_named_getter_another_function):
+        (WebKit::core):
+        (webkit_dom_test_custom_named_getter_finalize):
+        (webkit_dom_test_custom_named_getter_set_property):
+        (webkit_dom_test_custom_named_getter_get_property):
+        (webkit_dom_test_custom_named_getter_constructed):
+        (webkit_dom_test_custom_named_getter_class_init):
+        (webkit_dom_test_custom_named_getter_init):
+        (WebKit::wrapTestCustomNamedGetter):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.h: Ditto.
+        (_WebKitDOMTestCustomNamedGetter):
+        (_WebKitDOMTestCustomNamedGetterClass):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetterPrivate.h: Ditto.
+        (WebKit):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverridingNameGetter.h: Ditto.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp: Ditto.
+        (WebCore):
+        (WebCore::JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor):
+        (WebCore::JSTestCustomNamedGetterConstructor::finishCreation):
+        (WebCore::JSTestCustomNamedGetterConstructor::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetterConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestCustomNamedGetterPrototype::self):
+        (WebCore::JSTestCustomNamedGetterPrototype::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetterPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestCustomNamedGetter::JSTestCustomNamedGetter):
+        (WebCore::JSTestCustomNamedGetter::finishCreation):
+        (WebCore::JSTestCustomNamedGetter::createPrototype):
+        (WebCore::JSTestCustomNamedGetter::destroy):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertyDescriptor):
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        (WebCore::JSTestCustomNamedGetter::getConstructor):
+        (WebCore::jsTestCustomNamedGetterPrototypeFunctionAnotherFunction):
+        (WebCore::isObservable):
+        (WebCore::JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestCustomNamedGetterOwner::finalize):
+        (WebCore::toJS):
+        (WebCore::toTestCustomNamedGetter):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h: Ditto.
+        (WebCore):
+        (JSTestCustomNamedGetter):
+        (WebCore::JSTestCustomNamedGetter::create):
+        (WebCore::JSTestCustomNamedGetter::createStructure):
+        (WebCore::JSTestCustomNamedGetter::impl):
+        (WebCore::JSTestCustomNamedGetter::releaseImpl):
+        (WebCore::JSTestCustomNamedGetter::releaseImplIfNotNull):
+        (JSTestCustomNamedGetterOwner):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (JSTestCustomNamedGetterPrototype):
+        (WebCore::JSTestCustomNamedGetterPrototype::create):
+        (WebCore::JSTestCustomNamedGetterPrototype::createStructure):
+        (WebCore::JSTestCustomNamedGetterPrototype::JSTestCustomNamedGetterPrototype):
+        (JSTestCustomNamedGetterConstructor):
+        (WebCore::JSTestCustomNamedGetterConstructor::create):
+        (WebCore::JSTestCustomNamedGetterConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestOverridingNameGetter.cpp:
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetter.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetter.mm: Ditto.
+        (-[DOMTestCustomNamedGetter dealloc]):
+        (-[DOMTestCustomNamedGetter finalize]):
+        (-[DOMTestCustomNamedGetter anotherFunction:]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetterInternal.h: Ditto.
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp: Ditto.
+        (WebCore):
+        (TestCustomNamedGetterInternal):
+        (WebCore::TestCustomNamedGetterInternal::V8_USE):
+        (WebCore::TestCustomNamedGetterInternal::anotherFunctionCallback):
+        (WebCore::ConfigureV8TestCustomNamedGetterTemplate):
+        (WebCore::V8TestCustomNamedGetter::GetRawTemplate):
+        (WebCore::V8TestCustomNamedGetter::GetTemplate):
+        (WebCore::V8TestCustomNamedGetter::HasInstance):
+        (WebCore::V8TestCustomNamedGetter::wrapSlow):
+        (WebCore::V8TestCustomNamedGetter::derefObject):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h: Ditto.
+        (WebCore):
+        (V8TestCustomNamedGetter):
+        (WebCore::V8TestCustomNamedGetter::toNative):
+        (WebCore::V8TestCustomNamedGetter::existingWrapper):
+        (WebCore::V8TestCustomNamedGetter::wrap):
+        (WebCore::toV8):
+
 2012-02-07  Emil A Eklund  <eae@chromium.org>
 
         Revert TableSection cell and border calculations to integers

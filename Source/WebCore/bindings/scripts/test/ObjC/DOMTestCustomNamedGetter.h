@@ -30,7 +30,7 @@
 
 @class NSString;
 
-@interface DOMTestOverridingNameGetter : DOMObject
+@interface DOMTestCustomNamedGetter : DOMObject
 - (void)anotherFunction:(NSString *)str;
 @end
 

@@ -565,7 +565,7 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
     my $interfaceName = $dataNode->name;
     my $hasCustomIndexedGetter = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     my $hasCustomIndexedSetter = $dataNode->extendedAttributes->{"CustomIndexedSetter"} && !$dataNode->extendedAttributes->{"HasNumericIndexGetter"};
-    my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     my $hasCustomDeleters = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
     my $hasCustomEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
@@ -2133,24 +2133,24 @@ sub GenerateImplementationNamedPropertyGetter
     my $dataNode = shift;
     my $namedPropertyGetter = shift;
     my $interfaceName = $dataNode->name;
-    my $hasCustomGetter = $dataNode->extendedAttributes->{"HasOverridingNameGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"CustomNamedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
     # FIXME: Remove hard-coded HTMLOptionsCollection reference by changing HTMLOptionsCollection to not inherit
     # from HTMLCollection per W3C spec (http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/html.html#HTMLOptionsCollection).
     if ($interfaceName eq "HTMLOptionsCollection") {
         $interfaceName = "HTMLCollection";
-        $hasCustomGetter = 1;
+        $hasCustomNamedGetter = 1;
     }
 
     if ($interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
-        $hasCustomGetter = 1;
+        $hasCustomNamedGetter = 1;
     }
 
     if ($interfaceName eq "HTMLDocument") {
-        $hasCustomGetter = 0;
+        $hasCustomNamedGetter = 0;
     }
 
-    my $hasGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $hasCustomGetter;
+    my $hasGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $hasCustomNamedGetter;
     if (!$hasGetter) {
         return;
     }
@@ -2159,7 +2159,7 @@ sub GenerateImplementationNamedPropertyGetter
         $namedPropertyGetter = $codeGenerator->FindSuperMethod($dataNode, "namedItem");
     }
 
-    if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"} && !$hasCustomGetter) {
+    if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"} && !$hasCustomNamedGetter) {
         AddToImplIncludes("V8Collection.h");
         my $type = $namedPropertyGetter->type;
         push(@implContent, <<END);

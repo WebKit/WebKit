@@ -24,15 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOMTestOverridingNameGetter.h>
+#import <WebCore/DOMTestCustomNamedGetter.h>
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 namespace WebCore {
-    class TestOverridingNameGetter;
+    class TestCustomNamedGetter;
 }
 
-WebCore::TestOverridingNameGetter* core(DOMTestOverridingNameGetter *);
-DOMTestOverridingNameGetter *kit(WebCore::TestOverridingNameGetter*);
+WebCore::TestCustomNamedGetter* core(DOMTestCustomNamedGetter *);
+DOMTestCustomNamedGetter *kit(WebCore::TestCustomNamedGetter*);
 
 #endif

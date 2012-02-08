@@ -20,35 +20,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebDOMTestOverridingNameGetter_h
-#define WebDOMTestOverridingNameGetter_h
+#ifndef WebDOMTestCustomNamedGetter_h
+#define WebDOMTestCustomNamedGetter_h
 
 #include <WebDOMObject.h>
 #include <WebDOMString.h>
 
 namespace WebCore {
-class TestOverridingNameGetter;
+class TestCustomNamedGetter;
 };
 
 
-class WebDOMTestOverridingNameGetter : public WebDOMObject {
+class WebDOMTestCustomNamedGetter : public WebDOMObject {
 public:
-    WebDOMTestOverridingNameGetter();
-    explicit WebDOMTestOverridingNameGetter(WebCore::TestOverridingNameGetter*);
-    WebDOMTestOverridingNameGetter(const WebDOMTestOverridingNameGetter&);
-    WebDOMTestOverridingNameGetter& operator=(const WebDOMTestOverridingNameGetter&);
-    virtual ~WebDOMTestOverridingNameGetter();
+    WebDOMTestCustomNamedGetter();
+    explicit WebDOMTestCustomNamedGetter(WebCore::TestCustomNamedGetter*);
+    WebDOMTestCustomNamedGetter(const WebDOMTestCustomNamedGetter&);
+    WebDOMTestCustomNamedGetter& operator=(const WebDOMTestCustomNamedGetter&);
+    virtual ~WebDOMTestCustomNamedGetter();
 
     void anotherFunction(const WebDOMString& str);
 
-    WebCore::TestOverridingNameGetter* impl() const;
+    WebCore::TestCustomNamedGetter* impl() const;
 
 protected:
-    struct WebDOMTestOverridingNameGetterPrivate;
-    WebDOMTestOverridingNameGetterPrivate* m_impl;
+    struct WebDOMTestCustomNamedGetterPrivate;
+    WebDOMTestCustomNamedGetterPrivate* m_impl;
 };
 
-WebCore::TestOverridingNameGetter* toWebCore(const WebDOMTestOverridingNameGetter&);
-WebDOMTestOverridingNameGetter toWebKit(WebCore::TestOverridingNameGetter*);
+WebCore::TestCustomNamedGetter* toWebCore(const WebDOMTestCustomNamedGetter&);
+WebDOMTestCustomNamedGetter toWebKit(WebCore::TestCustomNamedGetter*);
 
 #endif
