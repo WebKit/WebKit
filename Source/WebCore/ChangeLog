@@ -1,3 +1,23 @@
+2012-02-08  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Dispatch updateViewportArguments(), when Document is finished
+        restoring from page cache.
+
+        https://bugs.webkit.org/show_bug.cgi?id=77943
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move updateViewportArguments() call from setPageInCache() to
+        documentDidResumeFromPageCache() to ensure, that the Document is
+        fully resumed from the page cache and attached to the mainframe,
+        when the viewport arguments are updated.
+
+        No tests. No change in behaviour.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::documentDidResumeFromPageCache):
+
 2012-02-08  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove incorrect early exit in CCDamageTracker

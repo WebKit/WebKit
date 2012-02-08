@@ -4085,8 +4085,6 @@ void Document::setInPageCache(bool flag)
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
 
-        updateViewportArguments();
-
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
     }
@@ -4127,6 +4125,8 @@ void Document::documentDidResumeFromPageCache()
 
     ASSERT(m_frame);
     m_frame->loader()->client()->dispatchDidBecomeFrameset(isFrameSet());
+
+    updateViewportArguments();
 }
 
 void Document::registerForPageCacheSuspensionCallbacks(Element* e)
