@@ -1,5 +1,26 @@
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
+        Remove simplejson because it's no longer used by webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=78164
+
+        Reviewed by Eric Seidel.
+
+        All the importers of this code were removed in a previous patch.
+
+        * Scripts/webkitpy/thirdparty/simplejson: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/LICENSE.txt: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/README.txt: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/__init__.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/_speedups.c: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/decoder.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/encoder.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/jsonfilter.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/ordered_dict.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/scanner.py: Removed.
+        * Scripts/webkitpy/thirdparty/simplejson/tool.py: Removed.
+
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
         webkitpy still imports simplejson
         https://bugs.webkit.org/show_bug.cgi?id=78161
 
