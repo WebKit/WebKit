@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<style>
+.flexbox {
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    border: 5px solid blue;
+    float:left;
+}
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkFlexBoxen()">
+
+<div data-expected-width=130 data-expected-height=30 class=flexbox>
+    <div style="background-color:pink; width: 20px; height: 20px;"></div>
+    <div style="background-color:red; width: 100px; height: 20px;"></div>
+</div>
+
+</body>
+</html>

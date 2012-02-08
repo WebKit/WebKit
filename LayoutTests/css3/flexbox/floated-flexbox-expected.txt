@@ -1,0 +1,7 @@
+FAIL:
+Expected 130 for width, but got 110. 
+
+<div data-expected-width="130" data-expected-height="30" class="flexbox">
+    <div style="background-color:pink; width: 20px; height: 20px;"></div>
+    <div style="background-color:red; width: 100px; height: 20px;"></div>
+</div>

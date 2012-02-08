@@ -1,3 +1,22 @@
+2012-02-07  Ojan Vafai  <ojan@chromium.org>
+
+        Floated flexboxes render as regular RenderBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=77909
+
+        Reviewed by Eric Seidel.
+
+        Add grid/flexbox cases to adjusting the display of floated/positioned
+        elements. Also, move this logic into a switch statement. This makes
+        the code more readable and gives compile warnings when new display types
+        are added that aren't handled here.
+
+        Test: css3/flexbox/floated-flexbox.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::adjustDisplay):
+        (WebCore):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+
 2012-02-08  Dirk Schulze  <krit@webkit.org>
 
         viewBox on nested SVG causes wrong content size for relative values

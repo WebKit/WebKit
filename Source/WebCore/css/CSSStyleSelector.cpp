@@ -1727,6 +1727,55 @@ static void addIntrinsicMargins(RenderStyle* style)
     }
 }
 
+static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool strictParsing)
+{
+    switch (display) {
+    case BLOCK:
+    case TABLE:
+    case BOX:
+    case FLEXBOX:
+#if ENABLE(CSS_GRID_LAYOUT)
+    case GRID:
+#endif
+        return display;
+
+    case LIST_ITEM:
+        // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk, but only in quirks mode.
+        if (!strictParsing && isFloating)
+            return BLOCK;
+        return display;
+    case INLINE_TABLE:
+        return TABLE;
+    case INLINE_BOX:
+        return BOX;
+    case INLINE_FLEXBOX:
+        return FLEXBOX;
+#if ENABLE(CSS_GRID_LAYOUT)
+    case INLINE_GRID:
+        return GRID;
+#endif
+
+    case INLINE:
+    case RUN_IN:
+    case COMPACT:
+    case INLINE_BLOCK:
+    case TABLE_ROW_GROUP:
+    case TABLE_HEADER_GROUP:
+    case TABLE_FOOTER_GROUP:
+    case TABLE_ROW:
+    case TABLE_COLUMN_GROUP:
+    case TABLE_COLUMN:
+    case TABLE_CELL:
+    case TABLE_CAPTION:
+        return BLOCK;
+    case NONE:
+        ASSERT_NOT_REACHED();
+        return NONE;
+    }
+    ASSERT_NOT_REACHED();
+    return BLOCK;
+}
+
 void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
     // Cache our original display.
@@ -1776,26 +1825,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         if (e && e->hasTagName(legendTag))
             style->setDisplay(BLOCK);
 
-        // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
-        // position or float an inline, compact, or run-in.  Cache the original display, since it
-        // may be needed for positioned elements that have to compute their static normal flow
-        // positions.  We also force inline-level roots to be block-level.
-        if (style->display() != BLOCK && style->display() != TABLE && style->display() != BOX &&
-            (style->position() == AbsolutePosition || style->position() == FixedPosition || style->isFloating() ||
-             (e && e->document()->documentElement() == e))) {
-            if (style->display() == INLINE_TABLE)
-                style->setDisplay(TABLE);
-            else if (style->display() == INLINE_BOX)
-                style->setDisplay(BOX);
-            else if (style->display() == LIST_ITEM) {
-                // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk,
-                // but only in quirks mode.
-                if (!m_checker.strictParsing() && style->isFloating())
-                    style->setDisplay(BLOCK);
-            }
-            else
-                style->setDisplay(BLOCK);
-        }
+        // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
+        if (style->position() == AbsolutePosition || style->position() == FixedPosition || style->isFloating() || (e && e->document()->documentElement() == e))
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
