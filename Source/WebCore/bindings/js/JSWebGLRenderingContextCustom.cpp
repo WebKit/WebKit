@@ -40,8 +40,10 @@
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESVertexArrayObject.h"
+#include "JSUint32Array.h"
 #include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
+#include "JSWebGLCompressedTextureS3TC.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLProgram.h"
@@ -56,7 +58,7 @@
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
 #include "WebGLBuffer.h"
-#include "WebGLCompressedTextures.h"
+#include "WebGLCompressedTextureS3TC.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLExtension.h"
@@ -71,6 +73,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
+#include <wtf/Uint32Array.h>
 
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"
@@ -121,6 +124,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return toJS(exec, globalObject, info.getWebGLTexture());
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
         return toJS(exec, globalObject, info.getWebGLUnsignedByteArray());
+    case WebGLGetInfo::kTypeWebGLUnsignedIntArray:
+        return toJS(exec, globalObject, info.getWebGLUnsignedIntArray());
     case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
         return toJS(exec, globalObject, info.getWebGLVertexArrayObjectOES());
     default:
@@ -193,8 +198,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugRendererInfo*>(extension));
     case WebGLExtension::WebGLDebugShadersName:
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
-    case WebGLExtension::WebKitWebGLCompressedTexturesName:
-        return toJS(exec, globalObject, static_cast<WebGLCompressedTextures*>(extension));
+    case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
+        return toJS(exec, globalObject, static_cast<WebGLCompressedTextureS3TC*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

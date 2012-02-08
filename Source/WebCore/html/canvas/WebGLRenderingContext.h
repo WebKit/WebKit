@@ -52,7 +52,7 @@ class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLContextGroup;
 class WebGLContextObject;
-class WebGLCompressedTextures;
+class WebGLCompressedTextureS3TC;
 class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
@@ -321,7 +321,7 @@ public:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
-    friend class WebGLCompressedTextures;
+    friend class WebGLCompressedTextureS3TC;
     friend class WebGLRenderingContextErrorMessageCallback;
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
@@ -366,6 +366,9 @@ public:
     bool validateRenderingState(int numElements);
 
     bool validateWebGLObject(const char*, WebGLObject*);
+
+    // Adds a compressed texture format.
+    void addCompressedTextureFormat(GC3Denum);
 
 #if ENABLE(VIDEO)
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, ExceptionCode&);
@@ -443,6 +446,8 @@ public:
     RefPtr<WebGLTexture> m_blackTexture2D;
     RefPtr<WebGLTexture> m_blackTextureCubeMap;
 
+    Vector<GC3Denum> m_compressedTextureFormats;
+
     // Fixed-size cache of reusable image buffers for video texImage2D calls.
     class LRUImageBufferCache {
     public:
@@ -500,7 +505,7 @@ public:
     OwnPtr<WebGLLoseContext> m_webglLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
-    OwnPtr<WebGLCompressedTextures> m_webglCompressedTextures;
+    OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);
@@ -587,6 +592,24 @@ public:
                              GC3Dsizei width, GC3Dsizei height,
                              GC3Denum format, GC3Denum type,
                              ArrayBufferView* pixels);
+
+    // Helper function to validate compressed texture data is correct size
+    // for the given format and dimensions.
+    bool validateCompressedTexFuncData(const char* functionName,
+                                       GC3Dsizei width, GC3Dsizei height,
+                                       GC3Denum format, ArrayBufferView* pixels);
+
+    // Helper function for validating compressed texture formats.
+    bool validateCompressedTexFormat(GC3Denum format);
+
+    // Helper function to validate compressed texture dimensions are valid for
+    // the given format.
+    bool validateCompressedTexDimensions(const char* functionName, GC3Dint level, GC3Dsizei width, GC3Dsizei height, GC3Denum format);
+
+    // Helper function to validate compressed texture dimensions are valid for
+    // the given format.
+    bool validateCompressedTexSubDimensions(const char* functionName, GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                                            GC3Dsizei width, GC3Dsizei height, GC3Denum format, WebGLTexture*);
 
     // Helper function to validate mode for draw{Arrays/Elements}.
     bool validateDrawMode(const char* functionName, GC3Denum);

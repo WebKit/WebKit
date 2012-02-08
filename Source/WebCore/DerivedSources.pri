@@ -222,6 +222,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/OESVertexArrayObject.idl \
     $$PWD/html/canvas/WebGLActiveInfo.idl \
     $$PWD/html/canvas/WebGLBuffer.idl \
+    $$PWD/html/canvas/WebGLCompressedTextureS3TC.idl \
     $$PWD/html/canvas/WebGLContextAttributes.idl \
     $$PWD/html/canvas/WebGLContextEvent.idl \
     $$PWD/html/canvas/WebGLDebugRendererInfo.idl \

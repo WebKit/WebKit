@@ -1,3 +1,67 @@
+2012-02-08  Gregg Tavares  <gman@google.com>
+
+        Implement new WEBGL compressed texture extensions
+        https://bugs.webkit.org/show_bug.cgi?id=77066
+
+        This removes the old experimental compressed
+        texture extension and implements the first new
+        one.
+
+        A test is in the WebGL conformance tests in
+        extensions/webgl-compressed-texture-s3tc.html
+        and will be copied here in a future patch.
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. Test coming in future patch.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLCompressedTextureS3TC.cpp: Added.
+        (WebCore):
+        (WebCore::WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC):
+        (WebCore::WebGLCompressedTextureS3TC::~WebGLCompressedTextureS3TC):
+        (WebCore::WebGLCompressedTextureS3TC::getName):
+        (WebCore::WebGLCompressedTextureS3TC::create):
+        (WebCore::WebGLCompressedTextureS3TC::supported):
+        * html/canvas/WebGLCompressedTextureS3TC.h: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        (WebCore):
+        (WebGLCompressedTextureS3TC):
+        * html/canvas/WebGLCompressedTextureS3TC.idl: Renamed from Source/WebCore/html/canvas/WebGLCompressedTextures.idl.
+        * html/canvas/WebGLCompressedTextures.cpp: Removed.
+        * html/canvas/WebGLCompressedTextures.h: Removed.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore):
+        (WebCore::WebGLGetInfo::getWebGLUnsignedIntArray):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLObject.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::addCompressedTextureFormat):
+        (WebCore::WebGLRenderingContext::compressedTexImage2D):
+        (WebCore::WebGLRenderingContext::compressedTexSubImage2D):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::validateCompressedTexFormat):
+        (WebCore::WebGLRenderingContext::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContext::validateCompressedTexDimensions):
+        (WebCore::WebGLRenderingContext::validateCompressedTexSubDimensions):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore):
+        (WebGLRenderingContext):
+        * html/canvas/WebGLRenderingContext.idl:
+
 2012-02-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: heap snapshot: implement Distance column in Object's retaining tree.

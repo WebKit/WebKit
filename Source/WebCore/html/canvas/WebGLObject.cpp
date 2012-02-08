@@ -32,7 +32,7 @@
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
-#include "WebGLCompressedTextures.h"
+#include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"

@@ -1782,10 +1782,10 @@
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */; };
 		6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */; };
-		6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextures.cpp */; };
-		6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextures.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextures.h */; };
-		6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextures.cpp */; };
-		6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextures.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextures.h */; };
+		6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */; };
+		6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextureS3TC.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextureS3TC.h */; };
+		6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp */; };
+		6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */; };
 		6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */; };
 		6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */; };
 		6E4ABCD4138EA0B70071D291 /* JSHTMLUnknownElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */; };
@@ -8650,11 +8650,11 @@
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3D.cpp; sourceTree = "<group>"; };
 		6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DCG.cpp; sourceTree = "<group>"; };
-		6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLCompressedTextures.cpp; sourceTree = "<group>"; };
-		6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLCompressedTextures.h; sourceTree = "<group>"; };
-		6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLCompressedTextures.cpp; path = canvas/WebGLCompressedTextures.cpp; sourceTree = "<group>"; };
-		6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLCompressedTextures.h; path = canvas/WebGLCompressedTextures.h; sourceTree = "<group>"; };
-		6E3FAE9014733FEA00E42306 /* WebGLCompressedTextures.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLCompressedTextures.idl; path = canvas/WebGLCompressedTextures.idl; sourceTree = "<group>"; };
+		6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLCompressedTextureS3TC.cpp; sourceTree = "<group>"; };
+		6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextureS3TC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLCompressedTextureS3TC.h; sourceTree = "<group>"; };
+		6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLCompressedTextureS3TC.cpp; path = canvas/WebGLCompressedTextureS3TC.cpp; sourceTree = "<group>"; };
+		6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLCompressedTextureS3TC.h; path = canvas/WebGLCompressedTextureS3TC.h; sourceTree = "<group>"; };
+		6E3FAE9014733FEA00E42306 /* WebGLCompressedTextureS3TC.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLCompressedTextureS3TC.idl; path = canvas/WebGLCompressedTextureS3TC.idl; sourceTree = "<group>"; };
 		6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLGetInfo.cpp; path = canvas/WebGLGetInfo.cpp; sourceTree = "<group>"; };
 		6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLGetInfo.h; path = canvas/WebGLGetInfo.h; sourceTree = "<group>"; };
 		6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLUnknownElement.cpp; sourceTree = "<group>"; };
@@ -14481,9 +14481,9 @@
 				49C7B9A81042D32E0009D447 /* WebGLBuffer.cpp */,
 				49C7B9A91042D32E0009D447 /* WebGLBuffer.h */,
 				49C7B9AA1042D32E0009D447 /* WebGLBuffer.idl */,
-				6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextures.cpp */,
-				6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextures.h */,
-				6E3FAE9014733FEA00E42306 /* WebGLCompressedTextures.idl */,
+				6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp */,
+				6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */,
+				6E3FAE9014733FEA00E42306 /* WebGLCompressedTextureS3TC.idl */,
 				6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */,
 				6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */,
 				6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */,
@@ -17464,8 +17464,8 @@
 				A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */,
 				49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */,
 				49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */,
-				6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextures.cpp */,
-				6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextures.h */,
+				6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */,
+				6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextureS3TC.h */,
 				6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */,
 				6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */,
 				BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */,
@@ -22991,7 +22991,7 @@
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
 				A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */,
 				49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */,
-				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextures.h in Headers */,
+				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextureS3TC.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
 				49C7B9981042D2D30009D447 /* JSWebGLFramebuffer.h in Headers */,
@@ -24018,7 +24018,7 @@
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
-				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextures.h in Headers */,
+				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */,
 				6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */,
 				93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */,
 				01D3CF8314BD0A3000FE9970 /* WebGLContextGroup.h in Headers */,
@@ -26135,7 +26135,7 @@
 				FD8E9BDF13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp in Sources */,
 				A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */,
 				49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */,
-				6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextures.cpp in Sources */,
+				6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp in Sources */,
 				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
 				BC2CBF7B140F1D58003879BE /* JSWebGLContextEvent.cpp in Sources */,
 				49C7B9971042D2D30009D447 /* JSWebGLFramebuffer.cpp in Sources */,
@@ -26968,7 +26968,7 @@
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
-				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextures.cpp in Sources */,
+				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,
 				93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */,
 				01D3CF8214BD0A3000FE9970 /* WebGLContextGroup.cpp in Sources */,

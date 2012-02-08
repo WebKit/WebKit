@@ -55,7 +55,7 @@
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"
 #include "V8WebGLBuffer.h"
-#include "V8WebGLCompressedTextures.h"
+#include "V8WebGLCompressedTextureS3TC.h"
 #include "V8WebGLDebugRendererInfo.h"
 #include "V8WebGLDebugShaders.h"
 #include "V8WebGLFramebuffer.h"
@@ -154,6 +154,8 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
         return toV8(info.getWebGLTexture());
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
         return toV8(info.getWebGLUnsignedByteArray());
+    case WebGLGetInfo::kTypeWebGLUnsignedIntArray:
+        return toV8(info.getWebGLUnsignedIntArray());
     case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
         return toV8(info.getWebGLVertexArrayObjectOES());
     default:
@@ -193,9 +195,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
         extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension));
         referenceName = "webGLDebugShadersName";
         break;
-    case WebGLExtension::WebKitWebGLCompressedTexturesName:
-        extensionObject = toV8(static_cast<WebGLCompressedTextures*>(extension));
-        referenceName = "webKitWebGLCompressedTexturesName";
+    case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
+        extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension));
+        referenceName = "webKitWebGLCompressedTextureS3TCName";
         break;
     }
     ASSERT(!extensionObject.IsEmpty());

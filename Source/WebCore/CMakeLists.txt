@@ -2181,7 +2181,7 @@ IF (ENABLE_WEBGL)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ValidateLimitations.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
         html/canvas/WebGLBuffer.cpp
-        html/canvas/WebGLCompressedTextures.cpp
+        html/canvas/WebGLCompressedTextureS3TC.cpp
         html/canvas/WebGLContextAttributes.cpp
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLContextGroup.cpp
@@ -2214,7 +2214,7 @@ IF (ENABLE_WEBGL)
         html/canvas/OESVertexArrayObject.idl
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl
-        html/canvas/WebGLCompressedTextures.idl
+        html/canvas/WebGLCompressedTextureS3TC.idl
         html/canvas/WebGLContextAttributes.idl
         html/canvas/WebGLContextEvent.idl
         html/canvas/WebGLDebugRendererInfo.idl

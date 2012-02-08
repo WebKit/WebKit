@@ -286,7 +286,7 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/Uint8ClampedArray.idl \
     $(WebCore)/html/canvas/WebGLActiveInfo.idl \
     $(WebCore)/html/canvas/WebGLBuffer.idl \
-    $(WebCore)/html/canvas/WebGLCompressedTextures.idl \
+    $(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
     $(WebCore)/html/canvas/WebGLContextAttributes.idl \
     $(WebCore)/html/canvas/WebGLContextEvent.idl \
     $(WebCore)/html/canvas/WebGLFramebuffer.idl \

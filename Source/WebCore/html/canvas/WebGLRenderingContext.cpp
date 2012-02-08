@@ -54,7 +54,7 @@
 #include "Settings.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
-#include "WebGLCompressedTextures.h"
+#include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLContextEvent.h"
 #include "WebGLContextGroup.h"
@@ -72,6 +72,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Uint16Array.h>
+#include <wtf/Uint32Array.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(QT)
@@ -539,6 +540,12 @@ bool WebGLRenderingContext::allowPrivilegedExtensions() const
     if (p && p->settings())
         return p->settings()->privilegedWebGLExtensionsEnabled();
     return false;
+}
+
+void WebGLRenderingContext::addCompressedTextureFormat(GC3Denum format)
+{
+    if (!m_compressedTextureFormats.contains(format))
+        m_compressedTextureFormats.append(format);
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()
@@ -1212,24 +1219,71 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::compressedTexImage2D(GC3Denum /*target*/, GC3Dint /*level*/, GC3Denum /*internalformat*/, GC3Dsizei /*width*/,
-                                                 GC3Dsizei /*height*/, GC3Dint /*border*/, ArrayBufferView* /*data*/)
+void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width,
+                                                 GC3Dsizei height, GC3Dint border, ArrayBufferView* data)
 {
     if (isContextLost())
         return;
+    if (!validateTexFuncLevel("compressedTexImage2D", target, level))
+        return;
 
-    // FIXME: implement this.
-    synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexImage2D", "invalid internalformat");
+    if (!validateCompressedTexFormat(internalformat)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexImage2D", "invalid internalformat");
+        return;
+    }
+    if (border) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexImage2D", "border not 0");
+        return;
+    }
+    if (!validateCompressedTexDimensions("compressedTexImage2D", level, width, height, internalformat))
+        return;
+    if (!validateCompressedTexFuncData("compressedTexImage2D", width, height, internalformat, data))
+        return;
+
+    WebGLTexture* tex = validateTextureBinding("compressedTexImage2D", target, true);
+    if (!tex)
+        return;
+    if (!isGLES2NPOTStrict()) {
+        if (level && WebGLTexture::isNPOT(width, height)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexImage2D", "level > 0 not power of 2");
+            return;
+        }
+    }
+    graphicsContext3D()->compressedTexImage2D(target, level, internalformat, width, height,
+                                              border, data->byteLength(), data->baseAddress());
+    tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
+    cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum /*target*/, GC3Dint /*level*/, GC3Dint /*xoffset*/, GC3Dint /*yoffset*/,
-                                                    GC3Dsizei /*width*/, GC3Dsizei /*height*/, GC3Denum /*format*/, ArrayBufferView* /*data*/)
+void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                                                    GC3Dsizei width, GC3Dsizei height, GC3Denum format, ArrayBufferView* data)
 {
     if (isContextLost())
         return;
+    if (!validateTexFuncLevel("compressedTexSubImage2D", target, level))
+        return;
+    if (!validateCompressedTexFormat(format)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexSubImage2D", "invalid format");
+        return;
+    }
+    if (!validateCompressedTexFuncData("compressedTexSubImage2D", width, height, format, data))
+        return;
 
-    // FIXME: implement this.
-    synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "compressedTexSubImage2D", "invalid format");
+    WebGLTexture* tex = validateTextureBinding("compressedTexSubImage2D", target, true);
+    if (!tex)
+        return;
+
+    if (format != tex->getInternalFormat(target, level)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "compressedTexSubImage2D", "format does not match texture format");
+        return;
+    }
+
+    if (!validateCompressedTexSubDimensions("compressedTexSubImage2D", target, level, xoffset, yoffset, width, height, format, tex))
+        return;
+
+    graphicsContext3D()->compressedTexSubImage2D(target, level, xoffset, yoffset,
+                                                 width, height, format, data->byteLength(), data->baseAddress());
+    cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
@@ -2190,11 +2244,11 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglLoseContext = WebGLLoseContext::create(this);
         return m_webglLoseContext.get();
     }
-    if (equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_textures")) {
+    if (equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_s3tc")) {
         // Use WEBKIT_ prefix until extension is official.
-        if (!m_webglCompressedTextures)
-            m_webglCompressedTextures = WebGLCompressedTextures::create(this);
-        return m_webglCompressedTextures.get();
+        if (!m_webglCompressedTextureS3TC)
+            m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::create(this);
+        return m_webglCompressedTextureS3TC.get();
     }
 
     if (allowPrivilegedExtensions()) {
@@ -2307,10 +2361,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
-        if (m_webglCompressedTextures)
-            return m_webglCompressedTextures->getCompressedTextureFormats();
-        // Defined as null in the spec
-        return WebGLGetInfo();
+        return WebGLGetInfo(Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size()));
     case GraphicsContext3D::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContext3D::CULL_FACE_MODE:
@@ -2365,9 +2416,6 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         return getIntParameter(pname);
     case GraphicsContext3D::MAX_VIEWPORT_DIMS:
         return getWebGLIntArrayParameter(pname);
-    case GraphicsContext3D::NUM_COMPRESSED_TEXTURE_FORMATS:
-        // WebGL 1.0 specifies that there are no compressed texture formats.
-        return WebGLGetInfo(static_cast<int>(0));
     case GraphicsContext3D::NUM_SHADER_BINARY_FORMATS:
         // FIXME: should we always return 0 for this?
         return getIntParameter(pname);
@@ -2640,8 +2688,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
     result.append("WEBKIT_WEBGL_lose_context");
-    if (WebGLCompressedTextures::supported(this))
-        result.append("WEBKIT_WEBGL_compressed_textures");
+    if (WebGLCompressedTextureS3TC::supported(this))
+        result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
 
     if (allowPrivilegedExtensions()) {
         if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
@@ -4683,6 +4731,117 @@ bool WebGLRenderingContext::validateTexFuncData(const char* functionName,
         return false;
     }
     return true;
+}
+
+bool WebGLRenderingContext::validateCompressedTexFormat(GC3Denum format)
+{
+    return m_compressedTextureFormats.contains(format);
+}
+
+bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionName,
+                                                          GC3Dsizei width, GC3Dsizei height,
+                                                          GC3Denum format, ArrayBufferView* pixels)
+{
+    if (!pixels) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no pixels");
+        return false;
+    }
+    if (width < 0 || height < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height < 0");
+        return false;
+    }
+
+    unsigned int bytesRequired = 0;
+
+    switch (format) {
+    case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        {
+            const int kBlockWidth = 4;
+            const int kBlockHeight = 4;
+            const int kBlockSize = 8;
+            int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
+            int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
+            int numBlocks = numBlocksAcross * numBlocksDown;
+            bytesRequired = numBlocks * kBlockSize;
+        }
+        break;
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        {
+            const int kBlockWidth = 4;
+            const int kBlockHeight = 4;
+            const int kBlockSize = 16;
+            int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
+            int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
+            int numBlocks = numBlocksAcross * numBlocksDown;
+            bytesRequired = numBlocks * kBlockSize;
+        }
+        break;
+    default:
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format");
+        return false;
+    }
+
+    if (pixels->byteLength() != bytesRequired) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "length of ArrayBufferView is not correct for dimensions");
+        return false;
+    }
+
+    return true;
+}
+
+bool WebGLRenderingContext::validateCompressedTexDimensions(const char* functionName, GC3Dint level, GC3Dsizei width, GC3Dsizei height, GC3Denum format)
+{
+    switch (format) {
+    case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT: {
+        const int kBlockWidth = 4;
+        const int kBlockHeight = 4;
+        bool widthValid = (level && width == 1) || (level && width == 2) || !(width % kBlockWidth);
+        bool heightValid = (level && height == 1) || (level && height == 2) || !(height % kBlockHeight);
+        if (!widthValid || !heightValid) {
+          synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "width or height invalid for level");
+          return false;
+        }
+        return true;
+    }
+    default:
+        return false;
+    }
+}
+
+bool WebGLRenderingContext::validateCompressedTexSubDimensions(const char* functionName, GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                                                               GC3Dsizei width, GC3Dsizei height, GC3Denum format, WebGLTexture* tex)
+{
+    if (xoffset < 0 || yoffset < 0) {
+      synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "xoffset or yoffset < 0");
+      return false;
+    }
+
+    switch (format) {
+    case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT: {
+        const int kBlockWidth = 4;
+        const int kBlockHeight = 4;
+        if ((xoffset % kBlockWidth) || (yoffset % kBlockHeight)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "xoffset or yoffset not multiple of 4");
+            return false;
+        }
+        if (width - xoffset > tex->getWidth(target, level)
+            || height - yoffset > tex->getHeight(target, level)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "dimensions out of range");
+            return false;
+        }
+        return validateCompressedTexDimensions(functionName, level, width, height, format);
+    }
+    default:
+        return false;
+    }
 }
 
 bool WebGLRenderingContext::validateDrawMode(const char* functionName, GC3Denum mode)

@@ -206,7 +206,6 @@ module html {
         /*      TEXTURE_WRAP_S */
         /*      TEXTURE_WRAP_T */
 
-        const unsigned int NUM_COMPRESSED_TEXTURE_FORMATS = 0x86A2;
         const unsigned int COMPRESSED_TEXTURE_FORMATS     = 0x86A3;
 
         /* HintMode */

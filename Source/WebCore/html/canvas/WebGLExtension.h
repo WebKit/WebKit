@@ -40,7 +40,7 @@ public:
         OESVertexArrayObjectName,
         WebGLDebugRendererInfoName,
         WebGLDebugShadersName,
-        WebKitWebGLCompressedTexturesName, // WEBKIT_ prefix until extension is official
+        WebKitWebGLCompressedTextureS3TCName, // WEBKIT_ prefix until extension is official
     };
 
     void ref() { m_context->ref(); }
