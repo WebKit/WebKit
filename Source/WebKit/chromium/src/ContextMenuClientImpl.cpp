@@ -259,8 +259,10 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             data.frameHistoryItem = WebHistoryItem(historyItem);
     }
 
-    if (r.isSelected())
-        data.selectedText = selectedFrame->editor()->selectedText().stripWhiteSpace();
+    if (r.isSelected()) {
+        if (!r.innerNonSharedNode()->hasTagName(HTMLNames::inputTag) || !static_cast<HTMLInputElement*>(r.innerNonSharedNode())->isPasswordField())
+            data.selectedText = selectedFrame->editor()->selectedText().stripWhiteSpace();
+    }
 
     if (r.isContentEditable()) {
         data.isEditable = true;

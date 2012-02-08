@@ -1,3 +1,13 @@
+2012-02-08  Bernhard Bauer  <bauerb@google.com>
+
+        [Chromium] Don't add selection from password fields to context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=77733
+
+        Reviewed by Adam Barth.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-02-08  Nico Weber  <nicolasweber@gmx.de>
 
         [chromium] Let -Wglobal-constructors hack in shared build metastasize to mac
