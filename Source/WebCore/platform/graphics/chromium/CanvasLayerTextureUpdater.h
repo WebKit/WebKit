@@ -35,6 +35,7 @@ namespace WebCore {
 
 class GraphicsContext3D;
 class LayerPainterChromium;
+class PlatformContextSkia;
 
 // Base class for BitmapCanvasLayerTextureUpdater and
 // SkPictureCanvasLayerTextureUpdater that reduces code duplication between
@@ -46,7 +47,7 @@ public:
 protected:
     explicit CanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    void paintContents(GraphicsContext&, const IntRect& contentRect, float contentsScale);
+    void paintContents(GraphicsContext&, PlatformContextSkia&, const IntRect& contentRect, float contentsScale);
     const IntRect& contentRect() const { return m_contentRect; }
 
 private:

@@ -31,6 +31,7 @@
 #ifndef PlatformContextSkia_h
 #define PlatformContextSkia_h
 
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "Noncopyable.h"
 #include "OpaqueRegionSkia.h"
@@ -192,6 +193,8 @@ public:
     void setDeferred(bool deferred) { m_deferred = deferred; }
 
     void setTrackOpaqueRegion(bool track) { m_trackOpaqueRegion = track; }
+    // A transform applied to all tracked opaque paints. This is applied at the time the painting is done.
+    void setOpaqueRegionTransform(const AffineTransform& transform) { m_opaqueRegionTransform = transform; }
 
     // This will be an empty region unless tracking is enabled.
     const OpaqueRegionSkia& opaqueRegion() const { return m_opaqueRegion; }
@@ -229,6 +232,7 @@ private:
     // Tracks the region painted opaque via the GraphicsContext.
     OpaqueRegionSkia m_opaqueRegion;
     bool m_trackOpaqueRegion;
+    AffineTransform m_opaqueRegionTransform;
 
     // Stores image sizes for a hint to compute image resampling modes.
     // Values are used in ImageSkia.cpp

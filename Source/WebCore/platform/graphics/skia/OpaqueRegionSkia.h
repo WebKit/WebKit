@@ -40,6 +40,7 @@
 #include "SkRect.h"
 
 namespace WebCore {
+class AffineTransform;
 class PlatformContextSkia;
 
 // This class is an encapsulation of functionality for PlatformContextSkia, and its methods are mirrored
@@ -52,15 +53,15 @@ public:
     // The resulting opaque region as a single rect.
     IntRect asRect() const;
 
-    void didDrawRect(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap*);
-    void didDrawPath(const PlatformContextSkia*, const SkPath&, const SkPaint&);
-    void didDrawPoints(const PlatformContextSkia*, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    void didDrawBounded(const PlatformContextSkia*, const SkRect&, const SkPaint&);
+    void didDrawRect(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap*);
+    void didDrawPath(const PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
+    void didDrawPoints(const PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    void didDrawBounded(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
 
 private:
-    void didDraw(const PlatformContextSkia*, const SkRect&, const SkPaint&, bool drawsOpaque, bool fillsBounds);
+    void didDraw(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, bool drawsOpaque, bool fillsBounds);
     void didDrawUnbounded(const SkPaint&, bool drawsOpaque);
-    void markRectAsOpaque(const PlatformContextSkia*, const SkRect&);
+    void markRectAsOpaque(const SkRect&);
     void markRectAsNonOpaque(const SkRect&);
 
     SkRect m_opaqueRect;

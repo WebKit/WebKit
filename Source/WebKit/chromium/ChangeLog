@@ -1,3 +1,14 @@
+2012-02-08  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Fix opaque tracking for box shadows and non-composited child elements
+        https://bugs.webkit.org/show_bug.cgi?id=78073
+
+        Reviewed by Stephen White.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-02-08  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove incorrect early exit in CCDamageTracker

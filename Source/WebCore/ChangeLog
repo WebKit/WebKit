@@ -1,3 +1,60 @@
+2012-02-08  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Fix opaque tracking for box shadows and non-composited child elements
+        https://bugs.webkit.org/show_bug.cgi?id=78073
+
+        Reviewed by Stephen White.
+
+        Tests: compositing/culling/scrolled-within-boxshadow.html
+               compositing/culling/translated-boxshadow.html
+
+        Unit tests: PlatformContextSkiaTest.cpp
+
+        When painting a box shadow, a filter is applied to the skia canvas, that can make
+        pixels painted with an opaque color end up non-opaque. So consider image/mask/color
+        filters when deciding if a paint is opaque.
+
+        Also when painting the background of an element with a box shadow, the background is
+        painted with a transform on the skia canvas based on the size of the box shadow. This
+        transform needs to be considered when tracking an opaque paint.
+
+        However, when a layer's contentRect position is non-zero, we translate the GraphicsContext
+        to put the contentRect at 0,0 in the skia canvas. For tracking opaque regions in the resulting
+        layer, we need to unto this translation. Scaling can also occur which we must undo. So we pass
+        the transform in to PlatformContextSkia to go from the SkCanvas back to the layer's content
+        coordinate space. Opaque paints can then be tracked in the layer's content space rather than
+        in the skia canvas space.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        (WebCore):
+        (CanvasLayerTextureUpdater):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/skia/OpaqueRegionSkia.cpp:
+        (WebCore::paintIsOpaque):
+        (WebCore::OpaqueRegionSkia::didDrawRect):
+        (WebCore::OpaqueRegionSkia::didDrawPath):
+        (WebCore::OpaqueRegionSkia::didDrawPoints):
+        (WebCore::OpaqueRegionSkia::didDrawBounded):
+        (WebCore::OpaqueRegionSkia::didDraw):
+        (WebCore::OpaqueRegionSkia::markRectAsOpaque):
+        (WebCore::OpaqueRegionSkia::markRectAsNonOpaque):
+        * platform/graphics/skia/OpaqueRegionSkia.h:
+        (WebCore):
+        (OpaqueRegionSkia):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::didDrawRect):
+        (WebCore::PlatformContextSkia::didDrawPath):
+        (WebCore::PlatformContextSkia::didDrawPoints):
+        (WebCore::PlatformContextSkia::didDrawBounded):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+        (WebCore::PlatformContextSkia::setOpaqueRegionTransform):
+
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
         Remove [CustomHeader] from CanvasPixelArray and rename [CustomHeader] to [JSCustomHeader]
