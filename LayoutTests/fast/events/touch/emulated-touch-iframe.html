@@ -1,0 +1,38 @@
+<html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<body>
+<iframe style="position:absolute; top:100px; left:100px;" src="./resources/emulated-touch-iframe2.html"></iframe>
+<p>Test touchend events are emulated in iframes correctly.</p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var eventCount = 0;
+var EXPECTED_EVENT_COUNT = 2;
+
+function testComplete()
+{
+    if (++eventCount === EXPECTED_EVENT_COUNT) {
+        debug("Final touchend (test will time out if broken)");
+        window.layoutTestController.notifyDone();
+    }
+}
+
+function runTest() {
+    if (window.eventSender && window.internals && window.internals.settings) {
+        window.eventSender.dragMode = false;
+        window.internals.settings.setTouchEventEmulationEnabled(true);
+
+        eventSender.mouseMoveTo(110, 110);
+        eventSender.mouseDown(0);
+        eventSender.mouseMoveTo(120, 130);
+        eventSender.mouseUp(0);
+    } else
+       debug('This test requires DRT.');
+}
+
+if (window.layoutTestController)
+    window.layoutTestController.waitUntilDone();
+
+</script>
+</body>
+</html>

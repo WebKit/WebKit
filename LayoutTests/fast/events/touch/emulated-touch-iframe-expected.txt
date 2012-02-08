@@ -1,0 +1,5 @@
+
+Test touchend events are emulated in iframes correctly.
+
+Final touchend (test will time out if broken)
+

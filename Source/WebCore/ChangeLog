@@ -1,3 +1,15 @@
+2012-02-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Touch event emulation fails for iframes
+        https://bugs.webkit.org/show_bug.cgi?id=77987
+
+        Reviewed by Pavel Feldman.
+
+        Test: fast/events/touch/emulated-touch-iframe.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2012-02-08  Andreas Kling  <awesomekling@apple.com>
 
         StyledElement: Manully setNeedsStyleRecalc() after adding CSSProperties directly.
