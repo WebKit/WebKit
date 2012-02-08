@@ -33,9 +33,16 @@
         'platform_files': [
             'chromium/public/WebCString.h',
             'chromium/public/WebCommon.h',
-            'chromium/public/WebString.h',
+            'chromium/public/WebFloatPoint.h',
+            'chromium/public/WebFloatQuad.h',
+            'chromium/public/WebFloatRect.h',
             'chromium/public/WebMimeRegistry.h',
+            'chromium/public/WebPoint.h',
+            'chromium/public/WebRect.h',
+            'chromium/public/WebSize.h',
+            'chromium/public/WebString.h',
             'chromium/src/WebCString.cpp',
+            'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebString.cpp',
         ]
     }

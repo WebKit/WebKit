@@ -538,7 +538,6 @@
                 'src/WebFileChooserCompletionImpl.h',
                 'src/WebFileSystemCallbacksImpl.cpp',
                 'src/WebFileSystemCallbacksImpl.h',
-                'src/WebFloatQuad.cpp',
                 'src/WebFontCache.cpp',
                 'src/WebFontDescription.cpp',
                 'src/WebFontImpl.cpp',

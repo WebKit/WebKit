@@ -1,3 +1,19 @@
+2012-02-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move geometry headers in Platform API to Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=78067
+
+        Reviewed by Adam Barth.
+
+        Add forwarding headers for several API types moved into Platform.
+
+        * public/platform/WebFloatPoint.h:
+        * public/platform/WebFloatQuad.h:
+        * public/platform/WebFloatRect.h:
+        * public/platform/WebPoint.h:
+        * public/platform/WebRect.h:
+        * public/platform/WebSize.h:
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         [Chromium] WebTextCheckingResult should have new default constructor

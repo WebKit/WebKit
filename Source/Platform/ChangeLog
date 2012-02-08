@@ -1,3 +1,76 @@
+2012-02-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move geometry headers in Platform API to Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=78067
+
+        Reviewed by Adam Barth.
+
+        This moves several geometry-related headers in the chromium WebKit platform API to Platform/chromium/public.
+        These require a bit of extra work since when WEBKIT_IMPLEMENTATION is set they #include headers from
+        WebCore/platform such as IntPoint so that the implementations of several functions can be inlined. Since we do
+        not want to add anything in WebCore to the include path of projects that depend on the Platform API this poses a
+        bit of an issue. I've added an extra build step to copy the specific headers used into the
+        SHARED_INTERMEDIATE_DIR to preserve this inlining.
+        
+        Eventually we'll move the cross-platform code, including these headers, into somewhere under Platform/, but doing
+        that requires non-trivial modifications to every build system in WebKit.
+
+        * Platform.gyp/Platform.gyp:
+        * Platform.gyp/copy_webcore_headers.py: Added.
+        (CopyHeaders):
+        (Main):
+        * chromium/public/WebFloatPoint.h: Copied from Source/WebKit/chromium/public/platform/WebFloatPoint.h.
+        (WebKit):
+        (WebFloatPoint):
+        (WebKit::WebFloatPoint::WebFloatPoint):
+        (WebKit::WebFloatPoint::operator=):
+        (WebKit::WebFloatPoint::operator WebCore::FloatPoint):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebFloatQuad.h: Copied from Source/WebKit/chromium/public/platform/WebFloatQuad.h.
+        (WebKit):
+        (WebFloatQuad):
+        (WebKit::WebFloatQuad::WebFloatQuad):
+        (WebKit::WebFloatQuad::operator=):
+        * chromium/public/WebFloatRect.h: Copied from Source/WebKit/chromium/public/platform/WebFloatRect.h.
+        (WebKit):
+        (WebFloatRect):
+        (WebKit::WebFloatRect::isEmpty):
+        (WebKit::WebFloatRect::WebFloatRect):
+        (WebKit::WebFloatRect::operator=):
+        (WebKit::WebFloatRect::operator WebCore::FloatRect):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebPoint.h: Copied from Source/WebKit/chromium/public/platform/WebPoint.h.
+        (WebKit):
+        (WebPoint):
+        (WebKit::WebPoint::WebPoint):
+        (WebKit::WebPoint::operator=):
+        (WebKit::WebPoint::operator WebCore::IntPoint):
+        (WebKit::WebPoint::operator gfx::Point):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebRect.h: Copied from Source/WebKit/chromium/public/platform/WebRect.h.
+        (WebKit):
+        (WebRect):
+        (WebKit::WebRect::isEmpty):
+        (WebKit::WebRect::WebRect):
+        (WebKit::WebRect::operator=):
+        (WebKit::WebRect::operator WebCore::IntRect):
+        (WebKit::WebRect::operator gfx::Rect):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebSize.h: Copied from Source/WebKit/chromium/public/platform/WebSize.h.
+        (WebKit):
+        (WebSize):
+        (WebKit::WebSize::isEmpty):
+        (WebKit::WebSize::WebSize):
+        (WebKit::WebSize::operator=):
+        (WebKit::WebSize::operator WebCore::IntSize):
+        (WebKit::WebSize::operator gfx::Size):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+
 2012-01-19  Joi Sigurdsson  <joi@chromium.org>
 
         Enable use of precompiled headers in Chromium port on Windows.
