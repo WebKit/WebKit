@@ -1,3 +1,19 @@
+2012-02-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: bind entire subtree upon childNodeInserted so that text node were accounted.
+        https://bugs.webkit.org/show_bug.cgi?id=78116
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        (WebInspector.DOMAgent.prototype._setChildNodes):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        (WebInspector.DOMAgent.prototype._unbind):
+
 2012-02-08  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Optional out arguments are not supported in the Web Inspector protocol, which breaks the implementation

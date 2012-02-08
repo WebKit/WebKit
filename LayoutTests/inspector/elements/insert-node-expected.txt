@@ -39,3 +39,16 @@ Running: testAppend
       <div id="child-after"></div>
   </div>
 
+Running: testAppendWithText
+======== Appended with text=========
+- <div id="container">
+      <div id="child-before"></div>
+      <div id="child1"></div>
+      <div id="child-middle"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+      <div id="child-after"></div>
+      <div style="display: none; " id="child-with-text">Text</div>
+  </div>
+Success: child text is bound
+

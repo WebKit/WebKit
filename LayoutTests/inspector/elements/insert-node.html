@@ -29,6 +29,16 @@ function appendChild()
     container.appendChild(child);
 }
 
+function appendChildWithText()
+{
+    var container = document.getElementById("container");
+    var child = document.createElement("div");
+    child.style.display = "none";
+    child.innerText = "Text";
+    child.setAttribute("id", "child-with-text");
+    container.appendChild(child);
+}
+
 function test()
 {
     var containerNode;
@@ -69,7 +79,8 @@ function test()
             InspectorTest.evaluateInPage("insertNode()", callback);
         },
 
-        function testAppend(next) {
+        function testAppend(next)
+        {
             function callback()
             {
                 InspectorTest.addResult("======== Appended =========");
@@ -77,6 +88,22 @@ function test()
                 next();
             }
             InspectorTest.evaluateInPage("appendChild()", callback);
+        },
+
+        function testAppendWithText(next)
+        {
+            function callback()
+            {
+                InspectorTest.addResult("======== Appended with text=========");
+                InspectorTest.dumpElementsTree(containerNode);
+                var newNode = InspectorTest.expandedNodeWithId("child-with-text");
+                if (WebInspector.domAgent.nodeForId(newNode.firstChild.id))
+                    InspectorTest.addResult("Success: child text is bound");
+                else
+                    InspectorTest.addResult("Failed: child text is not bound");
+                next();
+            }
+            InspectorTest.evaluateInPage("appendChildWithText()", callback);
         }
     ]);
 }
