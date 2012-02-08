@@ -443,6 +443,7 @@ fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 http/tests/misc/favicon-as-image.html
 
 # No authentication challenge handling
+http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
