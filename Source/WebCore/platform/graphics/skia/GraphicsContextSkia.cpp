@@ -721,6 +721,11 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& pt, float width,
     SkScalar originX = WebCoreFloatToSkScalar(pt.x());
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     SkScalar originY = WebCoreFloatToSkScalar(pt.y());
+    // Make sure to draw only complete dots.
+    int rowPixels = misspellBitmap->width();
+    float widthMod = fmodf(width, rowPixels);
+    if (rowPixels - widthMod > 1)
+        width -= widthMod;
 #else
     // Offset it vertically by 1 so that there's some space under the text.
     SkScalar originY = WebCoreFloatToSkScalar(pt.y()) + 1;
