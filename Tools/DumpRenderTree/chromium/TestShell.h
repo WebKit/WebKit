@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -136,6 +136,7 @@ public:
     void setCompositeToTexture(bool enabled) { m_compositeToTexture = enabled; }
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
+    void setDeferred2dCanvasEnabled(bool enabled) { m_deferred2dCanvasEnabled = enabled; }
     void setAcceleratedPaintingEnabled(bool enabled) { m_acceleratedPaintingEnabled = enabled; }
     void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
 #if defined(OS_WIN)
@@ -225,6 +226,7 @@ private:
     bool m_compositeToTexture;
     bool m_forceCompositingMode;
     bool m_accelerated2dCanvasEnabled;
+    bool m_deferred2dCanvasEnabled;
     bool m_acceleratedPaintingEnabled;
     bool m_perTilePaintingEnabled;
     WebPreferences m_prefs;

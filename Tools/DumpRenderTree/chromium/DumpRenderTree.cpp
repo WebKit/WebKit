@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,6 +56,7 @@ static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
 static const char optionEnableThreadedCompositing[] = "--enable-threaded-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
+static const char optionEnableDeferred2DCanvas[] = "--enable-deferred-2d-canvas";
 static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
@@ -143,6 +144,7 @@ int main(int argc, char* argv[])
     bool compositeToTexture = false;
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
+    bool deferred2DCanvasEnabled = false;
     bool acceleratedPaintingEnabled = false;
     bool perTilePaintingEnabled = false;
     bool stressOpt = false;
@@ -186,6 +188,8 @@ int main(int argc, char* argv[])
             forceCompositingMode = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
+        else if (argument == optionEnableDeferred2DCanvas)
+            deferred2DCanvasEnabled = true;
         else if (argument == optionEnableAcceleratedPainting)
             acceleratedPaintingEnabled = true;
         else if (!argument.find(optionUseGraphicsContext3DImplementation)) {
@@ -236,6 +240,7 @@ int main(int argc, char* argv[])
         shell.setCompositeToTexture(compositeToTexture);
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
+        shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);
         shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
         shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);
