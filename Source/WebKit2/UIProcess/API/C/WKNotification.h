@@ -36,6 +36,7 @@ WK_EXPORT WKTypeID WKNotificationGetTypeID();
 
 WK_EXPORT WKStringRef WKNotificationCopyTitle(WKNotificationRef notification);
 WK_EXPORT WKStringRef WKNotificationCopyBody(WKNotificationRef notification);
+WK_EXPORT WKStringRef WKNotificationCopyIconURL(WKNotificationRef notification);
 WK_EXPORT WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification);
 WK_EXPORT uint64_t WKNotificationGetID(WKNotificationRef notification);
 

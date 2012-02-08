@@ -45,24 +45,26 @@ class WebNotification : public APIObject {
 public:
     static const Type APIType = TypeNotification;
     
-    static PassRefPtr<WebNotification> create(const String& title, const String& body, const String& originString, uint64_t notificationID)
+    static PassRefPtr<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& originString, uint64_t notificationID)
     {
-        return adoptRef(new WebNotification(title, body, originString, notificationID));
+        return adoptRef(new WebNotification(title, body, iconURL, originString, notificationID));
     }
     
     const String& title() const { return m_title; }
     const String& body() const { return m_body; }
+    const String& iconURL() const { return m_iconURL; }
     WebSecurityOrigin* origin() const { return m_origin.get(); }
     
     uint64_t notificationID() const { return m_notificationID; }
 
 private:
-    WebNotification(const String& title, const String& body, const String& originString, uint64_t notificationID);
+    WebNotification(const String& title, const String& body, const String& iconURL, const String& originString, uint64_t notificationID);
 
     virtual Type type() const { return APIType; }
     
     String m_title;
     String m_body;
+    String m_iconURL;
     RefPtr<WebSecurityOrigin> m_origin;
     uint64_t m_notificationID;
 };

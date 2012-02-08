@@ -121,7 +121,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     }
     it->second.append(notificationID);
     
-    m_process->connection()->send(Messages::WebPageProxy::ShowNotification(notification->contents().title, notification->contents().body, notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
+    m_process->connection()->send(Messages::WebPageProxy::ShowNotification(notification->contents().title, notification->contents().body, notification->iconURL().string(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
     return true;
 #else
     return false;
