@@ -1,3 +1,19 @@
+2012-02-08  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium: Fix Mac rubber band overhang drawing on composited pages and re-enable tests.
+        https://bugs.webkit.org/show_bug.cgi?id=78007
+
+        This got broken by: http://trac.webkit.org/changeset/105470
+        And the tests were accidentally(?) disabled in: http://trac.webkit.org/changeset/95191
+
+        There is still three tests that fail from the set, but the cause for these is different,
+        which I'm still investigating.
+
+        Reviewed by James Robinson.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+
 2012-02-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move geometry headers in Platform API to Platform directory

@@ -517,9 +517,10 @@ WONTFIX SKIP : fast/frames/cross-site-this.html = FAIL
 // throw.  V8 follows the spec.
 WONTFIX SKIP : fast/js/reparsing-semicolon-insertion.html = FAIL
 
-// Rubber-banding is currently a CG only feature.
-WONTFIX : platform/chromium/rubberbanding = FAIL
-WONTFIX : platform/chromium/compositing/rubberbanding = IMAGE
+// These test rubber band overhang drawing, which is a Mac OS X Lion feature
+// that is not supported on other platforms.
+WONTFIX SKIP WIN LINUX : platform/chromium/rubberbanding = IMAGE
+WONTFIX SKIP WIN LINUX : platform/chromium/compositing/rubberbanding = IMAGE
 
 // This requires usp10.dll version 1.600 or greater on Windows and
 // it isn't installed on XP by default.
@@ -4041,6 +4042,10 @@ BUGWK77736 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-mixed-008.xml = IMAGE+TEXT
 BUGWK77736 MAC WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 BUGWK77736 : svg/zoom/text/zoom-hixie-rendering-model-004.xhtml = IMAGE+TEXT
+
+BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-e.html = IMAGE
+BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-se.html = IMAGE
+BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-s.html = IMAGE
 
 // SVGLoad event timing changes require some rebaselines.
 BUGWK78084 : svg/custom/SVGPoint-matrixTransform.svg = IMAGE+TEXT
