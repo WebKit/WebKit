@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?AdobeSVGViewer save="snapshot"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 1024 768" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 1024 768" onload="runRepaintTest()">
     <script type="text/ecmascript" xlink:href="../../fast/repaint/resources/repaint.js"></script>
     <script type="text/ecmascript" xlink:href="resources/helper_functions.js"></script>
     <script type="text/ecmascript" xlink:href="resources/timer.js"></script>
@@ -39,8 +39,6 @@
 		//tabgroupTriangle.disableAllTabs();
 		//tabgroupTriangle.enableSingleTab(3);
 		//tabgroupTriangle.enableAllTabs();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
             function tabChanged(id,title,index) {
                 alert("tab nr "+index+" with title '"+title+"' was activated in tabgroup '"+id+"'");

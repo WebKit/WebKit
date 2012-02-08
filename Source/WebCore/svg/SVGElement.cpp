@@ -105,6 +105,20 @@ SVGElementRareData* SVGElement::ensureRareSVGData()
     return data;
 }
 
+bool SVGElement::isOutermostSVGSVGElement() const
+{
+    // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
+    if (!parentNode())
+        return true;
+
+    // We act like an outermost SVG element, if we're a direct child of a <foreignObject> element.
+    if (parentNode()->hasTagName(SVGNames::foreignObjectTag))
+        return true;
+
+    // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
+    return !parentNode()->isSVGElement();
+}
+
 void SVGElement::reportAttributeParsingError(SVGParsingError error, Attribute* attribute)
 {
     if (error == NoError)
@@ -340,12 +354,30 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         if (hasLoadListener(currentTarget.get()))
             currentTarget->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
+        SVGElement* element = static_cast<SVGElement*>(currentTarget.get());
+        if (!element || !element->isOutermostSVGSVGElement())
+            continue;
+
+        // Consider <svg onload="foo()"><image xlink:href="foo.png" externalResourcesRequired="true"/></svg>.
+        // If foo.png is not yet loaded, the first SVGLoad event will go to the <svg> element, sent through
+        // Document::implicitClose(). Then the SVGLoad event will fire for <image>, once its loaded.
+        ASSERT(sendParentLoadEvents);
+
+        // If the load event was not sent yet by Document::implicitClose(), but the <image> from the example
+        // above, just appeared, don't send the SVGLoad event to the outermost <svg>, but wait for the document
+        // to be "ready to render", first.
+        if (!document()->loadEventFinished())
+            break;
     }
 }
 
 void SVGElement::finishParsingChildren()
 {
     StyledElement::finishParsingChildren();
+
+    // The outermost SVGSVGElement SVGLoad event is fired through Document::dispatchWindowLoadEvent.
+    if (isOutermostSVGSVGElement())
+        return;
 
     // finishParsingChildren() is called when the close tag is reached for an element (e.g. </svg>)
     // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish

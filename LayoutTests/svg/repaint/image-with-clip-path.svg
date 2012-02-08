@@ -13,12 +13,12 @@
     var green = "data:image/gif;base64,R0lGODlhAQABAIAAAAD/AAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
     var red = "data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
 
-	var count = 0;
-	function startTest() {
-		if (count == 0)
-			runSVGRepaintTest();
-		count = count + 1;
-	}
+    var count = 0;
+    function startTest() {
+        if (count == 0)
+            runRepaintTest();
+        count = count + 1;
+    }
 
     var r = document.querySelector('#r');
     var g = document.querySelector('#g');
@@ -29,12 +29,14 @@
         r.setAttribute('width', size);
         r.setAttribute('height', size);
         g.setAttribute("transform","translate(" + offset + ",50)");
-		i.setAttribute("externalResourcesRequired", "true");
+        i.setAttribute("externalResourcesRequired", "true");
         i.setAttributeNS('http://www.w3.org/1999/xlink', 'href', img);
     };
 
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText(true);
+        layoutTestController.waitUntilDone();
+    }
 
     function finishTest() {
         if (window.layoutTestController)

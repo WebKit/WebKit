@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  style="width:300px;height:400px" onload="runSVGRepaintTest()">
+  style="width:300px;height:400px" onload="runRepaintTest()">
 
 <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <!-- This tests filters failing to refresh after the initial rendering
@@ -110,9 +110,6 @@ There should be no red squares in the output. -->
       }
 
       document.getElementById('filtered').setAttribute('filter', 'url(#toGreen)');
-
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
     }
 ]]></script>
 

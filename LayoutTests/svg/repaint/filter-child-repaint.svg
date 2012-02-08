@@ -1,12 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="128px" height="128px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg width="128px" height="128px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
 <script xlink:href="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
   <script type="text/javascript">
   function repaintTest() {
     document.getElementById('poke').style.fill = 'green';
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
   }
   </script>
  

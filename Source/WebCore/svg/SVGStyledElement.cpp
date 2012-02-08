@@ -84,7 +84,7 @@ String SVGStyledElement::title() const
     // <title> elements are the title of the document, not a tooltip) so we instantly return.
     if (hasTagName(SVGNames::svgTag)) {
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(this);
-        if (svg->isOutermostSVG())
+        if (svg->isOutermostSVGSVGElement())
             return String();
     }
     

@@ -8,7 +8,7 @@
 <!--                                                                      -->
 <!-- Author : Vincent Hardy,  06-Jan-2004                                 --><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
 
-<svg onload="runSVGRepaintTest()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
+<svg onload="runRepaintTest()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
     <SVGTestCase xmlns:testcase="http://www.w3.org/2000/02/svg/testsuite/description/" xmlns="http://www.w3.org/2000/02/svg/testsuite/description/" owner="VH" desc="Tests that the viewer can handle the rotate         attribute on the text element" status="accepted" version="$Revision: 1.8 $" testname="$RCSfile: text-text-05-t.svg,v $">
         <OperatorScript>
             <Paragraph>
@@ -165,8 +165,6 @@ if (window.layoutTestController)
 
 function repaintTest() {
     document.execCommand("SelectAll");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 </script>
 </svg>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
 <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <script>
 <![CDATA[
@@ -6,9 +6,6 @@ function repaintTest() {
     var circle = document.getElementById("circle");
     circle.setAttribute("cx", 100);
     circle.setAttribute("cy", 100);
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 ]]>
 </script>

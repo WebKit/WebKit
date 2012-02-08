@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
     <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
     <title>There should be a single green 100x100 square.</title>
     <defs>
@@ -18,9 +18,6 @@
             var newFEImage = document.createElementNS("http://www.w3.org/2000/svg", "feImage");
             newFEImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#green-rect");
             document.getElementById("filter").appendChild(newFEImage);
-
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
         }
     ]]>
     </script>

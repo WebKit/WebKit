@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
 <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
 <defs>
 <filter filterUnits="userSpaceOnUse" id="blur" x="0" y="0" width="40" height="140">
@@ -11,8 +11,6 @@
 <script>
     function repaintTest() {
         document.getElementsByTagName("filter")[0].setAttribute("width", "140");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
 </script>
 </svg>

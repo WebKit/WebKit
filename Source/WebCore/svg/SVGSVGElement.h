@@ -126,8 +126,6 @@ public:
 
     void setupInitialView(const String& fragmentIdentifier, Element* anchorNode);
 
-    bool isOutermostSVG() const;
-
     Element* getElementById(const AtomicString&) const;
 
     bool widthAttributeEstablishesViewport() const;

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
  <script xlink:href="../../../fast/repaint/resources/repaint.js"></script>
  <script type="text/javascript">
   var start = new Date();
@@ -52,7 +52,8 @@
   var maxPerBlock = Xs.length / (idealTime / delay);
   var maxBlocks = Xs.length / maxPerBlock;
   var count = 0;
-
+  if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
   function repaintTest() {
     for (var subcount = 0; subcount < maxPerBlock; subcount += 1) {
       var index = count * maxPerBlock + subcount;

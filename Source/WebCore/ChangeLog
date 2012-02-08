@@ -1,3 +1,72 @@
+2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVGLoad event fires too early
+        https://bugs.webkit.org/show_bug.cgi?id=78084
+
+        Reviewed by Hajime Morita.
+
+        SVGLoad event fires too early, making it impossible to use the vanilla repaint.js harness (runRepaintTest).
+
+        We're using a hack called runSVGRepaintTest() at the moment in trunk, which runs runRepaintTest() from a 0ms timer,
+        which is not reliable. The main difference between HTML onload and SVG onload is that HTMLs event is a "window event",
+        thus dispatched through DOMWindow (eg. <body onload="alert(event.target)" will yield Document,
+        <svg onload="alert(evt.target)"> will say SVGSVGElement).
+
+        Consider:
+        <svg onload="alert('1')>
+        <g onload="alert('2)">
+        <rect onload="alert('3')"/>
+        </svg>
+
+        As soon as the <rect> finishes parsing (SVGElement::finishedParsingChildren), it's SVGLoad event is fired.
+        So first you'll see '3', then '2', then '1'.
+
+        Using:
+        <svg onload="alert('1')>
+        <g onload="alert('2)">
+        <image xlink:href="someExternal.jpg" onload="alert('3')"/>
+        </svg>
+
+        will yield the same SVGLoad order. When using <image externalREsourcesRequired="true", first the '1' will fire,
+        then '3', then '2', all as expected and specified in SVG.
+
+        http://www.w3.org/TR/SVG/interact.html#LoadEvent says:
+        "The event is triggered at the point at which the user agent has fully parsed the element and its descendants and is
+        ready to act appropriately upon that element, such as being ready to render the element to the target device. Referenced
+        external resources that are required must be loaded, parsed and ready to render before the event is triggered. Optional
+        external resources are not required to be ready for the event to be triggered."
+
+        What we don't implement correctly is the second part of the first sentence: "and is ready to act appropriately upon that
+        element, such as being ready to render the element to the target device". We currently fire the SVGLoad event, right after
+        </svg> is seen, if no externalResourceRequired="true" attributes are set anywhere. This is not wrong, but not correct for
+        WebKit, as we're not yet "ready to render".
+
+        HTML fires its window onload event from Document::implicitClose(), where it calls Document::dispatchWindowLoadEvent.
+        At this point we're ready to render. So I'm now aligning the timing of the outermost <svg> elements SVGLoad event, to be
+        equal to HTML. This lets use use the repaint.js harness w/o any special SVG tricks.
+
+        Covered by existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Dispatch SVGLoad event for outermost <svg> elements from here, as HTML does for its window onload event.
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements): Sends a SVGLoad event to all outermost <svg> elements in a document, if possible.
+        There can be multiple ones, if using <svg><foreignObject><svg>... - the <svg> in the <fO> also acts as outermost <svg> element.
+        * svg/SVGDocumentExtensions.h: Add new dispatchSVGLoadEventToOutermostSVGElements() helper.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isOutermostSVGSVGElement): Moved from SVGSVGElement into SVGElement, and renamed from isOutermostSVG().
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible): Don't dispatch load events to outermost <svg> elements, if Document::implicitClose() wasn't called yet.
+        (WebCore::SVGElement::finishParsingChildren): Stop using the default SVGLoad dispatching logic for outermost <svg> elements.
+        * svg/SVGElement.h: Add isOutermostSVGSVGElement().
+        * svg/SVGSVGElement.cpp: Rename isOutermostSVG to isOutermostSVGSVGElement.
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        (WebCore::SVGSVGElement::createRenderer):
+        * svg/SVGSVGElement.h: Move isOutermostSVG() to SVGElement.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title): Rename isOutermostSVG to isOutermostSVGSVGElement.
+
 2012-02-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [CRASH] InspectorDOMAgent::updateTouchEventEmulationInPage()

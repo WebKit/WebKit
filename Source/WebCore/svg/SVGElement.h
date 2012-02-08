@@ -46,6 +46,8 @@ public:
     static PassRefPtr<SVGElement> create(const QualifiedName&, Document*);
     virtual ~SVGElement();
 
+    bool isOutermostSVGSVGElement() const;
+
     String xmlbase() const;
     void setXmlbase(const String&, ExceptionCode&);
 

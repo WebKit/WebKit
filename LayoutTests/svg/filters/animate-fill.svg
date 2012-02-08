@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
     <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
     <title>The rectangle should rapidly animate to green.</title>
 <defs>
@@ -10,9 +10,6 @@
 <script>
     function repaintTest() {
         document.getElementById('rect').setAttribute('fill', 'green');
-
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
 </script>
 </svg>

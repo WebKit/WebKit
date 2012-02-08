@@ -9,13 +9,14 @@ function repaintTest() {
             eventSender.zoomPageIn();
     }
 
-    if (window.postZoomCallback) {
-        window.postZoomCallback();
-        completeDynamicTest();
-    } else {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
+    if (!window.postZoomCallback)
+        return;
+
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    window.postZoomCallback();
+    completeDynamicTest();
 }
 
 function completeDynamicTest() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
     <script xlink:href="../../fast/repaint/resources/repaint.js"></script>
     <title>There should be a single green square.</title>
     <defs>
@@ -15,9 +15,6 @@
     <![CDATA[
         function repaintTest() {
             document.getElementById("feimage").setAttributeNS("http://www.w3.org/1999/xlink", "href", "#rect2");
-
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
         }
     ]]>
     </script>

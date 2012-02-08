@@ -28,7 +28,7 @@ fill='none' stroke='blue'/>">
 <!-- Author : Vincent Hardy                                                -->
 <!-- Modified for svg 1.1 by Ola Andersson, 07-Mar-2002                    -->
 <!--======================================================================-->
-<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="runSVGRepaintTest()">
+<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="runRepaintTest()">
     <SVGTestCase xmlns="http://www.w3.org/2000/02/svg/testsuite/description/">
         <OperatorScript version="$Revision: 1.6 $" testname="coords-viewattr-01-b.svg">
             <Paragraph>

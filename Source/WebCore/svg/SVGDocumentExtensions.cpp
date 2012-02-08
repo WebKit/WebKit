@@ -117,6 +117,20 @@ void SVGDocumentExtensions::unpauseAnimations()
         (*itr)->unpauseAnimations();
 }
 
+void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
+{
+    Vector<RefPtr<SVGSVGElement> > timeContainers;
+    timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
+
+    Vector<RefPtr<SVGSVGElement> >::iterator end = timeContainers.end();
+    for (Vector<RefPtr<SVGSVGElement> >::iterator it = timeContainers.begin(); it != end; ++it) {
+        SVGSVGElement* outerSVG = (*it).get();
+        if (!outerSVG->isOutermostSVGSVGElement())
+            continue;
+        outerSVG->sendSVGLoadEventIfPossible();
+    }
+}
+
 bool SVGDocumentExtensions::sampleAnimationAtTime(const String& elementId, SVGSMILElement* element, double time)
 {
     ASSERT(element);

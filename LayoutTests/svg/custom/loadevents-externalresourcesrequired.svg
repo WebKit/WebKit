@@ -7,7 +7,7 @@
       var results = new Array();
 
       function reportLoadEvent(el) {
-        results.push(el.localName);
+		results.push(el.localName);
       }
       function runTest()
       {

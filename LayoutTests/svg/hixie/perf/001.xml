@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 600 600" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runSVGRepaintTest()">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 600 600" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
  <script xlink:href="../../../fast/repaint/resources/repaint.js"></script>
  <script type="text/javascript">
   var start = new Date();
@@ -264,6 +264,8 @@
   var dx = 5;
   var dy = -5;
   var count = 0;
+  if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
   function repaintTest() {
    if ((cx + r + dx > 390) || (cx - r + dx < -190))
      dx =- dx;
