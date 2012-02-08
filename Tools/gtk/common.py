@@ -64,6 +64,10 @@ def get_build_path():
     if is_valid_build_directory(build_dir):
         return build_dir
 
+    build_dir = os.getcwd()
+    if is_valid_build_directory(build_dir):
+        return build_dir
+
     print 'Could not determine build directory.'
     sys.exit(1)
 

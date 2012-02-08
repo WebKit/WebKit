@@ -1,3 +1,15 @@
+2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Fails to build docs with non-standard build directories
+        https://bugs.webkit.org/show_bug.cgi?id=78118
+
+        Reviewed by Martin Robinson.
+
+        * gtk/common.py:
+        (get_build_path): also try the current directory as a valid build
+        dir, which makes non-standard build directories such as build-2.0
+        and build-3.0 work
+
 2012-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Open links in a new window when clicking with the middle button in MiniBrowser
