@@ -39,6 +39,8 @@ GraphicsContext3D* SharedGraphicsContext3D::get()
     attributes.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
     attributes.shareResources = true;
     static GraphicsContext3D* context = GraphicsContext3D::create(attributes, 0).leakRef();
+    if (context && !context->makeContextCurrent())
+        context = 0;
     return context;
 }
 
