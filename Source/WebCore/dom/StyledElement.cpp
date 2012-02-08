@@ -146,11 +146,13 @@ void StyledElement::addCSSProperty(int id, const String &value)
 void StyledElement::addCSSProperty(int propertyID, int identifier)
 {
     ensureAttributeStyle()->setProperty(CSSProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier)));
+    setNeedsStyleRecalc();
 }
 
 void StyledElement::addCSSImageProperty(int id, const String& url)
 {
     ensureAttributeStyle()->setProperty(CSSProperty(id, CSSImageValue::create(url)));
+    setNeedsStyleRecalc();
 }
 
 void StyledElement::addCSSLength(int id, const String &value)

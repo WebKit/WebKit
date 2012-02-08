@@ -1,3 +1,19 @@
+2012-02-08  Andreas Kling  <awesomekling@apple.com>
+
+        StyledElement: Manully setNeedsStyleRecalc() after adding CSSProperties directly.
+        <http://webkit.org/b/78068>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        Turns out that setProperty() with a CSSProperty has quite different behavior from
+        the other setProperty() methods. We should probably clean that up (separately.)
+        For now, simply call setNeedsStyleRecalc() manually in the addCSS* functions that
+        use setProperty(CSSProperty).
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+
 2012-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r107050.
