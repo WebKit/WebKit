@@ -1,3 +1,24 @@
+2012-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r107050.
+        http://trac.webkit.org/changeset/107050
+        https://bugs.webkit.org/show_bug.cgi?id=78094
+
+        May crash editing tests (Requested by morrita on #webkit).
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createShadowSubtree):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createShadowSubtree):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createShadowSubtree):
+
 2012-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         [Qt] REGRESSION(r106918): It made svg/zoom/page/zoom-foreignObject.svg crash with Qt5-WK1

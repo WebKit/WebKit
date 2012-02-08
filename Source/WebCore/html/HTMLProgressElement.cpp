@@ -153,14 +153,11 @@ void HTMLProgressElement::didElementStateChange()
 
 void HTMLProgressElement::createShadowSubtree()
 {
-    ASSERT(!shadowRoot());
-
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
     m_value = ProgressValueElement::create(document());
-    bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
-
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
-    root->appendChild(bar, ASSERT_NO_EXCEPTION);
+    ExceptionCode ec = 0;
+    bar->appendChild(m_value, ec);
+    ensureShadowRoot()->appendChild(bar, ec);
 }
 
 } // namespace
