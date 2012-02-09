@@ -27,6 +27,8 @@
 #include "PageGroup.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "StorageTracker.h"
+#include "StorageTrackerClientEfl.h"
 #include "ewk_logging.h"
 #include "ewk_network.h"
 #include "ewk_private.h"
@@ -135,6 +137,12 @@ int ewk_shutdown(void)
     return 0;
 }
 
+static WebCore::StorageTrackerClientEfl* trackerClient()
+{
+    DEFINE_STATIC_LOCAL(WebCore::StorageTrackerClientEfl, trackerClient, ());
+    return &trackerClient;
+}
+
 Eina_Bool _ewk_init_body(void)
 {
 
@@ -173,6 +181,8 @@ Eina_Bool _ewk_init_body(void)
     }
 
     ewk_network_tls_certificate_check_set(false);
+
+    WebCore::StorageTracker::initializeTracker(webkitDirectory.utf8().data(), trackerClient());
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
 #if USE(SOUP)

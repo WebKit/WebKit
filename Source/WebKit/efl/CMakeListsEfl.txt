@@ -73,6 +73,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp
     efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
+    efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
 
