@@ -1194,6 +1194,32 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     return true;
 }
 
+// This function makes some assumptions that only make sense for attribute styles (we only compare CSSProperty::id() and CSSProperty::value().)
+static inline bool attributeStylesEqual(StylePropertySet* a, StylePropertySet* b)
+{
+    if (a == b)
+        return true;
+    if (a->propertyCount() != b->propertyCount())
+        return false;
+    unsigned propertyCount = a->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        const CSSProperty& aProperty = a->propertyAt(i);
+        unsigned j;
+        for (j = 0; j < propertyCount; ++j) {
+            const CSSProperty& bProperty = b->propertyAt(j);
+            if (aProperty.id() != bProperty.id())
+                continue;
+            // We could get a few more hits by comparing cssText() here, but that gets expensive quickly.
+            if (aProperty.value() != bProperty.value())
+                return false;
+            break;
+        }
+        if (j == propertyCount)
+            return false;
+    }
+    return true;
+}
+
 bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
 {
     RenderStyle* style = element->renderStyle();
@@ -1209,6 +1235,10 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->inlineStyleDecl())
         return false;
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
+        return false;
+    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle().get();
+    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle().get();
+    if (!additionalAttributeStyleA != !additionalAttributeStyleB)
         return false;
     if (element->isLink() != m_element->isLink())
         return false;
@@ -1274,7 +1304,10 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
         return false;
 
-    if (element->attributeStyle() && !element->attributeMap()->mapsEquivalent(m_styledElement->attributeMap()))
+    if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
+        return false;
+
+    if (additionalAttributeStyleA && !attributeStylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
         return false;
 
     if (element->isLink() && m_elementLinkState != style->insideLink())

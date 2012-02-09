@@ -1,3 +1,26 @@
+2012-02-08  Andreas Kling  <awesomekling@apple.com>
+
+        Increased style sharing for elements with presentation attributes.
+        <http://webkit.org/b/78199>
+
+        Reviewed by Antti Koivisto.
+
+        When determining whether two elements can share style, we can do a lot better.
+        Instead of comparing the attribute maps for exact equality, do a property-by-property
+        comparison of the attributeStyle() and the additionalAttributeStyle() (if any.)
+
+        This increases our style sharing hit rate and shaves 100ms off of each cycle on
+        Chromium's "Moz" page cycler test on my machine.
+
+        The function that compares attribute styles has O(n^2) runtime in the worst case,
+        where n is the number of properties in the styles. However, given the low number of
+        properties found in attribute styles, this should be fine, and it doesn't seem to
+        heat up in profiles.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::attributeStylesEqual):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+
 2012-02-08  Raymond Liu  <raymond.liu@intel.com>
 
         Fix the caculation of preDelayFrames in DynamicsCompressorKernel
