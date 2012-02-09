@@ -72689,6 +72689,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SidebarOverlay.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SidebarPane.js"
 					>
 				</File>

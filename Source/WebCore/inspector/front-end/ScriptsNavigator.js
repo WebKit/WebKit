@@ -41,9 +41,13 @@ WebInspector.ScriptsNavigator = function(presentationModel)
     this._presentationModel = presentationModel;
 
     this._tabbedPane.element.id = "scripts-navigator-tabbed-pane";
+    
+    this._tabbedPane.element.tabIndex = 0;
+    this._tabbedPane.element.addEventListener("focus", this.focus.bind(this), false);
   
     this._treeSearchBox = document.createElement("div");
     this._treeSearchBox.id = "scripts-navigator-tree-search-box";
+    this._tabbedPane.element.appendChild(this._treeSearchBox);
 
     this._navigatorScriptsTreeElement = document.createElement("ol");
     var scriptsView = new WebInspector.View();
@@ -85,12 +89,35 @@ WebInspector.ScriptsNavigator.prototype = {
     },
 
     /**
+     * @type {WebInspector.View}
+     */
+    get view()
+    {
+        return this._tabbedPane;
+    },
+
+    /**
+     * @type {Element}
+     */
+    get element()
+    {
+        return this._tabbedPane.element;
+    },
+
+    /**
      * @param {Element} element
      */
     show: function(element)
     {
         this._tabbedPane.show(element);
-        element.appendChild(this._treeSearchBox);
+    },
+
+    focus: function()
+    {
+        if (this._tabbedPane.selectedTabId === WebInspector.ScriptsNavigator.ScriptsTab)
+            WebInspector.setCurrentFocusElement(this._navigatorScriptsTreeElement);
+        else
+            WebInspector.setCurrentFocusElement(this._navigatorContentScriptsTreeElement);
     },
 
     /**

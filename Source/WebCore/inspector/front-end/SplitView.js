@@ -73,7 +73,7 @@ WebInspector.SplitView = function(sidebarPosition, sidebarWidthSettingName, defa
 }
 
 WebInspector.SplitView.EventTypes = {
-    Resized: "Resized",
+    Resized: "Resized"
 }
 
 /**
@@ -114,7 +114,7 @@ WebInspector.SplitView.prototype = {
      */
     get resizable()
     {
-        return this._resizable && !this._mainElementHidden && !this._sidebarElementHidden
+        return this._resizable && !this._mainElementHidden && !this._sidebarElementHidden;
     },
 
     /**
@@ -288,6 +288,7 @@ WebInspector.SplitView.prototype = {
         this._mainElementHidden = true;
         this._updateResizer();
         this._restoreSidebarWidth();
+        this.doResize();
     },
 
     showMainElement: function()
@@ -306,6 +307,7 @@ WebInspector.SplitView.prototype = {
         this._mainElementHidden = false;
         this._updateResizer();
         this._restoreSidebarWidth();
+        this.doResize();
     },
 
     hideSidebarElement: function()
@@ -320,6 +322,7 @@ WebInspector.SplitView.prototype = {
         this._sidebarElementHidden = true;
         this._updateResizer();
         this._restoreSidebarWidth();
+        this.doResize();
     },
 
     showSidebarElement: function()
@@ -331,6 +334,7 @@ WebInspector.SplitView.prototype = {
         this._sidebarElementHidden = false;
         this._updateResizer();
         this._restoreSidebarWidth();
+        this.doResize();
     },
 
     wasShown: function()
@@ -366,7 +370,7 @@ WebInspector.SplitView.prototype = {
      */
     _resizerDragging: function(event)
     {
-        var leftWidth = event.pageX + this._dragOffset
+        var leftWidth = event.pageX + this._dragOffset;
         var rightWidth = this._totalWidth - leftWidth;
         var sidebarWidth = this.hasLeftSidebar ? leftWidth : rightWidth;
 

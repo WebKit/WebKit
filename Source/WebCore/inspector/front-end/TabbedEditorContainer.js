@@ -65,6 +65,14 @@ WebInspector.TabbedEditorContainer.prototype = {
     },
 
     /**
+     * @type {Element}
+     */
+    get element()
+    {
+        return this._tabbedPane.element;
+    },
+
+    /**
      * @param {Element} parentElement
      */
     show: function(parentElement)

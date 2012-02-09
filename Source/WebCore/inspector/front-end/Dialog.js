@@ -45,7 +45,6 @@ WebInspector.Dialog = function(relativeToElement, delegate)
     this._glassPaneElement.addEventListener("focus", this._onGlassPaneFocus.bind(this), false);
 
     this._element = this._glassPaneElement.createChild("div");
-    this._element.className = "dialog";
     this._element.tabIndex = 0;
     this._element.addEventListener("focus", this._onFocus.bind(this), false);
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
@@ -54,8 +53,7 @@ WebInspector.Dialog = function(relativeToElement, delegate)
         WebInspector.KeyboardShortcut.Keys.Esc.code,
     ];
 
-    delegate.element.addStyleClass("dialog-contents");
-    this._element.appendChild(delegate.element);
+    delegate.show(this._element);
 
     this._position();
     this._windowResizeHandler = this._position.bind(this);
@@ -142,12 +140,23 @@ WebInspector.Dialog.prototype = {
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  */
 WebInspector.DialogDelegate = function()
 {
 }
 
 WebInspector.DialogDelegate.prototype = {
+    /**
+     * @param {Element} element
+     */
+    show: function(element)
+    {
+        element.appendChild(this.element);
+        this.element.addStyleClass("dialog-contents");
+        element.addStyleClass("dialog");    
+    },
+
     /**
      * @param {Element} element
      * @param {Element} relativeToElement
@@ -172,3 +181,5 @@ WebInspector.DialogDelegate.prototype = {
 
     willHide: function() { }
 };
+
+WebInspector.DialogDelegate.prototype.__proto__ = WebInspector.Object.prototype;

@@ -1,3 +1,52 @@
+2012-02-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Support hiding scripts panel debug sidebar.
+        https://bugs.webkit.org/show_bug.cgi?id=77543
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Dialog.js:
+        (WebInspector.Dialog):
+        (WebInspector.DialogDelegate.prototype.show):
+        * inspector/front-end/Images/navigatorPinButton.png: Added.
+        * inspector/front-end/Images/navigatorShowHideButton.png: Added.
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator):
+        (WebInspector.ScriptsNavigator.prototype.get view):
+        (WebInspector.ScriptsNavigator.prototype.get element):
+        (WebInspector.ScriptsNavigator.prototype.show):
+        (WebInspector.ScriptsNavigator.prototype.focus):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._fileSelected):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        (WebInspector.ScriptsPanel.prototype._createNavigatorControls):
+        (WebInspector.ScriptsPanel.prototype._createNavigatorControlButton):
+        (WebInspector.ScriptsPanel.prototype._toggleNavigator):
+        (WebInspector.ScriptsPanel.prototype._hidePinnedNavigator):
+        (WebInspector.ScriptsPanel.prototype.set _pinNavigator):
+        (WebInspector.ScriptsPanel.prototype.set _showNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._hideNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._navigatorOverlayWasShown):
+        (WebInspector.ScriptsPanel.prototype._navigatorOverlayWillHide):
+        * inspector/front-end/SidebarOverlay.js: Added.
+        * inspector/front-end/SplitView.js:
+        (WebInspector.SplitView.prototype.get resizable):
+        (WebInspector.SplitView.prototype.hideMainElement):
+        (WebInspector.SplitView.prototype.showMainElement):
+        (WebInspector.SplitView.prototype.hideSidebarElement):
+        (WebInspector.SplitView.prototype.showSidebarElement):
+        (WebInspector.SplitView.prototype._resizerDragging):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype.get element):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/dialog.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/scriptsPanel.css:
+
 2012-02-09  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Show percentage by default in heap profiler.
