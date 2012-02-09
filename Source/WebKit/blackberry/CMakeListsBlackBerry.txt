@@ -54,7 +54,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.cpp
     blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp
     blackberry/WebCoreSupport/DragClientBlackBerry.cpp
-    blackberry/WebCoreSupport/EditCommandBlackBerry.cpp
     blackberry/WebCoreSupport/EditorClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp
