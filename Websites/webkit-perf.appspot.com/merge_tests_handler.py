@@ -28,11 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 from google.appengine.ext.webapp import template
 
 import os
 
+from controller import schedule_runs_update
+from controller import schedule_dashboard_update
+from controller import schedule_manifest_update
 from models import Test
 from models import TestResult
 from models import delete_model_with_numeric_id_holder
@@ -53,13 +55,17 @@ class MergeTestsHandler(webapp2.RequestHandler):
 
         merged_results = TestResult.all()
         merged_results.filter('name =', merge.name)
+        branches_and_platforms_to_update = set()
         for result in merged_results:
+            branches_and_platforms_to_update.add((result.build.branch.id, result.build.platform.id))
             result.name = into.name
             result.put()
 
-        # Just flush everyting since we rarely merge tests and we need to flush
-        # dashboard, manifest, and all runs for this test here.
-        memcache.flush_all()
+        for branch_id, platform_id in branches_and_platforms_to_update:
+            schedule_runs_update(into.id, branch_id, platform_id)
+
+        schedule_dashboard_update()
+        schedule_manifest_update()
 
         delete_model_with_numeric_id_holder(merge)
 

@@ -20,6 +20,9 @@ from google.appengine.ext.webapp import util
 
 import json
 
+from controller import CachedDashboardHandler
+from controller import CachedManifestHandler
+from controller import CachedRunsHandler
 from create_handler import CreateHandler
 from dashboard_handler import DashboardHandler
 from manifest_handler import ManifestHandler
@@ -32,10 +35,13 @@ routes = [
     ('/admin/report/?', AdminReportHandler),
     ('/admin/merge-tests/?', MergeTestsHandler),
     ('/admin/create/(.*)', CreateHandler),
-    ('/api/test/?', ManifestHandler),
+    ('/api/test/?', CachedManifestHandler),
+    ('/api/test/update', ManifestHandler),
     ('/api/test/report/?', ReportHandler),
-    ('/api/test/runs/?', RunsHandler),
-    ('/api/test/dashboard/?', DashboardHandler),
+    ('/api/test/runs/?', CachedRunsHandler),
+    ('/api/test/runs/update', RunsHandler),
+    ('/api/test/dashboard/?', CachedDashboardHandler),
+    ('/api/test/dashboard/update', DashboardHandler),
 ]
 
 

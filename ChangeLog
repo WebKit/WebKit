@@ -1,3 +1,41 @@
+2012-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic should update memcache in taskqueue
+        https://bugs.webkit.org/show_bug.cgi?id=78209
+
+        Reviewed by Adam Barth.
+
+        Update dashboard, manifest, and runs memcaches in taskqueue.
+        Also centralized the management of caches in controller.py.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+        * Websites/webkit-perf.appspot.com/controller.py: Added.
+        (cache_manifest):
+        (schedule_manifest_update):
+        (CachedManifestHandler):
+        (CachedManifestHandler.get):
+        (cache_dashboard):
+        (schedule_dashboard_update):
+        (CachedDashboardHandler):
+        (CachedDashboardHandler.get):
+        (cache_runs):
+        (schedule_runs_update):
+        (CachedRunsHandler):
+        (CachedRunsHandler.get):
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler.post):
+        * Websites/webkit-perf.appspot.com/dashboard_handler.py:
+        (DashboardHandler.post):
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/manifest_handler.py:
+        (ManifestHandler.post):
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py:
+        (MergeTestsHandler.post):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.post):
+
 2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebView::mouse-target-changed signal to WebKit2 GTK+ API

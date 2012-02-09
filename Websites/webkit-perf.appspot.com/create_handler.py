@@ -28,11 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 from google.appengine.ext import db
 
 import json
 
+from controller import schedule_dashboard_update
 from models import Builder
 from models import Branch
 from models import NumericIdHolder
@@ -42,7 +42,7 @@ from models import create_in_transaction_with_numeric_id_holder
 
 class CreateHandler(webapp2.RequestHandler):
     def post(self, model):
-        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8';
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
 
         try:
             payload = json.loads(self.request.body)
@@ -63,7 +63,7 @@ class CreateHandler(webapp2.RequestHandler):
             error = "Unknown model type: %s\n" % model
 
         # No need to clear manifest or runs since they only contain ones with test results
-        memcache.delete('dashboard')
+        schedule_dashboard_update()
         self.response.out.write(error + '\n' if error else 'OK')
 
     def _create_builder(self, name, password):

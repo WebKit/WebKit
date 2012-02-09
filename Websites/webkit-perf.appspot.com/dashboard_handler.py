@@ -28,10 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
-
 import json
 
+from controller import cache_dashboard
 from models import Builder
 from models import Branch
 from models import Platform
@@ -39,14 +38,12 @@ from models import Test
 
 
 class DashboardHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8';
-        cache = memcache.get('dashboard')
-        if cache:
-            self.response.out.write(cache)
-            return
-
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
         webkit_trunk = Branch.get_by_key_name('webkit-trunk')
+        if not webkit_trunk:
+            self.response.out.write("BAD: no webkit-trunk")
+            return
 
         # FIXME: Determine popular branches, platforms, and tests
         dashboard = {
@@ -62,6 +59,5 @@ class DashboardHandler(webapp2.RequestHandler):
         for test in Test.all():
             dashboard['testToId'][test.name] = test.id
 
-        result = json.dumps(dashboard)
-        self.response.out.write(result)
-        memcache.add('dashboard', result)
+        cache_dashboard(json.dumps(dashboard))
+        self.response.out.write('OK')

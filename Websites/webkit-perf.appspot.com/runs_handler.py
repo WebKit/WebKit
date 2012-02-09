@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 
 import json
 from time import mktime
 from datetime import datetime
 
+from controller import cache_runs
 from models import Build
 from models import Builder
 from models import Branch
@@ -45,8 +45,8 @@ from models import modelFromNumericId
 
 
 class RunsHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
 
         try:
             test_id = int(self.request.get('id', 0))
@@ -60,12 +60,6 @@ class RunsHandler(webapp2.RequestHandler):
 
         # FIXME: Just fetch builds specified by "days"
         # days = self.request.get('days', 365)
-
-        cache_key = Test.cache_key(test_id, branch_id, platform_id)
-        cache = memcache.get(cache_key)
-        if cache:
-            self.response.out.write(cache)
-            return
 
         builds = Build.all()
         builds.filter('branch =', modelFromNumericId(branch_id, Branch))
@@ -105,5 +99,5 @@ class RunsHandler(webapp2.RequestHandler):
             'max': max(values) if values else None,
             'date_range': [min(timestamps), max(timestamps)] if timestamps else None,
             'stat': 'ok'})
-        self.response.out.write(result)
-        memcache.add(cache_key, result)
+        cache_runs(test_id, branch_id, platform_id, result)
+        self.response.out.write('OK')

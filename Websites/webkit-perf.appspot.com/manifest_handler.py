@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 
 import json
 
+from controller import cache_manifest
 from models import Builder
 from models import Branch
 from models import Platform
@@ -39,12 +39,8 @@ from models import Test
 
 
 class ManifestHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8';
-        cache = memcache.get('manifest')
-        if cache:
-            self.response.out.write(cache)
-            return
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
 
         test_map = {}
         platform_id_map = {}
@@ -88,6 +84,5 @@ class ManifestHandler(webapp2.RequestHandler):
                 'platformIds': list(set(branch_id_map[branch.id]['platforms'])),
             }
 
-        result = json.dumps({'testMap': test_map, 'platformMap': platform_map, 'branchMap': branch_map})
-        self.response.out.write(result)
-        memcache.add('manifest', result)
+        cache_manifest(json.dumps({'testMap': test_map, 'platformMap': platform_map, 'branchMap': branch_map}))
+        self.response.out.write('OK')

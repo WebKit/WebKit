@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 from google.appengine.ext import db
 
 import json
@@ -36,6 +35,9 @@ import re
 import time
 from datetime import datetime
 
+from controller import schedule_runs_update
+from controller import schedule_dashboard_update
+from controller import schedule_manifest_update
 from models import Builder
 from models import Branch
 from models import Build
@@ -95,7 +97,7 @@ class ReportHandler(webapp2.RequestHandler):
 
         for test_name, result in self._body['results'].iteritems():
             test = self._add_test_if_needed(test_name, branch, platform)
-            memcache.delete(Test.cache_key(test.id, branch.id, platform.id))
+            schedule_runs_update(test.id, branch.id, platform.id)
             if isinstance(result, dict):
                 TestResult(name=test_name, build=build, value=float(result['avg']), valueMedian=_float_or_none(result, 'median'),
                     valueStdev=_float_or_none(result, 'stdev'), valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max')).put()
@@ -106,8 +108,8 @@ class ReportHandler(webapp2.RequestHandler):
         log.delete()
 
         # We need to update dashboard and manifest because they are affected by the existance of test results
-        memcache.delete('dashboard')
-        memcache.delete('manifest')
+        schedule_dashboard_update()
+        schedule_manifest_update()
 
         return self._output('OK')
 
