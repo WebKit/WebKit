@@ -1,3 +1,10 @@
+2012-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for GTK+ 2.x after my previous commit.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_expose_event): The name of the event is expose_event and not expose.
+
 2012-02-08  Dan Vrátil  <dvratil@redhat.com>, Milan Crha <mcrha@redhat.com>
 
         [GTK] Embedded GtkWidgets are not drawn

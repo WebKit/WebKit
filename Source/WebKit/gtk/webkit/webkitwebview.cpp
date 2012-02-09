@@ -641,7 +641,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     }
 
     // Chaining up to the parent forces child widgets to be drawn.
-    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->expose(widget, event);
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->expose_event(widget, event);
     return FALSE;
 }
 #else
