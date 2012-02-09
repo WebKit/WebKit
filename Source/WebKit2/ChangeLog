@@ -1,5 +1,18 @@
 2012-02-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Remove WebGraphicsLayer::updateTileBuffersRecursively
+        https://bugs.webkit.org/show_bug.cgi?id=78105
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The method is unused.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
+2012-02-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Register individual WebGraphicsLayers to LayerTreeHost instead of handling the tree as a whole.
         https://bugs.webkit.org/show_bug.cgi?id=77976
 

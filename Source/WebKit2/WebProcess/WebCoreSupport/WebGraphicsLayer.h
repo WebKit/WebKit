@@ -138,7 +138,6 @@ public:
     void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
 
     bool isReadyForTileBufferSwap() const;
-    void updateTileBuffersRecursively();
     void updateContentBuffers();
     void purgeBackingStores();
     void recreateBackingStoreIfNeeded();

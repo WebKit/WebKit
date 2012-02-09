@@ -573,18 +573,6 @@ void WebGraphicsLayer::removeTile(int tileID)
     m_webGraphicsLayerClient->removeTile(id(), tileID);
 }
 
-void WebGraphicsLayer::updateTileBuffersRecursively()
-{
-    m_mainBackingStore->updateTileBuffers();
-    for (size_t i = 0; i < children().size(); ++i) {
-        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
-        layer->updateTileBuffersRecursively();
-    }
-
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
-        mask->updateTileBuffersRecursively();
-}
-
 void WebGraphicsLayer::updateContentBuffers()
 {
     // Backing-stores for directly composited images is handled in LayerTreeHost.
