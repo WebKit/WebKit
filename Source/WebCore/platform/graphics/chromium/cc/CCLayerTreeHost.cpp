@@ -447,7 +447,7 @@ void CCLayerTreeHost::reserveTextures()
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
-        if (it.representsTargetRenderSurface() || !it->alwaysReserveTextures())
+        if (!it.representsItself() || !it->alwaysReserveTextures())
             continue;
         it->reserveTextures();
     }

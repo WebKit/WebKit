@@ -1,3 +1,18 @@
+2012-02-09  Adrienne Walker  <enne@google.com>
+
+        [chromium] Correct potential double reserveTextures() in CCLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=78258
+
+        Reviewed by James Robinson.
+
+        This isn't a problem currently, because scrollbar layers don't create
+        render surfaces. However, if this ever got used for other layers, we
+        could call reserve on them twice needlessly. It's also just bad form
+        to have an iterator doing the wrong thing.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::reserveTextures):
+
 2012-02-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r107261.
