@@ -1,3 +1,59 @@
+2012-02-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Register individual WebGraphicsLayers to LayerTreeHost instead of handling the tree as a whole.
+        https://bugs.webkit.org/show_bug.cgi?id=77976
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The LayerTreeHost association had to be maintained between re-parented layers and it would be
+        impossible to know if the layer would be disconnected from the LayerTreeHost only for reparenting
+        or disconnected for good (in other words, that the LayerTreeHost could be deleted meanwhile).
+
+        Instead, this patch assumes that graphics layers will only be in contact with one instance of
+        LayerTreeHost, and that this association can be kept until either the graphics layer or the layer
+        tree host gets deleted.
+
+        The registered layers are kept in a set and the visible rect and scales are passed directly
+        to layers instead of down the tree, through the root layer.
+
+        This also fixes the !m_layerInfo.imageBackingStoreID ASSERT that was popping in unit tests.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::~WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::removeFromParent):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::setMaskLayer):
+        (WebCore::WebGraphicsLayer::setReplicatedByLayer):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::setVisibleContentRectAndScale):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreUpdatesAllowed):
+        (WebCore::WebGraphicsLayer::createTile):
+        (WebCore::WebGraphicsLayer::updateTile):
+        (WebCore::WebGraphicsLayer::removeTile):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+        (WebCore::WebGraphicsLayer::purgeBackingStores):
+        (WebCore::WebGraphicsLayer::setWebGraphicsLayerClient):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebCore):
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::~LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::attachLayer):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::detachLayer):
+        (WebKit::LayerTreeHostQt::setVisibleContentRectAndScale):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-02-07  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] WebView should use Flickable instead of QScroller to handle positioning

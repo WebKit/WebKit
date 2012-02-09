@@ -39,19 +39,25 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+namespace WebCore {
+class WebGraphicsLayer;
+}
+
 namespace WebKit {
 
-class WebLayerTreeTileClient {
+class WebGraphicsLayerClient {
 public:
     // TiledBackingStoreRemoteTileClient
     virtual void createTile(WebLayerID, int tileID, const UpdateInfo&) = 0;
     virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&) = 0;
     virtual void removeTile(WebLayerID, int tileID) = 0;
+
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
     virtual int64_t adoptImageBackingStore(WebCore::Image*) = 0;
     virtual void releaseImageBackingStore(int64_t) = 0;
     virtual void didSyncCompositingStateForLayer(const WebLayerInfo&) = 0;
-    virtual void didDeleteLayer(WebLayerID) = 0;
+    virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
+    virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
 };
 }
 
@@ -129,8 +135,7 @@ public:
     virtual void updateTile(int tileID, const WebKit::UpdateInfo&);
     virtual void removeTile(int tileID);
 
-    void setLayerTreeTileClient(WebKit::WebLayerTreeTileClient*);
-    WebKit::WebLayerTreeTileClient* layerTreeTileClient() const;
+    void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
 
     bool isReadyForTileBufferSwap() const;
     void updateTileBuffersRecursively();
@@ -161,7 +166,7 @@ private:
 #if USE(TILED_BACKING_STORE)
     void computeTransformedVisibleRect();
 
-    WebKit::WebLayerTreeTileClient* m_layerTreeTileClient;
+    WebKit::WebGraphicsLayerClient* m_webGraphicsLayerClient;
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;

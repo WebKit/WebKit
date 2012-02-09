@@ -52,8 +52,13 @@ PassRefPtr<LayerTreeHostQt> LayerTreeHostQt::create(WebPage* webPage)
 
 LayerTreeHostQt::~LayerTreeHostQt()
 {
-    if (m_rootLayer)
-        toWebGraphicsLayer(m_rootLayer.get())->setLayerTreeTileClient(0);
+    // Prevent setWebGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
+    HashSet<WebCore::WebGraphicsLayer*> registeredLayers;
+    registeredLayers.swap(m_registeredLayers);
+
+    HashSet<WebCore::WebGraphicsLayer*>::iterator end = registeredLayers.end();
+    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
+        (*it)->setWebGraphicsLayerClient(0);
 }
 
 LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
@@ -63,6 +68,7 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
 #if USE(TILED_BACKING_STORE)
     , m_waitingForUIProcess(false)
     , m_isSuspended(false)
+    , m_contentsScale(1)
 #endif
     , m_shouldSyncFrame(false)
     , m_shouldSyncRootLayer(true)
@@ -83,7 +89,7 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
 #if USE(TILED_BACKING_STORE)
-    toWebGraphicsLayer(m_rootLayer.get())->setLayerTreeTileClient(this);
+    toWebGraphicsLayer(m_rootLayer.get())->setWebGraphicsLayerClient(this);
 #endif
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeHostQt non-composited content");
@@ -232,10 +238,19 @@ void LayerTreeHostQt::didSyncCompositingStateForLayer(const WebLayerInfo& info)
     m_webPage->send(Messages::LayerTreeHostProxy::SyncCompositingLayerState(info));
 }
 
-void LayerTreeHostQt::didDeleteLayer(WebLayerID id)
+void LayerTreeHostQt::attachLayer(WebGraphicsLayer* layer)
 {
+    ASSERT(!m_registeredLayers.contains(layer));
+    m_registeredLayers.add(layer);
+
+    layer->setVisibleContentRectAndScale(m_visibleContentsRect, m_contentsScale);
+}
+
+void LayerTreeHostQt::detachLayer(WebGraphicsLayer* layer)
+{
+    m_registeredLayers.remove(layer);
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeHostProxy::DeleteCompositingLayer(id));
+    m_webPage->send(Messages::LayerTreeHostProxy::DeleteCompositingLayer(layer->id()));
 }
 
 void LayerTreeHostQt::performScheduledLayerFlush()
@@ -403,10 +418,15 @@ void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
 
 void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float scale)
 {
-    if (m_rootLayer) {
-        toWebGraphicsLayer(m_rootLayer.get())->setVisibleContentRectAndScale(rect, scale);
-        scheduleLayerFlush();
-    }
+    if (rect == m_visibleContentsRect && scale == m_contentsScale)
+        return;
+    m_visibleContentsRect = rect;
+    m_contentsScale = scale;
+
+    HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
+    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
+        (*it)->setVisibleContentRectAndScale(rect, scale);
+    scheduleLayerFlush();
 }
 
 void LayerTreeHostQt::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
