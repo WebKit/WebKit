@@ -482,8 +482,10 @@ PassRefPtr<Widget> FrameLoaderClient::createPlugin(const IntSize& pluginSize, HT
     GtkWidget* gtkWidget = 0;
     g_signal_emit_by_name(getViewFromFrame(m_frame), "create-plugin-widget",
                           mimeTypeString.data(), urlString.data(), hash.get(), &gtkWidget);
-    if (gtkWidget)
+    if (gtkWidget) {
+        gtk_container_add(GTK_CONTAINER(getViewFromFrame(m_frame)), gtkWidget);
         return adoptRef(new GtkPluginWidget(gtkWidget));
+    }
 
     RefPtr<PluginView> pluginView = PluginView::create(core(m_frame), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 

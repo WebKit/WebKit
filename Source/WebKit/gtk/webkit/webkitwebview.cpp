@@ -639,6 +639,9 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         copyRectFromCairoSurfaceToContext(WEBKIT_WEB_VIEW(widget)->priv->backingStore->cairoSurface(),
                                           cr.get(), IntSize(), IntRect(rects.get()[i]));
     }
+
+    // Chaining up to the parent forces child widgets to be drawn.
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->expose(widget, event);
     return FALSE;
 }
 #else
@@ -667,6 +670,8 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
     }
     cairo_rectangle_list_destroy(rectList);
 
+    // Chaining up to the parent forces child widgets to be drawn.
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->draw(widget, cr);
     return FALSE;
 }
 #endif // GTK_API_VERSION_2

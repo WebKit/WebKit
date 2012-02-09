@@ -1,3 +1,19 @@
+2012-02-08  Dan Vrátil  <dvratil@redhat.com>, Milan Crha <mcrha@redhat.com>
+
+        [GTK] Embedded GtkWidgets are not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=63451
+
+        Remove widget from it's parent container when GtkPluginWidget is destroyed.
+        Remove paint() method because real expose even is used for drawing child widgets now.
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkPluginWidget.cpp:
+        (WebCore::GtkPluginWidget::~GtkPluginWidget):
+        (WebCore):
+        * platform/gtk/GtkPluginWidget.h:
+        (GtkPluginWidget):
+
 2012-02-09  Arun Patole  <arun.patole@motorola.com>
 
         Setting media element 'src' attribute to "" should trigger load

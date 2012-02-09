@@ -1,3 +1,18 @@
+2012-02-08  Dan Vrátil  <dvratil@redhat.com>, Milan Crha <mcrha@redhat.com>
+
+        [GTK] Embedded GtkWidgets are not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=63451
+
+        Insert plugin widgets to WebKitWebView container as it's children.
+        Chain up to parent in webkit_web_view_draw() to ensure the child widgets are drawn.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createPlugin):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_draw):
+
 2012-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for list items whose text wraps
