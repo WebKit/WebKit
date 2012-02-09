@@ -35,17 +35,24 @@ import sys
 from webkitpy.common.system.executive import Executive
 
 
-class WebKitPort(object):
+class DeprecatedPort(object):
     results_directory = "/tmp/layout-test-results"
 
+    # FIXME: This is only used by BotInfo.
+    def name(self):
+        return self.__class__
+
+    def flag(self):
+        if self.port_flag_name:
+            return "--port=%s" % self.port_flag_name
+        return None
+
     # We might need to pass scm into this function for scm.checkout_root
-    @classmethod
-    def script_path(cls, script_name):
+    def script_path(self, script_name):
         return os.path.join("Tools", "Scripts", script_name)
 
-    @classmethod
-    def script_shell_command(cls, script_name):
-        script_path = cls.script_path(script_name)
+    def script_shell_command(self, script_name):
+        script_path = self.script_path(script_name)
         return Executive.shell_command_for_script(script_path)
 
     @staticmethod
@@ -64,206 +71,124 @@ class WebKitPort(object):
             "Darwin": MacPort,
         }
         # Do we really need MacPort as the ultimate default?
-        return ports.get(port_name, default_port.get(platform.system(), MacPort))
+        return ports.get(port_name, default_port.get(platform.system(), MacPort))()
 
-    @staticmethod
-    def makeArgs():
+    def makeArgs(self):
+        # FIXME: This shouldn't use a static Executive().
         args = '--makeargs="-j%s"' % Executive().cpu_count()
         if os.environ.has_key('MAKEFLAGS'):
             args = '--makeargs="%s"' % os.environ['MAKEFLAGS']
         return args
 
-    @classmethod
-    def name(cls):
-        raise NotImplementedError("subclasses must implement")
+    def update_webkit_command(self, non_interactive=False):
+        return self.script_shell_command("update-webkit")
 
-    @classmethod
-    def flag(cls):
-        raise NotImplementedError("subclasses must implement")
+    def check_webkit_style_command(self):
+        return self.script_shell_command("check-webkit-style")
 
-    @classmethod
-    def update_webkit_command(cls, non_interactive=False):
-        return cls.script_shell_command("update-webkit")
+    def prepare_changelog_command(self):
+        return self.script_shell_command("prepare-ChangeLog")
 
-    @classmethod
-    def check_webkit_style_command(cls):
-        return cls.script_shell_command("check-webkit-style")
-
-    @classmethod
-    def prepare_changelog_command(cls):
-        return cls.script_shell_command("prepare-ChangeLog")
-
-    @classmethod
-    def build_webkit_command(cls, build_style=None):
-        command = cls.script_shell_command("build-webkit")
+    def build_webkit_command(self, build_style=None):
+        command = self.script_shell_command("build-webkit")
         if build_style == "debug":
             command.append("--debug")
         if build_style == "release":
             command.append("--release")
         return command
 
-    @classmethod
-    def run_javascriptcore_tests_command(cls):
-        return cls.script_shell_command("run-javascriptcore-tests")
+    def run_javascriptcore_tests_command(self):
+        return self.script_shell_command("run-javascriptcore-tests")
 
-    @classmethod
-    def run_webkit_unit_tests_command(cls):
+    def run_webkit_unit_tests_command(self):
         return None
 
-    @classmethod
-    def run_webkit_tests_command(cls):
-        return cls.script_shell_command("run-webkit-tests")
+    def run_webkit_tests_command(self):
+        return self.script_shell_command("run-webkit-tests")
 
-    @classmethod
-    def run_python_unittests_command(cls):
-        return cls.script_shell_command("test-webkitpy")
+    def run_python_unittests_command(self):
+        return self.script_shell_command("test-webkitpy")
 
-    @classmethod
-    def run_perl_unittests_command(cls):
-        return cls.script_shell_command("test-webkitperl")
+    def run_perl_unittests_command(self):
+        return self.script_shell_command("test-webkitperl")
 
-    @classmethod
-    def layout_tests_results_path(cls):
-        return os.path.join(cls.results_directory, "full_results.json")
+    def layout_tests_results_path(self):
+        return os.path.join(self.results_directory, "full_results.json")
 
 
-class MacPort(WebKitPort):
-
-    @classmethod
-    def name(cls):
-        return "Mac"
-
-    @classmethod
-    def flag(cls):
-        return "--port=mac"
-
-    @classmethod
-    def _system_version(cls):
-        version_string = platform.mac_ver()[0]  # e.g. "10.5.6"
-        version_tuple = version_string.split('.')
-        return map(int, version_tuple)
-
-    @classmethod
-    def is_leopard(cls):
-        return tuple(cls._system_version()[:2]) == (10, 5)
+class MacPort(DeprecatedPort):
+    port_flag_name = "mac"
 
 
-class WinPort(WebKitPort):
-
-    @classmethod
-    def name(cls):
-        return "Win"
-
-    @classmethod
-    def flag(cls):
-        # FIXME: This is lame.  We should autogenerate this from a codename or something.
-        return "--port=win"
+class WinPort(DeprecatedPort):
+    port_flag_name = "win"
 
 
-class GtkPort(WebKitPort):
+class GtkPort(DeprecatedPort):
+    port_flag_name = "gtk"
 
-    @classmethod
-    def name(cls):
-        return "Gtk"
-
-    @classmethod
-    def flag(cls):
-        return "--port=gtk"
-
-    @classmethod
-    def build_webkit_command(cls, build_style=None):
-        command = WebKitPort.build_webkit_command(build_style=build_style)
+    def build_webkit_command(self, build_style=None):
+        command = super(GtkPort, self).build_webkit_command(build_style=build_style)
         command.append("--gtk")
         command.append("--update-gtk")
-        command.append(WebKitPort.makeArgs())
+        command.append(super(GtkPort, self).makeArgs())
         return command
 
-    @classmethod
-    def run_webkit_tests_command(cls):
-        command = WebKitPort.run_webkit_tests_command()
+    def run_webkit_tests_command(self):
+        command = super(GtkPort, self).run_webkit_tests_command()
         command.append("--gtk")
         return command
 
 
-class QtPort(WebKitPort):
+class QtPort(DeprecatedPort):
+    port_flag_name = "qt"
 
-    @classmethod
-    def name(cls):
-        return "Qt"
-
-    @classmethod
-    def flag(cls):
-        return "--port=qt"
-
-    @classmethod
-    def build_webkit_command(cls, build_style=None):
-        command = WebKitPort.build_webkit_command(build_style=build_style)
+    def build_webkit_command(self, build_style=None):
+        command = super(QtPort, self).build_webkit_command(build_style=build_style)
         command.append("--qt")
-        command.append(WebKitPort.makeArgs())
+        command.append(super(QtPort, self).makeArgs())
         return command
 
 
-class EflPort(WebKitPort):
+class EflPort(DeprecatedPort):
+    port_flag_name = "efl"
 
-    @classmethod
-    def name(cls):
-        return "Efl"
-
-    @classmethod
-    def flag(cls):
-        return "--port=efl"
-
-    @classmethod
-    def build_webkit_command(cls, build_style=None):
-        command = WebKitPort.build_webkit_command(build_style=build_style)
+    def build_webkit_command(self, build_style=None):
+        command = super(EflPort, self).build_webkit_command(build_style=build_style)
         command.append("--efl")
-        command.append(WebKitPort.makeArgs())
+        command.append(super(EflPort, self).makeArgs())
         return command
 
 
-class ChromiumPort(WebKitPort):
+class ChromiumPort(DeprecatedPort):
+    port_flag_name = "chromium"
 
-    @classmethod
-    def name(cls):
-        return "Chromium"
-
-    @classmethod
-    def flag(cls):
-        return "--port=chromium"
-
-    @classmethod
-    def update_webkit_command(cls, non_interactive=False):
-        command = WebKitPort.update_webkit_command(non_interactive=non_interactive)
+    def update_webkit_command(self, non_interactive=False):
+        command = super(ChromiumPort, self).update_webkit_command(non_interactive=non_interactive)
         command.append("--chromium")
         if non_interactive:
             command.append("--force-update")
         return command
 
-    @classmethod
-    def build_webkit_command(cls, build_style=None):
-        command = WebKitPort.build_webkit_command(build_style=build_style)
+    def build_webkit_command(self, build_style=None):
+        command = super(ChromiumPort, self).build_webkit_command(build_style=build_style)
         command.append("--chromium")
         command.append("--update-chromium")
         return command
 
-    @classmethod
-    def run_webkit_tests_command(cls):
-        command = cls.script_shell_command("new-run-webkit-tests")
+    def run_webkit_tests_command(self):
+        # Note: This could be run-webkit-tests now.
+        command = self.script_shell_command("new-run-webkit-tests")
         command.append("--chromium")
         command.append("--skip-failing-tests")
         return command
 
-    @classmethod
-    def run_javascriptcore_tests_command(cls):
+    def run_javascriptcore_tests_command(self):
         return None
 
 
 class ChromiumXVFBPort(ChromiumPort):
+    port_flag_name = "chromium-xvfb"
 
-    @classmethod
-    def flag(cls):
-        return "--port=chromium-xvfb"
-
-    @classmethod
-    def run_webkit_tests_command(cls):
-        return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command()
+    def run_webkit_tests_command(self):
+        return ["xvfb-run"] + super(ChromiumXVFBPort, self).run_webkit_tests_command()

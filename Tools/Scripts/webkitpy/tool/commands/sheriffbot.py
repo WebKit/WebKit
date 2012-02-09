@@ -29,7 +29,6 @@
 import os
 
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.commands.queues import AbstractQueue

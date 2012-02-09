@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.config.ports import WebKitPort
+from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 from webkitpy.tool import steps
@@ -100,8 +100,7 @@ class StepsTest(unittest.TestCase):
         mock_options.non_interactive = False
         step = steps.RunTests(MockTool(log_executive=True), mock_options)
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        mock_port = WebKitPort()
-        mock_port.name = lambda: "Mac"
+        mock_port = DeprecatedPort()
         tool = MockTool(log_executive=True)
         tool.port = lambda: mock_port
         step = steps.RunTests(tool, mock_options)

@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.config.ports import WebKitPort
+from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures
@@ -44,7 +44,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
     def __init__(self):
         AbstractReviewQueue.__init__(self)
-        self.port = WebKitPort.port(self.port_name)
+        self.port = DeprecatedPort.port(self.port_name)
 
     def should_proceed_with_work_item(self, patch):
         return True

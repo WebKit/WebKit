@@ -33,7 +33,7 @@ from optparse import make_option
 import os
 import threading
 
-from webkitpy.common.config.ports import WebKitPort
+from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.host import Host
 from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.net.statusserver import StatusServer
@@ -61,6 +61,7 @@ class WebKitPatch(MultiCommandTool, Host):
         self._irc = None
         self._deprecated_port = None
 
+    # FIXME: Rename this deprecated_port()
     def port(self):
         return self._deprecated_port
 
@@ -98,7 +99,7 @@ class WebKitPatch(MultiCommandTool, Host):
         if options.irc_password:
             self.irc_password = options.irc_password
         # If options.port is None, we'll get the default port for this platform.
-        self._deprecated_port = WebKitPort.port(options.port)
+        self._deprecated_port = DeprecatedPort.port(options.port)
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():
