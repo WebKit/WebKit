@@ -1,3 +1,17 @@
+2012-02-08  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebCoreSupport FrameNetworkingContextBlackBerry and IconDatabaseClientBlackBerry classes
+        https://bugs.webkit.org/show_bug.cgi?id=78049
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.h: Added.
+        * blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.h: Added.
+
 2012-02-08  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream InspectorClientBlackBerry.{h, cpp}
