@@ -1,5 +1,13 @@
 2012-02-09  Adam Barth  <abarth@webkit.org>
 
+        Remove extraneous line in previous patch.  I forgot to remove this
+        before landing.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverProxy.start):
+
+2012-02-09  Adam Barth  <abarth@webkit.org>
+
         run-perf-tests should have an option to pause before running tests so we can attach Instruments
         https://bugs.webkit.org/show_bug.cgi?id=78271
 

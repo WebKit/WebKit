@@ -197,7 +197,6 @@ class DriverProxy(object):
 
     def start(self):
         self._driver.start()
-        self._reftest_driver.start()
 
     def stop(self):
         self._driver.stop()
