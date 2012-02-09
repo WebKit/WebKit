@@ -3675,8 +3675,6 @@ BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.ht
 BUGWK75111 RELEASE : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
 BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH
 
-BUGWK75896 MAC DEBUG : css3/calc/block-mask-overlay-image-outset.html = PASS CRASH
-
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
 BUGWK75161 GPU : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
