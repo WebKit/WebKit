@@ -1,3 +1,23 @@
+2012-02-09  Shinya Kawanaka  <shinyak@google.com>
+
+        ASSERT_NO_EXCEPTION should be initialized with non-zero value.
+        https://bugs.webkit.org/show_bug.cgi?id=78194
+
+        Reviewed by Hajime Morita.
+
+        ExceptionCode should not be checked without initializing it.
+        However, we encountered a bug that breaks this rule.
+        It was missed until now because ExceptionCode is sometimes set to 0 even if it is not initialized.
+        This patch ensures it is initialized as non-zero value.
+
+        No new tests, no change in behavior.
+
+        * dom/ExceptionCodePlaceholder.cpp:
+        (WebCore::NoExceptionAssertionChecker::NoExceptionAssertionChecker):
+        (WebCore::NoExceptionAssertionChecker::~NoExceptionAssertionChecker):
+        * dom/ExceptionCodePlaceholder.h:
+        (NoExceptionAssertionChecker):
+
 2012-02-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed, rolling out r107197.

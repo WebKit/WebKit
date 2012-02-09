@@ -36,7 +36,7 @@ namespace WebCore {
 #if !ASSERT_DISABLED
 
 NoExceptionAssertionChecker::NoExceptionAssertionChecker(const char* file, int line)
-    : ExceptionCodePlaceholder(0)
+    : ExceptionCodePlaceholder(defaultExceptionCode)
     , m_file(file)
     , m_line(line)
 {
@@ -44,7 +44,7 @@ NoExceptionAssertionChecker::NoExceptionAssertionChecker(const char* file, int l
 
 NoExceptionAssertionChecker::~NoExceptionAssertionChecker()
 {
-    ASSERT_AT(!m_code, m_file, m_line, "");
+    ASSERT_AT(!m_code || m_code == defaultExceptionCode, m_file, m_line, "");
 }
 
 #endif

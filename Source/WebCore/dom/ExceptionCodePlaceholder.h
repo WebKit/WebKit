@@ -70,6 +70,7 @@ public:
     ~NoExceptionAssertionChecker();
 
 private:
+    static const ExceptionCode defaultExceptionCode = 0xaaaaaaaa;
     const char* m_file;
     int m_line;
 };
