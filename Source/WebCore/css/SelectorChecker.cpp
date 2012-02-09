@@ -268,14 +268,13 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
 
 bool SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isFastCheckableSelector) const
 {
+    PseudoId dynamicPseudo = NOPSEUDO;
     if (isFastCheckableSelector && !element->isSVGElement()) {
         if (!fastCheckRightmostSelector(sel, element, VisitedMatchDisabled))
             return false;
         return fastCheckSelector(sel, element);
     }
-
-    PseudoId dynamicPseudo = NOPSEUDO;
-    return checkSelector(SelectorCheckingContext(sel, element, SelectorChecker::VisitedMatchDisabled), dynamicPseudo) == SelectorMatches;
+    return checkSelector(sel, element, dynamicPseudo, false, VisitedMatchDisabled) == SelectorMatches;
 }
 
 namespace {
@@ -443,29 +442,26 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
 // * SelectorFailsLocally     - the selector fails for the element e
 // * SelectorFailsAllSiblings - the selector fails for e and any sibling of e
 // * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
-SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorCheckingContext& context, PseudoId& dynamicPseudo) const
+SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType visitedMatchType, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
     // because its contents are not part of the formal document structure.
-    if (context.element->isSVGShadowRoot())
+    if (e->isSVGShadowRoot())
         return SelectorFailsCompletely;
 #endif
 
     // first selector has to match
-    if (!checkOneSelector(context, dynamicPseudo))
+    if (!checkOneSelector(sel, e, dynamicPseudo, isSubSelector, visitedMatchType, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
 
     // The rest of the selectors has to match
-    CSSSelector::Relation relation = context.selector->relation();
+    CSSSelector::Relation relation = sel->relation();
 
-    // Prepare next selector
-    CSSSelector* historySelector = context.selector->tagHistory();
-    if (!historySelector)
+    // Prepare next sel
+    sel = sel->tagHistory();
+    if (!sel)
         return SelectorMatches;
-
-    SelectorCheckingContext nextContext(context);
-    nextContext.selector = historySelector;
 
     if (relation != CSSSelector::SubSelector) {
         // Bail-out if this selector is irrelevant for the pseudoStyle
@@ -473,87 +469,75 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
             return SelectorFailsCompletely;
 
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
-        if (!context.isSubSelector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
-            nextContext.visitedMatchType = VisitedMatchDisabled;
+        if (!isSubSelector && (e->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
+            visitedMatchType = VisitedMatchDisabled;
     }
 
     switch (relation) {
     case CSSSelector::Descendant:
-        nextContext.element = context.element->parentElement();
-        nextContext.isSubSelector = false;
-        nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
-        for (; nextContext.element; nextContext.element = nextContext.element->parentElement()) {
-            SelectorMatch match = checkSelector(nextContext, dynamicPseudo);
+        while (true) {
+            ContainerNode* n = e->parentNode();
+            if (!n || !n->isElementNode())
+                return SelectorFailsCompletely;
+            e = static_cast<Element*>(n);
+            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
         }
-        return SelectorFailsCompletely;
-
+        break;
     case CSSSelector::Child:
-        nextContext.element = context.element->parentElement();
-        if (!nextContext.element)
-            return SelectorFailsCompletely;
-        nextContext.isSubSelector = false;
-        nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, dynamicPseudo);
-
-    case CSSSelector::DirectAdjacent:
-        if (!m_isCollectingRulesOnly && context.element->parentElement()) {
-            RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : context.element->parentNode()->renderStyle();
-            if (parentStyle)
-                parentStyle->setChildrenAffectedByDirectAdjacentRules();
+        {
+            ContainerNode* n = e->parentNode();
+            if (!n || !n->isElementNode())
+                return SelectorFailsCompletely;
+            e = static_cast<Element*>(n);
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
-        nextContext.element = context.element->previousElementSibling();
-        if (!nextContext.element)
-            return SelectorFailsAllSiblings;
-        nextContext.isSubSelector = false;
-        nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, dynamicPseudo);
-
+    case CSSSelector::DirectAdjacent:
+        {
+            if (!m_isCollectingRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
+                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
+                if (parentStyle)
+                    parentStyle->setChildrenAffectedByDirectAdjacentRules();
+            }
+            e = e->previousElementSibling();
+            if (!e)
+                return SelectorFailsAllSiblings;
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
+        }
     case CSSSelector::IndirectAdjacent:
-        if (!m_isCollectingRulesOnly && context.element->parentElement()) {
-            RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : context.element->parentNode()->renderStyle();
+        if (!m_isCollectingRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
+            RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
             if (parentStyle)
                 parentStyle->setChildrenAffectedByForwardPositionalRules();
         }
-        nextContext.element = context.element->previousElementSibling();
-        nextContext.isSubSelector = false;
-        nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
-        for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
-            SelectorMatch match = checkSelector(nextContext, dynamicPseudo);
+        while (true) {
+            e = e->previousElementSibling();
+            if (!e)
+                return SelectorFailsAllSiblings;
+            SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
         };
-        return SelectorFailsAllSiblings;
-
+        break;
     case CSSSelector::SubSelector:
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        if ((context.elementStyle || m_isCollectingRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
-             && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && context.selector->m_match == CSSSelector::PseudoClass))
+        if ((elementStyle || m_isCollectingRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
+             && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
-        nextContext.isSubSelector = true;
-        return checkSelector(nextContext, dynamicPseudo);
-
+        return checkSelector(sel, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle);
     case CSSSelector::ShadowDescendant:
         {
-            Node* shadowHostNode = context.element->shadowAncestorNode();
-            if (shadowHostNode == context.element || !shadowHostNode->isElementNode())
+            Node* shadowHostNode = e->shadowAncestorNode();
+            if (shadowHostNode == e || !shadowHostNode->isElementNode())
                 return SelectorFailsCompletely;
-            nextContext.element = toElement(shadowHostNode);
-            nextContext.isSubSelector = false;
-            nextContext.elementStyle = 0;
-            nextContext.elementParentStyle = 0;
-            return checkSelector(nextContext, dynamicPseudo);
+            e = static_cast<Element*>(shadowHostNode);
+            return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
     }
 
-    ASSERT_NOT_REACHED();
     return SelectorFailsCompletely;
 }
 
@@ -703,69 +687,63 @@ static bool anyAttributeMatches(Element* element, CSSSelector::Match match, cons
     return false;
 }
 
-bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, PseudoId& dynamicPseudo) const
+bool SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType visitedMatchType, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
-    Element* const & element = context.element;
-    CSSSelector* const & selector = context.selector;
-    ASSERT(element);
-    ASSERT(selector);
-
-    if (!SelectorChecker::tagMatches(element, selector))
+    ASSERT(e);
+    if (!SelectorChecker::tagMatches(e, sel))
         return false;
 
-    if (selector->m_match == CSSSelector::Class)
-        return element->hasClass() && static_cast<StyledElement*>(element)->classNames().contains(selector->value());
+    if (sel->m_match == CSSSelector::Class)
+        return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->value());
 
-    if (selector->m_match == CSSSelector::Id)
-        return element->hasID() && element->idForStyleResolution() == selector->value();
+    if (sel->m_match == CSSSelector::Id)
+        return e->hasID() && e->idForStyleResolution() == sel->value();
 
-    if (selector->isAttributeSelector()) {
-        const QualifiedName& attr = selector->attribute();
+    if (sel->isAttributeSelector()) {
+        const QualifiedName& attr = sel->attribute();
 
-        if (!element->hasAttributes())
+        if (!e->hasAttributes())
             return false;
 
         bool caseSensitive = !m_documentIsHTML || !htmlAttributeHasCaseInsensitiveValue(attr);
 
-        if (!anyAttributeMatches(element, static_cast<CSSSelector::Match>(selector->m_match), attr, selector->value(), caseSensitive))
+        if (!anyAttributeMatches(e, static_cast<CSSSelector::Match>(sel->m_match), attr, sel->value(), caseSensitive))
             return false;
     }
 
-    if (selector->m_match == CSSSelector::PseudoClass) {
+    if (sel->m_match == CSSSelector::PseudoClass) {
         // Handle :not up front.
-        if (selector->pseudoType() == CSSSelector::PseudoNot) {
-            ASSERT(selector->selectorList());
-            SelectorCheckingContext subContext(context);
-            subContext.isSubSelector = true;
-            for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = subContext.selector->tagHistory()) {
+        if (sel->pseudoType() == CSSSelector::PseudoNot) {
+            ASSERT(sel->selectorList());
+            for (CSSSelector* subSel = sel->selectorList()->first(); subSel; subSel = subSel->tagHistory()) {
                 // :not cannot nest. I don't really know why this is a
                 // restriction in CSS3, but it is, so let's honor it.
                 // the parser enforces that this never occurs
-                ASSERT(subContext.selector->pseudoType() != CSSSelector::PseudoNot);
+                ASSERT(subSel->pseudoType() != CSSSelector::PseudoNot);
                 // We select between :visited and :link when applying. We don't know which one applied (or not) yet.
-                if (subContext.selector->pseudoType() == CSSSelector::PseudoVisited || (subContext.selector->pseudoType() == CSSSelector::PseudoLink && subContext.visitedMatchType == VisitedMatchEnabled))
+                if (subSel->pseudoType() == CSSSelector::PseudoVisited || (subSel->pseudoType() == CSSSelector::PseudoLink && visitedMatchType == VisitedMatchEnabled))
                     return true;
-                if (!checkOneSelector(subContext, dynamicPseudo))
+                if (!checkOneSelector(subSel, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle))
                     return true;
             }
         } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
-            return checkScrollbarPseudoClass(selector, dynamicPseudo);
+            return checkScrollbarPseudoClass(sel, dynamicPseudo);
         } else if (dynamicPseudo == SELECTION) {
-            if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
+            if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
                 return !m_document->page()->focusController()->isActive();
         }
 
         // Normal element pseudo class checking.
-        switch (selector->pseudoType()) {
+        switch (sel->pseudoType()) {
             // Pseudo classes:
         case CSSSelector::PseudoNot:
             break; // Already handled up above.
         case CSSSelector::PseudoEmpty:
             {
                 bool result = true;
-                for (Node* n = element->firstChild(); n; n = n->nextSibling()) {
+                for (Node* n = e->firstChild(); n; n = n->nextSibling()) {
                     if (n->isElementNode()) {
                         result = false;
                         break;
@@ -779,22 +757,22 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                     }
                 }
                 if (!m_isCollectingRulesOnly) {
-                    if (context.elementStyle)
-                        context.elementStyle->setEmptyState(result);
-                    else if (element->renderStyle() && (element->document()->usesSiblingRules() || element->renderStyle()->unique()))
-                        element->renderStyle()->setEmptyState(result);
+                    if (elementStyle)
+                        elementStyle->setEmptyState(result);
+                    else if (e->renderStyle() && (e->document()->usesSiblingRules() || e->renderStyle()->unique()))
+                        e->renderStyle()->setEmptyState(result);
                 }
                 return result;
             }
         case CSSSelector::PseudoFirstChild:
             // first-child matches the first child that is an element
-            if (element->parentElement()) {
+            if (e->parentElement()) {
                 bool result = false;
-                if (!element->previousElementSibling())
+                if (!e->previousElementSibling())
                     result = true;
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : element->parentNode()->renderStyle();
+                    RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByFirstChildRules();
                     if (result && childStyle)
@@ -805,17 +783,17 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             break;
         case CSSSelector::PseudoFirstOfType:
             // first-of-type matches the first element of its type
-            if (element->parentElement()) {
+            if (e->parentElement()) {
                 bool result = true;
-                const QualifiedName& type = element->tagQName();
-                for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                const QualifiedName& type = e->tagQName();
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
                     if (sibling->hasTagName(type)) {
                         result = false;
                         break;
                     }
                 }
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : element->parentNode()->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                 }
@@ -824,11 +802,11 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             break;
         case CSSSelector::PseudoLastChild:
             // last-child matches the last child that is an element
-            if (Element* parentElement = element->parentElement()) {
-                bool result = parentElement->isFinishedParsingChildren() && !element->nextElementSibling();
+            if (Element* parentElement = e->parentElement()) {
+                bool result = parentElement->isFinishedParsingChildren() && !e->nextElementSibling();
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByLastChildRules();
                     if (result && childStyle)
@@ -839,16 +817,16 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             break;
         case CSSSelector::PseudoLastOfType:
             // last-of-type matches the last element of its type
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                const QualifiedName& type = element->tagQName();
-                for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                const QualifiedName& type = e->tagQName();
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
                     if (sibling->hasTagName(type))
                         return false;
                 }
@@ -856,13 +834,13 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             }
             break;
         case CSSSelector::PseudoOnlyChild:
-            if (Element* parentElement = element->parentElement()) {
-                bool firstChild = !element->previousElementSibling();
-                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && !element->nextElementSibling();
+            if (Element* parentElement = e->parentElement()) {
+                bool firstChild = !e->previousElementSibling();
+                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && !e->nextElementSibling();
 
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle) {
                         parentStyle->setChildrenAffectedByFirstChildRules();
                         parentStyle->setChildrenAffectedByLastChildRules();
@@ -877,9 +855,9 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             break;
         case CSSSelector::PseudoOnlyOfType:
             // FIXME: This selector is very slow.
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle) {
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
@@ -887,12 +865,12 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                const QualifiedName& type = element->tagQName();
-                for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                const QualifiedName& type = e->tagQName();
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
                     if (sibling->hasTagName(type))
                         return false;
                 }
-                for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
                     if (sibling->hasTagName(type))
                         return false;
                 }
@@ -900,11 +878,11 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             }
             break;
         case CSSSelector::PseudoNthChild:
-            if (!selector->parseNth())
+            if (!sel->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 int count = 1;
-                for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
                     RenderStyle* s = sibling->renderStyle();
                     unsigned index = s ? s->childIndex() : 0;
                     if (index) {
@@ -915,212 +893,208 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 }
 
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (childStyle)
                         childStyle->setChildIndex(count);
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                 }
 
-                if (selector->matchNth(count))
+                if (sel->matchNth(count))
                     return true;
             }
             break;
         case CSSSelector::PseudoNthOfType:
-            if (!selector->parseNth())
+            if (!sel->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 int count = 1;
-                const QualifiedName& type = element->tagQName();
-                for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+                const QualifiedName& type = e->tagQName();
+                for (const Element* sibling = e->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
                     if (sibling->hasTagName(type))
                         ++count;
                 }
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
                 }
 
-                if (selector->matchNth(count))
+                if (sel->matchNth(count))
                     return true;
             }
             break;
         case CSSSelector::PseudoNthLastChild:
-            if (!selector->parseNth())
+            if (!sel->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
                 int count = 1;
-                for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
                     ++count;
-                if (selector->matchNth(count))
+                if (sel->matchNth(count))
                     return true;
             }
             break;
         case CSSSelector::PseudoNthLastOfType:
-            if (!selector->parseNth())
+            if (!sel->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
+            if (Element* parentElement = e->parentElement()) {
                 if (!m_isCollectingRulesOnly) {
-                    RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
+                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
                 int count = 1;
-                const QualifiedName& type = element->tagQName();
-                for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                const QualifiedName& type = e->tagQName();
+                for (const Element* sibling = e->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
                     if (sibling->hasTagName(type))
                         ++count;
                 }
-                if (selector->matchNth(count))
+                if (sel->matchNth(count))
                     return true;
             }
             break;
         case CSSSelector::PseudoTarget:
-            if (element == element->document()->cssTarget())
+            if (e == e->document()->cssTarget())
                 return true;
             break;
         case CSSSelector::PseudoAny:
-            {
-                SelectorCheckingContext subContext(context);
-                subContext.isSubSelector = true;
-                for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
-                    if (checkSelector(subContext, dynamicPseudo) == SelectorMatches)
-                        return true;
-                }
+            for (CSSSelector* selector = sel->selectorList()->first(); selector; selector = CSSSelectorList::next(selector)) {
+                if (checkSelector(selector, e, dynamicPseudo, true, visitedMatchType, elementStyle, elementParentStyle) == SelectorMatches)
+                    return true;
             }
             break;
         case CSSSelector::PseudoAutofill:
-            if (!element || !element->isFormControlElement())
+            if (!e || !e->isFormControlElement())
                 break;
-            if (HTMLInputElement* inputElement = element->toInputElement())
+            if (HTMLInputElement* inputElement = e->toInputElement())
                 return inputElement->isAutofilled();
             break;
         case CSSSelector::PseudoAnyLink:
         case CSSSelector::PseudoLink:
             // :visited and :link matches are separated later when applying the style. Here both classes match all links...
-            return element->isLink();
+            return e->isLink();
         case CSSSelector::PseudoVisited:
             // ...except if :visited matching is disabled for ancestor/sibling matching.
-            return element->isLink() && context.visitedMatchType == VisitedMatchEnabled;
+            return e->isLink() && visitedMatchType == VisitedMatchEnabled;
         case CSSSelector::PseudoDrag:
-            if (context.elementStyle)
-                context.elementStyle->setAffectedByDragRules(true);
-            else if (element->renderStyle())
-                element->renderStyle()->setAffectedByDragRules(true);
-            if (element->renderer() && element->renderer()->isDragging())
+            if (elementStyle)
+                elementStyle->setAffectedByDragRules(true);
+            else if (e->renderStyle())
+                e->renderStyle()->setAffectedByDragRules(true);
+            if (e->renderer() && e->renderer()->isDragging())
                 return true;
             break;
         case CSSSelector::PseudoFocus:
-            return matchesFocusPseudoClass(element);
+            return matchesFocusPseudoClass(e);
         case CSSSelector::PseudoHover:
             // If we're in quirks mode, then hover should never match anchors with no
             // href and *:hover should not match anything. This is important for sites like wsj.com.
-            if (m_strictParsing || context.isSubSelector || (selector->hasTag() && !element->hasTagName(aTag)) || element->isLink()) {
-                if (context.elementStyle)
-                    context.elementStyle->setAffectedByHoverRules(true);
-                else if (element->renderStyle())
-                    element->renderStyle()->setAffectedByHoverRules(true);
-                if (element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoHover))
+            if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (elementStyle)
+                    elementStyle->setAffectedByHoverRules(true);
+                else if (e->renderStyle())
+                    e->renderStyle()->setAffectedByHoverRules(true);
+                if (e->hovered() || InspectorInstrumentation::forcePseudoState(e, CSSSelector::PseudoHover))
                     return true;
             }
             break;
         case CSSSelector::PseudoActive:
             // If we're in quirks mode, then :active should never match anchors with no
             // href and *:active should not match anything.
-            if (m_strictParsing || context.isSubSelector || (selector->hasTag() && !element->hasTagName(aTag)) || element->isLink()) {
-                if (context.elementStyle)
-                    context.elementStyle->setAffectedByActiveRules(true);
-                else if (element->renderStyle())
-                    element->renderStyle()->setAffectedByActiveRules(true);
-                if (element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoActive))
+            if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (elementStyle)
+                    elementStyle->setAffectedByActiveRules(true);
+                else if (e->renderStyle())
+                    e->renderStyle()->setAffectedByActiveRules(true);
+                if (e->active() || InspectorInstrumentation::forcePseudoState(e, CSSSelector::PseudoActive))
                     return true;
             }
             break;
         case CSSSelector::PseudoEnabled:
-            if (element && element->isFormControlElement())
-                return element->isEnabledFormControl();
+            if (e && e->isFormControlElement())
+                return e->isEnabledFormControl();
             break;
         case CSSSelector::PseudoFullPageMedia:
-            return element && element->document() && element->document()->isMediaDocument();
+            return e && e->document() && e->document()->isMediaDocument();
             break;
         case CSSSelector::PseudoDefault:
-            return element && element->isDefaultButtonForForm();
+            return e && e->isDefaultButtonForForm();
         case CSSSelector::PseudoDisabled:
-            if (element && element->isFormControlElement())
-                return !element->isEnabledFormControl();
+            if (e && e->isFormControlElement())
+                return !e->isEnabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:
-            if (!element || !element->isFormControlElement())
+            if (!e || !e->isFormControlElement())
                 return false;
-            return element->isTextFormControl() && element->isReadOnlyFormControl();
+            return e->isTextFormControl() && e->isReadOnlyFormControl();
         case CSSSelector::PseudoReadWrite:
-            if (!element || !element->isFormControlElement())
+            if (!e || !e->isFormControlElement())
                 return false;
-            return element->isTextFormControl() && !element->isReadOnlyFormControl();
+            return e->isTextFormControl() && !e->isReadOnlyFormControl();
         case CSSSelector::PseudoOptional:
-            return element && element->isOptionalFormControl();
+            return e && e->isOptionalFormControl();
         case CSSSelector::PseudoRequired:
-            return element && element->isRequiredFormControl();
+            return e && e->isRequiredFormControl();
         case CSSSelector::PseudoValid:
-            if (!element)
+            if (!e)
                 return false;
-            element->document()->setContainsValidityStyleRules();
-            return element->willValidate() && element->isValidFormControlElement();
+            e->document()->setContainsValidityStyleRules();
+            return e->willValidate() && e->isValidFormControlElement();
         case CSSSelector::PseudoInvalid:
-            if (!element)
+            if (!e)
                 return false;
-            element->document()->setContainsValidityStyleRules();
-            return (element->willValidate() && !element->isValidFormControlElement()) || element->hasUnacceptableValue();
+            e->document()->setContainsValidityStyleRules();
+            return (e->willValidate() && !e->isValidFormControlElement()) || e->hasUnacceptableValue();
         case CSSSelector::PseudoChecked:
             {
-                if (!element || !element->isFormControlElement())
+                if (!e || !e->isFormControlElement())
                     break;
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
-                HTMLInputElement* inputElement = element->toInputElement();
+                HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
                     return true;
-                if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected())
+                if (e->hasTagName(optionTag) && toHTMLOptionElement(e)->selected())
                     return true;
                 break;
             }
         case CSSSelector::PseudoIndeterminate:
             {
-                if (!element || !element->isFormControlElement())
+                if (!e || !e->isFormControlElement())
                     break;
 #if ENABLE(PROGRESS_TAG)
-                if (element->hasTagName(progressTag)) {
-                    HTMLProgressElement* progress = static_cast<HTMLProgressElement*>(element);
+                if (e->hasTagName(progressTag)) {
+                    HTMLProgressElement* progress = static_cast<HTMLProgressElement*>(e);
                     if (progress && !progress->isDeterminate())
                         return true;
                     break;
                 }
 #endif
-                HTMLInputElement* inputElement = element->toInputElement();
+                HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->isIndeterminate())
                     return true;
                 break;
             }
         case CSSSelector::PseudoRoot:
-            if (element == element->document()->documentElement())
+            if (e == e->document()->documentElement())
                 return true;
             break;
         case CSSSelector::PseudoLang:
             {
-                AtomicString value = element->computeInheritedLanguage();
-                const AtomicString& argument = selector->argument();
+                AtomicString value = e->computeInheritedLanguage();
+                const AtomicString& argument = sel->argument();
                 if (value.isEmpty() || !value.startsWith(argument, false))
                     break;
                 if (value.length() != argument.length() && value[argument.length()] != '-')
@@ -1133,34 +1107,34 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             // element is an element in the document, the 'full-screen' pseudoclass applies to
             // that element. Also, an <iframe>, <object> or <embed> element whose child browsing
             // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
-            if (element->isFrameElementBase() && static_cast<HTMLFrameElementBase*>(element)->containsFullScreenElement())
+            if (e->isFrameElementBase() && static_cast<HTMLFrameElementBase*>(e)->containsFullScreenElement())
                 return true;
-            if (!element->document()->webkitIsFullScreen())
+            if (!e->document()->webkitIsFullScreen())
                 return false;
-            return element == element->document()->webkitCurrentFullScreenElement();
+            return e == e->document()->webkitCurrentFullScreenElement();
         case CSSSelector::PseudoAnimatingFullScreenTransition:
-            if (element != element->document()->webkitCurrentFullScreenElement())
+            if (e != e->document()->webkitCurrentFullScreenElement())
                 return false;
-            return element->document()->isAnimatingFullScreen();
+            return e->document()->isAnimatingFullScreen();
         case CSSSelector::PseudoFullScreenAncestor:
-            return element->containsFullScreenElement();
+            return e->containsFullScreenElement();
         case CSSSelector::PseudoFullScreenDocument:
             // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
             // to all elements of that Document.
-            if (!element->document()->webkitIsFullScreen())
+            if (!e->document()->webkitIsFullScreen())
                 return false;
             return true;
 #endif
         case CSSSelector::PseudoInRange:
-            if (!element)
+            if (!e)
                 return false;
-            element->document()->setContainsValidityStyleRules();
-            return element->isInRange();
+            e->document()->setContainsValidityStyleRules();
+            return e->isInRange();
         case CSSSelector::PseudoOutOfRange:
-            if (!element)
+            if (!e)
                 return false;
-            element->document()->setContainsValidityStyleRules();
-            return element->isOutOfRange();
+            e->document()->setContainsValidityStyleRules();
+            return e->isOutOfRange();
         case CSSSelector::PseudoUnknown:
         case CSSSelector::PseudoNotParsed:
         default:
@@ -1169,18 +1143,18 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         }
         return false;
     }
-    if (selector->m_match == CSSSelector::PseudoElement) {
-        if (!context.elementStyle && !m_isCollectingRulesOnly)
+    if (sel->m_match == CSSSelector::PseudoElement) {
+        if (!elementStyle && !m_isCollectingRulesOnly)
             return false;
 
-        if (selector->isUnknownPseudoElement()) {
+        if (sel->isUnknownPseudoElement()) {
             m_hasUnknownPseudoElements = true;
-            return element->shadowPseudoId() == selector->value();
+            return e->shadowPseudoId() == sel->value();
         }
 
-        PseudoId pseudoId = CSSSelector::pseudoId(selector->pseudoType());
+        PseudoId pseudoId = CSSSelector::pseudoId(sel->pseudoType());
         if (pseudoId == FIRST_LETTER) {
-            if (Document* document = element->document())
+            if (Document* document = e->document())
                 document->setUsesFirstLetterRules(true);
         }
         if (pseudoId != NOPSEUDO)

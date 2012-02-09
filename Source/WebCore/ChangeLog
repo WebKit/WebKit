@@ -1,3 +1,19 @@
+2012-02-09  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed, rolling out r107197.
+        http://trac.webkit.org/changeset/107197
+        https://bugs.webkit.org/show_bug.cgi?id=77525
+
+        broke Chromium Linux
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SelectorChecker.h:
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r107182, r107186, r107189, r107191,
