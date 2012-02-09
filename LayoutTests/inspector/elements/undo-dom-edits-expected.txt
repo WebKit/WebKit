@@ -53,14 +53,11 @@ Initial:
   </div>
 Post-action:
 - <div id="testEditAsHTML">
-    - <div id="node-to-edit-as-html">
-          <div id="span2">Text2</div>
-      </div>
+    + <div id="node-to-edit-as-html">…</div>
+      <span>Second node</span>
   </div>
 Post-undo (initial):
 - <div id="testEditAsHTML">
-    - <div id="node-to-edit-as-html">
-          <span id="span">Text</span>
-      </div>
+    + <div id="node-to-edit-as-html"></div>
   </div>
 

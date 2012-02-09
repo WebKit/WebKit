@@ -904,6 +904,7 @@ WebInspector.ElementsPanel.prototype = {
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Expand/collapse"));
         section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Edit attribute"));
+        section.addKey(shortcut.shortcutToString(shortcut.Keys.F2), WebInspector.UIString("Toggle edit as HTML"));
 
         this.sidebarPanes.styles.registerShortcuts();
     },
@@ -925,8 +926,13 @@ WebInspector.ElementsPanel.prototype = {
             }
             return;
         }
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+005A")  // Z key
+
+        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+005A") { // Z key
             DOMAgent.undo(this._updateSidebars.bind(this));
+            return;
+        }
+
+        this.treeOutline.handleShortcut(event);
     },
 
     handleCopyEvent: function(event)

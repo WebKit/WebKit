@@ -349,6 +349,7 @@ public:
     SetOuterHTMLAction(Node* node, const String& html)
         : InspectorDOMAgent::DOMAction("SetOuterHTML")
         , m_node(node)
+        , m_nextSibling(node->nextSibling())
         , m_html(html)
         , m_newNode(0)
     {
@@ -364,8 +365,18 @@ public:
 
     virtual bool undo(ExceptionCode& ec)
     {
-        DOMEditor domEditor(m_node->ownerDocument());
-        domEditor.patchNode(m_node.get(), m_oldHTML, ec);
+        DOMEditor domEditor(m_newNode->ownerDocument());
+        Node* node = domEditor.patchNode(m_newNode, m_oldHTML, ec);
+        if (ec || !node)
+            return false;
+        // HTML editing could have produced extra nodes. Remove them if necessary.
+        node = node->nextSibling();
+
+        while (!ec && node && node != m_nextSibling.get()) {
+            Node* nodeToRemove = node;
+            node = node->nextSibling();
+            nodeToRemove->remove(ec);
+        }
         return !ec;
     }
 
@@ -376,6 +387,7 @@ public:
 
 private:
     RefPtr<Node> m_node;
+    RefPtr<Node> m_nextSibling;
     String m_html;
     String m_oldHTML;
     Node* m_newNode;

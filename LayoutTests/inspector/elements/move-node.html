@@ -35,7 +35,7 @@ function test()
                 next();
             }
 
-            treeOutline._nodeBeingDragged = InspectorTest.expandedNodeWithId("child2");
+            treeOutline._treeElementBeingDragged = treeOutline.getCachedTreeElement(InspectorTest.expandedNodeWithId("child2"));
             var treeElementToDropOn = treeOutline.getCachedTreeElement(InspectorTest.expandedNodeWithId("child4"));
             treeOutline._doMove(treeElementToDropOn);
         }

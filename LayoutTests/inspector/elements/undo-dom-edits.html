@@ -41,10 +41,9 @@ function test()
     function testEditAsHTML(callback)
     {
         var node = InspectorTest.expandedNodeWithId("node-to-edit-as-html"); 
-        node.setOuterHTML("<div id=\"node-to-edit-as-html\"><div id=\"span2\">Text2</div></div>", callback);
+        node.setOuterHTML("<div id=\"node-to-edit-as-html\"><div id=\"span2\">Text2</div></div><span>Second node</span>", callback);
     }
     testSuite.push(InspectorTest.generateUndoTest(testEditAsHTML));
-
 
     InspectorTest.runTestSuite(testSuite);
 }

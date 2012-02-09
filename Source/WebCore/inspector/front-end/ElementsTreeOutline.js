@@ -329,7 +329,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         event.dataTransfer.setData("text/plain", treeElement.listItemElement.textContent);
         event.dataTransfer.effectAllowed = "copyMove";
-        this._nodeBeingDragged = treeElement.representedObject;
+        this._treeElementBeingDragged = treeElement;
 
         WebInspector.domAgent.hideDOMNodeHighlight();
 
@@ -338,7 +338,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _ondragover: function(event)
     {
-        if (!this._nodeBeingDragged)
+        if (!this._treeElementBeingDragged)
             return false;
 
         var treeElement = this._treeElementFromEvent(event);
@@ -347,7 +347,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         var node = treeElement.representedObject;
         while (node) {
-            if (node === this._nodeBeingDragged)
+            if (node === this._treeElementBeingDragged.representedObject)
                 return false;
             node = node.parentNode;
         }
@@ -392,7 +392,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _doMove: function(treeElement)
     {
-        if (!this._nodeBeingDragged)
+        if (!this._treeElementBeingDragged)
             return;
 
         var parentNode;
@@ -407,27 +407,17 @@ WebInspector.ElementsTreeOutline.prototype = {
             anchorNode = dragTargetNode;
         }
 
-        function callback(error, newNodeId)
-        {
-            if (error)
-                return;
+        var wasExpanded = this._treeElementBeingDragged.expanded;
+        this._treeElementBeingDragged.representedObject.moveTo(parentNode, anchorNode, this._selectNodeAfterEdit.bind(this, null, wasExpanded));
 
-            this._updateModifiedNodes();
-            var newNode = WebInspector.domAgent.nodeForId(newNodeId);
-            if (newNode)
-                this.selectDOMNode(newNode, true);
-        }
-
-        this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
-
-        delete this._nodeBeingDragged;
+        delete this._treeElementBeingDragged;
     },
 
     _ondragend: function(event)
     {
         event.preventDefault();
         this._clearDragOverTreeElementMarker();
-        delete this._nodeBeingDragged;
+        delete this._treeElementBeingDragged;
     },
 
     _clearDragOverTreeElementMarker: function()
@@ -501,6 +491,65 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         if (this._contextMenuCallback)
             this._contextMenuCallback(contextMenu, node);
+    },
+
+    handleShortcut: function(event)
+    {
+        var node = this.selectedDOMNode();
+        var treeElement = this.getCachedTreeElement(node);
+        if (!node || !treeElement)
+            return;
+
+        if (event.keyIdentifier === "F2") {
+            this._toggleEditAsHTML(node);
+            return;
+        }
+
+        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && node.parentNode) {
+            if (event.keyIdentifier === "Up" && node.previousSibling) {
+                node.moveTo(node.parentNode, node.previousSibling, this._selectNodeAfterEdit.bind(this, null, treeElement.expanded));
+                return;
+            }
+            if (event.keyIdentifier === "Down" && node.nextSibling) {
+                node.moveTo(node.parentNode, node.nextSibling.nextSibling, this._selectNodeAfterEdit.bind(this, null, treeElement.expanded));
+                return;
+            }
+        }
+
+    },
+
+    _toggleEditAsHTML: function(node)
+    {
+        var treeElement = this.getCachedTreeElement(node);
+        if (!treeElement)
+            return;
+
+        if (treeElement._editing && treeElement._htmlEditElement && WebInspector.isBeingEdited(treeElement._htmlEditElement))
+            treeElement._editing.commit();
+        else
+            treeElement._editAsHTML();
+    },
+
+    _selectNodeAfterEdit: function(fallbackNode, wasExpanded, error, nodeId)
+    {
+        if (error)
+            return;
+
+        // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
+        this._updateModifiedNodes();
+
+        var newNode = WebInspector.domAgent.nodeForId(nodeId) || fallbackNode;
+        if (!newNode)
+            return;
+
+        this.selectDOMNode(newNode, true);
+
+        var newTreeItem = this.findTreeElement(newNode);
+        if (wasExpanded) {
+            if (newTreeItem)
+                newTreeItem.expand();
+        }
+        return newTreeItem;
     }
 }
 
@@ -1263,7 +1312,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function commit()
         {
-            commitCallback(this._htmlEditElement.textContent);
+            commitCallback(initialValue, this._htmlEditElement.textContent);
             dispose.call(this);
         }
 
@@ -1399,17 +1448,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 cancel();
                 return;
             }
-
-            var node = WebInspector.domAgent.nodeForId(nodeId);
-
-            // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
-            treeOutline._updateModifiedNodes();
-            treeOutline.selectDOMNode(node, true);
-
-            var newTreeItem = treeOutline.findTreeElement(node);
-            if (wasExpanded)
-                newTreeItem.expand();
-
+            var newTreeItem = treeOutline._selectNodeAfterEdit(null, wasExpanded, error, nodeId);
             moveToNextAttributeIfNeeded.call(newTreeItem);
         }
 
@@ -1685,6 +1724,8 @@ WebInspector.ElementsTreeElement.prototype = {
             parentElement.adjustCollapsedRange();
         }
 
+        if (!this.representedObject.parentNode || this.representedObject.parentNode.nodeType() === Node.DOCUMENT_NODE)
+            return;
         this.representedObject.removeNode(removeNodeCallback);
     },
 
@@ -1717,9 +1758,12 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        function commitChange(value)
+        function commitChange(initialValue, value)
         {
-            node.setOuterHTML(value, selectNode);
+            if (initialValue !== value)
+                node.setOuterHTML(value, selectNode);
+            else
+                return;
         }
 
         node.getOuterHTML(this._startEditingAsHTML.bind(this, commitChange));

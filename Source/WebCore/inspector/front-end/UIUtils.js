@@ -268,7 +268,7 @@ WebInspector.EditingConfig.prototype = {
 WebInspector.startEditing = function(element, config)
 {
     if (!WebInspector.markBeingEdited(element, true))
-        return;
+        return null;
 
     config = config || new WebInspector.EditingConfig(function() {}, function() {});
     var committedCallback = config.commitHandler;

@@ -1,3 +1,32 @@
+2012-02-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: toggle Edit as HTML on F2, drag nodes up / down upon Ctrl(Cmd) Up / Down.
+        https://bugs.webkit.org/show_bug.cgi?id=78123
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::SetOuterHTMLAction):
+        (WebCore::InspectorDOMAgent::SetOuterHTMLAction::undo):
+        (InspectorDOMAgent::SetOuterHTMLAction):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._registerShortcuts):
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._ondragstart):
+        (WebInspector.ElementsTreeOutline.prototype._ondragover):
+        (WebInspector.ElementsTreeOutline.prototype._doMove):
+        (WebInspector.ElementsTreeOutline.prototype._ondragend):
+        (WebInspector.ElementsTreeOutline.prototype._populateContextMenu):
+        (WebInspector.ElementsTreeOutline.prototype.handleShortcut):
+        (WebInspector.ElementsTreeOutline.prototype._toggleEditAsHTML):
+        (WebInspector.ElementsTreeOutline.prototype._selectNodeAfterEdit):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML.commit):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.changeTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        * inspector/front-end/UIUtils.js:
+
 2012-02-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         SelectorChecker::checkSelector: move parameters into a struct
