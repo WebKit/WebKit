@@ -1,3 +1,24 @@
+2012-02-08  Tony Chang  <tony@chromium.org>
+
+        refactor RenderFlexibleBox to return preferred sizes of all children
+        https://bugs.webkit.org/show_bug.cgi?id=78169
+
+        Reviewed by Ojan Vafai.
+
+        This is in preparation for multi-line flexbox. We need the preferred
+        size of each child so we can compute where the multi-line breaks happen.
+
+        No new tests, just refactoring.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild): Renamed from preferredMainAxisContentExtentForFlexItem because
+        other methods are ForChild rather than ForFlexItem.
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithm):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-02-08  Shinya Kawanaka  <shinyak@google.com>
 
         Stop calling Element::ensureShadowRoot() if it is used in construction phase.

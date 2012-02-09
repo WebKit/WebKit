@@ -85,7 +85,7 @@ private:
     void adjustAlignmentForChild(RenderBox* child, LayoutUnit);
     LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const;
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
-    LayoutUnit preferredMainAxisContentExtentForFlexItem(RenderBox* child) const;
+    LayoutUnit preferredMainAxisContentExtentForChild(RenderBox* child) const;
 
     void layoutFlexItems(bool relayoutChildren);
 
@@ -95,7 +95,7 @@ private:
     LayoutUnit availableAlignmentSpaceForChild(RenderBox*);
     LayoutUnit marginBoxAscent(RenderBox*);
 
-    void computePreferredMainAxisExtent(bool relayoutChildren, TreeOrderIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    void computeMainAxisPreferredSizes(bool relayoutChildren, TreeOrderIterator&, WTF::Vector<LayoutUnit>&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
     bool runFreeSpaceAllocationAlgorithm(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
