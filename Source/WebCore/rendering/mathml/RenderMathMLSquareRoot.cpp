@@ -61,8 +61,8 @@ const float gRadicalLineThickness = 0.02f;
 // Radical thick line thickness (%)
 const float gRadicalThickLineThickness = 0.1f;
     
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Node *expression) 
-    : RenderMathMLBlock(expression) 
+RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element* element)
+    : RenderMathMLBlock(element)
 {
 }
 

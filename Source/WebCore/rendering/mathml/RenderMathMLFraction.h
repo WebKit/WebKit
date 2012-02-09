@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderMathMLFraction : public RenderMathMLBlock {
 public:
-    RenderMathMLFraction(Element* fraction);
+    RenderMathMLFraction(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void updateFromElement();
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const; 
@@ -44,6 +44,7 @@ protected:
     virtual void layout();
 private:
     virtual const char* renderName() const { return "RenderMathMLFraction"; }
+    
     float m_lineThickness;
 };
 

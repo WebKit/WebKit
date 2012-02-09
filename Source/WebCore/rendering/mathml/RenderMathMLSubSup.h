@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLSubSup : public RenderMathMLBlock {
 public:
-    RenderMathMLSubSup(Element* fraction);
+    RenderMathMLSubSup(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual bool hasBase() const { return true; }
     virtual int nonOperatorHeight() const;
@@ -57,4 +57,3 @@ private:
 #endif // ENABLE(MATHML)
 
 #endif // RenderMathMLSubSup_h
-

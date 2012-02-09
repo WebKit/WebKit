@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLRoot : public RenderMathMLBlock {
 public:
-    RenderMathMLRoot(Node* fraction);
+    RenderMathMLRoot(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void paint(PaintInfo&, const LayoutPoint&);
 protected:

@@ -64,8 +64,8 @@ const float gRadicalLineThickness = 0.02f;
 // Radical thick line thickness (%)
 const float gRadicalThickLineThickness = 0.1f;
     
-RenderMathMLRoot::RenderMathMLRoot(Node *expression) 
-: RenderMathMLBlock(expression) 
+RenderMathMLRoot::RenderMathMLRoot(Element* element)
+    : RenderMathMLBlock(element)
 {
 }
 
@@ -232,7 +232,8 @@ void RenderMathMLRoot::layout()
     
     LayoutUnit indexShift = indexBox->offsetWidth() + topStartShift;
     LayoutUnit radicalHeight = static_cast<LayoutUnit>((1 - gRadicalTopLeftPointYPos) * maxHeight);
-    LayoutUnit rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->offsetHeight() - (maxHeight + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()));
+    LayoutUnit rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->offsetHeight()
+        - (maxHeight + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()));
     
     style()->setPaddingLeft(Length(indexShift, Fixed));
     if (rootMarginTop > 0)

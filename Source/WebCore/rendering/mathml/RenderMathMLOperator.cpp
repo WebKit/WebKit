@@ -38,15 +38,15 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-RenderMathMLOperator::RenderMathMLOperator(Node* container)
-    : RenderMathMLBlock(container)
+RenderMathMLOperator::RenderMathMLOperator(Element* element)
+    : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(0)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Node* container, UChar operatorChar)
-    : RenderMathMLBlock(container)
+RenderMathMLOperator::RenderMathMLOperator(Node* node, UChar operatorChar)
+    : RenderMathMLBlock(node)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
 {
@@ -139,7 +139,7 @@ void RenderMathMLOperator::updateFromElement()
     // This boolean indicates whether stretching is disabled via the markup.
     bool stretchDisabled = false;
     
-    // We made need the element later if we can't stretch.
+    // We may need the element later if we can't stretch.
     if (node()->nodeType() == Node::ELEMENT_NODE) {
         if (Element* mo = static_cast<Element*>(node())) {
             AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
@@ -282,7 +282,7 @@ void RenderMathMLOperator::updateFromElement()
     }
 }
 
-RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int topRelative)
+PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int topRelative)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
@@ -307,13 +307,13 @@ RefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int size, int top
         newStyle->setPosition(RelativePosition);
     }
 
-    return newStyle;
+    return newStyle.release();
 }
 
 RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int size, int charRelative, int topRelative)
 {
     RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
-    container->setStyle(createStackableStyle(size, topRelative).release());
+    container->setStyle(createStackableStyle(size, topRelative));
     addChild(container);
     RenderBlock* parent = container;
     if (charRelative) {

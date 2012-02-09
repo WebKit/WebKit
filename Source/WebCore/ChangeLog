@@ -1,3 +1,62 @@
+2012-02-09  David Barton  <dbarton@mathscribe.com>
+
+        MathML internals for bug 52444 fix - type checking, PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=78180
+
+        Reviewed by Eric Seidel.
+        
+        static_cast<Element*>(node()) is done in methods in RenderMathMLFenced.cpp and a few
+        other files. It is more type-safe if the RenderMathMLFenced() or other constructor only
+        accepts an Element*, not a Node*. Also a couple functions were changed to return a
+        PassRefPtr instead of a RefPtr.
+
+        No new tests.
+
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::RenderMathMLFenced):
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        (WebCore::RenderMathMLFenced::makeOperatorStyle):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        (RenderMathMLFenced):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLFraction.h:
+        (RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLMath.cpp:
+        (WebCore::RenderMathMLMath::RenderMathMLMath):
+        * rendering/mathml/RenderMathMLMath.h:
+        (RenderMathMLMath):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createStackableStyle):
+        (WebCore::RenderMathMLOperator::createGlyph):
+        * rendering/mathml/RenderMathMLOperator.h:
+        (RenderMathMLOperator):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot):
+        (WebCore::RenderMathMLRoot::layout):
+        * rendering/mathml/RenderMathMLRoot.h:
+        (RenderMathMLRoot):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::RenderMathMLRow):
+        * rendering/mathml/RenderMathMLRow.h:
+        (RenderMathMLRow):
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::RenderMathMLSquareRoot):
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        (RenderMathMLSquareRoot):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::addChild):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::RenderMathMLUnderOver):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (RenderMathMLUnderOver):
+
 2012-02-09  Andreas Kling  <awesomekling@apple.com>
 
         Avoid unnecessary work when evaluating style sharing candidates.

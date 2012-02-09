@@ -38,10 +38,9 @@ using namespace MathMLNames;
     
 static const double gOverSpacingAdjustment = 0.5;
     
-RenderMathMLUnderOver::RenderMathMLUnderOver(Node* expression) 
-    : RenderMathMLBlock(expression) 
+RenderMathMLUnderOver::RenderMathMLUnderOver(Element* element)
+    : RenderMathMLBlock(element)
 {
-    Element* element = static_cast<Element*>(expression);
     // Determine what kind of under/over expression we have by element name
     
     if (element->hasLocalName(MathMLNames::munderTag))

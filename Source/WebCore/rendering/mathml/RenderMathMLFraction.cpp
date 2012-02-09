@@ -46,8 +46,8 @@ static const float gLineThick = 3.f;
 static const float gFractionBarWidth = 0.05f;
 static const float gDenominatorPad = 0.1f;
 
-RenderMathMLFraction::RenderMathMLFraction(Element* fraction) 
-    : RenderMathMLBlock(fraction)
+RenderMathMLFraction::RenderMathMLFraction(Element* element)
+    : RenderMathMLBlock(element)
     , m_lineThickness(gLineMedium)
 {
     setChildrenInline(false);

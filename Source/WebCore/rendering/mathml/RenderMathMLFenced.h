@@ -34,15 +34,16 @@ namespace WebCore {
     
 class RenderMathMLFenced : public RenderMathMLRow {
 public:
-    RenderMathMLFenced(Node *fraction);
+    RenderMathMLFenced(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void updateFromElement();
     
 private:
     virtual const char* renderName() const { return "RenderMathMLFenced"; }
 
+    PassRefPtr<RenderStyle> makeOperatorStyle();
     void makeFences();
-    RefPtr<RenderStyle> makeOperatorStyle();
+    
     UChar m_open;
     UChar m_close;
     RefPtr<StringImpl> m_separators;

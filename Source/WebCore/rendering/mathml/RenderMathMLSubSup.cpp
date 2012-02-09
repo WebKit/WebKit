@@ -56,7 +56,6 @@ RenderMathMLSubSup::RenderMathMLSubSup(Element* element)
 
 void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    
     // Note: The RenderMathMLBlock only allows element children to be added.
     Element* childElement = toElement(child->node());
 

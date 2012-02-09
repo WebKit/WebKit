@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLMath : public RenderMathMLRow {
 public:
-    RenderMathMLMath(Node* container);
+    RenderMathMLMath(Element*);
     virtual bool isRenderMathMLMath() const { return true; }
 
 private:

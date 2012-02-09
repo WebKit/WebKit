@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLUnderOver : public RenderMathMLBlock {
 public:
-    RenderMathMLUnderOver(Node* expression);
+    RenderMathMLUnderOver(Element*);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void layout();
     virtual bool hasBase() const { return true; }

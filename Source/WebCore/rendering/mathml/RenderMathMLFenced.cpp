@@ -44,8 +44,8 @@ enum Braces { OpeningBraceChar = 0x28, ClosingBraceChar = 0x29 };
     
 static const float gOperatorPadding = 0.1f;
 
-RenderMathMLFenced::RenderMathMLFenced(Node* fenced) 
-    : RenderMathMLRow(fenced)
+RenderMathMLFenced::RenderMathMLFenced(Element* element)
+    : RenderMathMLRow(element)
     , m_open(OpeningBraceChar)
     , m_close(ClosingBraceChar)
 {
@@ -63,7 +63,7 @@ void RenderMathMLFenced::updateFromElement()
     if (closeValue.length() > 0)
         m_close = closeValue[0];
     
-    AtomicString separators = static_cast<Element*>(fenced)->getAttribute(MathMLNames::separatorsAttr);
+    AtomicString separators = fenced->getAttribute(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
         StringBuilder characters;
         for (unsigned int i = 0; i < separators.length(); i++) {
@@ -80,22 +80,22 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-RefPtr<RenderStyle> RenderMathMLFenced::makeOperatorStyle() 
+PassRefPtr<RenderStyle> RenderMathMLFenced::makeOperatorStyle()
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
     newStyle->setDisplay(INLINE_BLOCK);
     newStyle->setPaddingRight(Length(static_cast<int>(gOperatorPadding * style()->fontSize()), Fixed));
-    return newStyle;
+    return newStyle.release();
 }
 
 void RenderMathMLFenced::makeFences()
 {
     RenderObject* openFence = new (renderArena()) RenderMathMLOperator(node(), m_open);
-    openFence->setStyle(makeOperatorStyle().release());
+    openFence->setStyle(makeOperatorStyle());
     RenderBlock::addChild(openFence, firstChild());
     RenderObject* closeFence = new (renderArena()) RenderMathMLOperator(node(), m_close);
-    closeFence->setStyle(makeOperatorStyle().release());
+    closeFence->setStyle(makeOperatorStyle());
     RenderBlock::addChild(closeFence);
 }
 
@@ -122,7 +122,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject*)
                 separator = (*m_separators.get())[count - 2];
                 
             RenderObject* separatorObj = new (renderArena()) RenderMathMLOperator(node(), separator);
-            separatorObj->setStyle(makeOperatorStyle().release());
+            separatorObj->setStyle(makeOperatorStyle());
             RenderBlock::addChild(separatorObj, lastChild());
         }
     }

@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Node* container);
+    RenderMathMLRow(Element*);
     virtual bool isRenderMathMLRow() const { return true; }
     virtual int nonOperatorHeight() const;
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
