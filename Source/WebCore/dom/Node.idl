@@ -67,15 +67,15 @@ module core {
         readonly attribute NamedNodeMap     attributes;
         readonly attribute Document         ownerDocument;
 
-        [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [Return] Node newChild,
-                                                 in Node refChild)
+        [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
+                                                                in Node refChild)
             raises(DOMException);
         [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
-                                                 in [Return] Node oldChild)
+                                                                in [CustomReturn] Node oldChild)
             raises(DOMExceptionJSC);
-        [Custom] Node               removeChild(in [Return] Node oldChild)
+        [Custom] Node               removeChild(in [CustomReturn] Node oldChild)
             raises(DOMException);
-        [Custom] Node               appendChild(in [Return] Node newChild)
+        [Custom] Node               appendChild(in [CustomReturn] Node newChild)
             raises(DOMException);
 
         boolean            hasChildNodes();

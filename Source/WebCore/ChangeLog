@@ -1,3 +1,23 @@
+2012-02-09  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [Return] to [CustomReturn]
+        https://bugs.webkit.org/show_bug.cgi?id=78225
+
+        Reviewed by Adam Barth.
+
+        [Return] is used to handle custom code for a returned value.
+        To clarify it, this patch renames [Return] to [CustomReturn].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * dom/Node.idl:
+
 2012-02-09  Levi Weintraub  <leviw@chromium.org>
 
         Add roundedIntPoint method for LayoutPoints

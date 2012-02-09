@@ -868,7 +868,7 @@ sub GenerateFunction {
 
             push(@cBody, "    }\n");
         }
-        $returnParamName = "converted_".$paramName if $param->extendedAttributes->{"Return"};
+        $returnParamName = "converted_".$paramName if $param->extendedAttributes->{"CustomReturn"};
     }
 
     my $assign = "";
