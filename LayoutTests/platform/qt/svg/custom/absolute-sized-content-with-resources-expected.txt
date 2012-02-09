@@ -22,4 +22,3 @@ layer at (0,0) size 800x484
             RenderSVGRect {rect} at (42,141) size 334x268 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
               [masker="mask"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
         RenderText {#text} at (0,0) size 0x0
-caret: position 124 of child 0 {#text} of child 1 {p} of body
