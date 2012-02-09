@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head><title>The rectangle should be green.</title></head>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+<title>The rectangle should be green.</title></head>
 <script>
 
 var W = 200;
@@ -44,16 +46,15 @@ function updateFill() {
             layoutTestController.notifyDone();
 }
 
-function test() {
+function repaintTest() {
     if(window.layoutTestController)
         layoutTestController.waitUntilDone();
 
     updateFill();
-
     setTimeout("updateFill()", 0);
 }
 </script>
-<body onload="test()">
+<body onload="runRepaintTest()">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px">
 <defs id="defs"></defs>
 <rect id="shape" width="200" height="200"></rect>

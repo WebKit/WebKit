@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
 
 <g id="g">
     <use xlink:href="#rect" />
@@ -9,17 +10,9 @@
 </defs>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-
-    function runTest()
-    {
+    function repaintTest() {
         document.getElementById("g").setAttribute("fill", "#00FF00");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
-
-    window.setTimeout("runTest()", 0);
 </script>
 
 </svg>

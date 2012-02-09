@@ -1,4 +1,5 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
 <defs>
     <marker id="markerStart" markerWidth="2" markerHeight="2" refX="5" refY="5" markerUnits="strokeWidth">
         <rect width="10" height="10" fill="red" stroke="none"/>
@@ -12,31 +13,12 @@
 </defs>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.setTimeout("clickNow()", 0);
-
-function clickNow() {
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 135);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
-}
-
-function mouseHandler(evt)
-{
-    var marker = document.getElementById("markerStart");
-    marker.setAttribute("viewBox", "0 0 10 10");
+function repaintTest() {
+    document.getElementById("markerStart").setAttribute("viewBox", "0 0 10 10");
 }
 </script>
 
-<g onclick="mouseHandler()">
+<g>
     <path id="go" fill="none" stroke="black" stroke-width="8" marker-start="url(#markerStart)" marker-mid="url(#markerMiddle)" marker-end="url(#markerEnd)" d="M 130 135 L 180 135 L 180 185"/>
 </g>
 </svg>

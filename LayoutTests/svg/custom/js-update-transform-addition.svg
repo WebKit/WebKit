@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
-
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.setTimeout("move()", 0);
-
-function move()
-{
+function repaintTest() {
     var poly = document.getElementById("polygon");
     var trafos = poly.transform.baseVal;
 
@@ -17,10 +11,6 @@ function move()
     trafo.setTranslate(1000, 1000);
 
     trafos.appendItem(trafo);
-
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
 }
 </script>
 

@@ -1,4 +1,5 @@
-<svg xmlns='http://www.w3.org/2000/svg'>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">>
+    <script xlink:href="../../fast/repaint/resources/repaint.js"/>
     <defs>
         <linearGradient id='test'>
             <stop id='stop' offset='0' stop-color='red' />
@@ -7,15 +8,9 @@
     <rect fill="url(#test)" width='100' height='100' />
     <script>
     <![CDATA[
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
-        var loaded = function() {
-            var stop = document.getElementById("stop");
-            stop.style.stopColor = 'green';
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+        function repaintTest() {
+            document.getElementById("stop").style.stopColor = 'green';
         }
-        window.setTimeout(loaded, 0);
     ]]>
     </script>
 </svg>

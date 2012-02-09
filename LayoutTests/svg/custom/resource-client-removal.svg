@@ -1,19 +1,23 @@
-<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest(evt)">
->
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
 <script>
 <![CDATA[
-function runTest(evt) {
-    grada = document.getElementById("inneruse");
-    gradb = document.getElementById("offset");
-    offset();
+function repaintTest() {
+    container = document.getElementById("inneruse");
+    stop = document.getElementById("offset");
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    setTimeout(offset, 0);
 }
 var turns = 5;
 function offset(){
-    grada.setAttribute ("transform", "");
-    gradb.setAttribute ("offset", "1.0");
+    container.setAttribute ("transform", "");
+    stop.setAttribute ("offset", "1.0");
     turns--;
     if (turns > 0)
-        window.setTimeout("offset()",10)
+        window.setTimeout("offset()", 0)
+    else if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 ]]>
 </script>

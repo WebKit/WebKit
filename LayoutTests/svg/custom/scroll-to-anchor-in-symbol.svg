@@ -1,16 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg"> 
     <script>
-    if (window.layoutTestController) {
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     window.onload = function () {
         location.hash = 'v1';
-        setTimeout(function(){
-            document.getElementById("t1").appendChild(document.createTextNode("PASS: Navigating to symbol did not crash."));
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 0);
+        document.getElementById("t1").appendChild(document.createTextNode("PASS: Navigating to symbol did not crash."));
     }
     </script>
     <symbol><view id="v1"/></symbol>

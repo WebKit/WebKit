@@ -1,8 +1,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script src="../../fast/js/resources/js-test-pre.js"/>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload="eventTestOne()">
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100px" height="100px">
   <defs>
@@ -26,7 +26,6 @@ var rectElement = document.getElementById("target");
 description("Test SVG use element specific event handling using SVGElementInstance: ");
 debug("'useElement' is the original use element");
 debug("'rectElement' is the original element which gets cloned by the use element");
-eventTestOne();
 
 // Helper functions
 function eventHandler(evt)

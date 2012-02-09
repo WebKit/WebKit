@@ -3,30 +3,22 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:svg="http://www.w3.org/2000/svg">
 <head>
+    <script src="../../fast/repaint/resources/repaint.js"></script>
     <script type="text/javascript">
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
-
         function createSVGLength(e, value) {
             var result = e.ownerSVGElement.createSVGLength();
             result.value = value;
             return result;
         };
 
-        function shifter() {
+        function repaintTest() {
             var e = document.getElementById("ttt");
             e.x.baseVal.initialize(createSVGLength(e, 200));
             e.y.baseVal.initialize(createSVGLength(e, 20));
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        };
-        
-        window.onload = function() {
-            window.setTimeout(shifter, 0);
-        };
+        }
     </script>
 </head>
-<body>
+<body onload="runRepaintTest()">
 <svg:svg
     xmlns="http://www.w3.org/2000/svg"
     version="1.1" baseProfile="full" width="800" height="600">

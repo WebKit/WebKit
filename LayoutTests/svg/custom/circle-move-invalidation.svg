@@ -1,33 +1,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">  
-<head>  
+<head>
+<script src="../../fast/repaint/resources/repaint.js"/>
 <title>Bug 22660</title>  
 <script>  
-function runTest() {
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-  window.setTimeout("clickNow()", 0);
-}
-function clickNow() {
-  if (window.eventSender) {
-    eventSender.mouseMoveTo(300, 300);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-  }
-}
-function moveTo(cx, cy) {
+function repaintTest() {
   var circle = document.getElementById('c1');
-  circle.setAttribute('cx', cx);
-  circle.setAttribute('cy', cy);
-          if (window.layoutTestController) {
-              layoutTestController.notifyDone();
-          }
-}
-document.onmousedown = function(e) {
-  moveTo(e.clientX, e.clientY);
+  circle.setAttribute('cx', '300');
+  circle.setAttribute('cy', '300');
 }
 </script>  
 </head>  
-<body onload="runTest()">
+<body onload="runRepaintTest()">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 400 400" style="width:300px; height:300px; border: 1px solid black;">   
 <circle id="c1" cx="100" cy="100" r="50" style="fill:red" />  
 </svg>

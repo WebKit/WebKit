@@ -1,5 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
 <style>
 
 svg {
@@ -46,7 +47,9 @@ svg, .outerBox {
     padding-bottom: 15px;
 }
 </style>
+</head>
 
+<body onload="runRepaintTest()">
 <svg id="svg" xmlns="http://www.w3.org/2000/svg">
   <rect width="100" height="100" fill="lime"/>
 </svg>
@@ -66,10 +69,12 @@ var iterations = 0;
 var svgStyle = document.getElementById("svg").style;
 var htmlStyle = document.getElementById("html").style;
 
-function move() {
+function repaintTest() {
     if (iterations < 10) {
-        if (window.layoutTestController)
-            layoutTestController.display();
+        if (iterations == 0) {
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+        }
 
         svgLeft = svgLeft + 15;
         htmlLeft = htmlLeft + 15;
@@ -84,17 +89,12 @@ function move() {
         htmlStyle.top = htmlTop + "px";
 
         ++iterations;
-        window.setTimeout(move, 0);
+        window.setTimeout(repaintTest, 0);
     } else {
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
 }
-
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.setTimeout(move, 0);
 ]]>
 </script> 
 </body>

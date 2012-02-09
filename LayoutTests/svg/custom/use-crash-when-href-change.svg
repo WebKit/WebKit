@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
 
 <g>
     <use id="use" xlink:href="#rect" />
@@ -11,19 +11,12 @@
 <text x="10" y= "30">PASS without crash in debug mode.</text>
 
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
-    }
 
-    function runTest()
-    {
+    function runTest() {
         document.getElementById("use").setAttribute("xlink:href", "");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
-
-    window.setTimeout("runTest()", 0);
 </script>
 
 </svg>

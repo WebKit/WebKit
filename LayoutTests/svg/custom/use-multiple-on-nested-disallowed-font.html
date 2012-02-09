@@ -1,4 +1,4 @@
-<svg height="1" width="1">
+<svg height="1" width="1" onload="runTest()">
   <defs>
     <use id="B">
       <linearGradient>
@@ -18,14 +18,10 @@
   <use xlink:href="#B"></use>
 </svg>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-}
 
-setTimeout(function() {
-        document.body.innerHTML += "PASS: This file should not crash.";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }, 0);
+function runTest() {
+    document.body.innerHTML += "PASS: This file should not crash.";
+}
 </script>

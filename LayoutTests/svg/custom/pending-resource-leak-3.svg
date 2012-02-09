@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" onload="runTest()">
     <script>
-        if (window.layoutTestController) {
+        if (window.layoutTestController)
             layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-        }
 
-        setTimeout(function() {
+        function runTest() {
             document.getElementById("rect").setAttribute("fill",  "url(#bar)");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 0);
+        }
     </script>
     <text x="0" y="70">This should not leak</text>
     <rect width="50" height="50" fill="url(#foo)" id="rect"/>

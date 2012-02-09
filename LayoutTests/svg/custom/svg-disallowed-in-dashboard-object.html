@@ -1,11 +1,10 @@
 <html>
-<body>
+<body onload="timeOut()">
 <p>This test makes sure we can't open SVG documents in Dashboard compatibility mode.  It can not be tested manually.</p>
 <script>
     if (window.layoutTestController) {
         layoutTestController.setUseDashboardCompatibilityMode(true);
         layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
     }
     
     function debug(str) {
@@ -13,7 +12,6 @@
         c.appendChild(document.createTextNode(str + '\n'));
     }
     
-    setTimeout("timeOut()", 500);
     function timeOut() {
         try {
             var failed = false;
@@ -58,8 +56,6 @@
         } catch (e) {
             debug("FAIL: Exception thrown: " + e)
         }
-        if (window.layoutTestController) 
-            layoutTestController.notifyDone();
     }
 </script>
     

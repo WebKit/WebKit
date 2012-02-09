@@ -1,5 +1,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body onload="window.setTimeout(resizeBox,0)">
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
     <p>The svg area contained in the div element (red box), should fill out the whole area with a green shaped path</p>
     <div id="contentBox" style="width: 100px; height: 400px; border: 1px solid red;">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -9,13 +12,8 @@
         </svg>
     </div>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
-
-        function resizeBox() {
+        function repaintTest() {
             document.getElementById("contentBox").style.setProperty("width", "400px");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
         }
     </script>
 </body>

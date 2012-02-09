@@ -13,10 +13,8 @@ span {
 
 <script type="text/javascript">
 
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
 
 function log(msg)
 {
@@ -36,14 +34,12 @@ function run()
         log("<span style='color: red'>FAIL</span>("
                 + withLinebreaks.offsetWidth + "px != "+ withoutLinebreaks.offsetWidth + "px)");
     }
-
-    layoutTestController.notifyDone();
 }
 </script>
 
 </head>
 
-<body onload="setTimeout('run()', 200)">
+<body onload="run()">
 
 <p>This test is to ensure that text rendered with a SVG-font has the same behavior for handling
 control characters like newlines, as text rendered though the normal (fast or complex) path.

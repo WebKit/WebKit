@@ -1,31 +1,12 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" onload="setup()">
-
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
 <mask id="Mask" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="300">
     <rect x="0" y="0" width="800" height="300" fill="none"/>
 </mask>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.setTimeout("clickNow()", 0);
-
-function clickNow() {
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 135);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
-}
-
-function setup()
-{
-    var mask = document.getElementById("Mask");
-    mask.firstChild.nextSibling.setAttribute("fill", "red");
+function repaintTest() {
+    document.getElementById("Mask").firstChild.nextSibling.setAttribute("fill", "red");
 }
 </script>
 

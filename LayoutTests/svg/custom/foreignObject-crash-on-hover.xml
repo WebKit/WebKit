@@ -4,7 +4,8 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:html="http://www.w3.org/1999/xhtml"
-     height="600" width="800">
+     height="600" width="800" onload="runRepaintTest()">
+  <script xlink:href="../../fast/repaint/resources/repaint.js"/>
   <g transform="translate(50,50)">
     <polygon points="0,0 300,0 300,300 0,300" style="fill:lightblue; stroke:red;"/>
     <!-- switch -->
@@ -18,20 +19,14 @@
           style="fill:red; stroke:blue;"/>
   </g>
   <script>
-  function done() {
-      if (window.layoutTestController)
-          window.layoutTestController.notifyDone();
+  function repaintTest() {
+    if (window.eventSender) {
+        layoutTestController.waitUntilDone();
+        eventSender.mouseMoveTo(100, 100);
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        setTimeout("layoutTestController.notifyDone()", 0);
+    }
   }
-
-  if (window.layoutTestController)
-      window.layoutTestController.waitUntilDone();
-
-  if (window.eventSender) {
-      eventSender.mouseMoveTo(100, 100);
-      eventSender.mouseUp();
-      eventSender.mouseDown();
-  }
-
-  window.setTimeout("done()", 50);
   </script>
 </svg> 

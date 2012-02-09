@@ -1013,10 +1013,6 @@ BUGCR10306 LINUX : svg/carto.net/combobox.svg = FAIL
 // alpha in bottom group.
 BUGCR10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
-BUGWK66386 : svg/custom/repaint-shadow.svg = PASS IMAGE
-
-BUGWK73512 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
-
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
@@ -1566,7 +1562,6 @@ BUGCR99500 WIN : svg/batik/text/verticalText.svg = IMAGE
 BUGCR99500 WIN : svg/carto.net/textbox.svg = IMAGE
 BUGCR99500 WIN : svg/carto.net/window.svg = IMAGE
 BUGCR99500 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGCR99500 WIN : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE
 BUGCR99500 WIN : svg/custom/js-late-clipPath-creation.svg = IMAGE
 BUGCR99500 WIN : svg/custom/linking-a-03-b-viewBox.svg = IMAGE
 BUGCR99500 WIN : svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html = IMAGE
@@ -1599,7 +1594,6 @@ BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PAS
 // This test definitely times out (i.e. is not just slow).
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUGCR9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
-BUGCR9798 LINUX : svg/custom/js-update-transform-changes.svg = FAIL
 
 // New tests or failures from WebKit merge 42324:42364. Re-baselined on
 // Windows. Probably just need the same on other platforms.
@@ -1612,8 +1606,6 @@ BUGCR10055 MAC : fast/events/updateLayoutForHitTest.html = FAIL
 BUGCR10760 LINUX : fast/forms/input-text-scroll-left-on-blur.html = FAIL
 BUGCR10760 LINUX : fast/inline/25277-2.html = FAIL
 BUGCR10760 LINUX : fast/inline/25277.html = FAIL
-BUGCR10760 LINUX : svg/custom/marker-child-changes.svg = PASS FAIL
-BUGCR10760 LINUX : svg/custom/marker-viewBox-changes.svg = FAIL
 
 // New failures from WebKit merge 42725:42805
 // WebKit change http://trac.webkit.org/changeset/42785
@@ -1885,9 +1877,6 @@ BUGCR40680 SKIP : fast/media/media-query-list-05.html = FAIL
 BUGCR40680 SKIP : fast/media/media-query-list-06.html = FAIL
 BUGCR40680 SKIP : fast/media/media-query-list-07.html = FAIL
 
-// Unknown flakiness.
-BUGCR38706 : svg/custom/deep-dynamic-updates.svg = PASS IMAGE+TEXT IMAGE
-
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT
 
@@ -1945,9 +1934,6 @@ BUGWK70765 WIN : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
 // WebKit roll 58791:58807
 BUGCR43319 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
-
-BUGCR43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = PASS IMAGE
-BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = PASS IMAGE
 
 // Flaky tests
 BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
@@ -2281,8 +2267,6 @@ BUGWK46600 SKIP : fast/dom/nodesFromRect-inner-documents.html = TEXT
 
 // Many flaky SVG tests
 BUGCR59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
-BUGCR59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = PASS IMAGE
-BUGCR59671 LINUX : svg/carto.net/slider.svg = PASS IMAGE
 
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
@@ -2651,7 +2635,6 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
@@ -2993,8 +2976,6 @@ BUGWK60414 WIN : platform/win/plugins/iframe-inside-overflow.html = TEXT
 BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TIMEOUT TEXT
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT
-
-BUGCR82419 LINUX WIN : svg/custom/fill-opacity-update.svg = IMAGE
 
 // New pixel tests added for bug 58999. These will fail on windows and linux until bug
 // 60342 is fixed and the 58999 fix enabled for skia.
@@ -3751,22 +3732,8 @@ BUGWK76511 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = IMAGE+
 // Seems flaky - it depends on property dumping of JS internal fields in a specific order, which doesn't seem stable.
 BUGCR110537 : inspector/protocol/runtime-agent.html = PASS TEXT TIMEOUT
 
-// SVG text layout optimizations: probably just need a rebaseline for chromium.
-// The MAC LINUX tests are disabled above for WIN (BUGCR99500).
-BUGWK65711 : svg/custom/use-detach.svg = IMAGE+TEXT IMAGE
-BUGWK65711 MAC LINUX : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE+TEXT IMAGE
-BUGWK65711 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE+TEXT IMAGE
-BUGWK65711 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT IMAGE
-
 BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT
 BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
-
-// Text layout should have changed, kerning should look more natural. We previously didn't relayout
-// the text when moving to a new view target, and thus didn't update the scaledFont.
-BUGWK76446 : svg/custom/linking-a-03-b-all.svg = IMAGE+TEXT
-BUGWK76446 : svg/custom/linking-a-03-b-viewBox-transform.svg = IMAGE+TEXT
-// Disabled above for WIN (BUGCR99500).
-BUGWK76446 MAC LINUX : svg/custom/linking-a-03-b-viewBox.svg = IMAGE+TEXT
 
 // Selection should have disappeared, a side-effect of moving RenderSVGRoot to RenderReplaced (a progression!)
 BUGWK76446 : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE+TEXT
@@ -4036,6 +4003,112 @@ BUGWK73860 : svg/filters/feImage-target-attribute-change.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-target-inline-style-change.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-target-property-change.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-target-style-change.svg = IMAGE+TEXT
+
+// Rebaselines needed after changing svg/custom tests to use the repaint.js harness
+BUGWK78115 : svg/custom/animate-path-discrete.svg = IMAGE
+BUGWK78115 : svg/custom/animate-path-morphing.svg = IMAGE
+BUGWK78115 : svg/custom/animate-target-id-changed.svg = IMAGE
+BUGWK78115 : svg/custom/animate-target-removed-from-document.svg = IMAGE
+BUGWK78115 : svg/custom/circle-move-invalidation.svg = IMAGE
+BUGWK78115 : svg/custom/clip-path-child-changes.svg = IMAGE
+BUGWK78115 : svg/custom/clip-path-href-changes.svg = IMAGE
+BUGWK78115 : svg/custom/clip-path-id-changes.svg = IMAGE
+BUGWK78115 MAC WIN : svg/custom/clip-path-units-changes.svg = IMAGE
+BUGWK78115 : svg/custom/deep-dynamic-updates.svg = IMAGE
+BUGWK78115 : svg/custom/fill-opacity-update.svg = IMAGE
+BUGWK78115 : svg/custom/foreignObject-crash-on-hover.xml = IMAGE+TEXT
+BUGWK78115 : svg/custom/gradient-add-stops.svg = IMAGE
+BUGWK78115 : svg/custom/gradient-stop-style-change.svg = IMAGE
+BUGWK78115 : svg/custom/hit-test-path-stroke.svg = IMAGE
+BUGWK78115 : svg/custom/hit-test-path.svg = IMAGE
+BUGWK78115 : svg/custom/hit-test-unclosed-subpaths.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/hit-test-with-br.xhtml = IMAGE
+BUGWK78115 : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE
+BUGWK78115 MAC LINUX : svg/custom/js-late-clipPath-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-gradient-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-marker-and-object-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-marker-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-mask-and-object-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-mask-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-late-pattern-creation.svg = IMAGE
+BUGWK78115 : svg/custom/js-repaint-rect-on-path-with-stroke.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-bounce.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/js-update-container.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-container2.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-gradient.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-image.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-path-changes.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-path-removal.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-pattern-child.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-pattern.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-polygon-changes.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-polygon-removal.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-stop-linked-gradient.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/js-update-stop.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-style.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/js-update-transform-addition.svg = IMAGE
+BUGWK78115 : svg/custom/js-update-transform-changes.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-all.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-preserveAspectRatio.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-transform.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-viewBox-transform.svg = IMAGE
+BUGWK78115 MAC LINUX : svg/custom/linking-a-03-b-viewBox.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-viewTarget.svg = IMAGE
+BUGWK78115 : svg/custom/linking-a-03-b-zoomAndPan.svg = IMAGE
+BUGWK78115 : svg/custom/marker-child-changes-css.svg = IMAGE
+BUGWK78115 : svg/custom/marker-child-changes.svg = IMAGE
+BUGWK78115 : svg/custom/marker-strokeWidth-changes.svg = IMAGE
+BUGWK78115 : svg/custom/marker-viewBox-changes.svg = IMAGE
+BUGWK78115 : svg/custom/mask-child-changes.svg = IMAGE
+BUGWK78115 : svg/custom/mask-invalidation.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/object-sizing-no-width-height-change-content-box-size.xhtml = IMAGE
+BUGWK78115 : svg/custom/pending-resource-after-removal-expected.png = IMAGE
+BUGWK78115 : svg/custom/pending-resource-after-removal.xhtml = IMAGE
+BUGWK78115 : svg/custom/pending-resource-leak-2.svg = IMAGE
+BUGWK78115 : svg/custom/pending-resource-leak-3.svg = IMAGE
+BUGWK78115 : svg/custom/prevent-default.svg = IMAGE
+BUGWK78115 : svg/custom/relative-sized-content-with-resources.xhtml = IMAGE+TEXT
+BUGWK78115 : svg/custom/relative-sized-content.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-deep-shadow-tree-content.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-image.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-inner-svg.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-shadow-tree-content.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-use-on-symbol.xhtml = IMAGE
+BUGWK78115 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = IMAGE
+BUGWK78115 : svg/custom/repaint-moving-svg-and-div.xhtml = IMAGE
+BUGWK78115 : svg/custom/repaint-on-constant-size-change.svg = IMAGE
+BUGWK78115 : svg/custom/repaint-shadow.svg = IMAGE
+BUGWK78115 : svg/custom/repaint-stroke-width-changes.svg = IMAGE
+BUGWK78115 : svg/custom/resource-client-removal.svg = IMAGE
+BUGWK78115 : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
+BUGWK78115 : svg/custom/scroll-hit-test.xhtml = IMAGE
+BUGWK78115 : svg/custom/scroll-to-anchor-in-symbol.svg = IMAGE
+BUGWK78115 : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = IMAGE
+BUGWK78115 : svg/custom/stroke-opacity-update.svg = IMAGE
+BUGWK78115 : svg/custom/svg-absolute-children.svg = IMAGE
+BUGWK78115 : svg/custom/svg-fonts-in-html-linebreaks.html = IMAGE
+BUGWK78115 : svg/custom/text-dom-removal.svg = IMAGE
+BUGWK78115 : svg/custom/text-repaint-including-stroke.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/text-xy-updates-SVGList.xhtml = IMAGE
+BUGWK78115 : svg/custom/use-animation-in-fill.html = IMAGE
+BUGWK78115 : svg/custom/use-clipped-hit.svg = IMAGE+TEXT
+BUGWK78115 : svg/custom/use-crash-in-non-wellformed-document.svg = IMAGE
+BUGWK78115 : svg/custom/use-crash-when-href-change.svg = IMAGE
+BUGWK78115 : svg/custom/use-detach.svg = IMAGE
+BUGWK78115 : svg/custom/use-disappears-after-style-update.svg = IMAGE
+BUGWK78115 : svg/custom/use-elementInstance-event-target.svg = IMAGE
+BUGWK78115 : svg/custom/use-elementInstance-methods.svg = IMAGE
+BUGWK78115 : svg/custom/use-event-handler-on-referenced-element.svg = IMAGE
+BUGWK78115 : svg/custom/use-event-handler-on-use-element.svg = IMAGE
+BUGWK78115 : svg/custom/use-inherit-style.svg = IMAGE
+BUGWK78115 : svg/custom/use-instanceRoot-as-event-target.xhtml = IMAGE
+BUGWK78115 : svg/custom/use-instanceRoot-event-bubbling.xhtml = IMAGE
+BUGWK78115 : svg/custom/use-instanceRoot-event-listeners.xhtml = IMAGE
+BUGWK78115 : svg/custom/use-multiple-on-nested-disallowed-font.html = IMAGE
+BUGWK78115 : svg/custom/use-setAttribute-crash.svg = IMAGE
 
 BUGWK78038 DEBUG : compositing/iframes/invisible-nested-iframe-show.html = PASS CRASH
 BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS CRASH

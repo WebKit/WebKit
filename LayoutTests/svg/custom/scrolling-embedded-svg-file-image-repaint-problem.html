@@ -3,6 +3,7 @@
  "http://www.w3.org/Graphics/xhtml1-transitional-plus-embed.dtd">
  <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
+ <script src="../../fast/repaint/resources/repaint.js"></script>
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
  <meta name="keywords" content="W3C SVG 1.1 Test Suite testsuite mobile"/>
  <meta name="description" content="W3C SVG 1.1 Test Suite"/>
@@ -25,16 +26,19 @@ SVG 1.1 test:render-groups-01-b </title>
  -->
  </style>
  <script>
- if (window.layoutTestController)
-   layoutTestController.waitUntilDone();
-
-  window.location='#scrollTo';
-  setTimeout("finishTest()", 0);
-
+  function repaintTest() {
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+    setTimeout(startTest, 0);
+  }
+  function startTest() {
+    window.location='#scrollTo';
+    setTimeout(finishTest, 0);
+  }
   function finishTest()
   {
     if (window.location.toString().indexOf("#") == -1) {
-      setTimeout("finishTest()", 0);
+      setTimeout(finishTest, 0);
       return;
     }
 
@@ -43,7 +47,7 @@ SVG 1.1 test:render-groups-01-b </title>
   }
  </script>
  </head>
- <body class="bodytext">
+ <body class="bodytext" onload="runRepaintTest()">
 
     <div class="linkbar"> 
 <p>

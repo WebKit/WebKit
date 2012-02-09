@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+  <script xlink:href="../../fast/repaint/resources/repaint.js"/>
   <defs>
     <script type="text/ecmascript">
       <![CDATA[
@@ -7,21 +8,17 @@
           evt.stopPropagation();
           evt.preventDefault();
           if (window.layoutTestController)
-            window.setTimeout("layoutTestController.notifyDone()", 0);
+            layoutTestController.notifyDone();
         }
         
-        function sendClick() {
+        function repaintTest() {
           if (window.eventSender) {
+            layoutTestController.waitUntilDone();
             eventSender.mouseMoveTo(50, 50);
             eventSender.mouseDown();
             eventSender.mouseUp();
           }
         }
-        
-        if (window.layoutTestController)
-          layoutTestController.waitUntilDone();
-        
-        window.setTimeout("sendClick()", 0);
       ]]>
     </script>
   </defs>

@@ -121,5 +121,8 @@ use.id = "use";
 use.href.baseVal = "#rectParent";
 useContainer.appendChild(use);
 
-// Start test
-nextTest();
+function repaintTest() {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    nextTest();
+}

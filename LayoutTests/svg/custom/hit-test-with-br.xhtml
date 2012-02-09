@@ -1,28 +1,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+  <script src="../../fast/repaint/resources/repaint.js"></script>
 <title>&lt;br&gt; prevents click handler from firing</title>
 <script>
-function clickHandler(evt)
-{
+function clickHandler(evt) {
     evt.target.style.fill = "green";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
-if (window.layoutTestController)
-  layoutTestController.waitUntilDone();
+function repaintTest() {
+    if (window.eventSender) {
+        layoutTestController.waitUntilDone();
 
-function doClick() {
-  if (window.eventSender) {
-      eventSender.mouseMoveTo(10, 70);
-      eventSender.mouseDown();
-      eventSender.mouseUp();
-      layoutTestController.notifyDone();
-  }
+        // This timeout should be unncessary, but as the test currently times out on Chromium, I'm trying with this timeout.
+        setTimeout(function() {
+            eventSender.mouseMoveTo(10, 70);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }, 0);
+    }
 }
-
-setTimeout("doClick()", 0);
 </script>
   </head>
-  <body>
+  <body onload="runRepaintTest()">
     <p>
     A test for hit testing when an svg container is relatively positioned in
     a containing block. See bug 13981.

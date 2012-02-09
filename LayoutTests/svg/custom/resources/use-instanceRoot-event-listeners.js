@@ -6,9 +6,6 @@ var rectElement = document.getElementById("target");
 var useElement = document.getElementById("test");
 description("Test attaching event listeners on SVG use elements in different ways: ");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
 function eventHandler(evt)
 {
     if (logEvent) {
@@ -169,10 +166,12 @@ function driveTests()
     }
 }
 
-// Start tests
-if (window.eventSender) {
-    document.documentElement.offsetLeft;
-    eventSender.mouseMoveTo(115, 55);
-    driveTests();
-} else
-    alert("This test must be run via DRT!");
+function repaintTest() {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    if (window.eventSender)
+        driveTests();
+    else
+        alert("This test must be run via DRT!");
+}
