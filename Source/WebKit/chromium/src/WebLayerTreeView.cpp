@@ -118,4 +118,9 @@ WebLayerTreeView::operator PassRefPtr<CCLayerTreeHost>() const
     return m_private.get();
 }
 
+void WebLayerTreeView::setNeedsRedraw()
+{
+    m_private->setNeedsRedraw();
+}
+
 } // namespace WebKit

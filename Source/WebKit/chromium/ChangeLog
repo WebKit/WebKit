@@ -1,5 +1,18 @@
 2012-02-09  Jonathan Backer  <backer@chromium.org>
 
+        [chromium] Plumb setNeedsRedraw.
+        https://bugs.webkit.org/show_bug.cgi?id=78248
+
+        Reviewed by James Robinson.
+
+        * public/platform/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setNeedsRedraw):
+        (WebKit):
+
+2012-02-09  Jonathan Backer  <backer@chromium.org>
+
         [chromium] Add setNeedsRedraw to WebWidget
         https://bugs.webkit.org/show_bug.cgi?id=77555
 

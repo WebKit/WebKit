@@ -107,6 +107,8 @@ public:
     operator WTF::PassRefPtr<WebCore::CCLayerTreeHost>() const;
 #endif
 
+    WEBKIT_EXPORT void setNeedsRedraw();
+
 protected:
     WebPrivatePtr<WebCore::CCLayerTreeHost> m_private;
 };
