@@ -1,3 +1,16 @@
+2012-02-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] take _showShortEvents out of timeline calculator
+        https://bugs.webkit.org/show_bug.cgi?id=78230
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._toggleFilterButtonClicked):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._addToRecordsWindow):
+
 2012-02-08  Dan Vrátil  <dvratil@redhat.com>, Milan Crha <mcrha@redhat.com>
 
         [GTK] Embedded GtkWidgets are not drawn

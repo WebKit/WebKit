@@ -95,7 +95,6 @@ WebInspector.TimelinePanel = function()
     this._registeredAnimationCallbackRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
-    this._calculator._showShortEvents = false;
     var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
@@ -110,7 +109,7 @@ WebInspector.TimelinePanel = function()
 
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
-    this._calculator._showShortEvents = this.toggleFilterButton.toggled;
+    this._showShortEvents = this.toggleFilterButton.toggled;
     this._timeStampRecords = [];
     this._expandOffset = 15;
 
@@ -435,8 +434,8 @@ WebInspector.TimelinePanel.prototype = {
     _toggleFilterButtonClicked: function()
     {
         this.toggleFilterButton.toggled = !this.toggleFilterButton.toggled;
-        this._calculator._showShortEvents = this.toggleFilterButton.toggled;
-        this.toggleFilterButton.element.title = this._calculator._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
+        this._showShortEvents = this.toggleFilterButton.toggled;
+        this.toggleFilterButton.element.title = this._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
         this._scheduleRefresh(true);
     },
 
@@ -672,7 +671,7 @@ WebInspector.TimelinePanel.prototype = {
             delete this._refreshTimeout;
         }
 
-        this._overviewPane.update(this._rootRecord.children, this._calculator._showShortEvents);
+        this._overviewPane.update(this._rootRecord.children, this._showShortEvents);
 
         this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter();
@@ -700,7 +699,7 @@ WebInspector.TimelinePanel.prototype = {
      */
     _addToRecordsWindow: function(record, recordsWindow, parentIsCollapsed)
     {
-        if (!this._calculator._showShortEvents && !record.isLong())
+        if (!this._showShortEvents && !record.isLong())
             return;
         var percentages = this._calculator.computeBarGraphPercentages(record);
         if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden) {
