@@ -187,8 +187,10 @@ void WebWorkerClientImpl::workerContextDestroyed()
     m_proxy->workerContextDestroyed();
 }
 
-bool WebWorkerClientImpl::allowFileSystem() 
+bool WebWorkerClientImpl::allowFileSystem()
 {
+    if (m_proxy->askedToTerminate())
+        return false;
     WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
     if (!webView)
         return false;
@@ -203,6 +205,8 @@ void WebWorkerClientImpl::openFileSystem(WebFileSystem::Type type, long long siz
 
 bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) 
 {
+    if (m_proxy->askedToTerminate())
+        return false;
     WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
     if (!webView)
         return false;
@@ -210,7 +214,9 @@ bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const 
 }
  
 WebView* WebWorkerClientImpl::view() const 
-{   
+{
+    if (m_proxy->askedToTerminate())
+        return 0;
     return m_webFrame->view(); 
 }
 

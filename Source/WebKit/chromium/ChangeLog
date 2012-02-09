@@ -1,3 +1,20 @@
+2012-02-08  Dmitry Lomov  <dslomov@chromium.org>
+
+        [V8][Chromium] Race between worker accessing WebDatabase and frame closing down.
+        https://bugs.webkit.org/show_bug.cgi?id=78150
+        Handle case when the frame is shut down under us gracefully.
+
+        Reviewed by David Levin.
+
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase): Handle WebWorkerBase::view returning 0.
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::openFromWorker): Handle WebWorkerBase::view returning 0.
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::allowFileSystem):
+        (WebKit::WebWorkerClientImpl::allowDatabase):
+        (WebKit::WebWorkerClientImpl::view):
+
 2012-02-08  Adam Klein  <adamk@chromium.org>
 
         DOM mutations should not be delivered on worker threads

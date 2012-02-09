@@ -183,7 +183,12 @@ void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* ca
     }
     WorkerLoaderProxy* workerLoaderProxy = &context->thread()->workerLoaderProxy();
     WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-    WebFrame* webFrame = webWorker->view()->mainFrame();
+    WebView* webView = webWorker->view();
+    if (!webView) {
+        // Frame is closed, worker is terminaring.
+        return;
+    }
+    WebFrame* webFrame = webView->mainFrame();
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 #endif
 }

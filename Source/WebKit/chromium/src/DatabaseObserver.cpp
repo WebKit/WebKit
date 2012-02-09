@@ -165,7 +165,10 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        return allowDatabaseForWorker(webWorker->commonClient(), webWorker->view()->mainFrame(), name, displayName, estimatedSize);
+        WebView* view = webWorker->view();
+        if (!view)
+            return false;
+        return allowDatabaseForWorker(webWorker->commonClient(), view->mainFrame(), name, displayName, estimatedSize);
 #else
         ASSERT_NOT_REACHED();
 #endif
