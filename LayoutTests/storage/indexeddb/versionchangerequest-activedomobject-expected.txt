@@ -1,0 +1,25 @@
+Ensure that IDBVersionChangeRequest objects are not GC'd if they have pending events
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+
+window.dbname = 'versionchangerequest-activedomobject'
+
+testDeleteDatabase():
+indexedDB.deleteDatabase(window.dbname)
+window.gc()
+PASS deleteDatabase's IDBVersionChangeRequest.onsuccess event fired
+
+testSetVersion():
+openRequest = indexedDB.open(window.dbname)
+db = openRequest.result
+db.setVersion('1')
+window.gc()
+PASS setVersion's IDBVersionChangeRequest.onsuccess event fired
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
