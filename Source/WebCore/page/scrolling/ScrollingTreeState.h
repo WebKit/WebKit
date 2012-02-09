@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "IntRect.h"
 #include "Region.h"
+#include "ScrollTypes.h"
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
@@ -53,7 +54,11 @@ public:
         ContentsSize = 1 << 1,
         NonFastScrollableRegion = 1 << 2,
         WheelEventHandlerCount = 1 << 3,
-        ScrollLayer = 1 << 4,
+        HorizontalScrollElasticity = 1 << 4,
+        VerticalScrollElasticity = 1 << 5,
+        HasEnabledHorizontalScrollbar = 1 << 6,
+        HasEnabledVerticalScrollbar = 1 << 7,
+        ScrollLayer = 1 << 8,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -70,6 +75,18 @@ public:
 
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
+
+    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
+    void setHorizontalScrollElasticity(ScrollElasticity);
+
+    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
+    void setVerticalScrollElasticity(ScrollElasticity);
+
+    bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
+    void setHasEnabledHorizontalScrollbar(bool);
+
+    bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
+    void setHasEnabledVerticalScrollbar(bool);
 
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(const GraphicsLayer*);
@@ -88,6 +105,12 @@ private:
     Region m_nonFastScrollableRegion;
 
     unsigned m_wheelEventHandlerCount;
+
+    ScrollElasticity m_horizontalScrollElasticity;
+    ScrollElasticity m_verticalScrollElasticity;
+
+    bool m_hasEnabledHorizontalScrollbar;
+    bool m_hasEnabledVerticalScrollbar;
 
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_platformScrollLayer;

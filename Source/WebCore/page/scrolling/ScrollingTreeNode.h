@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "IntRect.h"
+#include "ScrollTypes.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -57,6 +58,12 @@ private:
 
     IntRect m_viewportRect;
     IntSize m_contentsSize;
+
+    ScrollElasticity m_horizontalScrollElasticity;
+    ScrollElasticity m_verticalScrollElasticity;
+    
+    bool m_hasEnabledHorizontalScrollbar;
+    bool m_hasEnabledVerticalScrollbar;
 };
 
 } // namespace WebCore

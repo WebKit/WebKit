@@ -115,6 +115,11 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
         }
     }
 
+    m_scrollingTreeState->setHorizontalScrollElasticity(frameView->horizontalScrollElasticity());
+    m_scrollingTreeState->setVerticalScrollElasticity(frameView->verticalScrollElasticity());
+    m_scrollingTreeState->setHasEnabledHorizontalScrollbar(frameView->horizontalScrollbar() && frameView->horizontalScrollbar()->enabled());
+    m_scrollingTreeState->setHasEnabledVerticalScrollbar(frameView->verticalScrollbar() && frameView->verticalScrollbar()->enabled());
+
     m_scrollingTreeState->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
     m_scrollingTreeState->setContentsSize(frameView->contentsSize());
     m_scrollingTreeState->setNonFastScrollableRegion(nonScrollableRegion);

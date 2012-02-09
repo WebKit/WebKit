@@ -38,6 +38,10 @@ PassOwnPtr<ScrollingTreeState> ScrollingTreeState::create()
 ScrollingTreeState::ScrollingTreeState()
     : m_changedProperties(0)
     , m_wheelEventHandlerCount(0)
+    , m_horizontalScrollElasticity(ScrollElasticityNone)
+    , m_verticalScrollElasticity(ScrollElasticityNone)
+    , m_hasEnabledHorizontalScrollbar(false)
+    , m_hasEnabledVerticalScrollbar(false)
 {
 }
 
@@ -79,6 +83,42 @@ void ScrollingTreeState::setWheelEventHandlerCount(unsigned wheelEventHandlerCou
 
     m_wheelEventHandlerCount = wheelEventHandlerCount;
     m_changedProperties |= WheelEventHandlerCount;
+}
+
+void ScrollingTreeState::setHorizontalScrollElasticity(ScrollElasticity horizontalScrollElasticity)
+{
+    if (m_horizontalScrollElasticity == horizontalScrollElasticity)
+        return;
+
+    m_horizontalScrollElasticity = horizontalScrollElasticity;
+    m_changedProperties |= HorizontalScrollElasticity;
+}
+
+void ScrollingTreeState::setVerticalScrollElasticity(ScrollElasticity verticalScrollElasticity)
+{
+    if (m_verticalScrollElasticity == verticalScrollElasticity)
+        return;
+
+    m_verticalScrollElasticity = verticalScrollElasticity;
+    m_changedProperties |= VerticalScrollElasticity;
+}
+
+void ScrollingTreeState::setHasEnabledHorizontalScrollbar(bool hasEnabledHorizontalScrollbar)
+{
+    if (m_hasEnabledHorizontalScrollbar == hasEnabledHorizontalScrollbar)
+        return;
+
+    m_hasEnabledHorizontalScrollbar = hasEnabledHorizontalScrollbar;
+    m_changedProperties |= HasEnabledHorizontalScrollbar;
+}
+
+void ScrollingTreeState::setHasEnabledVerticalScrollbar(bool hasEnabledVerticalScrollbar)
+{
+    if (m_hasEnabledVerticalScrollbar == hasEnabledVerticalScrollbar)
+        return;
+
+    m_hasEnabledVerticalScrollbar = hasEnabledVerticalScrollbar;
+    m_changedProperties |= HasEnabledVerticalScrollbar;
 }
 
 PassOwnPtr<ScrollingTreeState> ScrollingTreeState::commit()
