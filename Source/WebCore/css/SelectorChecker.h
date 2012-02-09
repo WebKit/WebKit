@@ -51,8 +51,28 @@ public:
 
     enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
+
+    struct SelectorCheckingContext {
+        // Initial selector constructor
+        SelectorCheckingContext(CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType, RenderStyle* elementStyle = 0, RenderStyle* elementParentStyle = 0)
+            : selector(selector)
+            , element(element)
+            , visitedMatchType(visitedMatchType)
+            , elementStyle(elementStyle)
+            , elementParentStyle(elementParentStyle)
+            , isSubSelector(false)
+        { }
+
+        CSSSelector* selector;
+        Element* element;
+        VisitedMatchType visitedMatchType;
+        RenderStyle* elementStyle;
+        RenderStyle* elementParentStyle;
+        bool isSubSelector;
+    };
+
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&) const;
     static bool isFastCheckableSelector(const CSSSelector*);
     bool fastCheckSelector(const CSSSelector*, const Element*) const;
 
@@ -96,7 +116,7 @@ public:
     static bool determineSelectorScopes(const CSSSelectorList&, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes);
 
 private:
-    bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle*, RenderStyle* elementParentStyle) const;
+    bool checkOneSelector(const SelectorCheckingContext&, PseudoId&) const;
     bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
     static bool isFrameFocused(const Element*);
 

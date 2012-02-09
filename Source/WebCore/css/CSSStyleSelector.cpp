@@ -2092,7 +2092,8 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
     }
 
     // Slow path.
-    SelectorChecker::SelectorMatch match = m_checker.checkSelector(ruleData.selector(), m_element, m_dynamicPseudo, false, SelectorChecker::VisitedMatchEnabled, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
+    SelectorChecker::SelectorCheckingContext context(ruleData.selector(), m_element, SelectorChecker::VisitedMatchEnabled, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
+    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_checker.pseudoStyle() != NOPSEUDO && m_checker.pseudoStyle() != m_dynamicPseudo)
