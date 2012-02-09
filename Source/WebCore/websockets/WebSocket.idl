@@ -57,10 +57,10 @@ module websockets {
         attribute EventListener onerror;
         attribute EventListener onclose;
 
-        readonly attribute [ConvertNullStringTo=Undefined] DOMString protocol;
-        readonly attribute [ConvertNullStringTo=Undefined] DOMString extensions;
+        readonly attribute [TreatReturnedNullStringTo=Undefined] DOMString protocol;
+        readonly attribute [TreatReturnedNullStringTo=Undefined] DOMString extensions;
 
-        attribute [ConvertNullStringTo=Undefined] DOMString binaryType
+        attribute [TreatReturnedNullStringTo=Undefined] DOMString binaryType
             setter raises(DOMException);
 
         // FIXME: Use overloading provided by our IDL code generator.

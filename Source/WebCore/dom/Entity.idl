@@ -20,9 +20,9 @@
 module core {
 
     interface Entity : Node {
-        readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
-        readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
-        readonly attribute [ConvertNullStringTo=Null] DOMString notationName;
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString publicId;
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString systemId;
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString notationName;
     };
 
 }

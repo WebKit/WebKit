@@ -24,7 +24,7 @@ module xpath {
         ObjCProtocol,
         OmitConstructor
     ] XPathNSResolver {
-        [ConvertNullStringTo=Null] DOMString lookupNamespaceURI(in [Optional=TreatAsUndefined] DOMString prefix);
+        [TreatReturnedNullStringTo=Null] DOMString lookupNamespaceURI(in [Optional=TreatAsUndefined] DOMString prefix);
     };
 
 }

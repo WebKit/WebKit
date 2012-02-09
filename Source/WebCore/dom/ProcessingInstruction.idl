@@ -24,8 +24,8 @@ module core {
 
         // DOM Level 1
 
-        readonly attribute [ConvertNullStringTo=Null] DOMString target;
-                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString data
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString target;
+                 attribute [TreatReturnedNullStringTo=Null, TreatNullAs=NullString] DOMString data
                      setter raises(DOMException);
 
         // interface LinkStyle from DOM Level 2 Style Sheets

@@ -33,8 +33,8 @@ module storage {
         CustomNamedSetter,
     ] Storage {
         readonly attribute [NotEnumerable] unsigned long length;
-        [NotEnumerable, ConvertNullStringTo=Null] DOMString key(in unsigned long index);
-        [NotEnumerable, ConvertNullStringTo=Null] DOMString getItem(in DOMString key);
+        [NotEnumerable, TreatReturnedNullStringTo=Null] DOMString key(in unsigned long index);
+        [NotEnumerable, TreatReturnedNullStringTo=Null] DOMString getItem(in DOMString key);
         [NotEnumerable] void setItem(in DOMString key, in DOMString data) 
             raises(DOMException);
         [NotEnumerable] void removeItem(in DOMString key);

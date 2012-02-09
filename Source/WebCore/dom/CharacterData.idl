@@ -26,7 +26,7 @@ module core {
 
         readonly attribute unsigned long length;
         
-        [ConvertNullStringTo=Null, ObjCLegacyUnnamedParameters] DOMString substringData(in [IsIndex,Optional=TreatAsUndefined] unsigned long offset, 
+        [TreatReturnedNullStringTo=Null, ObjCLegacyUnnamedParameters] DOMString substringData(in [IsIndex,Optional=TreatAsUndefined] unsigned long offset, 
                                                                          in [IsIndex,Optional=TreatAsUndefined] unsigned long length)
             raises(DOMException);
 

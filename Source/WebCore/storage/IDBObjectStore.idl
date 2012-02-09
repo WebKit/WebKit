@@ -28,8 +28,8 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBObjectStore {
-        readonly attribute [ConvertNullStringTo=Null] DOMString name;
-        readonly attribute [ConvertNullStringTo=Null] DOMString keyPath;
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString name;
+        readonly attribute [TreatReturnedNullStringTo=Null] DOMString keyPath;
         readonly attribute DOMStringList indexNames;
         readonly attribute IDBTransaction transaction;
 
