@@ -31,6 +31,7 @@
 import logging
 import re
 import sys
+import os
 
 import webkit
 
@@ -148,3 +149,12 @@ class QtPort(WebKitPort):
 
     def operating_system(self):
         return self._operating_system
+
+    def check_sys_deps(self, needs_http):
+        result = super(QtPort, self).check_sys_deps(needs_http)
+        if not 'WEBKIT_TESTFONTS' in os.environ:
+            _log.error('\nThe WEBKIT_TESTFONTS environment variable is not defined or not set properly.')
+            _log.error('You must set it before running the tests.')
+            _log.error('Use git to grab the actual fonts from http://gitorious.org/qtwebkit/testfonts')
+            return False
+        return result

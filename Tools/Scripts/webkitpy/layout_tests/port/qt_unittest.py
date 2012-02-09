@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+import os
 
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -86,3 +87,17 @@ class QtPortTest(port_testcase.PortTestCase):
         self.assertEqual('linux', self.make_port(port_name='qt-linux', os_name='linux').operating_system())
         self.assertEqual('mac', self.make_port(os_name='mac').operating_system())
         self.assertEqual('win', self.make_port(port_name='qt-win', os_name='win').operating_system())
+
+    def test_check_sys_deps(self):
+        port = self.make_port()
+
+        # Success
+        os.environ['WEBKIT_TESTFONTS'] = '/tmp/foo'
+        port._executive = MockExecutive2(exit_code=0)
+        self.assertTrue(port.check_sys_deps(needs_http=False))
+
+        # Failure
+        del os.environ['WEBKIT_TESTFONTS']
+        port._executive = MockExecutive2(exit_code=1,
+            output='testing output failure')
+        self.assertFalse(port.check_sys_deps(needs_http=False))

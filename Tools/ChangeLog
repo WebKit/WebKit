@@ -1,3 +1,22 @@
+2012-02-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] run-webkit-tests --qt  crashes if WEBKIT_TESTFONTS is not set
+        https://bugs.webkit.org/show_bug.cgi?id=77466
+
+        Reviewed by Dirk Pranke.
+
+        Replicate the behavior of old-run-webkit-tests and check if WEBKIT_TESTFONTS
+        is set or if we should raise an error. A unit test was added.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.operating_system):
+        (QtPort):
+        (QtPort.check_sys_deps):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest.test_operating_system):
+        (QtPortTest):
+        (QtPortTest.test_check_sys_deps):
+
 2012-02-09  Eric Seidel  <eric@webkit.org>
 
         Rename ports.WebKitPort to DeprecatedPort and make it stop being all class methods
