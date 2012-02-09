@@ -4015,3 +4015,7 @@ BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-o
 
 // Just needs a rebaseline.
 BUGWK47907 : media/video-empty-source.html = IMAGE+TEXT
+
+// Started crashing on XP only.
+BUGWK78251 DEBUG XP : inspector/elements/set-outer-html-body.html = CRASH
+BUGWK78251 DEBUG XP : inspector/elements/undo-dom-edits.html = CRASH
