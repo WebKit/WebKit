@@ -61,7 +61,7 @@ public:
 
     void resetPinch()
     {
-        m_pinchStarted = m_pinchStarted = false;
+        m_pinchStarted = m_pinchEnded = false;
         m_pinchMagnification = 0;
     }
 
