@@ -42,6 +42,15 @@ def get_build_path():
     def is_valid_build_directory(path):
         return os.path.exists(os.path.join(path, 'GNUmakefile'))
 
+    # Debian and Ubuntu build both flavours of the library (with gtk2
+    # and with gtk3); they use directories build-2.0 and build-3.0 for
+    # that, which is not handled by the above cases; we check that the
+    # directory where we are called from is a valid build directory,
+    # which should handle pretty much all other non-standard cases.
+    build_dir = os.getcwd()
+    if is_valid_build_directory(build_dir):
+        return build_dir
+
     build_types = ['Release', 'Debug']
     if '--debug' in sys.argv:
         build_types.reverse()
@@ -61,15 +70,6 @@ def get_build_path():
         return build_dir
 
     build_dir = top_level_path("WebKitBuild")
-    if is_valid_build_directory(build_dir):
-        return build_dir
-
-    # Debian and Ubuntu build both flavours of the library (with gtk2
-    # and with gtk3); they use directories build-2.0 and build-3.0 for
-    # that, which is not handled by the above cases; we check that the
-    # directory where we are called from is a valid build directory,
-    # which should handle pretty much all other non-standard cases.
-    build_dir = os.getcwd()
     if is_valid_build_directory(build_dir):
         return build_dir
 

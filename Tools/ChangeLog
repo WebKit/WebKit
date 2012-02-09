@@ -1,5 +1,14 @@
 2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Rubber-stamped by Martin Robinson.
+
+        * gtk/common.py:
+        (get_build_path): Move test for current directory being a valid
+        directory up so it takes precedence over WebKitBuild/Release and
+        WebKitBuild/Debug when they exist as well.
+
+2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] doc rebasing does not respect DESTDIR
         https://bugs.webkit.org/show_bug.cgi?id=78177
 
