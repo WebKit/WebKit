@@ -30,26 +30,26 @@ module css {
         CustomGetPropertyNames,
         V8DependentLifetime
     ] CSSStyleDeclaration {
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString        cssText
                      setter raises(DOMException);
 
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Optional=TreatAsUndefined] DOMString propertyName);
-        [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=TreatAsUndefined] DOMString propertyName);
-        [TreatReturnedNullStringAs=Null] DOMString          removeProperty(in [Optional=TreatAsUndefined] DOMString propertyName)
+        [ConvertNullStringTo=Null] DOMString          getPropertyValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          removeProperty(in [Optional=CallWithDefaultValue] DOMString propertyName)
             raises(DOMException);
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority(in [Optional=TreatAsUndefined] DOMString propertyName);
-        [ObjCLegacyUnnamedParameters] void setProperty(in [Optional=TreatAsUndefined] DOMString propertyName, 
-                                        in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString value, 
-                                        in [Optional=TreatAsUndefined] DOMString priority)
+        [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [ObjCLegacyUnnamedParameters] void setProperty(in [Optional=CallWithDefaultValue] DOMString propertyName, 
+                                        in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString value, 
+                                        in [Optional=CallWithDefaultValue] DOMString priority)
             raises(DOMException);
 
         readonly attribute unsigned long    length;
-        DOMString          item(in [Optional=TreatAsUndefined] unsigned long index);
+        DOMString          item(in [Optional=CallWithDefaultValue] unsigned long index);
         readonly attribute CSSRule          parentRule;
 
         // Extensions
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand(in [Optional=TreatAsUndefined] DOMString propertyName);
-        boolean            isPropertyImplicit(in [Optional=TreatAsUndefined] DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          getPropertyShorthand(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        boolean            isPropertyImplicit(in [Optional=CallWithDefaultValue] DOMString propertyName);
     };
 
 }

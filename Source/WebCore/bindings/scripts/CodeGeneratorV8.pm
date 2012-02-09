@@ -1526,9 +1526,11 @@ sub GenerateParametersCheck
 
         my $parameterName = $parameter->name;
 
-        # Optional arguments with [Optional] should generate an early call with fewer arguments.
-        # Optional arguments with [Optional=TreatAsUndefined] should not generate the early call.
-        if ($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined" && !$parameter->extendedAttributes->{"Callback"}) {
+        # Optional callbacks should be treated differently, because they always have a default value (0),
+        # and we can reduce the number of overloaded functions that take a different number of parameters.
+        # Optional arguments with default values [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue] should not generate an early call.
+        my $optional = $parameter->extendedAttributes->{"Optional"};        
+        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are not enough parameters.
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
@@ -1536,9 +1538,9 @@ sub GenerateParametersCheck
             $parameterCheckString .= "    }\n";
         }
 
-        my $parameterMissingPolicy = "MissingIsUndefinedValue";
-        if ($parameter->extendedAttributes->{"Optional"} and $parameter->extendedAttributes->{"Optional"} eq "TreatAsUndefined" and $parameter->extendedAttributes->{"TreatUndefinedAs"} and $parameter->extendedAttributes->{"TreatUndefinedAs"} eq "NullString") {
-            $parameterMissingPolicy = "MissingIsNullValue";
+        my $parameterMissingPolicy = "MissingIsUndefined";
+        if ($optional && $optional eq "CallWithNullValue") {
+            $parameterMissingPolicy = "MissingIsEmpty";
         }
 
         AddToImplIncludes("ExceptionCode.h");
@@ -2084,7 +2086,7 @@ sub GenerateImplementationIndexer
 
     if ($indexerType && !$hasCustomSetter) {
         if ($indexerType eq "DOMString") {
-            my $conversion = $indexer->extendedAttributes->{"TreatReturnedNullStringAs"};
+            my $conversion = $indexer->extendedAttributes->{"ConvertNullStringTo"};
             if ($conversion && $conversion eq "Null") {
                 push(@implContent, <<END);
     setCollectionStringOrNullIndexedGetter<${interfaceName}>(desc);
@@ -3591,7 +3593,8 @@ sub RequiresCustomSignature
       return 0;
     }
     foreach my $parameter (@{$function->parameters}) {
-        if (($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined") || $parameter->extendedAttributes->{"Callback"}) {
+        my $optional = $parameter->extendedAttributes->{"Optional"};
+        if (($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue") || $parameter->extendedAttributes->{"Callback"}) {
             return 0;
         }
     }
@@ -3714,13 +3717,13 @@ sub NativeToJSValue
     return "v8NumberArray($value)" if $type eq "double[]";
 
     if ($codeGenerator->IsStringType($type)) {
-        my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
+        my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
             return "v8StringOrNull($value)" if $conv eq "Null";
             return "v8StringOrUndefined($value)" if $conv eq "Undefined";
             return "v8StringOrFalse($value)" if $conv eq "False";
 
-            die "Unknown value for TreatReturnedNullStringAs extended attribute";
+            die "Unknown value for ConvertNullStringTo extended attribute";
         }
         $conv = $signature->extendedAttributes->{"ConvertScriptString"};
         return "v8StringOrNull($value)" if $conv;

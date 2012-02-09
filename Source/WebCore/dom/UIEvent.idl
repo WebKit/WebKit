@@ -24,11 +24,11 @@ module events {
         readonly attribute DOMWindow            view;
         readonly attribute long                 detail;
         
-        [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=TreatAsUndefined] DOMString type, 
-                                        in [Optional=TreatAsUndefined] boolean canBubble, 
-                                        in [Optional=TreatAsUndefined] boolean cancelable, 
-                                        in [Optional=TreatAsUndefined] DOMWindow view, 
-                                        in [Optional=TreatAsUndefined] long detail);
+        [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                        in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                        in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                        in [Optional=CallWithDefaultValue] DOMWindow view, 
+                                        in [Optional=CallWithDefaultValue] long detail);
 
         // extensions
         readonly attribute long                 keyCode;

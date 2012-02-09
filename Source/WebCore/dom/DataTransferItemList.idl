@@ -39,12 +39,12 @@ module core {
 #endif
     ] DataTransferItemList {
         readonly attribute long length;
-        DataTransferItem item(in [Optional=TreatAsUndefined] unsigned long index);
+        DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index);
 
         void clear();
         void add(in File file);
-        void add(in [Optional=TreatAsUndefined] DOMString data, 
-                 in [Optional=TreatAsUndefined] DOMString type) raises(DOMException);
+        void add(in [Optional=CallWithDefaultValue] DOMString data, 
+                 in [Optional=CallWithDefaultValue] DOMString type) raises(DOMException);
     };
 
 }

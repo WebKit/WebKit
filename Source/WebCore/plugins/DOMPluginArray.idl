@@ -26,9 +26,9 @@ module window {
         IndexedGetter
     ] DOMPluginArray {
         readonly attribute unsigned long length;
-        DOMPlugin item(in [Optional=TreatAsUndefined] unsigned long index);
-        DOMPlugin namedItem(in [Optional=TreatAsUndefined] DOMString name);
-        void refresh(in [Optional=TreatAsUndefined] boolean reload);
+        DOMPlugin item(in [Optional=CallWithDefaultValue] unsigned long index);
+        DOMPlugin namedItem(in [Optional=CallWithDefaultValue] DOMString name);
+        void refresh(in [Optional=CallWithDefaultValue] boolean reload);
     };
 
 }

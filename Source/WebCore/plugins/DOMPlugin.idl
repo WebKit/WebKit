@@ -28,8 +28,8 @@ module window {
         readonly attribute DOMString filename;
         readonly attribute DOMString description;
         readonly attribute unsigned long length;
-        DOMMimeType item(in [Optional=TreatAsUndefined] unsigned long index);
-        DOMMimeType namedItem(in [Optional=TreatAsUndefined] DOMString name);
+        DOMMimeType item(in [Optional=CallWithDefaultValue] unsigned long index);
+        DOMMimeType namedItem(in [Optional=CallWithDefaultValue] DOMString name);
     };
 
 }

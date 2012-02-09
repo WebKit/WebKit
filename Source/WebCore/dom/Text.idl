@@ -23,12 +23,12 @@ module core {
 
         // DOM Level 1
 
-        Text splitText(in [IsIndex,Optional=TreatAsUndefined] unsigned long offset)
+        Text splitText(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset)
             raises (DOMException);
 
         // Introduced in DOM Level 3:
         readonly attribute DOMString       wholeText;
-        Text               replaceWholeText(in [Optional=TreatAsUndefined] DOMString content)
+        Text               replaceWholeText(in [Optional=CallWithDefaultValue] DOMString content)
                                             raises(DOMException);
     };
 

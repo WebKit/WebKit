@@ -33,9 +33,9 @@ module html {
         JSNoStaticTables
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-        static [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Undefined] DOMString createObjectURL(in MediaStream stream);
+        static [CallWith=ScriptExecutionContext,ConvertNullStringTo=Undefined] DOMString createObjectURL(in MediaStream stream);
 #endif
-        static [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Undefined] DOMString createObjectURL(in Blob blob);
+        static [CallWith=ScriptExecutionContext,ConvertNullStringTo=Undefined] DOMString createObjectURL(in Blob blob);
         static [CallWith=ScriptExecutionContext] void revokeObjectURL(in DOMString url);
     };
 }

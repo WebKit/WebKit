@@ -29,8 +29,8 @@
 module core {
 
     interface Clipboard {
-                 attribute [TreatReturnedNullStringAs=Undefined] DOMString dropEffect;
-                 attribute [TreatReturnedNullStringAs=Undefined] DOMString effectAllowed;
+                 attribute [ConvertNullStringTo=Undefined] DOMString dropEffect;
+                 attribute [ConvertNullStringTo=Undefined] DOMString effectAllowed;
         readonly attribute [CustomGetter] Array types;
         readonly attribute FileList files;
 

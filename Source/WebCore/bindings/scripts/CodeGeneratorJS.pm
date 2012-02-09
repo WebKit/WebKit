@@ -437,7 +437,7 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "    bool ok;\n");
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(ok);\n");
 
-        # If the item function returns a string then we let the TreatReturnedNullStringAs handle the cases
+        # If the item function returns a string then we let the ConvertNullStringTo handle the cases
         # where the index is out of range.
         if (IndexGetterReturnsStrings($implClassName)) {
             push(@getOwnPropertySlotImpl, "    if (ok) {\n");
@@ -2427,9 +2427,13 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
 
     foreach my $parameter (@{$function->parameters}) {
-        # Optional arguments with [Optional] should generate an early call with fewer arguments.
-        # Optional arguments with [Optional=TreatAsUndefined] should not generate the early call.
-        if ($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined" && !$parameter->extendedAttributes->{"Callback"}) {
+        # Optional callbacks should be treated differently, because they always have a default value (0),
+        # and we can reduce the number of overloaded functions that take a different number of parameters.
+        # Optional arguments with [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue]
+        # should not generate an early call.
+        my $optional = $parameter->extendedAttributes->{"Optional"};
+        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
+            # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
                 $hasOptionalArguments = 1;
@@ -2495,9 +2499,10 @@ sub GenerateParametersCheck
                 }
             }
 
-            my $parameterMissingPolicy = "MissingIsUndefinedValue";
-            if ($parameter->extendedAttributes->{"Optional"} and $parameter->extendedAttributes->{"Optional"} eq "TreatAsUndefined" and $parameter->extendedAttributes->{"TreatUndefinedAs"} and $parameter->extendedAttributes->{"TreatUndefinedAs"} eq "NullString") {
-                $parameterMissingPolicy = "MissingIsNullValue";
+            my $optional = $parameter->extendedAttributes->{"Optional"};
+            my $parameterMissingPolicy = "MissingIsUndefined";
+            if ($optional && $optional eq "CallWithNullValue") {
+                $parameterMissingPolicy = "MissingIsEmpty";
             }
 
             push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterMissingPolicy)") . ");\n");
@@ -2936,13 +2941,13 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsStringType($type)) {
         AddToImplIncludes("KURL.h", $conditional);
-        my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
+        my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
             return "jsStringOrNull(exec, $value)" if $conv eq "Null";
             return "jsStringOrUndefined(exec, $value)" if $conv eq "Undefined";
             return "jsStringOrFalse(exec, $value)" if $conv eq "False";
 
-            die "Unknown value for TreatReturnedNullStringAs extended attribute";
+            die "Unknown value for ConvertNullStringTo extended attribute";
         }
         $conv = $signature->extendedAttributes->{"ConvertScriptString"};
         return "jsOwnedStringOrNull(exec, $value)" if $conv;
@@ -3516,7 +3521,8 @@ END
             }
 
             # For now, we do not support SVG constructors.
-            # In constructor arguments, we can use [Optional=TreatAsUndefined] but cannot use [Optional].
+            # We do not also support a constructor [Optional] argument without CallWithDefaultValue
+            # nor CallWithNullValue.
             my $numParameters = @{$function->parameters};
             my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 

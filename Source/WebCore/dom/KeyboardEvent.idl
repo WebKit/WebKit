@@ -40,37 +40,37 @@ module events {
         readonly attribute boolean          altGraphKey;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        boolean getModifierState(in [Optional=TreatAsUndefined] DOMString keyIdentifierArg);
+        boolean getModifierState(in [Optional=CallWithDefaultValue] DOMString keyIdentifierArg);
 #endif
 
         // FIXME: this does not match the version in the DOM spec.
-        void initKeyboardEvent(in [Optional=TreatAsUndefined] DOMString type, 
-                               in [Optional=TreatAsUndefined] boolean canBubble, 
-                               in [Optional=TreatAsUndefined] boolean cancelable, 
-                               in [Optional=TreatAsUndefined] DOMWindow view, 
-                               in [Optional=TreatAsUndefined] DOMString keyIdentifier,
-                               in [Optional=TreatAsUndefined] unsigned long keyLocation,
-                               in [Optional=TreatAsUndefined] boolean ctrlKey,
-                               in [Optional=TreatAsUndefined] boolean altKey,
-                               in [Optional=TreatAsUndefined] boolean shiftKey,
-                               in [Optional=TreatAsUndefined] boolean metaKey,
-                               in [Optional=TreatAsUndefined] boolean altGraphKey);
+        void initKeyboardEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                               in [Optional=CallWithDefaultValue] boolean canBubble, 
+                               in [Optional=CallWithDefaultValue] boolean cancelable, 
+                               in [Optional=CallWithDefaultValue] DOMWindow view, 
+                               in [Optional=CallWithDefaultValue] DOMString keyIdentifier,
+                               in [Optional=CallWithDefaultValue] unsigned long keyLocation,
+                               in [Optional=CallWithDefaultValue] boolean ctrlKey,
+                               in [Optional=CallWithDefaultValue] boolean altKey,
+                               in [Optional=CallWithDefaultValue] boolean shiftKey,
+                               in [Optional=CallWithDefaultValue] boolean metaKey,
+                               in [Optional=CallWithDefaultValue] boolean altGraphKey);
 
         // WebKit Extensions
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         readonly attribute long             keyCode;
         readonly attribute long             charCode;
         
-        void initKeyboardEvent(in [Optional=TreatAsUndefined] DOMString type, 
-                               in [Optional=TreatAsUndefined] boolean canBubble, 
-                               in [Optional=TreatAsUndefined] boolean cancelable, 
-                               in [Optional=TreatAsUndefined] DOMWindow view, 
-                               in [Optional=TreatAsUndefined] DOMString keyIdentifier,
-                               in [Optional=TreatAsUndefined] unsigned long keyLocation,
-                               in [Optional=TreatAsUndefined] boolean ctrlKey,
-                               in [Optional=TreatAsUndefined] boolean altKey,
-                               in [Optional=TreatAsUndefined] boolean shiftKey,
-                               in [Optional=TreatAsUndefined] boolean metaKey);
+        void initKeyboardEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                               in [Optional=CallWithDefaultValue] boolean canBubble, 
+                               in [Optional=CallWithDefaultValue] boolean cancelable, 
+                               in [Optional=CallWithDefaultValue] DOMWindow view, 
+                               in [Optional=CallWithDefaultValue] DOMString keyIdentifier,
+                               in [Optional=CallWithDefaultValue] unsigned long keyLocation,
+                               in [Optional=CallWithDefaultValue] boolean ctrlKey,
+                               in [Optional=CallWithDefaultValue] boolean altKey,
+                               in [Optional=CallWithDefaultValue] boolean shiftKey,
+                               in [Optional=CallWithDefaultValue] boolean metaKey);
 #endif
 
     };

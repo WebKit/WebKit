@@ -118,9 +118,6 @@ module test {
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
         void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
-        void    methodWithOptionalString(in [Optional] DOMString str);
-        void    methodWithOptionalIsUndefinedString(in [Optional=TreatAsUndefined] DOMString str);
-        void    methodWithOptionalIsNullStringString(in [Optional=TreatAsUndefined, TreatUndefinedAs=NullString] DOMString str);
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // 'Callback' extended attribute
@@ -191,9 +188,9 @@ module test {
         [CheckAccessToNode] SVGDocument getSVGDocument()
             raises(DOMException);
 
-        void convert1(in [TreatReturnedNullStringAs=Null] a);
-        void convert2(in [TreatReturnedNullStringAs=Undefined] b);
-        void convert3(in [TreatReturnedNullStringAs=False] c);
+        void convert1(in [ConvertNullStringTo=Null] a);
+        void convert2(in [ConvertNullStringTo=Undefined] b);
+        void convert3(in [ConvertNullStringTo=False] c);
         void convert4(in [TreatNullAs=NullString] d);
         void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e);
 

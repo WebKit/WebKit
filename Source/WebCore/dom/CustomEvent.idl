@@ -32,10 +32,10 @@ module events {
     ] CustomEvent : Event {
         readonly attribute [InitializedByEventConstructor] DOMObject detail;
 
-        void initCustomEvent(in [Optional=TreatAsUndefined] DOMString typeArg, 
-                             in [Optional=TreatAsUndefined] boolean canBubbleArg, 
-                             in [Optional=TreatAsUndefined] boolean cancelableArg, 
-                             in [Optional=TreatAsUndefined] DOMObject detailArg);
+        void initCustomEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                             in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                             in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                             in [Optional=CallWithDefaultValue] DOMObject detailArg);
     };
 #endif
 

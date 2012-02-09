@@ -28,12 +28,12 @@ module stylesheets {
         ObjCPolymorphic,
         V8DependentLifetime
     ] StyleSheet {
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        type;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        type;
                  attribute boolean          disabled;
         readonly attribute Node             ownerNode;
         readonly attribute StyleSheet       parentStyleSheet;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        href;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        title;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        href;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        title;
         readonly attribute MediaList        media;
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

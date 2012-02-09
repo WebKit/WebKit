@@ -46,7 +46,7 @@ module html {
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
-    DOMString canPlayType(in [Optional=TreatAsUndefined] DOMString type);
+    DOMString canPlayType(in [Optional=CallWithDefaultValue] DOMString type);
 
     // ready state
     const unsigned short HAVE_NOTHING = 0;
@@ -117,7 +117,7 @@ module html {
     readonly attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
 
-    attribute [Reflect, TreatNullAs=NullString, TreatReturnedNullStringAsNull] DOMString mediaGroup;
+    attribute [Reflect, TreatNullAs=NullString, ConvertNullStringToNull] DOMString mediaGroup;
     attribute [CustomSetter] MediaController controller;
 };
 }

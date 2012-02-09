@@ -27,7 +27,7 @@ module svg {
         readonly attribute SVGSVGElement        rootElement;
 
         // Overwrite the one in events::DocumentEvent
-        Event createEvent(in [Optional=TreatAsUndefined] DOMString eventType)
+        Event createEvent(in [Optional=CallWithDefaultValue] DOMString eventType)
             raises(DOMException);
     };
 

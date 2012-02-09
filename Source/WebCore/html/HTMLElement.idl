@@ -49,14 +49,14 @@ module html {
                  attribute [TreatNullAs=NullString] DOMString outerText
                      setter raises(DOMException);
 
-        Element insertAdjacentElement(in [Optional=TreatAsUndefined] DOMString where,
-                                      in [Optional=TreatAsUndefined] Element element)
+        Element insertAdjacentElement(in [Optional=CallWithDefaultValue] DOMString where,
+                                      in [Optional=CallWithDefaultValue] Element element)
             raises(DOMException);
-        void insertAdjacentHTML(in [Optional=TreatAsUndefined] DOMString where,
-                                in [Optional=TreatAsUndefined] DOMString html)
+        void insertAdjacentHTML(in [Optional=CallWithDefaultValue] DOMString where,
+                                in [Optional=CallWithDefaultValue] DOMString html)
             raises(DOMException);
-        void insertAdjacentText(in [Optional=TreatAsUndefined] DOMString where,
-                                in [Optional=TreatAsUndefined] DOMString text)
+        void insertAdjacentText(in [Optional=CallWithDefaultValue] DOMString where,
+                                in [Optional=CallWithDefaultValue] DOMString text)
             raises(DOMException);
 
         readonly attribute HTMLCollection children;

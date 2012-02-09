@@ -34,21 +34,21 @@ module events {
         readonly attribute unsigned short   button;
         readonly attribute EventTarget      relatedTarget;
         
-        [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=TreatAsUndefined] DOMString type, 
-                                           in [Optional=TreatAsUndefined] boolean canBubble, 
-                                           in [Optional=TreatAsUndefined] boolean cancelable, 
-                                           in [Optional=TreatAsUndefined] DOMWindow view, 
-                                           in [Optional=TreatAsUndefined] long detail, 
-                                           in [Optional=TreatAsUndefined] long screenX, 
-                                           in [Optional=TreatAsUndefined] long screenY, 
-                                           in [Optional=TreatAsUndefined] long clientX, 
-                                           in [Optional=TreatAsUndefined] long clientY, 
-                                           in [Optional=TreatAsUndefined] boolean ctrlKey, 
-                                           in [Optional=TreatAsUndefined] boolean altKey, 
-                                           in [Optional=TreatAsUndefined] boolean shiftKey, 
-                                           in [Optional=TreatAsUndefined] boolean metaKey, 
-                                           in [Optional=TreatAsUndefined] unsigned short button, 
-                                           in [Optional=TreatAsUndefined] EventTarget relatedTarget);
+        [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                           in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                           in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                           in [Optional=CallWithDefaultValue] DOMWindow view, 
+                                           in [Optional=CallWithDefaultValue] long detail, 
+                                           in [Optional=CallWithDefaultValue] long screenX, 
+                                           in [Optional=CallWithDefaultValue] long screenY, 
+                                           in [Optional=CallWithDefaultValue] long clientX, 
+                                           in [Optional=CallWithDefaultValue] long clientY, 
+                                           in [Optional=CallWithDefaultValue] boolean ctrlKey, 
+                                           in [Optional=CallWithDefaultValue] boolean altKey, 
+                                           in [Optional=CallWithDefaultValue] boolean shiftKey, 
+                                           in [Optional=CallWithDefaultValue] boolean metaKey, 
+                                           in [Optional=CallWithDefaultValue] unsigned short button, 
+                                           in [Optional=CallWithDefaultValue] EventTarget relatedTarget);
 
         // extensions
         readonly attribute long             offsetX;

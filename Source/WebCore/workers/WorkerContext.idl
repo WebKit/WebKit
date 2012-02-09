@@ -59,10 +59,10 @@ module threads {
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        void clearTimeout(in [Optional=TreatAsUndefined] long handle);
+        void clearTimeout(in [Optional=CallWithDefaultValue] long handle);
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        void clearInterval(in [Optional=TreatAsUndefined] long handle);
+        void clearInterval(in [Optional=CallWithDefaultValue] long handle);
 
 
         // EventTarget interface

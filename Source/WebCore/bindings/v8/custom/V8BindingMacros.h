@@ -48,4 +48,4 @@
         return;
 
 #define MAYBE_MISSING_PARAMETER(args, index, policy) \
-    (((policy) == MissingIsNullValue && (index) >= (args).Length()) ? (v8::Local<v8::Value>()) : ((args)[(index)]))
+    (((policy) == MissingIsEmpty && (index) >= (args).Length()) ? (v8::Local<v8::Value>()) : ((args)[(index)]))

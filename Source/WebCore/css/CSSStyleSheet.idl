@@ -25,20 +25,20 @@ module css {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
 
-        [ObjCLegacyUnnamedParameters] unsigned long insertRule(in [Optional=TreatAsUndefined] DOMString rule, 
-                                                in [Optional=TreatAsUndefined] unsigned long index)
+        [ObjCLegacyUnnamedParameters] unsigned long insertRule(in [Optional=CallWithDefaultValue] DOMString rule, 
+                                                in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
-        void               deleteRule(in [Optional=TreatAsUndefined] unsigned long index)
+        void               deleteRule(in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
 
         // IE Extensions
         readonly attribute CSSRuleList      rules;
 
-        long addRule(in [Optional=TreatAsUndefined] DOMString selector,
-                     in [Optional=TreatAsUndefined] DOMString style,
+        long addRule(in [Optional=CallWithDefaultValue] DOMString selector,
+                     in [Optional=CallWithDefaultValue] DOMString style,
                      in [Optional] unsigned long index)
             raises(DOMException);
-        void removeRule(in [Optional=TreatAsUndefined] unsigned long index)
+        void removeRule(in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
     };
 

@@ -51,10 +51,10 @@ module core {
         const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
         const unsigned short      NOTATION_NODE                  = 12;
 
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        nodeName;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        nodeName;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        nodeValue
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString        nodeValue
                      setter raises(DOMException);
 
         readonly attribute unsigned short   nodeType;
@@ -79,34 +79,34 @@ module core {
             raises(DOMException);
 
         boolean            hasChildNodes();
-        Node               cloneNode(in [Optional=TreatAsUndefined] boolean deep);
+        Node               cloneNode(in [Optional=CallWithDefaultValue] boolean deep);
         void               normalize();
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnnamedParameters] boolean isSupported(in [Optional=TreatAsUndefined] DOMString feature, 
-                                           in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString version);
+        [ObjCLegacyUnnamedParameters] boolean isSupported(in [Optional=CallWithDefaultValue] DOMString feature, 
+                                           in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString version);
 
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        prefix
+        readonly attribute [ConvertNullStringTo=Null] DOMString        namespaceURI;
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString        prefix
                      setter raises(DOMException);
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        localName;
 
         boolean            hasAttributes();
 
         // Introduced in DOM Level 3:
 
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString       baseURI;
+        readonly attribute [ConvertNullStringTo=Null] DOMString       baseURI;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString       textContent
+                 attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString       textContent
                      setter raises(DOMException);
 
-        boolean            isSameNode(in [Optional=TreatAsUndefined] Node other);
-        boolean            isEqualNode(in [Optional=TreatAsUndefined] Node other);
-        [TreatReturnedNullStringAs=Null] DOMString          lookupPrefix(in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString namespaceURI);
-        boolean            isDefaultNamespace(in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString namespaceURI);
-        [TreatReturnedNullStringAs=Null] DOMString          lookupNamespaceURI(in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString prefix);
+        boolean            isSameNode(in [Optional=CallWithDefaultValue] Node other);
+        boolean            isEqualNode(in [Optional=CallWithDefaultValue] Node other);
+        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        boolean            isDefaultNamespace(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString prefix);
 
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
@@ -116,10 +116,10 @@ module core {
         const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
         const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-        unsigned short     compareDocumentPosition(in [Optional=TreatAsUndefined] Node other);
+        unsigned short     compareDocumentPosition(in [Optional=CallWithDefaultValue] Node other);
 
         // Introduced in DOM4
-        boolean contains(in [Optional=TreatAsUndefined] Node other);
+        boolean contains(in [Optional=CallWithDefaultValue] Node other);
 
 #if 0
         DOMObject          getFeature(in DOMString feature, 

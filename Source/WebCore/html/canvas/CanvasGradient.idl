@@ -27,8 +27,8 @@ module html {
 
     interface CanvasGradient {
 
-        void addColorStop(in [Optional=TreatAsUndefined] float offset, 
-                          in [Optional=TreatAsUndefined] DOMString color)
+        void addColorStop(in [Optional=CallWithDefaultValue] float offset, 
+                          in [Optional=CallWithDefaultValue] DOMString color)
             raises (DOMException);
 
     };

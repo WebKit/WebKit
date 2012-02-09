@@ -512,8 +512,8 @@ namespace WebCore {
     }
 
     enum ParameterMissingPolicy {
-        MissingIsUndefinedValue,
-        MissingIsNullValue
+        MissingIsUndefined,
+        MissingIsEmpty
     };
 
 } // namespace WebCore
