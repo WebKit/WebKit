@@ -80,6 +80,9 @@ public:
     static const unsigned int maxViewWidth;
     static const unsigned int maxViewHeight;
 
+    void setTimeout(int timeout) { m_timeout = timeout; }
+    void setShouldTimeout(bool flag) { m_shouldTimeout = flag; }
+
 protected:
     void timerEvent(QTimerEvent*);
 
@@ -317,6 +320,9 @@ private:
     QWebHistory* m_webHistory;
     QStringList m_desktopNotificationAllowedOrigins;
     bool m_ignoreDesktopNotification;
+
+    bool m_shouldTimeout;
+    int m_timeout;
 };
 
 #endif // LayoutTestControllerQt_h

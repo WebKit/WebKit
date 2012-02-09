@@ -1,3 +1,34 @@
+2012-02-08  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][DRT] DumpRenderTreeQt should support --no-timeout and --timeout options
+        https://bugs.webkit.org/show_bug.cgi?id=78146
+
+        Reviewed by Ryosuke Niwa.
+
+        Our DumpRenderTree should support --no-timeout and --timeout options in order
+        to be able to use run-perf-tests and have a Performance Bot.
+        This patch adds setTimeout and setShouldTimeout functions to our LayoutTestController
+        and the necessary code to handle such command line arguments to our DumpRenderTree.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::setTimeout):
+        (WebCore):
+        (WebCore::DumpRenderTree::setShouldTimeout):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::setTimeout):
+        (LayoutTestController::setShouldTimeout):
+        (LayoutTestController):
+        * DumpRenderTree/qt/main.cpp:
+        (isOption):
+        (printUsage):
+        (main):
+
 2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Rubber-stamped by Martin Robinson.

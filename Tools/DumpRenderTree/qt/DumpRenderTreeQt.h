@@ -106,6 +106,9 @@ public:
     void setRedirectOutputFileName(const QString& fileName) { m_redirectOutputFileName = fileName; }
     void setRedirectErrorFileName(const QString& fileName) { m_redirectErrorFileName = fileName; }
 
+    void setTimeout(int);
+    void setShouldTimeout(bool flag);
+
 public Q_SLOTS:
     void initJSObjects();
 

@@ -1138,4 +1138,14 @@ QList<WebPage*> DumpRenderTree::getAllPages() const
     return pages;
 }
 
+void DumpRenderTree::setTimeout(int timeout)
+{
+    m_controller->setTimeout(timeout);
+}
+
+void DumpRenderTree::setShouldTimeout(bool flag)
+{
+    m_controller->setShouldTimeout(flag);
+}
+
 }
