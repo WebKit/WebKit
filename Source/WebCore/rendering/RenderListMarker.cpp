@@ -1110,7 +1110,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (style()->visibility() != VISIBLE)
         return;
 
-    LayoutPoint boxOrigin(paintOffset + location());
+    IntPoint boxOrigin(paintOffset + location());
     LayoutRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));

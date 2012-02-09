@@ -82,7 +82,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
 
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
 
     GraphicsContextStateSaver stateSaver(*info.context);
     

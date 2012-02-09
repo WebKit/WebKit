@@ -1617,7 +1617,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
         context.save();
         context.translate(-scrollCorner.x(), -scrollCorner.y());
         LayoutRect transformedClip = clip;
-        transformedClip.moveBy(scrollCorner.location());
+        transformedClip.moveBy(roundedIntPoint(scrollCorner.location()));
         m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
         context.restore();
 #if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)

@@ -56,6 +56,11 @@ inline LayoutSize roundedLayoutSize(const FloatSize& s)
     return roundedIntSize(s);
 }
 
+inline IntPoint roundedIntPoint(const LayoutPoint& p)
+{
+    return p;
+}
+
 inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
 {
     return roundedIntPoint(p);

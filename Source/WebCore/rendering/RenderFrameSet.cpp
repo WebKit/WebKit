@@ -802,7 +802,7 @@ bool RenderFrameSet::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& cursor) const
 {
-    if (canResizeRow(point)) {
+    if (canResizeRow(roundedIntPoint(point))) {
         cursor = rowResizeCursor();
         return SetCursor;
     }

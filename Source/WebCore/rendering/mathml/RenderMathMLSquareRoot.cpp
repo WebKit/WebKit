@@ -73,7 +73,7 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     if (info.context->paintingDisabled())
         return;
     
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
 
     LayoutUnit maxHeight = 0;
     LayoutUnit width = 0;

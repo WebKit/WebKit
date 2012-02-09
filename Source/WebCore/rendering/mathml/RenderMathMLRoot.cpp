@@ -104,7 +104,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     if (!firstChild() || !lastChild())
         return;
 
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
     
     RenderBoxModelObject* indexBox = toRenderBoxModelObject(lastChild());
     

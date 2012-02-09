@@ -1578,7 +1578,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 LayoutRect viewRect = frameView->visibleContentRect();
                 LayoutRect r = getRectToExpose(viewRect, rect, alignX, alignY);
                 
-                frameView->setScrollPosition(r.location());
+                frameView->setScrollPosition(roundedIntPoint(r.location()));
 
                 // This is the outermost view of a web page, so after scrolling this view we
                 // scroll its container by calling Page::scrollRectIntoView.
@@ -2135,8 +2135,8 @@ LayoutSize RenderLayer::offsetFromResizeCorner(const LayoutPoint& absolutePoint)
 {
     // Currently the resize corner is always the bottom right corner
     // FIXME: This assumes the location is 0, 0. Is this guaranteed to always be the case?
-    LayoutPoint bottomRight = toPoint(size());
-    LayoutPoint localPoint = absoluteToContents(absolutePoint);
+    IntPoint bottomRight = toPoint(size());
+    IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
     return localPoint - bottomRight;
 }
 
@@ -2543,7 +2543,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& pain
     }
 }
 
-bool RenderLayer::isPointInResizeControl(const LayoutPoint& absolutePoint) const
+bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
 {
     if (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE)
         return false;
@@ -2551,9 +2551,9 @@ bool RenderLayer::isPointInResizeControl(const LayoutPoint& absolutePoint) const
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    LayoutPoint localPoint = absoluteToContents(absolutePoint);
+    IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
 
-    LayoutRect localBounds(0, 0, box->width(), box->height());
+    IntRect localBounds(0, 0, box->pixelSnappedWidth(), box->pixelSnappedHeight());
     return resizerCornerRect(this, localBounds).contains(localPoint);
 }
     
@@ -2946,7 +2946,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
 
     if (isPaintingOverlayScrollbars) {
         clipToRect(rootLayer, context, paintDirtyRect, damageRect);
-        paintOverflowControls(context, paintOffset, damageRect.rect(), true);
+        paintOverflowControls(context, roundedIntPoint(paintOffset), damageRect.rect(), true);
         restoreClip(context, paintDirtyRect, damageRect);
     }
 

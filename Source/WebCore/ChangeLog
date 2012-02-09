@@ -1,3 +1,56 @@
+2012-02-09  Levi Weintraub  <leviw@chromium.org>
+
+        Add roundedIntPoint method for LayoutPoints
+        https://bugs.webkit.org/show_bug.cgi?id=78262
+
+        Reviewed by Eric Seidel.
+
+        Adding a roundedIntPoint method that operates on a LayoutPoint. Currently, this does
+        nothing as LayoutPoint is a typedef to IntPoint. When we enable sub-pixel LayoutUnits,
+        this is a critical part in our pixel snapping strategy, where we round the logical top-
+        left point, then snap the right and bottom edges.
+
+        Also using this new method where we wish to convert LayoutPoints to IntPoints, which
+        we're currently doing implicitly (since they're the same thing).
+
+        No new tests. No change in functionality.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::selectCursor):
+        * rendering/LayoutTypes.h:
+        (WebCore::roundedIntPoint):
+        (WebCore):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::getCursor):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::offsetFromResizeCorner):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::paint):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::paint):
+
 2012-02-09  John Bates  <jbates@google.com>
 
         [Chromium] Add chromium-style tracing support

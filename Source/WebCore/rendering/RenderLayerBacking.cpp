@@ -1161,7 +1161,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         context.save();
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
         LayoutRect transformedClip = clip;
-        transformedClip.moveBy(scrollCornerAndResizer.location());
+        transformedClip.moveBy(roundedIntPoint(scrollCornerAndResizer.location()));
         m_owningLayer->paintScrollCorner(&context, LayoutPoint(), transformedClip);
         m_owningLayer->paintResizer(&context, LayoutPoint(), transformedClip);
         context.restore();
