@@ -43,7 +43,6 @@
 #include "HTMLInputElement.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
-#include "IsIndexInputType.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MonthInputType.h"
@@ -96,7 +95,6 @@ static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     map->add(InputTypeNames::file(), FileInputType::create);
     map->add(InputTypeNames::hidden(), HiddenInputType::create);
     map->add(InputTypeNames::image(), ImageInputType::create);
-    map->add(InputTypeNames::isindex(), IsIndexInputType::create);
 #if ENABLE(INPUT_TYPE_MONTH)
     map->add(InputTypeNames::month(), MonthInputType::create);
 #endif
@@ -800,12 +798,6 @@ const AtomicString& hidden()
 const AtomicString& image()
 {
     DEFINE_STATIC_LOCAL(AtomicString, name, ("image"));
-    return name;
-}
-
-const AtomicString& isindex()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("khtml_isindex"));
     return name;
 }
 

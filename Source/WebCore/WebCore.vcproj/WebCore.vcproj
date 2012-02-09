@@ -60374,14 +60374,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\IsIndexInputType.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\IsIndexInputType.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\LabelsNodeList.cpp"
 				>
 			</File>

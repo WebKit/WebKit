@@ -241,7 +241,6 @@ public:
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     void createShadowSubtree();
-    void setInitialName(const AtomicString&);
     virtual void defaultEventHandler(Event*);
 
 private:

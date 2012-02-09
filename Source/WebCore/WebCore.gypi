@@ -5350,8 +5350,6 @@
             'html/ImageInputType.cpp',
             'html/ImageInputType.h',
             'html/InputType.cpp',
-            'html/IsIndexInputType.cpp',
-            'html/IsIndexInputType.h',
             'html/LabelsNodeList.cpp',
             'html/LabelsNodeList.h',
             'html/LinkRelAttribute.cpp',

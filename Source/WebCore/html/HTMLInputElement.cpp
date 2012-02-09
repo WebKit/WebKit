@@ -1243,13 +1243,6 @@ void HTMLInputElement::setDefaultValue(const String &value)
     setAttribute(valueAttr, value);
 }
 
-void HTMLInputElement::setInitialName(const AtomicString& name)
-{
-    ASSERT(hasTagName(isindexTag));
-    ASSERT(m_name.isNull());
-    m_name = name;
-}
-
 static inline bool isRFC2616TokenCharacter(UChar ch)
 {
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;

@@ -5938,8 +5938,6 @@
 		F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D8C1251F12D003EF269 /* HiddenInputType.h */; };
 		F55B3DC11251F12D003EF269 /* ImageInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */; };
 		F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D8E1251F12D003EF269 /* ImageInputType.h */; };
-		F55B3DC31251F12D003EF269 /* IsIndexInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D8F1251F12D003EF269 /* IsIndexInputType.cpp */; };
-		F55B3DC41251F12D003EF269 /* IsIndexInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D901251F12D003EF269 /* IsIndexInputType.h */; };
 		F55B3DC51251F12D003EF269 /* MonthInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D911251F12D003EF269 /* MonthInputType.cpp */; };
 		F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D921251F12D003EF269 /* MonthInputType.h */; };
 		F55B3DC71251F12D003EF269 /* NumberInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D931251F12D003EF269 /* NumberInputType.cpp */; };
@@ -12925,8 +12923,6 @@
 		F55B3D8C1251F12D003EF269 /* HiddenInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HiddenInputType.h; sourceTree = "<group>"; };
 		F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageInputType.cpp; sourceTree = "<group>"; };
 		F55B3D8E1251F12D003EF269 /* ImageInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInputType.h; sourceTree = "<group>"; };
-		F55B3D8F1251F12D003EF269 /* IsIndexInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IsIndexInputType.cpp; sourceTree = "<group>"; };
-		F55B3D901251F12D003EF269 /* IsIndexInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IsIndexInputType.h; sourceTree = "<group>"; };
 		F55B3D911251F12D003EF269 /* MonthInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonthInputType.cpp; sourceTree = "<group>"; };
 		F55B3D921251F12D003EF269 /* MonthInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonthInputType.h; sourceTree = "<group>"; };
 		F55B3D931251F12D003EF269 /* NumberInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberInputType.cpp; sourceTree = "<group>"; };
@@ -16915,8 +16911,6 @@
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
 				37E3524C12450C6600BAF5D9 /* InputType.h */,
-				F55B3D8F1251F12D003EF269 /* IsIndexInputType.cpp */,
-				F55B3D901251F12D003EF269 /* IsIndexInputType.h */,
 				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */,
@@ -22498,7 +22492,6 @@
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
-				F55B3DC41251F12D003EF269 /* IsIndexInputType.h in Headers */,
 				598D77DF132541FA00761B22 /* JavaArrayJSC.h in Headers */,
 				59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */,
 				598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */,
@@ -25532,7 +25525,6 @@
 				B275357D0B053814002CE64F /* IntRectMac.mm in Sources */,
 				B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */,
 				B275357E0B053814002CE64F /* IntSizeMac.mm in Sources */,
-				F55B3DC31251F12D003EF269 /* IsIndexInputType.cpp in Sources */,
 				598D77DD132541EE00761B22 /* JavaArrayJSC.cpp in Sources */,
 				59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */,
 				598D77E11325420400761B22 /* JavaFieldJSC.cpp in Sources */,

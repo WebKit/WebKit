@@ -2168,8 +2168,6 @@ webcore_sources += \
 	Source/WebCore/html/ImageInputType.h \
 	Source/WebCore/html/InputType.cpp \
 	Source/WebCore/html/InputType.h \
-	Source/WebCore/html/IsIndexInputType.cpp \
-	Source/WebCore/html/IsIndexInputType.h \
 	Source/WebCore/html/LabelsNodeList.cpp \
 	Source/WebCore/html/LabelsNodeList.h \
 	Source/WebCore/html/LinkRelAttribute.cpp \

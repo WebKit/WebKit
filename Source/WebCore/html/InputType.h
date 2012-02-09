@@ -292,7 +292,6 @@ const AtomicString& email();
 const AtomicString& file();
 const AtomicString& hidden();
 const AtomicString& image();
-const AtomicString& isindex();
 const AtomicString& month();
 const AtomicString& number();
 const AtomicString& password();

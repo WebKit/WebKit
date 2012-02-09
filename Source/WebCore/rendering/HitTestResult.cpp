@@ -552,7 +552,7 @@ bool HitTestResult::isContentEditable() const
     if (!m_innerNonSharedNode)
         return false;
 
-    if (m_innerNonSharedNode->hasTagName(textareaTag) || m_innerNonSharedNode->hasTagName(isindexTag))
+    if (m_innerNonSharedNode->hasTagName(textareaTag))
         return true;
 
     if (m_innerNonSharedNode->hasTagName(inputTag))

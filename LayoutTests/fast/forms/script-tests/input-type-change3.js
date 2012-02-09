@@ -32,7 +32,6 @@ check("file", "email"); // We can't change a concrete type to file for a securit
 check("hidden", "hidden");
 check("image", "image");
 check("isindex", "text");
-check("khtml_isindex", "");
 check("number", "number");
 check("password", "password");
 check("passwd", "text");
