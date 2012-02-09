@@ -1174,22 +1174,21 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     if (element->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
         return false;
 
-    if (!m_element->document()->containsValidityStyleRules())
-        return false;
+    if (m_element->document()->containsValidityStyleRules()) {
+        bool willValidate = element->willValidate();
 
-    bool willValidate = element->willValidate();
+        if (willValidate != m_element->willValidate())
+            return false;
 
-    if (willValidate != m_element->willValidate())
-        return false;
+        if (willValidate && (element->isValidFormControlElement() != m_element->isValidFormControlElement()))
+            return false;
 
-    if (willValidate && (element->isValidFormControlElement() != m_element->isValidFormControlElement()))
-        return false;
+        if (element->isInRange() != m_element->isInRange())
+            return false;
 
-    if (element->isInRange() != m_element->isInRange())
-        return false;
-
-    if (element->isOutOfRange() != m_element->isOutOfRange())
-        return false;
+        if (element->isOutOfRange() != m_element->isOutOfRange())
+            return false;
+    }
 
     return true;
 }

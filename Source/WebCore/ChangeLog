@@ -1,3 +1,16 @@
+2012-02-09  Andreas Kling  <awesomekling@apple.com>
+
+        REGRESSION(r53878): Input elements don't share their styles if the document contains no validity style rules.
+        <http://webkit.org/b/69400>
+
+        Reviewed by Kent Tamura.
+
+        Don't reject style sharing candidates prematurely just because the document doesn't
+        have any :valid or :invalid selectors.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithControl):
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Fixed typo in the following files. [TreatUndefinedAs] => [TreatAsUndefined].
