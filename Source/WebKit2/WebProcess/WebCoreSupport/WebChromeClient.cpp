@@ -780,7 +780,7 @@ bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direc
 
 void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
 {
-    m_page->send(Messages::WebPageProxy::NumWheelEventHandlersChanged(count));
+    m_page->numWheelEventHandlersChanged(count);
 }
 
 } // namespace WebKit

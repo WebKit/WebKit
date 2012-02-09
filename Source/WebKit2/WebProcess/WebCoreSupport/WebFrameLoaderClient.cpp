@@ -577,6 +577,8 @@ void WebFrameLoaderClient::dispatchDidLayout()
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didLayoutForFrame(webPage, m_frame);
 
+    webPage->recomputeShortCircuitHorizontalWheelEventsState();
+
     // NOTE: Unlike the other layout notifications, this does not notify the
     // the UIProcess for every call.
 

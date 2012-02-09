@@ -312,8 +312,6 @@ public:
     bool scrollsOverflow() const;
     bool allowsScrolling() const; // Returns true if at least one scrollbar is visible and enabled.
     bool hasScrollbars() const { return m_hBar || m_vBar; }
-    virtual void didAddHorizontalScrollbar(Scrollbar*);
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 

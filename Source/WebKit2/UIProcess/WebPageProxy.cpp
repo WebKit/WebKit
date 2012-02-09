@@ -195,6 +195,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameHasCustomRepresentation(false)
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
+    , m_canShortCircuitHorizontalWheelEvents(true)
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
     , m_pageCount(0)
@@ -3456,7 +3457,7 @@ void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const
 {
-    return m_wheelEventHandlerCount > 0;
+    return !m_canShortCircuitHorizontalWheelEvents;
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)

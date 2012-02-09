@@ -321,21 +321,6 @@ void FrameView::detachCustomScrollbars()
     }
 }
 
-void FrameView::didAddHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    if (m_frame && m_frame->document())
-        m_frame->document()->didAddWheelEventHandler();
-    ScrollView::didAddHorizontalScrollbar(scrollbar);
-}
-
-void FrameView::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    ScrollView::willRemoveHorizontalScrollbar(scrollbar);
-    // FIXME: maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
-    if (m_frame && m_frame->document())
-        m_frame->document()->didRemoveWheelEventHandler();
-}
-
 void FrameView::recalculateScrollbarOverlayStyle()
 {
     ScrollbarOverlayStyle oldOverlayStyle = scrollbarOverlayStyle();

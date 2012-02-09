@@ -206,6 +206,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isRunningModal(false)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
+    , m_canShortCircuitHorizontalWheelEvents(false)
+    , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
     , m_isShowingContextMenu(false)
 #if PLATFORM(WIN)
@@ -2998,6 +3000,68 @@ void WebPage::confirmCompositionForTesting(const String& compositionString)
     if (compositionString.isNull())
         frame->editor()->confirmComposition();
     frame->editor()->confirmComposition(compositionString);
+}
+
+void WebPage::numWheelEventHandlersChanged(unsigned numWheelEventHandlers)
+{
+    if (m_numWheelEventHandlers == numWheelEventHandlers)
+        return;
+
+    m_numWheelEventHandlers = numWheelEventHandlers;
+    recomputeShortCircuitHorizontalWheelEventsState();
+}
+
+static bool hasEnabledHorizontalScrollbar(ScrollableArea* scrollableArea)
+{
+    if (Scrollbar* scrollbar = scrollableArea->horizontalScrollbar())
+        return scrollbar->enabled();
+
+    return false;
+}
+
+static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
+{
+    if (FrameView* frameView = mainFrame->view()) {
+        if (hasEnabledHorizontalScrollbar(frameView))
+            return true;
+    }
+
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView)
+            continue;
+
+        const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+        if (!scrollableAreas)
+            continue;
+
+        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+            ScrollableArea* scrollableArea = *it;
+            ASSERT(scrollableArea->isOnActivePage());
+
+            if (hasEnabledHorizontalScrollbar(scrollableArea))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
+{
+    bool canShortCircuitHorizontalWheelEvents = !m_numWheelEventHandlers;
+
+    if (canShortCircuitHorizontalWheelEvents) {
+        // Check if we have any horizontal scroll bars on the page.
+        if (pageContainsAnyHorizontalScrollbars(mainFrame()))
+            canShortCircuitHorizontalWheelEvents = false;
+    }
+
+    if (m_canShortCircuitHorizontalWheelEvents == canShortCircuitHorizontalWheelEvents)
+        return;
+
+    m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents;
+    send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
 Frame* WebPage::mainFrame() const

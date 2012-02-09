@@ -86,8 +86,6 @@ public:
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
 
     virtual bool avoidScrollbarCreation() const;
-    virtual void didAddHorizontalScrollbar(Scrollbar*);
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
     virtual void setContentsSize(const IntSize&);
 

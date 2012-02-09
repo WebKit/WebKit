@@ -1,3 +1,45 @@
+2012-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Don't use the wheel event handler count to track if a page has horizontal scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=78192
+
+        Reviewed by Andreas Kling.
+
+        Prior to this change, we were incrementing and decrementing the wheel event handler count
+        whenever a scrollable area gained or lost a horizontal scrollbar, so we could use the count
+        to determine if Safari can handle horizontal wheel events directly or whether they have to be sent
+        to the web process first.
+
+        What this meant was that whenever a page had horizontal scrollbars we'd have to send all scroll wheel events
+        to the main thread instead of the scrolling thread, regardless of whether there were any wheel event handlers.
+        
+        After this change, we traverse the tree of scrollable areas after every layout and check if any of them
+        have a horizontal scrollbar. (We still also check if there are wheel event handlers).
+
+        If traversing the tree after every layout is deemed to slow we can go back to caching the number of horizontal scrollbars
+        in a page, but the number of subframes in a page is usually very small and the number of other scrollable areas is even smaller.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::willHandleHorizontalScrollEvents):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setCanShortCircuitHorizontalWheelEvents):
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::numWheelEventHandlersChanged):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::numWheelEventHandlersChanged):
+        (WebKit):
+        (WebKit::hasEnabledHorizontalScrollbar):
+        (WebKit::pageContainsAnyHorizontalScrollbars):
+        (WebKit::WebPage::recomputeShortCircuitHorizontalWheelEventsState):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106920, r106924, r106933, r106939,

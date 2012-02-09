@@ -500,6 +500,9 @@ public:
     void gestureEvent(const WebGestureEvent&);
 #endif
 
+    void numWheelEventHandlersChanged(unsigned);
+    void recomputeShortCircuitHorizontalWheelEventsState();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -756,6 +759,8 @@ private:
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
+    bool m_canShortCircuitHorizontalWheelEvents;
+    unsigned m_numWheelEventHandlers;
 
     unsigned m_cachedPageCount;
 
