@@ -12,14 +12,20 @@
 <body>
 <div id="console"></div>
 
-<p>Output test: The following text field should have a localized representation for "-1234.5678".
+<p>Output test 1: The following text field should have a localized representation for "-1234.5678".
 e.g. "-1234.5678" for en_US locale, "-1234,5678" for fr_FR locale. The thousand separator is
 currently off.</p>
 <div><input type=number value="-1234.5678" step=any></div>
 
-<p>Input test: Type a localized representation of a number (e.g. -1,234.5678 for en_US locale,
+<p>Output test 2: The following text field should have "-1234.5678E+12" in any locale.
+</p>
+<div><input type=number value="-1234.5678E+12" step=any></div>
+
+<p>Input test 1: Type a localized representation of a number (e.g. -1,234.5678 for en_US locale,
 -1.234,5678 for fr_FR locale) into the following text field.
 You'll see an equivalent number in the standard format on the bottom of the text field.</p>
+<p>Input test 2: Type a number in the scientific notation (e.g. 0.1234e-10.)
+You'll see the same number string on the bottom of the text field.</p>
 <div><input type=number id=target step=any oninput="handleInput()"></div>
 <div>Standard format: <output id=output></output></div>
 

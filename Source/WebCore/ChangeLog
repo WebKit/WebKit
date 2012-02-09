@@ -1,3 +1,23 @@
+2012-02-09  Kent Tamura  <tkent@chromium.org>
+
+        Do not localize numbers in scientific notation
+        https://bugs.webkit.org/show_bug.cgi?id=78208
+
+        Reviewed by Hajime Morita.
+
+        For a preparation of fixing http://wkb.ug/62939, we stop supporting
+        localized numbers in scientific notation in <input type=number>.
+
+        We're going to change number localization processing so that it replaces
+        letters one by one. It will be very hard to support scientific notation.
+
+        * html/NumberInputType.cpp:
+        (WebCore::isE): A helper functio for String::find() to detect scientific notation.
+        (WebCore::NumberInputType::visibleValue): Avoid localization for scientific notation.
+        (WebCore::NumberInputType::convertFromVisibleValue): ditto.
+        (WebCore::NumberInputType::isAcceptableValue):
+        Use convertFromVisibleValue, also stop accepting a standard format as a fallback.
+
 2012-02-09  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         EntryBase.cpp is missing in CMake build system when turning on ENABLE_FILE_SYSTEM

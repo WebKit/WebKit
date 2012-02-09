@@ -283,10 +283,18 @@ void NumberInputType::handleBlurEvent()
     element()->updateInnerTextValue();
 }
 
+static bool isE(UChar ch)
+{
+    return ch == 'e' || ch == 'E';
+}
+
 String NumberInputType::visibleValue() const
 {
     String currentValue = element()->value();
     if (currentValue.isEmpty())
+        return currentValue;
+    // We don't localize scientific notations.
+    if (currentValue.find(isE) != notFound)
         return currentValue;
     // FIXME: The following three lines should be removed when we
     // remove the second argument of convertToLocalizedNumber().
@@ -300,12 +308,16 @@ String NumberInputType::convertFromVisibleValue(const String& visibleValue) cons
 {
     if (visibleValue.isEmpty())
         return visibleValue;
+    // We don't localize scientific notations.
+    if (visibleValue.find(isE) != notFound)
+        return visibleValue;
     return convertFromLocalizedNumber(visibleValue);
 }
 
 bool NumberInputType::isAcceptableValue(const String& proposedValue)
 {
-    return proposedValue.isEmpty() || parseToDoubleForNumberType(convertFromLocalizedNumber(proposedValue), 0) || parseToDoubleForNumberType(proposedValue, 0);
+    String standardValue = convertFromVisibleValue(proposedValue);
+    return standardValue.isEmpty() || parseToDoubleForNumberType(standardValue, 0);
 }
 
 String NumberInputType::sanitizeValue(const String& proposedValue) const
