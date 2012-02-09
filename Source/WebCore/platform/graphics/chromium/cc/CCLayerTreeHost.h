@@ -33,6 +33,7 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
+#include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -74,7 +75,7 @@ struct CCSettings {
             , refreshRate(0)
             , perTilePainting(false)
             , partialSwapEnabled(false)
-            , partialTextureUpdates(true) { }
+            , maxPartialTextureUpdates(std::numeric_limits<size_t>::max()) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
@@ -83,7 +84,7 @@ struct CCSettings {
     double refreshRate;
     bool perTilePainting;
     bool partialSwapEnabled;
-    bool partialTextureUpdates;
+    size_t maxPartialTextureUpdates;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
@@ -192,6 +193,7 @@ public:
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
 
+    bool requestPartialTextureUpdate();
     void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
 
 protected:
@@ -243,6 +245,7 @@ private:
     bool m_triggerIdlePaints;
 
     TextureList m_deleteTextureAfterCommitList;
+    size_t m_partialTextureUpdateRequests;
 };
 
 }

@@ -53,7 +53,11 @@ namespace WebCore {
 class UpdatableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(UpdatableTile);
 public:
-    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture) : m_texture(texture) { }
+    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
+        : m_partialUpdate(false)
+        , m_texture(texture)
+    {
+    }
 
     LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
     ManagedTexture* managedTexture() { return m_texture->texture(); }
@@ -68,6 +72,7 @@ public:
     IntRect m_dirtyRect;
     IntRect m_updateRect;
     IntRect m_opaqueRect;
+    bool m_partialUpdate;
 private:
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
@@ -210,7 +215,10 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
             if (paintOffset.y() + destRect.height() > m_paintRect.height())
                 CRASH();
 
-            updater.append(tile->texture(), sourceRect, destRect);
+            if (tile->m_partialUpdate)
+                updater.appendPartial(tile->texture(), sourceRect, destRect);
+            else
+                updater.append(tile->texture(), sourceRect, destRect);
         }
     }
 
@@ -351,12 +359,42 @@ void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
     }
 }
 
+// Returns true if tile is dirty and only part of it needs to be updated.
+bool TiledLayerChromium::tileOnlyNeedsPartialUpdate(UpdatableTile* tile)
+{
+    if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
+        return false;
+
+    if (!tile->isDirty())
+        return false;
+
+    return !tile->m_dirtyRect.contains(m_tiler->tileRect(tile));
+}
+
+// Dirty tiles with valid textures needs buffered update to guarantee that
+// we don't modify textures currently used for drawing by the impl thread.
+bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
+{
+    // No impl thread?.
+    if (!CCProxy::hasImplThread())
+        return false;
+
+    if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
+        return false;
+
+    if (!tile->isDirty())
+        return false;
+
+    return true;
+}
+
 void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom)
 {
     // Reset m_updateRect for all tiles.
     for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
         tile->m_updateRect = IntRect();
+        tile->m_partialUpdate = false;
     }
 
     createTextureUpdaterIfNeeded();
@@ -372,9 +410,11 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 tile = createTile(i, j);
 
-            // Do post commit deletion of current texture when partial texture
-            // updates are not used.
-            if (tile->isDirty() && layerTreeHost() && !layerTreeHost()->settings().partialTextureUpdates)
+            // FIXME: Decide if partial update should be allowed based on cost
+            // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
+            if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost() && layerTreeHost()->requestPartialTextureUpdate())
+                tile->m_partialUpdate = true;
+            else if (tileNeedsBufferedUpdate(tile) && layerTreeHost())
                 layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
 
             if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))

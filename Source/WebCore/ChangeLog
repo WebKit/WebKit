@@ -1,3 +1,59 @@
+2012-02-08  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Avoid unnecessary full tile updates without breaking atomicity of commits.
+        https://bugs.webkit.org/show_bug.cgi?id=76740
+
+        Reviewed by James Robinson.
+
+        Allow the final batch of texture uploads to be performed without
+        allocating new textures and re-painting complete tiles.
+
+        This patch is tested by the following unit test:
+        - CCLayerTreeHostTestAtomicCommitWithPartialUpdate.runMultiThread
+        - TiledLayerChromiumTest.partialUpdates
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::UpdatableTile):
+        (UpdatableTile):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore):
+        (WebCore::TiledLayerChromium::tileOnlyNeedsPartialUpdate):
+        (WebCore::TiledLayerChromium::tileNeedsBufferedUpdate):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::requestPartialTextureUpdate):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (CCSettings):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::doCommit):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::CCSingleThreadProxy::maxPartialTextureUpdates):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::append):
+        (WebCore):
+        (WebCore::CCTextureUpdater::appendPartial):
+        (WebCore::CCTextureUpdater::hasMoreUpdates):
+        (WebCore::CCTextureUpdater::update):
+        (WebCore::CCTextureUpdater::clear):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        (CCTextureUpdater):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WTF):
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        (WebCore::CCThreadProxy::maxPartialTextureUpdates):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         Replacement text should be available from the marker.

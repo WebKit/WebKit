@@ -33,6 +33,7 @@
 #include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>
 
+using namespace std;
 using namespace WTF;
 
 namespace WebCore {
@@ -172,7 +173,8 @@ void CCSingleThreadProxy::doCommit()
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
         CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
-        while (updater.update(m_layerTreeHostImpl->context(), 1)) { }
+        updater.update(m_layerTreeHostImpl->context(), numeric_limits<size_t>::max());
+        ASSERT(!updater.hasMoreUpdates());
         m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 

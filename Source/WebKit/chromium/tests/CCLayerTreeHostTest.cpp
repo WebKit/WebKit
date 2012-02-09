@@ -1147,16 +1147,15 @@ public:
 class CCLayerTreeHostTestAtomicCommit : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestAtomicCommit()
-        : m_updateCheckLayer(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
-        , m_numCommits(0)
+        : m_layer(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
     {
         // Make sure partial texture updates are turned off.
-        m_settings.partialTextureUpdates = false;
+        m_settings.maxPartialTextureUpdates = 0;
     }
 
     virtual void beginTest()
     {
-        m_layerTreeHost->setRootLayer(m_updateCheckLayer);
+        m_layerTreeHost->setRootLayer(m_layer);
         m_layerTreeHost->setViewportSize(IntSize(10, 10));
 
         postSetNeedsCommitToMainThread();
@@ -1173,7 +1172,7 @@ public:
             EXPECT_EQ(1, context->numTextures());
             // Number of textures used for commit should be one.
             EXPECT_EQ(1, context->numUsedTextures());
-            // Verify used texture is correct.
+            // Verify that used texture is correct.
             EXPECT_TRUE(context->usedTexture(context->texture(0)));
 
             context->resetUsedTextures();
@@ -1214,7 +1213,7 @@ public:
 
     virtual void layout()
     {
-        m_updateCheckLayer->setNeedsDisplay();
+        m_layer->setNeedsDisplay();
     }
 
     virtual void afterTest()
@@ -1223,11 +1222,136 @@ public:
 
 private:
     MockContentLayerDelegate m_delegate;
-    RefPtr<ContentLayerChromiumWithUpdateTracking> m_updateCheckLayer;
-    int m_numCommits;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_layer;
 };
 
 TEST_F(CCLayerTreeHostTestAtomicCommit, runMultiThread)
+{
+    runTest(true);
+}
+
+class CCLayerTreeHostTestAtomicCommitWithPartialUpdate : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestAtomicCommitWithPartialUpdate()
+        : m_parent(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
+        , m_child(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
+        , m_numCommits(0)
+    {
+        // Allow one partial texture update.
+        m_settings.maxPartialTextureUpdates = 1;
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setRootLayer(m_parent);
+        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_parent->addChild(m_child);
+        m_child->setOpacity(0.5);
+        m_child->setBounds(IntSize(20, 20));
+
+        postSetNeedsCommitToMainThread();
+        postSetNeedsRedrawToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
+
+        switch (impl->frameNumber()) {
+        case 0:
+            // Number of textures should be two.
+            EXPECT_EQ(2, context->numTextures());
+            // Number of textures used for commit should be two.
+            EXPECT_EQ(2, context->numUsedTextures());
+            // Verify that used textures are correct.
+            EXPECT_TRUE(context->usedTexture(context->texture(0)));
+            EXPECT_TRUE(context->usedTexture(context->texture(1)));
+
+            context->resetUsedTextures();
+            break;
+        case 1:
+            // Number of textures should be four as the first two
+            // textures are used by the impl thread.
+            EXPECT_EQ(4, context->numTextures());
+            // Number of textures used for commit should still be two.
+            EXPECT_EQ(2, context->numUsedTextures());
+            // First two textures should not have been used.
+            EXPECT_FALSE(context->usedTexture(context->texture(0)));
+            EXPECT_FALSE(context->usedTexture(context->texture(1)));
+            // New textures should have been used.
+            EXPECT_TRUE(context->usedTexture(context->texture(2)));
+            EXPECT_TRUE(context->usedTexture(context->texture(3)));
+
+            context->resetUsedTextures();
+            break;
+        case 2:
+            // Number of textures should be three as we allow one
+            // partial update and the first two textures are used by
+            // the impl thread.
+            EXPECT_EQ(3, context->numTextures());
+            // Number of textures used for commit should still be two.
+            EXPECT_EQ(2, context->numUsedTextures());
+            // First texture should not have been used.
+            EXPECT_FALSE(context->usedTexture(context->texture(0)));
+            // Second texture should have been used.
+            EXPECT_TRUE(context->usedTexture(context->texture(1)));
+            // New textures should have been used.
+            EXPECT_TRUE(context->usedTexture(context->texture(2)));
+
+            context->resetUsedTextures();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
+
+        // Number of textures used for drawing should always be two.
+        EXPECT_EQ(2, context->numUsedTextures());
+
+        if (impl->frameNumber() < 3) {
+            context->resetUsedTextures();
+            postSetNeedsAnimateAndCommitToMainThread();
+            postSetNeedsRedrawToMainThread();
+        } else
+            endTest();
+    }
+
+    virtual void layout()
+    {
+        switch (m_numCommits++) {
+        case 0:
+        case 1:
+            m_parent->setNeedsDisplay();
+            m_child->setNeedsDisplay();
+            break;
+        case 2:
+            // Damage part of layers.
+            m_parent->setNeedsDisplayRect(FloatRect(0, 0, 5, 5));
+            m_child->setNeedsDisplayRect(FloatRect(0, 0, 5, 5));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    MockContentLayerDelegate m_delegate;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_parent;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_child;
+    int m_numCommits;
+};
+
+TEST_F(CCLayerTreeHostTestAtomicCommitWithPartialUpdate, runMultiThread)
 {
     runTest(true);
 }

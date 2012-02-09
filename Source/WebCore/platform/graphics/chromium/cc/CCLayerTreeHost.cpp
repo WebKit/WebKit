@@ -39,6 +39,8 @@
 #include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
 
+using namespace std;
+
 namespace {
 static int numLayerTreeInstances;
 }
@@ -71,6 +73,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_minPageScale(1)
     , m_maxPageScale(1)
     , m_triggerIdlePaints(true)
+    , m_partialTextureUpdateRequests(0)
 {
     ASSERT(CCProxy::isMainThread());
     numLayerTreeInstances++;
@@ -120,7 +123,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
     // Update m_settings based on partial update capability.
-    m_settings.partialTextureUpdates = m_settings.partialTextureUpdates && m_proxy->partialTextureUpdateCapability();
+    m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
     m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
                                                       TextureManager::reclaimLimitBytes(viewportSize()),
@@ -415,6 +418,9 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
+    // Reset partial texture update requests.
+    m_partialTextureUpdateRequests = 0;
+
     reserveTextures();
 
     paintLayerContents(m_updateList, PaintVisible);
@@ -621,6 +627,15 @@ void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)
         it->second->stop();
         m_rateLimiters.remove(it);
     }
+}
+
+bool CCLayerTreeHost::requestPartialTextureUpdate()
+{
+    if (m_partialTextureUpdateRequests >= m_settings.maxPartialTextureUpdates)
+        return false;
+
+    m_partialTextureUpdateRequests++;
+    return true;
 }
 
 void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> texture)

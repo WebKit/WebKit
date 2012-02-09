@@ -107,6 +107,9 @@ private:
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);
 
+    bool tileOnlyNeedsPartialUpdate(UpdatableTile*);
+    bool tileNeedsBufferedUpdate(UpdatableTile*);
+
     void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom);
     IntRect idlePaintRect(const IntRect& visibleLayerRect);
 

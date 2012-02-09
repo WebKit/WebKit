@@ -60,13 +60,24 @@ class FakeLayerTextureUpdater : public LayerTextureUpdater {
 public:
     class Texture : public LayerTextureUpdater::Texture {
     public:
-        Texture(PassOwnPtr<ManagedTexture> texture) : LayerTextureUpdater::Texture(texture) { }
+        Texture(FakeLayerTextureUpdater* layer, PassOwnPtr<ManagedTexture> texture)
+            : LayerTextureUpdater::Texture(texture)
+            , m_layer(layer)
+        {
+        }
         virtual ~Texture() { }
 
-        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect&, const IntRect&) { }
+        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect&, const IntRect&) { m_layer->updateRect(); }
+
+    private:
+        FakeLayerTextureUpdater* m_layer;
     };
 
-    FakeLayerTextureUpdater() : m_prepareCount(0) { }
+    FakeLayerTextureUpdater()
+        : m_prepareCount(0)
+        , m_updateCount(0)
+    {
+    }
     virtual ~FakeLayerTextureUpdater() { }
 
     // Sets the rect to invalidate during the next call to prepareToUpdate(). After the next
@@ -77,17 +88,23 @@ public:
     int prepareCount() const { return m_prepareCount; }
     void clearPrepareCount() { m_prepareCount = 0; }
 
+    // Number of times updateRect has been invoked.
+    int updateCount() const { return m_updateCount; }
+    void clearUpdateCount() { m_updateCount = 0; }
+    void updateRect() { m_updateCount++; }
+
     void setOpaquePaintRect(const IntRect& opaquePaintRect) { m_opaquePaintRect = opaquePaintRect; }
 
     // Last rect passed to prepareToUpdate().
     const IntRect& lastUpdateRect()  const { return m_lastUpdateRect; }
 
-    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(this, ManagedTexture::create(manager))); }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect* resultingOpaqueRect);
 
 private:
     int m_prepareCount;
+    int m_updateCount;
     IntRect m_rectToInvalidate;
     IntRect m_lastUpdateRect;
     IntRect m_opaquePaintRect;
@@ -155,8 +172,6 @@ public:
     }
 
 private:
-    virtual void createTextureUpdater(const CCLayerTreeHost*) { }
-
     virtual LayerTextureUpdater* textureUpdater() const
     {
         return m_fakeTextureUpdater.get();
@@ -577,6 +592,77 @@ TEST(TiledLayerChromiumTest, resizeToSmaller)
 
     layer->setBounds(IntSize(200, 200));
     layer->invalidateRect(IntRect(0, 0, 200, 200));
+}
+
+TEST(TiledLayerChromiumTest, partialUpdates)
+{
+    CCSettings settings;
+    settings.maxPartialTextureUpdates = 4;
+    // Initialize without threading support.
+    WebKit::WebCompositor::initialize(0);
+    FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
+    RefPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, settings);
+
+    // Create one 500 x 300 tiled layer.
+    IntSize contentBounds(300, 200);
+    IntRect contentRect(IntPoint::zero(), contentBounds);
+
+    OwnPtr<TextureManager> textureManager = TextureManager::create(60*1024*1024, 60*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    layer->setBounds(contentBounds);
+    layer->setPosition(FloatPoint(150, 150));
+    layer->invalidateRect(contentRect);
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    ccLayerTreeHost->setRootLayer(layer);
+    ccLayerTreeHost->setViewportSize(IntSize(300, 200));
+
+    // Full update of all 6 tiles.
+    ccLayerTreeHost->updateLayers();
+    ccLayerTreeHost->updateCompositorResources(ccLayerTreeHost->context(), updater);
+    updater.update(0, 4);
+    EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_TRUE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    updater.update(0, 4);
+    EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_FALSE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    ccLayerTreeHost->commitComplete();
+
+    // Full update of 3 tiles and partial update of 3 tiles.
+    layer->invalidateRect(IntRect(0, 0, 300, 150));
+    ccLayerTreeHost->updateLayers();
+    ccLayerTreeHost->updateCompositorResources(ccLayerTreeHost->context(), updater);
+    updater.update(0, 4);
+    EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_TRUE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    updater.update(0, 4);
+    EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_FALSE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    ccLayerTreeHost->commitComplete();
+
+    // Partial update of 6 tiles.
+    layer->invalidateRect(IntRect(50, 50, 200, 100));
+    ccLayerTreeHost->updateLayers();
+    ccLayerTreeHost->updateCompositorResources(ccLayerTreeHost->context(), updater);
+    updater.update(0, 4);
+    EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_TRUE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    updater.update(0, 4);
+    EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
+    EXPECT_FALSE(updater.hasMoreUpdates());
+    layer->fakeLayerTextureUpdater()->clearUpdateCount();
+    ccLayerTreeHost->commitComplete();
+
+    ccLayerTreeHost->setRootLayer(0);
+    ccLayerTreeHost.clear();
+    WebKit::WebCompositor::shutdown();
 }
 
 } // namespace

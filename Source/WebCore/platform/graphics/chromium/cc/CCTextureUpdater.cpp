@@ -48,7 +48,7 @@ CCTextureUpdater::~CCTextureUpdater()
 {
 }
 
-void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect, Vector<UpdateEntry>& entries)
 {
     ASSERT(texture);
 
@@ -56,24 +56,50 @@ void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRe
     entry.m_texture = texture;
     entry.m_sourceRect = sourceRect;
     entry.m_destRect = destRect;
-    m_entries.append(entry);
+    entries.append(entry);
+}
+
+void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+{
+    append(texture, sourceRect, destRect, m_entries);
+}
+
+void CCTextureUpdater::appendPartial(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+{
+    append(texture, sourceRect, destRect, m_partialEntries);
 }
 
 bool CCTextureUpdater::hasMoreUpdates() const
 {
-    return m_entries.size();
+    return m_entries.size() || m_partialEntries.size();
 }
 
 bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
 {
+    size_t index;
     size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (; m_entryIndex < maxIndex; ++m_entryIndex) {
-        UpdateEntry& entry = m_entries[m_entryIndex];
+    for (index = m_entryIndex; index < maxIndex; ++index) {
+        UpdateEntry& entry = m_entries[index];
         entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
     }
 
-    if (maxIndex < m_entries.size())
+    bool moreUpdates = maxIndex < m_entries.size();
+
+    ASSERT(m_partialEntries.size() <= count);
+    // Make sure the number of updates including partial updates are not more
+    // than |count|.
+    if ((count - (index - m_entryIndex)) < m_partialEntries.size())
+        moreUpdates = true;
+
+    if (moreUpdates) {
+        m_entryIndex = index;
         return true;
+    }
+
+    for (index = 0; index < m_partialEntries.size(); ++index) {
+        UpdateEntry& entry = m_partialEntries[index];
+        entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
+    }
 
     // If no entries left to process, auto-clear.
     clear();
@@ -84,6 +110,7 @@ void CCTextureUpdater::clear()
 {
     m_entryIndex = 0;
     m_entries.clear();
+    m_partialEntries.clear();
 }
 
 }
