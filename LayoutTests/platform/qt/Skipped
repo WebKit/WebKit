@@ -2534,10 +2534,6 @@ fast/parser/nested-fragment-parser-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=77729
 fast/events/touch/emulate-touch-events.html 
 
-# [Qt] REGRESSION(r106918): It made svg/as-object/nested-embedded-svg-size-changes.html fail in debug mode
-# https://bugs.webkit.org/show_bug.cgi?id=78026
-svg/as-object/nested-embedded-svg-size-changes.html
-
 # [Qt] fast/text/international/inline-plaintext-is-isolated.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=78092
 fast/text/international/inline-plaintext-is-isolated.html

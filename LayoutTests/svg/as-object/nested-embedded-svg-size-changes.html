@@ -23,12 +23,22 @@
         shouldBeEqualToString("document.defaultView.getComputedStyle(object1).width", "400px");
         shouldBeEqualToString("document.defaultView.getComputedStyle(object1).height", "200px");
 
-        setTimeout(function() {
-            var htmlDoc = object1.contentDocument;
-            var htmlWindow = htmlDoc.defaultView;
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+        requestSizeChange();
+    }
+
+    function requestSizeChange() {
+        object1 = document.getElementsByTagName("object")[0];
+        var htmlDoc = object1.contentDocument;
+        var htmlWindow = htmlDoc.defaultView;
+
+        // Wait until the embedded SVG (of the embedded HTML that we're loading), is loaded.
+        if (htmlWindow.canChangeSize) {
             htmlWindow.changeSize();
             test3();
-        }, 0);
+        } else
+            setTimeout(requestSizeChange, 50);
     }
 
     function test3() {
@@ -62,8 +72,6 @@
 <div id="console"></div>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
     description("This test checks that intrinsic size changes of an embedded SVG cause immediate updates of the object that embeds it.");
     test1();
 </script>
