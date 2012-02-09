@@ -1,5 +1,13 @@
 2012-02-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed followup for r107235.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._hideNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._navigatorOverlayWillHide):
+
+2012-02-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Support hiding scripts panel debug sidebar.
         https://bugs.webkit.org/show_bug.cgi?id=77543
 
