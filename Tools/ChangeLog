@@ -1,5 +1,17 @@
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
+        Remove Python 2.5 support from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=71593
+
+        Reviewed by Eric Seidel.
+
+        This is the last vestige of our Python 2.5 support.
+
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractQueueTest.test_log_from_script_error_for_upload):
+
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
         version_check.py should inform users that we don't support Python 2.5 anymore
         https://bugs.webkit.org/show_bug.cgi?id=78179
 
