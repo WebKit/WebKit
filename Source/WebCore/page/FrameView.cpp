@@ -1463,6 +1463,10 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         RenderBox* renderBox = *it;
         if (renderBox->style()->position() != FixedPosition)
             continue;
+#if USE(ACCELERATED_COMPOSITING)
+        if (renderBox->layer()->isComposited())
+            continue;
+#endif
         IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
         updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
