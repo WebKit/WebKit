@@ -64,10 +64,10 @@ module core {
 
         // DOM Level 3 Core
 
-        readonly attribute [TreatReturnedNullStringTo=Null] DOMString inputEncoding;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString inputEncoding;
 
-        readonly attribute [TreatReturnedNullStringTo=Null] DOMString xmlEncoding;
-                 attribute [TreatReturnedNullStringTo=Null, TreatNullAs=NullString] DOMString xmlVersion
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString xmlEncoding;
+                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString xmlVersion
                     setter raises (DOMException);
                  attribute boolean xmlStandalone
                     setter raises (DOMException);
@@ -75,7 +75,7 @@ module core {
         Node               adoptNode(in [Optional=TreatAsUndefined] Node source)
             raises (DOMException);
 
-                 attribute [TreatReturnedNullStringTo=Null, TreatNullAs=NullString] DOMString documentURI;
+                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString documentURI;
 
         // DOM Level 2 Events (DocumentEvents interface)
 
@@ -141,7 +141,7 @@ module core {
         boolean            queryCommandIndeterm(in [Optional=TreatAsUndefined] DOMString command);
         boolean            queryCommandState(in [Optional=TreatAsUndefined] DOMString command);
         boolean            queryCommandSupported(in [Optional=TreatAsUndefined] DOMString command);
-        [TreatReturnedNullStringTo=False] DOMString queryCommandValue(in [Optional=TreatAsUndefined] DOMString command);
+        [TreatReturnedNullStringAs=False] DOMString queryCommandValue(in [Optional=TreatAsUndefined] DOMString command);
 
         // Moved down from HTMLDocument
 
@@ -184,9 +184,9 @@ module core {
 
         // IE extensions
 
-                 attribute [TreatReturnedNullStringTo=Undefined, TreatNullAs=NullString] DOMString charset;
-        readonly attribute [TreatReturnedNullStringTo=Undefined] DOMString defaultCharset;
-        readonly attribute [TreatReturnedNullStringTo=Undefined] DOMString readyState;
+                 attribute [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] DOMString charset;
+        readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString defaultCharset;
+        readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString readyState;
 
         Element            elementFromPoint(in [Optional=TreatAsUndefined] long x, 
                                             in [Optional=TreatAsUndefined] long y);
@@ -197,12 +197,12 @@ module core {
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         DOMSelection       getSelection();
 #endif
-        readonly attribute [TreatReturnedNullStringTo=Null] DOMString characterSet;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString characterSet;
 
         // WebKit extensions
 
-        readonly attribute [TreatReturnedNullStringTo=Null] DOMString preferredStylesheetSet;
-                 attribute [TreatReturnedNullStringTo=Null, TreatNullAs=NullString] DOMString selectedStylesheetSet;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString preferredStylesheetSet;
+                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString selectedStylesheetSet;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         CSSStyleDeclaration createCSSStyleDeclaration();

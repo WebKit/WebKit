@@ -30,14 +30,14 @@ module css {
         CustomGetPropertyNames,
         V8DependentLifetime
     ] CSSStyleDeclaration {
-                 attribute [TreatReturnedNullStringTo=Null, TreatNullAs=NullString] DOMString        cssText
+                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
                      setter raises(DOMException);
 
-        [TreatReturnedNullStringTo=Null] DOMString          getPropertyValue(in [Optional=TreatAsUndefined] DOMString propertyName);
+        [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Optional=TreatAsUndefined] DOMString propertyName);
         [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=TreatAsUndefined] DOMString propertyName);
-        [TreatReturnedNullStringTo=Null] DOMString          removeProperty(in [Optional=TreatAsUndefined] DOMString propertyName)
+        [TreatReturnedNullStringAs=Null] DOMString          removeProperty(in [Optional=TreatAsUndefined] DOMString propertyName)
             raises(DOMException);
-        [TreatReturnedNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=TreatAsUndefined] DOMString propertyName);
+        [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority(in [Optional=TreatAsUndefined] DOMString propertyName);
         [ObjCLegacyUnnamedParameters] void setProperty(in [Optional=TreatAsUndefined] DOMString propertyName, 
                                         in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString value, 
                                         in [Optional=TreatAsUndefined] DOMString priority)
@@ -48,7 +48,7 @@ module css {
         readonly attribute CSSRule          parentRule;
 
         // Extensions
-        [TreatReturnedNullStringTo=Null] DOMString          getPropertyShorthand(in [Optional=TreatAsUndefined] DOMString propertyName);
+        [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand(in [Optional=TreatAsUndefined] DOMString propertyName);
         boolean            isPropertyImplicit(in [Optional=TreatAsUndefined] DOMString propertyName);
     };
 

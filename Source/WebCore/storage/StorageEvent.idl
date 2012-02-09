@@ -29,8 +29,8 @@ module storage {
         ConstructorTemplate=Event
     ] StorageEvent : Event {
         readonly attribute [InitializedByEventConstructor] DOMString key;
-        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringTo=Null] DOMString oldValue;
-        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringTo=Null] DOMString newValue;
+        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString oldValue;
+        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString newValue;
         readonly attribute [InitializedByEventConstructor] DOMString url;
         readonly attribute [InitializedByEventConstructor] Storage storageArea;
 

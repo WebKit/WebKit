@@ -29,7 +29,7 @@ module core {
         IndexedGetter
     ] DOMStringList {
         readonly attribute unsigned long length;
-        [TreatReturnedNullStringTo=Null] DOMString item(in [IsIndex,Optional=TreatAsUndefined] unsigned long index);
+        [TreatReturnedNullStringAs=Null] DOMString item(in [IsIndex,Optional=TreatAsUndefined] unsigned long index);
         boolean contains(in [Optional=TreatAsUndefined] DOMString string);
     };
 
