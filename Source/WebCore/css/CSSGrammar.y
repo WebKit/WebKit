@@ -1530,12 +1530,6 @@ calc_func_operator:
     | '/' maybe_space {
         $$ = '/';
     }
-    | IDENT maybe_space {
-        if (equalIgnoringCase("mod", $1.characters, $1.length))
-            $$ = '%';
-        else
-            $$ = 0;
-    }
   ;
 
 calc_func_paren_expr:

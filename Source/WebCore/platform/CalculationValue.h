@@ -44,7 +44,6 @@ enum CalcOperator {
     CalcSubtract = '-',
     CalcMultiply = '*',
     CalcDivide = '/',
-    CalcMod = '%'
 };
 
 } // namespace WebCore

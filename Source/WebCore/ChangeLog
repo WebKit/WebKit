@@ -1,3 +1,19 @@
+2012-02-09  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc() - remove mod
+        https://bugs.webkit.org/show_bug.cgi?id=78226
+
+        mod has been removed from the spec for calc().
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcBinaryOperation::create):
+        (WebCore::CSSCalcBinaryOperation::evaluate):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        * css/CSSGrammar.y:
+        * platform/CalculationValue.h:
+
 2012-02-09  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: rename DOMEditor to DOMPatchSupport, move undoable actions from

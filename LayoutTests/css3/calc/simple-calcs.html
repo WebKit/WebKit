@@ -36,9 +36,7 @@
 <div class="width-test" style="width: -webkit-calc(50px*(12 - 10));">50px*(12 - 10)</div>
 <div class="width-test" style="width: -webkit-calc(50px*(10 / 5));">50px*(10 / 5)</div>
 <div class="width-test" style="width: -webkit-calc(10px* (5 * 2));">10px* (5 * 2)</div>
-<div class="width-test" style="width: -webkit-calc(50px* (12 mod 10));">50px* (12 mod 10)</div>
 <div class="width-test" style="width: -webkit-calc(50px + 10px * 5);">50px + 10px * 5 (operation order)</div>
-<div class="width-test" style="width: -webkit-calc(1100px mod 1000);">1100px mod 1000</div>
 <div style="width: 200px; background-color: white;" class="wrapper">
     <div class="width-test" style="width: -webkit-calc(100%/2);">100%/2 (where 100% is 200px)</div>
 </div>
@@ -66,12 +64,6 @@
 <div style="width: 200px; background-color: white;" class="wrapper">
     <div class="width-test" style="width: -webkit-calc(5 * 10%);">5 * 10% (where 100% is 200px)</div>
 </div>
-<!--
- FIXME: what do we do with mod of percent?
-<div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(75% mod 100);">150% mod 100 (where 100% is 200px)</div>
-</div>
--->
 <div class="width-test" style="width: -webkit-calc((100px));">(100px)</div>
 <div class="width-test" style="width: -webkit-calc((50px + 50px));">(50px + 50px)</div>
 <div class="width-test" style="width: -webkit-calc((50px) + 50px);">(50px) + 50px</div>
@@ -81,7 +73,6 @@
 <div class="width-test" style="width: -webkit-calc( (25px + 25px) * 2 );"> (25px + 25px) * 2 </div>
 <div class="width-test" style="width: -webkit-calc(2 * 50px);">2 * 50px</div>
 <div class="width-test" style="width: -webkit-calc(2 * 100px / 2);">2 * 100px / 2</div>
-<div class="width-test" style="width: -webkit-calc(12 mod 10 * 50px);">12 mod 10 * 50px</div>
 <div class="width-test" style="width: -webkit-calc((1em - 1em) + 100px);">(1em - 1em) + 100px</div>
 <div class="width-test" style="width: -webkit-calc(50px +  +50px);">50px +  +50px</div>
 <div class="width-test" style="width: -webkit-calc(-50px + 150px);">-50px + 150px</div>

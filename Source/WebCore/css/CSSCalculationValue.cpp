@@ -158,7 +158,6 @@ public:
             break;
                 
         case CalcDivide:
-        case CalcMod:
             if (rightCategory != CalcNumber || rightSide->isZero())
                 return 0;
             newCategory = leftCategory;
@@ -198,10 +197,6 @@ private:
             if (rightValue)
                 return leftValue / rightValue;
             return std::numeric_limits<double>::quiet_NaN();
-        case CalcMod:
-            // FIXME calc() : mod has been removed from the spec, need to remove
-            // this enum value
-            return 0;
         }
         return 0;
     }
@@ -296,7 +291,7 @@ private:
 
         while (*index < tokens->size() - 1) {
             char operatorCharacter = operatorValue(tokens, *index);
-            if (operatorCharacter != CalcMultiply && operatorCharacter != CalcDivide && operatorCharacter != CalcMod)
+            if (operatorCharacter != CalcMultiply && operatorCharacter != CalcDivide)
                 break;
             ++*index;
 
