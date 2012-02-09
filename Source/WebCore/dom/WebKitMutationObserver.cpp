@@ -41,6 +41,7 @@
 #include "MutationRecord.h"
 #include "Node.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -115,6 +116,7 @@ static MutationObserverSet& activeMutationObservers()
 
 void WebKitMutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
 {
+    ASSERT(isMainThread());
     m_records.append(mutation);
     activeMutationObservers().add(this);
 }
@@ -132,6 +134,7 @@ void WebKitMutationObserver::deliver()
 
 void WebKitMutationObserver::deliverAllMutations()
 {
+    ASSERT(isMainThread());
     static bool deliveryInProgress = false;
     if (deliveryInProgress)
         return;

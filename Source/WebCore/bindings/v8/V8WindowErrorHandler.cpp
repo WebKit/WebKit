@@ -58,7 +58,7 @@ v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionC
         v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8::Integer::New(errorEvent->lineno()) };
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
-        returnValue = V8Proxy::instrumentedCallFunction(0 /* page */, callFunction, thisValue, 3, parameters);
+        returnValue = V8Proxy::instrumentedCallFunction(0 /* frame */, callFunction, thisValue, 3, parameters);
     }
     return returnValue;
 }

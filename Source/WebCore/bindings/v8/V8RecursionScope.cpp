@@ -32,11 +32,12 @@
 #include "V8RecursionScope.h"
 
 #include "IDBPendingTransactionMonitor.h"
+#include "ScriptExecutionContext.h"
 #include "WebKitMutationObserver.h"
 
 namespace WebCore {
 
-void V8RecursionScope::didLeaveScriptContext()
+void V8RecursionScope::didLeaveScriptContext(ScriptExecutionContext* context)
 {
     // FIXME: Instrument any work that takes place when script exits to c++ (e.g. Mutation Observers).
 
@@ -48,7 +49,8 @@ void V8RecursionScope::didLeaveScriptContext()
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    WebKitMutationObserver::deliverAllMutations();
+    if (context && context->isDocument())
+        WebKitMutationObserver::deliverAllMutations();
 #endif
 }
 

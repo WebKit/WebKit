@@ -35,20 +35,29 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
+
 class V8RecursionScope {
     WTF_MAKE_NONCOPYABLE(V8RecursionScope);
 public:
-    V8RecursionScope() { V8BindingPerIsolateData::current()->incrementRecursionLevel(); }
+    explicit V8RecursionScope(ScriptExecutionContext* context)
+        : m_context(context)
+    {
+        V8BindingPerIsolateData::current()->incrementRecursionLevel();
+    }
+
     ~V8RecursionScope()
     {
         if (!V8BindingPerIsolateData::current()->decrementRecursionLevel())
-            didLeaveScriptContext();
+            didLeaveScriptContext(m_context);
     }
 
     static int recursionLevel() { return V8BindingPerIsolateData::current()->recursionLevel(); }
 
 private:
-    static void didLeaveScriptContext();
+    static void didLeaveScriptContext(ScriptExecutionContext*);
+
+    ScriptExecutionContext* m_context;
 };
 
 } // namespace WebCore

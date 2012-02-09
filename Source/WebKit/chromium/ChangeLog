@@ -1,3 +1,13 @@
+2012-02-08  Adam Klein  <adamk@chromium.org>
+
+        DOM mutations should not be delivered on worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=77898
+
+        Reviewed by Dmitry Titov.
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+
 2012-02-08  Scott Graham  <scottmg@chromium.org>
 
         Roll Chromium DEPS

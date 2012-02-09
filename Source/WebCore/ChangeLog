@@ -1,3 +1,53 @@
+2012-02-08  Adam Klein  <adamk@chromium.org>
+
+        DOM mutations should not be delivered on worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=77898
+
+        Reviewed by Dmitry Titov.
+
+        In V8RecursionScope, only call WebKitMutationObserver::deliverAllMutations
+        if in a Document context.
+
+        This is accomplished through a change to V8Proxy::instrumentedCallFunction
+        (which now takes a Frame* instead of a Page*), requiring an update to all
+        callers of that function (accounting for the majority of files changed
+        in this patch).
+
+        Added ASSERT(isMainThread()) in a deliverAllMutations to confirm that
+        it's no longer called on worker threads, and in enqueueMutationRecord,
+        where the same global store of active observers is accessed.
+
+        See also http://crbug.com/112586, where the problem was initially
+        reported.
+
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallback::call):
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::instrumentedCallFunction):
+        * bindings/v8/V8Proxy.h:
+        (WebCore):
+        (V8Proxy):
+        * bindings/v8/V8RecursionScope.cpp:
+        (WebCore::V8RecursionScope::didLeaveScriptContext):
+        * bindings/v8/V8RecursionScope.h:
+        (WebCore):
+        (WebCore::V8RecursionScope::V8RecursionScope):
+        (V8RecursionScope):
+        (WebCore::V8RecursionScope::~V8RecursionScope):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::enqueueMutationRecord):
+        (WebCore::WebKitMutationObserver::deliverAllMutations):
+
 2012-02-08  Anders Carlsson  <andersca@apple.com>
 
         Don't use the wheel event handler count to track if a page has horizontal scrollbars
