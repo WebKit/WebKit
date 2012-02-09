@@ -4,7 +4,7 @@
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../fast/repaint/resources/repaint.js"></script>
 </head>
-<body style="margin: 0px" onload="runRepaintTest()">
+<body style="margin: 0px">
 
 <script type="text/javascript">
     function test1() {
@@ -67,7 +67,7 @@
     }
 </script>
 
-<object style="border: 1px red solid; width: 400px; height: 200px;"  data="resources/nested-embedded-svg-size-changes-target.html"></object>
+<object style="border: 1px red solid; width: 400px; height: 200px;" onload="runRepaintTest()" data="resources/nested-embedded-svg-size-changes-target.html"></object>
 <p id="description"></p>
 <div id="console"></div>
 
