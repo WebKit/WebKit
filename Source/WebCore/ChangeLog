@@ -63,6 +63,29 @@
 
 2012-02-09  Roland Steiner  <rolandsteiner@chromium.org>
 
+        SelectorChecker::checkSelector: move parameters into a struct
+        https://bugs.webkit.org/show_bug.cgi?id=77525
+
+        Added 'SelectorCheckingContext' struct to hold parameters for the function.
+        Adapted calling sites.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. (refactoring)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SelectorChecker.h:
+        (SelectorCheckingContext):
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        (SelectorChecker):
+
+2012-02-09  Roland Steiner  <rolandsteiner@chromium.org>
+
         Unreviewed, rolling out r107197.
         http://trac.webkit.org/changeset/107197
         https://bugs.webkit.org/show_bug.cgi?id=77525
