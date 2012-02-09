@@ -729,8 +729,10 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 return;
             }
 
-            var widthFound = "width" in styles.styleAttributes;
-            var heightFound = "height" in styles.styleAttributes;
+            if (styles.attributesStyle) {
+                var widthFound = !!styles.attributesStyle.getLiveProperty("width");
+                var heightFound = !!styles.attributesStyle.getLiveProperty("height");
+            }
 
             var inlineStyle = styles.inlineStyle;
             if (inlineStyle) {
@@ -765,10 +767,10 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 return;
             var targetResult = {};
 
-            function inlineCallback(inlineStyle, styleAttributes)
+            function inlineCallback(inlineStyle, attributesStyle)
             {
                 targetResult.inlineStyle = inlineStyle;
-                targetResult.styleAttributes = styleAttributes;
+                targetResult.attributesStyle = attributesStyle;
             }
 
             function matchedCallback(result)

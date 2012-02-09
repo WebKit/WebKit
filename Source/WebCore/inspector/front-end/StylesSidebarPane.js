@@ -250,10 +250,10 @@ WebInspector.StylesSidebarPane.prototype = {
                 callback();
         }
 
-        function inlineCallback(inlineStyle, styleAttributes)
+        function inlineCallback(inlineStyle, attributesStyle)
         {
             resultStyles.inlineStyle = inlineStyle;
-            resultStyles.styleAttributes = styleAttributes;
+            resultStyles.attributesStyle = attributesStyle;
         }
 
         function computedCallback(computedStyle)
@@ -436,16 +436,13 @@ WebInspector.StylesSidebarPane.prototype = {
 
         var styleRules = [];
 
-        function addStyleAttributes()
+        function addAttributesStyle()
         {
-            for (var name in styles.styleAttributes) {
-                var attrStyle = { style: styles.styleAttributes[name], editable: false };
-                attrStyle.selectorText = node.nodeNameInCorrectCase() + "[" + name;
-                if (node.getAttribute(name))
-                    attrStyle.selectorText += "=" + node.getAttribute(name);
-                attrStyle.selectorText += "]";
-                styleRules.push(attrStyle);
-            }
+            if (!styles.attributesStyle)
+                return;
+            var attrStyle = { style: styles.attributesStyle, editable: false };
+            attrStyle.selectorText = node.nodeNameInCorrectCase() + "[" + WebInspector.UIString("Attributes Style") + "]";
+            styleRules.push(attrStyle);
         }
 
         styleRules.push({ computedStyle: true, selectorText: "", style: nodeComputedStyle, editable: false });
@@ -459,21 +456,21 @@ WebInspector.StylesSidebarPane.prototype = {
         // Add rules in reverse order to match the cascade order.
         if (styles.matchedCSSRules.length)
             styleRules.push({ isStyleSeparator: true, text: WebInspector.UIString("Matched CSS Rules") });
-        var addedStyleAttributes;
+        var addedAttributesStyle;
         for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
             var rule = styles.matchedCSSRules[i];
             if (!WebInspector.settings.showUserAgentStyles.get() && (rule.isUser || rule.isUserAgent))
                 continue;
-            if ((rule.isUser || rule.isUserAgent) && !addedStyleAttributes) {
+            if ((rule.isUser || rule.isUserAgent) && !addedAttributesStyle) {
                 // Show element's Style Attributes after all author rules.
-                addedStyleAttributes = true;
-                addStyleAttributes();
+                addedAttributesStyle = true;
+                addAttributesStyle();
             }
             styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
         }
 
-        if (!addedStyleAttributes)
-            addStyleAttributes();
+        if (!addedAttributesStyle)
+            addAttributesStyle();
 
         // Walk the node structure and identify styles with inherited properties.
         var parentNode = node.parentNode;

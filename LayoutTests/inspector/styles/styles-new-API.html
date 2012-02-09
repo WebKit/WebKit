@@ -96,18 +96,15 @@ function test()
 
     function test_tableStyles()
     {
-        function callback(error, inlineStyle, styleAttributes)
+        function callback(error, inlineStyle, attributesStyle)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
                 return;
             }
             InspectorTest.addResult("");
-            InspectorTest.addResult("=== Attribute styles for table ===");
-            for (var i = 0; i < styleAttributes.length; ++i) {
-                InspectorTest.addResult("Attribute: " + styleAttributes[i].name);
-                dumpRuleOrStyle(styleAttributes[i].style);
-            }
+            InspectorTest.addResult("=== Attributes style for table ===");
+            dumpRuleOrStyle(attributesStyle);
             test_styleSheets();
         }
 
@@ -386,7 +383,7 @@ body.mainpage {
 <p>
 Tests that InspectorCSSAgent API methods work as expected.
 </p>
-<table width=50% id="thetable">
+<table width="50%" id="thetable">
 </table>
 <h1 id="toggle">H1</h1>
 </body>

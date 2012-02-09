@@ -132,28 +132,19 @@ WebInspector.CSSStyleModel.prototype = {
 
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {function(?WebInspector.CSSStyleDeclaration, ?Object.<string, string>)} userCallback
+     * @param {function(?WebInspector.CSSStyleDeclaration, ?WebInspector.CSSStyleDeclaration)} userCallback
      */
     getInlineStylesAsync: function(nodeId, userCallback)
     {
         /**
-         * @param {function(?WebInspector.CSSStyleDeclaration, ?Object.<string, string>)} userCallback
+         * @param {function(?WebInspector.CSSStyleDeclaration, ?WebInspector.CSSStyleDeclaration)} userCallback
          */
-        function callback(userCallback, error, inlinePayload, attributesPayload)
+        function callback(userCallback, error, inlinePayload, attributesStylePayload)
         {
             if (error || !inlinePayload)
                 userCallback(null, null);
-            else {
-                var styleAttributes;
-                if (attributesPayload) {
-                    styleAttributes = {};
-                    for (var i = 0; i < attributesPayload.length; ++i) {
-                        var name = attributesPayload[i].name;
-                        styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(attributesPayload[i].style);
-                    }
-                }
-                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(inlinePayload), styleAttributes || null);
-            }
+            else
+                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(inlinePayload), attributesStylePayload ? WebInspector.CSSStyleDeclaration.parsePayload(attributesStylePayload) : null);
         }
 
         CSSAgent.getInlineStylesForNode(nodeId, callback.bind(null, userCallback));

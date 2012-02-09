@@ -536,7 +536,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
     }
 }
 
-void InspectorCSSAgent::getInlineStylesForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>& inlineStyle, RefPtr<InspectorArray>& attributes)
+void InspectorCSSAgent::getInlineStylesForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>& inlineStyle, RefPtr<InspectorObject>& attributesStyle)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -547,7 +547,8 @@ void InspectorCSSAgent::getInlineStylesForNode(ErrorString* errorString, int nod
         return;
 
     inlineStyle = styleSheet->buildObjectForStyle(element->style());
-    attributes = buildArrayForAttributeStyles(element);
+    RefPtr<InspectorObject> attributes = buildObjectForAttributesStyle(element);
+    attributesStyle = attributes ? attributes.release() : 0;
 }
 
 void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>& style)
@@ -862,26 +863,17 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForRuleList(CSSRuleList*
     return result.release();
 }
 
-PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Element* element)
+PassRefPtr<InspectorObject> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)
 {
-    // FIXME: Since we no longer have per-attribute style declarations, we should come up
-    //        with a nicer way to present what we do have.
-
     if (!element->isStyledElement())
-        return InspectorArray::create();
+        return 0;
 
     StylePropertySet* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
     if (!attributeStyle)
-        return InspectorArray::create();
+        return 0;
 
-    RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->ensureCSSStyleDeclaration(), 0);
-    attrStyleObject->setString("name", "");
-    attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
-
-    RefPtr<InspectorArray> attrStyles = InspectorArray::create();
-    attrStyles->pushObject(attrStyleObject.release());
-    return attrStyles.release();
+    return inspectorStyle->buildObjectForStyle();
 }
 
 void InspectorCSSAgent::didRemoveDocument(Document* document)

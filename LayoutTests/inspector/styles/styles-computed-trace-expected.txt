@@ -52,7 +52,7 @@ element.style  { ()
 
 ======== Matched CSS Rules ========
 [expanded] 
-button[]  { ()
+button[Attributes Style]  { ()
 display: none;
 
 
