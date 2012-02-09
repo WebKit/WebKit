@@ -2098,7 +2098,7 @@ BUGCR51854 SLOW WIN : http/tests/storage/callbacks-are-called-in-correct-context
 
 // Regressions from r65229
 BUGWK43912 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = CRASH IMAGE
-BUGWK43912 LINUX WIN : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
+BUGWK43912 LINUX WIN : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE IMAGE+TEXT
 
 // Times out frequently since the test was added
 BUGCR52017 LINUX MAC RELEASE : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
