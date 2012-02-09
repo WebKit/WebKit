@@ -116,6 +116,10 @@ public:
 
     static void platformInitialize(); // Only needed by WTR.
 
+    // Internal API used by WebPage.
+    void updateContentsSize(const QSizeF&);
+    QPointF pageItemPos();
+
 public Q_SLOTS:
     void load(const QUrl&);
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
@@ -209,6 +213,15 @@ QML_DECLARE_TYPEINFO(QQuickWebView, QML_HAS_ATTACHED_PROPERTIES)
 class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_OBJECT
     Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
+
+    // QML Flickable API.
+    Q_PROPERTY(qreal contentWidth READ contentWidth WRITE setContentWidth NOTIFY contentWidthChanged)
+    Q_PROPERTY(qreal contentHeight READ contentHeight WRITE setContentHeight NOTIFY contentHeightChanged)
+    Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged)
+    Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged)
+    Q_PROPERTY(QQuickItem* contentItem READ contentItem CONSTANT)
+    Q_PROPERTY(QDeclarativeListProperty<QObject> flickableData READ flickableData)
+
     Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
@@ -253,8 +266,19 @@ public:
     static int schemeDelegates_Count(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
     static void schemeDelegates_Clear(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
     QDeclarativeListProperty<QQuickUrlSchemeDelegate> schemeDelegates();
+    QDeclarativeListProperty<QObject> flickableData();
     void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData>);
     void sendApplicationSchemeReply(QQuickNetworkReply*);
+
+    QQuickItem* contentItem();
+    qreal contentWidth() const;
+    void setContentWidth(qreal);
+    qreal contentHeight() const;
+    void setContentHeight(qreal);
+    qreal contentX() const;
+    void setContentX(qreal);
+    qreal contentY() const;
+    void setContentY(qreal);
 
     // C++ only
     bool renderToOffscreenBuffer() const;
@@ -268,6 +292,10 @@ public Q_SLOTS:
     void postMessage(const QString&);
 
 Q_SIGNALS:
+    void contentWidthChanged();
+    void contentHeightChanged();
+    void contentXChanged();
+    void contentYChanged();
     void alertDialogChanged();
     void confirmDialogChanged();
     void promptDialogChanged();

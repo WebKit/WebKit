@@ -37,7 +37,7 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtWebPageEventHandler* eventHandl
     reset();
 }
 
-bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
+bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
 {
     if (!interactionEngine())
         return false;
@@ -62,6 +62,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
         ASSERT(m_state == NoGesture);
         m_state = GestureRecognitionStarted;
         m_firstPosition = touchPoint.screenPos();
+        m_touchBegin.reset(new QTouchEvent(*event));
         return false;
     case QEvent::TouchUpdate: {
         ASSERT(m_state != NoGesture);
@@ -73,16 +74,17 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
                 return false;
 
             m_state = GestureRecognized;
-            interactionEngine()->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
+            ASSERT(m_touchBegin);
+            interactionEngine()->panGestureStarted(m_touchBegin.data());
         }
 
         ASSERT(m_state == GestureRecognized);
-        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
+        interactionEngine()->panGestureRequestUpdate(event);
         return true;
     }
     case QEvent::TouchEnd:
         if (m_state == GestureRecognized) {
-            interactionEngine()->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
+            interactionEngine()->panGestureEnded(event);
             reset();
             return true;
         }

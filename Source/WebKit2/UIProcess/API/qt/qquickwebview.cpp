@@ -51,6 +51,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <WKOpenPanelResultListener.h>
+#include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -66,12 +67,15 @@ static QQuickWebViewPrivate* createPrivateObject(QQuickWebView* publicObject)
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
+    , flickProvider(0)
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
     , authenticationDialog(0)
     , certificateVerificationDialog(0)
     , itemSelector(0)
+    , userDidOverrideContentWidth(false)
+    , userDidOverrideContentHeight(false)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
 {
@@ -129,6 +133,12 @@ void QQuickWebViewPrivate::disableMouseEvents()
     Q_Q(QQuickWebView);
     q->setAcceptedMouseButtons(Qt::NoButton);
     q->setAcceptHoverEvents(false);
+}
+
+QPointF QQuickWebViewPrivate::pageItemPos()
+{
+    ASSERT(pageView);
+    return pageView->pos();
 }
 
 void QQuickWebViewPrivate::loadDidSucceed()
@@ -468,10 +478,46 @@ void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGr
     webPageProxy->setUseFixedLayout(true);
 }
 
+QPointF QQuickWebViewFlickablePrivate::pageItemPos()
+{
+    // Flickable moves its contentItem so we need to take that position into account,
+    // as well as the potential displacement of the page on the contentItem because
+    // of additional QML items.
+    qreal xPos = flickProvider->contentItem()->x() + pageView->x();
+    qreal yPos = flickProvider->contentItem()->y() + pageView->y();
+    return QPointF(xPos, yPos);
+}
+
+void QQuickWebViewFlickablePrivate::updateContentsSize(const QSizeF& size)
+{
+    ASSERT(flickProvider);
+
+    // Make sure that the contentItem is sized to the page
+    // if the user did not add other flickable items in QML.
+    // If the user adds items in QML he has to make sure to
+    // also bind the contentWidth and contentHeight accordingly.
+    // This is in accordance with normal QML Flickable behaviour.
+    if (!userDidOverrideContentWidth)
+        flickProvider->setContentWidth(size.width());
+    if (!userDidOverrideContentHeight)
+        flickProvider->setContentHeight(size.height());
+}
+
 void QQuickWebViewFlickablePrivate::onComponentComplete()
 {
     Q_Q(QQuickWebView);
-    interactionEngine.reset(new QtViewportInteractionEngine(q, pageView.data()));
+
+    ASSERT(!flickProvider);
+    flickProvider = new QtFlickProvider(q, pageView.data());
+
+    // Propagate flickable signals.
+    const QQuickWebViewExperimental* experimental = q->experimental();
+    QObject::connect(flickProvider, SIGNAL(contentWidthChanged()), experimental, SIGNAL(contentWidthChanged()));
+    QObject::connect(flickProvider, SIGNAL(contentHeightChanged()), experimental, SIGNAL(contentHeightChanged()));
+    QObject::connect(flickProvider, SIGNAL(contentXChanged()), experimental, SIGNAL(contentXChanged()));
+    QObject::connect(flickProvider, SIGNAL(contentYChanged()), experimental, SIGNAL(contentYChanged()));
+
+    interactionEngine.reset(new QtViewportInteractionEngine(q, pageView.data(), flickProvider));
     pageView->eventHandler()->setViewportInteractionEngine(interactionEngine.data());
 
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
@@ -532,6 +578,8 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
 
     if (viewportSize.isEmpty() || !interactionEngine)
         return;
+
+    flickProvider->setViewportSize(viewportSize);
 
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
@@ -910,6 +958,78 @@ QQuickWebPage* QQuickWebViewExperimental::page()
     return q_ptr->page();
 }
 
+QDeclarativeListProperty<QObject> QQuickWebViewExperimental::flickableData()
+{
+    Q_D(const QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->flickableData();
+}
+
+QQuickItem* QQuickWebViewExperimental::contentItem()
+{
+    Q_D(QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->contentItem();
+}
+
+qreal QQuickWebViewExperimental::contentWidth() const
+{
+    Q_D(const QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->contentWidth();
+}
+
+void QQuickWebViewExperimental::setContentWidth(qreal width)
+{
+    Q_D(QQuickWebView);
+    ASSERT(d->flickProvider);
+    d->userDidOverrideContentWidth = true;
+    d->flickProvider->setContentWidth(width);
+}
+
+qreal QQuickWebViewExperimental::contentHeight() const
+{
+    Q_D(const QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->contentHeight();
+}
+
+void QQuickWebViewExperimental::setContentHeight(qreal height)
+{
+    Q_D(QQuickWebView);
+    ASSERT(d->flickProvider);
+    d->userDidOverrideContentHeight = true;
+    d->flickProvider->setContentHeight(height);
+}
+
+qreal QQuickWebViewExperimental::contentX() const
+{
+    Q_D(const QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->contentX();
+}
+
+void QQuickWebViewExperimental::setContentX(qreal x)
+{
+    Q_D(QQuickWebView);
+    ASSERT(d->flickProvider);
+    d->flickProvider->setContentX(x);
+}
+
+qreal QQuickWebViewExperimental::contentY() const
+{
+    Q_D(const QQuickWebView);
+    ASSERT(d->flickProvider);
+    return d->flickProvider->contentY();
+}
+
+void QQuickWebViewExperimental::setContentY(qreal y)
+{
+    Q_D(QQuickWebView);
+    ASSERT(d->flickProvider);
+    d->flickProvider->setContentY(y);
+}
+
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickItem(parent)
     , d_ptr(createPrivateObject(this))
@@ -1254,6 +1374,18 @@ void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
 {
     Q_D(QQuickWebView);
     d->webPageProxy->loadHTMLString(html, baseUrl.toString());
+}
+
+QPointF QQuickWebView::pageItemPos()
+{
+    Q_D(QQuickWebView);
+    return d->pageItemPos();
+}
+
+void QQuickWebView::updateContentsSize(const QSizeF& size)
+{
+    Q_D(QQuickWebView);
+    d->updateContentsSize(size);
 }
 
 #include "moc_qquickwebview_p.cpp"

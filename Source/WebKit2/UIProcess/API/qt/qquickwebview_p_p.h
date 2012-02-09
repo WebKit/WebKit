@@ -22,6 +22,7 @@
 #define qquickwebview_p_p_h
 
 #include "DrawingAreaProxy.h"
+#include "QtFlickProvider.h"
 #include "QtPageClient.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
@@ -67,6 +68,9 @@ public:
 
     void enableMouseEvents();
     void disableMouseEvents();
+
+    virtual QPointF pageItemPos();
+    virtual void updateContentsSize(const QSizeF&) { }
 
     virtual void loadDidSucceed();
     virtual void onComponentComplete() { }
@@ -133,6 +137,7 @@ protected:
 
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
+    QtFlickProvider* flickProvider;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;
@@ -145,6 +150,8 @@ protected:
     QFileDialog* fileDialog;
     WKOpenPanelResultListenerRef openPanelResultListener;
 
+    bool userDidOverrideContentWidth;
+    bool userDidOverrideContentHeight;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     QUrl m_iconURL;
@@ -165,6 +172,9 @@ public:
     QQuickWebViewFlickablePrivate(QQuickWebView* viewport);
     virtual ~QQuickWebViewFlickablePrivate();
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
+
+    virtual QPointF pageItemPos();
+    virtual void updateContentsSize(const QSizeF&);
 
     virtual void loadDidSucceed();
     virtual void onComponentComplete();

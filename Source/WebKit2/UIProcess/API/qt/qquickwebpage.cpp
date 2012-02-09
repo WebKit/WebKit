@@ -97,7 +97,7 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     transform.scale(contentsScale, contentsScale);
 
     float opacity = computeEffectiveOpacity(q);
-    QRectF clipRect = q->parentItem()->mapRectToScene(q->parentItem()->boundingRect());
+    QRectF clipRect = viewportItem->mapRectToScene(viewportItem->boundingRect());
 
     if (!clipRect.isValid())
         return;
@@ -242,13 +242,15 @@ QTransform QQuickWebPage::transformFromItem() const
 
 QTransform QQuickWebPage::transformToItem() const
 {
-    return QTransform(d->contentsScale, 0, 0, 0, d->contentsScale, 0, x(), y(), 1);
+    QPointF pos = d->viewportItem->pageItemPos();
+    return QTransform(d->contentsScale, 0, 0, 0, d->contentsScale, 0, pos.x(), pos.y(), 1);
 }
 
 void QQuickWebPagePrivate::updateSize()
 {
     QSizeF scaledSize = contentsSize * contentsScale;
     q->setSize(scaledSize);
+    viewportItem->updateContentsSize(scaledSize);
 }
 
 void QQuickWebPagePrivate::resetPaintNode()

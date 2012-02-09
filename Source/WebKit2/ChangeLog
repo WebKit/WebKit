@@ -1,3 +1,110 @@
+2012-02-07  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] WebView should use Flickable instead of QScroller to handle positioning
+        https://bugs.webkit.org/show_bug.cgi?id=76275
+
+        Reviewed by Simon Hausmann and Kenneth Rohde Christiansen.
+
+        The current WebView implementation uses QScroller to manage positioning but other
+        similar items in QML (ie. ListView, GridView) use Flickable as their base class.
+        Since QScroller will be dropped from Qt5 this patch removes the QScroller code
+        and redirects pan gestures to a dynamically created encapsulated Flickable instance
+        (QtFlickProvider) which handles the positioning.
+
+        This implementation only uses public QML API and does not depend on declarative-private.
+        It propagates a small subset of the Flickable API as the public API of the WebView.
+        This minimalistic API is accessible via the experimental extension and makes it possible
+        in QML to place additional items (such as toolbars, scroll indicators and floating menus)
+        aroud the page.
+        These items can use anchoring and binding for positioning on the flickable contentItem.
+
+        The patch depends however on the automatic touch->mouse event synthetization of Qt5.
+        The touch events sent to the flickProvider are translated to mouse events automatically
+        as long as the Flickable does not handle touch events directly.
+
+        After this change QtWebKit2 does no longer depend on QtWidgets and this dependency can be
+        removed in a follow-up patch.
+
+        * Target.pri: Added QtFlickProvider source.
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (QQuickWebPage::transformToItem):
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::pageItemPos):
+        (QQuickWebViewFlickablePrivate::pageItemPos):
+        (QQuickWebViewFlickablePrivate::updateContentsSize):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewExperimental::flickableData):
+        (QQuickWebViewExperimental::contentItem):
+        (QQuickWebViewExperimental::contentWidth):
+        (QQuickWebViewExperimental::setContentWidth):
+        (QQuickWebViewExperimental::contentHeight):
+        (QQuickWebViewExperimental::setContentHeight):
+        (QQuickWebViewExperimental::contentX):
+        (QQuickWebViewExperimental::setContentX):
+        (QQuickWebViewExperimental::contentY):
+        (QQuickWebViewExperimental::setContentY):
+        (QQuickWebView::pageItemPos):
+        (QQuickWebView::updateContentsSize):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::updateContentsSize):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/qt/QtFlickProvider.cpp: Added.
+        (QtFlickProvider::QtFlickProvider):
+        (QtFlickProvider::handleTouchFlickEvent):
+        (QtFlickProvider::contentItem):
+        (QtFlickProvider::flickableData):
+        (QtFlickProvider::contentPos):
+        (QtFlickProvider::setContentPos):
+        (QtFlickProvider::viewportSize):
+        (QtFlickProvider::setViewportSize):
+        (QtFlickProvider::returnToBounds):
+        (QtFlickProvider::cancelFlick):
+        (QtFlickProvider::isMoving):
+        (QtFlickProvider::isDragging):
+        (QtFlickProvider::isFlicking):
+        (QtFlickProvider::contentWidth):
+        (QtFlickProvider::setContentWidth):
+        (QtFlickProvider::contentHeight):
+        (QtFlickProvider::setContentHeight):
+        (QtFlickProvider::contentX):
+        (QtFlickProvider::setContentX):
+        (QtFlickProvider::contentY):
+        (QtFlickProvider::setContentY):
+        * UIProcess/qt/QtFlickProvider.h: Added.
+        (QtFlickProvider):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        (QtPanGestureRecognizer):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::scrollStateChanged):
+        (WebKit):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::scrollAnimationActive):
+        (WebKit::QtViewportInteractionEngine::panGestureActive):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::doneWithTouchEvent):
+
 2012-02-08  Keunsoon Lee  <keunsoon.lee@samsung.com>
 
         [WK2][EFL] creating dummy class derived from ResourceHandleClient for Efl download module.
