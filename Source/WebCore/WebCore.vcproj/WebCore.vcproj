@@ -71154,6 +71154,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\DOMPatchSupport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\DOMPatchSupport.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\DOMWrapperVisitor.h"
 				>
 			</File>

@@ -42,7 +42,7 @@
 #include "ContentSearchUtils.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "DOMEditor.h"
+#include "DOMPatchSupport.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -571,8 +571,8 @@ void InspectorPageAgent::setDocumentContent(ErrorString* errorString, const Stri
         *errorString = "No Document instance to set HTML for";
         return;
     }
-    DOMEditor editor(document);
-    editor.patchDocument(html);
+    DOMPatchSupport patcher(document);
+    patcher.patchDocument(html);
 }
 
 void InspectorPageAgent::setScreenSizeOverride(ErrorString* errorString, const int width, const int height)

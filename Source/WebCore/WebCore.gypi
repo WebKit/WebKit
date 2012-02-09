@@ -2343,6 +2343,8 @@
             'inspector/DOMEditor.h',
             'inspector/DOMNodeHighlighter.cpp',
             'inspector/DOMNodeHighlighter.h',
+            'inspector/DOMPatchSupport.cpp',
+            'inspector/DOMPatchSupport.h',
             'inspector/DOMWrapperVisitor.h',
             'inspector/IdentifiersFactory.cpp',
             'inspector/IdentifiersFactory.h',

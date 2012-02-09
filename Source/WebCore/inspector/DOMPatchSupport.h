@@ -28,49 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMEditor_h
-#define DOMEditor_h
+#ifndef DOMPatchSupport_h
+#define DOMPatchSupport_h
 
+#include "ExceptionCode.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Element;
-class InspectorHistory;
+class ContainerNode;
+class Document;
+class NamedNodeMap;
 class Node;
-class Text;
 
 #if ENABLE(INSPECTOR)
 
-typedef String ErrorString;
-
-class DOMEditor {
-    WTF_MAKE_NONCOPYABLE(DOMEditor);
+class DOMPatchSupport {
+    WTF_MAKE_NONCOPYABLE(DOMPatchSupport);
 public:
-    explicit DOMEditor(InspectorHistory*);
-    ~DOMEditor();
+    explicit DOMPatchSupport(Document*);
+    virtual ~DOMPatchSupport();
 
-    bool insertBefore(Node* parentNode, Node*, Node* anchorNode, ErrorString*);
-    bool removeChild(Node* parentNode, Node*, ErrorString*);
-    bool setAttribute(Element*, const String& name, const String& value, ErrorString*);
-    bool removeAttribute(Element*, const String& name, ErrorString*);
-    bool setOuterHTML(Node*, const String& html, Node** newNode, ErrorString*);
-    bool replaceWholeText(Text*, const String& text, ErrorString*);
+    void patchDocument(const String& markup);
+    Node* patchNode(Node*, const String& markup, ExceptionCode&);
 
 private:
-    class DOMAction;
-    class RemoveChildAction;
-    class InsertBeforeAction;
-    class RemoveAttributeAction;
-    class SetAttributeAction;
-    class SetOuterHTMLAction;
-    class ReplaceWholeTextAction;
+    struct Digest;
+    typedef Vector<pair<Digest*, size_t> > ResultMap;
+    typedef HashMap<String, Digest*> UnusedNodesMap;
 
-    InspectorHistory* m_history;
+    void innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
+    std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren);
+    void innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
+    PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
+    void insertBefore(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
+    void removeChild(Digest*, ExceptionCode&);
+    void markNodeAsUsed(Digest*);
+#ifdef DEBUG_DOM_PATCH_SUPPORT
+    void dumpMap(const ResultMap&, const String& name);
+#endif
+
+    Document* m_document;
+
+    UnusedNodesMap m_unusedNodesMap;
 };
 
 #endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
 
-#endif // !defined(DOMEditor_h)
+#endif // !defined(DOMPatchSupport_h)

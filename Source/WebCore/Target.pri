@@ -855,6 +855,7 @@ SOURCES += \
     inspector/ContentSearchUtils.cpp \
     inspector/DOMEditor.cpp \
     inspector/DOMNodeHighlighter.cpp \
+    inspector/DOMPatchSupport.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
@@ -1920,6 +1921,7 @@ HEADERS += \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
     inspector/DOMNodeHighlighter.h \
+    inspector/DOMPatchSupport.h \
     inspector/DOMWrapperVisitor.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \

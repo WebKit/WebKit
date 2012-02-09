@@ -35,7 +35,6 @@
 #include "InjectedScriptManager.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorHistory.h"
 #include "InspectorValues.h"
 #include "Timer.h"
 
@@ -52,13 +51,14 @@
 namespace WebCore {
 class ContainerNode;
 class CharacterData;
+class DOMEditor;
 class Document;
 class Element;
 class Event;
 class GraphicsContext;
 class InspectorClient;
-class InspectorDOMAgent;
 class InspectorFrontend;
+class InspectorHistory;
 class InspectorPageAgent;
 class IntRect;
 class HitTestResult;
@@ -193,14 +193,6 @@ public:
     Node* assertNode(ErrorString*, int nodeId);
 
 private:
-    class DOMAction;
-    class RemoveChildAction;
-    class InsertBeforeAction;
-    class RemoveAttributeAction;
-    class SetAttributeAction;
-    class SetOuterHTMLAction;
-    class ReplaceWholeTextAction;
-
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
     void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
@@ -254,6 +246,7 @@ private:
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
     OwnPtr<InspectorHistory> m_history;
+    OwnPtr<DOMEditor> m_domEditor;
 };
 
 #endif // ENABLE(INSPECTOR)

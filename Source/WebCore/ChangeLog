@@ -1,3 +1,94 @@
+2012-02-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: rename DOMEditor to DOMPatchSupport, move undoable actions from
+        InspectorDOMAgent to the new DOMEditor.
+        https://bugs.webkit.org/show_bug.cgi?id=78245
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/DOMEditor.cpp:
+        (DOMEditor::DOMAction):
+        (WebCore::DOMEditor::DOMAction::DOMAction):
+        (WebCore::DOMEditor::DOMAction::perform):
+        (WebCore::DOMEditor::DOMAction::undo):
+        (DOMEditor::RemoveChildAction):
+        (WebCore::DOMEditor::RemoveChildAction::RemoveChildAction):
+        (WebCore::DOMEditor::RemoveChildAction::perform):
+        (WebCore::DOMEditor::RemoveChildAction::undo):
+        (DOMEditor::InsertBeforeAction):
+        (WebCore::DOMEditor::InsertBeforeAction::InsertBeforeAction):
+        (WebCore::DOMEditor::InsertBeforeAction::perform):
+        (WebCore::DOMEditor::InsertBeforeAction::undo):
+        (DOMEditor::RemoveAttributeAction):
+        (WebCore::DOMEditor::RemoveAttributeAction::RemoveAttributeAction):
+        (WebCore::DOMEditor::RemoveAttributeAction::perform):
+        (WebCore::DOMEditor::RemoveAttributeAction::undo):
+        (DOMEditor::SetAttributeAction):
+        (WebCore::DOMEditor::SetAttributeAction::SetAttributeAction):
+        (WebCore::DOMEditor::SetAttributeAction::perform):
+        (WebCore::DOMEditor::SetAttributeAction::undo):
+        (DOMEditor::SetOuterHTMLAction):
+        (WebCore::DOMEditor::SetOuterHTMLAction::SetOuterHTMLAction):
+        (WebCore::DOMEditor::SetOuterHTMLAction::perform):
+        (WebCore::DOMEditor::SetOuterHTMLAction::undo):
+        (WebCore::DOMEditor::SetOuterHTMLAction::newNode):
+        (DOMEditor::ReplaceWholeTextAction):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::ReplaceWholeTextAction):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::perform):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::undo):
+        (WebCore::DOMEditor::DOMEditor):
+        (WebCore):
+        (WebCore::DOMEditor::~DOMEditor):
+        (WebCore::DOMEditor::insertBefore):
+        (WebCore::DOMEditor::removeChild):
+        (WebCore::DOMEditor::setAttribute):
+        (WebCore::DOMEditor::removeAttribute):
+        (WebCore::DOMEditor::setOuterHTML):
+        (WebCore::DOMEditor::replaceWholeText):
+        * inspector/DOMEditor.h:
+        (WebCore):
+        (DOMEditor):
+        * inspector/DOMPatchSupport.cpp: Copied from Source/WebCore/inspector/DOMEditor.cpp.
+        (WebCore::DOMPatchSupport::DOMPatchSupport):
+        (WebCore::DOMPatchSupport::~DOMPatchSupport):
+        (WebCore::DOMPatchSupport::patchDocument):
+        (WebCore::DOMPatchSupport::patchNode):
+        (WebCore::DOMPatchSupport::innerPatchNode):
+        (WebCore):
+        (WebCore::DOMPatchSupport::diff):
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        (WebCore::DOMPatchSupport::createDigest):
+        (WebCore::DOMPatchSupport::insertBefore):
+        (WebCore::DOMPatchSupport::removeChild):
+        (WebCore::DOMPatchSupport::markNodeAsUsed):
+        (WebCore::DOMPatchSupport::dumpMap):
+        * inspector/DOMPatchSupport.h: Copied from Source/WebCore/inspector/DOMEditor.h.
+        (DOMPatchSupport):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::setFrontend):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::setAttributeValue):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::moveTo):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore):
+        (InspectorDOMAgent):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setDocumentContent):
+
 2012-02-09  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r104746): iframes load PDFs as media documents
