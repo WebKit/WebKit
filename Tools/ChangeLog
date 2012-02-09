@@ -1,5 +1,18 @@
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
+        Don't re-implement ZipFile.extractall
+        https://bugs.webkit.org/show_bug.cgi?id=78173
+
+        Reviewed by Eric Seidel.
+
+        We can use ZipFile.extractall now that we don't support Python 2.5.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._extract_targz):
+        (AutoInstaller._unzip):
+
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
         Remove the ospath compat shim from webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=78170
 
