@@ -1815,6 +1815,7 @@
             'bindings/v8/custom/V8CustomXPathNSResolver.h',
             'bindings/v8/custom/V8DOMFormDataCustom.cpp',
             'bindings/v8/custom/V8DOMStringMapCustom.cpp',
+            'bindings/v8/custom/V8DOMTokenListCustom.cpp',
             'bindings/v8/custom/V8DOMWindowCustom.cpp',
             'bindings/v8/custom/V8DataViewCustom.cpp',
             'bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp',
