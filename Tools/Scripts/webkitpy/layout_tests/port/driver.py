@@ -156,6 +156,9 @@ class Driver(object):
     def has_crashed(self):
         return False
 
+    def start(self):
+        raise NotImplementedError('Driver.start')
+
     def stop(self):
         raise NotImplementedError('Driver.stop')
 
@@ -191,6 +194,10 @@ class DriverProxy(object):
 
     def has_crashed(self):
         return self._driver.has_crashed() or self._reftest_driver.has_crashed()
+
+    def start(self):
+        self._driver.start()
+        self._reftest_driver.start()
 
     def stop(self):
         self._driver.stop()

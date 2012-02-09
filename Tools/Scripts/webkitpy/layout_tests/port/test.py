@@ -499,5 +499,8 @@ class TestDriver(Driver):
             crashed_process_name=crashed_process_name,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 
+    def start(self):
+        pass
+
     def stop(self):
         pass

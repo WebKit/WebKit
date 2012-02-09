@@ -91,6 +91,8 @@ class PerfTestsRunner(object):
                 help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=600 * 1000,
                 help="Set the timeout for each test"),
+            optparse.make_option("--pause-before-testing", dest="pause_before_testing", action="store_true", default=False,
+                help="Pause before running the tests to let user attach a performance monitor."),
             optparse.make_option("--output-json-path",
                 help="Filename of the JSON file that summaries the results"),
             optparse.make_option("--source-json-path",
@@ -216,6 +218,12 @@ class PerfTestsRunner(object):
 
         for test in tests:
             driver = port.create_driver(worker_number=1, no_timeout=True)
+
+            if self._options.pause_before_testing:
+                driver.start()
+                if not self._host.user.confirm("Ready to run test?"):
+                    driver.stop()
+                    return unexpected
 
             relative_test_path = self._host.filesystem.relpath(test, self._base_path)
             self._printer.write('Running %s (%d of %d)' % (relative_test_path, expected + unexpected + 1, len(tests)))

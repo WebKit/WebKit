@@ -101,6 +101,9 @@ max 1120
 """
             return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 
+        def start(self):
+            """do nothing"""
+
         def stop(self):
             """do nothing"""
 
@@ -157,9 +160,6 @@ max 1120
         class TestDriverWithStopCount(MainTest.TestDriver):
             stop_count = 0
 
-            def __init__(self):
-                TestDriverWithStopCount.sotp_count = 0
-
             def stop(self):
                 TestDriverWithStopCount.stop_count += 1
 
@@ -172,6 +172,29 @@ max 1120
 
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
+
+    def test_run_test_set_kills_drt_per_run(self):
+        class TestDriverWithStartCount(MainTest.TestDriver):
+            start_count = 0
+
+            def start(self):
+                TestDriverWithStartCount.start_count += 1
+
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output, args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
+
+        dirname = runner._base_path + '/inspector/'
+        tests = [dirname + 'pass.html']
+
+        try:
+            output = OutputCapture()
+            output.capture_output()
+            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+            self.assertEqual(TestDriverWithStartCount.start_count, 1)
+        finally:
+            _, stderr, logs = output.restore_output()
+            self.assertEqual(stderr, "Ready to run test?\n")
+            self.assertEqual(logs, "Running inspector/pass.html (1 of 1)\n\n")
 
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = array_stream.ArrayStream()

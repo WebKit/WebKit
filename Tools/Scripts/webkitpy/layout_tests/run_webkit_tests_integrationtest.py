@@ -140,6 +140,9 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
             TestDriver.__init__(self, port, worker_number, pixel_tests=port.get_option('pixel_test'), no_timeout=False)
             self._current_test_batch = None
 
+        def start(self):
+            pass
+
         def stop(self):
             self._current_test_batch = None
 

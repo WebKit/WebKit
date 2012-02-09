@@ -645,6 +645,10 @@ class WebKitDriver(Driver):
         block.decode_content()
         return block
 
+    def start(self):
+        if not self._server_process:
+            self._start()
+
     def stop(self):
         if self._server_process:
             self._server_process.stop()

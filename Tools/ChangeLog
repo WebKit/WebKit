@@ -1,5 +1,37 @@
 2012-02-09  Adam Barth  <abarth@webkit.org>
 
+        run-perf-tests should have an option to pause before running tests so we can attach Instruments
+        https://bugs.webkit.org/show_bug.cgi?id=78271
+
+        Reviewed by Ryosuke Niwa.
+
+        This lets me attach instruments to profile the performance of the test.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.start):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.start):
+        (DriverProxy.start):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.start):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.start):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.start):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run.RecordingTestDriver.start):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._run_tests_set):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (start):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStopCount):
+        (test_run_test_set_kills_drt_per_run):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStartCount):
+        (test_run_test_set_kills_drt_per_run.TestDriverWithStartCount.start):
+
+2012-02-09  Adam Barth  <abarth@webkit.org>
+
         run-perf-tests --chromium should run the chromium port
         https://bugs.webkit.org/show_bug.cgi?id=78266
 
