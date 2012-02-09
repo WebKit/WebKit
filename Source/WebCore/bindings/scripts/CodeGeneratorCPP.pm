@@ -748,11 +748,6 @@ sub GenerateImplementation
                 my $argName = "new" . ucfirst($attributeName);
                 my $arg = GetCPPTypeGetter($argName, $idlType);
 
-                # The definition of ConvertToString is flipped for the setter
-                if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                    $arg = "WTF::String($arg).toInt()";
-                }
-
                 my $attributeType = GetCPPType($attribute->signature->type, 1);
                 push(@implContent, "void $className\:\:$setterName($attributeType $argName)\n");
                 push(@implContent, "{\n");
