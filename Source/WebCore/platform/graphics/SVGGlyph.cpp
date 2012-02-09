@@ -80,7 +80,7 @@ static inline SVGGlyph::ArabicForm processArabicFormDetection(const UChar& curCh
     return curForm;
 }
 
-Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool mirror)
+Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool rtl)
 {
     Vector<SVGGlyph::ArabicForm> forms;
     unsigned length = input.length();
@@ -99,7 +99,7 @@ Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool 
     bool lastCharShapesRight = false;
 
     // Start identifying arabic forms
-    if (mirror) {
+    if (rtl) {
         for (int i = length - 1; i >= 0; --i)
             forms.prepend(processArabicFormDetection(input[i], lastCharShapesRight, forms.isEmpty() ? 0 : &forms.first()));
     } else {

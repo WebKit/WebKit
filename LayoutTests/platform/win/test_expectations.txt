@@ -132,3 +132,8 @@ BUGWK76118 : fast/css/text-overflow-input.html = MISSING
 // Rebaseline required after bug 74874
 BUGWK74874 : fast/table/027.html = IMAGE+TEXT
 BUGWK74874 : fast/table/027-vertical.html = IMAGE+TEXT
+
+// These tests need to be rebaselined after 77067
+BUGWK77067 : svg/custom/glyph-selection-arabic-forms.svg = IMAGE
+BUGWK77067 : svg/custom/glyph-selection-bidi-mirror.svg = IMAGE
+BUGWK77067 : svg/custom/glyph-selection-non-bmp.svg = IMAGE

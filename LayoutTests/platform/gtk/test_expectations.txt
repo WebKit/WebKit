@@ -98,3 +98,8 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
+
+// These tests need to be rebaselined after 77067
+BUGWK77067 : svg/custom/glyph-selection-arabic-forms.svg = TEXT
+BUGWK77067 : svg/custom/glyph-selection-bidi-mirror.svg = TEXT
+BUGWK77067 : svg/custom/glyph-selection-non-bmp.svg = TEXT
