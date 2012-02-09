@@ -38,14 +38,6 @@ import re
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system import path
-
-
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
 from webkitpy.common import find_files
 from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import ScriptError
@@ -148,7 +140,6 @@ class Port(object):
             self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
         self._reftest_list = {}
-        self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
 
     def wdiff_available(self):
@@ -176,9 +167,7 @@ class Port(object):
         return cpu_count
 
     def default_worker_model(self):
-        if self._multiprocessing_is_available:
-            return 'processes'
-        return 'inline'
+        return 'processes'
 
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines in for this port."""

@@ -42,16 +42,10 @@ They interact more or less like:
 """
 
 import logging
+import multiprocessing
 import optparse
 import Queue
 import sys
-
-
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
 
 # These are needed when workers are launched in new child processes.
 from webkitpy.common.host import Host
@@ -99,7 +93,7 @@ def get(port, options, client, worker_class):
     if worker_model == 'inline':
         queue_class = Queue.Queue
         manager_class = _InlineManager
-    elif worker_model == 'processes' and multiprocessing:
+    elif worker_model == 'processes':
         queue_class = multiprocessing.Queue
         manager_class = _MultiProcessManager
     else:
@@ -245,40 +239,38 @@ class _InlineWorkerConnection(_WorkerConnection):
         raise exc_info[0], exc_info[1], exc_info[2]
 
 
-if multiprocessing:
+class _Process(multiprocessing.Process):
+    def __init__(self, worker_connection, platform_name, options, client):
+        multiprocessing.Process.__init__(self)
+        self._worker_connection = worker_connection
+        self._platform_name = platform_name
+        self._options = options
+        self._client = client
 
-    class _Process(multiprocessing.Process):
-        def __init__(self, worker_connection, platform_name, options, client):
-            multiprocessing.Process.__init__(self)
-            self._worker_connection = worker_connection
-            self._platform_name = platform_name
-            self._options = options
-            self._client = client
+    def run(self):
+        # We need to create a new Host object here because this is
+        # running in a new process and we can't require the parent's
+        # Host to be pickleable and passed to the child.
+        if self._platform_name.startswith('test'):
+            host = MockHost()
+        else:
+            host = Host()
+        host._initialize_scm()
 
-        def run(self):
-            # We need to create a new Host object here because this is
-            # running in a new process and we can't require the parent's
-            # Host to be pickleable and passed to the child.
-            if self._platform_name.startswith('test'):
-                host = MockHost()
-            else:
-                host = Host()
-            host._initialize_scm()
+        options = self._options
+        port_obj = host.port_factory.get(self._platform_name, options)
 
-            options = self._options
-            port_obj = host.port_factory.get(self._platform_name, options)
+        # The unix multiprocessing implementation clones the
+        # log handler configuration into the child processes,
+        # but the win implementation doesn't.
+        configure_logging = (sys.platform == 'win32')
 
-            # The unix multiprocessing implementation clones the
-            # log handler configuration into the child processes,
-            # but the win implementation doesn't.
-            configure_logging = (sys.platform == 'win32')
-
-            # FIXME: this won't work if the calling process is logging
-            # somewhere other than sys.stderr and sys.stdout, but I'm not sure
-            # if this will be an issue in practice.
-            printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout, configure_logging)
-            self._client.run(port_obj)
-            printer.cleanup()
+        # FIXME: this won't work if the calling process is logging
+        # somewhere other than sys.stderr and sys.stdout, but I'm not sure
+        # if this will be an issue in practice.
+        printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout, configure_logging)
+        self._client.run(port_obj)
+        printer.cleanup()
 
 
 class _MultiProcessWorkerConnection(_WorkerConnection):

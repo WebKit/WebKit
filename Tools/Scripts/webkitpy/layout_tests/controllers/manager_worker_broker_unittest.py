@@ -31,15 +31,8 @@ import Queue
 import sys
 import unittest
 
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
-
 from webkitpy.common.system import outputcapture
 from webkitpy.common.host_mock import MockHost
-
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import message_broker
@@ -127,11 +120,7 @@ class FunctionTests(unittest.TestCase):
         # This test sometimes fails on Windows. See <http://webkit.org/b/55087>.
         if sys.platform in ('cygwin', 'win32'):
             return
-
-        if multiprocessing:
-            self.assertTrue(make_broker(self, 'processes') is not None)
-        else:
-            self.assertRaises(ValueError, make_broker, self, 'processes')
+        self.assertTrue(make_broker(self, 'processes') is not None)
 
     def test_get__unknown(self):
         self.assertRaises(ValueError, make_broker, self, 'unknown')
@@ -205,15 +194,12 @@ class _TestsMixin(object):
 
 
 # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54520.
-if multiprocessing and sys.platform not in ('cygwin', 'win32'):
+if sys.platform not in ('cygwin', 'win32'):
 
     class MultiProcessBrokerTests(_TestsMixin, unittest.TestCase):
         def setUp(self):
             _TestsMixin.setUp(self)
             self._worker_model = 'processes'
-
-        def queue(self):
-            return multiprocessing.Queue()
 
 
 class FunctionsTest(unittest.TestCase):

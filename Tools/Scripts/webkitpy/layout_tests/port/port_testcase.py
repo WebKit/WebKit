@@ -30,19 +30,11 @@
 
 import errno
 import socket
-
 import sys
 import time
 import unittest
 
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
 from webkitpy.layout_tests.servers import http_server_base
-
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
@@ -68,10 +60,7 @@ class PortTestCase(unittest.TestCase):
 
     def test_default_worker_model(self):
         port = self.make_port()
-        if multiprocessing:
-            self.assertEqual(port.default_worker_model(), 'processes')
-        else:
-            self.assertEqual(port.default_worker_model(), 'inline')
+        self.assertEqual(port.default_worker_model(), 'processes')
 
     def test_driver_cmd_line(self):
         port = self.make_port()

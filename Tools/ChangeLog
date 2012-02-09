@@ -1,3 +1,29 @@
+2012-02-08  Adam Barth  <abarth@webkit.org>
+
+        webkitpy should reply upon the multiprocessing package existing
+        https://bugs.webkit.org/show_bug.cgi?id=78176
+
+        Reviewed by Eric Seidel.
+
+        Now that we don't support Python 2.5, this import can't fail.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (_Process):
+        (_Process.__init__):
+        (_Process.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (FunctionTests.test_get__processes):
+        (MultiProcessBrokerTests.setUp):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.default_worker_model):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.check_build):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_default_worker_model):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed typo fix that makes docs build again for the gtk2-based

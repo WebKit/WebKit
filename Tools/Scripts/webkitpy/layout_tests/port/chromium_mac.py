@@ -102,13 +102,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
         return result
 
-    def default_child_processes(self):
-        if not self._multiprocessing_is_available:
-            # Running multiple threads in Mac Python is unstable (See
-            # https://bugs.webkit.org/show_bug.cgi?id=38553 for more info).
-            return 1
-        return chromium.ChromiumPort.default_child_processes(self)
-
     def operating_system(self):
         return 'mac'
 
