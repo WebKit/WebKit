@@ -15,4 +15,3 @@ layer at (0,0) size 800x482
               RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
           RenderSVGPath {circle} at (48,112) size 322x322 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=RADIAL-GRADIENT] [id="grad"]}] [cx=200.00] [cy=200.00] [r=160.00]
         RenderText {#text} at (0,0) size 0x0
-caret: position 145 of child 0 {#text} of child 1 {p} of body
