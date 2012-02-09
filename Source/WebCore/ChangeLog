@@ -1,3 +1,22 @@
+2012-02-08  Matthew Delaney  <mdelaney@apple.com>
+
+        GeneratorGeneratedImage::drawPattern does not factor in its destination context's scale when generating its image tiles
+
+        https://bugs.webkit.org/show_bug.cgi?id=67729
+        <rdar://problem/10087050>
+
+        Reviewed by Beth Dakin.
+
+        No new tests, current pixel tests will cover this. Though some pixel results might improve to become less pixel-y.
+
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::draw): Updated context to destContext for consistency.
+        (WebCore::GeneratorGeneratedImage::drawPattern): Taught drawPattern about the destination
+        scale factor to avoid having low-res generated images such as gradients in certain cases.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer): Have the image buffer match the
+        context acceleration setting as well.
+
 2012-02-08  Adam Klein  <adamk@chromium.org>
 
         Simplify and correct mutation delivery timing for JSC

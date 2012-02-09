@@ -33,19 +33,19 @@
 
 namespace WebCore {
 
-void GeneratorGeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
+void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
-    GraphicsContextStateSaver stateSaver(*context);
-    context->setCompositeOperation(compositeOp);
-    context->clip(dstRect);
-    context->translate(dstRect.x(), dstRect.y());
-    if (dstRect.size() != srcRect.size())
-        context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
-    context->translate(-srcRect.x(), -srcRect.y());
-    context->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
+    GraphicsContextStateSaver stateSaver(*destContext);
+    destContext->setCompositeOperation(compositeOp);
+    destContext->clip(destRect);
+    destContext->translate(destRect.x(), destRect.y());
+    if (destRect.size() != srcRect.size())
+        destContext->scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
+    destContext->translate(-srcRect.x(), -srcRect.y());
+    destContext->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
 }
 
-void GeneratorGeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
+void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
                                  const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
@@ -53,8 +53,16 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
     FloatRect adjustedSrcRect = srcRect;
     m_generator->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 
+    // Factor in the destination context's scale to generate at the best resolution
+    AffineTransform destContextCTM = destContext->getCTM();
+    double xScale = fabs(destContextCTM.xScale());
+    double yScale = fabs(destContextCTM.yScale());
+    AffineTransform adjustedPatternCTM = patternTransform;
+    adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
+    adjustedSrcRect.scale(xScale, yScale);
+
     // Create a BitmapImage and call drawPattern on it.
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(adjustedSize, ColorSpaceDeviceRGB, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
+    OwnPtr<ImageBuffer> imageBuffer = destContext->createCompatibleBuffer(adjustedSize);
     if (!imageBuffer)
         return;
 
@@ -63,7 +71,7 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
     graphicsContext->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator.get());
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, adjustedSrcRect, patternTransform, phase, styleColorSpace, compositeOp, destRect);
+    imageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
 }
 
 void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)

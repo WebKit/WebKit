@@ -754,7 +754,7 @@ PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& s
     AffineTransform transform = getCTM();
     IntSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
 
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(scaledSize);
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(scaledSize, ColorSpaceDeviceRGB, isAcceleratedContext() ? Accelerated : Unaccelerated);
     if (!buffer)
         return nullptr;
 
