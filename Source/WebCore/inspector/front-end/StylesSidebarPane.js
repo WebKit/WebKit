@@ -232,6 +232,14 @@ WebInspector.StylesSidebarPane.prototype = {
 
         function stylesCallback(matchedResult)
         {
+            delete this._innerUpdateInProgress;
+
+            if (this._lastNodeForInnerUpdate) {
+                delete this._lastNodeForInnerUpdate;
+                this._innerUpdate(false, null, callback);
+                return;
+            }
+
             if (matchedResult && this.node === node) {
                 resultStyles.matchedCSSRules = matchedResult.matchedCSSRules;
                 resultStyles.pseudoElements = matchedResult.pseudoElements;
@@ -270,6 +278,11 @@ WebInspector.StylesSidebarPane.prototype = {
      */
     _innerUpdate: function(refresh, editedSection, userCallback)
     {
+        if (this._innerUpdateInProgress) {
+            this._lastNodeForInnerUpdate = this.node;
+            return;
+        }
+
         var node = this.node;
         if (!node) {
             this._sectionsContainer.removeChildren();
@@ -282,11 +295,22 @@ WebInspector.StylesSidebarPane.prototype = {
 
         function computedStyleCallback(computedStyle)
         {
+            delete this._innerUpdateInProgress;
+
+            if (this._lastNodeForInnerUpdate) {
+                delete this._lastNodeForInnerUpdate;
+                this._innerUpdate(refresh, editedSection, userCallback);
+                return;
+            }
+
             if (this.node === node && computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
+
             if (userCallback)
                 userCallback();
         }
+
+        this._innerUpdateInProgress = true;
 
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, this._forcedPseudoClasses, computedStyleCallback.bind(this));
