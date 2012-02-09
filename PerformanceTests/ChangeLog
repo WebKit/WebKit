@@ -1,3 +1,15 @@
+2012-02-08  Hajime Morrita  <morrita@chromium.org>
+
+        [PerformanceTests] sunspider-crypto-md5.html and sunspider-crypto-sha1.html are timing out on cr-mac perf bot
+        https://bugs.webkit.org/show_bug.cgi?id=78174
+
+        Reviewed by Ryosuke Niwa.
+
+        Pulled back removed files.
+
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-crypto-md5.html: Added.
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-crypto-sha1.html: Added.
+
 2012-02-02  Hajime Morrita  <morrita@chromium.org>
 
         [PerformanceTests] Each Dromaeo test needs its landing html.
