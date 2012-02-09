@@ -206,6 +206,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         var uiSourceCode = this._files[tabId];
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
+        delete this._currentFile;
 
         this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorClosed, uiSourceCode);
 

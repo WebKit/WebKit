@@ -404,7 +404,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._debuggerResumed();
 
-        delete this._curentUISourceCode;
+        delete this._currentUISourceCode;
         this._editorContainer.reset();
         this._updateScriptViewStatusBarItems();
 
@@ -475,9 +475,9 @@ WebInspector.ScriptsPanel.prototype = {
             return null;
 
         var sourceFrame = this._getOrCreateSourceFrame(uiSourceCode);
-        if (this._curentUISourceCode === uiSourceCode)
+        if (this._currentUISourceCode === uiSourceCode)
             return sourceFrame;
-        this._curentUISourceCode = uiSourceCode;
+        this._currentUISourceCode = uiSourceCode;
 
         this._fileSelector.revealUISourceCode(uiSourceCode);
         this._editorContainer.showFile(uiSourceCode);
@@ -629,6 +629,9 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
 
+        if (this._currentUISourceCode === uiSourceCode)
+            delete this._currentUISourceCode;
+        
         // We don't need to update file selector here regardless of whether useScriptsNavigator is set or not:
         // SingleFileEditorContainer never dispatches EditorClosed, so no need to update ComboBoxFileSelector; 
         // ScriptsNavigator does not need to update on EditorClosed.
