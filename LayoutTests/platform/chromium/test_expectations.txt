@@ -675,7 +675,8 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
-BUGWK60109 SLOW WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
+// Put back WIN when WK78251 is solved.
+BUGWK60109 SLOW VISTA WIN7 DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
 
@@ -4015,6 +4016,7 @@ BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-o
 // Just needs a rebaseline.
 BUGWK47907 : media/video-empty-source.html = IMAGE+TEXT
 
-// Started crashing on XP only.
+// Started crashing after r107242.
+BUGWK78251 DEBUG XP : inspector/elements/edit-dom-actions.html = CRASH
 BUGWK78251 DEBUG XP : inspector/elements/set-outer-html-body.html = CRASH
 BUGWK78251 DEBUG XP : inspector/elements/undo-dom-edits.html = CRASH
