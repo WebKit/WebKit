@@ -1,41 +1,32 @@
+<!DOCTYPE HTML>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
 <style>
-div {color: red;}
-#controlsimple {color: hsl(120,75%,50%);}
-#simple        {color: hsl(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%));}
+    #controlsimple { color: hsl(120,75%,50%); }
+    #simple        { color: hsl(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%)); }
 
-#controlalpha {color: hsla(120,75%,50%,0.7);}
-#alpha        {color: hsla(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%), -webkit-calc(0.7));}
+    #controlalpha { color: hsla(120,75%,50%,0.7); }
+    #alpha        { color: hsla(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%), -webkit-calc(0.7)); }
 </style>
-
-<div id="controlsimple">These two sentences should be the same color (simple)</div>
-<div id="simple">These two sentences should be the same color (simple)</div>
-<hr/>
-<div id="controlalpha">These two sentences should be the same color (alpha)</div>
-<div id="alpha">These two sentences should be the same color (alpha)</div>
-<hr/>
-<div id="results"></div>
-
+<div id="test-container">
+    <hr/>
+    <div id="controlsimple">These two sentences should be the same color (simple)</div>
+    <div id="simple">These two sentences should be the same color (simple)</div>
+    <hr/>
+    <div id="controlalpha">These two sentences should be the same color (alpha)</div>
+    <div id="alpha">These two sentences should be the same color (alpha)</div>
+</div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+    description("Tests that CSS3 calc() can be used with the hsl() and hsla() functions");
+    
+    tests = ["simple", "alpha"];
 
-tests = ["simple", "alpha"];
-
-var success = true;
-
-for (i = 0; i < tests.length; i++) {
-    var test = tests[i];
-    var expected = getComputedStyle(document.getElementById("control" + test), null).color;
-    var actual = getComputedStyle(document.getElementById(test), null).color;
-    success = success && (actual == expected);
-}
-
-var results = document.getElementById("results");
-if (success) {
-    results.style.color = "green";
-    results.innerHTML = "PASS";
-} else {
-    results.style.color = "red";
-    results.innerHTML = "FAIL";
-}
+    for (i = 0; i < tests.length; i++) {
+        var test = tests[i];
+        shouldBeEqualToString('getComputedStyle(document.getElementById("' + test + '"), null).color', getComputedStyle(document.getElementById("control" + test), null).color);
+    }
+    
+    if (window.layoutTestController)
+        document.body.removeChild(document.getElementById("test-container"));   
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+
