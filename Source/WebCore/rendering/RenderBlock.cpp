@@ -2022,7 +2022,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
     setLogicalHeight(beforeEdge);
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (view()->layoutState()->currentLineGrid() == this)
+    if (view()->layoutState()->lineGrid() == this)
         layoutLineGridBox();
 
     // The margin struct caches all our current margin collapsing state.  The compact struct caches state when we encounter compacts,

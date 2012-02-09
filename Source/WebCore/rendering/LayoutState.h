@@ -48,7 +48,7 @@ public:
         , m_pageLogicalHeight(0)
         , m_pageLogicalHeightChanged(false)
         , m_columnInfo(0)
-        , m_currentLineGrid(0)
+        , m_lineGrid(0)
         , m_next(0)
 #ifndef NDEBUG
         , m_renderer(0)
@@ -81,12 +81,13 @@ public:
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
-    RenderBlock* currentLineGrid() const { return m_currentLineGrid; }
-    LayoutSize currentLineGridOffset() const { return m_currentLineGridOffset; }
+    RenderBlock* lineGrid() const { return m_lineGrid; }
+    LayoutSize lineGridOffset() const { return m_lineGridOffset; }
+    LayoutSize lineGridPaginationOrigin() const { return m_lineGridPaginationOrigin; }
 
     LayoutSize layoutOffset() const { return m_layoutOffset; }
 
-    bool needsBlockDirectionLocationSetBeforeLayout() const { return m_currentLineGrid || (m_isPaginated && m_pageLogicalHeight); }
+    bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
 private:
     // The normal operator new is disallowed.
@@ -94,6 +95,8 @@ private:
 
     void propagateLineGridInfo(RenderBox*);
     void establishLineGrid(RenderBlock*);
+
+    void computeLineGridPaginationOrigin(RenderBox*);
 
 public:
     bool m_clipped;
@@ -119,9 +122,10 @@ public:
     ColumnInfo* m_columnInfo;
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
-    RenderBlock* m_currentLineGrid;
-    LayoutSize m_currentLineGridOffset;
-    
+    RenderBlock* m_lineGrid;
+    LayoutSize m_lineGridOffset;
+    LayoutSize m_lineGridPaginationOrigin;
+
     LayoutState* m_next;
 #ifndef NDEBUG
     RenderObject* m_renderer;

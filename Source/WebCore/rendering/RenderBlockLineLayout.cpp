@@ -1450,7 +1450,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     setLogicalHeight(borderBefore() + paddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (view()->layoutState() && view()->layoutState()->currentLineGrid() == this)
+    if (view()->layoutState() && view()->layoutState()->lineGrid() == this)
         layoutLineGridBox();
 
     // Figure out if we should clear out our line boxes.

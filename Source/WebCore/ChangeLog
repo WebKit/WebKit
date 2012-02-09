@@ -1,3 +1,36 @@
+2012-02-08  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=78157
+        
+        Make multi-column layout work with line grids that are outside of the multi-column
+        block.
+
+        Reviewed by Dan Bernstein.
+
+        Added new tests in fast/line-grid.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::propagateLineGridInfo):
+        (WebCore::LayoutState::establishLineGrid):
+        (WebCore):
+        (WebCore::LayoutState::computeLineGridPaginationOrigin):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::lineGrid):
+        (WebCore::LayoutState::lineGridOffset):
+        (WebCore::LayoutState::lineGridPaginationOrigin):
+        (WebCore::LayoutState::needsBlockDirectionLocationSetBeforeLayout):
+        (LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineGridSnapAdjustment):
+
 2012-02-08  Matthew Delaney  <mdelaney@apple.com>
 
         GeneratorGeneratedImage::drawPattern does not factor in its destination context's scale when generating its image tiles

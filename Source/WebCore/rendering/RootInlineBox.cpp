@@ -335,8 +335,8 @@ LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
 
     // Get the current line grid and offset.
     LayoutState* layoutState = block()->view()->layoutState();
-    RenderBlock* lineGrid = layoutState->currentLineGrid();
-    LayoutSize lineGridOffset = layoutState->currentLineGridOffset();
+    RenderBlock* lineGrid = layoutState->lineGrid();
+    LayoutSize lineGridOffset = layoutState->lineGridOffset();
     if (!lineGrid || lineGrid->style()->writingMode() != block()->style()->writingMode())
         return 0;
 
@@ -359,19 +359,22 @@ LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
     LayoutUnit lineGridFontAscent = lineGrid->style()->fontMetrics().ascent(baselineType());
     LayoutUnit lineGridFontHeight = lineGridBox->logicalHeight();
     LayoutUnit firstTextTop = lineGridBlockOffset + lineGridBox->logicalTop();
+    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineTopWithLeading();
     LayoutUnit firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     LayoutUnit currentTextTop = blockOffset + logicalTop() + delta;
     LayoutUnit currentFontAscent = block()->style()->fontMetrics().ascent(baselineType());
     LayoutUnit currentBaselinePosition = currentTextTop + currentFontAscent;
 
+    LayoutUnit lineGridPaginationOrigin = isHorizontal() ? layoutState->lineGridPaginationOrigin().height() : layoutState->lineGridPaginationOrigin().width();
+
     // If we're paginated, see if we're on a page after the first one. If so, the grid resets on subsequent pages.
     // FIXME: If the grid is an ancestor of the pagination establisher, then this is incorrect.
     LayoutUnit pageLogicalTop = 0;
     if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
-        pageLogicalTop = block()->pageLogicalTopForOffset(logicalTop() + delta);
-        if (pageLogicalTop > firstTextTop)
-            firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderBefore() - lineGrid->paddingBefore();
+        pageLogicalTop = block()->pageLogicalTopForOffset(lineTopWithLeading() + delta);
+        if (pageLogicalTop > firstLineTopWithLeading)
+            firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderBefore() - lineGrid->paddingBefore() + lineGridPaginationOrigin;
     }
 
     if (block()->style()->lineGridSnap() == LineGridSnapContain) {
@@ -405,13 +408,13 @@ LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
     if (!layoutState->isPaginated() || !layoutState->pageLogicalHeight() || result == delta)
         return result;
     
-    // We may have shifted to a new page. We need to do a re-snap when that happens.
-    LayoutUnit newPageLogicalTop = block()->pageLogicalTopForOffset(logicalTop() + result);
+    // We may end up shifted to a new page. We need to do a re-snap when that happens.
+    LayoutUnit newPageLogicalTop = block()->pageLogicalTopForOffset(lineBottomWithLeading() + result);
     if (newPageLogicalTop == pageLogicalTop)
         return result;
     
     // Put ourselves at the top of the next page to force a snap onto the new grid established by that page.
-    return lineGridSnapAdjustment(newPageLogicalTop - (blockOffset + logicalTop()));
+    return lineGridSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
 }
 
 GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, 
