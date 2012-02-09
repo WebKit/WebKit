@@ -1,3 +1,16 @@
+2012-02-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        The localization of htmlSelectMultipleItems() needs better support of pluralization
+        https://bugs.webkit.org/show_bug.cgi?id=78197
+
+        Reviewed by Joseph Pecoraro.
+
+        For translation, the localization of 0 and 1 depends on the language.
+
+        * English.lproj/Localizable.strings:
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::htmlSelectMultipleItems):
+
 2012-02-09  Anders Carlsson  <andersca@apple.com>
 
         ScrollingTreeNodeMac should implement ScrollElasticityController
