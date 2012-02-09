@@ -1,3 +1,17 @@
+2012-02-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation with newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=77653
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Api/qgraphicswebview.cpp: Removed unnecessary inclusion of removed header file.
+        * declarative/public.pri: Use quick1 instead of qtquick1. It's mandator with Qt 5.
+        * tests/tests.pri: Ditto.
+        * declarative/qdeclarativewebview_p.h: Fix includes, just use the module-less
+        version that works with all Qt versions.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp: Ditto.
+
 2012-02-08  Leo Franchi  <lfranchi@kde.org>
 
         Remote web inspector reentrancy fixes

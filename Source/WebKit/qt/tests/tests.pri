@@ -22,7 +22,7 @@ haveQt(5): QT += widgets
 CONFIG += qtwebkit
 
 haveQt(5) {
-    contains(QT_CONFIG, qtquick1): QT += declarative qtquick1
+    QT += declarative quick1
 } else {
     contains(QT_CONFIG, declarative): QT += declarative
 }

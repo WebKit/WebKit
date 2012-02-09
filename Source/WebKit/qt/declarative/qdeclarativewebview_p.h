@@ -21,17 +21,10 @@
 #ifndef qdeclarativewebview_p_h
 #define qdeclarativewebview_p_h
 
+#include <QAction>
+#include <QDeclarativeItem>
 #include <QtCore/QBasicTimer>
 #include <QtCore/QUrl>
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtQuick1/QDeclarativeItem>
-#include <QtWidgets/QAction>
-#else
-#include <QtDeclarative/QDeclarativeItem>
-#include <QtGui/QAction>
-#endif
-
 #include <QtNetwork/QNetworkAccessManager>
 #include "qgraphicswebview.h"
 #include "qwebpage.h"

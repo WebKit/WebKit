@@ -2,13 +2,8 @@
 #include <QAction>
 #include <QColor>
 #include <QDebug>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtQuick1/QDeclarativeItem>
-#include <QtQuick1/QDeclarativeView>
-#else
 #include <QDeclarativeItem>
 #include <QDeclarativeView>
-#endif
 #include <QDeclarativeComponent>
 #include <QDeclarativeEngine>
 #include <QDeclarativeProperty>

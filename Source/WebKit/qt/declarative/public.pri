@@ -27,11 +27,7 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 CONFIG += qtwebkit qtwebkit-private
 
 QT += declarative
-haveQt(5): QT += widgets quick
-
-contains(QT_CONFIG, qtquick1): {
-    QT += qtquick1
-}
+haveQt(5): QT += widgets quick quick1
 
 DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
 
