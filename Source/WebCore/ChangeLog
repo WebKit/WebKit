@@ -1,3 +1,15 @@
+2012-02-08  Raymond Liu  <raymond.liu@intel.com>
+
+        Fix the caculation of preDelayFrames in DynamicsCompressorKernel
+        https://bugs.webkit.org/show_bug.cgi?id=78057
+
+        Reviewed by Chris Rogers.
+
+        No new tests required.
+
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::setPreDelayTime):
+
 2012-02-08  Adam Klein  <adamk@chromium.org>
 
         DOM mutations should not be delivered on worker threads

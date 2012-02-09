@@ -69,7 +69,7 @@ DynamicsCompressorKernel::DynamicsCompressorKernel(float sampleRate)
 void DynamicsCompressorKernel::setPreDelayTime(float preDelayTime)
 {
     // Re-configure look-ahead section pre-delay if delay time has changed.
-    unsigned preDelayFrames = preDelayTime / sampleRate();
+    unsigned preDelayFrames = preDelayTime * sampleRate();
     if (preDelayFrames > MaxPreDelayFrames - 1)
         preDelayFrames = MaxPreDelayFrames - 1;
         
