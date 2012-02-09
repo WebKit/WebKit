@@ -12,13 +12,9 @@ function clickHandler(evt) {
 function repaintTest() {
     if (window.eventSender) {
         layoutTestController.waitUntilDone();
-
-        // This timeout should be unncessary, but as the test currently times out on Chromium, I'm trying with this timeout.
-        setTimeout(function() {
-            eventSender.mouseMoveTo(10, 70);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-        }, 0);
+        eventSender.mouseMoveTo(50, 80);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
     }
 }
 </script>
