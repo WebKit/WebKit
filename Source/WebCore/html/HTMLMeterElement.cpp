@@ -234,11 +234,15 @@ void HTMLMeterElement::didElementStateChange()
 
 void HTMLMeterElement::createShadowSubtree()
 {
+    ASSERT(!shadowRoot());
+
     RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
     m_value = MeterValueElement::create(document());
     ExceptionCode ec = 0;
     bar->appendChild(m_value, ec);
-    ensureShadowRoot()->appendChild(bar, ec);
+
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
+    root->appendChild(bar, ec);
 }
 
 } // namespace

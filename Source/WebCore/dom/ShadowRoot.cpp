@@ -66,9 +66,12 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
         return 0;
     }
     RefPtr<ShadowRoot> shadowRoot = create(element->document());
+
+    ec = 0;
     element->setShadowRoot(shadowRoot, ec);
     if (ec)
         return 0;
+
     return shadowRoot.release();
 }
 

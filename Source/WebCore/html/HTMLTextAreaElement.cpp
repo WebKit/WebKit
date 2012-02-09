@@ -84,8 +84,9 @@ PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName&
 
 void HTMLTextAreaElement::createShadowSubtree()
 {
-    ExceptionCode ec = 0;
-    ensureShadowRoot()->appendChild(TextControlInnerTextElement::create(document()), ec);
+    ASSERT(!shadowRoot());
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
+    root->appendChild(TextControlInnerTextElement::create(document()), ASSERT_NO_EXCEPTION);
 }
 
 const AtomicString& HTMLTextAreaElement::formControlType() const

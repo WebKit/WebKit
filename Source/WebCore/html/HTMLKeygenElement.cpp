@@ -85,7 +85,9 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
         option->appendChild(Text::create(document, keys[i]), ec);
     }
 
-    ensureShadowRoot()->appendChild(select, ec);
+    ASSERT(!shadowRoot());
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
+    root->appendChild(select, ec);
 }
 
 PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
