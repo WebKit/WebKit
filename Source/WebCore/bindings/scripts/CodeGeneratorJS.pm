@@ -2427,13 +2427,9 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
 
     foreach my $parameter (@{$function->parameters}) {
-        # Optional callbacks should be treated differently, because they always have a default value (0),
-        # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue]
-        # should not generate an early call.
-        my $optional = $parameter->extendedAttributes->{"Optional"};
-        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
-            # Generate early call if there are enough parameters.
+        # Optional arguments with [Optional] should generate an early call with fewer arguments.
+        # Optional arguments with [Optional=TreatAsUndefined] should not generate the early call.
+        if ($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined" && !$parameter->extendedAttributes->{"Callback"}) {
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
                 $hasOptionalArguments = 1;
@@ -2499,10 +2495,9 @@ sub GenerateParametersCheck
                 }
             }
 
-            my $optional = $parameter->extendedAttributes->{"Optional"};
-            my $parameterMissingPolicy = "MissingIsUndefined";
-            if ($optional && $optional eq "CallWithNullValue") {
-                $parameterMissingPolicy = "MissingIsEmpty";
+            my $parameterMissingPolicy = "MissingIsUndefinedValue";
+            if ($parameter->extendedAttributes->{"TreatAsUndefined"} and $parameter->extendedAttributes->{"TreatAsUndefined"} eq "NullString") {
+                $parameterMissingPolicy = "MissingIsNullValue";
             }
 
             push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterMissingPolicy)") . ");\n");
@@ -3521,8 +3516,7 @@ END
             }
 
             # For now, we do not support SVG constructors.
-            # We do not also support a constructor [Optional] argument without CallWithDefaultValue
-            # nor CallWithNullValue.
+            # In constructor arguments, we can use [Optional=TreatAsUndefined] but cannot use [Optional].
             my $numParameters = @{$function->parameters};
             my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 

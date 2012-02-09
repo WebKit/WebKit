@@ -52,7 +52,7 @@ module xpath {
             
         Node iterateNext()
             raises (DOMException);
-        Node snapshotItem(in [Optional=CallWithDefaultValue] unsigned long index)
+        Node snapshotItem(in [Optional=TreatAsUndefined] unsigned long index)
             raises (DOMException);
     };
 

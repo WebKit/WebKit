@@ -32,13 +32,13 @@ module core {
         readonly attribute [Custom] double beta;
         readonly attribute [Custom] double gamma;
         readonly attribute [Custom] boolean absolute;
-        [Custom] void initDeviceOrientationEvent(in [Optional=CallWithDefaultValue] DOMString type, 
-                                                 in [Optional=CallWithDefaultValue] boolean bubbles, 
-                                                 in [Optional=CallWithDefaultValue] boolean cancelable, 
-                                                 in [Optional=CallWithDefaultValue] double alpha, 
-                                                 in [Optional=CallWithDefaultValue] double beta, 
-                                                 in [Optional=CallWithDefaultValue] double gamma,
-                                                 in [Optional=CallWithDefaultValue] boolean absolute);
+        [Custom] void initDeviceOrientationEvent(in [Optional=TreatAsUndefined] DOMString type, 
+                                                 in [Optional=TreatAsUndefined] boolean bubbles, 
+                                                 in [Optional=TreatAsUndefined] boolean cancelable, 
+                                                 in [Optional=TreatAsUndefined] double alpha, 
+                                                 in [Optional=TreatAsUndefined] double beta, 
+                                                 in [Optional=TreatAsUndefined] double gamma,
+                                                 in [Optional=TreatAsUndefined] boolean absolute);
     };
 
 }

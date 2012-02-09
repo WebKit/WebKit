@@ -1526,11 +1526,9 @@ sub GenerateParametersCheck
 
         my $parameterName = $parameter->name;
 
-        # Optional callbacks should be treated differently, because they always have a default value (0),
-        # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with default values [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue] should not generate an early call.
-        my $optional = $parameter->extendedAttributes->{"Optional"};        
-        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
+        # Optional arguments with [Optional] should generate an early call with fewer arguments.
+        # Optional arguments with [Optional=TreatAsUndefined] should not generate the early call.
+        if ($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are not enough parameters.
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
@@ -1538,9 +1536,9 @@ sub GenerateParametersCheck
             $parameterCheckString .= "    }\n";
         }
 
-        my $parameterMissingPolicy = "MissingIsUndefined";
-        if ($optional && $optional eq "CallWithNullValue") {
-            $parameterMissingPolicy = "MissingIsEmpty";
+        my $parameterMissingPolicy = "MissingIsUndefinedValue";
+        if ($parameter->extendedAttributes->{"TreatUndefinedAs"} and $parameter->extendedAttributes->{"TreatUndefinedAs"} eq "NullString") {
+            $parameterMissingPolicy = "MissingIsNullValue";
         }
 
         AddToImplIncludes("ExceptionCode.h");
@@ -3593,8 +3591,7 @@ sub RequiresCustomSignature
       return 0;
     }
     foreach my $parameter (@{$function->parameters}) {
-        my $optional = $parameter->extendedAttributes->{"Optional"};
-        if (($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue") || $parameter->extendedAttributes->{"Callback"}) {
+        if (($parameter->extendedAttributes->{"Optional"} && $parameter->extendedAttributes->{"Optional"} ne "TreatAsUndefined") || $parameter->extendedAttributes->{"Callback"}) {
             return 0;
         }
     }

@@ -36,9 +36,9 @@ module css {
         attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString name;
         readonly attribute CSSRuleList cssRules;
         
-        void insertRule(in [Optional=CallWithDefaultValue] DOMString rule);
-        void deleteRule(in [Optional=CallWithDefaultValue] DOMString key);
-        WebKitCSSKeyframeRule findRule(in [Optional=CallWithDefaultValue] DOMString key);
+        void insertRule(in [Optional=TreatAsUndefined] DOMString rule);
+        void deleteRule(in [Optional=TreatAsUndefined] DOMString key);
+        WebKitCSSKeyframeRule findRule(in [Optional=TreatAsUndefined] DOMString key);
     };
 
 }

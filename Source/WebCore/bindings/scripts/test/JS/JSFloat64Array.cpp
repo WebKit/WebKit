@@ -235,7 +235,7 @@ EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(ExecState* exec)
     Float64Array* impl = static_cast<Float64Array*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    Float32Array* array(toFloat32Array(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
+    Float32Array* array(toFloat32Array(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

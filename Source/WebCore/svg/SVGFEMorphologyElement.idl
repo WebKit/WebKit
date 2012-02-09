@@ -40,8 +40,8 @@ module svg {
         readonly attribute SVGAnimatedNumber      radiusX;
         readonly attribute SVGAnimatedNumber      radiusY;
 
-        void setRadius(in [Optional=CallWithDefaultValue] float radiusX, 
-                       in [Optional=CallWithDefaultValue] float radiusY);
+        void setRadius(in [Optional=TreatAsUndefined] float radiusX, 
+                       in [Optional=TreatAsUndefined] float radiusY);
     };
 
 }

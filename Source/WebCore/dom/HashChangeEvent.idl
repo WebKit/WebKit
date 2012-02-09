@@ -23,11 +23,11 @@ module events {
     interface [
         ConstructorTemplate=Event
     ] HashChangeEvent : Event {
-        void initHashChangeEvent(in [Optional=CallWithDefaultValue] DOMString type, 
-                                 in [Optional=CallWithDefaultValue] boolean canBubble, 
-                                 in [Optional=CallWithDefaultValue] boolean cancelable, 
-                                 in [Optional=CallWithDefaultValue] DOMString oldURL, 
-                                 in [Optional=CallWithDefaultValue] DOMString newURL); 
+        void initHashChangeEvent(in [Optional=TreatAsUndefined] DOMString type, 
+                                 in [Optional=TreatAsUndefined] boolean canBubble, 
+                                 in [Optional=TreatAsUndefined] boolean cancelable, 
+                                 in [Optional=TreatAsUndefined] DOMString oldURL, 
+                                 in [Optional=TreatAsUndefined] DOMString newURL); 
         readonly attribute [InitializedByEventConstructor] DOMString oldURL;
         readonly attribute [InitializedByEventConstructor] DOMString newURL;
     };

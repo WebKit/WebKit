@@ -32,13 +32,13 @@ module core {
         readonly attribute [Custom] Acceleration accelerationIncludingGravity;
         readonly attribute [Custom] RotationRate rotationRate;
         readonly attribute [Custom] double interval;
-        [Custom] void initDeviceMotionEvent(in [Optional=CallWithDefaultValue] DOMString type, 
-                                            in [Optional=CallWithDefaultValue] boolean bubbles, 
-                                            in [Optional=CallWithDefaultValue] boolean cancelable, 
-                                            in [Optional=CallWithDefaultValue] Acceleration acceleration, 
-                                            in [Optional=CallWithDefaultValue] Acceleration accelerationIncludingGravity, 
-                                            in [Optional=CallWithDefaultValue] RotationRate rotationRate, 
-                                            in [Optional=CallWithDefaultValue] double interval);
+        [Custom] void initDeviceMotionEvent(in [Optional=TreatAsUndefined] DOMString type, 
+                                            in [Optional=TreatAsUndefined] boolean bubbles, 
+                                            in [Optional=TreatAsUndefined] boolean cancelable, 
+                                            in [Optional=TreatAsUndefined] Acceleration acceleration, 
+                                            in [Optional=TreatAsUndefined] Acceleration accelerationIncludingGravity, 
+                                            in [Optional=TreatAsUndefined] RotationRate rotationRate, 
+                                            in [Optional=TreatAsUndefined] double interval);
     };
 
 }

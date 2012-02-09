@@ -30,38 +30,38 @@ module html {
         void save();
         void restore();
 
-        void scale(in [Optional=CallWithDefaultValue] float sx,
-                   in [Optional=CallWithDefaultValue] float sy);
-        void rotate(in [Optional=CallWithDefaultValue] float angle);
-        void translate(in [Optional=CallWithDefaultValue] float tx,
-                       in [Optional=CallWithDefaultValue] float ty);
-        void transform(in [Optional=CallWithDefaultValue] float m11,
-                       in [Optional=CallWithDefaultValue] float m12,
-                       in [Optional=CallWithDefaultValue] float m21,
-                       in [Optional=CallWithDefaultValue] float m22,
-                       in [Optional=CallWithDefaultValue] float dx,
-                       in [Optional=CallWithDefaultValue] float dy);
-        void setTransform(in [Optional=CallWithDefaultValue] float m11,
-                          in [Optional=CallWithDefaultValue] float m12,
-                          in [Optional=CallWithDefaultValue] float m21,
-                          in [Optional=CallWithDefaultValue] float m22,
-                          in [Optional=CallWithDefaultValue] float dx,
-                          in [Optional=CallWithDefaultValue] float dy);
+        void scale(in [Optional=TreatAsUndefined] float sx,
+                   in [Optional=TreatAsUndefined] float sy);
+        void rotate(in [Optional=TreatAsUndefined] float angle);
+        void translate(in [Optional=TreatAsUndefined] float tx,
+                       in [Optional=TreatAsUndefined] float ty);
+        void transform(in [Optional=TreatAsUndefined] float m11,
+                       in [Optional=TreatAsUndefined] float m12,
+                       in [Optional=TreatAsUndefined] float m21,
+                       in [Optional=TreatAsUndefined] float m22,
+                       in [Optional=TreatAsUndefined] float dx,
+                       in [Optional=TreatAsUndefined] float dy);
+        void setTransform(in [Optional=TreatAsUndefined] float m11,
+                          in [Optional=TreatAsUndefined] float m12,
+                          in [Optional=TreatAsUndefined] float m21,
+                          in [Optional=TreatAsUndefined] float m22,
+                          in [Optional=TreatAsUndefined] float dx,
+                          in [Optional=TreatAsUndefined] float dy);
 
         attribute float globalAlpha;
         attribute [TreatNullAs=NullString] DOMString globalCompositeOperation;
 
-        CanvasGradient createLinearGradient(in [Optional=CallWithDefaultValue] float x0,
-                                            in [Optional=CallWithDefaultValue] float y0,
-                                            in [Optional=CallWithDefaultValue] float x1,
-                                            in [Optional=CallWithDefaultValue] float y1)
+        CanvasGradient createLinearGradient(in [Optional=TreatAsUndefined] float x0,
+                                            in [Optional=TreatAsUndefined] float y0,
+                                            in [Optional=TreatAsUndefined] float x1,
+                                            in [Optional=TreatAsUndefined] float y1)
             raises (DOMException);
-        CanvasGradient createRadialGradient(in [Optional=CallWithDefaultValue] float x0,
-                                            in [Optional=CallWithDefaultValue] float y0,
-                                            in [Optional=CallWithDefaultValue] float r0,
-                                            in [Optional=CallWithDefaultValue] float x1,
-                                            in [Optional=CallWithDefaultValue] float y1,
-                                            in [Optional=CallWithDefaultValue] float r1)
+        CanvasGradient createRadialGradient(in [Optional=TreatAsUndefined] float x0,
+                                            in [Optional=TreatAsUndefined] float y0,
+                                            in [Optional=TreatAsUndefined] float r0,
+                                            in [Optional=TreatAsUndefined] float x1,
+                                            in [Optional=TreatAsUndefined] float y1,
+                                            in [Optional=TreatAsUndefined] float r1)
             raises (DOMException);
 
         attribute float lineWidth;
@@ -80,71 +80,71 @@ module html {
         attribute float webkitLineDashOffset;
 #endif
 
-        void clearRect(in [Optional=CallWithDefaultValue] float x,
-                       in [Optional=CallWithDefaultValue] float y,
-                       in [Optional=CallWithDefaultValue] float width,
-                       in [Optional=CallWithDefaultValue] float height);
-        void fillRect(in [Optional=CallWithDefaultValue] float x,
-                      in [Optional=CallWithDefaultValue] float y,
-                      in [Optional=CallWithDefaultValue] float width,
-                      in [Optional=CallWithDefaultValue] float height);
+        void clearRect(in [Optional=TreatAsUndefined] float x,
+                       in [Optional=TreatAsUndefined] float y,
+                       in [Optional=TreatAsUndefined] float width,
+                       in [Optional=TreatAsUndefined] float height);
+        void fillRect(in [Optional=TreatAsUndefined] float x,
+                      in [Optional=TreatAsUndefined] float y,
+                      in [Optional=TreatAsUndefined] float width,
+                      in [Optional=TreatAsUndefined] float height);
 
         void beginPath();
         void closePath();
-        void moveTo(in [Optional=CallWithDefaultValue] float x,
-                    in [Optional=CallWithDefaultValue] float y);
-        void lineTo(in [Optional=CallWithDefaultValue] float x,
-                    in [Optional=CallWithDefaultValue] float y);
-        void quadraticCurveTo(in [Optional=CallWithDefaultValue] float cpx,
-                              in [Optional=CallWithDefaultValue] float cpy,
-                              in [Optional=CallWithDefaultValue] float x,
-                              in [Optional=CallWithDefaultValue] float y);
-        void bezierCurveTo(in [Optional=CallWithDefaultValue] float cp1x,
-                           in [Optional=CallWithDefaultValue] float cp1y,
-                           in [Optional=CallWithDefaultValue] float cp2x,
-                           in [Optional=CallWithDefaultValue] float cp2y,
-                           in [Optional=CallWithDefaultValue] float x,
-                           in [Optional=CallWithDefaultValue] float y);
-        void arcTo(in [Optional=CallWithDefaultValue] float x1,
-                   in [Optional=CallWithDefaultValue] float y1,
-                   in [Optional=CallWithDefaultValue] float x2,
-                   in [Optional=CallWithDefaultValue] float y2,
-                   in [Optional=CallWithDefaultValue] float radius)
+        void moveTo(in [Optional=TreatAsUndefined] float x,
+                    in [Optional=TreatAsUndefined] float y);
+        void lineTo(in [Optional=TreatAsUndefined] float x,
+                    in [Optional=TreatAsUndefined] float y);
+        void quadraticCurveTo(in [Optional=TreatAsUndefined] float cpx,
+                              in [Optional=TreatAsUndefined] float cpy,
+                              in [Optional=TreatAsUndefined] float x,
+                              in [Optional=TreatAsUndefined] float y);
+        void bezierCurveTo(in [Optional=TreatAsUndefined] float cp1x,
+                           in [Optional=TreatAsUndefined] float cp1y,
+                           in [Optional=TreatAsUndefined] float cp2x,
+                           in [Optional=TreatAsUndefined] float cp2y,
+                           in [Optional=TreatAsUndefined] float x,
+                           in [Optional=TreatAsUndefined] float y);
+        void arcTo(in [Optional=TreatAsUndefined] float x1,
+                   in [Optional=TreatAsUndefined] float y1,
+                   in [Optional=TreatAsUndefined] float x2,
+                   in [Optional=TreatAsUndefined] float y2,
+                   in [Optional=TreatAsUndefined] float radius)
             raises (DOMException);
-        void rect(in [Optional=CallWithDefaultValue] float x,
-                  in [Optional=CallWithDefaultValue] float y,
-                  in [Optional=CallWithDefaultValue] float width,
-                  in [Optional=CallWithDefaultValue] float height);
-        void arc(in [Optional=CallWithDefaultValue] float x,
-                 in [Optional=CallWithDefaultValue] float y,
-                 in [Optional=CallWithDefaultValue] float radius,
-                 in [Optional=CallWithDefaultValue] float startAngle,
-                 in [Optional=CallWithDefaultValue] float endAngle,
-                 in [Optional=CallWithDefaultValue] boolean anticlockwise)
+        void rect(in [Optional=TreatAsUndefined] float x,
+                  in [Optional=TreatAsUndefined] float y,
+                  in [Optional=TreatAsUndefined] float width,
+                  in [Optional=TreatAsUndefined] float height);
+        void arc(in [Optional=TreatAsUndefined] float x,
+                 in [Optional=TreatAsUndefined] float y,
+                 in [Optional=TreatAsUndefined] float radius,
+                 in [Optional=TreatAsUndefined] float startAngle,
+                 in [Optional=TreatAsUndefined] float endAngle,
+                 in [Optional=TreatAsUndefined] boolean anticlockwise)
             raises (DOMException);
         void fill();
         void stroke();
         void clip();
-        boolean isPointInPath(in [Optional=CallWithDefaultValue] float x,
-                              in [Optional=CallWithDefaultValue] float y);
+        boolean isPointInPath(in [Optional=TreatAsUndefined] float x,
+                              in [Optional=TreatAsUndefined] float y);
 
         // text
         attribute DOMString font;
         attribute DOMString textAlign;
         attribute DOMString textBaseline;
 
-        TextMetrics measureText(in [Optional=CallWithDefaultValue] DOMString text);
+        TextMetrics measureText(in [Optional=TreatAsUndefined] DOMString text);
 
         // other
 
-        void setAlpha(in [Optional=CallWithDefaultValue] float alpha);
-        void setCompositeOperation(in [Optional=CallWithDefaultValue] DOMString compositeOperation);
+        void setAlpha(in [Optional=TreatAsUndefined] float alpha);
+        void setCompositeOperation(in [Optional=TreatAsUndefined] DOMString compositeOperation);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        void setLineWidth(in [Optional=CallWithDefaultValue] float width);
-        void setLineCap(in [Optional=CallWithDefaultValue] DOMString cap);
-        void setLineJoin(in [Optional=CallWithDefaultValue] DOMString join);
-        void setMiterLimit(in [Optional=CallWithDefaultValue] float limit);
+        void setLineWidth(in [Optional=TreatAsUndefined] float width);
+        void setLineCap(in [Optional=TreatAsUndefined] DOMString cap);
+        void setLineJoin(in [Optional=TreatAsUndefined] DOMString join);
+        void setMiterLimit(in [Optional=TreatAsUndefined] float limit);
 #endif
 
         void clearShadow();
@@ -162,10 +162,10 @@ module html {
         void setFillColor(in float r, in float g, in float b, in float a);
         void setFillColor(in float c, in float m, in float y, in float k, in float a);
 
-        void strokeRect(in [Optional=CallWithDefaultValue] float x,
-                        in [Optional=CallWithDefaultValue] float y,
-                        in [Optional=CallWithDefaultValue] float width,
-                        in [Optional=CallWithDefaultValue] float height,
+        void strokeRect(in [Optional=TreatAsUndefined] float x,
+                        in [Optional=TreatAsUndefined] float y,
+                        in [Optional=TreatAsUndefined] float width,
+                        in [Optional=TreatAsUndefined] float height,
                         in [Optional] float lineWidth);
 
         void drawImage(in HTMLImageElement image, in float x, in float y)
@@ -217,8 +217,8 @@ module html {
         attribute [Custom] custom fillStyle;
 
         // pixel manipulation
-        ImageData getImageData(in [Optional=CallWithDefaultValue] float sx, in [Optional=CallWithDefaultValue] float sy,
-                               in [Optional=CallWithDefaultValue] float sw, in [Optional=CallWithDefaultValue] float sh)
+        ImageData getImageData(in [Optional=TreatAsUndefined] float sx, in [Optional=TreatAsUndefined] float sy,
+                               in [Optional=TreatAsUndefined] float sw, in [Optional=TreatAsUndefined] float sh)
             raises(DOMException);
     };
 

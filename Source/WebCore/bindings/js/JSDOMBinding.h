@@ -42,11 +42,11 @@
 namespace WebCore {
 
 enum ParameterMissingPolicy {
-    MissingIsUndefined,
-    MissingIsEmpty
+    MissingIsUndefinedValue,
+    MissingIsNullValue
 };
 
-#define MAYBE_MISSING_PARAMETER(exec, index, policy) (((policy) == MissingIsEmpty && (index) >= (exec)->argumentCount()) ? (JSValue()) : ((exec)->argument(index)))
+#define MAYBE_MISSING_PARAMETER(exec, index, policy) (((policy) == MissingIsNullValue && (index) >= (exec)->argumentCount()) ? (JSValue()) : ((exec)->argument(index)))
 
     class Frame;
     class KURL;

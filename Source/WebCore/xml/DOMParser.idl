@@ -21,7 +21,7 @@ module xpath {
     interface [
         Constructor
     ] DOMParser {
-        Document parseFromString(in [Optional=CallWithDefaultValue] DOMString str, 
-                                 in [Optional=CallWithDefaultValue] DOMString contentType);
+        Document parseFromString(in [Optional=TreatAsUndefined] DOMString str, 
+                                 in [Optional=TreatAsUndefined] DOMString contentType);
     };
 }

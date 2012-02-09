@@ -36,7 +36,7 @@ module threads {
         ActiveDOMObject,
         JSCustomConstructor,
         ConstructorParameters=2,
-        Constructor(in DOMString scriptURL, in [Optional=CallWithNullValue] DOMString name),
+        Constructor(in DOMString scriptURL, in [Optional=TreatAsUndefined, TreatUndefinedAs=NullString] DOMString name),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
         JSCustomMarkFunction,

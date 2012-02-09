@@ -33,11 +33,11 @@ module core {
         ConstructorRaisesException
     ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
-        Element getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
-        NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString className);
-        NodeList getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString tagName);
-        NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                        in [Optional=CallWithDefaultValue] DOMString localName);
+        Element getElementById(in [Optional=TreatAsUndefined] DOMString elementId);
+        NodeList getElementsByClassName(in [Optional=TreatAsUndefined] DOMString className);
+        NodeList getElementsByTagName(in [Optional=TreatAsUndefined] DOMString tagName);
+        NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=TreatAsUndefined] DOMString namespaceURI,
+                                        in [Optional=TreatAsUndefined] DOMString localName);
     };
 
 }

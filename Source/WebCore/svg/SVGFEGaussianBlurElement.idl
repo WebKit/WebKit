@@ -33,8 +33,8 @@ module svg {
         readonly attribute SVGAnimatedNumber stdDeviationX;
         readonly attribute SVGAnimatedNumber stdDeviationY;
 
-        void setStdDeviation(in [Optional=CallWithDefaultValue] float stdDeviationX, 
-                             in [Optional=CallWithDefaultValue] float stdDeviationY);
+        void setStdDeviation(in [Optional=TreatAsUndefined] float stdDeviationX, 
+                             in [Optional=TreatAsUndefined] float stdDeviationY);
     };
 
 }

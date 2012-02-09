@@ -37,9 +37,9 @@ module events {
         readonly attribute [InitializedByEventConstructor] boolean verticalOverflow;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        void initOverflowEvent(in [Optional=CallWithDefaultValue] unsigned short orient,
-                               in [Optional=CallWithDefaultValue] boolean horizontalOverflow,
-                               in [Optional=CallWithDefaultValue] boolean verticalOverflow);
+        void initOverflowEvent(in [Optional=TreatAsUndefined] unsigned short orient,
+                               in [Optional=TreatAsUndefined] boolean horizontalOverflow,
+                               in [Optional=TreatAsUndefined] boolean verticalOverflow);
 #endif
     };
 

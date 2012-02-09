@@ -46,8 +46,8 @@ module html {
         HTMLElement createCaption();
         void deleteCaption();
 
-        HTMLElement insertRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
-        void deleteRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
+        HTMLElement insertRow(in [Optional=TreatAsUndefined] long index) raises(DOMException);
+        void deleteRow(in [Optional=TreatAsUndefined] long index) raises(DOMException);
     };
 
 }
