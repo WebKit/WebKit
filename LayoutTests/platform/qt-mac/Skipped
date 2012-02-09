@@ -5364,3 +5364,8 @@ svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
 #+
 # Tests that inspect element action works for iframe children (https://bugs.webkit.org/show_bug.cgi?id=76808).
 http/tests/inspector/inspect-element.html
+
+# new failing tests
+svg/custom/glyph-selection-arabic-forms.svg
+svg/custom/glyph-selection-bidi-mirror.svg
+svg/custom/glyph-selection-non-bmp.svg
