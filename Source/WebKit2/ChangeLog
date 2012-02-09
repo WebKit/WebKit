@@ -1,3 +1,41 @@
+2012-02-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Control the lifetime of TiledBackingStores in WebGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=78005
+
+        Reviewed by Noam Rosenthal.
+
+        This makes sure that no empty tiles are generated for layers without contents and that
+        no interaction is made with the TiledBackingStore until we got a WebGraphicsLayerClient.
+
+        - Create the main TiledBackingStore only when the layer has drawsContent and has no
+          directly composited image
+        - Removed recreateBackingStoreIfNeeded and do the (re)creation of the backing stores
+          in updateContentBuffers
+        - Call purgeBackingStores on registered layers instead of passing it down the layer tree
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::~WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setDrawsContent):
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::setVisibleContentRectTrajectoryVector):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreContentsRect):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+        (WebCore::WebGraphicsLayer::purgeBackingStores):
+        (WebCore::WebGraphicsLayer::setWebGraphicsLayerClient):
+        (WebCore::WebGraphicsLayer::computeTransformedVisibleRect):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::flushPendingLayerChanges):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::purgeBackingStores):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-02-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Remove WebGraphicsLayer::updateTileBuffersRecursively

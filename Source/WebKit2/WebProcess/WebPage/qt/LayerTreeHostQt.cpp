@@ -74,7 +74,6 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
     , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeHostQt::layerFlushTimerFired)
     , m_layerFlushSchedulingEnabled(true)
-    , m_shouldRecreateBackingStore(false)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
@@ -221,8 +220,6 @@ void LayerTreeHostQt::setPageOverlayNeedsDisplay(const WebCore::IntRect& rect)
 
 bool LayerTreeHostQt::flushPendingLayerChanges()
 {
-    recreateBackingStoreIfNeeded();
-
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
@@ -411,6 +408,7 @@ void LayerTreeHostQt::updateTile(WebLayerID layerID, int tileID, const UpdateInf
 {
     m_webPage->send(Messages::LayerTreeHostProxy::UpdateTileForLayer(layerID, tileID, updateInfo));
 }
+
 void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
 {
     m_webPage->send(Messages::LayerTreeHostProxy::RemoveTileForLayer(layerID, tileID));
@@ -447,21 +445,11 @@ bool LayerTreeHostQt::layerTreeTileUpdatesAllowed() const
 
 void LayerTreeHostQt::purgeBackingStores()
 {
-    m_shouldRecreateBackingStore = true;
-    WebGraphicsLayer* webRootLayer = toWebGraphicsLayer(m_rootLayer.get());
-    webRootLayer->purgeBackingStores();
+    HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
+    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
+        (*it)->purgeBackingStores();
 
     ASSERT(!m_directlyCompositedImageRefCounts.size());
-}
-
-void LayerTreeHostQt::recreateBackingStoreIfNeeded()
-{
-    if (!m_shouldRecreateBackingStore)
-        return;
-
-    m_shouldRecreateBackingStore = false;
-    WebGraphicsLayer* webRootLayer = toWebGraphicsLayer(m_rootLayer.get());
-    webRootLayer->recreateBackingStoreIfNeeded();
 }
 #endif
 

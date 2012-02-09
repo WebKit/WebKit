@@ -97,7 +97,6 @@ private:
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
     void sendLayersToUI();
-    void recreateBackingStoreIfNeeded();
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
@@ -124,7 +123,6 @@ private:
     void layerFlushTimerFired(WebCore::Timer<LayerTreeHostQt>*);
     WebCore::Timer<LayerTreeHostQt> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
-    bool m_shouldRecreateBackingStore;
 };
 
 }

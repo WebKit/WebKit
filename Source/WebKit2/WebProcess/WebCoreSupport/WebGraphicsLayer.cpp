@@ -88,11 +88,9 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     , m_inUpdateMode(false)
 #if USE(TILED_BACKING_STORE)
     , m_webGraphicsLayerClient(0)
-    , m_mainBackingStore(adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this))))
     , m_contentsScale(1.f)
 #endif
 {
-    m_mainBackingStore->setContentsScale(1.0);
     static WebLayerID nextLayerID = 1;
     m_layerInfo.id = nextLayerID++;
     layerByIDMap().add(id(), this);
@@ -102,11 +100,10 @@ WebGraphicsLayer::~WebGraphicsLayer()
 {
     layerByIDMap().remove(id());
 
-    // This would tell the UI process to release the backing store.
-    setContentsToImage(0);
-
-    if (m_webGraphicsLayerClient)
+    if (m_webGraphicsLayerClient) {
+        purgeBackingStores();
         m_webGraphicsLayerClient->detachLayer(this);
+    }
 }
 
 bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
@@ -247,8 +244,6 @@ void WebGraphicsLayer::setDrawsContent(bool b)
         return;
     GraphicsLayer::setDrawsContent(b);
 
-    if (b)
-        setNeedsDisplay();
     notifyChange();
 }
 
@@ -403,8 +398,8 @@ void WebGraphicsLayer::setNeedsDisplay()
 
 void WebGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    recreateBackingStoreIfNeeded();
-    m_mainBackingStore->invalidate(IntRect(rect));
+    if (m_mainBackingStore)
+        m_mainBackingStore->invalidate(IntRect(rect));
     notifyChange();
 }
 
@@ -462,10 +457,6 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     for (size_t i = 0; i < children().size(); ++i)
         m_layerInfo.children.append(toWebLayerID(children()[i]));
 
-    ASSERT(m_webGraphicsLayerClient);
-    if (m_layerInfo.imageIsUpdated && m_image && !m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
-
     m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
     m_modified = false;
     m_layerInfo.imageIsUpdated = false;
@@ -488,7 +479,8 @@ void WebGraphicsLayer::setRootLayer(bool isRoot)
 
 void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
 {
-    m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
+    if (m_mainBackingStore)
+        m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
 }
 
 void WebGraphicsLayer::setVisibleContentRectAndScale(const IntRect& pageVisibleRect, float scale)
@@ -528,8 +520,6 @@ bool WebGraphicsLayer::tiledBackingStoreUpdatesAllowed() const
 
 IntRect WebGraphicsLayer::tiledBackingStoreContentsRect()
 {
-    if (!drawsContent())
-        return IntRect();
     return IntRect(0, 0, size().width(), size().height());
 }
 
@@ -575,54 +565,40 @@ void WebGraphicsLayer::removeTile(int tileID)
 
 void WebGraphicsLayer::updateContentBuffers()
 {
-    // Backing-stores for directly composited images is handled in LayerTreeHost.
-    if (m_image)
-        return;
+    // The remote image might have been released by purgeBackingStores.
+    if (m_image) {
+        if (!m_layerInfo.imageBackingStoreID) {
+            m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
+            m_layerInfo.imageIsUpdated = true;
+        }
+    }
 
-    if (!drawsContent())
+    if (!drawsContent()) {
+        m_mainBackingStore.clear();
+        m_previousBackingStore.clear();
         return;
+    }
 
     m_inUpdateMode = true;
+    // This is the only place we (re)create the main tiled backing store,
+    // once we have a remote client and we are ready to send our data to the UI process.
+    if (!m_mainBackingStore) {
+        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+        m_mainBackingStore->setContentsScale(m_contentsScale);
+    }
     m_mainBackingStore->updateTileBuffers();
     m_inUpdateMode = false;
 }
 
 void WebGraphicsLayer::purgeBackingStores()
 {
-    for (size_t i = 0; i < children().size(); ++i) {
-        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
-        layer->purgeBackingStores();
+    m_mainBackingStore.clear();
+    m_previousBackingStore.clear();
+
+    if (m_layerInfo.imageBackingStoreID) {
+        m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+        m_layerInfo.imageBackingStoreID = 0;
     }
-
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
-        mask->purgeBackingStores();
-
-    if (m_mainBackingStore)
-        m_mainBackingStore.clear();
-
-    if (!m_layerInfo.imageBackingStoreID)
-        return;
-
-    m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-    m_layerInfo.imageBackingStoreID = 0;
-}
-
-void WebGraphicsLayer::recreateBackingStoreIfNeeded()
-{
-    for (size_t i = 0; i < children().size(); ++i) {
-        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
-        layer->recreateBackingStoreIfNeeded();
-    }
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
-        mask->recreateBackingStoreIfNeeded();
-
-    if (!m_mainBackingStore) {
-        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
-        m_mainBackingStore->setContentsScale(m_contentsScale);
-    }
-
-    if (m_image)
-        setContentsNeedsDisplay();
 }
 
 void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient* client)
@@ -639,9 +615,11 @@ void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*
         layer->setWebGraphicsLayerClient(client);
     }
 
-    // Have to force detach from remote layer here if layer tile client changes.
-    if (m_webGraphicsLayerClient)
+    // We have to release resources on the UI process here if the remote client has changed or is removed.
+    if (m_webGraphicsLayerClient) {
+        purgeBackingStores();
         m_webGraphicsLayerClient->detachLayer(this);
+    }
     m_webGraphicsLayerClient = client;
     if (client)
         client->attachLayer(this);
@@ -658,7 +636,8 @@ void WebGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.setChildrenTransform(childrenTransform());
     m_layerTransform.combineTransforms(parent() ? toWebGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
     // The combined transform will be used in tiledBackingStoreVisibleRect.
-    m_mainBackingStore->adjustVisibleRect();
+    if (m_mainBackingStore)
+        m_mainBackingStore->adjustVisibleRect();
 }
 #endif
 

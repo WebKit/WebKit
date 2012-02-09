@@ -140,7 +140,6 @@ public:
     bool isReadyForTileBufferSwap() const;
     void updateContentBuffers();
     void purgeBackingStores();
-    void recreateBackingStoreIfNeeded();
 #endif
 
 private:
