@@ -29,6 +29,6 @@
 
 import sys
 
-if sys.version < '2.5' or sys.version >= '2.8':
-    print >> sys.stderr, "Unsupported Python version: WebKit only supports 2.5.x - 2.7.x, and you're running %s." % sys.version.split()[0]
+if sys.version < '2.6' or sys.version >= '2.8':
+    print >> sys.stderr, "Unsupported Python version: WebKit only supports 2.6.x - 2.7.x, and you're running %s." % sys.version.split()[0]
     sys.exit(1)
