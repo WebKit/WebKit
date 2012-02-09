@@ -91,21 +91,20 @@ protected:
     {
         ASSERT(isMainThread());
         s_mainThreadState = exec;
-
-#if ENABLE(MUTATION_OBSERVERS)
-        ASSERT(s_recursionLevel >= 0);
-        ++s_recursionLevel;
-#endif
     };
 
     ~JSMainThreadExecState()
     {
         ASSERT(isMainThread());
+
+#if ENABLE(MUTATION_OBSERVERS)
+        bool didExitJavaScript = s_mainThreadState && !m_previousState;
+#endif
+
         s_mainThreadState = m_previousState;
 
 #if ENABLE(MUTATION_OBSERVERS)
-        ASSERT(s_recursionLevel > 0);
-        if (!--s_recursionLevel)
+        if (didExitJavaScript)
             didLeaveScriptContext();
 #endif
     }
@@ -116,11 +115,11 @@ private:
 
 #if ENABLE(MUTATION_OBSERVERS)
     static void didLeaveScriptContext();
-    static int s_recursionLevel;
 #endif
 };
 
 // Null state prevents origin security checks.
+// Used by non-JavaScript bindings (ObjC, GObject).
 class JSMainThreadNullState : private JSMainThreadExecState {
 public:
     explicit JSMainThreadNullState() : JSMainThreadExecState(0) {};

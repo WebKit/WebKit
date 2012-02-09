@@ -1,3 +1,29 @@
+2012-02-08  Adam Klein  <adamk@chromium.org>
+
+        Simplify and correct mutation delivery timing for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=78172
+
+        Reviewed by Adam Barth.
+
+        Instead of keeping a static recursion counter in JSMainThreadExecState,
+        simply wait for a state change from non-null ExecState to null ExecState.
+        Because s_mainThreadState is initially null, this equivalent to
+        waiting for s_recursionLevel to rewind to zero.
+
+        This also properly handles the usage of JSMainThreadNullState (and
+        does not do mutation delivery), since that class is only used by
+        non-JS bindings. Now fast/mutation/end-of-task-delivery.html properly
+        fails, whereas it was passing before due to usage of the ObjC DOM API
+        from DumpRenderTree.
+
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore):
+        * bindings/js/JSMainThreadExecState.h: Added a comment explaining the purpose of JSMainThreadNullState.
+        (WebCore::JSMainThreadExecState::JSMainThreadExecState):
+        (WebCore::JSMainThreadExecState::~JSMainThreadExecState):
+        (JSMainThreadExecState):
+        (WebCore):
+
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ConvertToString] from CodeGeneratorCPP.pm and rename
