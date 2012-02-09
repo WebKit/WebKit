@@ -1,3 +1,29 @@
+2012-02-09  Anders Carlsson  <andersca@apple.com>
+
+        ScrollingTreeNodeMac should implement ScrollElasticityController
+        https://bugs.webkit.org/show_bug.cgi?id=78277
+
+        Reviewed by Andreas Kling.
+
+        Add stubbed out implementations of the ScrollElasticityController member functions.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        (ScrollingTreeNodeMac):
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::allowsHorizontalStretching):
+        (WebCore):
+        (WebCore::ScrollingTreeNodeMac::allowsVerticalStretching):
+        (WebCore::ScrollingTreeNodeMac::stretchAmount):
+        (WebCore::ScrollingTreeNodeMac::pinnedInDirection):
+        (WebCore::ScrollingTreeNodeMac::canScrollHorizontally):
+        (WebCore::ScrollingTreeNodeMac::canScrollVertically):
+        (WebCore::ScrollingTreeNodeMac::shouldRubberBandInDirection):
+        (WebCore::ScrollingTreeNodeMac::absoluteScrollPosition):
+        (WebCore::ScrollingTreeNodeMac::immediateScrollBy):
+        (WebCore::ScrollingTreeNodeMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeNodeMac::startSnapRubberbandTimer):
+        (WebCore::ScrollingTreeNodeMac::stopSnapRubberbandTimer):
+
 2012-02-09  Adrienne Walker  <enne@google.com>
 
         [chromium] Correct potential double reserveTextures() in CCLayerTreeHost
