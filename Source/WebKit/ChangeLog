@@ -1,5 +1,17 @@
 2012-02-08  Leo Yang  <leo.yang@torchmobile.com.cn>
 
+        [BlackBerry] Upstream InspectorClientBlackBerry.{h, cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=78082
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/InspectorClientBlackBerry.h: Added.
+
+2012-02-08  Leo Yang  <leo.yang@torchmobile.com.cn>
+
         [BlackBerry] Remove EditCommandBlackBerry.cpp from build system
         https://bugs.webkit.org/show_bug.cgi?id=78078
 
