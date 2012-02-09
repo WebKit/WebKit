@@ -1,3 +1,16 @@
+2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Show url of current hovered link in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=78098
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewMouseTargetChanged): Check whether hit test result is a
+        link and use the url to update the status bar text.
+        (browserWindowConstructed): Connect to
+        WebKitWebView::mouse-target-changed signal.
+
 2012-02-09  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Upstream DumpRenderTreeBlackBerry
