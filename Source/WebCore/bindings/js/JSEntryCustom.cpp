@@ -50,10 +50,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Entry* entry)
         return jsNull();
 
     if (entry->isFile())
-        return getDOMObjectWrapper<JSFileEntry>(exec, globalObject, static_cast<FileEntry*>(entry));
+        return wrap<JSFileEntry>(exec, globalObject, static_cast<FileEntry*>(entry));
 
     ASSERT(entry->isDirectory());
-    return getDOMObjectWrapper<JSDirectoryEntry>(exec, globalObject, static_cast<DirectoryEntry*>(entry));
+    return wrap<JSDirectoryEntry>(exec, globalObject, static_cast<DirectoryEntry*>(entry));
 }
 
 } // namespace WebCore

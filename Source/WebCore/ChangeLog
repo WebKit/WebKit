@@ -1,3 +1,20 @@
+2012-02-08  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        REGRESSION(r84194): Build fails when turning on ENABLE_FILE_SYSTEM
+        https://bugs.webkit.org/show_bug.cgi?id=78088
+
+        Reviewed by Antonio Gomes.
+
+        WebCore::getDOMObjectWrapper was changed to WebCore::wrap in r84194.
+        Adapt to this change in JSEntryCustom.cpp and JSEntrySyncCustom.cpp.
+
+        Build fix, no new tests.
+
+        * bindings/js/JSEntryCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEntrySyncCustom.cpp:
+        (WebCore::toJS):
+
 2012-02-08  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Fix opaque tracking for box shadows and non-composited child elements
