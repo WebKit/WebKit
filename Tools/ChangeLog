@@ -1,3 +1,18 @@
+2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] doc rebasing does not respect DESTDIR
+        https://bugs.webkit.org/show_bug.cgi?id=78177
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Pass DESTDIR on to generate-gtkdoc, when
+        calling it for rebasing.
+        * gtk/generate-gtkdoc:
+        (get_common_options): Handle the new --virtual-root option.
+        * gtk/gtkdoc.py:
+        (GTKDoc.rebase_installed_docs): If a virtual-root has been given, pass
+        it on to gtkdoc-rebase as dest-dir, and prefix the htmldir with it.
+
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
         Remove Python 2.5 support from WebKit

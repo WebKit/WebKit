@@ -50,10 +50,19 @@ def get_gtkdoc_module_paths(xref_dep_packages):
 
 
 def get_common_options():
+    # TODO: We should consider using an arguments parsing library if
+    # we need more of these complex ones.
+    virtual_root = ''
+    for argument in sys.argv:
+        if argument.startswith('--virtual-root='):
+            virtual_root = argument.split('=')[1]
+            break
+
     return {
         'decorator': 'WEBKIT_API',
         'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
         'library_path' : common.build_path('.libs'),
+        'virtual_root' : virtual_root,
     }
 
 def get_common_xref_deps():

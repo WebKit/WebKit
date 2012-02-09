@@ -74,6 +74,11 @@ class GTKDoc(object):
     interactive        -- Whether or not errors or warnings should prompt the user
                           to continue or not. When this value is false, generation
                           will continue despite warnings. (default False)
+
+    virtual_root       -- A temporary installation directory which is used as the root
+                          where the actual installation prefix lives; this is mostly
+                          useful for packagers, and should be set to what is given to
+                          make install as DESTDIR.
     """
 
     def __init__(self, args):
@@ -356,13 +361,15 @@ class GTKDoc(object):
         self._run_command(args, cwd=self.output_dir, ignore_warnings=True)
 
     def rebase_installed_docs(self):
-        html_dir = os.path.join(self.prefix, 'share', 'gtk-doc', 'html', self.module_name)
+        html_dir = os.path.join(self.virtual_root + self.prefix, 'share', 'gtk-doc', 'html', self.module_name)
         if not os.path.isdir(html_dir):
             return
         args = ['gtkdoc-rebase',
                 '--relative',
                 '--html-dir=%s' % html_dir]
         args.extend(['--other-dir=%s' % extra_dir for extra_dir in self.cross_reference_deps])
+        if self.virtual_root:
+            args.extend(['--dest-dir=%s' % self.virtual_root])
         self._run_command(args, cwd=self.output_dir)
 
 
