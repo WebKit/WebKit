@@ -1,3 +1,15 @@
+2012-02-09  Adam Barth  <abarth@webkit.org>
+
+        run-perf-tests --chromium should run the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=78266
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch makes run-perf-tests work more like run-webkit-tests.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+
 2012-02-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] run-webkit-tests --qt  crashes if WEBKIT_TESTFONTS is not set

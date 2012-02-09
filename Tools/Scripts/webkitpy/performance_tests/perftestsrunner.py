@@ -79,6 +79,8 @@ class PerfTestsRunner(object):
                 help='Set the configuration to Release'),
             optparse.make_option("--platform",
                 help="Specify port/platform being tested (i.e. chromium-mac)"),
+            optparse.make_option("--chromium",
+                action="store_const", const='chromium', dest='platform', help='Alias for --platform=chromium'),
             optparse.make_option("--builder-name",
                 help=("The name of the builder shown on the waterfall running this script e.g. google-mac-2.")),
             optparse.make_option("--build-number",
