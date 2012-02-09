@@ -1537,7 +1537,7 @@ sub GenerateParametersCheck
         }
 
         my $parameterMissingPolicy = "MissingIsUndefinedValue";
-        if ($parameter->extendedAttributes->{"TreatUndefinedAs"} and $parameter->extendedAttributes->{"TreatUndefinedAs"} eq "NullString") {
+        if ($parameter->extendedAttributes->{"Optional"} and $parameter->extendedAttributes->{"Optional"} eq "TreatAsUndefined" and $parameter->extendedAttributes->{"TreatUndefinedAs"} and $parameter->extendedAttributes->{"TreatUndefinedAs"} eq "NullString") {
             $parameterMissingPolicy = "MissingIsNullValue";
         }
 
