@@ -29,13 +29,15 @@
 import os
 import unittest
 
-from webkitpy.common.checkout.changelog_unittest import ChangeLogTest
+# Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
+from webkitpy.common.checkout import changelog_unittest
+
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
 
-class PrepareChangeLogTest(ChangeLogTest):
+class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
     def test_ensure_bug_url(self):
         capture = OutputCapture()
         step = PrepareChangeLog(MockTool(), MockOptions())
