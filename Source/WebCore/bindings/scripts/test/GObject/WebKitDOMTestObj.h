@@ -273,7 +273,7 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gchar* str);
 
 /**
- * webkit_dom_test_obj_method_with_optional_is_treat_as_undefined_string:
+ * webkit_dom_test_obj_method_with_optional_is_undefined_string:
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
@@ -281,7 +281,7 @@ webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gc
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_method_with_optional_is_treat_as_undefined_string(WebKitDOMTestObj* self, const gchar* str);
+webkit_dom_test_obj_method_with_optional_is_undefined_string(WebKitDOMTestObj* self, const gchar* str);
 
 /**
  * webkit_dom_test_obj_method_with_optional_is_null_string_string:

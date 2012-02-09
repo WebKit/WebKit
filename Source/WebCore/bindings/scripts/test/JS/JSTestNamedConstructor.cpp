@@ -103,7 +103,7 @@ EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJS
     const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefinedValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefinedValue).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsUndefinedValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, MissingIsUndefinedValue).toString(exec)->value(exec)));
+    const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsNullValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, MissingIsNullValue).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(jsConstructor->document(), str1, str2, str3, ec);

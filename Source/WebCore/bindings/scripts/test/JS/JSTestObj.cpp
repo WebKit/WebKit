@@ -270,7 +270,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithNonOptionalArgAndOptionalArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t)2, NoIntrinsic },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t)3, NoIntrinsic },
     { "methodWithOptionalString", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalString), (intptr_t)1, NoIntrinsic },
-    { "methodWithOptionalIsTreatAsUndefinedString", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalIsTreatAsUndefinedString), (intptr_t)1, NoIntrinsic },
+    { "methodWithOptionalIsUndefinedString", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalIsUndefinedString), (intptr_t)1, NoIntrinsic },
     { "methodWithOptionalIsNullStringString", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalIsNullStringString), (intptr_t)1, NoIntrinsic },
     { "methodWithCallbackArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t)1, NoIntrinsic },
     { "methodWithNonCallbackArgAndCallbackArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t)2, NoIntrinsic },
@@ -298,7 +298,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjPrototypeTable = { 265, 255, JSTestObjPrototypeTableValues, 0 };
+static const HashTable JSTestObjPrototypeTable = { 266, 255, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -1629,7 +1629,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalIsTreatAsUndefinedString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalIsUndefinedString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&JSTestObj::s_info))
@@ -1640,7 +1640,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalIsTreat
     const String& str(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    impl->methodWithOptionalIsTreatAsUndefinedString(str);
+    impl->methodWithOptionalIsUndefinedString(str);
     return JSValue::encode(jsUndefined());
 }
 
@@ -1652,7 +1652,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalIsNullS
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const String& str(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue).toString(exec)->value(exec)));
+    const String& str(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsNullValue).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsNullValue).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->methodWithOptionalIsNullStringString(str);
@@ -2080,7 +2080,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    e* (toe(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefinedValue)));
+    e* (toe(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsNullValue)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->convert5();

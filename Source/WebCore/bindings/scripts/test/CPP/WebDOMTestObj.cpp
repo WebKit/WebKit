@@ -951,12 +951,12 @@ void WebDOMTestObj::methodWithOptionalString(const WebDOMString& str)
     impl()->methodWithOptionalString(str);
 }
 
-void WebDOMTestObj::methodWithOptionalIsTreatAsUndefinedString(const WebDOMString& str)
+void WebDOMTestObj::methodWithOptionalIsUndefinedString(const WebDOMString& str)
 {
     if (!impl())
         return;
 
-    impl()->methodWithOptionalIsTreatAsUndefinedString(str);
+    impl()->methodWithOptionalIsUndefinedString(str);
 }
 
 void WebDOMTestObj::methodWithOptionalIsNullStringString(const WebDOMString& str)

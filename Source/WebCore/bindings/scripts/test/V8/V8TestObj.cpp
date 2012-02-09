@@ -1186,12 +1186,12 @@ static v8::Handle<v8::Value> methodWithOptionalStringCallback(const v8::Argument
     return v8::Handle<v8::Value>();
 }
 
-static v8::Handle<v8::Value> methodWithOptionalIsTreatAsUndefinedStringCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithOptionalIsUndefinedStringCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestObj.methodWithOptionalIsTreatAsUndefinedString");
+    INC_STATS("DOM.TestObj.methodWithOptionalIsUndefinedString");
     TestObj* imp = V8TestObj::toNative(args.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefinedValue));
-    imp->methodWithOptionalIsTreatAsUndefinedString(str);
+    imp->methodWithOptionalIsUndefinedString(str);
     return v8::Handle<v8::Value>();
 }
 
@@ -1718,7 +1718,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"methodWithNonOptionalArgAndOptionalArg", TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback},
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},
     {"methodWithOptionalString", TestObjInternal::methodWithOptionalStringCallback},
-    {"methodWithOptionalIsTreatAsUndefinedString", TestObjInternal::methodWithOptionalIsTreatAsUndefinedStringCallback},
+    {"methodWithOptionalIsUndefinedString", TestObjInternal::methodWithOptionalIsUndefinedStringCallback},
     {"methodWithOptionalIsNullStringString", TestObjInternal::methodWithOptionalIsNullStringStringCallback},
     {"methodWithCallbackArg", TestObjInternal::methodWithCallbackArgCallback},
     {"methodWithNonCallbackArgAndCallbackArg", TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback},

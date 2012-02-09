@@ -346,14 +346,14 @@ webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gc
 }
 
 void
-webkit_dom_test_obj_method_with_optional_is_treat_as_undefined_string(WebKitDOMTestObj* self, const gchar* str)
+webkit_dom_test_obj_method_with_optional_is_undefined_string(WebKitDOMTestObj* self, const gchar* str)
 {
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj * item = WebKit::core(self);
     g_return_if_fail(str);
     WTF::String converted_str = WTF::String::fromUTF8(str);
-    item->methodWithOptionalIsTreatAsUndefinedString(converted_str);
+    item->methodWithOptionalIsUndefinedString(converted_str);
 }
 
 void

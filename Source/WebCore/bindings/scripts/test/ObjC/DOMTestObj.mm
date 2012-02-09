@@ -806,10 +806,10 @@
     IMPL->methodWithOptionalString(str);
 }
 
-- (void)methodWithOptionalIsTreatAsUndefinedString:(NSString *)str
+- (void)methodWithOptionalIsUndefinedString:(NSString *)str
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->methodWithOptionalIsTreatAsUndefinedString(str);
+    IMPL->methodWithOptionalIsUndefinedString(str);
 }
 
 - (void)methodWithOptionalIsNullStringString:(NSString *)str

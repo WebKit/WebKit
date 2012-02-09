@@ -184,7 +184,7 @@ enum {
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;
 - (void)methodWithOptionalString:(NSString *)str;
-- (void)methodWithOptionalIsTreatAsUndefinedString:(NSString *)str;
+- (void)methodWithOptionalIsUndefinedString:(NSString *)str;
 - (void)methodWithOptionalIsNullStringString:(NSString *)str;
 - (NSString *)conditionalMethod1;
 - (void)conditionalMethod2;

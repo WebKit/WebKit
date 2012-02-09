@@ -1,5 +1,36 @@
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Fixed typo in the following files. [TreatUndefinedAs] => [TreatAsUndefined].
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+
+        * bindings/scripts/test/TestObj.idl:
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated run-bindings-tests results.
+        (WebDOMTestObj::methodWithOptionalIsUndefinedString):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_method_with_optional_is_undefined_string):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalIsUndefinedString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalIsNullStringString):
+        (WebCore::jsTestObjPrototypeFunctionConvert5):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj methodWithOptionalIsUndefinedString:]):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::methodWithOptionalIsUndefinedStringCallback):
+        (WebCore):
+
+2012-02-09  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Fixed typo in the following files. [TreatReturnedNullStringTo=] => [TreatReturnedNullStringAs=].
 
         * bindings/scripts/test/TestObj.idl:
