@@ -1,3 +1,15 @@
+2012-02-09  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebKitSupport WebPageCompositor class
+        https://bugs.webkit.org/show_bug.cgi?id=78276
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebKitSupport/WebPageCompositor.cpp: Added.
+        * blackberry/WebKitSupport/WebPageCompositor.h: Added.
+
 2012-02-08  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry WebCoreSupport FrameNetworkingContextBlackBerry and IconDatabaseClientBlackBerry classes
