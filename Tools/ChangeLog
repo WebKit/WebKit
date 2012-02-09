@@ -1,3 +1,10 @@
+2012-02-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed typo fix that makes docs build again for the gtk2-based
+        library.
+
+        * gtk/generate-gtkdoc:
+
 2012-02-08  Adam Barth  <abarth@webkit.org>
 
         Don't re-implement ZipFile.extractall

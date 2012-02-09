@@ -146,7 +146,7 @@ saw_webkit1_warnings = saw_webkit2_warnings = False
 
 pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
 if not os.path.exists(pkg_config_path):
-    pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-1.0.pc')
+    pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
 if os.path.exists(pkg_config_path):
     options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
     if '--rebase' not in sys.argv:
