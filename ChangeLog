@@ -1,3 +1,14 @@
+2012-02-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Change lowercase variable with uppercase's.
+        https://bugs.webkit.org/show_bug.cgi?id=78198
+
+        Reviewed by Daniel Bates.
+
+        CMake variable is only written by uppercase.
+
+        * CMakeLists.txt:
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         Replacement text should be available from the marker.
