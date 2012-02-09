@@ -483,20 +483,14 @@ void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& t
         m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
 }
 
-void WebGraphicsLayer::setVisibleContentRectAndScale(const IntRect& pageVisibleRect, float scale)
+void WebGraphicsLayer::setContentsScale(float scale)
 {
-    if (m_pageVisibleRect == pageVisibleRect && m_contentsScale == scale)
-        return;
-
-    m_pageVisibleRect = pageVisibleRect;
     m_contentsScale = scale;
-
-    if (!m_mainBackingStore || m_mainBackingStore->contentsScale() != scale) {
+    if (m_mainBackingStore && m_mainBackingStore->contentsScale() != scale) {
         m_previousBackingStore = m_mainBackingStore.release();
         m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
         m_mainBackingStore->setContentsScale(scale);
-    } else
-        m_mainBackingStore->adjustVisibleRect();
+    }
 }
 
 void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
@@ -537,7 +531,7 @@ IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
     // Return a projection of the visible rect (surface coordinates) onto the layer's plane (layer coordinates).
     // The resulting quad might be squewed and the visible rect is the bounding box of this quad,
     // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
-    return m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_pageVisibleRect)));
+    return m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_webGraphicsLayerClient->visibleContentsRect())));
 }
 
 Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
@@ -623,6 +617,12 @@ void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*
     m_webGraphicsLayerClient = client;
     if (client)
         client->attachLayer(this);
+}
+
+void WebGraphicsLayer::adjustVisibleRect()
+{
+    if (m_mainBackingStore)
+        m_mainBackingStore->adjustVisibleRect();
 }
 
 void WebGraphicsLayer::computeTransformedVisibleRect()

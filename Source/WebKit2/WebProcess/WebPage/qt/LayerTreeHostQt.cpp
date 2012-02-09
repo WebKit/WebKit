@@ -240,7 +240,8 @@ void LayerTreeHostQt::attachLayer(WebGraphicsLayer* layer)
     ASSERT(!m_registeredLayers.contains(layer));
     m_registeredLayers.add(layer);
 
-    layer->setVisibleContentRectAndScale(m_visibleContentsRect, m_contentsScale);
+    layer->setContentsScale(m_contentsScale);
+    layer->adjustVisibleRect();
 }
 
 void LayerTreeHostQt::detachLayer(WebGraphicsLayer* layer)
@@ -414,6 +415,11 @@ void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
     m_webPage->send(Messages::LayerTreeHostProxy::RemoveTileForLayer(layerID, tileID));
 }
 
+WebCore::IntRect LayerTreeHostQt::visibleContentsRect() const
+{
+    return m_visibleContentsRect;
+}
+
 void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float scale)
 {
     if (rect == m_visibleContentsRect && scale == m_contentsScale)
@@ -422,8 +428,10 @@ void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float s
     m_contentsScale = scale;
 
     HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
-    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
-        (*it)->setVisibleContentRectAndScale(rect, scale);
+    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
+        (*it)->setContentsScale(scale);
+        (*it)->adjustVisibleRect();
+    }
     scheduleLayerFlush();
 }
 

@@ -1,3 +1,29 @@
+2012-02-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fetch the visible rect from LayerTreeHost instead of keeping a copy in each layer.
+        https://bugs.webkit.org/show_bug.cgi?id=78009
+
+        Reviewed by Noam Rosenthal.
+
+        Since WebGraphicsLayers are now accessed directly from LayerTreeHost, they don't
+        need to keep the visible rect to pass it down their child layers anymore.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setContentsScale):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::WebGraphicsLayer::adjustVisibleRect):
+        (WebCore):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::registerLayer):
+        (WebKit::LayerTreeHostQt::visibleContentsRect):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::setVisibleContentRectAndScale):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-02-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Control the lifetime of TiledBackingStores in WebGraphicsLayer.
