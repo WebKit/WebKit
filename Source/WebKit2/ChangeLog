@@ -1,3 +1,21 @@
+2012-02-09  Matthew Delaney  <mdelaney@apple.com>
+
+        HiDPI: WebKit2's link-dragging images are blurry
+        https://bugs.webkit.org/show_bug.cgi?id=67779
+
+        Reviewed by Beth Dakin.
+
+        Teach startDrag about the deviceScaleFactor so that it creates
+        an appropriately scaled bitmap image to ship over.
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag):
+        (WebKit::convertImageToBitmap):
+
+        Have setDragImage assume that it's receiving a bitmap image scaled
+        up by the deviceScaleFactor that it sees.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setDragImage:at:linkDrag:]):
+
 2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebView::mouse-target-changed signal to WebKit2 GTK+ API
