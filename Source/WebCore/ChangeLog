@@ -1,3 +1,18 @@
+2012-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Timeline memory graph would have been more useful if it had used minUsedHeapSize as the lower bound. Currently it uses zero as the lower bound.
+        https://bugs.webkit.org/show_bug.cgi?id=78222
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.HeapGraph):
+        (WebInspector.HeapGraph.prototype.update):
+        * inspector/front-end/timelinePanel.css:
+        (.memory-graph-label):
+        (.max.memory-graph-label):
+        (.min.memory-graph-label):
+
 2012-02-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Update protocol and UI to follow bug 77204 (Kill per-Attribute style declarations)

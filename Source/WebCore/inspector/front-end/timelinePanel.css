@@ -496,11 +496,18 @@
 
 .memory-graph-label {
     position: absolute;
-    top: 5px;
     left: 5px;
     font-size: 9px;
     color: rgb(50%, 50%, 50%);
     white-space: nowrap;
+}
+
+.max.memory-graph-label {
+    top: 5px;
+}
+
+.min.memory-graph-label {
+    bottom: 5px;
 }
 
 #timeline-memory-splitter {

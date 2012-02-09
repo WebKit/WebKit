@@ -524,12 +524,17 @@ WebInspector.HeapGraph = function() {
     this._canvas = document.createElement("canvas");
 
     this._maxHeapSizeLabel = document.createElement("div");
+    this._maxHeapSizeLabel.addStyleClass("max");
     this._maxHeapSizeLabel.addStyleClass("memory-graph-label");
+    this._minHeapSizeLabel = document.createElement("div");
+    this._minHeapSizeLabel.addStyleClass("min");
+    this._minHeapSizeLabel.addStyleClass("memory-graph-label");
 
     this._element = document.createElement("div");
     this._element.addStyleClass("hidden");
     this._element.appendChild(this._canvas);
     this._element.appendChild(this._maxHeapSizeLabel);
+    this._element.appendChild(this._minHeapSizeLabel);
 }
 
 WebInspector.HeapGraph.prototype = {
@@ -560,30 +565,33 @@ WebInspector.HeapGraph.prototype = {
         if (!records.length)
             return;
 
-        var maxTotalHeapSize = 0;
+        const lowerOffset = 3;
+        var maxUsedHeapSize = 0;
+        var minUsedHeapSize = 100000000000;
         var minTime;
         var maxTime;
         this._forAllRecords(records, function(r) {
-            if (r.totalHeapSize && r.totalHeapSize > maxTotalHeapSize)
-                maxTotalHeapSize = r.totalHeapSize;
+            maxUsedHeapSize = Math.max(maxUsedHeapSize, r.usedHeapSize || maxUsedHeapSize);
+            minUsedHeapSize = Math.min(minUsedHeapSize, r.usedHeapSize || minUsedHeapSize);
 
             if (typeof minTime === "undefined" || r.startTime < minTime)
                 minTime = r.startTime;
             if (typeof maxTime === "undefined" || r.endTime > maxTime)
                 maxTime = r.endTime;
         });
+        minUsedHeapSize = Math.min(minUsedHeapSize, maxUsedHeapSize);
 
         var width = this._canvas.width;
-        var height = this._canvas.height;
+        var height = this._canvas.height - lowerOffset;
         var xFactor = width / (maxTime - minTime);
-        var yFactor = height / maxTotalHeapSize;
+        var yFactor = height / (maxUsedHeapSize - minUsedHeapSize);
 
         var histogram = new Array(width);
         this._forAllRecords(records, function(r) {
             if (!r.usedHeapSize)
                 return;
              var x = Math.round((r.endTime - minTime) * xFactor);
-             var y = Math.round(r.usedHeapSize * yFactor);
+             var y = Math.round((r.usedHeapSize - minUsedHeapSize) * yFactor);
              histogram[x] = Math.max(histogram[x] || 0, y);
         });
 
@@ -620,7 +628,8 @@ WebInspector.HeapGraph.prototype = {
         ctx.fill();
         ctx.closePath();
 
-        this._maxHeapSizeLabel.textContent = Number.bytesToString(maxTotalHeapSize);
+        this._maxHeapSizeLabel.textContent = Number.bytesToString(maxUsedHeapSize);
+        this._minHeapSizeLabel.textContent = Number.bytesToString(minUsedHeapSize);
     },
 
     _clear: function(ctx) {
