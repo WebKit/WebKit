@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Download.h"
 
+#include "FileDownloaderEfl.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -28,7 +29,8 @@ namespace WebKit {
 
 void Download::start(WebPage* initiatingWebPage)
 {
-    notImplemented();
+    m_fileDownloader = FileDownloaderEfl::create(this);
+    m_fileDownloader->start(initiatingWebPage, m_request);
 }
 
 void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceResponse& response)

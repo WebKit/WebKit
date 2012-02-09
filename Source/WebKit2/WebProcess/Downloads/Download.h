@@ -47,6 +47,10 @@ OBJC_CLASS WKDownloadAsDelegate;
 #include <CFNetwork/CFURLDownloadPriv.h>
 #endif
 
+#if PLATFORM(EFL)
+#include <FileDownloaderEfl.h>
+#endif
+
 namespace CoreIPC {
     class DataReference;
 }
@@ -67,6 +71,10 @@ class WebPage;
 
 #if PLATFORM(QT)
 class QtFileDownloader;
+#endif
+
+#if PLATFORM(EFL)
+class FileDownloaderEfl;
 #endif
 
 class Download : public CoreIPC::MessageSender<Download> {
@@ -145,6 +153,9 @@ private:
 #if PLATFORM(GTK)
     OwnPtr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
+#endif
+#if PLATFORM(EFL)
+    OwnPtr<FileDownloaderEfl> m_fileDownloader;
 #endif
 };
 

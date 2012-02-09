@@ -45,6 +45,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/Plugins/efl/PluginProcessProxyEfl.cpp
 
     WebProcess/Downloads/efl/DownloadEfl.cpp
+    WebProcess/Downloads/efl/FileDownloaderEfl.cpp
 
     WebProcess/efl/WebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
@@ -65,6 +66,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/UIProcess/API/efl/"
+    "${WEBKIT2_DIR}/WebProcess/Downloads/efl"
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     ${Cairo_INCLUDE_DIRS}

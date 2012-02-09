@@ -1,3 +1,54 @@
+2012-02-08  Keunsoon Lee  <keunsoon.lee@samsung.com>
+
+        [WK2][EFL] creating dummy class derived from ResourceHandleClient for Efl download module.
+        https://bugs.webkit.org/show_bug.cgi?id=76171
+
+        Reviewed by Andreas Kling.
+
+        FileDownloaderEfl is a practical class to operate file download.
+        It communicates with Download class to start download
+        and to notify downloading states to user(e.g. client application).
+        Besides FileDownloaderEfl derives from ResourceHandleClient
+        and receives chunked data from ResourceHandle directly
+        or redirects data flow which is started from MainResourceLoader
+        by mean of exchanging ResourceHandle's existing client for FileDownloaderEfl.
+
+        This patch has only dummy functions to make easy to review.
+        Working patch will be uploaded on another bug thread.
+
+        * PlatformEfl.cmake: added new file to compile.
+        * WebProcess/Downloads/Download.h: added FileDownloaderEfl's instance as a form of OwnPtr<FileDownloaderEfl>.
+        (WebKit):
+        (Download):
+        * WebProcess/Downloads/efl/DownloadEfl.cpp:
+        (WebKit::Download::start): calling to FileDownloaderEfl::start() to start download for passing ResourceRequest.
+        * WebProcess/Downloads/efl/FileDownloaderEfl.cpp: Added. a practical class to operate file download.
+        (WebKit):
+        (WebKit::FileDownloaderEfl::create): create function, which returns PassOwnPtr<FileDownloaderEfl>.
+        (WebKit::FileDownloaderEfl::FileDownloaderEfl): constructor, which receives Download* as a parameter.
+        (WebKit::FileDownloaderEfl::~FileDownloaderEfl): deconstructor.
+        (WebKit::FileDownloaderEfl::start): a function to start downloading for passed ResourceRequest.
+        It does nothing for now, but shows how Download class can call FileDownloaderEfl's function.
+        (WebKit::FileDownloaderEfl::didReceiveResponse): virtual function for ResourceHandleClient.
+        It will receive response header information from ResourceHandle.
+        (WebKit::FileDownloaderEfl::didReceiveData): virtual function for ResourceHandleClient.
+        It will receive chunk data from ResourceHandle.
+        (WebKit::FileDownloaderEfl::didFinishLoading): virtual function for ResourceHandleClient.
+        It will be notified loading is finished from ResourceHandle.
+        (WebKit::FileDownloaderEfl::didFail): virtual function for ResourceHandleClient.
+        It will be notified loading is fail with ResourceError from ResourceHandle.
+        (WebKit::FileDownloaderEfl::shouldUseCredentialStorage): virtual function for ResourceHandleClient.
+        It returns whether to use credential storage or not.
+        (WebKit::FileDownloaderEfl::didReceiveAuthenticationChallenge): virtual function for ResourceHandleClient.
+        It will receive AuthenticationChallenge.
+        (WebKit::FileDownloaderEfl::didCancelAuthenticationChallenge): virtual function for ResourceHandleClient.
+        It will be notified AuthenticationChallenge is canceled.
+        (WebKit::FileDownloaderEfl::receivedCancellation): virtual function for ResourceHandleClient.
+        * WebProcess/Downloads/efl/FileDownloaderEfl.h: Added.
+        (WebCore):
+        (WebKit):
+        (FileDownloaderEfl):
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         Replacement text should be available from the marker.
