@@ -700,6 +700,8 @@ lines
 //
 // alternate
 
+alternate-reverse
+
 //
 // CSS_PROP__WEBKIT_ANIMATION_FILL_MODE
 //

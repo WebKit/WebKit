@@ -26,7 +26,17 @@
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
 
-static double normalizedAnimationValue(double runningTime, double duration, bool alternate)
+
+static bool shouldReverseAnimationValue(Animation::AnimationDirection direction, int loopCount)
+{
+    if (((direction == Animation::AnimationDirectionAlternate) && (loopCount & 1))
+        || ((direction == Animation::AnimationDirectionAlternateReverse) && !(loopCount & 1))
+        || direction == Animation::AnimationDirectionReverse)
+        return true;
+    return false;
+}
+
+static double normalizedAnimationValue(double runningTime, double duration, Animation::AnimationDirection direction)
 {
     if (!duration)
         return 0;
@@ -35,7 +45,8 @@ static double normalizedAnimationValue(double runningTime, double duration, bool
     const double lastFullLoop = duration * double(loopCount);
     const double remainder = runningTime - lastFullLoop;
     const double normalized = remainder / duration;
-    return (loopCount % 2 && alternate) ? (1 - normalized) : normalized;
+
+    return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
 
 static float applyOpacityAnimation(float fromOpacity, float toOpacity, double progress)

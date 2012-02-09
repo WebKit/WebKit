@@ -84,9 +84,18 @@ bool WebKitAnimation::ended() const
 
 WebKitAnimation::Direction WebKitAnimation::direction() const
 {
-    if (m_keyframeAnimation->animation()->direction() == Animation::AnimationDirectionNormal)
+    switch (m_keyframeAnimation->animation()->direction()) {
+    case Animation::AnimationDirectionNormal:
         return DIRECTION_NORMAL;
-    return DIRECTION_ALTERNATE;
+    case Animation::AnimationDirectionAlternate:
+        return DIRECTION_ALTERNATE;
+    case Animation::AnimationDirectionReverse:
+        return DIRECTION_REVERSE;
+    case Animation::AnimationDirectionAlternateReverse:
+        return DIRECTION_ALTERNATE_REVERSE;
+    }
+    ASSERT_NOT_REACHED();
+    return DIRECTION_NORMAL;
 }
 
 WebKitAnimation::FillMode WebKitAnimation::fillMode() const

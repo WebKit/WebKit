@@ -42,7 +42,7 @@ public:
 
     static PassRefPtr<Animation> create() { return adoptRef(new Animation); }
     static PassRefPtr<Animation> create(const Animation* o) { return adoptRef(new Animation(*o)); }
-    
+
     bool isDelaySet() const { return m_delaySet; }
     bool isDirectionSet() const { return m_directionSet; }
     bool isDurationSet() const { return m_durationSet; }
@@ -96,7 +96,12 @@ public:
 
     double delay() const { return m_delay; }
 
-    enum AnimationDirection { AnimationDirectionNormal, AnimationDirectionAlternate };
+    enum AnimationDirection {
+        AnimationDirectionNormal,
+        AnimationDirectionAlternate,
+        AnimationDirectionReverse,
+        AnimationDirectionAlternateReverse
+    };
     AnimationDirection direction() const { return static_cast<AnimationDirection>(m_direction); }
 
     unsigned fillMode() const { return m_fillMode; }
@@ -144,7 +149,7 @@ private:
     double m_delay;
     double m_duration;
     RefPtr<TimingFunction> m_timingFunction;
-    unsigned m_direction : 1; // AnimationDirection
+    unsigned m_direction : 2; // AnimationDirection
     unsigned m_fillMode : 2;
 
     unsigned m_playState     : 2;

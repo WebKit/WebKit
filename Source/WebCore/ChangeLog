@@ -1,3 +1,35 @@
+2012-02-08  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Implement reverse animation direction
+
+        Implement reverse animation direction
+        https://bugs.webkit.org/show_bug.cgi?id=60525
+
+        Implement reverse and alternate-reverse direction.
+
+        Reviewed by Dean Jackson.
+
+        Tests: animations/animation-direction-alternate-reverse.html
+               animations/animation-direction-reverse.html
+               animations/fill-mode-reverse.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationDirection):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapAnimationDirection):
+        * css/CSSValueKeywords.in:
+        * page/WebKitAnimation.cpp:
+        (WebCore::WebKitAnimation::direction):
+        * page/WebKitAnimation.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fractionalTime):
+        * platform/animation/Animation.h:
+        (Animation):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore):
+        (WebCore::shouldReverseAnimationValue):
+        (WebCore::normalizedAnimationValue):
+
 2012-02-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Avoid creating a temporary GraphicsContext3D if someone requests the WebView's GraphicsContext3D before initialization is complete

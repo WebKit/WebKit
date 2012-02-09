@@ -3376,7 +3376,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationDelay()
 PassRefPtr<CSSValue> CSSParser::parseAnimationDirection()
 {
     CSSParserValue* value = m_valueList->current();
-    if (value->id == CSSValueNormal || value->id == CSSValueAlternate)
+    if (value->id == CSSValueNormal || value->id == CSSValueAlternate || value->id == CSSValueReverse || value->id == CSSValueAlternateReverse)
         return cssValuePool()->createIdentifierValue(value->id);
     return 0;
 }

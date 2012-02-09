@@ -59,7 +59,7 @@ public:
     bool ended() const;
 
     // direction
-    enum Direction { DIRECTION_NORMAL, DIRECTION_ALTERNATE };
+    enum Direction { DIRECTION_NORMAL, DIRECTION_ALTERNATE, DIRECTION_REVERSE, DIRECTION_ALTERNATE_REVERSE };
     Direction direction() const;
 
     // fill mode

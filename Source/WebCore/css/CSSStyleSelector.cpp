@@ -4318,7 +4318,20 @@ void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    layer->setDirection(primitiveValue->getIdent() == CSSValueAlternate ? Animation::AnimationDirectionAlternate : Animation::AnimationDirectionNormal);
+    switch (primitiveValue->getIdent()) {
+    case CSSValueNormal:
+        layer->setDirection(Animation::AnimationDirectionNormal);
+        break;
+    case CSSValueAlternate:
+        layer->setDirection(Animation::AnimationDirectionAlternate);
+        break;
+    case CSSValueReverse:
+        layer->setDirection(Animation::AnimationDirectionReverse);
+        break;
+    case CSSValueAlternateReverse:
+        layer->setDirection(Animation::AnimationDirectionAlternateReverse);
+        break;
+    }
 }
 
 void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* value)

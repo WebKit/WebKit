@@ -1673,7 +1673,9 @@ double AnimationBase::fractionalTime(double scale, double elapsedTime, double of
         integralTime = min(integralTime, m_animation->iterationCount() - 1);
     fractionalTime -= integralTime;
 
-    if ((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
+    if (((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
+        || ((m_animation->direction() == Animation::AnimationDirectionAlternateReverse) && !(integralTime & 1))
+        || m_animation->direction() == Animation::AnimationDirectionReverse)
         fractionalTime = 1 - fractionalTime;
 
     if (scale != 1 || offset)
