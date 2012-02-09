@@ -107,6 +107,11 @@ public:
     // animate or layout in this case.
     virtual void composite(bool finish) = 0;
 
+    // Temporary method for the embedder to notify the WebWidget that the widget
+    // has taken damage, e.g. due to a window expose. This method will be
+    // removed when the WebWidget inversion patch lands --- http://crbug.com/112837
+    virtual void setNeedsRedraw() { }
+
     // Called to inform the WebWidget of a change in theme.
     // Implementors that cache rendered copies of widgets need to re-render
     // on receiving this message

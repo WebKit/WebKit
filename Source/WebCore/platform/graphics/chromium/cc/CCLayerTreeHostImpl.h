@@ -113,6 +113,10 @@ public:
 
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
 
+    // Where possible, redraws are scissored to a damage region calculated from changes to
+    // layer properties. This function overrides the damage region for the next draw cycle.
+    void setFullRootLayerDamage();
+
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
     CCLayerTreeHostImplClient* m_client;

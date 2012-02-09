@@ -250,6 +250,7 @@ void CCThreadProxy::setNeedsRedraw()
 {
     ASSERT(isMainThread());
     TRACE_EVENT("CCThreadProxy::setNeedsRedraw", this, 0);
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setFullRootLayerDamageOnImplThread));
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsRedrawOnImplThread));
 }
 
@@ -595,6 +596,12 @@ void CCThreadProxy::layerTreeHostClosedOnImplThread(CCCompletionEvent* completio
     m_inputHandlerOnImplThread.clear();
     m_schedulerOnImplThread.clear();
     completion->signal();
+}
+
+void CCThreadProxy::setFullRootLayerDamageOnImplThread()
+{
+    ASSERT(isImplThread());
+    m_layerTreeHostImpl->setFullRootLayerDamage();
 }
 
 size_t CCThreadProxy::maxPartialTextureUpdates() const

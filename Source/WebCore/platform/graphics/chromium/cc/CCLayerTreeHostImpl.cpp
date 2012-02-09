@@ -542,4 +542,13 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     return scrollInfo.release();
 }
 
+void CCLayerTreeHostImpl::setFullRootLayerDamage()
+{
+    if (rootLayer()) {
+        CCRenderSurface* renderSurface = rootLayer()->renderSurface();
+        if (renderSurface)
+            renderSurface->damageTracker()->forceFullDamageNextUpdate();
+    }
+}
+
 }
