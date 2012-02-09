@@ -390,6 +390,34 @@ webkit_response_policy_decision_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitHitTestResult</FILE>
+WebKitHitTestResult
+WebKitHitTestResultContext
+webkit_hit_test_result_get_context
+webkit_hit_test_result_context_is_link
+webkit_hit_test_result_context_is_image
+webkit_hit_test_result_context_is_media
+webkit_hit_test_result_get_link_uri
+webkit_hit_test_result_get_link_title
+webkit_hit_test_result_get_link_label
+webkit_hit_test_result_get_image_uri
+webkit_hit_test_result_get_media_uri
+
+<SUBSECTION Standard>
+WebKitHitTestResultClass
+WEBKIT_TYPE_HIT_TEST_RESULT
+WEBKIT_HIT_TEST_RESULT
+WEBKIT_IS_HIT_TEST_RESULT
+WEBKIT_HIT_TEST_RESULT_CLASS
+WEBKIT_IS_HIT_TEST_RESULT_CLASS
+WEBKIT_HIT_TEST_RESULT_GET_CLASS
+
+<SUBSECTION Private>
+WebKitHitTestResultPrivate
+webkit_hit_test_result_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR

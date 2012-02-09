@@ -1,3 +1,14 @@
+2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebView::mouse-target-changed signal to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=78097
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/symbols.filter: Add freeOwnedGPtr<_GdkEvent>
+        symbol to be able to use GOwnPtr<GdkEvent> in WebKit2 GTK+ unit
+        tests.
+
 2012-02-09  Kent Tamura  <tkent@chromium.org>
 
         Do not localize numbers in scientific notation

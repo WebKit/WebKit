@@ -1,3 +1,74 @@
+2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebView::mouse-target-changed signal to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=78097
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp: Added.
+        (webkitHitTestResultFinalize):
+        (webkitHitTestResultGetProperty):
+        (webkitHitTestResultSetProperty):
+        (webkit_hit_test_result_init):
+        (webkit_hit_test_result_class_init):
+        (webkitHitTestResultCreate): Create a new WebKitHitTestResult for
+        the given WKHitTestResult.
+        (stringIsEqualToCString): Helper function to compare String and
+        CString considering String::isEmpty() == CString.isNull().
+        (webkitHitTestResultCompare): Helper function to check whether a
+        WebKitHitTestResult contains the same information than the given
+        WKHitTestResult.
+        (webkit_hit_test_result_get_context):
+        (webkit_hit_test_result_context_is_link):
+        (webkit_hit_test_result_context_is_image):
+        (webkit_hit_test_result_context_is_media):
+        (webkit_hit_test_result_get_link_uri):
+        (webkit_hit_test_result_get_link_title):
+        (webkit_hit_test_result_get_link_label):
+        (webkit_hit_test_result_get_image_uri):
+        (webkit_hit_test_result_get_media_uri):
+        * UIProcess/API/gtk/WebKitHitTestResult.h: Added.
+        * UIProcess/API/gtk/WebKitHitTestResultPrivate.h:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (webkitNavigationPolicyDecisionCreate): Use
+        wkEventModifiersToGdkModifiers.
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (wkEventModifiersToGdkModifiers): Moved from
+        WebKitNavigationPolicyDecision and renamed to wkEventModifiersToGdkModifiers.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (mouseDidMoveOverElement): UI client callback that calls
+        webkitWebViewMouseTargetChanged().
+        (attachUIClientToView): Add implementation for callback
+        mouseDidMoveOverElement.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add
+        WebKitWebView::mouse-target-changed signal.
+        (webkitWebViewMouseTargetChanged): Emit
+        WebKitWebView::mouse-target-changed signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitHitTestResult.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMouseTarget):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        (WebViewTest::~WebViewTest):
+        (parentWindowMapped):
+        (WebViewTest::showInWindowAndWaitUntilMapped): Method to add the
+        view into a popup window and show it running the main loop until
+        the window is mapped.
+        (WebViewTest::mouseMoveTo): Method to synthesize a
+        GDK_MOTION_EVENT on the given coordinates and using the given
+        modifiers.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/webkit2.h: Include WebKitHitTestResult.h.
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2012-02-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fetch the visible rect from LayerTreeHost instead of keeping a copy in each layer.

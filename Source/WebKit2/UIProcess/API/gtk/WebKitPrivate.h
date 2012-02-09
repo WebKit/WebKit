@@ -40,4 +40,6 @@
 #define COMPILE_ASSERT_MATCHING_ENUM(webkitName, webcoreName) \
         COMPILE_ASSERT(int(webkitName) == int(webcoreName), mismatchingEnums)
 
+unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
+
 #endif // WebKitPrivate_h

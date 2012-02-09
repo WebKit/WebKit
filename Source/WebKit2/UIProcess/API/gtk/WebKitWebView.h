@@ -30,6 +30,7 @@
 
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
@@ -116,29 +117,32 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    void       (* load_changed)   (WebKitWebView             *web_view,
-                                   WebKitLoadEvent            load_event);
-    gboolean   (* load_failed)    (WebKitWebView             *web_view,
-                                   WebKitLoadEvent            load_event,
-                                   const gchar               *failing_uri,
-                                   GError                    *error);
+    void       (* load_changed)         (WebKitWebView             *web_view,
+                                         WebKitLoadEvent            load_event);
+    gboolean   (* load_failed)          (WebKitWebView             *web_view,
+                                         WebKitLoadEvent            load_event,
+                                         const gchar               *failing_uri,
+                                         GError                    *error);
 
-    GtkWidget *(* create)         (WebKitWebView             *web_view);
-    void       (* ready_to_show)  (WebKitWebView             *web_view);
-    void       (* close)          (WebKitWebView             *web_view);
+    GtkWidget *(* create)               (WebKitWebView             *web_view);
+    void       (* ready_to_show)        (WebKitWebView             *web_view);
+    void       (* close)                (WebKitWebView             *web_view);
 
-    gboolean   (* script_alert)   (WebKitWebView             *web_view,
-                                   const gchar               *message);
-    gboolean   (* script_confirm) (WebKitWebView             *web_view,
-                                   const gchar               *message,
-                                   gboolean                  *confirmed);
-    gboolean   (* script_prompt)  (WebKitWebView             *web_view,
-                                   const gchar               *message,
-                                   const gchar               *default_text,
-                                   gchar                    **text);
-    gboolean   (* decide_policy)  (WebKitWebView             *web_view,
-                                   WebKitPolicyDecision      *decision,
-                                   WebKitPolicyDecisionType  type);
+    gboolean   (* script_alert)         (WebKitWebView             *web_view,
+                                         const gchar               *message);
+    gboolean   (* script_confirm)       (WebKitWebView             *web_view,
+                                         const gchar               *message,
+                                         gboolean                  *confirmed);
+    gboolean   (* script_prompt)        (WebKitWebView             *web_view,
+                                         const gchar               *message,
+                                         const gchar               *default_text,
+                                         gchar                    **text);
+    gboolean   (* decide_policy)        (WebKitWebView             *web_view,
+                                         WebKitPolicyDecision      *decision,
+                                         WebKitPolicyDecisionType  type);
+    void       (* mouse_target_changed) (WebKitWebView            *web_view,
+                                         WebKitHitTestResult      *hit_test_result,
+                                         guint                     modifiers);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);

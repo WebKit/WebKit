@@ -267,15 +267,27 @@ public:
         return TRUE;
     }
 
+    static void mouseTargetChanged(WebKitWebView*, WebKitHitTestResult* hitTestResult, guint modifiers, UIClientTest* test)
+    {
+        g_assert(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(hitTestResult));
+
+        test->m_mouseTargetHitTestResult = hitTestResult;
+        test->m_mouseTargetModifiers = modifiers;
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
     UIClientTest()
         : m_scriptType(Alert)
         , m_scriptDialogConfirmed(true)
+        , m_mouseTargetModifiers(0)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
         g_signal_connect(m_webView, "create", G_CALLBACK(viewCreate), this);
         g_signal_connect(m_webView, "script-alert", G_CALLBACK(scriptAlert), this);
         g_signal_connect(m_webView, "script-confirm", G_CALLBACK(scriptConfirm), this);
         g_signal_connect(m_webView, "script-prompt", G_CALLBACK(scriptPrompt), this);
+        g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
     }
 
     ~UIClientTest()
@@ -293,11 +305,20 @@ public:
         m_windowProperties = windowProperties;
     }
 
+    WebKitHitTestResult* moveMouseAndWaitUntilMouseTargetChanged(int x, int y, unsigned int mouseModifiers = 0)
+    {
+        mouseMoveTo(x, y, mouseModifiers);
+        g_main_loop_run(m_mainLoop);
+        return m_mouseTargetHitTestResult.get();
+    }
+
     Vector<WebViewEvents> m_webViewEvents;
     ScriptType m_scriptType;
     bool m_scriptDialogConfirmed;
     WindowProperties m_windowProperties;
     HashSet<WTF::String> m_windowPropertiesChanged;
+    GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
+    unsigned int m_mouseTargetModifiers;
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -361,6 +382,66 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    const char* linksHoveredHTML =
+        "<html><body>"
+        " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
+        " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
+        " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
+        " <video style='position:absolute; left:1; top:30' width=10 height=10 controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
+        "</body></html>";
+
+    test->loadHtml(linksHoveredHTML, "file:///");
+    test->waitUntilLoadFinished();
+
+    // Move over link.
+    WebKitHitTestResult* hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 1);
+    g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Title");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_label(hitTestResult), ==, "WebKitGTK+ Website");
+    g_assert(!test->m_mouseTargetModifiers);
+
+    // Move out of the link.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(0, 0);
+    g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!test->m_mouseTargetModifiers);
+
+    // Move over image with GDK_CONTROL_MASK.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 10, GDK_CONTROL_MASK);
+    g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
+    g_assert(test->m_mouseTargetModifiers & GDK_CONTROL_MASK);
+
+    // Move over image link.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 20);
+    g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/logo");
+    g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
+    g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Logo");
+    g_assert(!webkit_hit_test_result_get_link_label(hitTestResult));
+    g_assert(!test->m_mouseTargetModifiers);
+
+    // Move over media.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 30);
+    g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.ogg");
+    g_assert(!test->m_mouseTargetModifiers);
+}
+
 static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
 {
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 1);
@@ -377,6 +458,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
+    UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
 }
 

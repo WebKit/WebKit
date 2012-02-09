@@ -25,7 +25,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebURLRequest.h"
-#include <gdk/gdk.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -280,26 +279,12 @@ static unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButto
     return 0;
 }
 
-unsigned wkEventModifiersToUnsigned(WKEventModifiers wkModifiers)
-{
-    unsigned modifiers = 0;
-    if (wkModifiers & kWKEventModifiersShiftKey)
-        modifiers |= GDK_SHIFT_MASK;
-    if (wkModifiers & kWKEventModifiersControlKey)
-        modifiers |= GDK_CONTROL_MASK;
-    if (wkModifiers & kWKEventModifiersAltKey)
-        modifiers |= GDK_MOD1_MASK;
-    if (wkModifiers & kWKEventModifiersMetaKey)
-        modifiers |= GDK_META_MASK;
-    return modifiers;
-}
-
 WebKitNavigationPolicyDecision* webkitNavigationPolicyDecisionCreate(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef request, const char* frameName, WKFramePolicyListenerRef listener)
 {
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, NULL));
     decision->priv->navigationType = static_cast<WebKitNavigationType>(navigationType);
     decision->priv->mouseButton = wkEventMouseButtonToWebKitMouseButton(mouseButton);
-    decision->priv->modifiers = wkEventModifiersToUnsigned(modifiers);
+    decision->priv->modifiers = wkEventModifiersToGdkModifiers(modifiers);
     decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(request)->resourceRequest()));
     decision->priv->frameName = frameName;
     webkitPolicyDecisionSetListener(WEBKIT_POLICY_DECISION(decision), listener);

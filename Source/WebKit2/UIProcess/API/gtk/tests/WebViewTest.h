@@ -42,10 +42,14 @@ public:
 
     void wait(double seconds);
     void waitUntilLoadFinished();
+    void showInWindowAndWaitUntilMapped();
+
+    void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
 
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;
     CString m_activeURI;
+    GtkWidget* m_parentWindow;
 };
 
 #endif // WebViewTest_h

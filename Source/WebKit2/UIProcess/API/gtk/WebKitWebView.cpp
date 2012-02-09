@@ -24,6 +24,7 @@
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
+#include "WebKitHitTestResultPrivate.h"
 #include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
 #include "WebKitPolicyClient.h"
@@ -59,6 +60,8 @@ enum {
 
     DECIDE_POLICY,
 
+    MOUSE_TARGET_CHANGED,
+
     LAST_SIGNAL
 };
 
@@ -83,6 +86,9 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
     GRefPtr<WebKitWindowProperties> windowProperties;
+
+    GRefPtr<WebKitHitTestResult> mouseTargetHitTestResult;
+    unsigned mouseTargetModifiers;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -615,6 +621,32 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      G_TYPE_BOOLEAN, 2, /* number of parameters */
                      WEBKIT_TYPE_POLICY_DECISION,
                      WEBKIT_TYPE_POLICY_DECISION_TYPE);
+
+    /**
+     * WebKitWebView::mouse-target-changed:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @hit_test_result: a #WebKitHitTestResult
+     * @modifiers: a bitmask of #GdkModifierType
+     *
+     * This signal is emitted when the mouse cursor moves over an
+     * element such as a link, image or a media element. To determine
+     * what type of element the mouse cursor is over, a Hit Test is performed
+     * on the current mouse coordinates and the result is passed in the
+     * @hit_test_result argument. The @modifiers argument is a bitmask of
+     * #GdkModifierType flags indicating the state of modifier keys.
+     * The signal is emitted again when the mouse is moved out of the
+     * current element with a new @hit_test_result.
+     */
+     signals[MOUSE_TARGET_CHANGED] =
+         g_signal_new("mouse-target-changed",
+                      G_TYPE_FROM_CLASS(webViewClass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET(WebKitWebViewClass, mouse_target_changed),
+                      0, 0,
+                      webkit_marshal_VOID__OBJECT_UINT,
+                      G_TYPE_NONE, 2,
+                      WEBKIT_TYPE_HIT_TEST_RESULT,
+                      G_TYPE_UINT);
 }
 
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -724,6 +756,19 @@ void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisio
 {
     gboolean returnValue;
     g_signal_emit(webView, signals[DECIDE_POLICY], 0, decision, type, &returnValue);
+}
+
+void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WKHitTestResultRef wkHitTestResult, unsigned modifiers)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->mouseTargetHitTestResult
+        && priv->mouseTargetModifiers == modifiers
+        && webkitHitTestResultCompare(priv->mouseTargetHitTestResult.get(), wkHitTestResult))
+        return;
+
+    priv->mouseTargetModifiers = modifiers;
+    priv->mouseTargetHitTestResult = adoptGRef(webkitHitTestResultCreate(wkHitTestResult));
+    g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), modifiers);
 }
 
 /**

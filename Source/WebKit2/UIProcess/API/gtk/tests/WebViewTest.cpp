@@ -21,15 +21,20 @@
 #include "config.h"
 #include "WebViewTest.h"
 
+#include <WebCore/GOwnPtrGtk.h>
+
 WebViewTest::WebViewTest()
     : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(webkit_web_view_new())))
     , m_mainLoop(g_main_loop_new(0, TRUE))
+    , m_parentWindow(0)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 }
 
 WebViewTest::~WebViewTest()
 {
+    if (m_parentWindow)
+        gtk_widget_destroy(m_parentWindow);
     g_object_unref(m_webView);
     g_main_loop_unref(m_mainLoop);
 }
@@ -130,3 +135,48 @@ void WebViewTest::waitUntilLoadFinished()
     g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChanged), this);
     g_main_loop_run(m_mainLoop);
 }
+
+static gboolean parentWindowMapped(GtkWidget* widget, GdkEvent*, WebViewTest* test)
+{
+    g_signal_handlers_disconnect_by_func(widget, reinterpret_cast<void*>(parentWindowMapped), test);
+    g_main_loop_quit(test->m_mainLoop);
+
+    return FALSE;
+}
+
+void WebViewTest::showInWindowAndWaitUntilMapped()
+{
+    g_assert(!m_parentWindow);
+    m_parentWindow = gtk_window_new(GTK_WINDOW_POPUP);
+    gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
+    gtk_widget_show(GTK_WIDGET(m_webView));
+
+    g_signal_connect(m_parentWindow, "map-event", G_CALLBACK(parentWindowMapped), this);
+    gtk_widget_show(m_parentWindow);
+    g_main_loop_run(m_mainLoop);
+}
+
+void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
+{
+    g_assert(m_parentWindow);
+    GtkWidget* viewWidget = GTK_WIDGET(m_webView);
+    g_assert(gtk_widget_get_realized(viewWidget));
+
+    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
+    event->motion.x = x;
+    event->motion.y = y;
+
+    event->motion.time = GDK_CURRENT_TIME;
+    event->motion.window = gtk_widget_get_window(viewWidget);
+    g_object_ref(event->motion.window);
+    event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
+    event->motion.state = mouseModifiers;
+    event->motion.axes = 0;
+
+    int xRoot, yRoot;
+    gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);
+    event->motion.x_root = xRoot;
+    event->motion.y_root = yRoot;
+    gtk_main_do_event(event.get());
+}
+
