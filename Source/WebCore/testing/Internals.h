@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ClientRect;
 class Document;
+class DocumentMarker;
 class Element;
 class InternalSettings;
 class Node;
@@ -79,7 +80,8 @@ public:
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
-    PassRefPtr<Range> markerRangeForNode(Node*, const String&, unsigned, ExceptionCode&);
+    PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
 
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
 
@@ -113,6 +115,7 @@ public:
 
 private:
     explicit Internals(Document*);
+    DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
 
     RefPtr<InternalSettings> m_settings;
 };

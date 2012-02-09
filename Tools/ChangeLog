@@ -1,3 +1,16 @@
+2012-02-07  MORITA Hajime  <morrita@google.com>
+
+        Replacement text should be available from the marker.
+        https://bugs.webkit.org/show_bug.cgi?id=77934
+
+        Made the mock requestCheckingOfText() implementation to return
+        a replacement text for each misspelled word if available.
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::finishLastTextCheck):
+
 2012-02-08  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][DRT] DumpRenderTreeQt should support --no-timeout and --timeout options

@@ -1,0 +1,11 @@
+The spellchecker should store replacement text in each marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS markedText is "wellcome"
+PASS markerDescription is "welcome"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+wellcome.

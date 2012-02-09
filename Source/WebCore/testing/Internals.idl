@@ -53,6 +53,7 @@ module window {
         ClientRect boundingBox(in Element element) raises(DOMException);
         unsigned long markerCountForNode(in Node node, in DOMString markerType) raises(DOMException);
         Range markerRangeForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
+        DOMString markerDescriptionForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
 
         void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
 

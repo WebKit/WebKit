@@ -110,6 +110,7 @@ EXPORTS
         ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
         ??0ClientRect@WebCore@@AAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QAE?AVIntRect@2@_N@Z
+	?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ
         ?fastMalloc@WTF@@YAPAXI@Z
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z

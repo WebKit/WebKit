@@ -1,3 +1,45 @@
+2012-02-07  MORITA Hajime  <morrita@google.com>
+
+        Replacement text should be available from the marker.
+        https://bugs.webkit.org/show_bug.cgi?id=77934
+
+        Reviewed by Kent Tamura.
+
+        On spellchecking, TextCheckingResult can contain a replacement text
+        which is usable both for an automatic replacement and for showing a suggestion.
+
+        But when marking a misspelled word ragarding to returned
+        TextCheckingResult, Editor uses only the misspelled range data and
+        discards the replacement value. Then it asks the same value again
+        when showing suggestion/autocorrection.
+
+        It would be great if the marker holds the replacement text
+        and Editor can use it on suggesting a correction, without any re-request.
+        This is especially true in the case when it needs IPC messaging for spellchecking:
+        We can save one round-trip by this technique.
+
+        Here is actual change:
+
+        - Passed the replacement text to addMarker() for for misspelling markers.
+          Note that this is done only for the unified checker path because legacy
+          TextCheckerClient API doesn't provide such a replacement.
+        - Added an Internals API to retrieve a description text on a marker.
+
+        Test: editing/spelling/spelling-marker-description.html
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerAt):
+        (WebCore):
+        (WebCore::Internals::markerRangeForNode):
+        (WebCore::Internals::markerDescriptionForNode):
+        * testing/Internals.h:
+        (WebCore):
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-08  Eric Seidel  <eric@webkit.org>
 
         Remove more cruft now that HTMLIsIndexElement is gone

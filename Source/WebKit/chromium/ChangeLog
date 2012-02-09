@@ -1,3 +1,17 @@
+2012-02-07  MORITA Hajime  <morrita@google.com>
+
+        Replacement text should be available from the marker.
+        https://bugs.webkit.org/show_bug.cgi?id=77934
+
+        didFinishCheckingText() accidentally dropped the description text
+        given from the backend. Fixed to copy it on the API-to-Core
+        convertion. The test won't work without this fix.
+
+        Reviewed by Kent Tamura.
+
+        * src/WebTextCheckingCompletionImpl.cpp:
+        (WebKit::toCoreResults):
+
 2012-02-08  Dmitry Lomov  <dslomov@chromium.org>
 
         [V8][Chromium] Race between worker accessing WebDatabase and frame closing down.
