@@ -31,8 +31,12 @@
     function requestSizeChange() {
         object1 = document.getElementsByTagName("object")[0];
         var htmlDoc = object1.contentDocument;
-        var htmlWindow = htmlDoc.defaultView;
+        if (!htmlDoc) {
+            setTimeout(requestSizeChange, 50);
+            return;
+        }
 
+        var htmlWindow = htmlDoc.defaultView;
         // Wait until the embedded SVG (of the embedded HTML that we're loading), is loaded.
         if (htmlWindow.canChangeSize) {
             htmlWindow.changeSize();
