@@ -25,8 +25,8 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""Representation of a layout test configuration."""
 
+import itertools
 
 class TestConfiguration(object):
     def __init__(self, version, architecture, build_type, graphics_type):
@@ -189,26 +189,6 @@ class TestConfigurationConverter(object):
                     values -= junk_specifier_set
             specifiers_list.append(frozenset(values))
 
-        # FIXME: Replace with iteritools.combinations when we obsolete Python 2.5.
-        def combinations(iterable, r):
-            """This function is borrowed verbatim from http://docs.python.org/library/itertools.html#itertools.combinations."""
-            pool = tuple(iterable)
-            n = len(pool)
-            if r > n:
-                return
-            indices = range(r)
-            yield tuple(pool[i] for i in indices)
-            while True:
-                for i in reversed(range(r)):
-                    if indices[i] != i + n - r:
-                        break
-                else:
-                    return
-                indices[i] += 1
-                for j in range(i + 1, r):
-                    indices[j] = indices[j - 1] + 1
-                yield tuple(pool[i] for i in indices)
-
         def intersect_combination(combination):
             return reduce(set.intersection, [set(specifiers) for specifiers in combination])
 
@@ -218,7 +198,7 @@ class TestConfigurationConverter(object):
         def try_collapsing(size, collapsing_sets):
             if len(specifiers_list) < size:
                 return False
-            for combination in combinations(specifiers_list, size):
+            for combination in itertools.combinations(specifiers_list, size):
                 if symmetric_difference(combination) in collapsing_sets:
                     for item in combination:
                         specifiers_list.remove(item)
@@ -235,7 +215,7 @@ class TestConfigurationConverter(object):
         def try_abbreviating():
             if len(specifiers_list) < 2:
                 return False
-            for combination in combinations(specifiers_list, 2):
+            for combination in itertools.combinations(specifiers_list, 2):
                 for collapsing_set in collapsing_sets:
                     diff = symmetric_difference(combination)
                     if diff <= collapsing_set:
