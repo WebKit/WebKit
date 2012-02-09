@@ -260,6 +260,11 @@ DOMEditor::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Dige
         }
     }
 
+#ifdef DEBUG_DOM_EDITOR
+    dumpMap(oldMap, "OLD");
+    dumpMap(newMap, "NEW");
+#endif
+
     return make_pair(oldMap, newMap);
 }
 
@@ -274,9 +279,16 @@ void DOMEditor::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPt
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
     HashMap<Digest*, Digest*> merges;
+    HashSet<size_t> usedNewOrdinals;
     for (size_t i = 0; i < oldList.size(); ++i) {
-        if (oldMap[i].first)
-            continue;
+        if (oldMap[i].first) {
+            if (!usedNewOrdinals.contains(oldMap[i].second)) {
+                usedNewOrdinals.add(oldMap[i].second);
+                continue;
+            }
+            oldMap[i].first = 0;
+            oldMap[i].second = 0;
+        }
 
         // Always match <head> and <body> tags with each other - we can't remove them from the DOM
         // upon patching.
@@ -307,10 +319,20 @@ void DOMEditor::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPt
         }
     }
 
-    // Mark retained nodes as used.
+    // Mark retained nodes as used, do not reuse node more than once.
+    HashSet<size_t> usedOldOrdinals;
     for (size_t i = 0; i < newList.size(); ++i) {
-        if (newMap[i].first)
-            markNodeAsUsed(newMap[i].first);
+        if (!newMap[i].first)
+            continue;
+        size_t oldOrdinal = newMap[i].second;
+        if (usedOldOrdinals.contains(oldOrdinal)) {
+            // Do not map node more than once
+            newMap[i].first = 0;
+            newMap[i].second = 0;
+            continue;
+        }
+        usedOldOrdinals.add(oldOrdinal);
+        markNodeAsUsed(newMap[i].first);
     }
 
     // Mark <head> and <body> nodes for merge.
@@ -450,6 +472,22 @@ void DOMEditor::markNodeAsUsed(Digest* digest)
             queue.append(first->m_children[i].get());
     }
 }
+
+#ifdef DEBUG_DOM_EDITOR
+static String nodeName(Node* node)
+{
+    if (node->document()->isXHTMLDocument())
+         return node->nodeName();
+    return node->nodeName().lower();
+}
+
+void DOMEditor::dumpMap(const ResultMap& map, const String& name)
+{
+    fprintf(stderr, "\n\n");
+    for (size_t i = 0; i < map.size(); ++i)
+        fprintf(stderr, "%s[%lu]: %s (%p) - [%lu]\n", name.utf8().data(), i, map[i].first ? nodeName(map[i].first->m_node).utf8().data() : "", map[i].first, map[i].second);
+}
+#endif
 
 } // namespace WebCore
 

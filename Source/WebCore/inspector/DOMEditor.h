@@ -68,6 +68,9 @@ private:
     void insertBefore(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
     void removeChild(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);
+#ifdef DEBUG_DOM_EDITOR
+    void dumpMap(const ResultMap&, const String& name);
+#endif
 
     Document* m_document;
 

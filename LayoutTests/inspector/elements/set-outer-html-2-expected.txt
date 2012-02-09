@@ -12,11 +12,8 @@ Event NodeInserted: UL
 Event NodeRemoved: UL
 ==========8<==========
 <div id="container" style="display:none">
-<h2 foo="bar" bar="baz">Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
-<h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
+<h2 foo="bar" bar="baz">Getting involved</h2>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    
@@ -35,11 +32,8 @@ Event AttrRemoved: H2
 Event ChildNodeCountUpdated: UL
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>
@@ -60,11 +54,8 @@ Event NodeInserted: DIV
 Event NodeRemoved: UL
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <div><ul>
    <li></li>
@@ -82,11 +73,8 @@ Event NodeInserted: UL
 Event NodeRemoved: DIV
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>
@@ -107,11 +95,8 @@ Event NodeInserted: H2
 Event NodeRemoved: H2
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
 
-
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>
@@ -125,17 +110,14 @@ Event NodeRemoved: H2
 Bringing things back
 
 Wrapper identity: identity
-Event NodeInserted: A
 Event NodeInserted: H2
-Event NodeRemoved: A
+Event NodeInserted: P
 Event NodeRemoved: H2
+Event NodeRemoved: P
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>
@@ -155,11 +137,8 @@ Wrapper identity: identity
 Event NodeInserted: DIV
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>
@@ -175,11 +154,49 @@ Bringing things back
 Wrapper identity: identity
 ==========8<==========
 <div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
-
 <h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
+<p id="identity">There are many ways to get involved. You can:</p>
+<ul>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
+</ul>
+</div>
+==========>8==========
+
+
+
+
+
+Running: testDupeNode
+Replacing '<h2>Getting involved</h2>' with '<h2>Getting involved</h2><h2>Getting involved</h2>'
+
+Wrapper identity: identity
+Event NodeInserted: H2
+==========8<==========
+<div id="container" style="display:none">
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+<h2>Getting involved</h2><h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
+<ul>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
+</ul>
+</div>
+==========>8==========
+
+Bringing things back
+
+Wrapper identity: identity
+Event NodeRemoved: H2
+==========8<==========
+<div id="container" style="display:none">
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+<h2>Getting involved</h2>
 <p id="identity">There are many ways to get involved. You can:</p>
 <ul>
    <li></li>

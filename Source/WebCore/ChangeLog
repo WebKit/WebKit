@@ -1,3 +1,19 @@
+2012-02-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: fix setOuterHTML for the case that adds / removes duplicate.
+        https://bugs.webkit.org/show_bug.cgi?id=78235
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::diff):
+        (WebCore::DOMEditor::innerPatchChildren):
+        (WebCore):
+        (WebCore::nodeName):
+        (WebCore::DOMEditor::dumpMap):
+        * inspector/DOMEditor.h:
+        (DOMEditor):
+
 2012-02-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Ensure timers and other active DOM objects do not fire in suspended documents.
