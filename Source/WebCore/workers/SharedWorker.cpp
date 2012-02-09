@@ -58,6 +58,8 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
     OwnPtr<MessagePortChannel> remotePort = channel->port2()->disentangle(ec);
     ASSERT(remotePort);
 
+    worker->suspendIfNeeded();
+
     KURL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
         return 0;

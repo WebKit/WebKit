@@ -45,6 +45,13 @@ namespace WebCore {
 
 static const int kMaxRecursionDepth = 3;
 
+PassRefPtr<FileWriter> FileWriter::create(ScriptExecutionContext* context)
+{
+    RefPtr<FileWriter> fileWriter(adoptRef(new FileWriter(context)));
+    fileWriter->suspendIfNeeded();
+    return fileWriter.release();
+}
+
 FileWriter::FileWriter(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_readyState(INIT)

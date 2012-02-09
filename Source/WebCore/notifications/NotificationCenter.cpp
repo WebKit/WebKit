@@ -41,6 +41,13 @@
 
 namespace WebCore {
 
+PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationPresenter* presenter)
+{
+    RefPtr<NotificationCenter> notificationCenter(adoptRef(new NotificationCenter(context, presenter)));
+    notificationCenter->suspendIfNeeded();
+    return notificationCenter.release();
+}
+
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter)
     : ActiveDOMObject(context, this)
     , m_notificationPresenter(presenter) {}

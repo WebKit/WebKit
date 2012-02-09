@@ -60,6 +60,8 @@ PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String&
 {
     RefPtr<Worker> worker = adoptRef(new Worker(context));
 
+    worker->suspendIfNeeded();
+
     KURL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
         return 0;

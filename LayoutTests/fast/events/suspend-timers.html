@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Suspend timers on navigate</title>
+<style>
+    iframe {
+      display: block;
+      border: solid 1px #ccc;
+      margin: 1em;
+      width: 200px;
+      height: 200px;
+    }
+</style>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<iframe src="resources/suspend-subframe-1.html" id="a-frame"></iframe> <iframe src="resources/suspend-subframe-2.html" id="b-frame"></iframe>
+
+<script type="text/javascript">
+description('Tests that all JS timers are suspended after the pagehide event is fired, so that timers created within it will not fire while the document is in the page cache.');
+
+if (window.layoutTestController)
+    layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+
+
+onpageshow = function(event)
+{
+    if (event.persisted) {
+        console.log('Restored page from page cache.');
+        if (!window.wasFinishJSTestCalled) {
+            setTimeout(function() {
+                finishJSTest();
+            }, 200);
+        }
+    }
+}
+
+onload = function()
+{
+    setTimeout(function() {
+        location.href = 'resources/pagehide-timeout-go-back.html';
+    }, 10);
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -102,8 +102,10 @@ PassRefPtr<AudioContext> AudioContext::create(Document* document)
     ASSERT(isMainThread());
     if (s_hardwareContextCount >= MaxHardwareContexts)
         return 0;
-        
-    return adoptRef(new AudioContext(document));
+
+    RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document)));
+    audioContext->suspendIfNeeded();
+    return audioContext.release();
 }
 
 PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
@@ -118,7 +120,9 @@ PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, 
         return 0;
     }
 
-    return adoptRef(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate));
+    RefPtr<AudioContext> audioContext(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate));
+    audioContext->suspendIfNeeded();
+    return audioContext.release();
 }
 
 // Constructor for rendering to the audio hardware.
