@@ -1,3 +1,13 @@
+2012-02-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Avoid creating a temporary GraphicsContext3D if someone requests the WebView's GraphicsContext3D before initialization is complete
+        https://bugs.webkit.org/show_bug.cgi?id=78154
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::context):
+
 2012-02-08  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78157

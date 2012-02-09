@@ -95,6 +95,8 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 GraphicsContext3D* CCSingleThreadProxy::context()
 {
     ASSERT(CCProxy::isMainThread());
+    if (m_contextBeforeInitialization)
+        return m_contextBeforeInitialization.get();
     DebugScopedSetImplThread impl;
     return m_layerTreeHostImpl->context();
 }
