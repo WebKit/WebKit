@@ -1,3 +1,17 @@
+2012-02-09  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        EntryBase.cpp is missing in CMake build system when turning on ENABLE_FILE_SYSTEM
+        https://bugs.webkit.org/show_bug.cgi?id=78190
+
+        Reviewed by Antonio Gomes.
+
+        EntryBase.cpp is not in the CMake build system, which causes build failure (undefined
+        symbols to EntryBase) when turning on ENABLE_FILE_SYSTEM.
+
+        Build system fix, no new tests.
+
+        * CMakeLists.txt:
+
 2012-02-09  Andreas Kling  <awesomekling@apple.com>
 
         REGRESSION(r53878): Input elements don't share their styles if the document contains no validity style rules.

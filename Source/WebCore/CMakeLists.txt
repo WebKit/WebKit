@@ -1586,6 +1586,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/Entry.cpp
         fileapi/EntryArray.cpp
         fileapi/EntryArraySync.cpp
+        fileapi/EntryBase.cpp
         fileapi/EntrySync.cpp
         fileapi/FileEntry.cpp
         fileapi/FileEntrySync.cpp
