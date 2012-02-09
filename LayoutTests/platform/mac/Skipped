@@ -420,6 +420,7 @@ fast/css/style-scoped
 
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/shadow-root-js-api.html
+fast/dom/shadow/shadow-disable.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html

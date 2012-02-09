@@ -1199,10 +1199,7 @@ ShadowRoot* Element::ensureShadowRoot()
     if (ShadowRoot* existingRoot = shadowRoot())
         return existingRoot;
 
-    ExceptionCode ec = 0;
-    setShadowRoot(ShadowRoot::create(document()), ec);
-    ASSERT(!ec);
-    return shadowRoot();
+    return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
 }
 
 void Element::removeShadowRoot()

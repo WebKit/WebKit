@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><tref id="tref" /></svg>
+<pre id="console"></pre>
+<script>
+description("Tests to ensure that shadow element cannot be created in elements having dynamically created shadow root.");
+
+function testToAddShadowRoot(element, success) {
+    debug(element.nodeName);
+
+    if (success)
+        shouldNotBe("new WebKitShadowRoot(element)", "null");
+    else
+        shouldThrow("new WebKitShadowRoot(element)");
+}
+
+var elementsToSuccess = [
+    document.createElement('div'),
+    document.createElement('span'),
+    document.createElement('a'),
+    document.createElement('section')
+];
+
+var elementsToFail = [
+    document.createElement('input'),
+    document.createElement('textarea'),
+    document.createElement('select'),
+    document.createElement('audio'),
+    document.createElement('video'),
+    document.getElementById('tref')
+];
+
+for (var i = 0; i < elementsToSuccess.length; ++i) {
+    var element = elementsToSuccess[i];
+    testToAddShadowRoot(element, true);
+}
+
+for (var i = 0; i < elementsToFail.length; ++i) {
+    var element = elementsToFail[i];
+    testToAddShadowRoot(element, false);
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

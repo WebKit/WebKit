@@ -241,7 +241,7 @@ void HTMLMeterElement::createShadowSubtree()
     ExceptionCode ec = 0;
     bar->appendChild(m_value, ec);
 
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ASSERT_NO_EXCEPTION);
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(bar, ec);
 }
 

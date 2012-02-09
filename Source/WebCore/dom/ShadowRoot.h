@@ -42,6 +42,16 @@ public:
     static PassRefPtr<ShadowRoot> create(Document*);
     static PassRefPtr<ShadowRoot> create(Element*, ExceptionCode&);
 
+    // FIXME: We will support multiple shadow subtrees, however current implementation does not work well
+    // if a shadow root is dynamically created. So we prohibit multiple shadow subtrees
+    // in several elements for a while.
+    // See https://bugs.webkit.org/show_bug.cgi?id=77503 and related bugs.
+    enum ShadowRootCreationPurpose {
+        CreatingUserAgentShadowRoot,
+        CreatingAuthorShadowRoot,
+    };
+    static PassRefPtr<ShadowRoot> create(Element*, ShadowRootCreationPurpose, ExceptionCode& = ASSERT_NO_EXCEPTION);
+
     void recalcShadowTreeStyle(StyleChange);
 
     void setNeedsReattachHostChildrenAndShadow();

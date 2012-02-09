@@ -31,7 +31,9 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLContentElement.h"
+#include "HTMLNames.h"
 #include "NodeRareData.h"
+#include "SVGNames.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -59,12 +61,50 @@ ShadowRoot::~ShadowRoot()
         clearRareData();
 }
 
+static bool allowsAuthorShadowRoot(Element* element)
+{
+    // FIXME: MEDIA recreates shadow root dynamically.
+    // https://bugs.webkit.org/show_bug.cgi?id=77936
+    if (element->hasTagName(HTMLNames::videoTag) || element->hasTagName(HTMLNames::audioTag))
+        return false;
+
+    // FIXME: ValidationMessage recreates shadow root dynamically.
+    // https://bugs.webkit.org/show_bug.cgi?id=77937
+    // Especially, INPUT recreates shadow root dynamically.
+    // https://bugs.webkit.org/show_bug.cgi?id=77930
+    if (element->isFormControlElement())
+        return false;
+
+    // FIXME: We disable multiple shadow subtrees for SVG for while, because there will be problems to support it.
+    // https://bugs.webkit.org/show_bug.cgi?id=78205
+    // Especially SVG TREF recreates shadow root dynamically.
+    // https://bugs.webkit.org/show_bug.cgi?id=77938
+    if (element->isSVGElement())
+        return false;
+
+    return true;
+}
+
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
+{
+    return create(element, CreatingAuthorShadowRoot, ec);
+}
+
+PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPurpose purpose, ExceptionCode& ec)
 {
     if (!element || element->shadowRoot()) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
+
+    // Since some elements recreates shadow root dynamically, multiple shadow subtrees won't work well in that element.
+    // Until they are fixed, we disable adding author shadow root for them.
+    if (purpose == CreatingAuthorShadowRoot && !allowsAuthorShadowRoot(element)) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+
+    ASSERT(purpose != CreatingUserAgentShadowRoot || !element->shadowRoot());
     RefPtr<ShadowRoot> shadowRoot = create(element->document());
 
     ec = 0;
