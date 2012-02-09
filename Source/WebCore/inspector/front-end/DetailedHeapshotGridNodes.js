@@ -62,7 +62,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 
     _toPercentString: function(num)
     {
-        return num.toFixed(2) + "%";
+        return num.toFixed(0) + "\u2009%"; // \u2009 is a thin space.
     },
 
     _createValueCell: function(columnIdentifier)
@@ -72,6 +72,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         var div = document.createElement("div");
         var valueSpan = document.createElement("span");
         valueSpan.textContent = this.data[columnIdentifier];
+        div.appendChild(valueSpan);
         var percentColumn = columnIdentifier + "-percent";
         if (percentColumn in this.data) {
             var percentSpan = document.createElement("span");
@@ -79,7 +80,6 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             percentSpan.textContent = this.data[percentColumn];
             div.appendChild(percentSpan);
         }
-        div.appendChild(valueSpan);
         cell.appendChild(div);
         return cell;
     },
@@ -300,10 +300,8 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         var view = this.dataGrid.snapshotView;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
-        if (view._showPercentage) {
-            data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
-            data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
-        }
+        data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
+        data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
 
         return this._enhanceData ? this._enhanceData(data) : data;
     },
@@ -625,10 +623,9 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
         data["count"] =  Number.withThousandsSeparator(this._count);
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
-        if (view._showPercentage) {
-            data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
-            data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
-        }
+        data["count-percent"] =  this._toPercentString(this._countPercent);
+        data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
+        data["retainedSize-percent"] = this._toPercentString(this._retainedSizePercent);
         return data;
     },
 

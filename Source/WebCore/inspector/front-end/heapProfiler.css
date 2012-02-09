@@ -121,8 +121,8 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
 
 .detailed-heapshot-view .data-grid span.percent-column {
     color: grey;
-    width: 42px;
-    float: left;
+    width: 32px;
+    float: right;
 }
 
 .detailed-heapshot-view .console-formatted-object, .console-formatted-node {

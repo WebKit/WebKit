@@ -12,7 +12,7 @@ InspectorTest.startProfilerTest = function(callback)
         // and test share the same heap. Taking a snapshot takes too long for a test,
         // so we provide synthetic snapshots.
         InspectorTest._panelReset = InspectorTest.override(WebInspector.panels.profiles, "_reset", function(){}, true);
-        InspectorTest.addSniffer(WebInspector.DetailedHeapshotView.prototype, "_updatePercentButton", InspectorTest._snapshotViewShown, true);
+        InspectorTest.addSniffer(WebInspector.DetailedHeapshotView.prototype, "_loadProfile", InspectorTest._snapshotViewShown, true);
 
         detailedHeapProfilesEnabled();
     }

@@ -430,8 +430,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.parent.addEventListener("profile added", this._updateBaseOptions, this);
     this.parent.addEventListener("profile added", this._updateFilterOptions, this);
 
-    this._showPercentage = false;
-
     this.viewsContainer = document.createElement("div");
     this.viewsContainer.addStyleClass("views-container");
     this.element.appendChild(this.viewsContainer);
@@ -514,8 +512,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.filterSelectElement.addEventListener("change", this._changeFilter.bind(this), false);
     this._updateFilterOptions();
 
-    this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item status-bar-item");
-    this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
     this.helpButton.addEventListener("click", this._helpClicked.bind(this), false);
 
@@ -539,7 +535,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
         else
             this.baseSelectElement.selectedIndex = profileIndex;
         this.dataGrid.setDataSource(this, this.profileWrapper);
-        this._updatePercentButton();
     }
 }
 
@@ -558,7 +553,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get statusBarItems()
     {
-        return [this.viewSelectElement, this.baseSelectElement, this.filterSelectElement, this.percentButton.element, this.helpButton.element];
+        return [this.viewSelectElement, this.baseSelectElement, this.filterSelectElement, this.helpButton.element];
     },
 
     get profile()
@@ -610,12 +605,6 @@ WebInspector.DetailedHeapshotView.prototype = {
     {
         var height = this.retainmentView.element.clientHeight;
         this._updateRetainmentViewHeight(height);
-    },
-
-    refreshShowPercents: function()
-    {
-        this._updatePercentButton();
-        this.refreshVisibleData();
     },
 
     searchCanceled: function()
@@ -843,8 +832,6 @@ WebInspector.DetailedHeapshotView.prototype = {
         if (!cell || (!cell.hasStyleClass("count-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
             return;
 
-        this.refreshShowPercents();
-
         event.preventDefault();
         event.stopPropagation();
     },
@@ -944,12 +931,6 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
         span.node = gridNode;
         return span;
-    },
-
-    _percentClicked: function(event)
-    {
-        this._showPercentage = !this._showPercentage;
-        this.refreshShowPercents();
     },
 
     _resolveObjectForPopover: function(element, showCallback, objectGroupName)
@@ -1094,17 +1075,6 @@ WebInspector.DetailedHeapshotView.prototype = {
             }
             filterOption.label = title;
             this.filterSelectElement.appendChild(filterOption);
-        }
-    },
-
-    _updatePercentButton: function()
-    {
-        if (this._showPercentage) {
-            this.percentButton.title = WebInspector.UIString("Hide percentages of counts and sizes.");
-            this.percentButton.toggled = true;
-        } else {
-            this.percentButton.title = WebInspector.UIString("Show percentages of counts and sizes.");
-            this.percentButton.toggled = false;
         }
     }
 };
