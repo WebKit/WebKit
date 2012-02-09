@@ -12,15 +12,13 @@ matching of the http-equiv attribute to the content-language state is case
 insensitive.
 </p>
 <div id="console"></div>
-<div id="x1"/>
+<div id="x"></div>
 <script>
 function languageOfNode(id) {
     var element = document.getElementById(id);
     return window.getComputedStyle(element).webkitLocale;
 }
-shouldBeEqualToString("languageOfNode('x1')", "ja-JP");
-
-var successfullyParsed = true;
+shouldBeEqualToString("languageOfNode('x')", "ja-JP");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

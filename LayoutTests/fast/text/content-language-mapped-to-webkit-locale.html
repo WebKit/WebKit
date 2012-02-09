@@ -9,17 +9,15 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=76701">bug 76701</a>:
 map content-language to -webkit-locale.</p>
 <div id="console"></div>
-<div id="x1"/>
-<div lang="ar" id="m1"/>
+<div id="x"></div>
+<div id="y" lang="ar"></div>
 <script>
 function languageOfNode(id) {
     var element = document.getElementById(id);
     return window.getComputedStyle(element).webkitLocale;
 }
-shouldBeEqualToString("languageOfNode('x1')", "zh-CN");
-shouldBeEqualToString("languageOfNode('m1')", "ar");
-
-var successfullyParsed = true;
+shouldBeEqualToString("languageOfNode('x')", "zh-CN");
+shouldBeEqualToString("languageOfNode('y')", "ar");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
