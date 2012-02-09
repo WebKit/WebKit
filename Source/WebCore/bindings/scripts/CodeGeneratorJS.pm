@@ -433,7 +433,7 @@ sub GenerateGetOwnPropertySlotBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@getOwnPropertySlotImpl, "    bool ok;\n");
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(ok);\n");
 
@@ -444,7 +444,7 @@ sub GenerateGetOwnPropertySlotBody
         } else {
             push(@getOwnPropertySlotImpl, "    if (ok && index < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
         }
-        if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+        if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
             push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
         } else {
             push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
@@ -527,11 +527,11 @@ sub GenerateGetOwnPropertyDescriptorBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    bool ok;\n");
         push(@getOwnPropertyDescriptorImpl, "    unsigned index = propertyName.toUInt32(ok);\n");
         push(@getOwnPropertyDescriptorImpl, "    if (ok && index < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
-        if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+        if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
             # Assume that if there's a setter, the index will be writable
             if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(thisObject->getByIndex(exec, index), ${namespaceMaybe}DontDelete);\n");
@@ -756,7 +756,7 @@ sub GenerateHeader
     my $hasGetter = $numAttributes > 0
                  || !$dataNode->extendedAttributes->{"OmitConstructor"}
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
-                 || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
+                 || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
@@ -766,7 +766,7 @@ sub GenerateHeader
     if ($hasGetter) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);\n");
-        push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomNamedGetter"};
+        push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomNamedGetter"};
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
         push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
@@ -828,7 +828,7 @@ sub GenerateHeader
     }
 
     # Custom getOwnPropertyNames function
-    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
@@ -947,9 +947,8 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"IndexedGetter"}) {
         push(@headerContent, "    static JSC::JSValue indexGetter(JSC::ExecState*, JSC::JSValue, unsigned);\n");
     }
-    if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+    if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
-        
     }
 
     # Index setter
@@ -1331,7 +1330,7 @@ sub GenerateImplementation
     AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
 
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
-    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"};
+    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"};
 
     AddIncludesForTypeInImpl($interfaceName);
 
@@ -1623,7 +1622,7 @@ sub GenerateImplementation
     my $hasGetter = $numAttributes > 0
                  || !$dataNode->extendedAttributes->{"OmitConstructor"} 
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
-                 || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
+                 || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
                  || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
@@ -1646,14 +1645,14 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
         }
 
-        if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"})
+        if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"})
                 && !$dataNode->extendedAttributes->{"CustomNamedGetter"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, "    if (propertyName < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
-            if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+            if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
                 push(@implContent, "        slot.setValue(thisObject->getByIndex(exec, propertyName));\n");
             } else {
                 push(@implContent, "        slot.setCustomIndex(thisObject, propertyName, thisObject->indexGetter);\n");
@@ -1663,7 +1662,7 @@ sub GenerateImplementation
             push(@implContent, "    return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);\n");
             push(@implContent, "}\n\n");
         }
-        
+
         if ($numAttributes > 0) {
             foreach my $attribute (@{$dataNode->attributes}) {
                 my $name = $attribute->signature->name;
@@ -2028,12 +2027,12 @@ sub GenerateImplementation
         }
     }
 
-    if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
+    if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-        if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+        if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(thisObject->impl())->length(); ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         }
@@ -2222,8 +2221,8 @@ sub GenerateImplementation
             $implIncludes{"Node.h"} = 1;
         }
     }
-    
-    if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
+
+    if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
