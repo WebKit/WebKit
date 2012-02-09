@@ -4070,7 +4070,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitLines:
     case CSSPropertyWebkitLineGrid:
-    case CSSPropertyWebkitLineGridSnap:
+    case CSSPropertyWebkitLineSnap:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:

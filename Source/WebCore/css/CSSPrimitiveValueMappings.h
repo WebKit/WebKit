@@ -3158,35 +3158,35 @@ template<> inline CSSPrimitiveValue::operator Hyphens() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineGridSnap gridSnap)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineSnap gridSnap)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (gridSnap) {
-    case LineGridSnapNone:
+    case LineSnapNone:
         m_value.ident = CSSValueNone;
         break;
-    case LineGridSnapBaseline:
+    case LineSnapBaseline:
         m_value.ident = CSSValueBaseline;
         break;
-    case LineGridSnapContain:
+    case LineSnapContain:
         m_value.ident = CSSValueContain;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator LineGridSnap() const
+template<> inline CSSPrimitiveValue::operator LineSnap() const
 {
     switch (m_value.ident) {
     case CSSValueNone:
-        return LineGridSnapNone;
+        return LineSnapNone;
     case CSSValueBaseline:
-        return LineGridSnapBaseline;
+        return LineSnapBaseline;
     case CSSValueContain:
-        return LineGridSnapContain;
+        return LineSnapContain;
     default:
         ASSERT_NOT_REACHED();
-        return LineGridSnapNone;
+        return LineSnapNone;
     }
 }
 

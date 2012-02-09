@@ -243,7 +243,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitLineBreak,
     CSSPropertyWebkitLineClamp,
     CSSPropertyWebkitLineGrid,
-    CSSPropertyWebkitLineGridSnap,
+    CSSPropertyWebkitLineSnap,
     CSSPropertyWebkitLocale,
     CSSPropertyWebkitMarginBeforeCollapse,
     CSSPropertyWebkitMarginAfterCollapse,
@@ -2207,8 +2207,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->lineGrid().isNull())
                 return cssValuePool->createIdentifierValue(CSSValueNone);
             return cssValuePool->createValue(style->lineGrid(), CSSPrimitiveValue::CSS_STRING);
-        case CSSPropertyWebkitLineGridSnap:
-            return CSSPrimitiveValue::create(style->lineGridSnap());
+        case CSSPropertyWebkitLineSnap:
+            return CSSPrimitiveValue::create(style->lineSnap());
         case CSSPropertyWebkitWritingMode:
             return cssValuePool->createValue(style->writingMode());
         case CSSPropertyWebkitTextCombine:

@@ -183,7 +183,7 @@ public:
 private:
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }
     
-    LayoutUnit lineGridSnapAdjustment(LayoutUnit delta = 0) const;
+    LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 
     int beforeAnnotationsAdjustment() const;
 

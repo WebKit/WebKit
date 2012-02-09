@@ -274,7 +274,7 @@ z-index
 -webkit-line-break
 -webkit-line-clamp
 -webkit-line-grid
--webkit-line-grid-snap
+-webkit-line-snap
 -webkit-logical-width
 -webkit-logical-height
 -webkit-margin-after-collapse

@@ -286,7 +286,7 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
         heightOfBlock += annotationsAdjustment;
     }
 
-    LayoutUnit gridSnapAdjustment = lineGridSnapAdjustment();
+    LayoutUnit gridSnapAdjustment = lineSnapAdjustment();
     if (gridSnapAdjustment) {
         adjustBlockDirectionPosition(gridSnapAdjustment);
         heightOfBlock += gridSnapAdjustment;
@@ -326,11 +326,11 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
     return result;
 }
 
-LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
+LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
 {
     // If our block doesn't have snapping turned on, do nothing.
     // FIXME: Implement bounds snapping.
-    if (block()->style()->lineGridSnap() == LineGridSnapNone)
+    if (block()->style()->lineSnap() == LineSnapNone)
         return 0;
 
     // Get the current line grid and offset.
@@ -377,7 +377,7 @@ LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
             firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderBefore() - lineGrid->paddingBefore() + lineGridPaginationOrigin;
     }
 
-    if (block()->style()->lineGridSnap() == LineGridSnapContain) {
+    if (block()->style()->lineSnap() == LineSnapContain) {
         // Compute the desired offset from the text-top of a grid line.
         // Look at our height (logicalHeight()).
         // Look at the total available height. It's going to be (textBottom - textTop) + (n-1)*(multiple with leading)
@@ -414,7 +414,7 @@ LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
         return result;
     
     // Put ourselves at the top of the next page to force a snap onto the new grid established by that page.
-    return lineGridSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
+    return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
 }
 
 GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, 
