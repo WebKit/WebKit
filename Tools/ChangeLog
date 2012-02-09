@@ -1,3 +1,18 @@
+2012-02-09  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream DumpRenderTreeBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=78042
+
+        Reviewed by Antonio Gomes.
+
+        Upstream final part of our DRT implementation.
+
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp: Added.
+        * DumpRenderTree/blackberry/PNGImageEncoder.cpp: Added.
+        * DumpRenderTree/blackberry/PNGImageEncoder.h: Added.
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp: Added.
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.h: Added.
+
 2012-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         kill-old-processes should kill gcc and clang
