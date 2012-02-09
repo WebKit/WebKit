@@ -327,7 +327,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr)
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
-        if (!getAttribute(srcAttr).isEmpty())
+        if (fastHasAttribute(srcAttr))
             scheduleLoad(MediaResource);
     } else if (attrName == controlsAttr)
         configureMediaControls();

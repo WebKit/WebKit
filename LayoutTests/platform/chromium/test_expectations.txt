@@ -4012,3 +4012,6 @@ BUGWK78159 DEBUG WIN SNOWLEOPARD : compositing/iframes/scrolling-iframe.html = P
 
 // Some of the new baselines don't make any sense.
 BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
+
+// Just needs a rebaseline.
+BUGWK47907 : media/video-empty-source.html = IMAGE+TEXT

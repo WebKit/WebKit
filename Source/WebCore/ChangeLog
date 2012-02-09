@@ -1,3 +1,15 @@
+2012-02-09  Arun Patole  <arun.patole@motorola.com>
+
+        Setting media element 'src' attribute to "" should trigger load
+        https://bugs.webkit.org/show_bug.cgi?id=47907
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-src-empty.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged):Trigger a load, as long as the 'src' attribute is present.
+
 2012-02-09  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Add setNeedsRedraw to WebWidget
