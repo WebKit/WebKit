@@ -1,3 +1,36 @@
+2012-02-08  Andreas Kling  <awesomekling@apple.com>
+
+        Simplify ownership of StyledElement::additionalAttributeStyles().
+        <http://webkit.org/b/78204>
+
+        Reviewed by Anders Carlsson.
+
+        Change additionalAttributeStyle() to return a raw pointer rather than a PassRefPtr.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::additionalAttributeStyle):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::additionalAttributeStyle):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalAttributeStyle):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyle):
+        (WebCore::HTMLTableElement::additionalCellStyle):
+        (WebCore::HTMLTableElement::additionalGroupStyle):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalAttributeStyle):
+        * html/HTMLTableSectionElement.h:
+        (HTMLTableSectionElement):
+
 2012-02-08  Kentaro Hara  <haraken@chromium.org>
 
         Rename [Optional=CallWithDefalutValue] and [Optional=CallWithNullValue]

@@ -1009,11 +1009,11 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        if (RefPtr<StylePropertySet> additionalStyle = m_styledElement->additionalAttributeStyle()) {
+        if (StylePropertySet* additionalStyle = m_styledElement->additionalAttributeStyle()) {
             if (result.ranges.firstAuthorRule == -1)
                 result.ranges.firstAuthorRule = m_matchedDecls.size();
             result.ranges.lastAuthorRule = m_matchedDecls.size();
-            addMatchedDeclaration(additionalStyle.get());
+            addMatchedDeclaration(additionalStyle);
             result.isCacheable = false;
         }
 
@@ -1236,8 +1236,8 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
-    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle().get();
-    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle().get();
+    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
+    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
     if (!additionalAttributeStyleA != !additionalAttributeStyleB)
         return false;
     if (element->isLink() != m_element->isLink())

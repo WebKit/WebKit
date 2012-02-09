@@ -44,7 +44,7 @@ public:
     void removeCSSProperties(int id1, int id2 = CSSPropertyInvalid, int id3 = CSSPropertyInvalid, int id4 = CSSPropertyInvalid, int id5 = CSSPropertyInvalid, int id6 = CSSPropertyInvalid, int id7 = CSSPropertyInvalid, int id8 = CSSPropertyInvalid);
     void removeCSSProperty(int id) { removeCSSProperties(id); }
 
-    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() { return 0; }
+    virtual StylePropertySet* additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
     StylePropertySet* inlineStyleDecl() const { return attributeData() ? attributeData()->inlineStyleDecl() : 0; }

@@ -43,7 +43,7 @@ private:
     HTMLTableColElement(const QualifiedName& tagName, Document*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
-    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
+    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     int m_span;
 };

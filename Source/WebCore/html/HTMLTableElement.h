@@ -66,8 +66,8 @@ public:
 
     virtual void attach();
 
-    PassRefPtr<StylePropertySet> additionalCellStyle();
-    PassRefPtr<StylePropertySet> additionalGroupStyle(bool rows);
+    StylePropertySet* additionalCellStyle();
+    StylePropertySet* additionalGroupStyle(bool rows);
 
 private:
     HTMLTableElement(const QualifiedName&, Document*);
@@ -76,7 +76,7 @@ private:
     virtual bool isURLAttribute(Attribute*) const;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
+    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

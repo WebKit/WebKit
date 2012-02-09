@@ -107,7 +107,7 @@ void HTMLTableCellElement::parseAttribute(Attribute* attr)
         HTMLTablePartElement::parseAttribute(attr);
 }
 
-PassRefPtr<StylePropertySet> HTMLTableCellElement::additionalAttributeStyle()
+StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()
 {
     ContainerNode* p = parentNode();
     while (p && !p->hasTagName(tableTag))

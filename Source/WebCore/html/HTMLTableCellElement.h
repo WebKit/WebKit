@@ -55,7 +55,7 @@ private:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    virtual PassRefPtr<StylePropertySet> additionalAttributeStyle() OVERRIDE;
+    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     virtual bool isURLAttribute(Attribute*) const;
 

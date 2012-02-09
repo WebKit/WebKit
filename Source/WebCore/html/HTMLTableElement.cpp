@@ -443,7 +443,7 @@ static StylePropertySet* leakBorderStyle(int value)
     return style.release().leakRef();
 }
 
-PassRefPtr<StylePropertySet> HTMLTableElement::additionalAttributeStyle()
+StylePropertySet* HTMLTableElement::additionalAttributeStyle()
 {
     if ((!m_borderAttr && !m_borderColorAttr) || m_frameAttr)
         return 0;
@@ -530,11 +530,11 @@ PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
     return style.release();
 }
 
-PassRefPtr<StylePropertySet> HTMLTableElement::additionalCellStyle()
+StylePropertySet* HTMLTableElement::additionalCellStyle()
 {
     if (!m_sharedCellStyle)
         m_sharedCellStyle = createSharedCellStyle();
-    return m_sharedCellStyle;
+    return m_sharedCellStyle.get();
 }
 
 static StylePropertySet* leakGroupBorderStyle(int rows)
@@ -554,7 +554,7 @@ static StylePropertySet* leakGroupBorderStyle(int rows)
     return style.release().leakRef();
 }
 
-PassRefPtr<StylePropertySet> HTMLTableElement::additionalGroupStyle(bool rows)
+StylePropertySet* HTMLTableElement::additionalGroupStyle(bool rows)
 {
     if (m_rulesAttr != GroupsRules)
         return 0;
