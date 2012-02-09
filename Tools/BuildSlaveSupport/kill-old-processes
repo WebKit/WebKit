@@ -55,6 +55,12 @@ def main():
     ]
 
     tasksToKillMac = [
+        "cc1plus",
+        "cc1objplus",
+        "clang",
+        "clang++",
+        "gcc-4.2",
+        "i686-apple-darwin10-gcc-4.2.1"
         "jsc",
         "make",
         "per5.12",
@@ -71,6 +77,7 @@ def main():
         "WebKitTestRunner Web Content",
         "WebKitTestRunner",
         "WebProcess",
+        "xcodebuild",
     ]
 
     if sys.platform == 'darwin':

@@ -1,3 +1,14 @@
+2012-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        kill-old-processes should kill gcc and clang
+        https://bugs.webkit.org/show_bug.cgi?id=78189
+
+        Reviewed by Eric Seidel.
+
+        Added a bunch of processes names of gcc and clang to the list.
+
+        * BuildSlaveSupport/kill-old-processes:
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         Replacement text should be available from the marker.
