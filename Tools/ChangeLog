@@ -1,3 +1,13 @@
+2012-02-09  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] always initialize makeArgs in buildChromiumNinja
+        https://bugs.webkit.org/show_bug.cgi?id=78231
+
+        Reviewed by Tony Gentilcore.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromiumNinja):
+
 2012-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Show url of current hovered link in MiniBrowser

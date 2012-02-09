@@ -2309,7 +2309,7 @@ sub buildChromiumNinja($$@)
     # rm -rf out requires rerunning gyp, so don't support --clean for now.
     my ($target, @options) = @_;
     my $config = configuration();
-    my $makeArgs;
+    my $makeArgs = "";
     for (@options) {
         $makeArgs = $1 if /^--makeargs=(.*)/i;
     }
