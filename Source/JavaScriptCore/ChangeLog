@@ -1,3 +1,22 @@
+2012-02-10  Yong Li  <yoli@rim.com>
+
+        ENABLE(ASSEMBLER_WX_EXCLUSIVE): LinkBuffer can leave pages not marked as executable.
+        https://bugs.webkit.org/show_bug.cgi?id=76724
+
+        Reviewed by Rob Buis.
+
+        This issue only exists when both ENABLE(ASSEMBLER_WX_EXCLUSIVE) and ENABLE(BRANCH_COMPACTION) are on.
+        The size used to call makeExecutable can be smaller than the one that was used for makeWritable.
+        So it can leave pages behind that are not set back to default flags. When an assembly on one of those
+        pages is executed or JIT returns to those pages in the case it was already executing from there, the
+        software will crash.
+
+        * assembler/LinkBuffer.h: Add m_initialSize and use it in performFinalization().
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::performFinalization):
+        (LinkBuffer):
+
 2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Split MarkedSpace into destructor and destructor-free subspaces
