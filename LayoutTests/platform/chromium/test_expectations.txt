@@ -2391,7 +2391,6 @@ BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
 BUG_DRT LINUX MAC : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 LINUX MAC : http/tests/multipart/invalid-image-data.html = PASS IMAGE
 BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = TEXT
-BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
 // The test says you should see numbers, but we display letters.
@@ -2433,7 +2432,6 @@ BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUGCR67139 : storage/close-during-stress-test.html = PASS TEXT
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX WIN : fast/text/emphasis.html = IMAGE+TEXT
@@ -3027,7 +3025,6 @@ BUGCR83865 : fast/forms/color = PASS FAIL
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = TEXT
 
-BUGCR84031 : storage/domstorage/sessionstorage/delete-removal.html = PASS TIMEOUT
 BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
@@ -3381,9 +3378,7 @@ BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
 
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
-BUGCR99899 MAC : storage/domstorage/events/basic.html = CRASH PASS
 BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
-BUGCR99899 MAC : storage/domstorage/events/case-sensitive.html = CRASH PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 BUGWK72530 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
@@ -3410,10 +3405,6 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
 
-// Failing since ~r97504.
-
-BUGWK70386 SNOWLEOPARD DEBUG : storage/domstorage/events/documentURI.html = PASS CRASH
-
 BUGCR101024 MAC CPU : fast/events/reveal-link-when-focused.html = IMAGE
 
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
@@ -3433,8 +3424,6 @@ BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSI
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-nonexistence-form-id.html = MISSING PASS
 BUGWK72039 LINUX MAC DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
-
-BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
 
 BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/overflow/003.xml = PASS TEXT
@@ -3471,7 +3460,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 BUGWK59552 SNOWLEOPARD DEBUG : fast/loader/opaque-base-url.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
 BUGWK59552 SLOW SNOWLEOPARD DEBUG : jquery/offset.html = PASS CRASH
-BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
