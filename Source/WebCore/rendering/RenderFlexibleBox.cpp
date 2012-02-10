@@ -465,26 +465,25 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
 
 void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 {
+    TreeOrderIterator treeIterator(this);
+    computeMainAxisPreferredSizes(relayoutChildren, treeIterator);
+
+    OrderedFlexItemList orderedChildren;
+    LayoutUnit preferredMainAxisExtent;
     float totalPositiveFlexibility;
     float totalNegativeFlexibility;
-    TreeOrderIterator treeIterator(this);
-
-    WTF::Vector<LayoutUnit> preferredSizes;
-    computeMainAxisPreferredSizes(relayoutChildren, treeIterator, preferredSizes, totalPositiveFlexibility, totalNegativeFlexibility);
-    LayoutUnit preferredMainAxisExtent = 0;
-    for (size_t i = 0; i < preferredSizes.size(); ++i)
-        preferredMainAxisExtent += preferredSizes[i];
-    LayoutUnit availableFreeSpace = mainAxisContentExtent() - preferredMainAxisExtent;
-
     FlexOrderIterator flexIterator(this, treeIterator.flexOrderValues());
+    computeFlexOrder(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility);
+
+    LayoutUnit availableFreeSpace = mainAxisContentExtent() - preferredMainAxisExtent;
     InflexibleFlexItemSize inflexibleItems;
     WTF::Vector<LayoutUnit> childSizes;
-    while (!runFreeSpaceAllocationAlgorithm(flexIterator, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
+    while (!runFreeSpaceAllocationAlgorithm(orderedChildren, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
         ASSERT(totalPositiveFlexibility >= 0 && totalNegativeFlexibility >= 0);
         ASSERT(inflexibleItems.size() > 0);
     }
 
-    layoutAndPlaceChildren(flexIterator, childSizes, availableFreeSpace, totalPositiveFlexibility);
+    layoutAndPlaceChildren(orderedChildren, childSizes, availableFreeSpace, totalPositiveFlexibility);
 }
 
 float RenderFlexibleBox::positiveFlexForChild(RenderBox* child) const
@@ -512,16 +511,12 @@ LayoutUnit RenderFlexibleBox::marginBoxAscent(RenderBox* child)
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
-void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, TreeOrderIterator& iterator, WTF::Vector<LayoutUnit>& preferredSizes, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
+void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, TreeOrderIterator& iterator)
 {
-    totalPositiveFlexibility = totalNegativeFlexibility = 0;
-
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (child->isPositioned()) {
-            preferredSizes.append(0);
+        if (child->isPositioned())
             continue;
-        }
 
         child->clearOverrideSize();
         if (mainAxisLengthForChild(child).isAuto()) {
@@ -530,35 +525,51 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Tre
             child->layoutIfNeeded();
         }
 
-        LayoutUnit preferredSize = mainAxisBorderAndPaddingExtentForChild(child) + preferredMainAxisContentExtentForChild(child);
-
         // We set the margins because we want to make sure 'auto' has a margin
         // of 0 and because if we're not auto sizing, we don't do a layout that
         // computes the start/end margins.
         if (isHorizontalFlow()) {
             child->setMarginLeft(child->style()->marginLeft().calcMinValue(flexboxAvailableContentExtent));
             child->setMarginRight(child->style()->marginRight().calcMinValue(flexboxAvailableContentExtent));
-            preferredSize += child->marginLeft() + child->marginRight();
         } else {
             child->setMarginTop(child->style()->marginTop().calcMinValue(flexboxAvailableContentExtent));
             child->setMarginBottom(child->style()->marginBottom().calcMinValue(flexboxAvailableContentExtent));
-            preferredSize += child->marginTop() + child->marginBottom();
         }
+    }
+}
 
-        preferredSizes.append(preferredSize);
+void RenderFlexibleBox::computeFlexOrder(FlexOrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
+{
+    orderedChildren.clear();
+    preferredMainAxisExtent = 0;
+    totalPositiveFlexibility = totalNegativeFlexibility = 0;
+    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        orderedChildren.append(child);
+        if (child->isPositioned())
+            continue;
 
+        LayoutUnit childMainAxisExtent = mainAxisBorderAndPaddingExtentForChild(child) + preferredMainAxisContentExtentForChild(child);
+        if (isHorizontalFlow())
+            childMainAxisExtent += child->marginLeft() + child->marginRight();
+        else
+            childMainAxisExtent += child->marginTop() + child->marginBottom();
+
+        // FIXME: When implementing multiline, we would return here if adding
+        // the child's main axis extent would cause us to overflow.
+        preferredMainAxisExtent += childMainAxisExtent;
         totalPositiveFlexibility += positiveFlexForChild(child);
         totalNegativeFlexibility += negativeFlexForChild(child);
     }
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(FlexOrderIterator& iterator, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
+bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(const OrderedFlexItemList& children, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
 {
     childSizes.clear();
 
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
-    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
         if (child->isPositioned()) {
             childSizes.append(0);
             continue;
@@ -664,7 +675,7 @@ static EFlexAlign flexAlignForChild(RenderBox* child)
     return align;
 }
 
-void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+void RenderFlexibleBox::layoutAndPlaceChildren(const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
     mainAxisOffset += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
@@ -675,8 +686,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent = 0, maxDescent = 0; // Used when flex-align: baseline.
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
-    size_t i = 0;
-    for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
         if (child->isPositioned()) {
             prepareChildForPositionedLayout(child, mainAxisOffset, crossAxisOffset);
             mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
@@ -719,13 +730,13 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
         // We have to do an extra pass for column-reverse to reposition the flex items since the start depends
         // on the height of the flexbox, which we only know after we've positioned all the flex items.
         computeLogicalHeight();
-        layoutColumnReverse(iterator, childSizes, availableFreeSpace, totalPositiveFlexibility);
+        layoutColumnReverse(children, childSizes, availableFreeSpace, totalPositiveFlexibility);
     }
 
-    alignChildren(iterator, maxAscent);
+    alignChildren(children, maxAscent);
 }
 
-void RenderFlexibleBox::layoutColumnReverse(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
     // This is similar to the logic in layoutAndPlaceChildren, except we place the children
     // starting from the end of the flexbox. We also don't need to layout anything since we're
@@ -735,8 +746,8 @@ void RenderFlexibleBox::layoutColumnReverse(FlexOrderIterator& iterator, const W
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    size_t i = 0;
-    for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
         if (child->isPositioned()) {
             child->layer()->setStaticBlockPosition(mainAxisOffset);
             mainAxisOffset -= packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
@@ -767,11 +778,12 @@ void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit del
         child->repaintDuringLayoutIfMoved(oldRect);
 }
 
-void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, LayoutUnit maxAscent)
+void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, LayoutUnit maxAscent)
 {
     LayoutUnit crossExtent = crossAxisExtent();
 
-    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
         // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
         if (!style()->isLeftToRightDirection() && isColumnFlow()) {
             LayoutPoint location = flowAwareLocationForChild(child);

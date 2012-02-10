@@ -1,3 +1,34 @@
+2012-02-09  Tony Chang  <tony@chromium.org>
+
+        more refactoring of RenderFlexibleBox in preparation for multiline
+        https://bugs.webkit.org/show_bug.cgi?id=78281
+
+        Reviewed by Ojan Vafai.
+
+        Previously, we were creating Vector of each flex item's preferred size in document order,
+        but for multiline, we need to break the lines in the flex order.  I just removed this code
+        since it was the wrong order.
+
+        Instead, have 2 funtions, computeMainAxisPreferredSizes which only does the necessary
+        layouts and margin computations to compute preferred sizes and computeFlexOrder which
+        does the work of computing the flex order, preferred sizes, positive/negative flex.
+
+        For multiline, we will have computeFlexOrder drive a while loop and it will return the
+        flex items, preferred size, and positive/negative flex values for each line.
+
+        No new tests, just refactoring.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes): Only layout auto sized children and set margins.
+        (WebCore::RenderFlexibleBox::computeFlexOrder): Compute flex order, preferred size, positive/negative flex.
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithm): Use the precomputed flex order.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Use the precomputed flex order.
+        (WebCore::RenderFlexibleBox::layoutColumnReverse): Use the precomputed flex order.
+        (WebCore::RenderFlexibleBox::alignChildren): Use the precomputed flex order.
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Rename [Optional=CallWithDefaultValue] and [Optional=CallWithNullValue]
