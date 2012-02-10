@@ -26,11 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.commands.sheriffbot import SheriffBot
-from webkitpy.tool.mocktool import *
 
 
 class SheriffBotTest(QueuesTest):

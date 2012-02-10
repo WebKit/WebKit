@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.queueengine import QueueEngine

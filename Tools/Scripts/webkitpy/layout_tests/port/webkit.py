@@ -35,7 +35,6 @@ import base64
 import itertools
 import logging
 import operator
-import os
 import re
 import sys
 import time

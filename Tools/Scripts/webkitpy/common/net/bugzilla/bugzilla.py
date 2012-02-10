@@ -31,7 +31,6 @@
 # WebKit's Python module for interacting with Bugzilla
 
 import mimetypes
-import os.path
 import re
 import StringIO
 import urllib

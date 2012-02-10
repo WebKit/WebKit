@@ -71,7 +71,11 @@ class MockFileSystem(object):
         raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
 
     def _split(self, path):
-        return path.rsplit(self.sep, 1)
+        # This is not quite a full implementation of os.path.split
+        # http://docs.python.org/library/os.path.html#os.path.split
+        if self.sep in path:
+            return path.rsplit(self.sep, 1)
+        return ('', path)
 
     def abspath(self, path):
         if os.path.isabs(path):

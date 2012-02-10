@@ -39,6 +39,7 @@ from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
 class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
     def test_ensure_bug_url(self):
+        # FIXME: This should use a MockFileSystem instead of a real FileSystem.
         capture = OutputCapture()
         step = PrepareChangeLog(MockTool(), MockOptions())
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)

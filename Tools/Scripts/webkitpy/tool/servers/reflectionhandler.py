@@ -34,7 +34,6 @@ import datetime
 import fnmatch
 import json
 import mimetypes
-import os
 import os.path
 import shutil
 import threading
@@ -42,6 +41,7 @@ import time
 import urlparse
 import wsgiref.handlers
 import BaseHTTPServer
+
 
 class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     # Subclasses should override.

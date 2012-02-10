@@ -26,14 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from .deps_mock import MockDEPS
 from .commitinfo import CommitInfo
 
 # FIXME: These imports are wrong, we should use a shared MockCommittersList.
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.bugzilla.bugzilla_mock import _mock_reviewers
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class MockCommitMessage(object):
@@ -42,6 +41,10 @@ class MockCommitMessage(object):
 
 
 class MockCheckout(object):
+    def __init__(self):
+        # FIXME: It's unclear if a MockCheckout is very useful.  A normal Checkout
+        # with a MockSCM/MockFileSystem/MockExecutive is probably better.
+        self._filesystem = MockFileSystem()
 
     # FIXME: This should move onto the Host object, and we should use a MockCommitterList for tests.
     _committer_list = CommitterList()
@@ -64,8 +67,7 @@ class MockCheckout(object):
         })
 
     def is_path_to_changelog(self, path):
-        # FIXME: This should self._filesystem.basename.
-        return os.path.basename(path) == "ChangeLog"
+        return self._filesystem.basename(path) == "ChangeLog"
 
     def bug_id_for_revision(self, svn_revision):
         return 12345

@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
@@ -43,7 +41,7 @@ class AttachToBug(AbstractStep):
     def run(self, state):
         filepath = state["filepath"]
         bug_id = state["bug_id"]
-        description = self._options.description or filepath.split(os.sep)[-1]
+        description = self._options.description or self._tool.filesystem.basename(filepath)
         comment_text = self._options.comment
 
         # add_attachment_to_bug fills in the filename from the file path.

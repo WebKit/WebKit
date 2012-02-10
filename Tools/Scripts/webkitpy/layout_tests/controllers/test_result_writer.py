@@ -28,7 +28,6 @@
 
 
 import logging
-import os
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.layout_tests.models import test_failures

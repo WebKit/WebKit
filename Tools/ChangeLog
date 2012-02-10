@@ -1,5 +1,46 @@
 2012-02-09  Eric Seidel  <eric@webkit.org>
 
+        Remove more uses of "os" from our webkitpy code
+        https://bugs.webkit.org/show_bug.cgi?id=78292
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        (MockCheckout.__init__):
+        (MockCheckout.is_path_to_changelog):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem._split):
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CreateBug.prompt_for_bug_title_and_comment):
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        * Scripts/webkitpy/tool/steps/attachtobug.py:
+        (AttachToBug.run):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        * Scripts/webkitpy/tool/steps/editchangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (PrepareChangeLogTest.test_ensure_bug_url):
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
+2012-02-09  Eric Seidel  <eric@webkit.org>
+
         Remove the cr-mac-ews (it's long been dead)
         https://bugs.webkit.org/show_bug.cgi?id=78267
 

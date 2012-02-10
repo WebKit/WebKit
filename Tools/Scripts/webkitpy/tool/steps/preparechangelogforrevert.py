@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
 from webkitpy.tool.grammar import join_with_separators

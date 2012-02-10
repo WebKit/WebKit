@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot

@@ -482,6 +482,7 @@ class CreateBug(AbstractDeclarativeCommand):
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = User.prompt("Bug title: ")
+        # FIXME: User should provide a function for doing this multi-line prompt.
         print "Bug comment (hit ^D on blank line to end):"
         lines = sys.stdin.readlines()
         try:
