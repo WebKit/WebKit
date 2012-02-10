@@ -1,3 +1,19 @@
+2012-02-09  Anders Carlsson  <andersca@apple.com>
+
+        FrameView::addSlowRepaintObject() doesn't update m_canBlitOnScroll correctly
+        https://bugs.webkit.org/show_bug.cgi?id=78291
+
+        Reviewed by Dan Bernstein.
+
+        m_slowRepaintObjectCount needs to be incremented before calling updateCanBlitOnScrollRecursively(),
+        because otherwise useSlowRepaints() will return false even though we have to use slow repaints.
+
+        I was unable to make a layout test for this because it requires that updateCanBlitOnScrollRecursively() isn't
+        called again after m_slowRepaintObjectCount has been incremented.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addSlowRepaintObject):
+
 2012-02-09  Ojan Vafai  <ojan@chromium.org>
 
         Remove TreeOrderIterator and iterate over the child boxes directly.

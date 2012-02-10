@@ -1328,9 +1328,8 @@ void FrameView::setCannotBlitToWindow()
 
 void FrameView::addSlowRepaintObject()
 {
-    if (!m_slowRepaintObjectCount)
+    if (!m_slowRepaintObjectCount++)
         updateCanBlitOnScrollRecursively();
-    m_slowRepaintObjectCount++;
 }
 
 void FrameView::removeSlowRepaintObject()
