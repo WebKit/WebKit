@@ -38,6 +38,7 @@ PassOwnPtr<ScrollingTreeState> ScrollingTreeState::create()
 ScrollingTreeState::ScrollingTreeState()
     : m_changedProperties(0)
     , m_wheelEventHandlerCount(0)
+    , m_shouldUpdateScrollLayerPositionOnMainThread(false)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_hasEnabledHorizontalScrollbar(false)
@@ -83,6 +84,15 @@ void ScrollingTreeState::setWheelEventHandlerCount(unsigned wheelEventHandlerCou
 
     m_wheelEventHandlerCount = wheelEventHandlerCount;
     m_changedProperties |= WheelEventHandlerCount;
+}
+
+void ScrollingTreeState::setShouldUpdateScrollLayerPositionOnMainThread(bool shouldUpdateScrollLayerPositionOnMainThread)
+{
+    if (m_shouldUpdateScrollLayerPositionOnMainThread == shouldUpdateScrollLayerPositionOnMainThread)
+        return;
+
+    m_shouldUpdateScrollLayerPositionOnMainThread = shouldUpdateScrollLayerPositionOnMainThread;
+    m_changedProperties |= ShouldUpdateScrollLayerPositionOnMainThread;
 }
 
 void ScrollingTreeState::setHorizontalScrollElasticity(ScrollElasticity horizontalScrollElasticity)

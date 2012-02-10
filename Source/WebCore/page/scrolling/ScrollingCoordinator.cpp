@@ -35,6 +35,8 @@
 #include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "Region.h"
+#include "RenderLayerCompositor.h"
+#include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
@@ -134,6 +136,18 @@ void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)
     recomputeWheelEventHandlerCount();
 }
 
+void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
+
+    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(frameView->hasSlowRepaintObjects());
+    scheduleTreeStateCommit();
+}
+
 void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());
@@ -148,6 +162,25 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->scrollToOffsetWithoutAnimation(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
+}
+
+void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
+{
+    FrameView* frameView = m_page->mainFrame()->view();
+
+    RenderView* renderView = m_page->mainFrame()->contentRenderer();
+    if (!renderView)
+        return;
+
+    GraphicsLayer* scrollLayer = renderView->compositor()->scrollLayer();
+    if (!scrollLayer)
+        return;
+
+    frameView->setConstrainsScrollingToContentEdge(false);
+    frameView->scrollToOffsetWithoutAnimation(scrollPosition);
+    frameView->setConstrainsScrollingToContentEdge(true);
+
+    scrollLayer->setPosition(-frameView->scrollPosition());
 }
 
 void ScrollingCoordinator::recomputeWheelEventHandlerCount()

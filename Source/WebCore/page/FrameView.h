@@ -184,6 +184,7 @@ public:
 
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
+    bool hasSlowRepaintObjects() const { return m_slowRepaintObjectCount; }
 
     void addFixedObject();
     void removeFixedObject();

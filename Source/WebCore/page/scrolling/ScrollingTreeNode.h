@@ -52,12 +52,15 @@ protected:
     ScrollingTree* scrollingTree() const { return m_scrollingTree; }
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& contentsSize() const { return m_contentsSize; }
+    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
 
 private:
     ScrollingTree* m_scrollingTree;
 
     IntRect m_viewportRect;
     IntSize m_contentsSize;
+
+    bool m_shouldUpdateScrollLayerPositionOnMainThread;
 
     ScrollElasticity m_horizontalScrollElasticity;
     ScrollElasticity m_verticalScrollElasticity;

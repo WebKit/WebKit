@@ -1328,16 +1328,32 @@ void FrameView::setCannotBlitToWindow()
 
 void FrameView::addSlowRepaintObject()
 {
-    if (!m_slowRepaintObjectCount++)
+    if (!m_slowRepaintObjectCount++) {
         updateCanBlitOnScrollRecursively();
+
+#if ENABLE(THREADED_SCROLLING)
+        if (Page* page = m_frame->page()) {
+            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
+        }
+#endif
+    }
 }
 
 void FrameView::removeSlowRepaintObject()
 {
     ASSERT(m_slowRepaintObjectCount > 0);
     m_slowRepaintObjectCount--;
-    if (!m_slowRepaintObjectCount)
+    if (!m_slowRepaintObjectCount) {
         updateCanBlitOnScrollRecursively();
+
+#if ENABLE(THREADED_SCROLLING)
+        if (Page* page = m_frame->page()) {
+            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
+        }
+#endif
+    }
 }
 
 void FrameView::addFixedObject()

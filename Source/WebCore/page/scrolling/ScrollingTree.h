@@ -64,6 +64,7 @@ public:
     void commitNewTreeState(PassOwnPtr<ScrollingTreeState>);
 
     void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
+    void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition);
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);

@@ -71,6 +71,9 @@ public:
     // frame view's underlying document.
     void frameViewWheelEventHandlerCountChanged(FrameView*);
 
+    // Should be called whenever the slow repaint objects counter changes between zero and one.
+    void frameViewHasSlowRepaintObjectsDidChange(FrameView*);
+
     // Should be called whenever the scroll layer for the given frame view changes.
     void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
 
@@ -82,6 +85,9 @@ public:
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
     void updateMainFrameScrollPosition(const IntPoint&);
+
+    // Dispatched by the scrolling tree whenever the main frame scroll position changes and the scroll layer position needs to be updated as well.
+    void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint&);
 
 private:
     explicit ScrollingCoordinator(Page*);

@@ -54,11 +54,12 @@ public:
         ContentsSize = 1 << 1,
         NonFastScrollableRegion = 1 << 2,
         WheelEventHandlerCount = 1 << 3,
-        HorizontalScrollElasticity = 1 << 4,
-        VerticalScrollElasticity = 1 << 5,
-        HasEnabledHorizontalScrollbar = 1 << 6,
-        HasEnabledVerticalScrollbar = 1 << 7,
-        ScrollLayer = 1 << 8,
+        ShouldUpdateScrollLayerPositionOnMainThread = 1 << 4,
+        HorizontalScrollElasticity = 1 << 5,
+        VerticalScrollElasticity = 1 << 6,
+        HasEnabledHorizontalScrollbar = 1 << 7,
+        HasEnabledVerticalScrollbar = 1 << 8,
+        ScrollLayer = 1 << 9,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -75,6 +76,9 @@ public:
 
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
+
+    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
+    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
     void setHorizontalScrollElasticity(ScrollElasticity);
@@ -105,6 +109,8 @@ private:
     Region m_nonFastScrollableRegion;
 
     unsigned m_wheelEventHandlerCount;
+
+    bool m_shouldUpdateScrollLayerPositionOnMainThread;
 
     ScrollElasticity m_horizontalScrollElasticity;
     ScrollElasticity m_verticalScrollElasticity;

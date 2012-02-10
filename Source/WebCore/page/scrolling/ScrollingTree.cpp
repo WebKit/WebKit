@@ -120,6 +120,19 @@ void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition
     callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition));
 }
 
+void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    {
+        MutexLocker lock(m_mutex);
+        m_mainFrameScrollPosition = scrollPosition;
+    }
+
+    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get(), scrollPosition));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

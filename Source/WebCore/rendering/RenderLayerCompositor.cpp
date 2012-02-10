@@ -983,8 +983,19 @@ void RenderLayerCompositor::frameViewDidScroll()
     if (RenderLayerBacking* backing = rootRenderLayer()->backing())
         backing->graphicsLayer()->visibleRectChanged();
 
-    if (m_scrollLayer)
-        m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
+    if (!m_scrollLayer)
+        return;
+
+#if ENABLE(THREADED_SCROLLING)
+    // If there's a scrolling coordinator that manages scrolling for this frame view,
+    // it will also manage updating the scroll layer position.
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
+        if (scrollingCoordinator->coordinatesScrollingForFrameView(frameView))
+            return;
+    }
+#endif
+
+    m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
 String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)

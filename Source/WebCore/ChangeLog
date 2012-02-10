@@ -1,5 +1,62 @@
 2012-02-09  Anders Carlsson  <andersca@apple.com>
 
+        Update the scroll layer position on the main thread when we have slow repaint objects
+        https://bugs.webkit.org/show_bug.cgi?id=78300
+        <rdar://problem/10710754>
+
+        Reviewed by Dan Bernstein.
+
+        When we have slow repaint objects (background-attachment: fixed), we need to update the
+        scroll layer position on the main thread, otherwise the web page will appear to jiggle.
+    
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        Call ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange if needed.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::hasSlowRepaintObjects):
+        Add new getter.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange):
+        Call ScrollingTreeNode::shouldUpdateScrollLayerPositionOnMainThread.
+
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition):
+        New function that will update both the main frame scroll position and the scroll layer position.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition):
+        Dispatch a call to ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition on the main thread.
+
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::ScrollingTreeNode):
+        Initialize m_shouldUpdateScrollLayerPositionOnMainThread.
+
+        (WebCore::ScrollingTreeNode::update):
+        Set m_shouldUpdateScrollLayerPositionOnMainThread.
+
+        * page/scrolling/ScrollingTreeState.cpp:
+        (WebCore::ScrollingTreeState::ScrollingTreeState):
+        Initialize m_shouldUpdateScrollLayerPositionOnMainThread.
+
+        (WebCore::ScrollingTreeState::setShouldUpdateScrollLayerPositionOnMainThread):
+        Update m_shouldUpdateScrollLayerPositionOnMainThread if needed.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::setScrollPosition):
+        Assert that we're not supposed to update the scroll layer position on the main thread.
+
+        (WebCore::ScrollingTreeNodeMac::scrollBy):
+        If we're supposed to update the scroll layer position on the main thread, 
+        call ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        If the frame view has its scrolling coordinated by a scrolling coordinator, don't update the scroll layer position.
+
+2012-02-09  Anders Carlsson  <andersca@apple.com>
+
         FrameView::addSlowRepaintObject() doesn't update m_canBlitOnScroll correctly
         https://bugs.webkit.org/show_bug.cgi?id=78291
 

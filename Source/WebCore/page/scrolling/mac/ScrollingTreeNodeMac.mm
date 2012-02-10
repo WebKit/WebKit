@@ -134,14 +134,22 @@ IntPoint ScrollingTreeNodeMac::scrollPosition() const
 
 void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& position)
 {
+    ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
+
     m_scrollLayer.get().position = CGPointMake(-position.x(), -position.y());
 }
 
-void ScrollingTreeNodeMac::scrollBy(const IntSize &offset)
+void ScrollingTreeNodeMac::scrollBy(const IntSize& offset)
 {
-    setScrollPosition(scrollPosition() + offset);
+    IntPoint newScrollPosition = scrollPosition() + offset;
 
-    scrollingTree()->updateMainFrameScrollPosition(scrollPosition());
+    if (shouldUpdateScrollLayerPositionOnMainThread()) {
+        scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(newScrollPosition);
+        return;
+    }
+
+    setScrollPosition(newScrollPosition);
+    scrollingTree()->updateMainFrameScrollPosition(newScrollPosition);
 }
 
 } // namespace WebCore
