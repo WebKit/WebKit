@@ -170,7 +170,7 @@ public:
     virtual String keygenMenuItem2048();
     virtual String keygenKeychainItemName(const String& host);
 #if PLATFORM(IOS)
-    virtual String htmlSelectMultipleItems(int);
+    virtual String htmlSelectMultipleItems(size_t);
 #endif // PLATFORM(IOS)
 #endif // PLATFORM(MAC)
     virtual String imageTitle(const String& filename, const IntSize&);

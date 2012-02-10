@@ -1,3 +1,18 @@
+2012-02-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        DefaultLocalizationStrategy::htmlSelectMultipleItems() should use size_t instead of int
+        https://bugs.webkit.org/show_bug.cgi?id=78374
+
+        Reviewed by Joseph Pecoraro.
+
+        The value comes from size_t and is converted to int for no good reason. We should use
+        size_t.
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::htmlSelectMultipleItems):
+        * platform/DefaultLocalizationStrategy.h:
+        (DefaultLocalizationStrategy):
+
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
         More ScrollableArea cleanup
