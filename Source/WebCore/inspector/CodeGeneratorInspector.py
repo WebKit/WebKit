@@ -2538,46 +2538,7 @@ class Generator:
 
                 optional = optional_mask and json_optional
 
-                ad_hoc_type_list = []
-
-                class AdHocTypeContext:
-                    container_full_name_prefix = "<not yet defined>"
-
-                    @staticmethod
-                    def get_type_name_fix():
-                        class NameFix:
-                            class_name = Capitalizer.lower_camel_case_to_upper(parameter_name)
-
-                            @staticmethod
-                            def output_comment(writer):
-                                writer.newline("// Named after parameter name '%s' while generating event %s.\n" % (parameter_name, event_name))
-
-                        return NameFix
-
-                    @staticmethod
-                    def add_type(binding):
-                        ad_hoc_type_list.append(binding)
-
-                param_type_binding = resolve_param_type(json_parameter, domain_name, AdHocTypeContext)
-
-                class EventForwardListener:
-                    @staticmethod
-                    def add_type_data(type_data):
-                        pass
-
-                class EventResolveContext:
-                    forward_listener = EventForwardListener
-
-                for type in ad_hoc_type_list:
-                    type.resolve_inner(EventResolveContext)
-
-                class EventGenerateContext:
-                    validator_writer = "not supported in EventGenerateContext"
-
-                for type in ad_hoc_type_list:
-                    generator = type.get_code_generator()
-                    if generator:
-                        generator.generate_type_builder(ad_hoc_type_writer, EventGenerateContext)
+                param_type_binding = Generator.resolve_type_and_generate_ad_hoc(json_parameter, event_name, domain_name, ad_hoc_type_writer)
 
                 annotated_type = get_annotated_type_text(c_type.get_text(), param_type_binding.get_in_c_type_text(json_optional))
 
@@ -2609,6 +2570,10 @@ class Generator:
         Generator.method_name_enum_list.append("        k%s_%sCmd," % (domain_name, json_command["name"]))
         Generator.method_handler_list.append("            &InspectorBackendDispatcherImpl::%s_%s," % (domain_name, json_command_name))
         Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
+
+        ad_hoc_type_output = []
+        Generator.backend_agent_interface_list.append(ad_hoc_type_output)
+        ad_hoc_type_writer = Writer(ad_hoc_type_output, "        ")
 
         Generator.backend_agent_interface_list.append("        virtual void %s(ErrorString*" % json_command_name)
 
@@ -2673,7 +2638,9 @@ class Generator:
 
                 optional = "optional" in json_return and json_return["optional"]
 
-                raw_type = resolve_param_raw_type(json_return, domain_name)
+                return_type_binding = Generator.resolve_type_and_generate_ad_hoc(json_return, json_command_name, domain_name, ad_hoc_type_writer)
+
+                raw_type = return_type_binding.reduce_to_raw_type()
                 setter_type = raw_type.get_setter_name()
                 initializer = raw_type.get_c_initializer()
                 var_type = raw_type.get_c_param_type(ParamType.OUTPUT, None)
@@ -2691,7 +2658,11 @@ class Generator:
 
                 method_out_code += code
                 agent_call_param_list.append(param)
-                Generator.backend_agent_interface_list.append(", %s%s out_%s" % (var_type.get_text(), raw_type.get_output_pass_model().get_parameter_type_suffix(), json_return_name))
+
+                annotated_type = get_annotated_type_text(var_type.get_text() + raw_type.get_output_pass_model().get_parameter_type_suffix(),
+                                                         return_type_binding.get_in_c_type_text(optional))
+
+                Generator.backend_agent_interface_list.append(", %s out_%s" % (annotated_type, json_return_name))
                 response_cook_list.append(cook)
 
                 backend_js_reply_param_list.append("\"%s\"" % json_return_name)
@@ -2712,6 +2683,52 @@ class Generator:
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
         Generator.backend_agent_interface_list.append(") = 0;\n")
+
+    @staticmethod
+    def resolve_type_and_generate_ad_hoc(json_param, method_name, domain_name, ad_hoc_type_writer):
+        param_name = json_param["name"]
+        ad_hoc_type_list = []
+
+        class AdHocTypeContext:
+            container_full_name_prefix = "<not yet defined>"
+
+            @staticmethod
+            def get_type_name_fix():
+                class NameFix:
+                    class_name = Capitalizer.lower_camel_case_to_upper(param_name)
+
+                    @staticmethod
+                    def output_comment(writer):
+                        writer.newline("// Named after parameter '%s' while generating command/event %s.\n" % (param_name, method_name))
+
+                return NameFix
+
+            @staticmethod
+            def add_type(binding):
+                ad_hoc_type_list.append(binding)
+
+        type_binding = resolve_param_type(json_param, domain_name, AdHocTypeContext)
+
+        class InterfaceForwardListener:
+            @staticmethod
+            def add_type_data(type_data):
+                pass
+
+        class InterfaceResolveContext:
+            forward_listener = InterfaceForwardListener
+
+        for type in ad_hoc_type_list:
+            type.resolve_inner(InterfaceResolveContext)
+
+        class InterfaceGenerateContext:
+            validator_writer = "not supported in InterfaceGenerateContext"
+
+        for type in ad_hoc_type_list:
+            generator = type.get_code_generator()
+            if generator:
+                generator.generate_type_builder(ad_hoc_type_writer, InterfaceGenerateContext)
+
+        return type_binding
 
     @staticmethod
     def process_types(type_map):
@@ -2807,7 +2824,7 @@ backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
 
 backend_h_file.write(Templates.backend_h.substitute(None,
     virtualSetters=join(Generator.backend_virtual_setters_list, "\n"),
-    agentInterfaces=join(Generator.backend_agent_interface_list, ""),
+    agentInterfaces=join(flatten_list(Generator.backend_agent_interface_list), ""),
     methodNamesEnumContent=join(Generator.method_name_enum_list, "\n")))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,

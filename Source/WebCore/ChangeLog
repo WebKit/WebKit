@@ -1,3 +1,28 @@
+2012-02-10  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: properly resolve output types of commands
+        https://bugs.webkit.org/show_bug.cgi?id=78025
+
+        Reviewed by Vsevolod Vlasov.
+
+        Code for generating ad-hoc types is added. It was reused from event
+        generator part.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.process_event):
+        (Generator.process_command):
+        (Generator.resolve_type_and_generate_ad_hoc):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext.get_type_name_fix):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext.get_type_name_fix.NameFix):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext.get_type_name_fix.NameFix.output_comment):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext.add_type):
+        (Generator.resolve_type_and_generate_ad_hoc.InterfaceForwardListener):
+        (Generator.resolve_type_and_generate_ad_hoc.InterfaceForwardListener.add_type_data):
+        (Generator.resolve_type_and_generate_ad_hoc.InterfaceResolveContext):
+        (Generator.resolve_type_and_generate_ad_hoc.InterfaceGenerateContext):
+        (Generator):
+
 2012-02-10  Kentaro Hara  <haraken@chromium.org>
 
         Rename [CustomPropertyNames] to [CustomEnumerateProperty]
