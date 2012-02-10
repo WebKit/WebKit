@@ -1,3 +1,14 @@
+2012-02-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Fix a few typos in IDL exception names.
+        https://bugs.webkit.org/show_bug.cgi?id=78356
+
+        Reviewed by Adam Barth.
+
+        * dom/Node.idl:
+        * notifications/NotificationCenter.idl:
+        * page/Navigator.idl:
+
 2012-02-10  Benjamin Poulain  <bpoulain@apple.com>
 
         DefaultLocalizationStrategy::htmlSelectMultipleItems() should use size_t instead of int

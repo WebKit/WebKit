@@ -72,7 +72,7 @@ module core {
             raises(DOMException);
         [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
                                                                 in [CustomReturn] Node oldChild)
-            raises(DOMExceptionJSC);
+            raises(DOMException);
         [Custom] Node               removeChild(in [CustomReturn] Node oldChild)
             raises(DOMException);
         [Custom] Node               appendChild(in [CustomReturn] Node newChild)

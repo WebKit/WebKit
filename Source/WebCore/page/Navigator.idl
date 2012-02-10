@@ -52,7 +52,7 @@ module window {
 
 #if defined(ENABLE_REGISTER_PROTOCOL_HANDLER) && ENABLE_REGISTER_PROTOCOL_HANDLER
         void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
-            raises(DomException);
+            raises(DOMException);
 #endif
 
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
