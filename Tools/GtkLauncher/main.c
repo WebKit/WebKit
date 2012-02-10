@@ -33,7 +33,7 @@
 
 static gint windowCount = 0;
 
-static GtkWidget* createWindow(WebKitWebView** outWebView);
+static GtkWidget* createWindow(WebKitWebView** outWebView, GtkWidget* openerWindow);
 
 static void activateUriEntryCb(GtkWidget* entry, gpointer data)
 {
@@ -105,7 +105,7 @@ static WebKitWebView*
 createWebViewCb(WebKitWebView* webView, WebKitWebFrame* web_frame, GtkWidget* window)
 {
     WebKitWebView *newWebView;
-    createWindow(&newWebView);
+    createWindow(&newWebView, window);
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
     return newWebView;
 }
@@ -123,7 +123,18 @@ static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window)
     return TRUE;
 }
 
-static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidget* statusbar, WebKitWebView* webView)
+static gboolean runModalDialogCb(WebKitWebView* webView, GtkWidget* openerWindow)
+{
+    if (!openerWindow)
+        return FALSE;
+
+    GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(webView));
+    gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(openerWindow));
+    gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+    return TRUE;
+}
+
+static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidget* statusbar, WebKitWebView* webView, GtkWidget* openerWindow)
 {
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -137,6 +148,7 @@ static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidge
     g_signal_connect(webView, "create-web-view", G_CALLBACK(createWebViewCb), window);
     g_signal_connect(webView, "web-view-ready", G_CALLBACK(webViewReadyCb), window);
     g_signal_connect(webView, "close-web-view", G_CALLBACK(closeWebViewCb), window);
+    g_signal_connect(webView, "run-modal-dialog", G_CALLBACK(runModalDialogCb), openerWindow);
 
     return scrolledWindow;
 }
@@ -190,7 +202,7 @@ static GtkWidget* createToolbar(GtkWidget* uriEntry, WebKitWebView* webView)
     return toolbar;
 }
 
-static GtkWidget* createWindow(WebKitWebView** outWebView)
+static GtkWidget* createWindow(WebKitWebView** outWebView, GtkWidget* openerWindow)
 {
     WebKitWebView *webView;
     GtkWidget *vbox;
@@ -214,7 +226,7 @@ static GtkWidget* createWindow(WebKitWebView** outWebView)
 #endif
     statusbar = createStatusbar(webView);
     gtk_box_pack_start(GTK_BOX(vbox), createToolbar(uriEntry, webView), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), createBrowser(window, uriEntry, statusbar, webView), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), createBrowser(window, uriEntry, statusbar, webView, openerWindow), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, FALSE, 0);
 
     gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -417,7 +429,7 @@ int main(int argc, char* argv[])
 #endif
 
     WebKitWebView *webView;
-    GtkWidget *main_window = createWindow(&webView);
+    GtkWidget *main_window = createWindow(&webView, 0);
 
     if (webkitSettings) {
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);

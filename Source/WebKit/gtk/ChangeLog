@@ -1,5 +1,29 @@
 2012-02-09  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Add DRT support for modal dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=53600
+
+        Reviewed by Martin Robinson.
+
+        Add support for running modal dialogs.
+
+        A new signal is added to the WebKitWebView. When emitted, the web view
+        is requesting to be displayed as a modal dialog. If accepted, the
+        ChromeClient then establishes a loop that is run until the chrome is destroyed.
+        If denied, nothing is done.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::chromeDestroyed):
+        (WebKit::ChromeClient::canRunModal):
+        (WebKit::ChromeClient::runModal):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
+2012-02-09  Zan Dobersek  <zandobersek@gmail.com>
+
         [Gtk] security/set-form-autocomplete-attribute.html fails
         https://bugs.webkit.org/show_bug.cgi?id=78261
 
