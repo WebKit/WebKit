@@ -1,3 +1,19 @@
+2012-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Update the non-fast-scrollable region for subframe layout as well
+        https://bugs.webkit.org/show_bug.cgi?id=78366
+        <rdar://problem/10844064>
+
+        Reviewed by Beth Dakin.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::computeNonFastScrollableRegion):
+        Move the non-fast-scrollable region computation out into a new function.
+
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        Always recompute the non-fast-scrollable region whenever a frame view's layout is updated,
+        not just the main frame.
+
 2012-02-09  Chris Marrin  <cmarrin@apple.com>
 
         Implement hardware animation of CSS filters

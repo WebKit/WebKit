@@ -93,18 +93,11 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     return true;
 }
 
-void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
+static Region computeNonFastScrollableRegion(FrameView* frameView)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_page);
+    Region nonFastScrollableRegion;
 
-    if (!coordinatesScrollingForFrameView(frameView))
-        return;
-
-    // Compute the region of the page that we can't do fast scrolling for. This currently includes
-    // all scrollable areas, such as subframes, overflow divs and list boxes.
-    Region nonScrollableRegion;
-    if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+        if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
 
@@ -113,9 +106,27 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
                 && (!scrollableArea->verticalScrollbar() || !scrollableArea->verticalScrollbar()->enabled()))
                 continue;
 
-            nonScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
+            nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
         }
     }
+
+    return nonFastScrollableRegion;
+}
+
+void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    // Compute the region of the page that we can't do fast scrolling for. This currently includes
+    // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
+    // frame view whose layout was updated is not the main frame.
+    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame()->view());
+    m_scrollingTreeState->setNonFastScrollableRegion(nonFastScrollableRegion);
+    scheduleTreeStateCommit();
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
 
     m_scrollingTreeState->setHorizontalScrollElasticity(frameView->horizontalScrollElasticity());
     m_scrollingTreeState->setVerticalScrollElasticity(frameView->verticalScrollElasticity());
@@ -124,7 +135,6 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
 
     m_scrollingTreeState->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
     m_scrollingTreeState->setContentsSize(frameView->contentsSize());
-    m_scrollingTreeState->setNonFastScrollableRegion(nonScrollableRegion);
     scheduleTreeStateCommit();
 }
 
