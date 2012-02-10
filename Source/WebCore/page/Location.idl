@@ -38,7 +38,7 @@ module window {
         CustomDeleteProperty,
         CustomEnumerateProperty,
         JSCustomDefineOwnProperty,
-        JSCustomPrototypePutDelegate,
+        JSCustomNamedGetterOnPrototype,
         JSCustomPrototypeDefineOwnProperty,
         OmitConstructor
     ] Location {

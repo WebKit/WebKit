@@ -1048,7 +1048,7 @@ sub GenerateHeader
         "    {\n" .
         "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
         "    }\n");
-    if ($dataNode->extendedAttributes->{"JSCustomPrototypePutDelegate"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n");
     }
@@ -1517,7 +1517,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomPrototypePutDelegate"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@implContent, "void ${className}Prototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(cell);\n");

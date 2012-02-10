@@ -1,3 +1,23 @@
+2012-02-10  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [JSCustomPrototypePutDelegate] to [JSCustomNamedGetterOnPrototype]
+        https://bugs.webkit.org/show_bug.cgi?id=78353
+
+        Reviewed by Adam Barth.
+
+        [JSCustomPrototypePutDelegate] is used to write custom code for named
+        getters on a prototype interface. "PutDelegate" is just a method name
+        in implementation and not so descriptive. This patch renames it to
+        [JSCustomNamedGetterOnPrototype]. This is also for naming consistency
+        with [CustomNamedGetter].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * page/Location.idl:
+
 2012-02-10  Enrica Casucci  <enrica@apple.com>
 
         Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.
