@@ -1,3 +1,18 @@
+2012-02-09  Matthew Delaney  <mdelaney@apple.com>
+
+        getComputedStyle() returns different values for different zoom levels
+        https://bugs.webkit.org/show_bug.cgi?id=32230
+
+        Reviewed by Beth Dakin.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-zoom-and-background-size.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fillSizeToCSSValue): Pass down the RenderStyle for use in adjusting
+        values to account for zoom.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Adjust additional
+        properties that are affected by zoom.
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Rename [Return] to [CustomReturn]
