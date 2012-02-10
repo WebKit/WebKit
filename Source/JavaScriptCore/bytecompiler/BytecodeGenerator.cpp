@@ -1162,15 +1162,8 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     }
 
     // Cases where we cannot statically optimize the lookup.
-    if (property == propertyNames().arguments || !canOptimizeNonLocals()) {
-        if (shouldOptimizeLocals() && m_codeType == GlobalCode) {
-            ScopeChainIterator iter = m_scopeChain->begin();
-            JSObject* globalObject = iter->get();
-            ASSERT((++iter) == m_scopeChain->end());
-            return ResolveResult::globalResolve(globalObject);
-        } else
-            return ResolveResult::dynamicResolve(0);
-    }
+    if (property == propertyNames().arguments || !canOptimizeNonLocals())
+        return ResolveResult::dynamicResolve(0);
 
     ScopeChainIterator iter = m_scopeChain->begin();
     ScopeChainIterator end = m_scopeChain->end();

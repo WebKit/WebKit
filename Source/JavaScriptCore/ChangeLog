@@ -1,5 +1,17 @@
 2012-02-09  Andy Wingo  <wingo@igalia.com>
 
+        Eliminate dead code in BytecodeGenerator::resolve()
+        https://bugs.webkit.org/show_bug.cgi?id=78242
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve):
+        BytecodeGenerator::shouldOptimizeLocals() is only true for
+        FunctionCode, and thus cannot be true for GlobalCode.
+
+2012-02-09  Andy Wingo  <wingo@igalia.com>
+
         Remove BytecodeGenerator::isLocal
         https://bugs.webkit.org/show_bug.cgi?id=78241
 
