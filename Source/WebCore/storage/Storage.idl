@@ -29,7 +29,7 @@ module storage {
         NamedGetter,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
-        CustomGetPropertyNames,
+        CustomEnumerateProperty,
         CustomNamedSetter,
     ] Storage {
         readonly attribute [NotEnumerable] unsigned long length;

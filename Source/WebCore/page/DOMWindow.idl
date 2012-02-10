@@ -31,7 +31,7 @@ module window {
         JSCustomDefineOwnProperty,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
-        CustomGetPropertyNames,
+        CustomEnumerateProperty,
         JSCustomMarkFunction,
         JSCustomToNativeObject,
         CustomPutFunction,

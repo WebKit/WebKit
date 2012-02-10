@@ -33,7 +33,7 @@ module window {
         CustomNamedSetter,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,
-        CustomGetPropertyNames,
+        CustomEnumerateProperty,
         OmitConstructor
     ] History {
         readonly attribute unsigned long length;

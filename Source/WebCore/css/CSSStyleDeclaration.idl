@@ -27,7 +27,7 @@ module css {
         CustomNamedSetter,
         NamedGetter,
         IndexedGetter,
-        CustomGetPropertyNames,
+        CustomEnumerateProperty,
         V8DependentLifetime
     ] CSSStyleDeclaration {
                  attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText

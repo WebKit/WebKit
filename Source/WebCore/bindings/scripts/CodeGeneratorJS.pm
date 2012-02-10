@@ -828,7 +828,7 @@ sub GenerateHeader
     }
 
     # Custom getOwnPropertyNames function
-    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($dataNode->extendedAttributes->{"CustomEnumerateProperty"} || $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
@@ -2013,7 +2013,7 @@ sub GenerateImplementation
         }
     }
 
-    if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
+    if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomEnumerateProperty"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");

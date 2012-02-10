@@ -565,7 +565,7 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
     my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"CustomNamedSetter"};
     my $hasCustomDeleters = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
-    my $hasCustomEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+    my $hasCustomEnumerator = $dataNode->extendedAttributes->{"CustomEnumerateProperty"};
     if ($interfaceName eq "HTMLOptionsCollection") {
         $interfaceName = "HTMLCollection";
         $hasCustomIndexedGetter = 1;
@@ -2160,7 +2160,7 @@ END
 
     my $hasCustomNamedSetter = $dataNode->extendedAttributes->{"CustomNamedSetter"};
     my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
-    my $hasEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+    my $hasEnumerator = $dataNode->extendedAttributes->{"CustomEnumerateProperty"};
     my $setOn = "Instance";
 
     # V8 has access-check callback API (see ObjectTemplate::SetAccessCheckCallbacks) and it's used on DOMWindow
