@@ -42,7 +42,7 @@ from models import delete_model_with_numeric_id_holder
 
 class MergeTestsHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write(template.render('merge_tests.yaml', {'tests': Test.all()}))
+        self.response.out.write(template.render('merge_tests.html', {'tests': Test.all()}))
 
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8';

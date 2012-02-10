@@ -38,7 +38,7 @@ from models import ReportLog
 
 class ReportLogsHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write(template.render('report_logs.yaml', {'logs': ReportLog.all()}))
+        self.response.out.write(template.render('report_logs.html', {'logs': ReportLog.all()}))
 
     def post(self):
         commit = bool(self.request.get('commit'))
@@ -61,7 +61,7 @@ class ReportLogsHandler(webapp2.RequestHandler):
         else:
             log.delete()
 
-        self.response.out.write(template.render('report_logs.yaml', {'logs': ReportLog.all(), 'status': 'OK'}))
+        self.response.out.write(template.render('report_logs.html', {'logs': ReportLog.all(), 'status': 'OK'}))
 
     def _error(self, message):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'

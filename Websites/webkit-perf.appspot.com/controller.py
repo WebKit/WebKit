@@ -64,7 +64,10 @@ def cache_manifest(cache):
 
 
 def schedule_manifest_update():
-    taskqueue.add(url='/api/test/update', name='manifest_update')
+    try:
+        taskqueue.add(url='/api/test/update', name='manifest_update')
+    except taskqueue.TombstonedTaskError:
+        pass
 
 
 class CachedManifestHandler(webapp2.RequestHandler):
@@ -82,7 +85,10 @@ def cache_dashboard(cache):
 
 
 def schedule_dashboard_update():
-    taskqueue.add(url='/api/test/dashboard/update', name='dashboard_update')
+    try:
+        taskqueue.add(url='/api/test/dashboard/update', name='dashboard_update')
+    except taskqueue.TombstonedTaskError:
+        pass
 
 
 class CachedDashboardHandler(webapp2.RequestHandler):
@@ -100,8 +106,11 @@ def cache_runs(test_id, branch_id, platform_id, cache):
 
 
 def schedule_runs_update(test_id, branch_id, platform_id):
-    taskqueue.add(url='/api/test/runs/update', name='runs_update_%d_%d_%d' % (test_id, branch_id, platform_id),
-        params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
+    try:
+        taskqueue.add(url='/api/test/runs/update', name='runs_update_%d_%d_%d' % (test_id, branch_id, platform_id),
+            params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
+    except taskqueue.TombstonedTaskError:
+        pass
 
 
 class CachedRunsHandler(webapp2.RequestHandler):

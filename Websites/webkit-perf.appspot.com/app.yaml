@@ -19,9 +19,9 @@ handlers:
   static_files: index.html
   upload: index.html
 
-- url: /(.+\.html)
+- url: /((index|embed|graph)\.html)
   static_files: \1
-  upload: (.+\.html)
+  upload: ((index|embed|graph)\.html)
 
 - url: /css
   static_dir: css
