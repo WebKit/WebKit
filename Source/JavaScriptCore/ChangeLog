@@ -1,3 +1,24 @@
+2012-02-10  Michael Saboff  <msaboff@apple.com>
+
+        Yarr assert with regexp where alternative in *-quantified group matches empty
+        https://bugs.webkit.org/show_bug.cgi?id=67752        
+
+        Reviewed by Gavin Barraclough.
+
+        Added backtracking for the prior alternative if it matched
+        but didn't consume any input characters.
+
+        * yarr/YarrJIT.cpp:
+        (YarrOp): New jump.
+        (JSC::Yarr::YarrGenerator::generate): Emit conditional jump
+        when an alternative matches and no input was consumed.  Moved the
+        zero length match check for a set of alternatives to the alternative
+        code from the parentheses cases to the alternative end cases.
+        Converted the existing zero length checks in the parentheses cases
+        to runtime assertion checks.
+        (JSC::Yarr::YarrGenerator::backtrack): Link new jump to backtrack
+        to prior term.
+
 2012-02-10  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         [Qt] GC should be parallel on Qt platform
