@@ -1,3 +1,18 @@
+2012-02-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Increase JPEG decoding performance some more
+        https://bugs.webkit.org/show_bug.cgi?id=78323
+
+        Reviewed by Adam Barth.
+
+        Increase JPEG image decoding speed by another 9% (avg) according to libjpeg-turbo tjbench.
+
+        No new tests. Covered by many existing tests, all requiring subsequent rebaselines.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (dctMethod): Fast decode on the jpeg-turbo using ports (Chrome Android, Chrome, Chromium).
+        (WebCore::JPEGImageReader::decode): Select DCT method via a helper routine.
+
 2012-02-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: FileSelector should not depend on DebuggerPresentationModel.

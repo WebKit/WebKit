@@ -70,6 +70,7 @@ extern "C" {
 #endif
 
 #if defined(JCS_ALPHA_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
+inline J_DCT_METHOD dctMethod() { return JDCT_IFAST; }
 #define TURBO_JPEG_RGB_SWIZZLE
 #if USE(SKIA) && (!SK_R32_SHIFT && SK_G32_SHIFT == 8 && SK_B32_SHIFT == 16)
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_RGBA; }
@@ -78,6 +79,7 @@ inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRA; }
 #endif
 inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == rgbOutputColorSpace(); }
 #else
+inline J_DCT_METHOD dctMethod() { return JDCT_ISLOW; }
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
 #endif
 
@@ -291,7 +293,7 @@ public:
             // Set parameters for decompression.
             // FIXME -- Should reset dct_method and dither mode for final pass
             // of progressive JPEG.
-            m_info.dct_method =  JDCT_ISLOW;
+            m_info.dct_method = dctMethod();
             m_info.dither_mode = JDITHER_FS;
             m_info.do_fancy_upsampling = true;
             m_info.enable_2pass_quant = false;
