@@ -1,3 +1,16 @@
+2012-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] KURL::fileSystemPath() doesn't work if uri contains #
+        https://bugs.webkit.org/show_bug.cgi?id=78339
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/KURLGtk.cpp:
+        (WebCore::KURL::fileSystemPath): Use GFile API instead of
+        g_filename_from_uri() to convert the uri to a local
+        path. g_file_get_path() removes the anchor from the uri and
+        returns a valid path instead of NULL.
+
 2012-02-10  Pablo Flouret  <pablof@motorola.com>
 
         CodeGeneratorJS doesn't always generate visitChildren() implementation when required
