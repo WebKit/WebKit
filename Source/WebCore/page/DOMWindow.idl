@@ -79,7 +79,7 @@ module window {
 
         void alert(in [Optional=DefaultIsUndefined] DOMString message);
         boolean confirm(in [Optional=DefaultIsUndefined] DOMString message);
-        [ConvertNullStringTo=Null] DOMString prompt(in [Optional=DefaultIsUndefined] DOMString message,
+        [TreatReturnedNullStringAs=Null] DOMString prompt(in [Optional=DefaultIsUndefined] DOMString message,
                                                     in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString defaultValue);
 
         boolean find(in [Optional=DefaultIsUndefined] DOMString string,

@@ -20,8 +20,8 @@
 module core {
 
     interface Notation : Node {
-        readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
-        readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString publicId;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
     };
 
 }

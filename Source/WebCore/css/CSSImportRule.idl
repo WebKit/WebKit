@@ -22,7 +22,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface CSSImportRule : CSSRule {
-        readonly attribute [ConvertNullStringTo=Null] DOMString href;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString href;
         readonly attribute MediaList media;
         readonly attribute CSSStyleSheet styleSheet;
     };

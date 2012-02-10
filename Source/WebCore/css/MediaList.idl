@@ -31,11 +31,11 @@ module stylesheets {
         IndexedGetter
     ] MediaList {
 
-                 attribute [TreatNullAs=NullString, ConvertNullStringTo=Null] DOMString mediaText
+                 attribute [TreatNullAs=NullString, TreatReturnedNullStringAs=Null] DOMString mediaText
                      setter raises(DOMException);
         readonly attribute unsigned long length;
 
-        [ConvertNullStringTo=Null] DOMString item(in [Optional=DefaultIsUndefined] unsigned long index);
+        [TreatReturnedNullStringAs=Null] DOMString item(in [Optional=DefaultIsUndefined] unsigned long index);
         void deleteMedium(in [Optional=DefaultIsUndefined] DOMString oldMedium)
             raises(DOMException);
         void appendMedium(in [Optional=DefaultIsUndefined] DOMString newMedium)

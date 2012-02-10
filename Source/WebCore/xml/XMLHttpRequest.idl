@@ -89,11 +89,11 @@ module xml {
         readonly attribute XMLHttpRequestUpload upload;
 
         // response
-        [ConvertNullStringTo=Undefined] DOMString getAllResponseHeaders()
+        [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders()
             raises(DOMException);
-        [ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
+        [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(in DOMString header)
             raises(DOMException);
-        readonly attribute [CustomGetter] DOMString responseText // The custom getter implements ConvertNullStringTo=Null
+        readonly attribute [CustomGetter] DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
             getter raises(DOMException);
         readonly attribute Document responseXML
             getter raises(DOMException);

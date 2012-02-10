@@ -542,18 +542,18 @@ module html {
         [StrictTypeChecking, Custom] void getParameter();
         // any getProgramParameter(in WebGLProgram program, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getProgramParameter();
-        [StrictTypeChecking, ConvertNullStringTo=Null] DOMString getProgramInfoLog(in WebGLProgram program) raises(DOMException);
+        [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getProgramInfoLog(in WebGLProgram program) raises(DOMException);
         // any getRenderbufferParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getRenderbufferParameter();
         // any getShaderParameter(in WebGLShader shader, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getShaderParameter() raises(DOMException);
 
-        [StrictTypeChecking, ConvertNullStringTo=Null] DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
 
         // TBD
         // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
 
-        [StrictTypeChecking, ConvertNullStringTo=Null] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
 
         // DOMString[] getSupportedExtensions()
         [StrictTypeChecking, Custom] void getSupportedExtensions();

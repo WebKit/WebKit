@@ -1,3 +1,61 @@
+2012-02-09  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [ConvertNullStringTo=] to [TreatReturnedNullStringAs=]
+        https://bugs.webkit.org/show_bug.cgi?id=78108
+
+        Reviewed by Adam Barth.
+
+        [ConvertNullStringTo=] is not descriptive. To clarify that it specifies
+        the behavior when the null string is returned by WebCore, this patch renames
+        [ConvertNullStringTo=] to [TreatReturnedNullStringAs=]. This change is also
+        for naming consistency with [TreatNullAs] and [TreatUndefinedAs].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementationIndexer):
+        (NativeToJSValue):
+        * bindings/scripts/test/TestObj.idl:
+        * css/CSSCharsetRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/StyleSheet.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/Clipboard.idl:
+        * dom/DOMStringList.idl:
+        * dom/Document.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/MutationRecord.idl:
+        * dom/Node.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/HTMLMediaElement.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * page/DOMWindow.idl:
+        * storage/IDBObjectStore.idl:
+        * storage/IDBRequest.idl:
+        * storage/Storage.idl:
+        * storage/StorageEvent.idl:
+        * websockets/WebSocket.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathNSResolver.idl:
+        * xml/XSLTProcessor.idl:
+
 2012-02-09  Tony Chang  <tony@chromium.org>
 
         more refactoring of RenderFlexibleBox in preparation for multiline

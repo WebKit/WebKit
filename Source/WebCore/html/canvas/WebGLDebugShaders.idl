@@ -29,6 +29,6 @@ module html {
         JSGenerateIsReachable=ImplContext,
         OmitConstructor
     ] WebGLDebugShaders {
-        [StrictTypeChecking, ConvertNullStringTo=Null] DOMString getTranslatedShaderSource(in WebGLShader shader) raises(DOMException);
+        [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getTranslatedShaderSource(in WebGLShader shader) raises(DOMException);
     };
 }

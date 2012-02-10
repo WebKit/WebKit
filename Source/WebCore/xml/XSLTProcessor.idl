@@ -42,7 +42,7 @@ module xml {
         [Custom] Document transformToDocument(in Node source);
 
         [Custom] void setParameter(in DOMString namespaceURI, in DOMString localName, in DOMString value);
-        [Custom, ConvertNullStringTo=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);
+        [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);
         [Custom] void removeParameter(in DOMString namespaceURI, in DOMString localName);
         void clearParameters();
 

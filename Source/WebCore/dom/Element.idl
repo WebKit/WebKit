@@ -27,9 +27,9 @@ module core {
 
         // DOM Level 1 Core
 
-        readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString tagName;
 
-        [ConvertNullStringTo=Null] DOMString getAttribute(in [Optional=DefaultIsUndefined] DOMString name);
+        [TreatReturnedNullStringAs=Null] DOMString getAttribute(in [Optional=DefaultIsUndefined] DOMString name);
         [ObjCLegacyUnnamedParameters] void setAttribute(in [Optional=DefaultIsUndefined] DOMString name,
                                          in [Optional=DefaultIsUndefined] DOMString value)
             raises(DOMException);
