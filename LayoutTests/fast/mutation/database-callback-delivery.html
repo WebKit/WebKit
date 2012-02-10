@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+var mutations;
+
+function testDatabase() {
+    var div;
+    var db;
+    var observer;
+
+    function start() {
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { attributes: true, characterData: true });
+
+        db = openDatabase('DatabaseMutationDelivery', '1.0', '', 1);
+        db.transaction(mutate);
+    }
+
+    function mutate() {
+        div.setAttribute('foo', 'bar');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        observer.disconnect();
+        debug('');
+        finishJSTest();
+    }
+
+    start();
+}
+
+description('Testing mutations are delivered following Database transaction callbacks.');
+
+if (!window.WebKitMutationObserver) {
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+    finishJSTest();
+} else
+    testDatabase();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
