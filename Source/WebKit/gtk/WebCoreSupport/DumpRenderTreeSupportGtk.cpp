@@ -913,3 +913,26 @@ void DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(WebKitWebView*
     UNUSED_PARAM(enabled);
 #endif
 }
+
+bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)
+{
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return false;
+
+    Document* document = coreFrame->document();
+    ASSERT(document);
+
+    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(id);
+    GOwnPtr<gchar> idBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    JSStringGetUTF8CString(id, idBuffer.get(), bufferSize);
+    Node* coreNode = document->getElementById(String::fromUTF8(idBuffer.get()));
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
+    if (!inputElement)
+        return false;
+
+    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
+}

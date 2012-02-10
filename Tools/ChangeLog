@@ -1,3 +1,16 @@
+2012-02-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] security/set-form-autocomplete-attribute.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=78261
+
+        Reviewed by Martin Robinson.
+
+        Use the new helper in DumpRenderTreeSupportGtk to properly
+        test whether an element performs autocompletion.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+
 2012-02-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Enable mock scrollbars for compositing layout tests

@@ -87,6 +87,7 @@ public:
     static void setAutofilled(JSContextRef, JSValueRef, bool);
     static void setValueForUser(JSContextRef, JSValueRef, JSStringRef);
     static bool shouldClose(WebKitWebFrame*);
+    static bool elementDoesAutoCompleteForElementWithId(WebKitWebFrame*, JSStringRef);
 
     // WebKitWebView
     static void executeCoreCommandByName(WebKitWebView*, const gchar* name, const gchar* value);

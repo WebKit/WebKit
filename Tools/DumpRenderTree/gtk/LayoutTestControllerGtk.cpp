@@ -585,8 +585,7 @@ void LayoutTestController::setPluginsEnabled(bool flag)
 
 bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
 {
-    // FIXME: implement
-    return false;
+    return DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(mainFrame, id);
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)

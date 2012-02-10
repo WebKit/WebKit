@@ -619,10 +619,6 @@ plugins/clicking-missing-plugin-fires-delegate.html
 # Need to implement getFormValue().
 plugins/form-value.html
 
-# Tests in security/ directory
-#   Tests failing
-security/set-form-autocomplete-attribute.html
-
 # Tests that failed because we don't have an eventSender implementation
 http/tests/plugins/plugin-document-has-focus.html
 

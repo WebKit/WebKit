@@ -1,3 +1,18 @@
+2012-02-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] security/set-form-autocomplete-attribute.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=78261
+
+        Reviewed by Martin Robinson.
+
+        Add a helper function to DumpRenderTreeSupportGtk, returning
+        whether or not an element does perform autocompletion.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for GTK+ 2.x after my previous commit.
