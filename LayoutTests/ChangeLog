@@ -1,3 +1,24 @@
+2011-02-09  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 106596
+
+    2012-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+            retrieveCallerFromVMCode should call trueCallerFrame
+            https://bugs.webkit.org/show_bug.cgi?id=77684
+
+            Rubber stamped by Oliver Hunt.
+
+            * fast/js/dfg-inline-function-dot-caller-expected.txt: Added.
+            * fast/js/dfg-inline-function-dot-caller.html: Added.
+            * fast/js/script-tests/dfg-inline-function-dot-caller.js: Added.
+            (resultArray):
+            (object.nonInlineable.nonInlineable.if):
+            (object.nonInlineable):
+            (object.inlineable):
+            (makeInlinableCall):
+            (g):
+
 2011-02-07  Lucas Forschler  <lforschler@apple.com>
 
     Merge 106982
