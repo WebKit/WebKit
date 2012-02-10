@@ -1390,6 +1390,12 @@ svg/hittest/zero-length-square-cap-path.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=78128
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 
+# [Qt] 3 SVG tests assert after r107207
+# https://bugs.webkit.org/show_bug.cgi?id=78332
+svg/custom/mask-child-changes.svg
+svg/custom/mask-invalidation.svg
+svg/custom/absolute-sized-content-with-resources.xhtml
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
@@ -2610,3 +2616,11 @@ fast/text/international/inline-plaintext-is-isolated.html
 # Synthetic bold is illegible under some scaling transforms
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
+
+# [Qt] REGRESSION(r107242): It made 5 inspector tests crash in debug mode
+# https://bugs.webkit.org/show_bug.cgi?id=78330
+inspector/elements/set-outer-html-body.html
+inspector/elements/set-outer-html-2.html
+inspector/elements/undo-dom-edits.html
+inspector/elements/set-outer-html.html
+inspector/elements/edit-dom-actions.html
