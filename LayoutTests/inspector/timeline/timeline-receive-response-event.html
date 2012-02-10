@@ -20,7 +20,7 @@ function performActions()
 function test()
 {
     WebInspector.showPanel("timeline");
-    WebInspector.panels.timeline.toggleTimelineButton.toggled = true;
+    WebInspector.panels.timeline._model._collectionEnabled = true;
     TimelineAgent.start(step1);
 
     function step1()
@@ -38,14 +38,15 @@ function test()
         function dumpFormattedRecord(record, prefix)
         {
              prefix = prefix || "";
-             InspectorTest.addResult(prefix + record.type);
+             if (record.type !== "GCEvent")
+                 InspectorTest.addResult(prefix + record.type);
              if (record._children) {
                  var childPrefix = prefix + "    ";
                  for (var i = 0; i < record._children.length; ++i)
                      dumpFormattedRecord(record._children[i], childPrefix);
              }
         }
-        WebInspector.panels.timeline.toggleTimelineButton.toggled = false;
+        WebInspector.panels.timeline._model._collectionEnabled = false;
 
         var records = WebInspector.panels.timeline._rootRecord.children;
         for (var i = 0; i < records.length; ++i)
