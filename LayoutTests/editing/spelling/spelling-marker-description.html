@@ -25,6 +25,7 @@ function verify(nretry)
     }
 
     var texts = destination.childNodes;
+    var markedText = null;
     for (var i = 0; i < texts.length; ++i) {
         if (internals.markerCountForNode(texts[i], "spelling")) { 
             markedText = internals.markerRangeForNode(texts[i], "spelling", 0).toString();
