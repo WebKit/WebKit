@@ -32,7 +32,7 @@ module window {
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
-        JSCustomGetOwnPropertySlotDelegate,
+        JSCustomGetOwnPropertySlotAndDescriptor,
         CustomNamedSetter,
         JSGenerateIsReachable=ImplFrame,
         CustomDeleteProperty,

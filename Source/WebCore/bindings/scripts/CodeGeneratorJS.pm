@@ -469,7 +469,7 @@ sub GenerateGetOwnPropertySlotBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
         push(@getOwnPropertySlotImpl, "    if (thisObject->getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
     }
@@ -570,7 +570,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}) {
+    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (thisObject->getOwnPropertyDescriptorDelegate(exec, propertyName, descriptor))\n");
         push(@getOwnPropertyDescriptorImpl, "        return true;\n");
     }
@@ -758,7 +758,7 @@ sub GenerateHeader
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
                  || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
-                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
+                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
                  || $dataNode->extendedAttributes->{"CustomNamedGetter"};
 
@@ -767,8 +767,8 @@ sub GenerateHeader
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);\n");
         push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomNamedGetter"};
-        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
-        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"};
+        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
+        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
 
@@ -1623,7 +1623,7 @@ sub GenerateImplementation
                  || !$dataNode->extendedAttributes->{"OmitConstructor"} 
                  || $dataNode->extendedAttributes->{"IndexedGetter"}
                  || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
-                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotDelegate"}
+                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"NamedGetter"}
                  || $dataNode->extendedAttributes->{"CustomNamedGetter"};

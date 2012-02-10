@@ -22,7 +22,7 @@ module html {
 
     interface [
         CustomNamedSetter,
-        JSCustomGetOwnPropertySlotDelegate,
+        JSCustomGetOwnPropertySlotAndDescriptor,
         CustomCall
     ] HTMLEmbedElement : HTMLElement {
     attribute [Reflect] DOMString align;

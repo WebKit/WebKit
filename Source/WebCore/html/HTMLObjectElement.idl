@@ -22,7 +22,7 @@ module html {
 
     interface [
         CustomNamedSetter,
-        JSCustomGetOwnPropertySlotDelegate,
+        JSCustomGetOwnPropertySlotAndDescriptor,
         CustomCall
     ] HTMLObjectElement : HTMLElement {
         readonly attribute HTMLFormElement form;

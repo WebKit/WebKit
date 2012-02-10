@@ -1,3 +1,30 @@
+2012-02-10  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [JSCustomGetOwnPropertySlotDelegate] to [JSCustomGetOwnPropertySlotAndDescriptor]
+        https://bugs.webkit.org/show_bug.cgi?id=78352
+
+        Reviewed by Adam Barth.
+
+        [JSCustomGetOwnPropertySlotDelegate] is used for "flexibly customizable"
+        named getter. It allows us to write custom code for getOwnPropertySlotDelegate()
+        and getOwnPropertyDescriptorDelegate(). To clarify that, we can rename
+        [JSCustomGetOwnPropertySlotDelegate] to [JSCustomGetOwnPropertySlotAndDescriptor].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * workers/WorkerContext.idl:
+
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
         Minor ScrollAnimatorMac cleanup
