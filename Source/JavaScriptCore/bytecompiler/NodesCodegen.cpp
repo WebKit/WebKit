@@ -142,7 +142,7 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
 
 bool ResolveNode::isPure(BytecodeGenerator& generator) const
 {
-    return generator.isLocal(m_ident);
+    return generator.resolve(m_ident).isStatic();
 }
 
 RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -792,7 +792,7 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
 {
     ResolveResult resolveResult = generator.resolve(m_ident);
     if (RegisterID* local = resolveResult.local()) {
-        if (generator.isLocalConstant(m_ident)) {
+        if (resolveResult.isReadOnly()) {
             if (dst == generator.ignoredResult())
                 return 0;
             RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);

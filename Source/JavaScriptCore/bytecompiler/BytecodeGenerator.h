@@ -262,9 +262,6 @@ namespace JSC {
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
 
-        bool isLocal(const Identifier&);
-        bool isLocalConstant(const Identifier&);
-
         // Returns the next available temporary register. Registers returned by
         // newTemporary require a modified form of reference counting: any
         // register with a refcount of 0 is considered "available", meaning that

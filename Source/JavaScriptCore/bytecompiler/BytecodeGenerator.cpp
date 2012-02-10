@@ -561,19 +561,6 @@ RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
     return reg;
 }
 
-bool BytecodeGenerator::isLocal(const Identifier& ident)
-{
-    if (ident == propertyNames().thisIdentifier)
-        return true;
-    
-    return shouldOptimizeLocals() && symbolTable().contains(ident.impl());
-}
-
-bool BytecodeGenerator::isLocalConstant(const Identifier& ident)
-{
-    return symbolTable().get(ident.impl()).isReadOnly();
-}
-
 RegisterID* BytecodeGenerator::newRegister()
 {
     m_calleeRegisters.append(m_calleeRegisters.size());

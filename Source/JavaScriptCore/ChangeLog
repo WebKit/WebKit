@@ -1,3 +1,24 @@
+2012-02-09  Andy Wingo  <wingo@igalia.com>
+
+        Remove BytecodeGenerator::isLocal
+        https://bugs.webkit.org/show_bug.cgi?id=78241
+
+        Minor refactor to BytecodeGenerator.
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::isLocal):
+        (JSC::BytecodeGenerator::isLocalConstant): Remove now-unused
+        methods.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::isPure): Use the ResolveResult mechanism
+        instead of isLocal.  This will recognize more resolve nodes as
+        being pure.
+        (JSC::PrefixResolveNode::emitBytecode): Use isReadOnly on the
+        location instead of isLocalConstant.
+
 2012-02-09  Oliver Hunt  <oliver@apple.com>
 
         The JS Parser scope object needs a VectorTrait specialization
