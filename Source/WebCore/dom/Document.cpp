@@ -545,7 +545,6 @@ Document::~Document()
     ASSERT(!m_parser || m_parser->refCount() == 1);
     detachParser();
     m_document = 0;
-    m_cachedResourceLoader.clear();
 
     m_renderArena.clear();
 
@@ -577,6 +576,9 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
+
+    clearStyleSelector(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
+    m_cachedResourceLoader.clear();
 
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.

@@ -1,3 +1,18 @@
+2012-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CachedResourceLoader is destroyed before CSSFontSelector is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=77817
+
+        Reviewed by Adam Barth.
+
+        Explicitly clear style selector before destorying the cached resource loader.
+
+        No new tests but PerformanceTests/Parser/html5-full-render.html was crashing
+        on performance bots due to this bug.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+
 2012-02-09  Anders Carlsson  <andersca@apple.com>
 
         Update the scroll layer position on the main thread when we have slow repaint objects
