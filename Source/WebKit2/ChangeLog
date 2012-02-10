@@ -1,5 +1,15 @@
 2012-02-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Managed network proxy settings are not used in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=78288
+        <rdar://problem/9962116>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb: Allow reading managed preferences.
+
+2012-02-09  Alexey Proskuryakov  <ap@apple.com>
+
         ASSERTION FAILED: checkURLReceivedFromWebProcess(originalURL) loading a local file, if the WebProcess crashed
         https://bugs.webkit.org/show_bug.cgi?id=70845
         <rdar://problem/10269985>

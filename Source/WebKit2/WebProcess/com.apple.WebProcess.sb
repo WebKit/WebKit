@@ -24,6 +24,7 @@
        (subpath "/Library/Dictionaries")
        (subpath "/Library/Fonts")
        (subpath "/Library/Frameworks")
+       (subpath "/Library/Managed Preferences")
        (subpath "/private/var/db/mds")
        (subpath "/private/var/db/DetachedSignatures")
        (regex #"^/private/etc/(hosts|group|passwd)$")
