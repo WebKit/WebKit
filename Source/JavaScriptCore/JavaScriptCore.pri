@@ -30,7 +30,6 @@ INCLUDEPATH += \
     $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
 
 win32-* {
-    DEFINES += _HAS_TR1=0
     LIBS += -lwinmm
 
     win32-g++* {
