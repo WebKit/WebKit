@@ -28,8 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import hashlib
+import json
 import re
 
+from datetime import datetime
 from google.appengine.ext import db
 
 
@@ -121,6 +123,61 @@ class ReportLog(db.Model):
     timestamp = db.DateTimeProperty(required=True)
     headers = db.TextProperty()
     payload = db.TextProperty()
+    commit = db.BooleanProperty()
+
+    def _parsed_payload(self):
+        if self.__dict__.get('_parsed') == None:
+            try:
+                self._parsed = json.loads(self.payload)
+            except ValueError:
+                self._parsed = False
+        return self._parsed
+
+    def get_value(self, keyName):
+        if not self._parsed_payload():
+            return None
+        return self._parsed.get(keyName, '')
+
+    def results(self):
+        return self.get_value('results')
+
+    def builder(self):
+        return self._model_by_key_name_in_payload(Builder, 'builder-name')
+
+    def branch(self):
+        return self._model_by_key_name_in_payload(Branch, 'branch')
+
+    def platform(self):
+        return self._model_by_key_name_in_payload(Platform, 'platform')
+
+    def build_number(self):
+        return self._integer_in_payload('build-number')
+
+    def webkit_revision(self):
+        return self._integer_in_payload('webkit-revision')
+
+    def chromium_revision(self):
+        return self._integer_in_payload('chromium-revision')
+
+    def _model_by_key_name_in_payload(self, model, keyName):
+        key = self.get_value(keyName)
+        if not key:
+            return None
+        return model.get_by_key_name(key)
+
+    def _integer_in_payload(self, keyName):
+        try:
+            return int(self.get_value(keyName))
+        except ValueError:
+            return None
+
+    def timestamp(self):
+        try:
+            return datetime.fromtimestamp(self._integer_in_payload('timestamp'))
+        except TypeError:
+            return None
+        except ValueError:
+            return None
 
 
 # Used when memcache entry is evicted

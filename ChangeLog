@@ -1,3 +1,57 @@
+2012-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic should process reports in background
+        https://bugs.webkit.org/show_bug.cgi?id=78309
+
+        Reviewed by Hajime Morita.
+
+        Split the logic to create Build, Test, and TestResult objects from ReportHandler into ReportProcessHandler.
+        ReportHandler now merely creates ReportLog and schedules a task to process it.
+
+        Also added ReportLogHandler to manage stale ReportLogs.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_manifest_update):
+        (schedule_dashboard_update):
+        (schedule_runs_update):
+        (CachedRunsHandler.get):
+        (schedule_report_process):
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/merge_tests.html: Renamed from Websites/webkit-perf.appspot.com/merge_tests.yaml.
+        * Websites/webkit-perf.appspot.com/models.py:
+        (ReportLog):
+        (ReportLog._parsed_payload):
+        (ReportLog.get_value):
+        (ReportLog.results):
+        (ReportLog.builder):
+        (ReportLog.branch):
+        (ReportLog.platform):
+        (ReportLog.build_number):
+        (ReportLog.webkit_revision):
+        (ReportLog.chromium_revision):
+        (ReportLog._model_by_key_name_in_payload):
+        (ReportLog._integer_in_payload):
+        (ReportLog.timestamp):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+        (ReportHandler._output):
+        (ReportHandler._results_are_valid):
+        (ReportHandler._results_are_valid._is_float_convertible):
+        (ReportHandler):
+        * Websites/webkit-perf.appspot.com/report_logs.html: Added.
+        * Websites/webkit-perf.appspot.com/report_logs_handler.py: Added.
+        (ReportLogsHandler):
+        (ReportLogsHandler.get):
+        (ReportLogsHandler.post):
+        (ReportLogsHandler._error):
+        * Websites/webkit-perf.appspot.com/report_process_handler.py: Copied from Websites/webkit-perf.appspot.com/report_handler.py.
+        (ReportProcessHandler):
+        (ReportProcessHandler.post):
+        (ReportProcessHandler._create_build_if_possible):
+        (ReportProcessHandler._create_build_if_possible.execute):
+        (ReportProcessHandler._add_test_if_needed):
+
 2012-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf-o-matic shouldn't rely on memcache to store cached JSON responses

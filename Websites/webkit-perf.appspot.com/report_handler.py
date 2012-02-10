@@ -32,21 +32,10 @@ from google.appengine.ext import db
 
 import json
 import re
-import time
 from datetime import datetime
 
-from controller import schedule_runs_update
-from controller import schedule_dashboard_update
-from controller import schedule_manifest_update
-from models import Builder
-from models import Branch
-from models import Build
-from models import NumericIdHolder
-from models import Platform
 from models import ReportLog
-from models import Test
-from models import TestResult
-from models import create_in_transaction_with_numeric_id_holder
+from controller import schedule_report_process
 
 
 class ReportHandler(webapp2.RequestHandler):
@@ -60,87 +49,45 @@ class ReportHandler(webapp2.RequestHandler):
         log = ReportLog(timestamp=datetime.now(), headers=headers, payload=request_body_without_password)
         log.put()
 
+        self._encountered_error = False
+
         try:
-            self._body = json.loads(self.request.body)
+            parsedPayload = json.loads(self.request.body)
+            password = parsedPayload.get('password', '')
         except ValueError:
             return self._output('Failed to parse the payload as a json. Report key: %d' % log.key().id())
 
-        builder = self._model_by_key_name_in_body_or_error(Builder, 'builder-name')
-        branch = self._model_by_key_name_in_body_or_error(Branch, 'branch')
-        platform = self._model_by_key_name_in_body_or_error(Platform, 'platform')
-        build_number = self._integer_in_body('build-number')
-        timestamp = self._timestamp_in_body()
-        revision = self._integer_in_body('webkit-revision')
-        chromium_revision = self._integer_in_body('webkit-revision') if 'chromium-revision' in self._body else None
+        builder = log.builder()
+        builder != None or self._output('No builder named "%s"' % log.get_value('builder-name'))
+        log.branch() != None or self._output('No branch named "%s"' % log.get_value('branch'))
+        log.platform() != None or self._output('No platform named "%s"' % log.get_value('platform'))
+        log.build_number() != None or self._output('Invalid build number "%s"' % log.get_value('build-number'))
+        log.timestamp() != None or self._output('Invalid timestamp "%s"' % log.get_value('timestamp'))
+        log.webkit_revision() != None or self._output('Invalid webkit revision "%s"' % log.get_value('webkit-revision'))
 
         failed = False
-        if builder and not (self.bypass_authentication() or builder.authenticate(self._body.get('password', ''))):
+        if builder and not (self.bypass_authentication() or builder.authenticate(password)):
             self._output('Authentication failed')
-            failed = True
 
-        if not self._results_are_valid():
+        if not self._results_are_valid(log):
             self._output("The payload doesn't contain results or results are malformed")
-            failed = True
 
-        if not (builder and branch and platform and build_number and revision and timestamp) or failed:
+        if self._encountered_error:
             return
 
-        build = self._create_build_if_possible(builder, build_number, branch, platform, timestamp, revision, chromium_revision)
-        if not build:
-            return
-
-        def _float_or_none(dictionary, key):
-            value = dictionary.get(key)
-            if value:
-                return float(value)
-            return None
-
-        for test_name, result in self._body['results'].iteritems():
-            test = self._add_test_if_needed(test_name, branch, platform)
-            schedule_runs_update(test.id, branch.id, platform.id)
-            if isinstance(result, dict):
-                TestResult(name=test_name, build=build, value=float(result['avg']), valueMedian=_float_or_none(result, 'median'),
-                    valueStdev=_float_or_none(result, 'stdev'), valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max')).put()
-            else:
-                TestResult(name=test_name, build=build, value=float(result)).put()
-
-        log = ReportLog.get(log.key())
-        log.delete()
-
-        # We need to update dashboard and manifest because they are affected by the existance of test results
-        schedule_dashboard_update()
-        schedule_manifest_update()
-
-        return self._output('OK')
-
-    def _model_by_key_name_in_body_or_error(self, model, keyName):
-        key = self._body.get(keyName, '')
-        instance = key and model.get_by_key_name(key)
-        if not instance:
-            self._output('There are no %s named "%s"' % (model.__name__.lower(), key))
-        return instance
-
-    def _integer_in_body(self, key):
-        value = self._body.get(key, '')
-        try:
-            return int(value)
-        except:
-            return self._output('Invalid %s: "%s"' % (key.replace('-', ' '), value))
-
-    def _timestamp_in_body(self):
-        value = self._body.get('timestamp', '')
-        try:
-            return datetime.fromtimestamp(int(value))
-        except:
-            return self._output('Failed to parse the timestamp: %s' % value)
+        log.commit = True
+        log.put()
+        schedule_report_process(log)
+        self._output("OK")
 
     def _output(self, message):
+        self._encountered_error = True
         self.response.out.write(message + '\n')
 
     def bypass_authentication(self):
         return False
 
-    def _results_are_valid(self):
+    def _results_are_valid(self, log):
 
         def _is_float_convertible(value):
             try:
@@ -148,11 +95,13 @@ class ReportHandler(webapp2.RequestHandler):
                 return True
             except TypeError:
                 return False
+            except ValueError:
+                return False
 
-        if 'results' not in self._body or not isinstance(self._body['results'], dict):
+        if not isinstance(log.results(), dict):
             return False
 
-        for testResult in self._body['results'].values():
+        for testResult in log.results().values():
             if isinstance(testResult, dict):
                 for value in testResult.values():
                     if not _is_float_convertible(value):
@@ -164,34 +113,6 @@ class ReportHandler(webapp2.RequestHandler):
                 return False
 
         return True
-
-    def _create_build_if_possible(self, builder, build_number, branch, platform, timestamp, revision, chromium_revision):
-        key_name = builder.name + ':' + str(int(time.mktime(timestamp.timetuple())))
-
-        def execute():
-            build = Build.get_by_key_name(key_name)
-            if build:
-                return self._output('The build at %s already exists for %s' % (str(timestamp), builder.name))
-
-            return Build(branch=branch, platform=platform, builder=builder, buildNumber=build_number,
-                timestamp=timestamp, revision=revision, chromiumRevision=chromium_revision, key_name=key_name).put()
-        return db.run_in_transaction(execute)
-
-    def _add_test_if_needed(self, test_name, branch, platform):
-
-        def execute(id):
-            test = Test.get_by_key_name(test_name)
-            returnValue = None
-            if not test:
-                test = Test(id=id, name=test_name, key_name=test_name)
-                returnValue = test
-            if branch.key() not in test.branches:
-                test.branches.append(branch.key())
-            if platform.key() not in test.platforms:
-                test.platforms.append(platform.key())
-            test.put()
-            return returnValue
-        return create_in_transaction_with_numeric_id_holder(execute) or Test.get_by_key_name(test_name)
 
 
 class AdminReportHandler(ReportHandler):

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre>{{ status }}</pre>
+<h1>Report logs</h1>
+
+<style type="text/css" scoped>
+
+table { width: 100%; border: solid 1px #ccc; border-collapse: collapse; }
+td { border: solid 1px #ccc; padding: 5px; }
+.control code { display: none; }
+code { white-space: pre-wrap; }
+form { display: inline; }
+
+</style>
+<script>
+
+$ = function (id) { return document.getElementById(id); }
+
+function show(id) {
+    var row = $('row_' + id);
+    var code = row.querySelector('code');
+    if (!code)
+        return;
+    var newRow = document.createElement('tr');
+    newRow.appendChild(document.createElement('td'));
+    newRow.firstChild.appendChild(code);
+    newRow.firstChild.colSpan = 8;
+    row.parentNode.insertBefore(newRow, row.nextSibling);
+    try {
+        code.textContent = JSON.stringify(JSON.parse(code.textContent), null, 2);
+    } catch (e) { }
+}
+
+function submit(form, event) {
+    if (!confirm('Are you sure?'))
+        event.preventDefault();
+}
+
+</script>
+<table>
+<thead>
+<tr>
+    <td>Id</td>
+    <td>Branch</td>
+    <td>Platform</td>
+    <td>Builder</td>
+    <td>Build</td>
+    <td>WebKit revision</td>
+    <td>Chromium revision</td>
+    <td class="control">Payload</td>
+</tr>
+</thead>
+<tbody>
+{% for log in logs %}
+<tr id="row_{{ log.key.id }}">
+    <td>{{ log.key.id }}</td>
+    <td>{{ log.branch.name }}</td>
+    <td>{{ log.platform.name }}</td>
+    <td><a href="http://build.webkit.org/builders/{{ log.builder.name }}/">{{ log.builder.name }}</a></td>
+    <td><a href="http://build.webkit.org/builders/{{ log.builder.name }}/builds/{{ log.build_number }}">{{ log.build_number }}</a></td>
+    <td><a href="http://trac.webkit.org/changeset/{{ log.webkit_revision }}">{{ log.webkit_revision }}</a></td>
+    <td><a href="http://src.chromium.org/viewvc/chrome?view=rev&amp;revision={{ log.chromium_revision }}">{{ log.chromium_revision }}</a></td>
+    <td class="control"><button onclick="show({{ log.key.id }})">Show</button>
+        <form method="post" action="/admin/report-logs" onsubmit="submit(this, event)">
+        <input type="hidden" name="id" value="{{ log.key.id }}">
+        <button name="commit" value="true">Commit</button>
+        <button name="delete" value="true">Delete</button></form>
+        <code>{{ log.payload }}</code></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</body>
+</html>
