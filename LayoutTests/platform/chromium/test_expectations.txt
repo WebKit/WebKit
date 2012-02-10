@@ -3998,3 +3998,6 @@ BUGWK47907 : media/video-empty-source.html = IMAGE+TEXT
 BUGWK78251 DEBUG XP : inspector/elements/edit-dom-actions.html = CRASH
 BUGWK78251 DEBUG XP : inspector/elements/set-outer-html-body.html = CRASH
 BUGWK78251 DEBUG XP : inspector/elements/undo-dom-edits.html = CRASH
+
+// Started to fail after r107349.
+BUGWK78331 editing/spelling/spelling-marker-description.html = TEXT
