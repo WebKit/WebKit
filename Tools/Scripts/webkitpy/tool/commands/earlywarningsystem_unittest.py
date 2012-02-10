@@ -67,7 +67,10 @@ class EarlyWarningSytemTest(QueuesTest):
 
     def _test_builder_ews(self, ews):
         ews.bind_to_tool(MockTool())
-        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews))
+        options = Mock()
+        options.port = None
+        options.run_tests = ews._default_run_tests
+        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), options=options)
 
     def _test_testing_ews(self, ews):
         ews.layout_test_results = lambda: None

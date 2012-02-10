@@ -1,3 +1,20 @@
+2012-02-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] EWS command-line option to run the tests
+        https://bugs.webkit.org/show_bug.cgi?id=78211
+
+        Reviewed by Adam Barth.
+
+        New --run-tests option (defaults to False) for the EWS commands.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem):
+        (AbstractEarlyWarningSystem.__init__):
+        (AbstractEarlyWarningSystem.review_patch):
+        (ChromiumLinuxEWS):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest._test_builder_ews):
+
 2012-02-09  Eric Seidel  <eric@webkit.org>
 
         Rename compare_text and compare_audio to make it clear that they're !=
