@@ -1,3 +1,17 @@
+2012-02-10  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream graphics helper classes in WebKitSupport
+        https://bugs.webkit.org/show_bug.cgi?id=78278
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebKitSupport/SurfacePool.cpp: Added.
+        * blackberry/WebKitSupport/SurfacePool.h: Added.
+        * blackberry/WebKitSupport/TileIndex.h: Added.
+        * blackberry/WebKitSupport/TileIndexHash.h: Added.
+
 2012-02-09  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream JavaScriptDebuggerBlackBerry.{h, cpp}
