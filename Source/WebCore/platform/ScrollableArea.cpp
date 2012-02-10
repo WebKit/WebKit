@@ -133,19 +133,9 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
     if (orientation == HorizontalScrollbar)
-        scrollToXOffsetWithoutAnimation(offset);
+        scrollToOffsetWithoutAnimation(FloatPoint(offset, scrollAnimator()->currentPosition().y()));
     else
-        scrollToYOffsetWithoutAnimation(offset);
-}
-
-void ScrollableArea::scrollToXOffsetWithoutAnimation(float x)
-{
-    scrollToOffsetWithoutAnimation(FloatPoint(x, scrollAnimator()->currentPosition().y()));
-}
-
-void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
-{
-    scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), y));
+        scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), offset));
 }
 
 void ScrollableArea::zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState)

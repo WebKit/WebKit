@@ -47,8 +47,6 @@ public:
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void scrollToOffsetWithoutAnimation(const FloatPoint&);
     void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
-    void scrollToXOffsetWithoutAnimation(float x);
-    void scrollToYOffsetWithoutAnimation(float x);
 
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 

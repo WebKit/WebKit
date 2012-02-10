@@ -255,7 +255,7 @@ void RenderListBox::computeLogicalHeight()
         m_vBar->setSteps(1, max(1, numVisibleItems() - 1), itemHeight);
         m_vBar->setProportion(numVisibleItems(), numItems());
         if (!enabled) {
-            scrollToYOffsetWithoutAnimation(0);
+            scrollToOffsetWithoutAnimation(VerticalScrollbar, 0);
             m_indexOffset = 0;
         }
     }
@@ -579,7 +579,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     else
         newOffset = index - numVisibleItems() + 1;
 
-    ScrollableArea::scrollToYOffsetWithoutAnimation(newOffset);
+    scrollToOffsetWithoutAnimation(VerticalScrollbar, newOffset);
 
     return true;
 }
@@ -675,7 +675,7 @@ void RenderListBox::setScrollTop(int newTop)
     if (index < 0 || index >= numItems() || index == m_indexOffset)
         return;
     
-    ScrollableArea::scrollToYOffsetWithoutAnimation(index);
+    scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
