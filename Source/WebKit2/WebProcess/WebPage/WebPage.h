@@ -536,10 +536,10 @@ private:
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String&);
     void linkClicked(const String& url, const WebMouseEvent&);
-    void reload(bool reloadFromOrigin);
-    void goForward(uint64_t, const SandboxExtension::Handle&);
-    void goBack(uint64_t, const SandboxExtension::Handle&);
-    void goToBackForwardItem(uint64_t, const SandboxExtension::Handle&);
+    void reload(bool reloadFromOrigin, const SandboxExtension::Handle&);
+    void goForward(uint64_t);
+    void goBack(uint64_t);
+    void goToBackForwardItem(uint64_t);
     void tryRestoreScrollPosition();
     void setActive(bool);
     void setFocused(bool);
@@ -567,7 +567,7 @@ private:
     static void logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
     uint64_t restoreSession(const SessionState&);
-    void restoreSessionAndNavigateToCurrentItem(const SessionState&, const SandboxExtension::Handle&);
+    void restoreSessionAndNavigateToCurrentItem(const SessionState&);
 
     void didRemoveBackForwardItem(uint64_t);
 

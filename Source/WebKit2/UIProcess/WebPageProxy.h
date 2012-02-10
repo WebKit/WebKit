@@ -743,7 +743,7 @@ private:
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
-    void backForwardGoToItem(uint64_t itemID);
+    void backForwardGoToItem(uint64_t itemID, SandboxExtension::Handle&);
     void backForwardItemAtIndex(int32_t index, uint64_t& itemID);
     void backForwardBackListCount(int32_t& count);
     void backForwardForwardListCount(int32_t& count);

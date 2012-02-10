@@ -156,7 +156,7 @@ messages -> WebPageProxy {
 
     # BackForward messages
     BackForwardAddItem(uint64_t itemID)
-    BackForwardGoToItem(uint64_t itemID)
+    BackForwardGoToItem(uint64_t itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     BackForwardItemAtIndex(int32_t itemIndex) -> (uint64_t itemID)
     BackForwardBackListCount() -> (int32_t count)
     BackForwardForwardListCount() -> (int32_t count)

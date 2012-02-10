@@ -1,3 +1,57 @@
+2012-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERTION FAILED: checkURLReceivedFromWebProcess(originalURL) loading a local file, if the WebProcess crashed
+        https://bugs.webkit.org/show_bug.cgi?id=70845
+        <rdar://problem/10269985>
+
+        Reviewed by Anders Carlsson.
+
+        This also fixes some case where WebProcess did not get a sandbox extension after a crash.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem): We no longer need to pass a sandbox
+        extension here, we're now passing it at b/f navigation bottleneck.
+        (WebKit::WebPageProxy::reload): Pass a sandbox extension - reload may mean reloading an error
+        page after a crash, so WebProcess may no longer have the extension.
+        (WebKit::WebPageProxy::goForward): We no longer need to pass a sandbox extension here,
+        we're now passing it at b/f navigation bottleneck. Also, fixed a bug where we first null checked
+        a WebBackForwardListItem pointer, and then used it anyway.
+        (WebKit::WebPageProxy::goBack): Ditto.
+        (WebKit::WebPageProxy::goToBackForwardItem): Ditto.
+        (WebKit::WebPageProxy::backForwardGoToItem): This is the bottleneck. We get here both for UI
+        actions like pressing the Back button, and for window.history.go() navigations. JS navigations
+        previously didn't open up the sandbox. URLs in UI process b/f list are trusted, so it's
+        always OK to grant a sandbox extension if one of them is a file: one.
+
+        * UIProcess/WebPageProxy.h: backForwardGoToItem() now returns a sandbox extension handle.
+
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess): If a URL is in UI process b/f
+        list, then it has been already vetted as something the Web process knows about. No need to
+        crash if it actually attempts going there.
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage): Removed a useless comment (we have tons
+        of fprintfs besides this one). Fixed log message syntax.
+
+        * UIProcess/cf/WebPageProxyCF.cpp: (WebKit::WebPageProxy::restoreFromSessionStateData):
+        We no longer need to pass a sandbox extension here, we're now passing it at b/f navigation
+        bottleneck. 
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: (WebKit::WebBackForwardListProxy::goToItem):
+        We now get an extension here, when telling UI process that we're navigating to a b/f list item.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reload): Use the extension we're getting.
+        (WebKit::WebPage::goForward): Don't use one we're not getting.
+        (WebKit::WebPage::goBack): Ditto.
+        (WebKit::WebPage::goToBackForwardItem): Ditto.
+        (WebKit::WebPage::restoreSessionAndNavigateToCurrentItem): Ditto.
+
+        * WebProcess/WebPage/WebPage.h: Adjusted signatures accordingly.
+
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
 2012-02-09  Matthew Delaney  <mdelaney@apple.com>
 
         HiDPI: WebKit2's drag images are blurry

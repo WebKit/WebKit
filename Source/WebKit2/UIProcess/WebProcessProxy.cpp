@@ -245,7 +245,17 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
             return true;
     }
 
+    // Items in back/forward list have been already checked.
+    // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
+    for (WebBackForwardListItemMap::iterator iter = m_backForwardListItemMap.begin(), end = m_backForwardListItemMap.end(); iter != end; ++iter) {
+        if (KURL(KURL(), iter->second->url()).fileSystemPath() == path)
+            return true;
+        if (KURL(KURL(), iter->second->originalURL()).fileSystemPath() == path)
+            return true;
+    }
+
     // A Web process that was never asked to load a file URL should not ever ask us to do anything with a file URL.
+    fprintf(stderr, "Received an unexpected URL from the web process: '%s'\n", url.string().utf8().data());
     return false;
 }
 
@@ -368,9 +378,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
 void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
 {
-    // This fprintf is intentionally left because this function should 
-    // only be hit in the case of a misbehaving web process.
-    fprintf(stderr, "Receive an invalid message from the web process with message ID %x\n", messageID.toInt());
+    fprintf(stderr, "Received an invalid message from the web process with message ID %x\n", messageID.toInt());
 
     // Terminate the WebProcesses.
     terminate();
