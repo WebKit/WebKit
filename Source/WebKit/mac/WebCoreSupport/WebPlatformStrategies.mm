@@ -30,6 +30,7 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
+#import <WebCore/PlatformPasteboard.h>
 
 using namespace WebCore;
 
@@ -54,6 +55,11 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 }
 
 VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
+{
+    return this;
+}
+
+PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 {
     return this;
 }
@@ -89,4 +95,58 @@ bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash, const KURL&
 void WebPlatformStrategies::addVisitedLink(Page* page, LinkHash hash)
 {
     return page->group().addVisitedLinkHash(hash);
+}
+
+void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    pasteboard.getTypes(types);
+}
+
+PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.bufferForType(pasteboardType);
+}
+
+void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    pasteboard.getPathnamesForType(pathnames, pasteboardType);
+}
+
+String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.stringForType(pasteboardType);
+}
+
+void WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
+{
+    PlatformPasteboard pasteboard(toPasteboard);
+    return pasteboard.copy(fromPasteboard);
+}
+
+void WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.setTypes(pasteboardTypes);
+}
+
+void WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.setBufferForType(buffer, pasteboardType);
+}
+
+void WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    pasteboard.setPathnamesForType(pathnames, pasteboardType);
+}
+
+void WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.setStringForType(string, pasteboardType);    
 }

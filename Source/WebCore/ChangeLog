@@ -1,3 +1,65 @@
+2012-02-10  Enrica Casucci  <enrica@apple.com>
+
+        Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.
+        https://bugs.webkit.org/show_bug.cgi?id=78282
+
+        This patch removes any accesss to the NSPasteboard object from the Pasteboard class which
+        now makes use of a new pasteboardStrategy object that is implemented both in WebKit and
+        WebKit2. The actual access to NSPasteboard is now performed inside the PlatformPasteboard
+        class. Currently both WebKit and WebKit2 use the same implementation of the PasteboardStrategy
+        interface but this one more step in the direction of removing access to NSPasteboard from
+        the WebProcess.
+        As part of the refactoring the I've reduced to a minimum the use of OBJ-C classes.
+        
+        Reviewed by Anders Carlsson.
+
+        No new tests. No change in behavior, just code refactoring.
+
+        * WebCore.exp.in: Added exported class PlatformPasteboard.
+        * WebCore.xcodeproj/project.pbxproj: Added new files to the build.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeSelectionToPasteboard): New method signature that doesn't use OBJ-C types.
+        * platform/Pasteboard.h:
+
+        * platform/PasteboardStrategy.h: Added PasteboardStrategy abstract class.
+        * platform/PlatformPasteboard.h: Added. This class implements access to NSPasteboard.
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::pasteboardStrategy): Added.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::insertablePasteboardTypes): 
+        (WebCore::DragData::asURL):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::selectionPasteboardTypes): Changed to use Vector<String> instead of NSArray.
+        (WebCore::writableTypesForURL): Ditto.
+        (WebCore::createWritableTypesForImage): Ditto.
+        (WebCore::writableTypesForImage): Ditto.
+        (WebCore::Pasteboard::Pasteboard): Removed access to NSPasteboard.
+        (WebCore::Pasteboard::clear): Modified to use platformStrategies()->pasteboardStrategy().
+        (WebCore::Pasteboard::writeSelectionForTypes): Ditto.
+        (WebCore::Pasteboard::writePlainText): Ditto.
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        (WebCore::writeURLForTypes): Ditto.
+        (WebCore::Pasteboard::writeURL): Ditto.
+        (WebCore::writeFileWrapperAsRTFDAttachment): Ditto.
+        (WebCore::Pasteboard::writeImage): Ditto.
+        (WebCore::Pasteboard::writeClipboard): Ditto.
+        (WebCore::Pasteboard::canSmartReplace): Ditto.
+        (WebCore::Pasteboard::plainText): Ditto.
+        (WebCore::documentFragmentWithRTF): Ditto.
+        (WebCore::Pasteboard::documentFragment): Ditto.
+        * platform/mac/PlatformPasteboardMac.mm: Added.
+        (WebCore::PlatformPasteboard::PlatformPasteboard):
+        (WebCore::PlatformPasteboard::getTypes):
+        (WebCore::PlatformPasteboard::bufferForType):
+        (WebCore::PlatformPasteboard::getPathnamesForType):
+        (WebCore::PlatformPasteboard::stringForType):
+        (WebCore::PlatformPasteboard::copy):
+        (WebCore::PlatformPasteboard::setTypes):
+        (WebCore::PlatformPasteboard::setBufferForType):
+        (WebCore::PlatformPasteboard::setPathnamesForType):
+        (WebCore::PlatformPasteboard::setStringForType):
+
 2012-02-10  Kentaro Hara  <haraken@chromium.org>
 
         Rename [JSCustomGetOwnPropertySlotDelegate] to [JSCustomGetOwnPropertySlotAndDescriptor]
@@ -88,6 +150,7 @@
         Always recompute the non-fast-scrollable region whenever a frame view's layout is updated,
         not just the main frame.
 
+>>>>>>> .r107433
 2012-02-09  Chris Marrin  <cmarrin@apple.com>
 
         Implement hardware animation of CSS filters

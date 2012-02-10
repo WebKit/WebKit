@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#import "config.h"
+#import "PlatformPasteboard.h"
+
+namespace WebCore {
+
+PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
+    : m_pasteboard([NSPasteboard pasteboardWithName:pasteboardName])
+{
+    ASSERT(pasteboardName);
+}
+
+void PlatformPasteboard::getTypes(Vector<String>& types)
+{
+    NSArray *pasteboardTypes = [m_pasteboard.get() types];
+    
+    for (NSUInteger i = 0; i < [pasteboardTypes count]; i++)
+        types.append([pasteboardTypes objectAtIndex:i]);
+}
+
+PassRefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
+{
+    return SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:pasteboardType] copy] autorelease]);
+}
+
+void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType)
+{
+    NSArray* paths = [m_pasteboard.get() propertyListForType:pasteboardType];
+    for (NSUInteger i = 0; i < [paths count]; i++)
+        pathnames.append([paths objectAtIndex:i]);
+}
+
+String PlatformPasteboard::stringForType(const String& pasteboardType)
+{
+    return [m_pasteboard.get() stringForType:pasteboardType];
+}
+
+void PlatformPasteboard::copy(const String& fromPasteboard)
+{
+    NSPasteboard* pasteboard = [NSPasteboard pasteboardWithName:fromPasteboard];
+    NSArray* types = [pasteboard types];
+    
+    [m_pasteboard.get() addTypes:types owner:nil];
+    for (NSUInteger i = 0; i < [types count]; i++) {
+        NSString* type = [types objectAtIndex:i];
+        [m_pasteboard.get() setData:[pasteboard dataForType:type] forType:type];
+    }    
+}
+
+void PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
+{
+    if (pasteboardTypes.isEmpty()) {
+        [m_pasteboard.get() declareTypes:nil owner:nil];
+        return;
+    }
+
+    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] init]);
+    for (size_t i = 0; i < pasteboardTypes.size(); ++i)
+        [types.get() addObject:pasteboardTypes[i]];
+
+    [m_pasteboard.get() declareTypes:types.get() owner:nil];
+}
+
+void PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType)
+{
+    [m_pasteboard.get() setData:[buffer->createNSData() autorelease] forType:pasteboardType];
+}
+
+void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
+{
+    RetainPtr<NSMutableArray> paths(AdoptNS, [[NSMutableArray alloc] init]);    
+    for (size_t i = 0; i < pathnames.size(); ++i)
+        [paths.get() addObject:pathnames[i]];
+    [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];
+}
+
+void PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
+{
+    [m_pasteboard.get() setString:string forType:pasteboardType];
+}
+
+}

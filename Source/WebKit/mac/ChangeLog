@@ -1,3 +1,31 @@
+2012-02-10  Enrica Casucci  <enrica@apple.com>
+
+        Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.
+        https://bugs.webkit.org/show_bug.cgi?id=78282
+
+        This patch removes any accesss to the NSPasteboard object from the Pasteboard class which
+        now makes use of a new pasteboardStrategy object that is implemented both in WebKit and
+        WebKit2. The actual access to NSPasteboard is now performed inside the PlatformPasteboard
+        class. Currently both WebKit and WebKit2 use the same implementation of the PasteboardStrategy
+        interface but this one more step in the direction of removing access to NSPasteboard from
+        the WebProcess.
+        As part of the refactoring the I've reduced to a minimum the use of OBJ-C classes.
+        
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebPlatformStrategies.h: Added PasteboardStrategy.
+        * WebCoreSupport/WebPlatformStrategies.mm: Added implementation of PasteboardStrategy interface.
+        (WebPlatformStrategies::createPasteboardStrategy):
+        (WebPlatformStrategies::getTypes):
+        (WebPlatformStrategies::bufferForType):
+        (WebPlatformStrategies::getPathnamesForType):
+        (WebPlatformStrategies::stringForType):
+        (WebPlatformStrategies::copy):
+        (WebPlatformStrategies::setTypes):
+        (WebPlatformStrategies::setBufferForType):
+        (WebPlatformStrategies::setPathnamesForType):
+        (WebPlatformStrategies::setStringForType):
+
 2012-02-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] DYLIB_INSTALL_NAME_BASE should not be prefixed by the SDKROOT
