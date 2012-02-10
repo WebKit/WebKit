@@ -257,6 +257,16 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_with_script_execution_context_and_script_state_with_spaces(WebKitDOMTestObj* self);
 
 /**
+ * webkit_dom_test_obj_with_script_arguments_and_call_stack:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_with_script_arguments_and_call_stack(WebKitDOMTestObj* self);
+
+/**
  * webkit_dom_test_obj_method_with_optional_arg:
  * @self: A #WebKitDOMTestObj
  * @opt: A #glong
@@ -1147,6 +1157,27 @@ webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spac
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
+
+/**
+ * webkit_dom_test_obj_get_with_script_arguments_and_call_stack_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMTestObj*
+webkit_dom_test_obj_get_with_script_arguments_and_call_stack_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_with_script_arguments_and_call_stack_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_with_script_arguments_and_call_stack_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
  * webkit_dom_test_obj_get_script_string_attr:

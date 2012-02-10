@@ -236,7 +236,7 @@ void Console::trace(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
     }
 }
 
-void Console::assertCondition(bool condition, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+void Console::assertCondition(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, bool condition)
 {
     if (condition)
         return;
@@ -303,7 +303,7 @@ void Console::time(const String& title)
 #endif
 }
 
-void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
+void Console::timeEnd(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack, const String& title)
 {
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT_COPY_END0("webkit", title.utf8().data());

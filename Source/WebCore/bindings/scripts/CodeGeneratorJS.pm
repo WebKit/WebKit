@@ -2332,6 +2332,7 @@ sub GenerateCallWith
     return () unless $callWith;
     my $outputArray = shift;
     my $returnValue = shift;
+    my $function = shift;
 
     my @callWithArgs;
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
@@ -2342,6 +2343,17 @@ sub GenerateCallWith
         push(@$outputArray, "    if (!scriptContext)\n");
         push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
         push(@callWithArgs, "scriptContext");
+    }
+    if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
+        push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, " . @{$function->parameters} . "));\n");
+        $implIncludes{"ScriptArguments.h"} = 1;
+        push(@callWithArgs, "scriptArguments");
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
+        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));\n");
+        $implIncludes{"ScriptCallStack.h"} = 1;
+        $implIncludes{"ScriptCallStackFactory.h"} = 1;
+        push(@callWithArgs, "callStack");
     }
     return @callWithArgs;
 }
@@ -2397,16 +2409,8 @@ sub GenerateParametersCheck
         $functionName = "impl->${functionImplementationName}";
     }
 
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"} and !$function->isStatic) {
-        push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
-        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));\n");
-        $implIncludes{"ScriptArguments.h"} = 1;
-        $implIncludes{"ScriptCallStack.h"} = 1;
-        $implIncludes{"ScriptCallStackFactory.h"} = 1;
-    }
-
     if (!$function->signature->extendedAttributes->{"Constructor"}) {
-        push(@arguments, GenerateCallWith($function->signature->extendedAttributes->{"CallWith"}, \@$outputArray, "JSValue::encode(jsUndefined())"));
+        push(@arguments, GenerateCallWith($function->signature->extendedAttributes->{"CallWith"}, \@$outputArray, "JSValue::encode(jsUndefined())", $function));
     }
 
     $implIncludes{"ExceptionCode.h"} = 1;
@@ -2425,9 +2429,6 @@ sub GenerateParametersCheck
             push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
 
             my @optionalCallbackArguments = @arguments;
-            if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                push @optionalCallbackArguments, "scriptArguments, callStack";
-            }
             if (@{$function->raisesExceptions}) {
                 push @optionalCallbackArguments, "ec";
             }
@@ -2522,9 +2523,6 @@ sub GenerateParametersCheck
         $argsIndex++;
     }
 
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-        push @arguments, "scriptArguments, callStack";
-    }
     if (@{$function->raisesExceptions}) {
         push @arguments, "ec";
     }

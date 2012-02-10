@@ -50,7 +50,6 @@
 #import "DOMcInternal.h"
 #import "DOMdInternal.h"
 #import "DOMeInternal.h"
-#import "DOMlogInternal.h"
 #import "Document.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
@@ -76,7 +75,6 @@
 #import "c.h"
 #import "d.h"
 #import "e.h"
-#import "log.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -523,6 +521,20 @@
     IMPL->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(core(newWithScriptExecutionContextAndScriptStateWithSpacesAttribute));
 }
 
+- (DOMTestObj *)withScriptArgumentsAndCallStackAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->withScriptArgumentsAndCallStackAttribute()));
+}
+
+- (void)setWithScriptArgumentsAndCallStackAttribute:(DOMTestObj *)newWithScriptArgumentsAndCallStackAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newWithScriptArgumentsAndCallStackAttribute);
+
+    IMPL->setWithScriptArgumentsAndCallStackAttribute(core(newWithScriptArgumentsAndCallStackAttribute));
+}
+
 - (NSString *)scriptStringAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -772,14 +784,6 @@
     IMPL->customMethodWithArgs(intArg, strArg, core(objArg));
 }
 
-- (void)customArgsAndException:(DOMlog *)intArg
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->customArgsAndException(core(intArg), ec);
-    WebCore::raiseOnDOMError(ec);
-}
-
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
@@ -848,6 +852,12 @@
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->withScriptExecutionContextAndScriptStateWithSpaces()));
+}
+
+- (void)withScriptArgumentsAndCallStack
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->withScriptArgumentsAndCallStack();
 }
 
 - (void)methodWithOptionalArg:(int)opt

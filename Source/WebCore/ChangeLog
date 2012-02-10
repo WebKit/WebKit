@@ -1,3 +1,72 @@
+2012-02-09  Kentaro Hara  <haraken@chromium.org>
+
+        Replace [CustomArgumentHandling] with [CallWith=ScriptArguments|CallStack]
+        https://bugs.webkit.org/show_bug.cgi?id=78327
+
+        Reviewed by Adam Barth.
+
+        This patch replaces [CustomArgumentHandling] with [CallWith=ScriptArguments|CallStack],
+        and removes [CustomArgumentHandling].
+
+        Test: bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm: Modified to replace
+        [CustomArgumentHandling] with [CallWith=ScriptArguments|CallStack].
+        (GenerateCallWith):
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateCallWith):
+        * bindings/scripts/CodeGeneratorCPP.pm: Simply removed [CustomArgumentHandling]
+        from the skipped list. By this fix, CodeGeneratorCPP.pm will generate
+        meaningless code for attributes or methods which was previously marked as
+        [CustomArgumentHandling], but this change will be harmless.
+        (ShouldSkipType):
+        * bindings/scripts/CodeGeneratorGObject.pm: Ditto.
+        (SkipFunction):
+        (GenerateFunction):
+
+        * bindings/v8/custom/V8ConsoleCustom.cpp: Changed the argument order.
+        (WebCore::V8Console::assertCallback):
+        * page/Console.cpp: Ditto.
+        (WebCore::Console::assertCondition):
+        (WebCore::Console::timeEnd):
+        * page/Console.h: Ditto.
+        (Console):
+
+        * bindings/scripts/test/TestObj.idl: Added test cases for [CallWith=ScriptArguments|CallStack].
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated run-bindings-tests results.
+        (WebDOMTestObj::withScriptArgumentsAndCallStackAttribute):
+        (WebDOMTestObj::setWithScriptArgumentsAndCallStackAttribute):
+        (WebDOMTestObj::withScriptArgumentsAndCallStack):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_with_script_arguments_and_call_stack):
+        (webkit_dom_test_obj_get_with_script_arguments_and_call_stack_attribute):
+        (webkit_dom_test_obj_set_with_script_arguments_and_call_stack_attribute):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj withScriptArgumentsAndCallStackAttribute]):
+        (-[DOMTestObj setWithScriptArgumentsAndCallStackAttribute:]):
+        (-[DOMTestObj withScriptArgumentsAndCallStack]):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrGetter):
+        (TestObjInternal):
+        (WebCore::TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrSetter):
+        (WebCore::TestObjInternal::withScriptArgumentsAndCallStackCallback):
+        (WebCore):
+        (WebCore::ConfigureV8TestObjTemplate):
+
 2012-02-09  Adam Barth  <abarth@webkit.org>
 
         Dromaeo/dom-traverse.html should go fast
