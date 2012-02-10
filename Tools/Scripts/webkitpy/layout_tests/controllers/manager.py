@@ -867,7 +867,7 @@ class Manager(object):
             self._clobber_old_results()
 
         # Create the output directory if it doesn't already exist.
-        self._port.maybe_make_directory(self._results_directory)
+        self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
         self._port.setup_test_run()
 

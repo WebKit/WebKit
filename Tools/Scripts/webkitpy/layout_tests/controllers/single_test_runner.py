@@ -224,7 +224,7 @@ class SingleTestRunner:
         failures = []
         if (expected_text and actual_text and
             # Assuming expected_text is already normalized.
-            self._port.compare_text(self._get_normalized_output_text(actual_text), expected_text)):
+            self._port.do_text_results_differ(self._get_normalized_output_text(actual_text), expected_text)):
             failures.append(test_failures.FailureTextMismatch())
         elif actual_text and not expected_text:
             failures.append(test_failures.FailureMissingResult())
@@ -233,7 +233,7 @@ class SingleTestRunner:
     def _compare_audio(self, actual_audio, expected_audio):
         failures = []
         if (expected_audio and actual_audio and
-            self._port.compare_audio(actual_audio, expected_audio)):
+            self._port.do_audio_results_differ(actual_audio, expected_audio)):
             failures.append(test_failures.FailureAudioMismatch())
         elif actual_audio and not expected_audio:
             failures.append(test_failures.FailureMissingAudio())

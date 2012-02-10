@@ -105,7 +105,7 @@ class TestResultWriter(object):
         """Creates the output directory (if needed) for a given test filename."""
         fs = self._port._filesystem
         output_filename = fs.join(self._root_output_dir, self._test_name)
-        self._port.maybe_make_directory(fs.dirname(output_filename))
+        fs.maybe_make_directory(fs.dirname(output_filename))
 
     def output_filename(self, modifier):
         """Returns a filename inside the output dir that contains modifier.

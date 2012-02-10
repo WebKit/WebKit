@@ -248,17 +248,10 @@ class Port(object):
             _log.error("No httpd found. Cannot run http tests.")
             return False
 
-    def compare_text(self, expected_text, actual_text):
-        """Return whether or not the two strings are *not* equal. This
-        routine is used to diff text output.
-
-        While this is a generic routine, we include it in the Port
-        interface so that it can be overriden for testing purposes."""
+    def do_text_results_differ(self, expected_text, actual_text):
         return expected_text != actual_text
 
-    def compare_audio(self, expected_audio, actual_audio):
-        # FIXME: If we give this method a better name it won't need this docstring (e.g. are_audio_results_equal()).
-        """Return whether the two audio files are *not* equal."""
+    def do_audio_results_differ(self, expected_audio, actual_audio):
         return expected_audio != actual_audio
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
@@ -269,14 +262,9 @@ class Port(object):
         """
         raise NotImplementedError('Port.diff_image')
 
-
-    def diff_text(self, expected_text, actual_text,
-                  expected_filename, actual_filename):
+    def diff_text(self, expected_text, actual_text, expected_filename, actual_filename):
         """Returns a string containing the diff of the two text strings
-        in 'unified diff' format.
-
-        While this is a generic routine, we include it in the Port
-        interface so that it can be overriden for testing purposes."""
+        in 'unified diff' format."""
 
         # The filenames show up in the diff output, make sure they're
         # raw bytes and not unicode, so that they don't trigger join()
@@ -309,10 +297,7 @@ class Port(object):
         pass
 
     def driver_name(self):
-        """Returns the name of the actual binary that is performing the test,
-        so that it can be referred to in log messages. In most cases this
-        will be DumpRenderTree, but if a port uses a binary with a different
-        name, it can be overridden here."""
+        # FIXME: Seems we should get this from the Port's Driver class.
         return "DumpRenderTree"
 
     def expected_baselines(self, test_name, suffix, all_baselines=False):
@@ -618,10 +603,6 @@ class Port(object):
             if self._filesystem.isdir(category) and test_name.startswith(test_or_category):
                 return True
         return False
-
-    def maybe_make_directory(self, *comps):
-        """Creates the specified directory if it doesn't already exist."""
-        self._filesystem.maybe_make_directory(*comps)
 
     def name(self):
         """Returns a name that uniquely identifies this particular type of port

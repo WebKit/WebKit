@@ -1,3 +1,33 @@
+2012-02-09  Eric Seidel  <eric@webkit.org>
+
+        Rename compare_text and compare_audio to make it clear that they're !=
+        https://bugs.webkit.org/show_bug.cgi?id=78301
+
+        Reviewed by Adam Barth.
+
+        I also removed the maybe_create_directory function which was redundant.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.set_up_run):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter._make_output_directory):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.do_text_results_differ):
+        (Port.do_audio_results_differ):
+        (Port.diff_text):
+        (Port.driver_name):
+        (Port.skips_perf_test):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.do_text_results_differ):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_do_text_results_differ):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.__init__):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        (Rebaseliner._diff_baselines):
+
 2012-02-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Add DRT support for modal dialogs

@@ -57,7 +57,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
                           {'port': 8081},
                           {'port': 8443, 'sslcert': True}]
         self._output_dir = output_dir
-        port_obj.maybe_make_directory(output_dir)
+        self._filesystem.maybe_make_directory(output_dir)
 
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 

@@ -65,7 +65,7 @@ class HttpServerBase(object):
             tmpdir = '/tmp'
 
         self._runtime_path = self._filesystem.join(tmpdir, "WebKit")
-        port_obj.maybe_make_directory(self._runtime_path)
+        self._filesystem.maybe_make_directory(self._runtime_path)
 
     def start(self):
         """Starts the server. It is an error to start an already started server.

@@ -45,10 +45,10 @@ class WinPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
-    def compare_text(self, expected_text, actual_text):
+    def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
         if self.get_option('webkit_test_runner'):
-            return ApplePort.compare_text(self, expected_text, actual_text)
+            return ApplePort.do_text_results_differ(self, expected_text, actual_text)
 
         # This is a hack (which dates back to ORWT).
         # Windows does not have an EDITING DELEGATE, so we strip any EDITING DELEGATE
