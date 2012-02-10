@@ -51,7 +51,6 @@
 #include "V8d.h"
 #include "V8e.h"
 #include "V8int.h"
-#include "V8log.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -695,6 +694,28 @@ static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSette
     return;
 }
 
+static v8::Handle<v8::Value> withScriptArgumentsAndCallStackAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStackAttribute._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    if (!callStack)
+        return v8::Undefined();
+    return toV8(imp->withScriptArgumentsAndCallStackAttribute(callStack));
+}
+
+static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStackAttribute._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    if (!callStack)
+        return v8::Undefined();
+    imp->setWithScriptArgumentsAndCallStackAttribute(callStack, WTF::getPtr(v));
+    return;
+}
+
 static v8::Handle<v8::Value> scriptStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.scriptStringAttr._get");
@@ -1108,29 +1129,6 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return v8::Handle<v8::Value>();
 }
 
-static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.customArgsAndException");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    {
-    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
-    if (!callStack)
-        return v8::Undefined();
-    EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8log::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->customArgsAndException(intArg, scriptArguments, callStack, ec);
-    if (UNLIKELY(ec))
-        goto fail;
-    return v8::Handle<v8::Value>();
-    }
-    fail:
-    V8Proxy::setDOMException(ec);
-    return v8::Handle<v8::Value>();
-}
-
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.addEventListener()");
@@ -1272,6 +1270,18 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesC
     if (state.hadException())
         return throwError(state.exception());
     return toV8(result.release());
+}
+
+static v8::Handle<v8::Value> withScriptArgumentsAndCallStackCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStack");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 0));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    if (!callStack)
+        return v8::Undefined();
+    imp->withScriptArgumentsAndCallStack(scriptArguments, callStack);
+    return v8::Handle<v8::Value>();
 }
 
 static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& args)
@@ -1804,6 +1814,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"withScriptExecutionContextAndScriptStateAttributeRaises", TestObjInternal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetter, TestObjInternal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAndScriptStateWithSpacesAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
     {"withScriptExecutionContextAndScriptStateWithSpacesAttribute", TestObjInternal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetter, TestObjInternal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'withScriptArgumentsAndCallStackAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
+    {"withScriptArgumentsAndCallStackAttribute", TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrGetter, TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'scriptStringAttr' (Type: 'readonly attribute' ExtAttr: 'ConvertScriptString')
     {"scriptStringAttr", TestObjInternal::scriptStringAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #if ENABLE(Condition1)
@@ -1874,6 +1886,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"withScriptExecutionContextAndScriptState", TestObjInternal::withScriptExecutionContextAndScriptStateCallback},
     {"withScriptExecutionContextAndScriptStateObjException", TestObjInternal::withScriptExecutionContextAndScriptStateObjExceptionCallback},
     {"withScriptExecutionContextAndScriptStateWithSpaces", TestObjInternal::withScriptExecutionContextAndScriptStateWithSpacesCallback},
+    {"withScriptArgumentsAndCallStack", TestObjInternal::withScriptArgumentsAndCallStackCallback},
     {"methodWithOptionalArg", TestObjInternal::methodWithOptionalArgCallback},
     {"methodWithNonOptionalArgAndOptionalArg", TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback},
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},
@@ -2005,12 +2018,6 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> methodThatRequiresAllArgsAndThrowsArgv[methodThatRequiresAllArgsAndThrowsArgc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> methodThatRequiresAllArgsAndThrowsSignature = v8::Signature::New(desc, methodThatRequiresAllArgsAndThrowsArgc, methodThatRequiresAllArgsAndThrowsArgv);
     proto->Set(v8::String::New("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjInternal::methodThatRequiresAllArgsAndThrowsCallback, v8::Handle<v8::Value>(), methodThatRequiresAllArgsAndThrowsSignature));
-
-    // Custom Signature 'customArgsAndException'
-    const int customArgsAndExceptionArgc = 1;
-    v8::Handle<v8::FunctionTemplate> customArgsAndExceptionArgv[customArgsAndExceptionArgc] = { V8log::GetRawTemplate() };
-    v8::Handle<v8::Signature> customArgsAndExceptionSignature = v8::Signature::New(desc, customArgsAndExceptionArgc, customArgsAndExceptionArgv);
-    proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
     desc->Set(v8::String::New("classMethod"), v8::FunctionTemplate::New(TestObjInternal::classMethodCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::New("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjInternal::classMethodWithOptionalCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
 #if ENABLE(Condition1)

@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8Console::assertCallback(const v8::Arguments& args)
     RefPtr<ScriptCallStack> callStack(createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture));
     bool condition = args[0]->BooleanValue();
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
-    imp->assertCondition(condition, scriptArguments.release(), callStack);
+    imp->assertCondition(scriptArguments.release(), callStack, condition);
     return v8::Handle<v8::Value>();
 }
 

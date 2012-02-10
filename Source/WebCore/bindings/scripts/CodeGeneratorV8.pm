@@ -1361,8 +1361,6 @@ static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
     INC_STATS(\"DOM.$implClassName.$name\");
 END
 
-    my $numParameters = @{$function->parameters};
-
     push(@implContentDecls, GenerateArgumentsCountCheck($function, $dataNode));
 
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
@@ -1417,17 +1415,6 @@ END
         # right before the label 'fail:'.
     }
 
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-        push(@implContentDecls, <<END);
-    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
-    if (!callStack)
-        return v8::Undefined();
-END
-        AddToImplIncludes("ScriptArguments.h");
-        AddToImplIncludes("ScriptCallStack.h");
-        AddToImplIncludes("ScriptCallStackFactory.h");
-    }
     if ($function->signature->extendedAttributes->{"CheckAccessToNode"}) {
         push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $function->signature->name . "(ec)))\n");
         push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
@@ -1459,6 +1446,7 @@ sub GenerateCallWith
     my $indent = shift;
     my $returnVoid = shift;
     my $emptyContext = shift;
+    my $function = shift;
 
     my @callWithArgs;
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
@@ -1477,6 +1465,19 @@ sub GenerateCallWith
         push(@$outputArray, $indent . "if (!scriptContext)\n");
         push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
         push(@callWithArgs, "scriptContext");
+    }
+    if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
+        push(@$outputArray, $indent . "RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, " . @{$function->parameters} . "));\n");
+        push(@callWithArgs, "scriptArguments");
+        AddToImplIncludes("ScriptArguments.h");
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
+        push(@$outputArray, $indent . "RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());\n");
+        push(@$outputArray, $indent . "if (!callStack)\n");
+        push(@$outputArray, $indent . "    return v8::Undefined();\n");
+        push(@callWithArgs, "callStack");
+        AddToImplIncludes("ScriptCallStack.h");
+        AddToImplIncludes("ScriptCallStackFactory.h");
     }
     return @callWithArgs;
 }
@@ -3196,7 +3197,7 @@ sub GenerateFunctionCallString()
 
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     my @callWithOutput = ();
-    my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1);
+    my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1, $function);
     $result .= join("", @callWithOutput);
     push(@arguments, @callWithArgs);
     $index += @callWithArgs;
@@ -3223,10 +3224,6 @@ sub GenerateFunctionCallString()
             push @arguments, $paramName;
         }
         $index++;
-    }
-
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-        push @arguments, "scriptArguments, callStack";
     }
 
     if (@{$function->raisesExceptions}) {

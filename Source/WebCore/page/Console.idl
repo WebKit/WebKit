@@ -33,17 +33,17 @@ module window {
         OmitConstructor
     ] Console {
 
-        [CustomArgumentHandling] void debug();
-        [CustomArgumentHandling] void error();
-        [CustomArgumentHandling] void info();
-        [CustomArgumentHandling] void log();
-        [CustomArgumentHandling] void warn();
-        [CustomArgumentHandling] void dir();
-        [CustomArgumentHandling] void dirxml();
-        [V8Custom, CustomArgumentHandling] void trace();
-        [V8Custom, CustomArgumentHandling, ImplementedAs=assertCondition] void assert(in boolean condition);
-        [CustomArgumentHandling] void count();
-        [CustomArgumentHandling] void markTimeline();
+        [CallWith=ScriptArguments|CallStack] void debug();
+        [CallWith=ScriptArguments|CallStack] void error();
+        [CallWith=ScriptArguments|CallStack] void info();
+        [CallWith=ScriptArguments|CallStack] void log();
+        [CallWith=ScriptArguments|CallStack] void warn();
+        [CallWith=ScriptArguments|CallStack] void dir();
+        [CallWith=ScriptArguments|CallStack] void dirxml();
+        [V8Custom, CallWith=ScriptArguments|CallStack] void trace();
+        [V8Custom, CallWith=ScriptArguments|CallStack, ImplementedAs=assertCondition] void assert(in boolean condition);
+        [CallWith=ScriptArguments|CallStack] void count();
+        [CallWith=ScriptArguments|CallStack] void markTimeline();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         readonly attribute [CustomGetter] Array profiles;
@@ -52,10 +52,10 @@ module window {
 #endif
 
         void time(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString title);
-        [CustomArgumentHandling] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
-        [CustomArgumentHandling] void timeStamp();
-        [CustomArgumentHandling] void group();
-        [CustomArgumentHandling] void groupCollapsed();
+        [CallWith=ScriptArguments|CallStack] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
+        [CallWith=ScriptArguments|CallStack] void timeStamp();
+        [CallWith=ScriptArguments|CallStack] void group();
+        [CallWith=ScriptArguments|CallStack] void groupCollapsed();
         void groupEnd();
 
         readonly attribute [V8CustomGetter] MemoryInfo memory;

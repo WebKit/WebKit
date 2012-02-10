@@ -1570,6 +1570,7 @@ enum {
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
+    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
     PROP_SCRIPT_STRING_ATTR,
 #if ENABLE(Condition1)
     PROP_CONDITIONAL_ATTR1,
@@ -1929,6 +1930,12 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
+    case PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE:
+    {
+        RefPtr<WebCore::TestObj> ptr = coreSelf->withScriptArgumentsAndCallStackAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
     case PROP_SCRIPT_STRING_ATTR:
     {
         g_value_take_string(value, convertToUTF8String(coreSelf->scriptStringAttr()));
@@ -2261,6 +2268,13 @@ G_MAXLONG, /* max */
                                     g_param_spec_object("with-script-execution-context-and-script-state-with-spaces-attribute", /* name */
                                                            "test_obj_with-script-execution-context-and-script-state-with-spaces-attribute", /* short description */
                                                            "read-write  WebKitDOMTestObj* TestObj.with-script-execution-context-and-script-state-with-spaces-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
+                                    g_param_spec_object("with-script-arguments-and-call-stack-attribute", /* name */
+                                                           "test_obj_with-script-arguments-and-call-stack-attribute", /* short description */
+                                                           "read-write  WebKitDOMTestObj* TestObj.with-script-arguments-and-call-stack-attribute", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
