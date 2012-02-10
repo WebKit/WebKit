@@ -287,6 +287,9 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     } else {
         fields.append("Sec-WebSocket-Key: " + m_secWebSocketKey);
         fields.append("Sec-WebSocket-Version: 13");
+        const String extensionValue = m_extensionDispatcher.createHeaderValue();
+        if (extensionValue.length())
+            fields.append("Sec-WebSocket-Extensions: " + extensionValue);
     }
 
     // Fields in the handshake are sent by the client in a random order; the
@@ -344,6 +347,9 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
     } else {
         request.addHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
         request.addHeaderField("Sec-WebSocket-Version", "13");
+        const String extensionValue = m_extensionDispatcher.createHeaderValue();
+        if (extensionValue.length())
+            request.addHeaderField("Sec-WebSocket-Extensions", extensionValue);
     }
 
     return request;
@@ -352,6 +358,7 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
 void WebSocketHandshake::reset()
 {
     m_mode = Incomplete;
+    m_extensionDispatcher.reset();
 }
 
 void WebSocketHandshake::clearScriptExecutionContext()
@@ -469,14 +476,14 @@ String WebSocketHandshake::serverWebSocketAccept() const
     return m_response.headerFields().get("sec-websocket-accept");
 }
 
-String WebSocketHandshake::serverWebSocketExtensions() const
-{
-    return m_response.headerFields().get("sec-websocket-extensions");
-}
-
 const WebSocketHandshakeResponse& WebSocketHandshake::serverHandshakeResponse() const
 {
     return m_response;
+}
+
+void WebSocketHandshake::addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor> processor)
+{
+    m_extensionDispatcher.addProcessor(processor);
 }
 
 KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
@@ -625,7 +632,15 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             return 0;
         }
         LOG(Network, "name=%s value=%s", nameStr.string().utf8().data(), valueStr.utf8().data());
-        m_response.addHeaderField(nameStr, valueStr);
+        // Sec-WebSocket-Extensions may be split. We parse and check the
+        // header value every time the header appears.
+        if (equalIgnoringCase("sec-websocket-extensions", nameStr)) {
+            if (!m_extensionDispatcher.processHeaderValue(valueStr)) {
+                m_failureReason = m_extensionDispatcher.failureReason();
+                return 0;
+            }
+        } else
+            m_response.addHeaderField(nameStr, valueStr);
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -639,7 +654,6 @@ bool WebSocketHandshake::checkResponseHeaders()
     const String& serverUpgrade = this->serverUpgrade();
     const String& serverConnection = this->serverConnection();
     const String& serverWebSocketAccept = this->serverWebSocketAccept();
-    const String& serverWebSocketExtensions = this->serverWebSocketExtensions();
 
     if (serverUpgrade.isNull()) {
         m_failureReason = "Error during WebSocket handshake: 'Upgrade' header is missing";
@@ -690,13 +704,6 @@ bool WebSocketHandshake::checkResponseHeaders()
     } else {
         if (serverWebSocketAccept != m_expectedAccept) {
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Accept mismatch";
-            return false;
-        }
-        if (!serverWebSocketExtensions.isNull()) {
-            // WebSocket protocol extensions are not supported yet.
-            // We do not send Sec-WebSocket-Extensions header in our request, thus
-            // servers should not return this header, either.
-            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Extensions header is invalid";
             return false;
         }
     }

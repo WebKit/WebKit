@@ -1,3 +1,27 @@
+2012-02-09  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Add WebSocket extension support
+        https://bugs.webkit.org/show_bug.cgi?id=78079
+
+        Add some tests which check WebSocketExtensions::processHeaderValue()
+        parses the given response correctly.
+
+        Reviewed by Kent Tamura.
+
+        * WebKit.gypi:
+        * tests/WebSocketExtensionDispatcherTest.cpp: Added.
+        (WebCore):
+        (MockWebSocketExtensionProcessor):
+        (WebCore::MockWebSocketExtensionProcessor::MockWebSocketExtensionProcessor):
+        (WebSocketExtensionDispatcherTest):
+        (WebCore::WebSocketExtensionDispatcherTest::WebSocketExtensionDispatcherTest):
+        (WebCore::WebSocketExtensionDispatcherTest::SetUp):
+        (WebCore::WebSocketExtensionDispatcherTest::TearDown):
+        (WebCore::WebSocketExtensionDispatcherTest::addMockProcessor):
+        (WebCore::WebSocketExtensionDispatcherTest::appendResult):
+        (WebCore::MockWebSocketExtensionProcessor::processResponse):
+        (WebCore::TEST_F):
+
 2012-02-09  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add support for starting page/scale animations on CC impl thread from WebViewImpl

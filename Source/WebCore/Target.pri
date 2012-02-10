@@ -3658,6 +3658,8 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         websockets/WebSocket.h \
         websockets/WebSocketChannel.h \
         websockets/WebSocketChannelClient.h \
+        websockets/WebSocketExtensionDispatcher.h \
+        websockets/WebSocketExtensionProcessor.h \
         websockets/WebSocketHandshake.h \
         websockets/WebSocketHandshakeRequest.h \
         websockets/WebSocketHandshakeResponse.h \
@@ -3666,6 +3668,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     SOURCES += \
         websockets/WebSocket.cpp \
         websockets/WebSocketChannel.cpp \
+        websockets/WebSocketExtensionDispatcher.cpp \
         websockets/WebSocketHandshake.cpp \
         websockets/WebSocketHandshakeRequest.cpp \
         websockets/WebSocketHandshakeResponse.cpp \

@@ -72902,6 +72902,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\websockets\WebSocketExtensionDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketExtensionDispatcher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketExtensionProcessor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\WebSocketHandshake.cpp"
 				>
 			</File>

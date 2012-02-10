@@ -1,3 +1,62 @@
+2012-02-09  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Add WebSocket extension support
+        https://bugs.webkit.org/show_bug.cgi?id=78079
+
+        This patch introduces WebSocketExtensionDispatcher class, which creates client's
+        Sec-WebSocket-Extensions header field and parses the server response.
+        This patch doesn't add any actual extension, so no changes in behavior.
+
+        Reviewed by Kent Tamura.
+
+        No new tests except for chromium port.
+
+        * CMakeLists.txt: Added WebSocketExtensionDispatcher.(cpp|h) and WebSocketExtensionProcessor.h.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * websockets/WebSocketExtensionDispatcher.cpp: Added.
+        (WebCore):
+        (ExtensionParser):
+        (WebCore::ExtensionParser::ExtensionParser):
+        (WebCore::ExtensionParser::currentToken):
+        (WebCore::ExtensionParser::finished):
+        (WebCore::ExtensionParser::parsedSuccessfully):
+        (WebCore::isTokenCharacter):
+        (WebCore::isSeparator):
+        (WebCore::ExtensionParser::skipSpaces):
+        (WebCore::ExtensionParser::consumeToken):
+        (WebCore::ExtensionParser::consumeQuotedString):
+        (WebCore::ExtensionParser::consumeQuotedStringOrToken):
+        (WebCore::ExtensionParser::consumeCharacter):
+        (WebCore::WebSocketExtensionDispatcher::reset):
+        (WebCore::WebSocketExtensionDispatcher::addProcessor):
+        (WebCore::WebSocketExtensionDispatcher::createHeaderValue):
+        (WebCore::WebSocketExtensionDispatcher::processHeaderValue):
+        (WebCore::WebSocketExtensionDispatcher::failureReason):
+        * websockets/WebSocketExtensionDispatcher.h: Added.
+        (WebCore):
+        (WebSocketExtensionDispatcher):
+        (WebCore::WebSocketExtensionDispatcher::WebSocketExtensionDispatcher):
+        * websockets/WebSocketExtensionProcessor.h: Added.
+        (WebCore):
+        (WebSocketExtensionProcessor):
+        (WebCore::WebSocketExtensionProcessor::~WebSocketExtensionProcessor):
+        (WebCore::WebSocketExtensionProcessor::extensionToken):
+        (WebCore::WebSocketExtensionProcessor::failureReason):
+        (WebCore::WebSocketExtensionProcessor::WebSocketExtensionProcessor):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage): Adds extension header value if exists.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest): Ditto.
+        (WebCore::WebSocketHandshake::reset): Resets WebSocketExtensionDispatcher object.
+        (WebCore::WebSocketHandshake::serverHandshakeResponse): Removed.
+        (WebCore::WebSocketHandshake::addExtensionProcessor): Added.
+        (WebCore::WebSocketHandshake::readHTTPHeaders): Parses and checks every time Sec-WebSocket-Extensions header appears.
+        (WebCore::WebSocketHandshake::checkResponseHeaders): Removed the check of Sec-WebSocket-Extensions.
+        * websockets/WebSocketHandshake.h: Removed serverHandshakeResponse().
+
 2012-02-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Avoid compositing invisible fixed positioned elements

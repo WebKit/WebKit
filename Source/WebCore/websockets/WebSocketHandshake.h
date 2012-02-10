@@ -35,8 +35,11 @@
 
 #include "KURL.h"
 #include "PlatformString.h"
+#include "WebSocketExtensionDispatcher.h"
+#include "WebSocketExtensionProcessor.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -81,9 +84,10 @@ public:
     String serverUpgrade() const;
     String serverConnection() const;
     String serverWebSocketAccept() const; // Only for hybi-10 handshake.
-    String serverWebSocketExtensions() const; // Only for hybi-10 handshake.
 
     const WebSocketHandshakeResponse& serverHandshakeResponse() const;
+
+    void addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor>);
 
 private:
     KURL httpURLForAuthenticationAndCookies() const;
@@ -116,6 +120,8 @@ private:
     // For hybi-10 handshake.
     String m_secWebSocketKey;
     String m_expectedAccept;
+
+    WebSocketExtensionDispatcher m_extensionDispatcher;
 };
 
 } // namespace WebCore
