@@ -70,7 +70,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this.editorView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
         this.editorView.show(this.splitView.mainElement);
 
-        this._navigator = new WebInspector.ScriptsNavigator(this._presentationModel);
+        this._navigator = new WebInspector.ScriptsNavigator();
         this._navigatorView = this._navigator.view;
         this._fileSelector = this._navigator;
         this._fileSelector.show(this.editorView.sidebarElement);
@@ -85,7 +85,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         if (WebInspector.settings.navigatorHidden.get())
             this._toggleNavigator();
     } else {
-        this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector(this._presentationModel);
+        this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector();
         this._fileSelector.show(this.splitView.mainElement);
 
         this._editorContainer = new WebInspector.ScriptsPanel.SingleFileEditorContainer(this);
@@ -408,6 +408,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._debuggerResumed();
 
         delete this._currentUISourceCode;
+        this._fileSelector.reset();
         this._editorContainer.reset();
         this._updateScriptViewStatusBarItems();
 
@@ -1174,7 +1175,9 @@ WebInspector.ScriptsPanel.FileSelector.prototype = {
      * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
      * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
      */
-    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList) { }
+    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList) { },
+    
+    reset: function() { }
 }
 
 /**
@@ -1241,15 +1244,12 @@ WebInspector.EditorContainerDelegate.prototype = {
  * @extends {WebInspector.Object}
  * @constructor
  */
-WebInspector.ScriptsPanel.ComboBoxFileSelector = function(presentationModel)
+WebInspector.ScriptsPanel.ComboBoxFileSelector = function()
 {
     WebInspector.Object.call(this);
     this.editorToolbar = this._createEditorToolbar();
     
-    this._presentationModel = presentationModel;
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._reset, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset, this);
     
     this._backForwardList = [];
 }
@@ -1387,7 +1387,7 @@ WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
         }
     },
     
-    _reset: function()
+    reset: function()
     {
         this._backForwardList = [];
         this._currentBackForwardIndex = -1;

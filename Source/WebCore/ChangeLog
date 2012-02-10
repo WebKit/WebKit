@@ -1,3 +1,21 @@
+2012-02-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: FileSelector should not depend on DebuggerPresentationModel.
+        https://bugs.webkit.org/show_bug.cgi?id=78337
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator):
+        (WebInspector.ScriptsNavigator.prototype._showScriptFoldersSettingChanged):
+        (WebInspector.ScriptsNavigator.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.replaceUISourceCodes):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.reset):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.reset):
+
 2012-02-10  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ConvertingNullStringTo] from CloseEvent.idl

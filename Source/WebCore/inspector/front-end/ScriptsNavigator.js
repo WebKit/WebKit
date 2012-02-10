@@ -31,14 +31,12 @@
  * @extends {WebInspector.Object}
  * @constructor
  */
-WebInspector.ScriptsNavigator = function(presentationModel)
+WebInspector.ScriptsNavigator = function()
 {
     WebInspector.Object.call(this);
     
     this._tabbedPane = new WebInspector.TabbedPane();
     this._tabbedPane.shrinkableTabs = true;
-
-    this._presentationModel = presentationModel;
 
     this._tabbedPane.element.id = "scripts-navigator-tabbed-pane";
     
@@ -71,9 +69,6 @@ WebInspector.ScriptsNavigator = function(presentationModel)
     this._scriptTreeElementsByUISourceCode = new Map();
     
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
-    
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._reset, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset, this);
 }
 
 WebInspector.ScriptsNavigator.ScriptsTab = "scripts";
@@ -228,14 +223,14 @@ WebInspector.ScriptsNavigator.prototype = {
     {
         var uiSourceCodes = this._navigatorScriptsTree.scriptTreeElements();
         uiSourceCodes = uiSourceCodes.concat(this._navigatorContentScriptsTree.scriptTreeElements());
-        this._reset();
+        this.reset();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             this.addUISourceCode(uiSourceCodes[i]);
         
         this.revealUISourceCode(this._lastSelectedUISourceCode);
     },
     
-    _reset: function()
+    reset: function()
     {
         this._navigatorScriptsTree.stopSearch();
         this._navigatorScriptsTree.removeChildren();
