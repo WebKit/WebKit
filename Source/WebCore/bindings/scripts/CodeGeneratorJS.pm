@@ -2135,7 +2135,9 @@ sub GenerateImplementation
 
             push(@implContent, "#endif\n\n") if $conditional;
         }
-        
+    }
+
+    if ($numFunctions > 0 || $numCachedAttributes > 0) {
         if ($needsMarkChildren && !$dataNode->extendedAttributes->{"JSCustomMarkFunction"}) {
             push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
             push(@implContent, "{\n");
@@ -2158,11 +2160,12 @@ sub GenerateImplementation
             }
             push(@implContent, "}\n\n");
         }
-        # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
-        # The custom function must make sure to account for the cached attribute.
-        # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
-        # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"JSCustomMarkFunction"}));
     }
+
+    # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
+    # The custom function must make sure to account for the cached attribute.
+    # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
+    # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"JSCustomMarkFunction"}));
 
     if ($numConstants > 0) {
         push(@implContent, "// Constant getters\n\n");
