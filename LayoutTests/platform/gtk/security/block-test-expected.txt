@@ -133,8 +133,8 @@ http://255.255.255.255:65536/test.jpg - willSendRequest <NSURLRequest URL http:/
 http://255.255.255.255:65536/test.jpg - didFailLoadingWithError: <NSError domain WebKitPolicyError, code 103, failing URL "http://255.255.255.255:65536/test.jpg">
 http://255.255.255.255:4294967295/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:4294967295/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:4294967295/test.jpg - didFailLoadingWithError: <NSError domain WebKitPolicyError, code 103, failing URL "http://255.255.255.255:4294967295/test.jpg">
-http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup_http_error_quark, code 4, failing URL "http://255.255.255.255:4294967296/test.jpg">
+http://255.255.255.255:4294967295/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:4294967295/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+http://255.255.255.255:4294967295/test.jpg - didFailLoadingWithError: <NSError domain WebKitPolicyError, code 103, failing URL "http://255.255.255.255:4294967296/test.jpg">
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup_http_error_quark, code 4, failing URL "http://255.255.255.255:0/test.jpg">
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)

@@ -1446,6 +1446,7 @@ svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 svg/css/stars-with-shadow.html
+svg/carto.net/tabgroup.svg
 
 # https://bugs.webkit.org/show_bug.cgi?id=73409
 fast/forms/placeholder-set-attribute.html
