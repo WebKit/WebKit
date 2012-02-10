@@ -42,6 +42,7 @@ using namespace WTF;
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSArray);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSArray);
 
 // Overview of JSArray
 //

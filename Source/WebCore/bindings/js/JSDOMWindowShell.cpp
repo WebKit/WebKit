@@ -149,16 +149,6 @@ DOMWindow* JSDOMWindowShell::impl() const
     return window()->impl();
 }
 
-void* JSDOMWindowShell::operator new(size_t size)
-{
-    Heap& heap = JSDOMWindow::commonJSGlobalData()->heap;
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!heap.globalData()->isInitializingObject());
-    heap.globalData()->setInitializingObject(true);
-#endif
-    return heap.allocate(size);
-}
-
 // ----
 // Conversion methods
 // ----

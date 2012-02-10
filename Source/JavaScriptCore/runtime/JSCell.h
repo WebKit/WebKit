@@ -61,6 +61,7 @@ namespace JSC {
     class JSCell {
         friend class JSValue;
         friend class MarkedBlock;
+        template<typename T> friend void* allocateCell(Heap&);
 
     public:
         enum CreatingEarlyCellTag { CreatingEarlyCell };
@@ -307,14 +308,34 @@ namespace JSC {
         return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
     }
 
-    template <typename T> void* allocateCell(Heap& heap)
+#if COMPILER(CLANG)
+    template<class T>
+    struct NeedsDestructor {
+        static const bool value = !__has_trivial_destructor(T);
+    };
+#else
+    // Write manual specializations for this struct template if you care about non-clang compilers.
+    template<class T>
+    struct NeedsDestructor {
+        static const bool value = true;
+    };
+#endif
+
+    template<typename T>
+    void* allocateCell(Heap& heap)
     {
 #if ENABLE(GC_VALIDATION)
         ASSERT(sizeof(T) == T::s_info.cellSize);
         ASSERT(!heap.globalData()->isInitializingObject());
         heap.globalData()->setInitializingObject(true);
 #endif
-        JSCell* result = static_cast<JSCell*>(heap.allocate(sizeof(T)));
+        JSCell* result = 0;
+        if (NeedsDestructor<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithDestructor(sizeof(T)));
+        else {
+            ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
+            result = static_cast<JSCell*>(heap.allocateWithoutDestructor(sizeof(T)));
+        }
         result->clearStructure();
         return result;
     }

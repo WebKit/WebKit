@@ -36,15 +36,13 @@ MarkedSpace::MarkedSpace(Heap* heap)
     , m_heap(heap)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
-        allocatorFor(cellSize).setCellSize(cellSize);
-        allocatorFor(cellSize).setHeap(heap);
-        allocatorFor(cellSize).setMarkedSpace(this);
+        allocatorFor(cellSize).init(heap, this, cellSize, false);
+        destructorAllocatorFor(cellSize).init(heap, this, cellSize, true);
     }
 
     for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
-        allocatorFor(cellSize).setCellSize(cellSize);
-        allocatorFor(cellSize).setHeap(heap);
-        allocatorFor(cellSize).setMarkedSpace(this);
+        allocatorFor(cellSize).init(heap, this, cellSize, false);
+        destructorAllocatorFor(cellSize).init(heap, this, cellSize, true);
     }
 }
 
@@ -53,20 +51,28 @@ void MarkedSpace::resetAllocators()
     m_waterMark = 0;
     m_nurseryWaterMark = 0;
 
-    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).reset();
+        destructorAllocatorFor(cellSize).reset();
+    }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         allocatorFor(cellSize).reset();
+        destructorAllocatorFor(cellSize).reset();
+    }
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()
 {
-    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).zapFreeList();
+        destructorAllocatorFor(cellSize).zapFreeList();
+    }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep)
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         allocatorFor(cellSize).zapFreeList();
+        destructorAllocatorFor(cellSize).zapFreeList();
+    }
 }
 
 
@@ -107,7 +113,7 @@ inline void TakeIfUnmarked::operator()(MarkedBlock* block)
     if (!block->markCountIsZero())
         return;
     
-    m_markedSpace->allocatorFor(block->cellSize()).removeBlock(block);
+    m_markedSpace->allocatorFor(block).removeBlock(block);
     m_empties.append(block);
 }
 

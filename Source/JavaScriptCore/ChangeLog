@@ -1,3 +1,90 @@
+2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Split MarkedSpace into destructor and destructor-free subspaces
+        https://bugs.webkit.org/show_bug.cgi?id=77761
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject): Switched over to use destructor-free space.
+        * heap/Heap.h:
+        (JSC::Heap::allocatorForObjectWithoutDestructor): Added to give clients (e.g. the JIT) the ability to 
+        pick which subspace they want to allocate out of.
+        (JSC::Heap::allocatorForObjectWithDestructor): Ditto.
+        (Heap):
+        (JSC::Heap::allocateWithDestructor): Added private function for CellAllocator to use.
+        (JSC):
+        (JSC::Heap::allocateWithoutDestructor): Ditto.
+        * heap/MarkedAllocator.cpp: Added the cellsNeedDestruction flag to allocators so that they can allocate 
+        their MarkedBlocks correctly.
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::cellsNeedDestruction):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC):
+        (JSC::MarkedAllocator::init): Replaced custom set functions, which were only used upon initialization, with
+        an init function that does all of that stuff in fewer lines.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::recycle):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::callDestructor): Templatized, along with specializedSweep and sweepHelper, to make 
+        checking the m_cellsNeedDestructor flag faster and cleaner looking.
+        (JSC):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::cellsNeedDestruction):
+        (JSC):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::TakeIfUnmarked::operator()):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (Subspace):
+        (JSC::MarkedSpace::allocatorFor): Needed function to differentiate between the two broad subspaces of 
+        allocators.
+        (JSC):
+        (JSC::MarkedSpace::destructorAllocatorFor): Ditto.
+        (JSC::MarkedSpace::allocateWithoutDestructor): Ditto.
+        (JSC::MarkedSpace::allocateWithDestructor): Ditto.
+        (JSC::MarkedSpace::forEachBlock):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h: Modified to use the proper allocator for JSFinalObjects and others.
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC::JIT::emitAllocateJSFunction):
+        * runtime/JSArray.cpp:
+        (JSC):
+        * runtime/JSArray.h:
+        (JSArray):
+        (JSC::JSArray::create):
+        (JSC):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSCell.h:
+        (JSCell):
+        (JSC):
+        (NeedsDestructor): Template struct that calculates at compile time whether the class in question requires 
+        destruction or not using the compiler type trait __has_trivial_destructor. allocateCell then checks this 
+        constant to decide whether to allocate in the destructor or destructor-free parts of the heap.
+        (JSC::allocateCell): 
+        * runtime/JSFunction.cpp:
+        (JSC):
+        * runtime/JSFunction.h:
+        (JSFunction):
+        * runtime/JSObject.cpp:
+        (JSC):
+        * runtime/JSObject.h:
+        (JSNonFinalObject):
+        (JSC):
+        (JSFinalObject):
+        (JSC::JSFinalObject::create):
+
 2012-02-10  Adrienne Walker  <enne@google.com>
 
         Remove implicit copy constructor usage in HashMaps with OwnPtr

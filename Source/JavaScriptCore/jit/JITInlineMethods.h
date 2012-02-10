@@ -402,9 +402,13 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
+template <typename ClassType, bool destructor, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
 {
-    MarkedAllocator* allocator = &m_globalData->heap.allocatorForObject(sizeof(ClassType));
+    MarkedAllocator* allocator = 0;
+    if (destructor)
+        allocator = &m_globalData->heap.allocatorForObjectWithDestructor(sizeof(ClassType));
+    else
+        allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
     loadPtr(&allocator->m_firstFreeCell, result);
     addSlowCase(branchTestPtr(Zero, result));
 
@@ -428,12 +432,12 @@ template <typename ClassType, typename StructureType> inline void JIT::emitAlloc
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
 {
-    emitAllocateBasicJSObject<JSFinalObject>(structure, result, scratch);
+    emitAllocateBasicJSObject<JSFinalObject, false, T>(structure, result, scratch);
 }
 
 inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, RegisterID scopeChain, RegisterID result, RegisterID storagePtr)
 {
-    emitAllocateBasicJSObject<JSFunction>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), result, storagePtr);
+    emitAllocateBasicJSObject<JSFunction, true>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), result, storagePtr);
 
     // store the function's scope chain
     storePtr(scopeChain, Address(result, JSFunction::offsetOfScopeChain()));

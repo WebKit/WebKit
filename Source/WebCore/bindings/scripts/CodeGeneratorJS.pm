@@ -794,6 +794,7 @@ sub GenerateHeader
 
     if (!$hasParent) {
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
+        push(@headerContent, "    ~${className}();\n");
     }
 
     # Class info
@@ -1340,9 +1341,6 @@ sub GenerateImplementation
     push(@implContent, "namespace WebCore {\n\n");
 
     push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className);\n");
-    if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@implContent, "ASSERT_HAS_TRIVIAL_DESTRUCTOR($className);\n\n");
-    }
 
     my $numAttributes = GenerateAttributesHashTable($object, $dataNode);
 
@@ -1615,7 +1613,14 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-        push(@implContent, "    thisObject->releaseImplIfNotNull();\n");
+        push(@implContent, "    thisObject->${className}::~${className}();\n");
+        push(@implContent, "}\n\n");
+
+        # We also need a destructor for the allocateCell to work properly with the destructor-free part of the heap.
+        # Otherwise, these destroy functions/destructors won't get called.
+        push(@implContent, "${className}::~${className}()\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    releaseImplIfNotNull();\n");
         push(@implContent, "}\n\n");
     }
 
@@ -3370,8 +3375,6 @@ sub GenerateConstructorDefinition
         push(@$outputArray, "{\n");
         push(@$outputArray, "}\n\n");
     } else {
-        push(@$outputArray, "ASSERT_HAS_TRIVIAL_DESTRUCTOR(${constructorClassName});\n\n");
-
         push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");

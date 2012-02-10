@@ -48,22 +48,13 @@ ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
 ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
 
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 
 const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSObject) };
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
-
-void JSFinalObject::destroy(JSCell* cell)
-{
-    jsCast<JSFinalObject*>(cell)->JSFinalObject::~JSFinalObject();
-}
-
-void JSNonFinalObject::destroy(JSCell* cell)
-{
-    jsCast<JSNonFinalObject*>(cell)->JSNonFinalObject::~JSNonFinalObject();
-}
 
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
@@ -82,11 +73,6 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
                 propertyNames.add(entry->key());
         }
     }
-}
-
-void JSObject::destroy(JSCell* cell)
-{
-    jsCast<JSObject*>(cell)->JSObject::~JSObject();
 }
 
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -50,6 +50,7 @@ EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 }
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFunction);
 
 const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFunction) };
 
@@ -106,13 +107,6 @@ void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable,
     ASSERT(structure() == scopeChainNode->globalObject->functionStructure());
     setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
-}
-
-void JSFunction::destroy(JSCell* cell)
-{
-    JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    ASSERT(thisObject->classInfo()->isSubClassOf(&JSFunction::s_info));
-    thisObject->JSFunction::~JSFunction();
 }
 
 const UString& JSFunction::name(ExecState* exec)

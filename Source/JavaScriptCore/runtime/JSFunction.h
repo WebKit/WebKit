@@ -64,8 +64,6 @@ namespace JSC {
             return function;
         }
         
-        static void destroy(JSCell*);
-
         JS_EXPORT_PRIVATE const UString& name(ExecState*);
         JS_EXPORT_PRIVATE const UString displayName(ExecState*);
         const UString calculatedDisplayName(ExecState*);

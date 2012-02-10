@@ -95,8 +95,8 @@ namespace JSC {
         // true if an allocation or collection is in progress
         inline bool isBusy();
         
-        MarkedAllocator& allocatorForObject(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
-        void* allocate(size_t);
+        MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
+        MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
         CheckedBoolean tryAllocateStorage(size_t, void**);
         CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
 
@@ -142,6 +142,10 @@ namespace JSC {
         friend class BumpSpace;
         friend class SlotVisitor;
         friend class CodeBlock;
+        template<typename T> friend void* allocateCell(Heap&);
+
+        void* allocateWithDestructor(size_t);
+        void* allocateWithoutDestructor(size_t);
 
         size_t waterMark();
         size_t highWaterMark();
@@ -334,10 +338,16 @@ namespace JSC {
         return forEachProtectedCell(functor);
     }
 
-    inline void* Heap::allocate(size_t bytes)
+    inline void* Heap::allocateWithDestructor(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        return m_objectSpace.allocate(bytes);
+        return m_objectSpace.allocateWithDestructor(bytes);
+    }
+    
+    inline void* Heap::allocateWithoutDestructor(size_t bytes)
+    {
+        ASSERT(isValidAllocation(bytes));
+        return m_objectSpace.allocateWithoutDestructor(bytes);
     }
     
     inline CheckedBoolean Heap::tryAllocateStorage(size_t bytes, void** outPtr)

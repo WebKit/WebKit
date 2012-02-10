@@ -22,6 +22,7 @@ public:
     void reset();
     void zapFreeList();
     size_t cellSize() { return m_cellSize; }
+    bool cellsNeedDestruction() { return m_cellsNeedDestruction; }
     void* allocate();
     Heap* heap() { return m_heap; }
     
@@ -29,9 +30,7 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void setHeap(Heap* heap) { m_heap = heap; }
-    void setCellSize(size_t cellSize) { m_cellSize = cellSize; }
-    void setMarkedSpace(MarkedSpace* space) { m_markedSpace = space; }
+    void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction);
     
 private:
     JS_EXPORT_PRIVATE void* allocateSlowCase();
@@ -43,6 +42,7 @@ private:
     MarkedBlock* m_currentBlock;
     DoublyLinkedList<HeapBlock> m_blockList;
     size_t m_cellSize;
+    bool m_cellsNeedDestruction;
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
@@ -51,11 +51,20 @@ inline MarkedAllocator::MarkedAllocator()
     : m_firstFreeCell(0)
     , m_currentBlock(0)
     , m_cellSize(0)
+    , m_cellsNeedDestruction(true)
     , m_heap(0)
     , m_markedSpace(0)
 {
 }
-    
+
+inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool cellsNeedDestruction)
+{
+    m_heap = heap;
+    m_markedSpace = markedSpace;
+    m_cellSize = cellSize;
+    m_cellsNeedDestruction = cellsNeedDestruction;
+}
+
 inline void* MarkedAllocator::allocate()
 {
     MarkedBlock::FreeCell* firstFreeCell = m_firstFreeCell;

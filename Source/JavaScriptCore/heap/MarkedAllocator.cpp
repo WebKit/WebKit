@@ -97,11 +97,11 @@ MarkedBlock* MarkedAllocator::allocateBlock(AllocationEffort allocationEffort)
             block = 0;
     }
     if (block)
-        block = MarkedBlock::recycle(block, m_heap, m_cellSize);
+        block = MarkedBlock::recycle(block, m_heap, m_cellSize, m_cellsNeedDestruction);
     else if (allocationEffort == AllocationCanFail)
         return 0;
     else
-        block = MarkedBlock::create(m_heap, m_cellSize);
+        block = MarkedBlock::create(m_heap, m_cellSize, m_cellsNeedDestruction);
     
     m_markedSpace->didAddBlock(block);
     

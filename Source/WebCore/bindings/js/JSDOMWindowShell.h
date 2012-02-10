@@ -58,7 +58,8 @@ namespace WebCore {
 
         static JSDOMWindowShell* create(PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld* world) 
         {
-            JSDOMWindowShell* shell = new JSDOMWindowShell(structure, world);
+            JSC::Heap& heap = JSDOMWindow::commonJSGlobalData()->heap;
+            JSDOMWindowShell* shell = new (NotNull, JSC::allocateCell<JSDOMWindowShell>(heap)) JSDOMWindowShell(structure, world);
             shell->finishCreation(*world->globalData(), window);
             return shell; 
         }
@@ -75,7 +76,6 @@ namespace WebCore {
         void finishCreation(JSC::JSGlobalData&, PassRefPtr<DOMWindow>);
 
     private:
-        void* operator new(size_t);
         static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 
         static JSC::UString className(const JSC::JSObject*);

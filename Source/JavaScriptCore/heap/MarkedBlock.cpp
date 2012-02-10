@@ -32,17 +32,17 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize)
+MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize, bool cellsNeedDestruction)
 {
     PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
-    return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize);
+    return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize, cellsNeedDestruction);
 }
 
-MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, Heap* heap, size_t cellSize)
+MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
 {
-    return new (NotNull, block) MarkedBlock(block->m_allocation, heap, cellSize);
+    return new (NotNull, block) MarkedBlock(block->m_allocation, heap, cellSize, cellsNeedDestruction);
 }
 
 void MarkedBlock::destroy(MarkedBlock* block)
@@ -50,10 +50,11 @@ void MarkedBlock::destroy(MarkedBlock* block)
     block->m_allocation.deallocate();
 }
 
-MarkedBlock::MarkedBlock(PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
+MarkedBlock::MarkedBlock(PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
     : HeapBlock(allocation)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
+    , m_cellsNeedDestruction(cellsNeedDestruction)
     , m_state(New) // All cells start out unmarked.
     , m_heap(heap)
 {
@@ -70,16 +71,17 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
-    if (cell->classInfo() != &JSFinalObject::s_info)
-        cell->methodTable()->destroy(cell);
+    ASSERT(cell->classInfo() != &JSFinalObject::s_info);
+    cell->methodTable()->destroy(cell);
 
     cell->zap();
 }
 
-template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode>
+template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode, bool destructorCallNeeded>
 MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
 {
     ASSERT(blockState != Allocated && blockState != FreeListed);
+    ASSERT(destructorCallNeeded || sweepMode != SweepOnly);
 
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
@@ -93,7 +95,7 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
         if (blockState == Zapped && !cell->isZapped())
             continue;
 
-        if (blockState != New)
+        if (destructorCallNeeded && blockState != New)
             callDestructor(cell);
 
         if (sweepMode == SweepToFreeList) {
@@ -111,10 +113,21 @@ MarkedBlock::FreeCell* MarkedBlock::sweep(SweepMode sweepMode)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
+    if (sweepMode == SweepOnly && !m_cellsNeedDestruction)
+        return 0;
+
+    if (m_cellsNeedDestruction)
+        return sweepHelper<true>(sweepMode);
+    return sweepHelper<false>(sweepMode);
+}
+
+template<bool destructorCallNeeded>
+MarkedBlock::FreeCell* MarkedBlock::sweepHelper(SweepMode sweepMode)
+{
     switch (m_state) {
     case New:
         ASSERT(sweepMode == SweepToFreeList);
-        return specializedSweep<New, SweepToFreeList>();
+        return specializedSweep<New, SweepToFreeList, destructorCallNeeded>();
     case FreeListed:
         // Happens when a block transitions to fully allocated.
         ASSERT(sweepMode == SweepToFreeList);
@@ -124,12 +137,12 @@ MarkedBlock::FreeCell* MarkedBlock::sweep(SweepMode sweepMode)
         return 0;
     case Marked:
         return sweepMode == SweepToFreeList
-            ? specializedSweep<Marked, SweepToFreeList>()
-            : specializedSweep<Marked, SweepOnly>();
+            ? specializedSweep<Marked, SweepToFreeList, destructorCallNeeded>()
+            : specializedSweep<Marked, SweepOnly, destructorCallNeeded>();
     case Zapped:
         return sweepMode == SweepToFreeList
-            ? specializedSweep<Zapped, SweepToFreeList>()
-            : specializedSweep<Zapped, SweepOnly>();
+            ? specializedSweep<Zapped, SweepToFreeList, destructorCallNeeded>()
+            : specializedSweep<Zapped, SweepOnly, destructorCallNeeded>();
     }
 
     ASSERT_NOT_REACHED();

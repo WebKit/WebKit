@@ -89,8 +89,8 @@ namespace JSC {
             void returnValue() { }
         };
 
-        static MarkedBlock* create(Heap*, size_t cellSize);
-        static MarkedBlock* recycle(MarkedBlock*, Heap*, size_t cellSize);
+        static MarkedBlock* create(Heap*, size_t cellSize, bool cellsNeedDestruction);
+        static MarkedBlock* recycle(MarkedBlock*, Heap*, size_t cellSize, bool cellsNeedDestruction);
         static void destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -115,6 +115,7 @@ namespace JSC {
         bool markCountIsZero(); // Faster than markCount().
 
         size_t cellSize();
+        bool cellsNeedDestruction();
 
         size_t size();
         size_t capacity();
@@ -159,14 +160,15 @@ namespace JSC {
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
 
         enum BlockState { New, FreeListed, Allocated, Marked, Zapped };
+        template<bool destructorCallNeeded> FreeCell* sweepHelper(SweepMode = SweepOnly);
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(PageAllocationAligned&, Heap*, size_t cellSize);
+        MarkedBlock(PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);
-        template<BlockState, SweepMode> FreeCell* specializedSweep();
+        template<BlockState, SweepMode, bool destructorCallNeeded> FreeCell* specializedSweep();
         
 #if ENABLE(GGC)
         CardSet<bytesPerCard, blockSize> m_cards;
@@ -179,6 +181,7 @@ namespace JSC {
 #else
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
 #endif
+        bool m_cellsNeedDestruction;
         BlockState m_state;
         Heap* m_heap;
     };
@@ -241,6 +244,11 @@ namespace JSC {
     inline size_t MarkedBlock::cellSize()
     {
         return m_atomsPerCell * atomSize;
+    }
+
+    inline bool MarkedBlock::cellsNeedDestruction()
+    {
+        return m_cellsNeedDestruction; 
     }
 
     inline size_t MarkedBlock::size()

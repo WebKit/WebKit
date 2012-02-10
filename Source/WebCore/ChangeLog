@@ -1,3 +1,27 @@
+2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Split MarkedSpace into destructor and destructor-free subspaces
+        https://bugs.webkit.org/show_bug.cgi?id=77761
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/JSDOMWindowShell.cpp: Removed old operator new, which was just used in the create
+        function so that we can use allocateCell instead.
+        (WebCore):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::create):
+        (JSDOMWindowShell):
+        * bindings/scripts/CodeGeneratorJS.pm: Added destructor back to root JS DOM nodes (e.g. JSNode, etc)
+        because their destroy functions need to be called, so we don't want the NeedsDestructor struct to 
+        think they don't need destruction due to having empty/trivial destructors.
+        Removed ASSERT_HAS_TRIVIAL_DESTRUCTOR from all JS DOM wrapper auto-generated objects because their 
+        ancestors now have non-trivial destructors. 
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDefinition):
+
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
         Remove a bunch of unused ScrollableArea member functions

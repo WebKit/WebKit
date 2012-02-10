@@ -1565,7 +1565,7 @@ private:
     template<typename T>
     void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        MarkedAllocator* allocator = &m_jit.globalData()->heap.allocatorForObject(sizeof(JSFinalObject));
+        MarkedAllocator* allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(JSFinalObject));
         
         m_jit.loadPtr(&allocator->m_firstFreeCell, resultGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));

@@ -84,8 +84,6 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        JS_EXPORT_PRIVATE static void destroy(JSCell*);
-
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
         JS_EXPORT_PRIVATE static UString className(const JSObject*);
@@ -323,8 +321,6 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
-        JS_EXPORT_PRIVATE static void destroy(JSCell*);
-
     protected:
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
@@ -343,6 +339,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         WriteBarrier<Unknown> m_inlineStorage[JSNonFinalObject_inlineStorageCapacity];
     };
 
+    class JSFinalObject;
+
     // JSFinalObject is a type of JSObject that contains sufficent internal
     // storage to fully make use of the colloctor cell containing it.
     class JSFinalObject : public JSObject {
@@ -351,13 +349,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
     public:
         typedef JSObject Base;
 
-        static JSFinalObject* create(ExecState* exec, Structure* structure)
-        {
-            JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
-            finalObject->finishCreation(exec->globalData());
-            return finalObject;
-        }
-
+        static JSFinalObject* create(ExecState*, Structure*);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), &s_info);
@@ -374,8 +366,6 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             ASSERT(classInfo());
         }
 
-        static void destroy(JSCell*);
-
     private:
         explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
@@ -386,6 +376,13 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
 
         WriteBarrierBase<Unknown> m_inlineStorage[JSFinalObject_inlineStorageCapacity];
     };
+
+inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structure)
+{
+    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
+    finalObject->finishCreation(exec->globalData());
+    return finalObject;
+}
 
 inline bool isJSFinalObject(JSCell* cell)
 {
