@@ -134,8 +134,6 @@ public:
     void setWithScriptExecutionContextAndScriptStateAttributeRaises(const WebDOMTestObj&);
     WebDOMTestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute() const;
     void setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(const WebDOMTestObj&);
-    WebDOMTestObj withScriptArgumentsAndCallStackAttribute() const;
-    void setWithScriptArgumentsAndCallStackAttribute(const WebDOMTestObj&);
     WebDOMString scriptStringAttr() const;
 #if ENABLE(Condition1)
     int conditionalAttr1() const;
@@ -194,7 +192,6 @@ public:
     void withScriptExecutionContextAndScriptState();
     WebDOMTestObj withScriptExecutionContextAndScriptStateObjException();
     WebDOMTestObj withScriptExecutionContextAndScriptStateWithSpaces();
-    void withScriptArgumentsAndCallStack();
     void methodWithOptionalArg(int opt);
     void methodWithNonOptionalArgAndOptionalArg(int nonOpt, int opt);
     void methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int opt1, int opt2);

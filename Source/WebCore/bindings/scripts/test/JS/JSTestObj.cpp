@@ -42,6 +42,7 @@
 #include "JSd.h"
 #include "JSe.h"
 #include "JSint.h"
+#include "JSlog.h"
 #include "KURL.h"
 #include "SVGDocument.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -111,7 +112,6 @@ static const HashTableValue JSTestObjTableValues[] =
     { "withScriptExecutionContextAndScriptStateAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateAttribute), (intptr_t)setJSTestObjWithScriptExecutionContextAndScriptStateAttribute, NoIntrinsic },
     { "withScriptExecutionContextAndScriptStateAttributeRaises", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises), (intptr_t)setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises, NoIntrinsic },
     { "withScriptExecutionContextAndScriptStateWithSpacesAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute), (intptr_t)setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute, NoIntrinsic },
-    { "withScriptArgumentsAndCallStackAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptArgumentsAndCallStackAttribute), (intptr_t)setJSTestObjWithScriptArgumentsAndCallStackAttribute, NoIntrinsic },
     { "scriptStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjScriptStringAttr), (intptr_t)0, NoIntrinsic },
 #if ENABLE(Condition1)
     { "conditionalAttr1", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr1), (intptr_t)setJSTestObjConditionalAttr1, NoIntrinsic },
@@ -261,6 +261,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithException", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t)0, NoIntrinsic },
     { "customMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0, NoIntrinsic },
     { "customMethodWithArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t)3, NoIntrinsic },
+    { "customArgsAndException", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomArgsAndException), (intptr_t)1, NoIntrinsic },
     { "addEventListener", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAddEventListener), (intptr_t)3, NoIntrinsic },
     { "removeEventListener", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionRemoveEventListener), (intptr_t)3, NoIntrinsic },
     { "withScriptStateVoid", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateVoid), (intptr_t)0, NoIntrinsic },
@@ -271,7 +272,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "withScriptExecutionContextAndScriptState", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState), (intptr_t)0, NoIntrinsic },
     { "withScriptExecutionContextAndScriptStateObjException", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException), (intptr_t)0, NoIntrinsic },
     { "withScriptExecutionContextAndScriptStateWithSpaces", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces), (intptr_t)0, NoIntrinsic },
-    { "withScriptArgumentsAndCallStack", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack), (intptr_t)0, NoIntrinsic },
     { "methodWithOptionalArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArg), (intptr_t)1, NoIntrinsic },
     { "methodWithNonOptionalArgAndOptionalArg", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t)2, NoIntrinsic },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t)3, NoIntrinsic },
@@ -304,7 +304,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjPrototypeTable = { 266, 255, JSTestObjPrototypeTableValues, 0 };
+static const HashTable JSTestObjPrototypeTable = { 265, 255, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -702,16 +702,6 @@ JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
         return jsUndefined();
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptExecutionContextAndScriptStateWithSpacesAttribute(exec, scriptContext)));
-    return result;
-}
-
-
-JSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptArgumentsAndCallStackAttribute(callStack)));
     return result;
 }
 
@@ -1163,15 +1153,6 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
 }
 
 
-void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
-    impl->setWithScriptArgumentsAndCallStackAttribute(callStack, toTestObj(value));
-}
-
-
 #if ENABLE(Condition1)
 void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* thisObject, JSValue value)
 {
@@ -1493,6 +1474,27 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
     return JSValue::encode(castedThis->customMethodWithArgs(exec));
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    ExceptionCode ec = 0;
+    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 1));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
+    log* intArg(tolog(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    impl->customArgsAndException(intArg, scriptArguments, callStack, ec);
+    setDOMException(exec, ec);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
@@ -1651,20 +1653,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwVMTypeError(exec);
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 0));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
-    impl->withScriptArgumentsAndCallStack(scriptArguments, callStack);
-    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* exec)

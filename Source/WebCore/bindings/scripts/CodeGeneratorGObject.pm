@@ -188,7 +188,8 @@ sub SkipFunction {
     my $prefix = shift;
 
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
-    my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"};
+    my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"} ||
+        $function->signature->extendedAttributes->{"CustomArgumentHandling"};
 
     if ($isCustomFunction &&
         $functionName ne "webkit_dom_node_replace_child" &&
@@ -736,6 +737,10 @@ sub GenerateFunction {
     my $functionSig = "${className}* self";
 
     my @callImplParams;
+
+    # skip some custom functions for now
+    my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"} ||
+                       $function->signature->extendedAttributes->{"CustomArgumentHandling"};
 
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;

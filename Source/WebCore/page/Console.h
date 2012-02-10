@@ -66,7 +66,7 @@ public:
     void dir(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void dirxml(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void trace(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    void assertCondition(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, bool condition);
+    void assertCondition(bool condition, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void count(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void markTimeline(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -75,7 +75,7 @@ public:
     void profileEnd(const String&, ScriptState*, PassRefPtr<ScriptCallStack>);
 #endif
     void time(const String&);
-    void timeEnd(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, const String&);
+    void timeEnd(const String&, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void timeStamp(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void group(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void groupCollapsed(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);

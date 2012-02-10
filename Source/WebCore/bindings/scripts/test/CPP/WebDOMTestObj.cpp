@@ -614,22 +614,6 @@ void WebDOMTestObj::setWithScriptExecutionContextAndScriptStateWithSpacesAttribu
     impl()->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(toWebCore(newWithScriptExecutionContextAndScriptStateWithSpacesAttribute));
 }
 
-WebDOMTestObj WebDOMTestObj::withScriptArgumentsAndCallStackAttribute() const
-{
-    if (!impl())
-        return WebDOMTestObj();
-
-    return toWebKit(WTF::getPtr(impl()->withScriptArgumentsAndCallStackAttribute()));
-}
-
-void WebDOMTestObj::setWithScriptArgumentsAndCallStackAttribute(const WebDOMTestObj& newWithScriptArgumentsAndCallStackAttribute)
-{
-    if (!impl())
-        return;
-
-    impl()->setWithScriptArgumentsAndCallStackAttribute(toWebCore(newWithScriptArgumentsAndCallStackAttribute));
-}
-
 WebDOMString WebDOMTestObj::scriptStringAttr() const
 {
     if (!impl())
@@ -1013,14 +997,6 @@ WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateWithSpaces(
         return WebDOMTestObj();
 
     return toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateWithSpaces()));
-}
-
-void WebDOMTestObj::withScriptArgumentsAndCallStack()
-{
-    if (!impl())
-        return;
-
-    impl()->withScriptArgumentsAndCallStack();
 }
 
 void WebDOMTestObj::methodWithOptionalArg(int opt)

@@ -88,6 +88,9 @@ module test {
         [Custom] void customMethod();
         [Custom] void customMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
 
+        [CustomArgumentHandling] void customArgsAndException(in log intArg)
+            raises(DOMException);
+
         void addEventListener(in DOMString type, 
                               in EventListener listener, 
                               in [Optional] boolean useCapture);
@@ -107,7 +110,6 @@ module test {
         [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateObjException()
             raises(DOMException);
         [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
-        [CallWith=ScriptArguments|CallStack] void withScriptArgumentsAndCallStack();
 
         attribute [CallWith=ScriptState] long withScriptStateAttribute;
         attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttribute;
@@ -119,7 +121,6 @@ module test {
         attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttributeRaises
             getter raises(DOMException);
         attribute [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
-        attribute [CallWith=ScriptArguments|CallStack] TestObj withScriptArgumentsAndCallStackAttribute;
 
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);
