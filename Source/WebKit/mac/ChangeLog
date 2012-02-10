@@ -1,3 +1,14 @@
+2012-02-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] DYLIB_INSTALL_NAME_BASE should not be prefixed by the SDKROOT
+        https://bugs.webkit.org/show_bug.cgi?id=78320
+
+        Reviewed by Joseph Pecoraro.
+
+        <rdar://problem/10839750>
+
+        * Configurations/WebKit.xcconfig:
+
 2012-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r104885): Articles not displayed in Vienna RSS reader
