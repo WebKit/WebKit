@@ -1,3 +1,17 @@
+2012-02-10  Adam Langley  <agl@chromium.org>
+
+        Don't lowercase ping URLs.
+
+        Previously, ping URLs would be lowercased when splitting them apart.
+        URLs are not, however, case-insensitive.
+
+        https://bugs.webkit.org/show_bug.cgi?id=78371
+
+        Reviewed by Tony Chang.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::sendPings): Don't lowercase URL.
+
 2012-02-10  Ojan Vafai  <ojan@chromium.org>
 
         flex-pack:center and flex-item-align:center should do true centering

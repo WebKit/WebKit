@@ -489,7 +489,7 @@ void HTMLAnchorElement::sendPings(const KURL& destinationURL)
     if (!hasAttribute(pingAttr) || !document()->settings()->hyperlinkAuditingEnabled())
         return;
 
-    SpaceSplitString pingURLs(getAttribute(pingAttr), true);
+    SpaceSplitString pingURLs(getAttribute(pingAttr), false);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(document()->frame(), document()->completeURL(pingURLs[i]), destinationURL);
 }
