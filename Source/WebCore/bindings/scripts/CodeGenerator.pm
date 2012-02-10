@@ -638,4 +638,15 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
     return @checks;
 }
 
+sub ExtendedAttributeContains
+{
+    my $object = shift;
+    my $callWith = shift;
+    return 0 unless $callWith;
+    my $keyword = shift;
+
+    my @callWithKeywords = split /\s*\|\s*/, $callWith;
+    return grep { $_ eq $keyword } @callWithKeywords;
+}
+
 1;

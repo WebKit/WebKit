@@ -561,6 +561,59 @@ void WebDOMTestObj::setWithScriptExecutionContextAttributeRaises(const WebDOMTes
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
 }
 
+WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateAttribute() const
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    return toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateAttribute()));
+}
+
+void WebDOMTestObj::setWithScriptExecutionContextAndScriptStateAttribute(const WebDOMTestObj& newWithScriptExecutionContextAndScriptStateAttribute)
+{
+    if (!impl())
+        return;
+
+    impl()->setWithScriptExecutionContextAndScriptStateAttribute(toWebCore(newWithScriptExecutionContextAndScriptStateAttribute));
+}
+
+WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateAttributeRaises() const
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    WebCore::ExceptionCode ec = 0;
+    WebDOMTestObj result = toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateAttributeRaises(ec)));
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return result;
+}
+
+void WebDOMTestObj::setWithScriptExecutionContextAndScriptStateAttributeRaises(const WebDOMTestObj& newWithScriptExecutionContextAndScriptStateAttributeRaises)
+{
+    if (!impl())
+        return;
+
+    WebCore::ExceptionCode ec = 0;
+    impl()->setWithScriptExecutionContextAndScriptStateAttributeRaises(toWebCore(newWithScriptExecutionContextAndScriptStateAttributeRaises), ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+}
+
+WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateWithSpacesAttribute() const
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    return toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateWithSpacesAttribute()));
+}
+
+void WebDOMTestObj::setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(const WebDOMTestObj& newWithScriptExecutionContextAndScriptStateWithSpacesAttribute)
+{
+    if (!impl())
+        return;
+
+    impl()->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(toWebCore(newWithScriptExecutionContextAndScriptStateWithSpacesAttribute));
+}
+
 WebDOMString WebDOMTestObj::scriptStringAttr() const
 {
     if (!impl())
@@ -917,6 +970,33 @@ void WebDOMTestObj::withScriptExecutionContext()
         return;
 
     impl()->withScriptExecutionContext();
+}
+
+void WebDOMTestObj::withScriptExecutionContextAndScriptState()
+{
+    if (!impl())
+        return;
+
+    impl()->withScriptExecutionContextAndScriptState();
+}
+
+WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateObjException()
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    WebCore::ExceptionCode ec = 0;
+    WebDOMTestObj result = toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateObjException(ec)));
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return result;
+}
+
+WebDOMTestObj WebDOMTestObj::withScriptExecutionContextAndScriptStateWithSpaces()
+{
+    if (!impl())
+        return WebDOMTestObj();
+
+    return toWebKit(WTF::getPtr(impl()->withScriptExecutionContextAndScriptStateWithSpaces()));
 }
 
 void WebDOMTestObj::methodWithOptionalArg(int opt)

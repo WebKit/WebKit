@@ -32,7 +32,7 @@ use Digest::MD5;
 
 use constant FileNamePrefix => "V8";
 
-my ($codeGenerator);
+my $codeGenerator;
 
 my $module = "";
 my $outputDir = "";
@@ -866,14 +866,11 @@ END
 
     my $returnType = GetTypeFromSignature($attribute->signature);
     my $getterString;
-    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"} || "";
 
     if ($getterStringUsesImp) {
         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
 
-        if ($callWith) {
-            push(@arguments, GenerateCallWith($callWith, \@implContentDecls, "    ", 0, 0));
-        }
+        push(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 0, 0));
 
         push(@arguments, "ec") if $useExceptions;
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
@@ -905,7 +902,7 @@ END
         }
         push(@implContentDecls, GenerateSetDOMException("    "));
 
-        if ($callWith eq "ScriptState") {
+        if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContentDecls, "    if (state.hadException())\n");
             push(@implContentDecls, "        return throwError(state.exception());\n");
         }
@@ -1118,8 +1115,6 @@ END
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
     }
 
-    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"} || "";
-
     if ($implClassName eq "SVGNumber") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
@@ -1145,9 +1140,7 @@ END
         } else {
             my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
 
-            if ($callWith) {
-                push(@arguments, GenerateCallWith($callWith, \@implContentDecls, "    ", 1, 0));
-            }
+            push(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 1, 0));
 
             push(@arguments, $result);
             push(@arguments, "ec") if $useExceptions;
@@ -1168,7 +1161,7 @@ END
         push(@implContentDecls, "        V8Proxy::setDOMException(ec);\n");
     }
 
-    if ($callWith eq "ScriptState") {
+    if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
         push(@implContentDecls, "    if (state.hadException())\n");
         push(@implContentDecls, "        throwError(state.exception());\n");
     }
@@ -1464,30 +1457,31 @@ END
 sub GenerateCallWith
 {
     my $callWith = shift;
+    return () unless $callWith;
     my $outputArray = shift;
     my $indent = shift;
     my $returnVoid = shift;
     my $emptyContext = shift;
-    my $callWithArg = "COMPILE_ASSERT(false)";
 
-    if ($callWith eq "ScriptState") {
+    my @callWithArgs;
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
         if ($emptyContext) {
             push(@$outputArray, $indent . "EmptyScriptState state;\n");
-            $callWithArg = "&state";
+            push(@callWithArgs, "&state");
         } else {
             push(@$outputArray, $indent . "ScriptState* state = ScriptState::current();\n");
             push(@$outputArray, $indent . "if (!state)\n");
             push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
-            $callWithArg = "state";
+            push(@callWithArgs, "state");
         }
-    } elsif ($callWith eq "ScriptExecutionContext") {
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (!scriptContext)\n");
         push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
-        $callWithArg = "scriptContext";
+        push(@callWithArgs, "scriptContext");
     }
-
-    return $callWithArg;
+    return @callWithArgs;
 }
 
 sub GenerateArgumentsCountCheck
@@ -3203,14 +3197,13 @@ sub GenerateFunctionCallString()
         $functionName = "imp->${name}";
     }
 
-    my $callWith = $function->signature->extendedAttributes->{"CallWith"} || "";
-    if ($callWith) {
-        my @callWithOutput = ();
-        push(@arguments, GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1));
-        $result .= join("", @callWithOutput);
-        $index++;
-        $numberOfParameters++
-    }
+    my $callWith = $function->signature->extendedAttributes->{"CallWith"};
+    my @callWithOutput = ();
+    my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1);
+    $result .= join("", @callWithOutput);
+    push(@arguments, @callWithArgs);
+    $index += @callWithArgs;
+    $numberOfParameters += @callWithArgs;
 
     foreach my $parameter (@{$function->parameters}) {
         if ($index eq $numberOfParameters) {
@@ -3250,13 +3243,13 @@ sub GenerateFunctionCallString()
 
     if ($returnType eq "void") {
         $result .= $indent . "$functionString;\n";
-    } elsif ($callWith eq "ScriptState" or @{$function->raisesExceptions}) {
+    } elsif ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState") or @{$function->raisesExceptions}) {
         $result .= $indent . $nativeReturnType . " result = $functionString;\n";
     } else {
         # Can inline the function call into the return statement to avoid overhead of using a Ref<> temporary
         $return = $functionString;
         $returnIsRef = 0;
-    
+
         if ($implClassName eq "SVGTransformList" and IsRefPtrType($returnType)) {
             $return = "WTF::getPtr(" . $return . ")";
         }
@@ -3267,7 +3260,7 @@ sub GenerateFunctionCallString()
         $result .= $indent . "    goto fail;\n";
     }
 
-    if ($callWith eq "ScriptState") {
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
         $result .= $indent . "if (state.hadException())\n";
         $result .= $indent . "    return throwError(state.exception());\n"
     }

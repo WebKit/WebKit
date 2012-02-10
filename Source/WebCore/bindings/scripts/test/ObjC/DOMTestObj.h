@@ -123,6 +123,12 @@ enum {
 - (void)setWithScriptStateAttributeRaises:(DOMTestObj *)newWithScriptStateAttributeRaises;
 - (DOMTestObj *)withScriptExecutionContextAttributeRaises;
 - (void)setWithScriptExecutionContextAttributeRaises:(DOMTestObj *)newWithScriptExecutionContextAttributeRaises;
+- (DOMTestObj *)withScriptExecutionContextAndScriptStateAttribute;
+- (void)setWithScriptExecutionContextAndScriptStateAttribute:(DOMTestObj *)newWithScriptExecutionContextAndScriptStateAttribute;
+- (DOMTestObj *)withScriptExecutionContextAndScriptStateAttributeRaises;
+- (void)setWithScriptExecutionContextAndScriptStateAttributeRaises:(DOMTestObj *)newWithScriptExecutionContextAndScriptStateAttributeRaises;
+- (DOMTestObj *)withScriptExecutionContextAndScriptStateWithSpacesAttribute;
+- (void)setWithScriptExecutionContextAndScriptStateWithSpacesAttribute:(DOMTestObj *)newWithScriptExecutionContextAndScriptStateWithSpacesAttribute;
 - (NSString *)scriptStringAttr;
 #if ENABLE(Condition1)
 - (int)conditionalAttr1;
@@ -180,6 +186,9 @@ enum {
 - (void)withScriptStateVoidException;
 - (DOMTestObj *)withScriptStateObjException;
 - (void)withScriptExecutionContext;
+- (void)withScriptExecutionContextAndScriptState;
+- (DOMTestObj *)withScriptExecutionContextAndScriptStateObjException;
+- (DOMTestObj *)withScriptExecutionContextAndScriptStateWithSpaces;
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;
