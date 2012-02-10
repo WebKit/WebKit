@@ -2562,7 +2562,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     
     _data->_dragHasStarted = YES;
     IntSize size([image size]);
-    size.scale(1.0 / [self _intrinsicDeviceScaleFactor]);
+    size.scale(1.0 / _data->_page->deviceScaleFactor());
     [image setSize:size];
     
     // The call to super could release this WKView.

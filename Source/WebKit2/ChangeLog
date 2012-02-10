@@ -1,3 +1,15 @@
+2012-02-09  Matthew Delaney  <mdelaney@apple.com>
+
+        HiDPI: WebKit2's drag images are blurry
+        https://bugs.webkit.org/show_bug.cgi?id=67779
+
+        Use the proper deviceScaleFactor() instead of accessing _intrinsicDeviceScaleFactor
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setDragImage:at:linkDrag:]):
+
 2012-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Allow reading some debug-only preference files
