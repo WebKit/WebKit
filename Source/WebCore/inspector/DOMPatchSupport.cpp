@@ -45,6 +45,7 @@
 #include "Node.h"
 
 #include <wtf/Deque.h>
+#include <wtf/HashTraits.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SHA1.h>
 #include <wtf/text/CString.h>
@@ -279,7 +280,7 @@ void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
     HashMap<Digest*, Digest*> merges;
-    HashSet<size_t> usedNewOrdinals;
+    HashSet<size_t, WTF::IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t> > usedNewOrdinals;
     for (size_t i = 0; i < oldList.size(); ++i) {
         if (oldMap[i].first) {
             if (!usedNewOrdinals.contains(oldMap[i].second)) {
@@ -320,7 +321,7 @@ void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
     }
 
     // Mark retained nodes as used, do not reuse node more than once.
-    HashSet<size_t> usedOldOrdinals;
+    HashSet<size_t, WTF::IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t> >  usedOldOrdinals;
     for (size_t i = 0; i < newList.size(); ++i) {
         if (!newMap[i].first)
             continue;

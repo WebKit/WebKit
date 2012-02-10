@@ -1,3 +1,13 @@
+2012-02-10  Pavel Feldman  <pfeldman@google.com>
+
+        [Qt] REGRESSION(r107242): It made 5 inspector tests crash in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=78330
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+
 2012-02-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] TimelineModel should not depend on TimelinePanel

@@ -2617,10 +2617,3 @@ fast/text/international/inline-plaintext-is-isolated.html
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
 
-# [Qt] REGRESSION(r107242): It made 5 inspector tests crash in debug mode
-# https://bugs.webkit.org/show_bug.cgi?id=78330
-inspector/elements/set-outer-html-body.html
-inspector/elements/set-outer-html-2.html
-inspector/elements/undo-dom-edits.html
-inspector/elements/set-outer-html.html
-inspector/elements/edit-dom-actions.html
