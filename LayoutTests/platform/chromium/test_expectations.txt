@@ -1648,11 +1648,6 @@ BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 
 // rebaseline after skia rev. 2527 lands
 BUGCR101797 CPU : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg = IMAGE
 BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
 BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
@@ -3226,8 +3221,6 @@ BUGWK70887 DEBUG : jquery/css.html = PASS TIMEOUT
 
 BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
-BUGWK64976 BUGWK75042 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = FAIL
-
 BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
 
 BUGWK65063 SNOWLEOPARD : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
@@ -3606,8 +3599,6 @@ BUGWK73692 : media/event-attributes.html = TEXT PASS
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
-
-BUGWK73933 DEBUG : svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg = TIMEOUT PASS
 
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/complex-character-based-fallback.html = IMAGE+TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/danda-space.html = IMAGE+TEXT
