@@ -3992,6 +3992,10 @@ BUGWK78084 : svg/custom/repaint-on-image-bounds-change.svg = IMAGE+TEXT IMAGE
 BUGWK78084 : svg/custom/text-ctm.svg = IMAGE+TEXT
 BUGWK78084 : svg/custom/text-hit-test.svg = IMAGE+TEXT
 
+// Massive rebaselining, some rebaseline just don't make sense.
+BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
+BUGWK78115 WIN : svg/custom/use-crash-in-non-wellformed-document.svg = TEXT
+
 // feImage now supports dynamic invalidations if the target changes.
 BUGWK73860 : svg/filters/feImage-animated-transform-on-target-rect.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-change-target-id.svg = IMAGE+TEXT
