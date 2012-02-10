@@ -2483,9 +2483,9 @@ IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToL
     // Apply the clip from the layer.
     IntRect clipRect;
     if (clipToLayerContents)
-        clipRect = layer->childrenClipRect();
+        clipRect = pixelSnappedIntRect(layer->childrenClipRect());
     else
-        clipRect = layer->selfClipRect();
+        clipRect = pixelSnappedIntRect(layer->selfClipRect());
     clipRect = contentsToWindow(clipRect); 
     return intersection(clipRect, windowClipRect());
 }

@@ -98,7 +98,7 @@ DragImageRef Frame::nodeImage(Node* node)
         return 0;
 
     LayoutRect topLevelRect;
-    IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
+    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     document()->updateLayout();
 

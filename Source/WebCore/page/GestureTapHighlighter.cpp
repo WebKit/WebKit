@@ -55,7 +55,7 @@ inline LayoutPoint ownerFrameToMainFrameOffset(const RenderObject* o)
 
     Frame* mainFrame = containingFrame->page()->mainFrame();
 
-    LayoutPoint mainFramePoint = mainFrame->view()->rootViewToContents(containingFrame->view()->contentsToRootView(LayoutPoint()));
+    LayoutPoint mainFramePoint = mainFrame->view()->rootViewToContents(containingFrame->view()->contentsToRootView(IntPoint()));
     return mainFramePoint;
 }
 
@@ -95,8 +95,8 @@ inline bool strikes(const LayoutRect& a, const LayoutRect& b)
 
 inline void shiftXEdgesToContainIfStrikes(LayoutRect& rect, const LayoutRect& other)
 {
-    int leftSide = rect.x();
-    int rightSide = rect.maxX();
+    LayoutUnit leftSide = rect.x();
+    LayoutUnit rightSide = rect.maxX();
 
     if (!other.isEmpty() && strikes(rect, other)) {
         leftSide = std::min(leftSide, other.x());

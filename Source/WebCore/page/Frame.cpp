@@ -1072,7 +1072,7 @@ DragImageRef Frame::nodeImage(Node* node)
     m_view->setNodeToDraw(node); // Enable special sub-tree drawing mode.
 
     LayoutRect topLevelRect;
-    IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
+    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));
     if (!buffer)

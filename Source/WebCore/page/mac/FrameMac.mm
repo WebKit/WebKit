@@ -158,7 +158,7 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
     LayoutRect topLevelRect;
-    NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
+    NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     m_view->setNodeToDraw(node);              // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);
@@ -167,7 +167,7 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     m_view->setNodeToDraw(0);
 
     if (elementRect)
-        *elementRect = topLevelRect;
+        *elementRect = pixelSnappedIntRect(topLevelRect);
     if (imageRect)
         *imageRect = paintingRect;
     return result;
@@ -182,7 +182,7 @@ DragImageRef Frame::nodeImage(Node* node)
     m_doc->updateLayout(); // forces style recalc
 
     LayoutRect topLevelRect;
-    NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
+    NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);

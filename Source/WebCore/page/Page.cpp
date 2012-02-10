@@ -1076,7 +1076,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
 
     // The objects are only relevant if they are being painted within the viewRect().
     if (RenderView* view = object->view()) {
-        if (!objectPaintRect.intersects(view->viewRect()))
+        if (!objectPaintRect.intersects(pixelSnappedIntRect(view->viewRect())))
             return;
     }
 

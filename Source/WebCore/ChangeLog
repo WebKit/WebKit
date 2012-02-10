@@ -1,3 +1,44 @@
+2012-02-09  Emil A Eklund  <eae@chromium.org>
+
+        Convert Frame/FrameView to LayoutUnits in preparation for turning on subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78311
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no new functionality.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        Pixel snap painting rect for image to ensure that it is painted aligned
+        to device pixels. This avoids avoid unwanted anti-aliasing.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRectForLayer):
+        Pixel snap clip rects as all window coordinates and sizes are exposed as
+        integers.
+
+        * page/GestureTapHighlighter.cpp:
+        * page/Page.cpp:
+        (WebCore::Page::addRelevantRepaintedObject):
+        As the painting is done aligned on pixel boundaries we need to pixel snap
+        the view rect when checking if it intersects the objects paint rect.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::snapshotDragImage):
+        (WebCore::Frame::nodeImage):
+        Pixel snap painting rect for image to ensure that it is painted aligned
+        to device pixels. This avoids avoid unwanted anti-aliasing.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::Frame::nodeImage):
+        Pixel snap painting rect for image to ensure that it is painted aligned
+        to device pixels. This avoids avoid unwanted anti-aliasing.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::pixelSnappedIntRect):
+        (WebCore):
+        No-op implementation of pixelSnappedIntRect for now.
+
 2012-02-09  Kenichi Ishibashi  <bashi@chromium.org>
 
         Add WebSocket extension support
