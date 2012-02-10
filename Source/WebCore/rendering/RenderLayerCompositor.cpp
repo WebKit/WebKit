@@ -1567,6 +1567,11 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     if (container != m_renderView)
         return false;
 
+    // Fixed position elements that are invisible in the current view don't get their own layer.
+    FrameView* frameView = m_renderView->frameView();
+    if (frameView && !layer->absoluteBoundingBox().intersects(LayoutRect(frameView->scrollXForFixedPosition(), frameView->scrollYForFixedPosition(), frameView->layoutWidth(), frameView->layoutHeight())))
+        return false;
+
     return true;
 }
 

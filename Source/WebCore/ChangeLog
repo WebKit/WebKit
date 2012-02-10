@@ -1,3 +1,15 @@
+2012-02-09  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Avoid compositing invisible fixed positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=78186
+
+        Reviewed by James Robinson.
+
+        Test: compositing/layer-creation/fixed-position-out-of-view.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+
 2012-02-09  Timothy Hatcher  <timothy@apple.com>
 
         Prevent attaching when inspecting the Web Inspector.
