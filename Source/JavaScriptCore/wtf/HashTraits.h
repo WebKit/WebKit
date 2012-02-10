@@ -57,6 +57,7 @@ namespace WTF {
 
     template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
         typedef T TraitType;
+        typedef T EmptyValueType;
 
         static T emptyValue() { return T(); }
 
@@ -112,7 +113,9 @@ namespace WTF {
     };
 
     template<typename P> struct HashTraits<OwnPtr<P> > : SimpleClassHashTraits<OwnPtr<P> > {
-        static std::nullptr_t emptyValue() { return nullptr; }
+        typedef std::nullptr_t EmptyValueType;
+
+        static EmptyValueType emptyValue() { return nullptr; }
 
         typedef PassOwnPtr<P> PassInType;
         static void store(PassOwnPtr<P> value, OwnPtr<P>& storage) { storage = value; }
@@ -144,9 +147,10 @@ namespace WTF {
         typedef FirstTraitsArg FirstTraits;
         typedef SecondTraitsArg SecondTraits;
         typedef pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType> TraitType;
+        typedef pair<typename FirstTraits::EmptyValueType, typename SecondTraits::EmptyValueType> EmptyValueType;
 
         static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
-        static TraitType emptyValue() { return make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
+        static EmptyValueType emptyValue() { return make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
 
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
 

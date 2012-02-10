@@ -1,3 +1,29 @@
+2012-02-10  Adrienne Walker  <enne@google.com>
+
+        Remove implicit copy constructor usage in HashMaps with OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=78071
+
+        Reviewed by Darin Adler.
+
+        Change the return type of emptyValue() in PairHashTraits to be the
+        actual type returned rather than the trait type to avoid an implicit
+        generation of the OwnPtr copy constructor. This happens for hash
+        traits involving OwnPtr where the empty value is not zero and each
+        hash bucket needs to be initialized with emptyValue().
+
+        Also, update StructureTransitionTable to use default hash traits
+        rather than rolling its own, in order to update it to handle
+        EmptyValueType.
+
+        Test: patch from bug 74154 compiles on Clang with this patch
+
+        * runtime/StructureTransitionTable.h:
+        (StructureTransitionTable):
+        * wtf/HashTraits.h:
+        (GenericHashTraits):
+        (PairHashTraits):
+        (WTF::PairHashTraits::emptyValue):
+
 2012-02-10  Aron Rosenberg  <arosenberg@logitech.com>
 
         [Qt] Fix compiler warning in Visual Studio 2010 about TR1

@@ -29,7 +29,6 @@
 #include "UString.h"
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/HashTraits.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -55,22 +54,6 @@ class StructureTransitionTable {
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
-    struct HashTraits {
-        typedef WTF::HashTraits<RefPtr<StringImpl> > FirstTraits;
-        typedef WTF::GenericHashTraits<unsigned> SecondTraits;
-        typedef std::pair<FirstTraits::TraitType, SecondTraits::TraitType > TraitType;
-
-        static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
-        static TraitType emptyValue() { return std::make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
-
-        static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
-
-        static const int minimumTableSize = FirstTraits::minimumTableSize;
-
-        static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
-        static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
-    };
-
     struct WeakGCMapFinalizerCallback {
         static void* finalizerContextFor(Hash::Key)
         {
@@ -83,7 +66,7 @@ class StructureTransitionTable {
         }
     };
 
-    typedef WeakGCMap<Hash::Key, Structure, WeakGCMapFinalizerCallback, Hash, HashTraits> TransitionMap;
+    typedef WeakGCMap<Hash::Key, Structure, WeakGCMapFinalizerCallback, Hash> TransitionMap;
 
     static Hash::Key keyForWeakGCMapFinalizer(void* context, Structure*);
 
