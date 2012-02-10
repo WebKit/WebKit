@@ -883,6 +883,14 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
     return suggestedFilenameWithMIMEType(self, MIMEType);
 }
 
+- (NSURL *)_webkit_URLFromURLOrPath
+{
+    if ([self scheme])
+        return self;
+
+    return [NSURL fileURLWithPath:[self absoluteString]];
+}
+
 @end
 
 @implementation NSString (WebNSURLExtras)

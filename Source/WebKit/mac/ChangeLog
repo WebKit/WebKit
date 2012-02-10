@@ -1,3 +1,18 @@
+2012-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r104885): Articles not displayed in Vienna RSS reader
+        https://bugs.webkit.org/show_bug.cgi?id=78280
+        <rdar://problem/10762545>
+
+        Reviewed by Oliver Hunt.
+
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm: (-[NSURL _webkit_URLFromURLOrPath]):
+        Added a method to create a URL from a path, similarly to what KURL used to do.
+
+        * WebView/WebFrame.mm: (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]):
+        Use it in an API where a known regression occurred.
+
 2012-02-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r106681): Null check missing in [WebFrame(WebInternal) _typingStyle]
