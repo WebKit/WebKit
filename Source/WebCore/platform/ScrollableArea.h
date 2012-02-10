@@ -102,10 +102,6 @@ public:
     void invalidateScrollCorner(const IntRect&);
     virtual void getTickmarks(Vector<IntRect>&) const { }
 
-    // This function should be overriden by subclasses to perform the actual
-    // scroll of the content.
-    virtual void setScrollOffset(const IntPoint&) = 0;
-
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
     // like CSS transforms.
@@ -172,8 +168,6 @@ protected:
     virtual ~ScrollableArea();
 
     void setScrollOrigin(const IntPoint&);
-    void setScrollOriginX(int);
-    void setScrollOriginY(int);
     void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
 
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
@@ -195,6 +189,10 @@ private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);
+
+    // This function should be overriden by subclasses to perform the actual
+    // scroll of the content.
+    virtual void setScrollOffset(const IntPoint&) = 0;
 
     mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
     bool m_constrainsScrollingToContentEdge : 1;

@@ -71,22 +71,6 @@ void ScrollableArea::setScrollOrigin(const IntPoint& origin)
         m_scrollOriginChanged = true;
     }
 }
- 
-void ScrollableArea::setScrollOriginX(int x)
-{
-    if (m_scrollOrigin.x() != x) {
-        m_scrollOrigin.setX(x);
-        m_scrollOriginChanged = true;
-    }
-}
-
-void ScrollableArea::setScrollOriginY(int y)
-{
-    if (m_scrollOrigin.y() != y) {
-        m_scrollOrigin.setY(y);
-        m_scrollOriginChanged = true;
-    }
-}
 
 bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
