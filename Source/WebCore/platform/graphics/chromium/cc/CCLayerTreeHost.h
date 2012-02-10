@@ -188,6 +188,8 @@ public:
     // Returns false if we should abort this frame due to initialization failure.
     bool updateLayers();
 
+    void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
+
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     void applyScrollAndScale(const CCScrollAndScaleSet&);
     void startRateLimiter(GraphicsContext3D*);

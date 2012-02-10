@@ -42,6 +42,7 @@
 namespace WebCore {
 
     class IntRect;
+    class IntSize;
     class KURL;
     class ResourceError;
     class ResourceRequest;
@@ -70,6 +71,9 @@ namespace WebCore {
     };
 
     template<> struct CrossThreadCopierBase<false, false, IntRect> : public CrossThreadCopierPassThrough<IntRect> {
+    };
+
+    template<> struct CrossThreadCopierBase<false, false, IntSize> : public CrossThreadCopierPassThrough<IntSize> {
     };
 
     // Custom copy methods.

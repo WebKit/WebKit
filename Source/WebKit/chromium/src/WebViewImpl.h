@@ -45,6 +45,7 @@
 #include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "InspectorClientImpl.h"
+#include "IntPoint.h"
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlayList.h"
@@ -315,6 +316,7 @@ public:
     void mouseDoubleClick(const WebMouseEvent&);
     bool mouseWheel(const WebMouseWheelEvent&);
     bool gestureEvent(const WebGestureEvent&);
+    void startPageScaleAnimation(const WebCore::IntPoint& targetPosition, bool useAnchor, float newScale, double durationSec);
     bool keyEvent(const WebKeyboardEvent&);
     bool charEvent(const WebKeyboardEvent&);
     bool touchEvent(const WebTouchEvent&);

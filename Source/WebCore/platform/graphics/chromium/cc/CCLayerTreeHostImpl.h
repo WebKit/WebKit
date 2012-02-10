@@ -117,6 +117,8 @@ public:
     // layer properties. This function overrides the damage region for the next draw cycle.
     void setFullRootLayerDamage();
 
+    void startPageScaleAnimation(const IntSize& tragetPosition, bool useAnchor, float scale, double durationSec);
+
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
     CCLayerTreeHostImplClient* m_client;

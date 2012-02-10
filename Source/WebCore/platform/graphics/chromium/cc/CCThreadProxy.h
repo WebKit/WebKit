@@ -49,6 +49,7 @@ public:
 
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&);
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
@@ -97,6 +98,7 @@ private:
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCThread::Task**);
     void beginFrameCompleteOnImplThread(CCCompletionEvent*);
     void requestReadbackOnImplThread(ReadbackRequest*);
+    void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
     void initializeContextOnImplThread(GraphicsContext3D*);

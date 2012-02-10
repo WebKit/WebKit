@@ -93,6 +93,11 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
     return true;
 }
 
+void CCSingleThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
+{
+    m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime() * 1000.0, durationSec * 1000.0);
+}
+
 GraphicsContext3D* CCSingleThreadProxy::context()
 {
     ASSERT(CCProxy::isMainThread());

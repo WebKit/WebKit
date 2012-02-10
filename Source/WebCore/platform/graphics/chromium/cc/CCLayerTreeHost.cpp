@@ -356,6 +356,10 @@ void CCLayerTreeHost::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
     m_proxy->setNeedsCommit();
 }
 
+void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
+{
+    m_proxy->startPageScaleAnimation(targetPosition, useAnchor, scale, durationSec);
+}
 
 void CCLayerTreeHost::loseCompositorContext(int numTimes)
 {

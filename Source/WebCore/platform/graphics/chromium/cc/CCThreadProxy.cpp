@@ -133,6 +133,19 @@ void CCThreadProxy::requestReadbackOnImplThread(ReadbackRequest* request)
     m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
+void CCThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
+{
+    ASSERT(CCProxy::isMainThread());
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::requestStartPageScaleAnimationOnImplThread, targetPosition, useAnchor, scale, durationSec));
+}
+
+void CCThreadProxy::requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec)
+{
+    ASSERT(CCProxy::isImplThread());
+    if (m_layerTreeHostImpl)
+        m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime() * 1000.0, durationSec * 1000.0);
+}
+
 GraphicsContext3D* CCThreadProxy::context()
 {
     return 0;

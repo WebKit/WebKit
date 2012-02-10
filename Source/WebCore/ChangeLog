@@ -1,3 +1,37 @@
+2012-02-09  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add support for starting page/scale animations on CC impl thread from WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=77872
+
+        Reviewed by James Robinson.
+
+        Added unit test.
+
+        Provides a pathway to invoke CCLayerTreeHostImpl::startPageScaleAnimation() from
+        WebViewImpl. This is intended to support scale and scroll animations, such as WebInputEvent::GestureDoubleTap.
+
+        * platform/CrossThreadCopier.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::startPageScaleAnimation):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::startPageScaleAnimation):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::startPageScaleAnimation):
+        (WebCore):
+        (WebCore::CCThreadProxy::requestStartPageScaleAnimationOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-02-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] TiledLayerChromium::protectVisibleTileTextures() should only protect the visible textures

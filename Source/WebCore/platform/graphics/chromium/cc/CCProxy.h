@@ -57,6 +57,8 @@ public:
 
     virtual bool compositeAndReadback(void *pixels, const IntRect&) = 0;
 
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec) = 0;
+
     virtual void finishAllRendering() = 0;
 
     virtual bool isStarted() const = 0;

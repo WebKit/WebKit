@@ -938,6 +938,75 @@ TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, DISABLED_runMultiThread)
     runTestThreaded();
 }
 
+// Verifies that startPageScaleAnimation events propagate correctly from CCLayerTreeHost to
+// CCLayerTreeHostImpl in the MT compositor.
+class CCLayerTreeHostTestStartPageScaleAnimation : public CCLayerTreeHostTest {
+public:
+
+    CCLayerTreeHostTestStartPageScaleAnimation()
+        : m_animationRequested(false)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->rootLayer()->setScrollable(true);
+        m_layerTreeHost->rootLayer()->setScrollPosition(IntPoint());
+        postSetNeedsRedrawToMainThread();
+    }
+
+    static void requestStartPageScaleAnimation(void* self)
+    {
+        CCLayerTreeHostTestStartPageScaleAnimation* test = static_cast<CCLayerTreeHostTestStartPageScaleAnimation*>(self);
+        if (test->layerTreeHost())
+            test->layerTreeHost()->startPageScaleAnimation(IntSize(), false, 1.25, 0);
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        impl->rootLayer()->setScrollable(true);
+        impl->rootLayer()->setScrollPosition(IntPoint());
+        impl->setPageScaleFactorAndLimits(impl->pageScale(), 0.5, 2);
+
+        // We request animation only once.
+        if (!m_animationRequested) {
+            callOnMainThread(CCLayerTreeHostTestStartPageScaleAnimation::requestStartPageScaleAnimation, this);
+            m_animationRequested = true;
+        }
+    }
+
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
+    {
+        IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
+        m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
+        m_layerTreeHost->setPageScale(scale);
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        impl->processScrollDeltas();
+        // We get one commit before the first draw, and the animation doesn't happen until the second draw,
+        // so results available on the third commit.
+        if (impl->frameNumber() == 2) {
+            EXPECT_EQ(1.25, impl->pageScale());
+            endTest();
+        } else
+            postSetNeedsRedrawToMainThread();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    bool m_animationRequested;
+};
+
+TEST_F(CCLayerTreeHostTestStartPageScaleAnimation, runTest)
+{
+    runTest(true);
+}
+
 class CCLayerTreeHostTestSetVisible : public CCLayerTreeHostTest {
 public:
 

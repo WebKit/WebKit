@@ -1,3 +1,30 @@
+2012-02-09  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add support for starting page/scale animations on CC impl thread from WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=77872
+
+        Reviewed by James Robinson.
+
+        Provides a pathway to invoke CCLayerTreeHostImpl::startPageScaleAnimation() from
+        WebViewImpl. This is intended to support scale and scroll animations, such as WebInputEvent::GestureDoubleTap.
+
+        * src/WebViewImpl.cpp:
+        (WebKit):
+        (WebKit::WebViewImpl::startPageScaleAnimation):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestStartPageScaleAnimation):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::CCLayerTreeHostTestStartPageScaleAnimation):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::beginTest):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::requestStartPageScaleAnimation):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::afterTest):
+        (WTF::TEST_F):
+
 2012-02-09  John Bates  <jbates@google.com>
 
         [Chromium] Add chromium-style tracing support

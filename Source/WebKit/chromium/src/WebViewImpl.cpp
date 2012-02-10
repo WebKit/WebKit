@@ -623,6 +623,12 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
 
     return handled;
 }
+
+void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->startPageScaleAnimation(IntSize(scroll.x(), scroll.y()), useAnchor, newScale, durationSec);
+}
 #endif
 
 bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)

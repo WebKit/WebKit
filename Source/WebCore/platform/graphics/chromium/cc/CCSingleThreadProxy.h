@@ -42,6 +42,7 @@ public:
 
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&);
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
