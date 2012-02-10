@@ -635,7 +635,7 @@ QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWe
     if (!webElement)
         return res;
 
-    RefPtr<WebCore::CSSComputedStyleDeclaration> computedStyleDeclaration = computedStyle(webElement, true);
+    RefPtr<WebCore::CSSComputedStyleDeclaration> computedStyleDeclaration = CSSComputedStyleDeclaration::create(webElement, true);
     CSSStyleDeclaration* style = static_cast<WebCore::CSSStyleDeclaration*>(computedStyleDeclaration.get());
     for (unsigned i = 0; i < style->length(); i++) {
         QString name = style->item(i);

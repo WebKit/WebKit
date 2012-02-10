@@ -378,7 +378,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     else if (isTabSpanNode(node))
         node = node->parentNode();
 
-    RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
+    RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = CSSComputedStyleDeclaration::create(node);
     m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
 
     if (propertiesToInclude == EditingPropertiesInEffect) {
@@ -558,8 +558,8 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
 {
     if (!node || !node->parentNode())
         return;
-    RefPtr<StylePropertySet> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()), AllEditingProperties);
-    RefPtr<StylePropertySet> nodeStyle = editingStyleFromComputedStyle(computedStyle(node), AllEditingProperties);
+    RefPtr<StylePropertySet> parentStyle = editingStyleFromComputedStyle(CSSComputedStyleDeclaration::create(node->parentNode()), AllEditingProperties);
+    RefPtr<StylePropertySet> nodeStyle = editingStyleFromComputedStyle(CSSComputedStyleDeclaration::create(node), AllEditingProperties);
     nodeStyle->removeEquivalentProperties(parentStyle->ensureCSSStyleDeclaration());
     m_mutableStyle->removeEquivalentProperties(nodeStyle->ensureCSSStyleDeclaration());
 }
@@ -569,8 +569,8 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
     if (!node || !node->parentNode() || !m_mutableStyle)
         return;
 
-    RefPtr<StylePropertySet> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()), AllEditingProperties);
-    RefPtr<StylePropertySet> nodeStyle = editingStyleFromComputedStyle(computedStyle(node), AllEditingProperties);
+    RefPtr<StylePropertySet> parentStyle = editingStyleFromComputedStyle(CSSComputedStyleDeclaration::create(node->parentNode()), AllEditingProperties);
+    RefPtr<StylePropertySet> nodeStyle = editingStyleFromComputedStyle(CSSComputedStyleDeclaration::create(node), AllEditingProperties);
     nodeStyle->removeEquivalentProperties(parentStyle->ensureCSSStyleDeclaration());
 
     unsigned propertyCount = nodeStyle->propertyCount();
@@ -641,7 +641,7 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
 
     TriState state = FalseTriState;
     for (Node* node = selection.start().deprecatedNode(); node; node = node->traverseNextNode()) {
-        RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
+        RefPtr<CSSComputedStyleDeclaration> nodeStyle = CSSComputedStyleDeclaration::create(node);
         if (nodeStyle) {
             TriState nodeState = triStateOfStyle(nodeStyle.get(), node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
             if (node == selection.start().deprecatedNode())
@@ -813,7 +813,7 @@ bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* elem
 
 bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node* node) const
 {
-    return !m_mutableStyle || getPropertiesNotIn(m_mutableStyle.get(), computedStyle(node).get())->isEmpty();
+    return !m_mutableStyle || getPropertiesNotIn(m_mutableStyle.get(), CSSComputedStyleDeclaration::create(node).get())->isEmpty();
 }
 
 bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* element)
@@ -1061,7 +1061,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     // The property value, if it's a percentage, may not reflect the actual computed value.  
     // For example: style="height: 1%; overflow: visible;" in quirksmode
     // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-    RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
+    RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = CSSComputedStyleDeclaration::create(element);
     RefPtr<StylePropertySet> fromComputedStyle = StylePropertySet::create();
     {
         unsigned propertyCount = m_mutableStyle->propertyCount();
@@ -1487,7 +1487,7 @@ bool hasTransparentBackgroundColor(StylePropertySet* style)
 PassRefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
     for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        RefPtr<CSSComputedStyleDeclaration> ancestorStyle = computedStyle(ancestor);
+        RefPtr<CSSComputedStyleDeclaration> ancestorStyle = CSSComputedStyleDeclaration::create(ancestor);
         if (!hasTransparentBackgroundColor(ancestorStyle.get()))
             return ancestorStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
     }

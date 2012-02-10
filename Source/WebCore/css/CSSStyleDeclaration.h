@@ -35,10 +35,13 @@ class StyledElement;
 
 typedef int ExceptionCode;
 
-class CSSStyleDeclaration : public RefCounted<CSSStyleDeclaration> {
-    WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
+class CSSStyleDeclaration {
+    WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration); WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CSSStyleDeclaration() { }
+
+    virtual void ref() = 0;
+    virtual void deref() = 0;
 
     virtual CSSRule* parentRule() const = 0;
     virtual String cssText() const = 0;
@@ -64,7 +67,7 @@ public:
 
     virtual bool cssPropertyMatches(const CSSProperty*) const = 0;
     virtual CSSStyleSheet* parentStyleSheet() const { return 0; }
- 
+
 #ifndef NDEBUG
     void showStyle();
 #endif

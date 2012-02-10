@@ -47,17 +47,15 @@ namespace WebCore {
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
-    static PassRefPtr<PropertySetCSSStyleDeclaration> create(PassRefPtr<StylePropertySet> propertySet)
-    {
-        return adoptRef(new PropertySetCSSStyleDeclaration(propertySet)); 
-    }
+    PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
 
 private:
-    PropertySetCSSStyleDeclaration(PassRefPtr<StylePropertySet> propertySet) : m_propertySet(propertySet) { }
-    
+    virtual void ref() OVERRIDE { m_propertySet->ref(); }
+    virtual void deref() OVERRIDE { m_propertySet->deref(); }
+
     virtual CSSRule* parentRule() const OVERRIDE;
     virtual unsigned length() const OVERRIDE;
-    virtual String item(unsigned index) const;
+    virtual String item(unsigned index) const OVERRIDE;
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) OVERRIDE;
     virtual String getPropertyValue(const String& propertyName) OVERRIDE;
     virtual String getPropertyPriority(const String& propertyName) OVERRIDE;
@@ -66,7 +64,7 @@ private:
     virtual void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) OVERRIDE;
     virtual String removeProperty(const String& propertyName, ExceptionCode&) OVERRIDE;
     virtual String cssText() const OVERRIDE;
-    virtual void setCssText(const String&, ExceptionCode&);
+    virtual void setCssText(const String&, ExceptionCode&) OVERRIDE;
     virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) OVERRIDE;
     virtual String getPropertyValueInternal(CSSPropertyID) OVERRIDE;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) OVERRIDE;
@@ -76,7 +74,7 @@ private:
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
     
-    RefPtr<StylePropertySet> m_propertySet;
+    StylePropertySet* m_propertySet;
 };
 
 namespace {
@@ -228,18 +226,7 @@ StylePropertySet::StylePropertySet(StyledElement* parentElement, bool isInlineSt
 
 StylePropertySet::~StylePropertySet()
 {
-}
-
-void StylePropertySet::deref()
-{
-    if (derefBase()) {
-        delete this;
-        return;
-    }
-    // StylePropertySet and CSSStyleDeclaration ref each other. When we have a declaration and
-    // our refcount drops to one we know it is the only thing keeping us alive.
-    if (m_cssStyleDeclaration && hasOneRef())
-        m_cssStyleDeclaration.clear();
+    
 }
 
 CSSStyleSheet* StylePropertySet::contextStyleSheet() const
@@ -1130,7 +1117,7 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* se
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
 {
     if (!m_cssStyleDeclaration)
-        m_cssStyleDeclaration = PropertySetCSSStyleDeclaration::create(const_cast<StylePropertySet*>(this));
+        m_cssStyleDeclaration = adoptPtr(new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this)));
     return m_cssStyleDeclaration.get();
 }
 
@@ -1253,9 +1240,6 @@ PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::copy() const
 
 PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::makeMutable()
 {
-    ASSERT(m_propertySet->m_cssStyleDeclaration == this || (!m_propertySet->m_cssStyleDeclaration && m_propertySet->hasOneRef()));
-    if (!m_propertySet->m_cssStyleDeclaration)
-        m_propertySet->m_cssStyleDeclaration = this;
     return m_propertySet;
 }
 

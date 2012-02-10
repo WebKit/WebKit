@@ -650,7 +650,7 @@ JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef element)
     if (!toJS(element)->inherits(&JSElement::s_info))
         return JSValueMakeUndefined(toRef(exec));
 
-    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(static_cast<JSElement*>(toJS(element))->impl(), true);
+    RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(static_cast<JSElement*>(toJS(element))->impl(), true);
 
     JSLock lock(SilenceAssertionsOnly);
     return toRef(exec, toJS(exec, globalObject, style.get()));

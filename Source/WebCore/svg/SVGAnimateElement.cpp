@@ -59,7 +59,7 @@ SVGAnimateElement::~SVGAnimateElement()
 static inline void getPropertyValue(SVGElement* svgParent, const QualifiedName& attributeName, String& value)
 {
     ASSERT(svgParent->isStyled());
-    value = computedStyle(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
+    value = CSSComputedStyleDeclaration::create(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
 }
 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)

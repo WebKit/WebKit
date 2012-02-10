@@ -1,3 +1,56 @@
+2012-02-09  Antti Koivisto  <antti@apple.com>
+
+        Use underlying property set to refcount PropertySetCSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=78257
+
+        Reviewed by Andreas Kling.
+
+        Clean up the PropertySetCSSStyleDeclaration refcounting. PropertySetCSSStyleDeclaration now
+        forwards the ref/deref to the underlying StylePropertySet.
+
+        Also made CSSComputedStyleDeclaration construction use the standard create() pattern.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::ref):
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::deref):
+        * css/CSSComputedStyleDeclaration.h:
+        (WebCore::CSSComputedStyleDeclaration::create):
+        (CSSComputedStyleDeclaration):
+        (WebCore):
+        * css/CSSStyleDeclaration.h:
+        (CSSStyleDeclaration):
+        * css/StylePropertySet.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::PropertySetCSSStyleDeclaration):
+        (WebCore):
+        (WebCore::StylePropertySet::~StylePropertySet):
+        (WebCore::StylePropertySet::ensureCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::makeMutable):
+        * css/StylePropertySet.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::highestEmbeddingAncestor):
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::init):
+        (WebCore::EditingStyle::removeStyleAddedByNode):
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        (WebCore::backgroundColorInEffect):
+        * editing/Editor.cpp:
+        (WebCore::Editor::textDirectionForSelection):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getComputedStyle):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::getPropertyValue):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::baseValueFor):
+
 2012-02-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [TextPrompt] TAB should complete suggestions up to their common prefix in Console

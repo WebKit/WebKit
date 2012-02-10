@@ -47,8 +47,14 @@ enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
 class CSSComputedStyleDeclaration : public CSSStyleDeclaration {
 public:
-    friend PassRefPtr<CSSComputedStyleDeclaration> computedStyle(PassRefPtr<Node>, bool allowVisitedStyle, const String& pseudoElementName);
+    static PassRefPtr<CSSComputedStyleDeclaration> create(PassRefPtr<Node> node, bool allowVisitedStyle = false, const String& pseudoElementName = String())
+    {
+        return adoptRef(new CSSComputedStyleDeclaration(node, allowVisitedStyle, pseudoElementName));
+    }
     virtual ~CSSComputedStyleDeclaration();
+
+    virtual void ref() OVERRIDE;
+    virtual void deref() OVERRIDE;
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
     String getPropertyValue(int propertyID) const;
@@ -109,12 +115,8 @@ private:
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
+    unsigned m_refCount;
 };
-
-inline PassRefPtr<CSSComputedStyleDeclaration> computedStyle(PassRefPtr<Node> node,  bool allowVisitedStyle = false, const String& pseudoElementName = String())
-{
-    return adoptRef(new CSSComputedStyleDeclaration(node, allowVisitedStyle, pseudoElementName));
-}
 
 } // namespace WebCore
 

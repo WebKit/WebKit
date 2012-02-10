@@ -283,7 +283,7 @@ PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
     Element* elem = element();
     if (!elem)
         return 0;
-    return WebCore::computedStyle(elem);
+    return CSSComputedStyleDeclaration::create(elem);
 }
 
 Position Position::previous(PositionMoveType moveType) const

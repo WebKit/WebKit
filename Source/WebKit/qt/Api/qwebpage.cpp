@@ -1566,7 +1566,7 @@ static bool isClickableElement(Element* element, RefPtr<NodeList> list)
     ExceptionCode ec = 0;
     return isClickable
         || element->webkitMatchesSelector("a,*:link,*:visited,*[role=button],button,input,select,label", ec)
-        || computedStyle(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
+        || CSSComputedStyleDeclaration::create(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
 }
 
 static bool isValidFrameOwner(Element* element)
