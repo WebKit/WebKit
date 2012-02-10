@@ -45,6 +45,7 @@ public:
 
 private:
     HTMLShadowElement(const QualifiedName&, Document*);
+    virtual bool isShadowElement() const { return true; }
 };
 
 } // namespace WebCore
