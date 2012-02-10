@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -114,10 +114,11 @@ WebInspector.TimelinePanel = function()
     this._expandOffset = 15;
 
     this._createFileSelector();
-    this._model = new WebInspector.TimelineModel(this);
+    this._model = new WebInspector.TimelineModel();
+    this._model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onTimelineEventRecorded, this);
+    this._model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
     this._registerShortcuts();
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
     this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
 }
 
@@ -354,11 +355,10 @@ WebInspector.TimelinePanel.prototype = {
 
     _loadFromFile: function()
     {
-        if (this.toggleTimelineButton.toggled)
-            WebInspector.timelineManager.stop();
-
-        this._clearPanel();
-
+        if (this.toggleTimelineButton.toggled) {
+            this.toggleTimelineButton.toggled = false;
+            this._model.stopRecord();
+        }
         this._model._loadFromFile(this._fileSelectorElement.files[0]);
         this._createFileSelector();
     },
@@ -422,10 +422,9 @@ WebInspector.TimelinePanel.prototype = {
     _toggleTimelineButtonClicked: function()
     {
         if (this.toggleTimelineButton.toggled)
-            WebInspector.timelineManager.stop();
+            this._model.stopRecord();
         else {
-            this._clearPanel();
-            WebInspector.timelineManager.start(30);
+            this._model.startRecord();
             WebInspector.userMetrics.TimelineStarted.record();
         }
         this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;
@@ -462,19 +461,11 @@ WebInspector.TimelinePanel.prototype = {
 
     _onTimelineEventRecorded: function(event)
     {
-        if (this.toggleTimelineButton.toggled) {
-            this._addRecordToTimeline(event.data);
-
-            if (this._memoryStatistics && event.data["domGroups"])
-                this._memoryStatistics.addTimlineEvent(event);
-        }
-    },
-
-    _addRecordToTimeline: function(record)
-    {
-        this._model._addRecord(record);
-        this._innerAddRecordToTimeline(record, this._rootRecord);
+        this._innerAddRecordToTimeline(event.data, this._rootRecord);
         this._scheduleRefresh(false);
+
+        if (this._memoryStatistics && event.data["domGroups"])
+            this._memoryStatistics.addTimlineEvent(event);
     },
 
     _findParentRecord: function(record)
@@ -600,6 +591,11 @@ WebInspector.TimelinePanel.prototype = {
 
     _clearPanel: function()
     {
+        this._model._reset();
+    },
+
+    _onRecordsCleared: function()
+    {
         this._timeStampRecords = [];
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
@@ -611,7 +607,6 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._refresh();
         this._closeRecordDetails();
-        this._model._reset();
         this._linkifier.reset();
     },
 
@@ -1426,23 +1421,55 @@ WebInspector.TimelineExpandableElement.prototype = {
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  */
-WebInspector.TimelineModel = function(timelinePanel)
+WebInspector.TimelineModel = function()
 {
-    this._panel = timelinePanel;
     this._records = [];
+    this._collectionEnabled = false;
+
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onRecordAdded, this);
+}
+
+WebInspector.TimelineModel.Events = {
+    RecordAdded: "RecordAdded",
+    RecordsCleared: "RecordsCleared"
 }
 
 WebInspector.TimelineModel.prototype = {
+    startRecord: function()
+    {
+        if (this._collectionEnabled)
+            return;
+        this._reset();
+        WebInspector.timelineManager.start(30);
+        this._collectionEnabled = true;
+    },
+
+    stopRecord: function()
+    {
+        if (!this._collectionEnabled)
+            return;
+        WebInspector.timelineManager.stop();
+        this._collectionEnabled = false;
+    },
+
+    _onRecordAdded: function(event)
+    {
+        if (this._collectionEnabled)
+            this._addRecord(event.data);
+    },
+
     _addRecord: function(record)
     {
         this._records.push(record);
+        this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordAdded, record);
     },
 
     _loadNextChunk: function(data, index)
     {
         for (var i = 0; i < 20 && index < data.length; ++i, ++index)
-            this._panel._addRecordToTimeline(data[index]);
+            this._addRecord(data[index]);
 
         if (index !== data.length)
             setTimeout(this._loadNextChunk.bind(this, data, index), 0);
@@ -1453,7 +1480,7 @@ WebInspector.TimelineModel.prototype = {
         function onLoad(e)
         {
             var data = JSON.parse(e.target.result);
-            var version = data[0];
+            this._reset();
             this._loadNextChunk(data, 1);
         }
 
@@ -1494,6 +1521,10 @@ WebInspector.TimelineModel.prototype = {
 
     _reset: function()
     {
+        this.stopRecord();
         this._records = [];
+        this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordsCleared);
     }
 }
+
+WebInspector.TimelineModel.prototype.__proto__ = WebInspector.Object.prototype;
