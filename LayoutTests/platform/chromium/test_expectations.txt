@@ -3907,6 +3907,16 @@ BUGWK77521 LINUX : fast/repaint/search-field-cancel.html = IMAGE
 
 BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
 
+// Will need rebaselines for mock scrollbars
+BUGJAMESR WIN MAC : compositing/direct-image-compositing.html = IMAGE
+BUGJAMESR WIN MAC : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGJAMESR WIN MAC : compositing/iframes/iframe-copy-on-scroll.html = IMAGE
+BUGJAMESR WIN MAC: compositing/masks/masked-ancestor.html = IMAGE
+BUGJAMESR WIN MAC : compositing/masks/multiple-masks.html = IMAGE
+BUGJAMESR WIN MAC: compositing/masks/simple-composited-mask.html = IMAGE
+BUGJAMESR WIN MAC : compositing/overflow/overflow-scroll.html = IMAGE
+BUGJAMESR WIN MAC : compositing/overflow/scrollbar-painting.html = IMAGE
+
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
 // Hitting ASSERT_NOT_REACHED in EventHandler::handleTouchEvent() as of r106554.

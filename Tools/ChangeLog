@@ -1,3 +1,22 @@
+2012-02-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Enable mock scrollbars for compositing layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=78299
+
+        Reviewed by Dirk Pranke.
+
+        This enables mock scrollbars by default for compositing tests. These pixel tests are intended to test the
+        compositor behavior, not native theming, and having real scrollbars causes us to have to maintain significantly
+        more pngs than we should and expose weird alpha bugs in our theming that doesn't impact real users.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+
 2012-02-09  Eric Seidel  <eric@webkit.org>
 
         Remove more uses of "os" from our webkitpy code

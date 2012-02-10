@@ -240,6 +240,7 @@ void TestShell::runFileTest(const TestParams& params)
         m_prefs.acceleratedCompositingForVideoEnabled = true;
         m_prefs.accelerated2dCanvasEnabled = true;
         m_prefs.deferred2dCanvasEnabled = true;
+        m_prefs.mockScrollbarsEnabled = true;
         m_prefs.applyTo(m_webView);
     }
 
