@@ -198,11 +198,13 @@ def parse_args(args=None):
     """Provides a default set of command line args.
 
     Returns a tuple of options, args from optparse"""
+    
+    option_group_definitions = []
 
     # FIXME: All of these options should be stored closer to the code which
     # FIXME: actually uses them. configuration_options should move
     # FIXME: to WebKitPort and be shared across all scripts.
-    configuration_options = [
+    option_group_definitions.append(("Configuration Options", [
         optparse.make_option("-t", "--target", dest="configuration",
                              help="(DEPRECATED)"),
         # FIXME: --help should display which configuration is default.
@@ -218,12 +220,12 @@ def parse_args(args=None):
         optparse.make_option('--efl', action='store_const', const='efl', dest="platform", help='Alias for --platform=efl'),
         optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
         optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
-    ]
+    ]))
 
-    print_options = printing.print_options()
+    option_group_definitions.append(("Printing Options", printing.print_options()))
 
     # FIXME: These options should move onto the ChromiumPort.
-    chromium_options = [
+    option_group_definitions.append(("Chromium-specific Options", [
         optparse.make_option("--startup-dialog", action="store_true",
             default=False, help="create a dialog on DumpRenderTree startup"),
         optparse.make_option("--gp-fault-error-box", action="store_true",
@@ -267,9 +269,9 @@ def parse_args(args=None):
         optparse.make_option("--per-tile-painting",
             action="store_true",
             help="Use per-tile painting of composited pages"),
-    ]
+    ]))
 
-    webkit_options = [
+    option_group_definitions.append(("WebKit Options", [
         optparse.make_option("--gc-between-tests", action="store_true", default=False,
             help="Force garbage collection between each test"),
         optparse.make_option("--complex-text", action="store_true", default=False,
@@ -284,15 +286,15 @@ def parse_args(args=None):
             help="Use WebKitTestRunner rather than DumpRenderTree."),
         optparse.make_option("--root", action="store",
             help="Path to a pre-built root of WebKit (for running tests using a nightly build of WebKit)"),
-    ]
+    ]))
 
-    old_run_webkit_tests_compat = [
+    option_group_definitions.append(("ORWT Compatibility Options", [
         # FIXME: Remove this option once the bots don't refer to it.
         # results.html is smart enough to figure this out itself.
         _compat_shim_option("--use-remote-links-to-tests"),
-    ]
+    ]))
 
-    results_options = [
+    option_group_definitions.append(("Results Options", [
         optparse.make_option("-p", "--pixel-tests", action="store_true",
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
@@ -354,9 +356,9 @@ def parse_args(args=None):
         optparse.make_option("--ignore-metrics", action="store_true", dest="ignore_metrics",
             default=False, help="Ignore rendering metrics related information from test "
             "output, only compare the structure of the rendertree."),
-    ]
+    ]))
 
-    test_options = [
+    option_group_definitions.append(("Testing Options", [
         optparse.make_option("--build", dest="build",
             action="store_true", default=True,
             help="Check to ensure the DumpRenderTree build is up-to-date "
@@ -430,16 +432,16 @@ def parse_args(args=None):
             help="Don't re-try any tests that produce unexpected results."),
         optparse.make_option("--max-locked-shards", type="int",
             help="Set the maximum number of locked shards"),
-    ]
+    ]))
 
-    misc_options = [
+    option_group_definitions.append(("Miscellaneous Options", [
         optparse.make_option("--lint-test-files", action="store_true",
         default=False, help=("Makes sure the test files parse for all "
                             "configurations. Does not run any tests.")),
-    ]
+    ]))
 
     # FIXME: Move these into json_results_generator.py
-    results_json_options = [
+    option_group_definitions.append(("Result JSON Options", [
         optparse.make_option("--master-name", help="The name of the buildbot master."),
         optparse.make_option("--builder-name", default="",
             help=("The name of the builder shown on the waterfall running "
@@ -452,12 +454,14 @@ def parse_args(args=None):
         optparse.make_option("--test-results-server", default="",
             help=("If specified, upload results json files to this appengine "
                   "server.")),
-    ]
+    ]))
 
-    option_list = (configuration_options + print_options +
-                   chromium_options + webkit_options + results_options + test_options +
-                   misc_options + results_json_options + old_run_webkit_tests_compat)
-    option_parser = optparse.OptionParser(option_list=option_list)
+    option_parser = optparse.OptionParser()
+
+    for group_name, group_options in option_group_definitions:
+        option_group = optparse.OptionGroup(option_parser, group_name)
+        option_group.add_options(group_options)
+        option_parser.add_option_group(option_group)
 
     return option_parser.parse_args(args)
 
