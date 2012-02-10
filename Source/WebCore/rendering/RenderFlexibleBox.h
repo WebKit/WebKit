@@ -49,7 +49,9 @@ public:
     bool isHorizontalFlow() const;
 
 private:
-    class TreeOrderIterator;
+    struct FlexOrderHashTraits;
+    typedef HashSet<int, DefaultHash<int>::Hash, FlexOrderHashTraits> FlexOrderHashSet;
+
     class FlexOrderIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
     typedef WTF::Vector<RenderBox*> OrderedFlexItemList;
@@ -96,7 +98,7 @@ private:
     LayoutUnit availableAlignmentSpaceForChild(RenderBox*);
     LayoutUnit marginBoxAscent(RenderBox*);
 
-    void computeMainAxisPreferredSizes(bool relayoutChildren, TreeOrderIterator&);
+    void computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet&);
     void computeFlexOrder(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
     bool runFreeSpaceAllocationAlgorithm(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);

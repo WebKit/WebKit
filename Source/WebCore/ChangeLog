@@ -1,3 +1,22 @@
+2012-02-09  Ojan Vafai  <ojan@chromium.org>
+
+        Remove TreeOrderIterator and iterate over the child boxes directly.
+        https://bugs.webkit.org/show_bug.cgi?id=78294
+
+        Reviewed by Tony Chang.
+
+        No new tests. This is purely a refactor. No change in behavior. 
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+        (FlexOrderHashTraits):
+        (WebCore::RenderFlexibleBox::FlexOrderHashTraits::emptyValue):
+        (WebCore::RenderFlexibleBox::FlexOrderHashTraits::constructDeletedValue):
+        (WebCore::RenderFlexibleBox::FlexOrderHashTraits::isDeletedValue):
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Code generators should support multiple values for the [CallWith=] attribute

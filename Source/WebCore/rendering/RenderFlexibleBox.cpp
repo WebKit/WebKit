@@ -40,53 +40,11 @@ namespace WebCore {
 // Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely flex-order values. Instead,
 // we make the two smallest int values invalid flex-order values (in the css parser code we clamp them to
 // int min + 2).
-struct FlexOrderHashTraits : WTF::GenericHashTraits<int> {
+struct RenderFlexibleBox::FlexOrderHashTraits : WTF::GenericHashTraits<int> {
     static const bool emptyValueIsZero = false;
     static int emptyValue() { return std::numeric_limits<int>::min(); }
     static void constructDeletedValue(int& slot) { slot = std::numeric_limits<int>::min() + 1; }
     static bool isDeletedValue(int value) { return value == std::numeric_limits<int>::min() + 1; }
-};
-
-typedef HashSet<int, DefaultHash<int>::Hash, FlexOrderHashTraits> FlexOrderHashSet;
-
-class RenderFlexibleBox::TreeOrderIterator {
-public:
-    explicit TreeOrderIterator(RenderFlexibleBox* flexibleBox)
-        : m_flexibleBox(flexibleBox)
-        , m_currentChild(0)
-    {
-    }
-
-    RenderBox* first()
-    {
-        reset();
-        return next();
-    }
-
-    RenderBox* next()
-    {
-        m_currentChild = m_currentChild ? m_currentChild->nextSiblingBox() : m_flexibleBox->firstChildBox();
-
-        if (m_currentChild)
-            m_flexOrderValues.add(m_currentChild->style()->flexOrder());
-
-        return m_currentChild;
-    }
-
-    void reset()
-    {
-        m_currentChild = 0;
-    }
-
-    const FlexOrderHashSet& flexOrderValues()
-    {
-        return m_flexOrderValues;
-    }
-
-private:
-    RenderFlexibleBox* m_flexibleBox;
-    RenderBox* m_currentChild;
-    FlexOrderHashSet m_flexOrderValues;
 };
 
 class RenderFlexibleBox::FlexOrderIterator {
@@ -465,14 +423,14 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
 
 void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 {
-    TreeOrderIterator treeIterator(this);
-    computeMainAxisPreferredSizes(relayoutChildren, treeIterator);
+    FlexOrderHashSet flexOrderValues;
+    computeMainAxisPreferredSizes(relayoutChildren, flexOrderValues);
 
     OrderedFlexItemList orderedChildren;
     LayoutUnit preferredMainAxisExtent;
     float totalPositiveFlexibility;
     float totalNegativeFlexibility;
-    FlexOrderIterator flexIterator(this, treeIterator.flexOrderValues());
+    FlexOrderIterator flexIterator(this, flexOrderValues);
     computeFlexOrder(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility);
 
     LayoutUnit availableFreeSpace = mainAxisContentExtent() - preferredMainAxisExtent;
@@ -511,10 +469,12 @@ LayoutUnit RenderFlexibleBox::marginBoxAscent(RenderBox* child)
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
-void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, TreeOrderIterator& iterator)
+void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet& flexOrderValues)
 {
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
-    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        flexOrderValues.add(child->style()->flexOrder());
+
         if (child->isPositioned())
             continue;
 
