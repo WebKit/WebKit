@@ -1,3 +1,13 @@
+2012-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove a bunch of unused ScrollableArea member functions
+        https://bugs.webkit.org/show_bug.cgi?id=78388
+
+        Reviewed by Beth Dakin.
+
+        * platform/ScrollableArea.cpp:
+        * platform/ScrollableArea.h:
+
 2012-02-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Fix a few typos in IDL exception names.

@@ -141,20 +141,11 @@ public:
 
     virtual bool isOnActivePage() const { ASSERT_NOT_REACHED(); return true; }
     
-    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) <= minimumScrollPosition().x(); }
-    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) >= maximumScrollPosition().x(); }
-    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) <= minimumScrollPosition().y(); }
-    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) >= maximumScrollPosition().y(); }
-
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;
 
     // Returns the bounding box of this scrollable area, in the coordinate system of the enclosing scroll view.
     virtual IntRect scrollableAreaBoundingBox() const { ASSERT_NOT_REACHED(); return IntRect(); }
-
-    bool isPinnedInBothDirections(const IntSize&) const;
-    bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const;
-    bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
 
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 
