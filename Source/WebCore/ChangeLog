@@ -1,3 +1,17 @@
+2012-02-09  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Assertion failure minX <= maxX in Region.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=78038
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests (should make them stop asserting).
+
+        Clamp sizes for composited layers coming out of WebCore to make sure they are valid non-negative values.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setSize):
+
 2012-02-09  Gregg Tavares  <gman@google.com>
 
         Make WebGLRenderingContext::printWarningToConsole safer

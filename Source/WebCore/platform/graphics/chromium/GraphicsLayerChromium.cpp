@@ -175,10 +175,16 @@ void GraphicsLayerChromium::setAnchorPoint(const FloatPoint3D& point)
 
 void GraphicsLayerChromium::setSize(const FloatSize& size)
 {
-    if (size == m_size)
+    // We are receiving negative sizes here that cause assertions to fail in the compositor. Clamp them to 0 to
+    // avoid those assertions.
+    FloatSize clampedSize = size;
+    if (clampedSize.isEmpty())
+        clampedSize = FloatSize();
+
+    if (clampedSize == m_size)
         return;
 
-    GraphicsLayer::setSize(size);
+    GraphicsLayer::setSize(clampedSize);
     updateLayerSize();
 }
 
