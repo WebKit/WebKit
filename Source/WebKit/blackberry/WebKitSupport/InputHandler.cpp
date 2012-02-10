@@ -111,6 +111,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_currentFocusElement(0)
     , m_processingChange(false)
     , m_navigationMode(false)
+    , m_changingFocus(false)
     , m_currentFocusElementType(TextEdit)
     , m_currentFocusElementTextEditMask(DEFAULT_STYLE)
     , m_composingTextStart(0)
@@ -421,6 +422,11 @@ bool InputHandler::shouldAcceptInputFocus()
         if (focusedFrame->eventHandler()->mousePressed())
             return true;
 
+        if (!m_webPage->m_client->hasKeyboardFocus()) {
+            FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Client does not have input focus.");
+            return false;
+        }
+
         // Make sure the main frame is not still loading.
         if (mainFrame->loader()->isLoading())
             return false;
@@ -440,9 +446,15 @@ void InputHandler::setElementFocused(Element* element)
     ASSERT(DOMSupport::isTextBasedContentEditableElement(element));
     ASSERT(element->document() && element->document()->frame());
 
-    if (!shouldAcceptInputFocus()) {
-        // Remove the focus from this element.
+    if (!m_changingFocus && !shouldAcceptInputFocus()) {
+        // Remove the focus from this element, but guard against recursion by
+        // allowing a refocus during the blur to continue.
+        // THIS IS A HACK that needs to be fixed. Instead of blur the field,
+        // the frame or frame selection should be blurred. Google bypasses these
+        // though so it can't be done right now.
+        m_changingFocus = true;
         element->blur();
+        m_changingFocus = false;
         return;
     }
 

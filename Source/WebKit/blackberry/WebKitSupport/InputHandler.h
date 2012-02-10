@@ -176,6 +176,8 @@ private:
 
     bool m_processingChange;
     bool m_navigationMode;
+    bool m_changingFocus;
+
     FocusElementType m_currentFocusElementType;
     int m_currentFocusElementTextEditMask;
 

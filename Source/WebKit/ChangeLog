@@ -1,3 +1,20 @@
+2012-02-10  Mike Fenton  <mifenton@rim.com>
+
+        BlackBerry Port - JS focus on blur can cause recursion
+        https://bugs.webkit.org/show_bug.cgi?id=78368
+
+        Prevent JS recursion of blur/focus by allowing focus
+        if we are already trying to prevent focus.
+
+        Reviewed by Rob Buis.
+
+        * blackberry/WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::shouldAcceptInputFocus):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        * blackberry/WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-02-10  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Upstream graphics helper classes in WebKitSupport
