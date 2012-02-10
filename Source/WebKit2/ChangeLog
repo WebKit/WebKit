@@ -1,3 +1,20 @@
+2012-02-09  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent attaching when inspecting the Web Inspector.
+
+        Also adds some comments about keeping in sync with InspectorFrontendClientLocal::canAttachWindow
+        and why there are two implementations of the same function.
+
+        https://webkit.org/b/78304
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::canAttach): Prevent attaching when the page is an inspector page.
+        Added comments about InspectorFrontendClientLocal::canAttachWindow.
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy): Added comment about keeping in sync with InspectorFrontendClientLocal.
+
 2012-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         Managed network proxy settings are not used in WebProcess

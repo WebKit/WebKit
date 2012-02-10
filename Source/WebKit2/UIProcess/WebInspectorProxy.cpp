@@ -260,8 +260,17 @@ void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 
 bool WebInspectorProxy::canAttach()
 {
-    unsigned inspectedWindowHeight = platformInspectedWindowHeight();
-    return inspectedWindowHeight && minimumAttachedHeight <= (inspectedWindowHeight * 3 / 4);
+    // Keep this in sync with InspectorFrontendClientLocal::canAttachWindow. There are two implementations
+    // to make life easier in the multi-process world we have. WebInspectorProxy uses canAttach to decide if
+    // we can attach on open (on the UI process side). And InspectorFrontendClientLocal::canAttachWindow is
+    // used to decide if we can attach when the attach button is pressed (on the WebProcess side).
+
+    // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
+    // Also don't allow attaching to another inspector -- two inspectors in one window is too much!
+    bool isInspectorPage = m_page->pageGroup() == inspectorPageGroup();
+    unsigned inspectedPageHeight = platformInspectedWindowHeight();
+    unsigned maximumAttachedHeight = inspectedPageHeight * 3 / 4;
+    return minimumAttachedHeight <= maximumAttachedHeight && !isInspectorPage;
 }
 
 bool WebInspectorProxy::shouldOpenAttached()

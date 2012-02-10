@@ -1,3 +1,14 @@
+2012-02-09  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent attaching when inspecting the Web Inspector.
+
+        https://webkit.org/b/78304
+
+        Reviewed by Brian Weinstein.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::canAttachWindow): Prevent attaching when the page is an inspector page.
+
 2012-02-09  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Assertion failure minX <= maxX in Region.cpp

@@ -164,6 +164,8 @@ private:
 
     static const unsigned initialWindowWidth = 750;
     static const unsigned initialWindowHeight = 650;
+
+    // Keep this in sync with the value in InspectorFrontendClientLocal.
     static const unsigned minimumAttachedHeight = 250;
 
     WebPageProxy* m_page;

@@ -159,10 +159,12 @@ void InspectorFrontendClientLocal::requestDetachWindow()
 
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
-    unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
-
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
-    return minimumAttachedHeight <= inspectedPageHeight * maximumAttachedHeightRatio;
+    // Also don't allow attaching to another inspector -- two inspectors in one window is too much!
+    bool isInspectorPage = m_inspectorController->inspectedPage()->inspectorController()->hasInspectorFrontendClient();
+    unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
+    unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
+    return minimumAttachedHeight <= maximumAttachedHeight && !isInspectorPage;
 }
 
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
