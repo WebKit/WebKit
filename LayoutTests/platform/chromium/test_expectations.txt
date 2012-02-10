@@ -419,6 +419,18 @@ WONTFIX SKIP : fast/js/global-recursion-on-full-stack.html = FAIL
 WONTFIX SKIP : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX SKIP : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
 
+// These tests rely on embedded identities in URLs, which chrome chooses not to support
+WONTFIX SKIP : http/tests/appcache/auth.html = TIMEOUT
+WONTFIX SKIP : http/tests/security/credentials-in-referer.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/basic-auth-default.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/basic-auth-nopassword.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/basic-auth-nouser.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/basic-auth.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/cross-origin-authorization.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/cross-origin-no-authorization.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/re-login-async.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/re-login.html = TEXT
+
 // This test relies on code in the test plugin that only exists in Apple's Mac port.
 WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
 
@@ -778,7 +790,6 @@ BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.htm
 BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
 
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
-BUGDPRANKE WIN : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
@@ -1585,8 +1596,6 @@ BUGCR9798 WIN DEBUG : http/tests/local/style-access-before-stylesheet-loaded.htm
 BUGCR9798 WIN DEBUG : http/tests/misc/redirect-with-quotes.php = PASS TIMEOUT
 BUGCR9798 SLOW WIN : http/tests/misc/refresh-headers.php = PASS
 BUGCR9798 WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html = PASS TIMEOUT
-BUGCR9798 WIN : http/tests/xmlhttprequest/basic-auth.html = PASS TIMEOUT
-BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/basic-auth-default.html = PASS TIMEOUT
 BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = PASS TIMEOUT
 BUGCR9797 BUGCR9798 SLOW WIN RELEASE : http/tests/xmlhttprequest/state-after-network-error.html = PASS
 BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
@@ -1628,9 +1637,6 @@ BUGCR11251 : fast/forms/textarea-metrics.html = FAIL
 // Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.
 BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
 BUGCR11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
-
-// Newly added test http://trac.webkit.org/changeset/44816
-BUGCR18733 SLOW WIN : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
 
 // WebKit 45017:45086
 BUGCR15217 : fast/js/dictionary-no-cache.html = FAIL
@@ -1809,7 +1815,6 @@ BUGCR29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 // Likely, moving Windows to using Apache2 will fix this as the Linux/Mac builds
 // did not get flaky here and moving to Apache made the appcache tests less
 // flaky on those platforms.
-BUGCR25977 WIN : http/tests/appcache/auth.html = PASS TIMEOUT
 BUGCR25977 WIN DEBUG : http/tests/appcache/empty-manifest.html = PASS TIMEOUT
 // This test is slow on windows, but sometimes times out indefinitely.
 // See if this improves when we move to apache.
