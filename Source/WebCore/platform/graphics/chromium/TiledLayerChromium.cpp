@@ -337,7 +337,7 @@ void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
 
 void TiledLayerChromium::protectVisibleTileTextures()
 {
-    protectTileTextures(IntRect(IntPoint::zero(), contentBounds()));
+    protectTileTextures(visibleLayerRect());
 }
 
 void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
