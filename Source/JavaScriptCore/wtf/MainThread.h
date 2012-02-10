@@ -52,11 +52,14 @@ WTF_EXPORT_PRIVATE void callOnMainThread(const Function<void ()>&);
 WTF_EXPORT_PRIVATE void setMainThreadCallbacksPaused(bool paused);
 
 WTF_EXPORT_PRIVATE bool isMainThread();
+
+void initializeGCThreads();
+
 #if ENABLE(PARALLEL_GC)
 void registerGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
-#elif PLATFORM(MAC)
-bool isMainThreadOrGCThread();
+#elif PLATFORM(MAC) || PLATFORM(WINDOWS)
+WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 #else
 inline bool isMainThreadOrGCThread() { return isMainThread(); }
 #endif

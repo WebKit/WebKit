@@ -1,3 +1,35 @@
+2012-02-10  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        [Qt] GC should be parallel on Qt platform
+        https://bugs.webkit.org/show_bug.cgi?id=73309
+
+        Reviewed by Zoltan Herczeg.
+
+        These changes made the parallel gc feature available for Qt port.
+        The implementation of "registerGCThread" and "isMainThreadOrGCThread",
+        and a local static function [initializeGCThreads] is moved from
+        MainThreadMac.mm to the common MainThread.cpp to make them available
+        for other platforms.
+
+        Measurement results:
+        V8           speed-up:  1.025x as fast  [From: 663.4ms  To: 647.0ms ]
+        V8 Splay     speed-up:  1.185x as fast  [From: 138.4ms  To: 116.8ms ]
+
+        Tested on Intel(R) Core(TM) i5-2320 CPU @ 3.00GHz with 4-core.
+
+        * JavaScriptCore.order:
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        (WTF):
+        (WTF::initializeGCThreads):
+        (WTF::registerGCThread):
+        (WTF::isMainThreadOrGCThread):
+        * wtf/MainThread.h:
+        (WTF):
+        * wtf/Platform.h:
+        * wtf/mac/MainThreadMac.mm:
+        (WTF):
+
 2012-02-09  Andy Wingo  <wingo@igalia.com>
 
         Eliminate dead code in BytecodeGenerator::resolve()
