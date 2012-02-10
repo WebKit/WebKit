@@ -1,3 +1,25 @@
+2012-02-09  Oliver Hunt  <oliver@apple.com>
+
+        The JS Parser scope object needs a VectorTrait specialization
+        https://bugs.webkit.org/show_bug.cgi?id=78308
+
+        Reviewed by Gavin Barraclough.
+
+        This showed up as a periodic crash in various bits of generated code
+        originally, but I've added an assertion in the bytecode generator
+        that makes the effected code much more crash-happy should it go
+        wrong again.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolve):
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        (JSC):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::isValidScopedLookup):
+        (JSActivation):
+
 2012-02-08  Oliver Hunt  <oliver@apple.com>
 
         Whoops, fix the build.

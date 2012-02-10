@@ -32,6 +32,7 @@
 #include "BytecodeGenerator.h"
 
 #include "BatchedTransitionOptimizer.h"
+#include "JSActivation.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "ScopeChain.h"
@@ -413,7 +414,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         if (!functionBody->captures(ident))
             addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
     }
-    
+
     if (m_shouldEmitDebugHooks)
         codeBlock->m_numCapturedVars = codeBlock->m_numVars;
 
@@ -1207,6 +1208,10 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
                     return ResolveResult::dynamicIndexedGlobalResolve(entry.getIndex(), depth, currentScope, flags);
                 return ResolveResult::indexedGlobalResolve(entry.getIndex(), currentScope, flags);
             }
+#if !ASSERT_DISABLED
+            if (JSActivation* activation = jsDynamicCast<JSActivation*>(currentVariableObject))
+                ASSERT(activation->isValidScopedLookup(entry.getIndex()));
+#endif
             return ResolveResult::lexicalResolve(entry.getIndex(), depth, flags);
         }
         bool scopeRequiresDynamicChecks = false;
