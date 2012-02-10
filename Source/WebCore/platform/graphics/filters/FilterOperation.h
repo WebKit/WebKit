@@ -74,6 +74,8 @@ public:
 
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const FilterOperation& o) const { return o.getOperationType() == m_type; }
+    
+    virtual bool isDefault() const { return false; }
 
 protected:
     FilterOperation(OperationType type)
@@ -82,6 +84,28 @@ protected:
     }
 
     OperationType m_type;
+};
+
+class DefaultFilterOperation : public FilterOperation {
+public:
+    static PassRefPtr<DefaultFilterOperation> create(OperationType type)
+    {
+        return adoptRef(new DefaultFilterOperation(type));
+    }
+
+private:
+
+    virtual bool operator==(const FilterOperation& o) const
+    {
+        return isSameType(o);
+    }
+
+    virtual bool isDefault() const { return true; }
+
+    DefaultFilterOperation(OperationType type)
+        : FilterOperation(type)
+    {
+    }
 };
 
 class PassthroughFilterOperation : public FilterOperation {

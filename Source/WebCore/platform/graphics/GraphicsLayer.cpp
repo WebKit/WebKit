@@ -380,6 +380,46 @@ void GraphicsLayer::setGraphicsLayerFactory(GraphicsLayer::GraphicsLayerFactory 
 }
 #endif
 
+#if ENABLE(CSS_FILTERS)
+static inline const FilterOperations* filterOperationsAt(const KeyframeValueList& valueList, size_t index)
+{
+    return static_cast<const FilterAnimationValue*>(valueList.at(index))->value();
+}
+
+int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
+{
+    ASSERT(valueList.property() == AnimatedPropertyWebkitFilter);
+
+    if (valueList.size() < 2)
+        return -1;
+
+    // Empty filters match anything, so find the first non-empty entry as the reference
+    size_t firstIndex = 0;
+    for ( ; firstIndex < valueList.size(); ++firstIndex) {
+        if (filterOperationsAt(valueList, firstIndex)->operations().size() > 0)
+            break;
+    }
+
+    if (firstIndex >= valueList.size())
+        return -1;
+
+    const FilterOperations* firstVal = filterOperationsAt(valueList, firstIndex);
+    
+    for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
+        const FilterOperations* val = filterOperationsAt(valueList, i);
+        
+        // An emtpy filter list matches anything.
+        if (val->operations().isEmpty())
+            continue;
+        
+        if (!firstVal->operationsMatch(*val))
+            return -1;
+    }
+    
+    return firstIndex;
+}
+#endif
+
 // An "invalid" list is one whose functions don't match, and therefore has to be animated as a Matrix
 // The hasBigRotation flag will always return false if isValid is false. Otherwise hasBigRotation is 
 // true if the rotation between any two keyframes is >= 180 degrees.

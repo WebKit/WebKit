@@ -1,3 +1,97 @@
+2012-02-09  Chris Marrin  <cmarrin@apple.com>
+
+        Implement hardware animation of CSS filters
+        https://bugs.webkit.org/show_bug.cgi?id=78155
+
+        Added logic to PlatformCAAnimation to return enough information
+        to GraphicsLayerCA to be able to construct a keyPath animation
+        for each filter property. Some filters need to animate multiple
+        properties per filter, so PlatformCAAnimation also returns the number
+        of properties per filter and then an animation is constructed for 
+        each one. Also added all the support logic to handle hardware filter
+        animation in the higher level logic, just like we do for transforms and
+        opacity.
+
+        Also stubbed out new PlatformCAAnimation functions for Windows. We don't yet
+        support hardware filters on Windows.
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/filters/filter-animation-from-none-hw.html
+               css3/filters/filter-animation-from-none-multi-hw.html
+               css3/filters/filter-animation-from-none-multi.html
+               css3/filters/filter-animation-hw.html
+               css3/filters/filter-animation-multi-hw.html
+               css3/filters/filter-animation-multi.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore):
+        (PropertyWrapperAcceleratedFilter):
+        (WebCore::PropertyWrapperAcceleratedFilter::PropertyWrapperAcceleratedFilter):
+        (WebCore::PropertyWrapperAcceleratedFilter::animationIsAccelerated):
+        (WebCore::PropertyWrapperAcceleratedFilter::blend):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore):
+        (WebCore::filterOperationsAt):
+        (WebCore::GraphicsLayer::validateFilterOperations):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore):
+        (FilterAnimationValue):
+        (WebCore::FilterAnimationValue::FilterAnimationValue):
+        (WebCore::FilterAnimationValue::clone):
+        (WebCore::FilterAnimationValue::value):
+        (GraphicsLayer):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::propertyIdToString):
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore):
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::GraphicsLayerCA::createKeyframeAnimation):
+        (WebCore::GraphicsLayerCA::setFilterAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::cloneLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        (PlatformCAAnimation):
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::setFromValue):
+        (PlatformCAAnimation::setToValue):
+        (PlatformCAAnimation::setValues):
+        (PlatformCAAnimation::numAnimatedFilterProperties):
+        (PlatformCAAnimation::animatedFilterPropertyName):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimation::setFromValue):
+        (PlatformCAAnimation::setToValue):
+        (PlatformCAAnimation::setValues):
+        (PlatformCAAnimation::numAnimatedFilterProperties):
+        (PlatformCAAnimation::animatedFilterPropertyName):
+        * platform/graphics/filters/FilterOperation.h:
+        (FilterOperation):
+        (WebCore::FilterOperation::isDefault):
+        (DefaultFilterOperation):
+        (WebCore::DefaultFilterOperation::create):
+        (WebCore::DefaultFilterOperation::operator==):
+        (WebCore::DefaultFilterOperation::isDefault):
+        (WebCore::DefaultFilterOperation::DefaultFilterOperation):
+        (WebCore):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasFilter):
+        (RenderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        (WebCore::RenderLayerBacking::graphicsLayerToCSSProperty):
+        (WebCore::RenderLayerBacking::cssToGraphicsLayerProperty):
+
 2012-02-10  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: properly resolve output types of commands

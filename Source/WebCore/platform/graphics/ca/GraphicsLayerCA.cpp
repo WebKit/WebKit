@@ -211,6 +211,12 @@ static String propertyIdToString(AnimatedPropertyID property)
         return "opacity";
     case AnimatedPropertyBackgroundColor:
         return "backgroundColor";
+    case AnimatedPropertyWebkitFilter:
+#if ENABLE(CSS_FILTERS)
+        return "filters";
+#else
+        ASSERT_NOT_REACHED();
+#endif
     case AnimatedPropertyInvalid:
         ASSERT_NOT_REACHED();
     }
@@ -444,7 +450,7 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
     }
 }
 
-void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, AnimatedPropertyID property, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
+void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
     // Look for running animations affecting this property.
     AnimationsMap::const_iterator end = m_runningAnimations.end();
@@ -453,7 +459,13 @@ void GraphicsLayerCA::moveOrCopyAnimationsForProperty(MoveOrCopy operation, Anim
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
-            if (currAnimation.m_property == property)
+            
+            if (currAnimation.m_property == AnimatedPropertyWebkitTransform || currAnimation.m_property == AnimatedPropertyOpacity
+                    || currAnimation.m_property == AnimatedPropertyBackgroundColor
+#if ENABLE(CSS_FILTERS)
+                    || currAnimation.m_property == AnimatedPropertyWebkitFilter
+#endif
+                )
                 moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index), fromLayer, toLayer);
         }
     }
@@ -648,6 +660,10 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
+#if ENABLE(CSS_FILTERS)
+    else if (valueList.property() == AnimatedPropertyWebkitFilter)
+        createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
+#endif
     else
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
 
@@ -1299,8 +1315,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
             ASSERT(m_structuralLayer->superlayer());
             m_structuralLayer->superlayer()->replaceSublayer(m_structuralLayer.get(), m_layer.get());
 
-            moveOrCopyAnimationsForProperty(Move, AnimatedPropertyWebkitTransform, m_structuralLayer.get(), m_layer.get());
-            moveOrCopyAnimationsForProperty(Move, AnimatedPropertyOpacity, m_structuralLayer.get(), m_layer.get());
+            moveOrCopyAnimations(Move, m_structuralLayer.get(), m_layer.get());
 
             // Release the structural layer.
             m_structuralLayer = 0;
@@ -1380,8 +1395,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
     m_layer->superlayer()->replaceSublayer(m_layer.get(), m_structuralLayer.get());
     m_structuralLayer->appendSublayer(m_layer.get());
 
-    moveOrCopyAnimationsForProperty(Move, AnimatedPropertyWebkitTransform, m_layer.get(), m_structuralLayer.get());
-    moveOrCopyAnimationsForProperty(Move, AnimatedPropertyOpacity, m_layer.get(), m_structuralLayer.get());
+    moveOrCopyAnimations(Move, m_layer.get(), m_structuralLayer.get());
     
     updateSublayerList();
     updateOpacityOnLayer();
@@ -1744,7 +1758,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
-    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform);
+    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyWebkitFilter);
     
     bool isKeyframe = valueList.size() > 2;
     bool valuesOK;
@@ -1755,10 +1769,10 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     RefPtr<PlatformCAAnimation> caAnimation;
     
     if (isKeyframe) {
-        caAnimation = createKeyframeAnimation(animation, valueList.property(), additive);
+        caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), additive);
         valuesOK = setAnimationKeyframes(valueList, animation, caAnimation.get());
     } else {
-        caAnimation = createBasicAnimation(animation, valueList.property(), additive);
+        caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), additive);
         valuesOK = setAnimationEndpoints(valueList, animation, caAnimation.get());
     }
     
@@ -1779,10 +1793,10 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
     if (isKeyframe) {
-        caAnimation = createKeyframeAnimation(animation, valueList.property(), additive);
+        caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), additive);
         validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     } else {
-        caAnimation = createBasicAnimation(animation, valueList.property(), additive);
+        caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), additive);
         validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     }
     
@@ -1845,16 +1859,79 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return validMatrices;
 }
 
-PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, double timeOffset)
 {
-    RefPtr<PlatformCAAnimation> basicAnim = PlatformCAAnimation::create(PlatformCAAnimation::Basic, propertyIdToString(property));
+    bool isKeyframe = valueList.size() > 2;
+    
+    FilterOperation::OperationType filterOp = operation->getOperationType();
+    int numAnimatedProperties = PlatformCAAnimation::numAnimatedFilterProperties(filterOp);
+    
+    // Each filter might need to animate multiple properties, each with their own keyPath. The keyPath is always of the form:
+    //
+    //      filter.filter_<animationIndex>.<filterPropertyName>
+    //
+    // PlatformCAAnimation tells us how many properties each filter has and we iterate that many times and create an animation
+    // for each. This internalFilterPropertyIndex gets passed to PlatformCAAnimation so it can properly create the property animation
+    // values.
+    for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
+        bool valuesOK;
+        RefPtr<PlatformCAAnimation> caAnimation;
+        String keyPath = String::format("filters.filter_%d.%s", animationIndex, PlatformCAAnimation::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
+        
+        if (isKeyframe) {
+            caAnimation = createKeyframeAnimation(animation, keyPath, false);
+            valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex, filterOp);
+        } else {
+            caAnimation = createBasicAnimation(animation, keyPath, false);
+            valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex);
+        }
+        
+        ASSERT(valuesOK);
+
+        m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, timeOffset));
+    }
+
+    return true;
+}
+
+bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
+{
+    ASSERT(valueList.property() == AnimatedPropertyWebkitFilter);
+
+    int listIndex = validateFilterOperations(valueList);
+    if (listIndex < 0)
+        return false;
+        
+    const FilterOperations* operations = static_cast<const FilterAnimationValue*>(valueList.at(listIndex))->value();
+    int numAnimations = operations->size();
+
+    // FIXME: We can't currently hardware animate shadows. There is an open question about removing shadows from filters 
+    // entirely, in which case this issue is moot.
+    for (int i = 0; i < numAnimations; ++i) {
+        if (operations->at(i)->getOperationType() == FilterOperation::DROP_SHADOW)
+            return false;
+    }
+
+    for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, operations->operations().at(animationIndex).get(), animation, animationName, animationIndex, timeOffset))
+            return false;
+    }
+
+    return true;
+}
+#endif
+
+PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
+{
+    RefPtr<PlatformCAAnimation> basicAnim = PlatformCAAnimation::create(PlatformCAAnimation::Basic, keyPath);
     setupAnimation(basicAnim.get(), anim, additive);
     return basicAnim;
 }
 
-PassRefPtr<PlatformCAAnimation>GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, AnimatedPropertyID property, bool additive)
+PassRefPtr<PlatformCAAnimation>GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    RefPtr<PlatformCAAnimation> keyframeAnim = PlatformCAAnimation::create(PlatformCAAnimation::Keyframe, propertyIdToString(property));
+    RefPtr<PlatformCAAnimation> keyframeAnim = PlatformCAAnimation::create(PlatformCAAnimation::Keyframe, keyPath);
     setupAnimation(keyframeAnim.get(), anim, additive);
     return keyframeAnim;
 }
@@ -2081,6 +2158,76 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, int internalFilterPropertyIndex)
+{
+    ASSERT(valueList.size() == 2);
+    
+    const FilterAnimationValue* fromValue = static_cast<const FilterAnimationValue*>(valueList.at(0));
+    const FilterAnimationValue* toValue = static_cast<const FilterAnimationValue*>(valueList.at(1));
+    
+    const FilterOperation* fromOperation = fromValue->value()->at(functionIndex);
+    const FilterOperation* toOperation = toValue->value()->at(functionIndex);
+    
+    RefPtr<DefaultFilterOperation> defaultFromOperation;
+    RefPtr<DefaultFilterOperation> defaultToOperation;
+    
+    ASSERT(fromOperation || toOperation);
+    
+    if (!fromOperation) {
+        defaultFromOperation = DefaultFilterOperation::create(toOperation->getOperationType());
+        fromOperation = defaultFromOperation.get();
+    }
+    
+    if (!toOperation) {
+        defaultToOperation = DefaultFilterOperation::create(fromOperation->getOperationType());
+        toOperation = defaultToOperation.get();
+    }
+    
+    basicAnim->setFromValue(fromOperation, internalFilterPropertyIndex);
+    basicAnim->setToValue(toOperation, internalFilterPropertyIndex);
+    
+    // This codepath is used for 2-keyframe animations, so we still need to look in the start for a timing function.
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    basicAnim->setTimingFunction(timingFunction);
+
+    return true;
+}
+
+bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType filterOp)
+{
+    Vector<float> keyTimes;
+    Vector<RefPtr<FilterOperation> > values;
+    Vector<const TimingFunction*> timingFunctions;
+    RefPtr<DefaultFilterOperation> defaultOperation;
+
+    for (unsigned i = 0; i < valueList.size(); ++i) {
+        const FilterAnimationValue* curValue = static_cast<const FilterAnimationValue*>(valueList.at(i));
+        keyTimes.append(curValue->keyTime());
+
+        if (curValue->value()->operations().size() > static_cast<size_t>(functionIndex))
+            values.append(curValue->value()->operations()[functionIndex]);
+        else {
+            if (!defaultOperation)
+                defaultOperation = DefaultFilterOperation::create(filterOp);
+            values.append(defaultOperation);
+        }
+
+        const TimingFunction* timingFunction = timingFunctionForAnimationValue(curValue, animation);
+        timingFunctions.append(timingFunction);
+    }
+    
+    // We toss the last timing function because it has to be one shorter than the others.
+    timingFunctions.removeLast();
+
+    keyframeAnim->setKeyTimes(keyTimes);
+    keyframeAnim->setValues(values, internalFilterPropertyIndex);
+    keyframeAnim->setTimingFunctions(timingFunctions);
+
+    return true;
+}
+#endif
+
 void GraphicsLayerCA::suspendAnimations(double time)
 {
     double t = PlatformCALayer::currentTimeToMediaTime(time ? time : currentTime());
@@ -2269,9 +2416,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
 #endif
 
     // move over animations
-    moveOrCopyAnimationsForProperty(Move, AnimatedPropertyWebkitTransform, oldLayer.get(), m_layer.get());
-    moveOrCopyAnimationsForProperty(Move, AnimatedPropertyOpacity, oldLayer.get(), m_layer.get());
-    moveOrCopyAnimationsForProperty(Move, AnimatedPropertyBackgroundColor, oldLayer.get(), m_layer.get());
+    moveOrCopyAnimations(Move, oldLayer.get(), m_layer.get());
     
     // need to tell new layer to draw itself
     setNeedsDisplay();
@@ -2491,8 +2636,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, 
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());
-        moveOrCopyAnimationsForProperty(Copy, AnimatedPropertyWebkitTransform, layer, newLayer.get());
-        moveOrCopyAnimationsForProperty(Copy, AnimatedPropertyOpacity, layer, newLayer.get());
+        moveOrCopyAnimations(Copy, layer, newLayer.get());
     }
     
     if (showDebugBorders()) {

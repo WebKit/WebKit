@@ -47,7 +47,8 @@ enum AnimatedPropertyID {
     AnimatedPropertyInvalid,
     AnimatedPropertyWebkitTransform,
     AnimatedPropertyOpacity,
-    AnimatedPropertyBackgroundColor
+    AnimatedPropertyBackgroundColor,
+    AnimatedPropertyWebkitFilter
 };
 
 class GraphicsLayerClient {

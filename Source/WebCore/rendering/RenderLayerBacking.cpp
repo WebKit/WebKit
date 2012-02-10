@@ -1197,12 +1197,20 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 {
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
     bool hasTransform = renderer()->isBox() && keyframes.containsProperty(CSSPropertyWebkitTransform);
-    
-    if (!hasOpacity && !hasTransform)
+#if ENABLE(CSS_FILTERS)
+    bool hasFilter = keyframes.containsProperty(CSSPropertyWebkitFilter);
+#else
+    bool hasFilter = false;
+#endif
+
+    if (!hasOpacity && !hasTransform && !hasFilter)
         return false;
     
     KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
     KeyframeValueList opacityVector(AnimatedPropertyOpacity);
+#if ENABLE(CSS_FILTERS)
+    KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
+#endif
 
     size_t numKeyframes = keyframes.size();
     for (size_t i = 0; i < numKeyframes; ++i) {
@@ -1222,10 +1230,18 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         
         if ((hasOpacity && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyOpacity))
             opacityVector.insert(new FloatAnimationValue(key, keyframeStyle->opacity(), tf));
+
+#if ENABLE(CSS_FILTERS)
+        if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitFilter))
+            filterVector.insert(new FilterAnimationValue(key, &(keyframeStyle->filter()), tf));
+#endif
     }
 
     bool didAnimateTransform = false;
     bool didAnimateOpacity = false;
+#if ENABLE(CSS_FILTERS)
+    bool didAnimateFilter = false;
+#endif
     
     if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), anim, keyframes.animationName(), timeOffset)) {
         didAnimateTransform = true;
@@ -1237,7 +1253,18 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
     }
 
+#if ENABLE(CSS_FILTERS)
+    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, LayoutSize(), anim, keyframes.animationName(), timeOffset)) {
+        didAnimateFilter = true;
+        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitFilter);
+    }
+#endif
+
+#if ENABLE(CSS_FILTERS)
+    return didAnimateTransform || didAnimateOpacity || didAnimateFilter;
+#else
     return didAnimateTransform || didAnimateOpacity;
+#endif
 }
 
 void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
@@ -1254,6 +1281,10 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
 {
     bool didAnimateOpacity = false;
     bool didAnimateTransform = false;
+#if ENABLE(CSS_FILTERS)
+    bool didAnimateFilter = false;
+#endif
+
     ASSERT(property != cAnimateAll);
 
     if (property == (int)CSSPropertyOpacity) {
@@ -1278,12 +1309,28 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
             transformVector.insert(new TransformAnimationValue(0, &fromStyle->transform()));
             transformVector.insert(new TransformAnimationValue(1, &toStyle->transform()));
             if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
-                // To ensure that the correct transform is visible when the animation ends, also set the final opacity.
+                // To ensure that the correct transform is visible when the animation ends, also set the final transform.
                 updateLayerTransform(toStyle);
                 didAnimateTransform = true;
             }
         }
     }
+
+#if ENABLE(CSS_FILTERS)
+    if (property == (int)CSSPropertyWebkitFilter && m_owningLayer->hasFilter()) {
+        const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyWebkitFilter);
+        if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
+            KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
+            filterVector.insert(new FilterAnimationValue(0, &fromStyle->filter()));
+            filterVector.insert(new FilterAnimationValue(1, &toStyle->filter()));
+            if (m_graphicsLayer->addAnimation(filterVector, LayoutSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
+                // To ensure that the correct filter is visible when the animation ends, also set the final filter.
+                updateLayerFilters(toStyle);
+                didAnimateFilter = true;
+            }
+        }
+    }
+#endif
 
     if (didAnimateOpacity)
         compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
@@ -1291,7 +1338,16 @@ bool RenderLayerBacking::startTransition(double timeOffset, int property, const 
     if (didAnimateTransform)
         compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitTransform);
     
+#if ENABLE(CSS_FILTERS)
+    if (didAnimateFilter)
+        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitFilter);
+#endif
+
+#if ENABLE(CSS_FILTERS)
+    return didAnimateOpacity || didAnimateTransform || didAnimateFilter;
+#else
     return didAnimateOpacity || didAnimateTransform;
+#endif
 }
 
 void RenderLayerBacking::transitionPaused(double timeOffset, int property)
@@ -1353,6 +1409,13 @@ int RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
         case AnimatedPropertyBackgroundColor:
             cssProperty = CSSPropertyBackgroundColor;
             break;
+        case AnimatedPropertyWebkitFilter:
+#if ENABLE(CSS_FILTERS)
+            cssProperty = CSSPropertyWebkitFilter;
+#else
+            ASSERT_NOT_REACHED();
+#endif
+            break;
         case AnimatedPropertyInvalid:
             ASSERT_NOT_REACHED();
     }
@@ -1368,6 +1431,10 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(int cssPropert
             return AnimatedPropertyOpacity;
         case CSSPropertyBackgroundColor:
             return AnimatedPropertyBackgroundColor;
+#if ENABLE(CSS_FILTERS)
+        case CSSPropertyWebkitFilter:
+            return AnimatedPropertyWebkitFilter;
+#endif
         // It's fine if we see other css properties here; they are just not accelerated.
     }
     return AnimatedPropertyInvalid;

@@ -524,6 +524,9 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     virtual void filterNeedsRepaint();
+    bool hasFilter() const { return renderer()->hasFilter(); }
+#else
+    bool hasFilter() const { return false; }
 #endif
 
     // Overloaded new operator. Derived classes must override operator new
