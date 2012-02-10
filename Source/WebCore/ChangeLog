@@ -1,3 +1,17 @@
+2012-02-09  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Heap-buffer-overflow in WebCore::CSSParser::lex
+        https://bugs.webkit.org/show_bug.cgi?id=77402
+
+        Reviewed by Antti Koivisto.
+
+        Comments should check only a single \0 terminator.
+
+        Test: fast/css/parsing-css-comment.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex):
+
 2012-02-09  Kentaro Hara  <haraken@chromium.org>
 
         Replace [CustomArgumentHandling] with [CallWith=ScriptArguments|CallStack]

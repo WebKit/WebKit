@@ -8525,9 +8525,9 @@ restartAfterComment:
         if (*m_currentCharacter == '*') {
             ++m_currentCharacter;
             while (m_currentCharacter[0] != '*' || m_currentCharacter[1] != '/') {
-                if (m_currentCharacter[0] == '\n')
+                if (*m_currentCharacter == '\n')
                     ++m_lineNumber;
-                if (m_currentCharacter[0] == '\0' && m_currentCharacter[1] == '\0') {
+                if (*m_currentCharacter == '\0') {
                     // Unterminated comments are simply ignored.
                     m_currentCharacter -= 2;
                     break;
