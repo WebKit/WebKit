@@ -22,7 +22,7 @@ module html {
 
     interface [
         JSGenerateToNativeObject,
-        NamedConstructor=Option(in [Optional=CallWithNullValue] DOMString data, in [Optional=CallWithNullValue] DOMString value, in [Optional=CallWithDefaultValue] boolean defaultSelected, in [Optional=CallWithDefaultValue] boolean selected),
+        NamedConstructor=Option(in [Optional=DefaultIsNullString] DOMString data, in [Optional=DefaultIsNullString] DOMString value, in [Optional=DefaultIsUndefined] boolean defaultSelected, in [Optional=DefaultIsUndefined] boolean selected),
         ConstructorRaisesException
     ] HTMLOptionElement : HTMLElement {
         readonly attribute HTMLFormElement form;

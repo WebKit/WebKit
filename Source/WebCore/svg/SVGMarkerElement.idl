@@ -51,7 +51,7 @@ module svg {
         readonly attribute SVGAnimatedAngle       orientAngle;
 
         void setOrientToAuto();
-        void setOrientToAngle(in [Optional=CallWithDefaultValue] SVGAngle angle);
+        void setOrientToAngle(in [Optional=DefaultIsUndefined] SVGAngle angle);
     };
 
 }

@@ -37,7 +37,7 @@ module html {
         const unsigned int BYTES_PER_ELEMENT = 4;
 
         readonly attribute unsigned long length;
-        Int32Array subarray(in [Optional=CallWithDefaultValue] long start, 
+        Int32Array subarray(in [Optional=DefaultIsUndefined] long start, 
                             in [Optional] long end);
 
         // void set(in Int32Array array, [Optional] in unsigned long offset);

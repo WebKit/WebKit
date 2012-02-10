@@ -35,7 +35,7 @@ module svg {
         readonly attribute SVGAnimatedString className;
         readonly attribute CSSStyleDeclaration style;
 
-        CSSValue getPresentationAttribute(in [Optional=CallWithDefaultValue] DOMString name);
+        CSSValue getPresentationAttribute(in [Optional=DefaultIsUndefined] DOMString name);
     };
 
 }

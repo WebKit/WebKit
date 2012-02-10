@@ -511,9 +511,9 @@ namespace WebCore {
         return V8ParameterBase::prepareBase();
     }
 
-    enum ParameterMissingPolicy {
-        MissingIsUndefined,
-        MissingIsEmpty
+    enum ParameterDefaultPolicy {
+        DefaultIsUndefined,
+        DefaultIsNullString
     };
 
 } // namespace WebCore

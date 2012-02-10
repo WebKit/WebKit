@@ -21,17 +21,17 @@ module xpath {
     interface [
         Constructor
     ] XPathEvaluator {
-        XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
-                                         in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
+        XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
+                                         in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
             raises(DOMException);
 
-        XPathNSResolver createNSResolver(in [Optional=CallWithDefaultValue] Node nodeResolver);
+        XPathNSResolver createNSResolver(in [Optional=DefaultIsUndefined] Node nodeResolver);
 
-        XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
-                             in [Optional=CallWithDefaultValue] Node contextNode, 
-                             in [Optional=CallWithDefaultValue] XPathNSResolver resolver,
-                             in [Optional=CallWithDefaultValue] unsigned short type,
-                             in [Optional=CallWithDefaultValue] XPathResult inResult)
+        XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
+                             in [Optional=DefaultIsUndefined] Node contextNode, 
+                             in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
+                             in [Optional=DefaultIsUndefined] unsigned short type,
+                             in [Optional=DefaultIsUndefined] XPathResult inResult)
             raises(DOMException);
     };
 }

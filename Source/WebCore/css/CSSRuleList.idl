@@ -32,7 +32,7 @@ module css {
         V8DependentLifetime
     ] CSSRuleList {
         readonly attribute unsigned long    length;
-        CSSRule           item(in [Optional=CallWithDefaultValue] unsigned long index);
+        CSSRule           item(in [Optional=DefaultIsUndefined] unsigned long index);
     };
 
 }

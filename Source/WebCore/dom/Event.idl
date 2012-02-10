@@ -63,9 +63,9 @@ module events {
 
         void               stopPropagation();
         void               preventDefault();
-        [ObjCLegacyUnnamedParameters] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
-                                      in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
-                                      in [Optional=CallWithDefaultValue] boolean cancelableArg);
+        [ObjCLegacyUnnamedParameters] void initEvent(in [Optional=DefaultIsUndefined] DOMString eventTypeArg, 
+                                      in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                                      in [Optional=DefaultIsUndefined] boolean cancelableArg);
 
         // DOM Level 3 Additions.
         readonly attribute boolean defaultPrevented;

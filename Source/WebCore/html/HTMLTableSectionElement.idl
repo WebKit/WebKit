@@ -28,8 +28,8 @@ module html {
         attribute [Reflect=charoff] DOMString chOff;
         attribute [Reflect] DOMString vAlign;
         readonly attribute HTMLCollection rows;
-        HTMLElement insertRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
-        void deleteRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
+        HTMLElement insertRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
+        void deleteRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
     };
 
 }

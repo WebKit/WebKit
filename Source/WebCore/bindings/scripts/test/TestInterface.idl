@@ -34,7 +34,7 @@ module test {
         CustomNamedSetter,
         Conditional=Condition1|Condition2,
         CallWith=ScriptExecutionContext,
-        Constructor(in DOMString str1, in [Optional=CallWithDefaultValue] DOMString str2),
+        Constructor(in DOMString str1, in [Optional=DefaultIsUndefined] DOMString str2),
         ConstructorRaisesException
     ] TestInterface {
     };

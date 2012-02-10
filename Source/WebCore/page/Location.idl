@@ -46,8 +46,8 @@ module window {
                  attribute [DoNotCheckDomainSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
-        [Custom, V8OnInstance] void assign(in [Optional=CallWithDefaultValue] DOMString url);
-        [Custom, V8OnInstance] void replace(in [Optional=CallWithDefaultValue] DOMString url);
+        [Custom, V8OnInstance] void assign(in [Optional=DefaultIsUndefined] DOMString url);
+        [Custom, V8OnInstance] void replace(in [Optional=DefaultIsUndefined] DOMString url);
         [Custom, V8OnInstance] void reload();
 
         // URI decomposition attributes

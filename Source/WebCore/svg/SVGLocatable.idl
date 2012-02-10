@@ -37,7 +37,7 @@ module svg {
         SVGRect   getBBox();
         SVGMatrix getCTM();
         SVGMatrix getScreenCTM();
-        SVGMatrix getTransformToElement(in [Optional=CallWithDefaultValue] SVGElement element)
+        SVGMatrix getTransformToElement(in [Optional=DefaultIsUndefined] SVGElement element)
             raises(SVGException);
     };
 

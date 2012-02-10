@@ -67,9 +67,9 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
         return throwError("Not enough arguments", V8Proxy::TypeError);
 
     ExceptionCode ec = 0;
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str3, MAYBE_MISSING_PARAMETER(args, 2, MissingIsEmpty));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str3, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
 
     RefPtr<TestNamedConstructor> impl = TestNamedConstructor::createForJSConstructor(document, str1, str2, str3, ec);
     v8::Handle<v8::Object> wrapper = args.Holder();

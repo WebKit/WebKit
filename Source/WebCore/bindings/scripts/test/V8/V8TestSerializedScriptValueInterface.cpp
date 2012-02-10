@@ -127,7 +127,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
         return args.Holder();
     if (args.Length() < 2)
         return throwError("Not enough arguments", V8Proxy::TypeError);
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, hello, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, hello, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     bool valueDidThrow = false;
     RefPtr<SerializedScriptValue> value = SerializedScriptValue::create(args[1], 0, 0, valueDidThrow);
     if (valueDidThrow)

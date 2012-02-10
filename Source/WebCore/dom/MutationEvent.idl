@@ -33,14 +33,14 @@ module events {
         readonly attribute DOMString      attrName;
         readonly attribute unsigned short attrChange;
 
-        [ObjCLegacyUnnamedParameters] void initMutationEvent(in [Optional=CallWithDefaultValue] DOMString type, 
-                                              in [Optional=CallWithDefaultValue] boolean canBubble, 
-                                              in [Optional=CallWithDefaultValue] boolean cancelable, 
-                                              in [Optional=CallWithDefaultValue] Node relatedNode, 
-                                              in [Optional=CallWithDefaultValue] DOMString prevValue, 
-                                              in [Optional=CallWithDefaultValue] DOMString newValue, 
-                                              in [Optional=CallWithDefaultValue] DOMString attrName, 
-                                              in [Optional=CallWithDefaultValue] unsigned short attrChange);
+        [ObjCLegacyUnnamedParameters] void initMutationEvent(in [Optional=DefaultIsUndefined] DOMString type, 
+                                              in [Optional=DefaultIsUndefined] boolean canBubble, 
+                                              in [Optional=DefaultIsUndefined] boolean cancelable, 
+                                              in [Optional=DefaultIsUndefined] Node relatedNode, 
+                                              in [Optional=DefaultIsUndefined] DOMString prevValue, 
+                                              in [Optional=DefaultIsUndefined] DOMString newValue, 
+                                              in [Optional=DefaultIsUndefined] DOMString attrName, 
+                                              in [Optional=DefaultIsUndefined] unsigned short attrChange);
 
     };
 

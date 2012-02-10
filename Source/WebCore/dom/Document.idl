@@ -31,36 +31,36 @@ module core {
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        [ReturnNewObject] Element createElement(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString tagName)
+        [ReturnNewObject] Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
-        [ReturnNewObject] Text createTextNode(in [Optional=CallWithDefaultValue] DOMString data);
-        [ReturnNewObject] Comment createComment(in [Optional=CallWithDefaultValue] DOMString data);
-        [ReturnNewObject] CDATASection createCDATASection(in [Optional=CallWithDefaultValue] DOMString data)
+        [ReturnNewObject] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
+        [ReturnNewObject] Comment createComment(in [Optional=DefaultIsUndefined] DOMString data);
+        [ReturnNewObject] CDATASection createCDATASection(in [Optional=DefaultIsUndefined] DOMString data)
             raises(DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] ProcessingInstruction createProcessingInstruction(in [Optional=CallWithDefaultValue] DOMString target,
-                                                                                     in [Optional=CallWithDefaultValue] DOMString data)
+        [ObjCLegacyUnnamedParameters, ReturnNewObject] ProcessingInstruction createProcessingInstruction(in [Optional=DefaultIsUndefined] DOMString target,
+                                                                                     in [Optional=DefaultIsUndefined] DOMString data)
             raises (DOMException);
-        [ReturnNewObject] Attr createAttribute(in [Optional=CallWithDefaultValue] DOMString name)
+        [ReturnNewObject] Attr createAttribute(in [Optional=DefaultIsUndefined] DOMString name)
             raises (DOMException);
-        [ReturnNewObject] EntityReference createEntityReference(in [Optional=CallWithDefaultValue] DOMString name)
+        [ReturnNewObject] EntityReference createEntityReference(in [Optional=DefaultIsUndefined] DOMString name)
             raises(DOMException);
-        NodeList           getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString tagname);
+        NodeList           getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagname);
 
         // Introduced in DOM Level 2:
 
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
+        [ObjCLegacyUnnamedParameters, ReturnNewObject] Node importNode(in [Optional=DefaultIsUndefined] Node importedNode,
                                                    in [Optional] boolean deep)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                           in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
+        [ObjCLegacyUnnamedParameters, ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+                                                           in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                          in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
+        [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+                                                          in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
             raises (DOMException);
-        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
-                                                       in [Optional=CallWithDefaultValue] DOMString localName);
-        Element            getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
+        [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+                                                       in [Optional=DefaultIsUndefined] DOMString localName);
+        Element            getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
 
         // DOM Level 3 Core
 
@@ -72,14 +72,14 @@ module core {
                  attribute boolean xmlStandalone
                     setter raises (DOMException);
 
-        Node               adoptNode(in [Optional=CallWithDefaultValue] Node source)
+        Node               adoptNode(in [Optional=DefaultIsUndefined] Node source)
             raises (DOMException);
 
                  attribute [ConvertNullStringTo=Null, TreatNullAs=NullString] DOMString documentURI;
 
         // DOM Level 2 Events (DocumentEvents interface)
 
-        Event              createEvent(in [Optional=CallWithDefaultValue] DOMString eventType)
+        Event              createEvent(in [Optional=DefaultIsUndefined] DOMString eventType)
             raises(DOMException);
 
         // DOM Level 2 Tranversal and Range (DocumentRange interface)
@@ -88,15 +88,15 @@ module core {
 
         // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-        [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(in [Optional=CallWithDefaultValue] Node root,
-                                                       in [Optional=CallWithDefaultValue] unsigned long whatToShow,
-                                                       in [Optional=CallWithDefaultValue] NodeFilter filter,
-                                                       in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
+        [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(in [Optional=DefaultIsUndefined] Node root,
+                                                       in [Optional=DefaultIsUndefined] unsigned long whatToShow,
+                                                       in [Optional=DefaultIsUndefined] NodeFilter filter,
+                                                       in [Optional=DefaultIsUndefined] boolean expandEntityReferences)
             raises(DOMException);
-        [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(in [Optional=CallWithDefaultValue] Node root,
-                                                   in [Optional=CallWithDefaultValue] unsigned long whatToShow,
-                                                   in [Optional=CallWithDefaultValue] NodeFilter filter,
-                                                   in [Optional=CallWithDefaultValue] boolean expandEntityReferences)
+        [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(in [Optional=DefaultIsUndefined] Node root,
+                                                   in [Optional=DefaultIsUndefined] unsigned long whatToShow,
+                                                   in [Optional=DefaultIsUndefined] NodeFilter filter,
+                                                   in [Optional=DefaultIsUndefined] boolean expandEntityReferences)
             raises(DOMException);
 
         // DOM Level 2 Abstract Views (DocumentView interface)
@@ -109,26 +109,26 @@ module core {
 
         // DOM Level 2 Style (DocumentCSS interface)
 
-        [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=CallWithDefaultValue] Element element,
-                                                            in [Optional=CallWithDefaultValue] DOMString pseudoElement);
+        [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=DefaultIsUndefined] Element element,
+                                                            in [Optional=DefaultIsUndefined] DOMString pseudoElement);
 
         // DOM Level 3 XPath (XPathEvaluator interface)
-        [ObjCLegacyUnnamedParameters] XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
-                                                        in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
+        [ObjCLegacyUnnamedParameters] XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
+                                                        in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
             raises(DOMException);
         XPathNSResolver    createNSResolver(in Node nodeResolver);
-        [ObjCLegacyUnnamedParameters, V8Custom] XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
-                                                      in [Optional=CallWithDefaultValue] Node contextNode,
-                                                      in [Optional=CallWithDefaultValue] XPathNSResolver resolver,
-                                                      in [Optional=CallWithDefaultValue] unsigned short type,
-                                                      in [Optional=CallWithDefaultValue] XPathResult inResult)
+        [ObjCLegacyUnnamedParameters, V8Custom] XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
+                                                      in [Optional=DefaultIsUndefined] Node contextNode,
+                                                      in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
+                                                      in [Optional=DefaultIsUndefined] unsigned short type,
+                                                      in [Optional=DefaultIsUndefined] XPathResult inResult)
             raises(DOMException);
 
         // Common extensions
 
-        boolean            execCommand(in [Optional=CallWithDefaultValue] DOMString command,
-                                       in [Optional=CallWithDefaultValue] boolean userInterface,
-                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString value);
+        boolean            execCommand(in [Optional=DefaultIsUndefined] DOMString command,
+                                       in [Optional=DefaultIsUndefined] boolean userInterface,
+                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString value);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         // FIXME: remove the these two versions once [Optional] is implemented for Objective-C.
@@ -137,11 +137,11 @@ module core {
         boolean            execCommand(in DOMString command);
 #endif
 
-        boolean            queryCommandEnabled(in [Optional=CallWithDefaultValue] DOMString command);
-        boolean            queryCommandIndeterm(in [Optional=CallWithDefaultValue] DOMString command);
-        boolean            queryCommandState(in [Optional=CallWithDefaultValue] DOMString command);
-        boolean            queryCommandSupported(in [Optional=CallWithDefaultValue] DOMString command);
-        [ConvertNullStringTo=False] DOMString queryCommandValue(in [Optional=CallWithDefaultValue] DOMString command);
+        boolean            queryCommandEnabled(in [Optional=DefaultIsUndefined] DOMString command);
+        boolean            queryCommandIndeterm(in [Optional=DefaultIsUndefined] DOMString command);
+        boolean            queryCommandState(in [Optional=DefaultIsUndefined] DOMString command);
+        boolean            queryCommandSupported(in [Optional=DefaultIsUndefined] DOMString command);
+        [ConvertNullStringTo=False] DOMString queryCommandValue(in [Optional=DefaultIsUndefined] DOMString command);
 
         // Moved down from HTMLDocument
 
@@ -172,10 +172,10 @@ module core {
         readonly attribute HTMLCollection anchors;
         readonly attribute DOMString lastModified;
 
-        NodeList getElementsByName(in [Optional=CallWithDefaultValue] DOMString elementName);
+        NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-        NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=CallWithDefaultValue] DOMString typeNames);
+        NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -188,10 +188,10 @@ module core {
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
-        Element            elementFromPoint(in [Optional=CallWithDefaultValue] long x, 
-                                            in [Optional=CallWithDefaultValue] long y);
-        Range              caretRangeFromPoint(in [Optional=CallWithDefaultValue] long x, 
-                                               in [Optional=CallWithDefaultValue] long y);
+        Element            elementFromPoint(in [Optional=DefaultIsUndefined] long x, 
+                                            in [Optional=DefaultIsUndefined] long y);
+        Range              caretRangeFromPoint(in [Optional=DefaultIsUndefined] long x, 
+                                               in [Optional=DefaultIsUndefined] long y);
 
         // Mozilla extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -230,7 +230,7 @@ module core {
 #endif
 
         // HTML 5
-        NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString tagname);
+        NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString tagname);
 
         readonly attribute DOMString compatMode;
 
@@ -325,17 +325,17 @@ module core {
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-        [ReturnNewObject, V8EnabledAtRuntime] Touch createTouch(in [Optional=CallWithDefaultValue] DOMWindow window,
-                                                         in [Optional=CallWithDefaultValue] EventTarget target,
-                                                         in [Optional=CallWithDefaultValue] long identifier,
-                                                         in [Optional=CallWithDefaultValue] long pageX,
-                                                         in [Optional=CallWithDefaultValue] long pageY,
-                                                         in [Optional=CallWithDefaultValue] long screenX,
-                                                         in [Optional=CallWithDefaultValue] long screenY,
-                                                         in [Optional=CallWithDefaultValue] long webkitRadiusX,
-                                                         in [Optional=CallWithDefaultValue] long webkitRadiusY,
-                                                         in [Optional=CallWithDefaultValue] float webkitRotationAngle,
-                                                         in [Optional=CallWithDefaultValue] float webkitForce)
+        [ReturnNewObject, V8EnabledAtRuntime] Touch createTouch(in [Optional=DefaultIsUndefined] DOMWindow window,
+                                                         in [Optional=DefaultIsUndefined] EventTarget target,
+                                                         in [Optional=DefaultIsUndefined] long identifier,
+                                                         in [Optional=DefaultIsUndefined] long pageX,
+                                                         in [Optional=DefaultIsUndefined] long pageY,
+                                                         in [Optional=DefaultIsUndefined] long screenX,
+                                                         in [Optional=DefaultIsUndefined] long screenY,
+                                                         in [Optional=DefaultIsUndefined] long webkitRadiusX,
+                                                         in [Optional=DefaultIsUndefined] long webkitRadiusY,
+                                                         in [Optional=DefaultIsUndefined] float webkitRotationAngle,
+                                                         in [Optional=DefaultIsUndefined] float webkitForce)
             raises (DOMException);
         [ReturnNewObject, V8EnabledAtRuntime, Custom] TouchList createTouchList()
             raises (DOMException);

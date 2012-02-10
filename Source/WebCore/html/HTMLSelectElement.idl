@@ -52,8 +52,8 @@ module html {
         attribute [Reflect] boolean required;
         attribute long size;
         
-        [ObjCLegacyUnnamedParameters] void add(in [Optional=CallWithDefaultValue] HTMLElement element, 
-                                in [Optional=CallWithDefaultValue] HTMLElement before) raises(DOMException);
+        [ObjCLegacyUnnamedParameters] void add(in [Optional=DefaultIsUndefined] HTMLElement element, 
+                                in [Optional=DefaultIsUndefined] HTMLElement before) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // In JavaScript, we support both option index and option object parameters.
@@ -65,8 +65,8 @@ module html {
 
         // These methods are not in DOM Level 2 IDL, but are mentioned in the standard:
         // "The contained options can be directly accessed through the select element as a collection."
-        Node item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);
-        Node namedItem(in [Optional=CallWithDefaultValue] DOMString name);
+        Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
+        Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
         readonly attribute NodeList labels;
     };
 

@@ -2427,12 +2427,10 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
 
     foreach my $parameter (@{$function->parameters}) {
-        # Optional callbacks should be treated differently, because they always have a default value (0),
-        # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue]
-        # should not generate an early call.
+        # Optional arguments with [Optional] should generate an early call with fewer arguments.
+        # Optional arguments with [Optional=...] should not generate the early call.
         my $optional = $parameter->extendedAttributes->{"Optional"};
-        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
+        if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
@@ -2467,7 +2465,7 @@ sub GenerateParametersCheck
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             my $callbackClassName = GetCallbackClassName($argType);
             $implIncludes{"$callbackClassName.h"} = 1;
-            if ($parameter->extendedAttributes->{"Optional"}) {
+            if ($optional) {
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
                 push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
                 push(@$outputArray, "        if (!exec->argument($argsIndex).isObject()) {\n");
@@ -2499,13 +2497,12 @@ sub GenerateParametersCheck
                 }
             }
 
-            my $optional = $parameter->extendedAttributes->{"Optional"};
-            my $parameterMissingPolicy = "MissingIsUndefined";
-            if ($optional && $optional eq "CallWithNullValue") {
-                $parameterMissingPolicy = "MissingIsEmpty";
+            my $parameterDefaultPolicy = "DefaultIsUndefined";
+            if ($optional and $optional eq "DefaultIsNullString") {
+                $parameterDefaultPolicy = "DefaultIsNullString";
             }
 
-            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterMissingPolicy)") . ");\n");
+            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterDefaultPolicy)") . ");\n");
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
             # But this needs to be done in the bindings, because the type is unsigned and the fact that it

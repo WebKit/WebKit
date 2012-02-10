@@ -29,6 +29,6 @@ module svg {
     ] SVGElementInstanceList {
         readonly attribute unsigned long length;
 
-        SVGElementInstance item(in [Optional=CallWithDefaultValue] unsigned long index);
+        SVGElementInstance item(in [Optional=DefaultIsUndefined] unsigned long index);
     };
 }

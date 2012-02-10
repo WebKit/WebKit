@@ -34,14 +34,14 @@ module storage {
         readonly attribute [InitializedByEventConstructor] DOMString url;
         readonly attribute [InitializedByEventConstructor] Storage storageArea;
 
-        void initStorageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
-                              in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
-                              in [Optional=CallWithDefaultValue] boolean cancelableArg, 
-                              in [Optional=CallWithDefaultValue] DOMString keyArg, 
-                              in [Optional=CallWithDefaultValue,TreatNullAs=NullString] DOMString oldValueArg, 
-                              in [Optional=CallWithDefaultValue,TreatNullAs=NullString] DOMString newValueArg, 
-                              in [Optional=CallWithDefaultValue] DOMString urlArg, 
-                              in [Optional=CallWithDefaultValue] Storage storageAreaArg);
+        void initStorageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
+                              in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                              in [Optional=DefaultIsUndefined] boolean cancelableArg, 
+                              in [Optional=DefaultIsUndefined] DOMString keyArg, 
+                              in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString oldValueArg, 
+                              in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString newValueArg, 
+                              in [Optional=DefaultIsUndefined] DOMString urlArg, 
+                              in [Optional=DefaultIsUndefined] Storage storageAreaArg);
 
         // Needed once we support init<blank>EventNS
         // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);

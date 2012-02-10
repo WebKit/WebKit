@@ -24,6 +24,6 @@ module view {
         CPPPureInterface,
         OmitConstructor
     ] MediaQueryListListener {
-        void queryChanged(in [Optional=CallWithDefaultValue] MediaQueryList list);
+        void queryChanged(in [Optional=DefaultIsUndefined] MediaQueryList list);
     };
 }

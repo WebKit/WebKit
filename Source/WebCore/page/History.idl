@@ -41,7 +41,7 @@ module window {
 
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void back();
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=CallWithDefaultValue] long distance);
+        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=DefaultIsUndefined] long distance);
         
         [Custom, V8EnabledAtRuntime] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
             raises(DOMException);

@@ -800,6 +800,24 @@
     IMPL->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+- (void)methodWithOptionalString:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalString(str);
+}
+
+- (void)methodWithOptionalStringIsUndefined:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalStringIsUndefined(str);
+}
+
+- (void)methodWithOptionalStringIsNullString:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalStringIsNullString(str);
+}
+
 
 #if ENABLE(Condition1)
 - (NSString *)conditionalMethod1

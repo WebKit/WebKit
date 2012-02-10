@@ -334,6 +334,39 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOM
     item->methodWithNonOptionalArgAndTwoOptionalArgs(non_opt, opt1, opt2);
 }
 
+void
+webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gchar* str)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(str);
+    WTF::String converted_str = WTF::String::fromUTF8(str);
+    item->methodWithOptionalString(converted_str);
+}
+
+void
+webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* self, const gchar* str)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(str);
+    WTF::String converted_str = WTF::String::fromUTF8(str);
+    item->methodWithOptionalStringIsUndefined(converted_str);
+}
+
+void
+webkit_dom_test_obj_method_with_optional_string_is_null_string(WebKitDOMTestObj* self, const gchar* str)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(str);
+    WTF::String converted_str = WTF::String::fromUTF8(str);
+    item->methodWithOptionalStringIsNullString(converted_str);
+}
+
 gchar*
 webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)
 {

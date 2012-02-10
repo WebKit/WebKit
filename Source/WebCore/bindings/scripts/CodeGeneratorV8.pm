@@ -1526,21 +1526,19 @@ sub GenerateParametersCheck
 
         my $parameterName = $parameter->name;
 
-        # Optional callbacks should be treated differently, because they always have a default value (0),
-        # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with default values [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue] should not generate an early call.
-        my $optional = $parameter->extendedAttributes->{"Optional"};        
-        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
-            # Generate early call if there are not enough parameters.
+        # Optional arguments with [Optional] should generate an early call with fewer arguments.
+        # Optional arguments with [Optional=...] should not generate the early call.
+        my $optional = $parameter->extendedAttributes->{"Optional"};
+        if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && !$parameter->extendedAttributes->{"Callback"}) {
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
             $parameterCheckString .= $functionCall;
             $parameterCheckString .= "    }\n";
         }
 
-        my $parameterMissingPolicy = "MissingIsUndefined";
-        if ($optional && $optional eq "CallWithNullValue") {
-            $parameterMissingPolicy = "MissingIsEmpty";
+        my $parameterDefaultPolicy = "DefaultIsUndefined";
+        if ($optional and $optional eq "DefaultIsNullString") {
+            $parameterDefaultPolicy = "DefaultIsNullString";
         }
 
         AddToImplIncludes("ExceptionCode.h");
@@ -1548,7 +1546,7 @@ sub GenerateParametersCheck
         if ($parameter->extendedAttributes->{"Callback"}) {
             my $className = GetCallbackClassName($parameter->type);
             AddToImplIncludes("$className.h");
-            if ($parameter->extendedAttributes->{"Optional"}) {
+            if ($optional) {
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName;\n";
                 $parameterCheckString .= "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n";
                 $parameterCheckString .= "        if (!args[$paramIndex]->IsObject())\n";
@@ -1574,7 +1572,7 @@ sub GenerateParametersCheck
             $parameterCheckString .= "        goto fail;\n";
             $parameterCheckString .= "    }\n";
         } elsif ($nativeType =~ /^V8Parameter/) {
-            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterMissingPolicy)");
+            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)");
             $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             AddToImplIncludes("V8BindingMacros.h");
@@ -1595,7 +1593,7 @@ sub GenerateParametersCheck
                 }
             }
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterMissingPolicy)") . ");\n";
+                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)") . ");\n";
             if ($nativeType eq 'OptionsObject') {
                $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
                $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
@@ -3599,7 +3597,7 @@ sub RequiresCustomSignature
     }
     foreach my $parameter (@{$function->parameters}) {
         my $optional = $parameter->extendedAttributes->{"Optional"};
-        if (($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue") || $parameter->extendedAttributes->{"Callback"}) {
+        if (($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString") || $parameter->extendedAttributes->{"Callback"}) {
             return 0;
         }
     }

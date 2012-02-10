@@ -118,6 +118,9 @@ module test {
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
         void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
+        void    methodWithOptionalString(in [Optional] DOMString str);
+        void    methodWithOptionalStringIsUndefined(in [Optional=DefaultIsUndefined] DOMString str);
+        void    methodWithOptionalStringIsNullString(in [Optional=DefaultIsNullString] DOMString str);
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // 'Callback' extended attribute

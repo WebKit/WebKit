@@ -36,18 +36,18 @@ module events {
         readonly attribute boolean altKey;
         readonly attribute boolean metaKey;
 
-        void initTouchEvent(in [Optional=CallWithDefaultValue] TouchList touches,
-                            in [Optional=CallWithDefaultValue] TouchList targetTouches,
-                            in [Optional=CallWithDefaultValue] TouchList changedTouches,
-                            in [Optional=CallWithDefaultValue] DOMString type,
-                            in [Optional=CallWithDefaultValue] DOMWindow view,
-                            in [Optional=CallWithDefaultValue] long screenX, 
-                            in [Optional=CallWithDefaultValue] long screenY, 
-                            in [Optional=CallWithDefaultValue] long clientX, 
-                            in [Optional=CallWithDefaultValue] long clientY,
-                            in [Optional=CallWithDefaultValue] boolean ctrlKey,
-                            in [Optional=CallWithDefaultValue] boolean altKey,
-                            in [Optional=CallWithDefaultValue] boolean shiftKey,
-                            in [Optional=CallWithDefaultValue] boolean metaKey);
+        void initTouchEvent(in [Optional=DefaultIsUndefined] TouchList touches,
+                            in [Optional=DefaultIsUndefined] TouchList targetTouches,
+                            in [Optional=DefaultIsUndefined] TouchList changedTouches,
+                            in [Optional=DefaultIsUndefined] DOMString type,
+                            in [Optional=DefaultIsUndefined] DOMWindow view,
+                            in [Optional=DefaultIsUndefined] long screenX, 
+                            in [Optional=DefaultIsUndefined] long screenY, 
+                            in [Optional=DefaultIsUndefined] long clientX, 
+                            in [Optional=DefaultIsUndefined] long clientY,
+                            in [Optional=DefaultIsUndefined] boolean ctrlKey,
+                            in [Optional=DefaultIsUndefined] boolean altKey,
+                            in [Optional=DefaultIsUndefined] boolean shiftKey,
+                            in [Optional=DefaultIsUndefined] boolean metaKey);
     };
 }

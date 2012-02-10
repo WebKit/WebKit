@@ -46,7 +46,7 @@ module html {
     readonly attribute TimeRanges buffered;
     void load() 
         raises (DOMException);
-    DOMString canPlayType(in [Optional=CallWithDefaultValue] DOMString type);
+    DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type);
 
     // ready state
     const unsigned short HAVE_NOTHING = 0;

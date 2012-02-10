@@ -28,10 +28,10 @@ module html {
                  attribute [Custom] unsigned long length
                         setter raises (DOMException);
 
-        [Custom] void add(in [Optional=CallWithDefaultValue] HTMLOptionElement option, 
+        [Custom] void add(in [Optional=DefaultIsUndefined] HTMLOptionElement option, 
                           in [Optional] unsigned long index)
              raises (DOMException);
-        [Custom] void remove(in [Optional=CallWithDefaultValue] unsigned long index);
+        [Custom] void remove(in [Optional=DefaultIsUndefined] unsigned long index);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         Node item(in unsigned long index); 

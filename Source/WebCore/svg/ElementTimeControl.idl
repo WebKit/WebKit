@@ -32,9 +32,9 @@ module svg {
         OmitConstructor
     ] ElementTimeControl { 
         void beginElement();
-        void beginElementAt(in [Optional=CallWithDefaultValue] float offset);
+        void beginElementAt(in [Optional=DefaultIsUndefined] float offset);
         void endElement();
-        void endElementAt(in [Optional=CallWithDefaultValue] float offset);
+        void endElementAt(in [Optional=DefaultIsUndefined] float offset);
     };
 
 }

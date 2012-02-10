@@ -23,7 +23,7 @@ module xpath {
     interface [
         Constructor
     ] XMLSerializer {
-        DOMString serializeToString(in [Optional=CallWithDefaultValue] Node node)
+        DOMString serializeToString(in [Optional=DefaultIsUndefined] Node node)
             raises(DOMException);
     };
 

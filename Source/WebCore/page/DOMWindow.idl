@@ -77,18 +77,18 @@ module window {
                                            in [Optional] DOMObject dialogArgs,
                                            in [Optional] DOMString featureArgs);
 
-        void alert(in [Optional=CallWithDefaultValue] DOMString message);
-        boolean confirm(in [Optional=CallWithDefaultValue] DOMString message);
-        [ConvertNullStringTo=Null] DOMString prompt(in [Optional=CallWithDefaultValue] DOMString message,
-                                                    in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString defaultValue);
+        void alert(in [Optional=DefaultIsUndefined] DOMString message);
+        boolean confirm(in [Optional=DefaultIsUndefined] DOMString message);
+        [ConvertNullStringTo=Null] DOMString prompt(in [Optional=DefaultIsUndefined] DOMString message,
+                                                    in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString defaultValue);
 
-        boolean find(in [Optional=CallWithDefaultValue] DOMString string,
-                     in [Optional=CallWithDefaultValue] boolean caseSensitive,
-                     in [Optional=CallWithDefaultValue] boolean backwards,
-                     in [Optional=CallWithDefaultValue] boolean wrap,
-                     in [Optional=CallWithDefaultValue] boolean wholeWord,
-                     in [Optional=CallWithDefaultValue] boolean searchInFrames,
-                     in [Optional=CallWithDefaultValue] boolean showDialog);
+        boolean find(in [Optional=DefaultIsUndefined] DOMString string,
+                     in [Optional=DefaultIsUndefined] boolean caseSensitive,
+                     in [Optional=DefaultIsUndefined] boolean backwards,
+                     in [Optional=DefaultIsUndefined] boolean wrap,
+                     in [Optional=DefaultIsUndefined] boolean wholeWord,
+                     in [Optional=DefaultIsUndefined] boolean searchInFrames,
+                     in [Optional=DefaultIsUndefined] boolean showDialog);
 
         attribute [Replaceable] boolean offscreenBuffering;
 
@@ -105,13 +105,13 @@ module window {
         readonly attribute long pageXOffset;
         readonly attribute long pageYOffset;
 
-        void scrollBy(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
-        void scrollTo(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
-        void scroll(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
-        void moveBy(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
-        void moveTo(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
-        void resizeBy(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
-        void resizeTo(in [Optional=CallWithDefaultValue] float width, in [Optional=CallWithDefaultValue] float height); // FIXME: this should take longs not floats.
+        void scrollBy(in [Optional=DefaultIsUndefined] long x, in [Optional=DefaultIsUndefined] long y);
+        void scrollTo(in [Optional=DefaultIsUndefined] long x, in [Optional=DefaultIsUndefined] long y);
+        void scroll(in [Optional=DefaultIsUndefined] long x, in [Optional=DefaultIsUndefined] long y);
+        void moveBy(in [Optional=DefaultIsUndefined] float x, in [Optional=DefaultIsUndefined] float y); // FIXME: this should take longs not floats.
+        void moveTo(in [Optional=DefaultIsUndefined] float x, in [Optional=DefaultIsUndefined] float y); // FIXME: this should take longs not floats.
+        void resizeBy(in [Optional=DefaultIsUndefined] float x, in [Optional=DefaultIsUndefined] float y); // FIXME: this should take longs not floats.
+        void resizeTo(in [Optional=DefaultIsUndefined] float width, in [Optional=DefaultIsUndefined] float height); // FIXME: this should take longs not floats.
 
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
@@ -145,21 +145,21 @@ module window {
         readonly attribute StyleMedia styleMedia;
 
         // DOM Level 2 Style Interface
-        CSSStyleDeclaration getComputedStyle(in [Optional=CallWithDefaultValue] Element element,
-                                             in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=CallWithDefaultValue] DOMString pseudoElement);
+        CSSStyleDeclaration getComputedStyle(in [Optional=DefaultIsUndefined] Element element,
+                                             in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString pseudoElement);
 
         // WebKit extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        CSSRuleList getMatchedCSSRules(in [Optional=CallWithDefaultValue] Element element,
-                                       in [Optional=CallWithDefaultValue] DOMString pseudoElement);
+        CSSRuleList getMatchedCSSRules(in [Optional=DefaultIsUndefined] Element element,
+                                       in [Optional=DefaultIsUndefined] DOMString pseudoElement);
 #endif
 
         attribute [Replaceable] double devicePixelRatio;
         
-        WebKitPoint webkitConvertPointFromPageToNode(in [Optional=CallWithDefaultValue] Node node, 
-                                                     in [Optional=CallWithDefaultValue] WebKitPoint p);
-        WebKitPoint webkitConvertPointFromNodeToPage(in [Optional=CallWithDefaultValue] Node node, 
-                                                     in [Optional=CallWithDefaultValue] WebKitPoint p);
+        WebKitPoint webkitConvertPointFromPageToNode(in [Optional=DefaultIsUndefined] Node node, 
+                                                     in [Optional=DefaultIsUndefined] WebKitPoint p);
+        WebKitPoint webkitConvertPointFromNodeToPage(in [Optional=DefaultIsUndefined] Node node, 
+                                                     in [Optional=DefaultIsUndefined] WebKitPoint p);
 
         readonly attribute [V8EnabledAtRuntime] DOMApplicationCache applicationCache;
 
@@ -209,27 +209,27 @@ module window {
 #endif
 
         // Timers
-        [Custom] long setTimeout(in [Optional=CallWithDefaultValue] TimeoutHandler handler, 
-                                 in [Optional=CallWithDefaultValue] long timeout);
+        [Custom] long setTimeout(in [Optional=DefaultIsUndefined] TimeoutHandler handler, 
+                                 in [Optional=DefaultIsUndefined] long timeout);
         // [Custom] long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        void clearTimeout(in [Optional=CallWithDefaultValue] long handle);
+        void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        void clearInterval(in [Optional=CallWithDefaultValue] long handle);
+        void clearInterval(in [Optional=DefaultIsUndefined] long handle);
 
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME)
         // WebKit animation extensions, being standardized in the WebPerf WG
-        long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback, in [Optional=CallWithDefaultValue] Element element);
+        long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback, in [Optional=DefaultIsUndefined] Element element);
         void webkitCancelAnimationFrame(in long id);
         void webkitCancelRequestAnimationFrame(in long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 #endif
 
         // Base64
-        DOMString atob(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString string)
+        DOMString atob(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString string)
             raises(DOMException);
-        DOMString btoa(in [TreatNullAs=NullString,Optional=CallWithDefaultValue] DOMString string)
+        DOMString btoa(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString string)
             raises(DOMException);
 
         // Events

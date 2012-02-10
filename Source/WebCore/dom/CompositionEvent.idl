@@ -30,11 +30,11 @@ module events {
 
         readonly attribute DOMString data;
 
-        void initCompositionEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
-                                  in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
-                                  in [Optional=CallWithDefaultValue] boolean cancelableArg, 
-                                  in [Optional=CallWithDefaultValue] DOMWindow viewArg, 
-                                  in [Optional=CallWithDefaultValue] DOMString dataArg);
+        void initCompositionEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
+                                  in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                                  in [Optional=DefaultIsUndefined] boolean cancelableArg, 
+                                  in [Optional=DefaultIsUndefined] DOMWindow viewArg, 
+                                  in [Optional=DefaultIsUndefined] DOMString dataArg);
 
     };
 

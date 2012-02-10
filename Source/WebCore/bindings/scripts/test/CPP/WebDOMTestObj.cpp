@@ -943,6 +943,30 @@ void WebDOMTestObj::methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int o
     impl()->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+void WebDOMTestObj::methodWithOptionalString(const WebDOMString& str)
+{
+    if (!impl())
+        return;
+
+    impl()->methodWithOptionalString(str);
+}
+
+void WebDOMTestObj::methodWithOptionalStringIsUndefined(const WebDOMString& str)
+{
+    if (!impl())
+        return;
+
+    impl()->methodWithOptionalStringIsUndefined(str);
+}
+
+void WebDOMTestObj::methodWithOptionalStringIsNullString(const WebDOMString& str)
+{
+    if (!impl())
+        return;
+
+    impl()->methodWithOptionalStringIsNullString(str);
+}
+
 
 #if ENABLE(Condition1)
 WebDOMString WebDOMTestObj::conditionalMethod1()

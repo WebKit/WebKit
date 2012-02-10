@@ -30,7 +30,7 @@ module dom {
         IndexedGetter
     ] GamepadList {
         readonly attribute unsigned long length;
-        Gamepad item(in [Optional=CallWithDefaultValue] unsigned long index);
+        Gamepad item(in [Optional=DefaultIsUndefined] unsigned long index);
     };
 
 }

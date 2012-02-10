@@ -54,7 +54,7 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     Float64Array* imp = V8Float64Array::toNative(args.Holder());
-    EXCEPTION_BLOCK(Float32Array*, array, V8Float32Array::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    EXCEPTION_BLOCK(Float32Array*, array, V8Float32Array::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     return toV8(imp->foo(array));
 }
 

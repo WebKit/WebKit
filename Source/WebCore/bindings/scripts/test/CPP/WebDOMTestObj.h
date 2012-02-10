@@ -186,6 +186,9 @@ public:
     void methodWithOptionalArg(int opt);
     void methodWithNonOptionalArgAndOptionalArg(int nonOpt, int opt);
     void methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int opt1, int opt2);
+    void methodWithOptionalString(const WebDOMString& str);
+    void methodWithOptionalStringIsUndefined(const WebDOMString& str);
+    void methodWithOptionalStringIsNullString(const WebDOMString& str);
     WebDOMString conditionalMethod1();
     void conditionalMethod2();
     void conditionalMethod3();

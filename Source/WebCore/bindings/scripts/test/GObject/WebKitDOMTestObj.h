@@ -262,6 +262,39 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOMTestObj* self, glong non_opt, glong opt1, glong opt2);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_string:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_string_is_undefined:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_string_is_null_string:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string_is_null_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
  * webkit_dom_test_obj_conditional_method1:
  * @self: A #WebKitDOMTestObj
  *

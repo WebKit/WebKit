@@ -42,20 +42,20 @@ module svg {
 
         long getNumberOfChars();
         float getComputedTextLength();
-        float getSubStringLength(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset, 
-                                 in [Optional=CallWithDefaultValue,IsIndex] unsigned long length)
+        float getSubStringLength(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
+                                 in [Optional=DefaultIsUndefined,IsIndex] unsigned long length)
             raises(DOMException);
-        SVGPoint getStartPositionOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
+        SVGPoint getStartPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGPoint getEndPositionOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
+        SVGPoint getEndPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGRect getExtentOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
+        SVGRect getExtentOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
             raises(DOMException);
-        float getRotationOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
+        float getRotationOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
             raises(DOMException);
-        long getCharNumAtPosition(in [Optional=CallWithDefaultValue] SVGPoint point);
-        void selectSubString(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset, 
-                             in [Optional=CallWithDefaultValue,IsIndex] unsigned long length)
+        long getCharNumAtPosition(in [Optional=DefaultIsUndefined] SVGPoint point);
+        void selectSubString(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
+                             in [Optional=DefaultIsUndefined,IsIndex] unsigned long length)
             raises(DOMException);
     };
 
