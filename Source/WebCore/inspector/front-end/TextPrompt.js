@@ -400,6 +400,26 @@ WebInspector.TextPrompt.prototype = {
     },
 
     /**
+     * @param {Array.<string>} completions
+     * @param {number} wordPrefixLength
+     */
+    _buildCommonPrefix: function(completions, wordPrefixLength)
+    {
+        var commonPrefix = completions[0];
+        for (var i = 0; i < completions.length; ++i) {
+            var completion = completions[i];
+            var lastIndex = Math.min(commonPrefix.length, completion.length);
+            for (var j = wordPrefixLength; j < lastIndex; ++j) {
+                if (commonPrefix[j] !== completion[j]) {
+                    commonPrefix = commonPrefix.substr(0, j);
+                    break;
+                }
+            }
+        }
+        return commonPrefix;
+    },
+
+    /**
      * @param {Selection} selection
      * @param {boolean} auto
      * @param {Range} originalWordPrefixRange
@@ -430,24 +450,17 @@ WebInspector.TextPrompt.prototype = {
 
         var wordPrefixLength = originalWordPrefixRange.toString().length;
 
-        if (auto)
+        if (auto) {
             var completionText = completions[0];
-        else {
+            var commonPrefix = this._buildCommonPrefix(completions, wordPrefixLength);
+
+            this._commonPrefix = commonPrefix;
+        } else {
             if (completions.length === 1) {
                 var completionText = completions[0];
                 wordPrefixLength = completionText.length;
             } else {
-                var commonPrefix = completions[0];
-                for (var i = 0; i < completions.length; ++i) {
-                    var completion = completions[i];
-                    var lastIndex = Math.min(commonPrefix.length, completion.length);
-                    for (var j = wordPrefixLength; j < lastIndex; ++j) {
-                        if (commonPrefix[j] !== completion[j]) {
-                            commonPrefix = commonPrefix.substr(0, j);
-                            break;
-                        }
-                    }
-                }
+                var commonPrefix = this._buildCommonPrefix(completions, wordPrefixLength);
                 wordPrefixLength = commonPrefix.length;
 
                 if (selection.isCollapsed)
@@ -498,6 +511,20 @@ WebInspector.TextPrompt.prototype = {
             this.applySuggestion(completionText, completions.length > 1, originalWordPrefixRange);
     },
 
+    _completeCommonPrefix: function()
+    {
+        if (!this.autoCompleteElement || !this._commonPrefix || !this._userEnteredText || this._commonPrefix.indexOf(this._userEnteredText) !== 0)
+            return;
+
+        if (!this.isSuggestBoxVisible()) {
+            this.acceptAutoComplete();
+            return;
+        }
+
+        this.autoCompleteElement.textContent = this._commonPrefix.substring(this._userEnteredText.length);
+        this.acceptSuggestion(true)
+    },
+
     /**
      * @param {Range=} originalPrefixRange
      */
@@ -533,7 +560,10 @@ WebInspector.TextPrompt.prototype = {
             this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemApplied, { itemText: completionText });
     },
 
-    acceptSuggestion: function()
+    /**
+     * @param {boolean=} prefixAccepted
+     */
+    acceptSuggestion: function(prefixAccepted)
     {
         if (this._isAcceptingSuggestion)
             return false;
@@ -554,8 +584,11 @@ WebInspector.TextPrompt.prototype = {
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
 
-        this.hideSuggestBox();
-        this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemAccepted);
+        if (!prefixAccepted) {
+            this.hideSuggestBox();
+            this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemAccepted);
+        } else
+            this.autoCompleteSoon(true);
 
         return true;
     },
@@ -663,7 +696,9 @@ WebInspector.TextPrompt.prototype = {
 
     tabKeyPressed: function(event)
     {
-        // Just consume the key.
+        this._completeCommonPrefix();
+
+        // Consume the key.
         return true;
     },
 
