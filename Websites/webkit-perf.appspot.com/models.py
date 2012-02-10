@@ -116,8 +116,13 @@ class TestResult(db.Model):
     valueMax = db.FloatProperty()
 
 
-# Temporarily log reports sent by bots
+# Temporarily store log reports sent by bots
 class ReportLog(db.Model):
     timestamp = db.DateTimeProperty(required=True)
     headers = db.TextProperty()
     payload = db.TextProperty()
+
+
+# Used when memcache entry is evicted
+class PersistentCache(db.Model):
+    value = db.TextProperty(required=True)
