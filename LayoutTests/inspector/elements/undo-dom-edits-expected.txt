@@ -58,6 +58,6 @@ Post-action:
   </div>
 Post-undo (initial):
 - <div id="testEditAsHTML">
-    + <div id="node-to-edit-as-html"></div>
+    + <div id="node-to-edit-as-html">…</div>
   </div>
 

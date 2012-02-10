@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class ContainerNode;
+class DOMEditor;
 class Document;
 class NamedNodeMap;
 class Node;
@@ -51,7 +52,9 @@ class Node;
 class DOMPatchSupport {
     WTF_MAKE_NONCOPYABLE(DOMPatchSupport);
 public:
-    explicit DOMPatchSupport(Document*);
+    static void patchDocument(Document*, const String& markup);
+
+    DOMPatchSupport(DOMEditor*, Document*);
     virtual ~DOMPatchSupport();
 
     void patchDocument(const String& markup);
@@ -62,17 +65,18 @@ private:
     typedef Vector<pair<Digest*, size_t> > ResultMap;
     typedef HashMap<String, Digest*> UnusedNodesMap;
 
-    void innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
+    bool innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
     std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren);
-    void innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
+    bool innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
     PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
-    void insertBefore(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
-    void removeChild(Digest*, ExceptionCode&);
+    bool insertBeforeAndMarkAsUsed(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
+    bool removeChildAndMoveToNew(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);
 #ifdef DEBUG_DOM_PATCH_SUPPORT
     void dumpMap(const ResultMap&, const String& name);
 #endif
 
+    DOMEditor* m_domEditor;
     Document* m_document;
 
     UnusedNodesMap m_unusedNodesMap;

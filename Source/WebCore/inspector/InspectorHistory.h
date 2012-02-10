@@ -43,8 +43,6 @@ class ContainerNode;
 class Element;
 class Node;
 
-typedef String ErrorString;
-
 #if ENABLE(INSPECTOR)
 
 class InspectorHistory {
@@ -61,8 +59,8 @@ public:
         virtual String mergeId();
         virtual void merge(PassOwnPtr<Action>);
 
-        virtual bool perform(ErrorString*) = 0;
-        virtual bool undo(ErrorString*) = 0;
+        virtual bool perform(ExceptionCode&) = 0;
+        virtual bool undo(ExceptionCode&) = 0;
     private:
         String m_name;
     };
@@ -70,10 +68,10 @@ public:
     InspectorHistory();
     virtual ~InspectorHistory();
 
-    bool perform(PassOwnPtr<Action>, ErrorString*);
+    bool perform(PassOwnPtr<Action>, ExceptionCode&);
     void markUndoableState();
 
-    bool undo(ErrorString*);
+    bool undo(ExceptionCode&);
     void reset();
 
 private:

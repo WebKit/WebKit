@@ -179,6 +179,15 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
+String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
+{
+    if (ec) {
+        ExceptionCodeDescription description(ec);
+        return description.name;
+    }
+    return "";
+}
+
 InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorDOMAgent>("DOM", instrumentingAgents, inspectorState)
     , m_pageAgent(pageAgent)
@@ -541,13 +550,13 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     ExceptionCode ec = 0;
     RefPtr<Element> parsedElement = element->document()->createElement("span", ec);
     if (ec) {
-        *errorString = "Internal error: could not set attribute value";
+        *errorString = InspectorDOMAgent::toErrorString(ec);
         return;
     }
 
     toHTMLElement(parsedElement.get())->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
-        *errorString = "Could not parse value as attributes";
+        *errorString = InspectorDOMAgent::toErrorString(ec);
         return;
     }
 
@@ -654,7 +663,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
 void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML)
 {
     if (!nodeId) {
-        DOMPatchSupport domPatchSupport(m_document.get());
+        DOMPatchSupport domPatchSupport(m_domEditor.get(), m_document.get());
         domPatchSupport.patchDocument(outerHTML);
         return;
     }
@@ -1077,7 +1086,9 @@ void InspectorDOMAgent::setTouchEmulationEnabled(ErrorString* error, bool enable
 
 void InspectorDOMAgent::undo(ErrorString* errorString)
 {
-    m_history->undo(errorString);
+    ExceptionCode ec = 0;
+    m_history->undo(ec);
+    *errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
 void InspectorDOMAgent::markUndoableState(ErrorString*)

@@ -228,25 +228,26 @@ public:
     {
     }
 
-    virtual bool perform(ErrorString* errorString)
+    virtual bool perform(ExceptionCode& ec)
     {
-        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(errorString, m_styleSheetId);
+        ErrorString errorString;
+        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(&errorString, m_styleSheetId);
         if (!styleSheet)
             return false;
-        return perform(styleSheet, errorString);
+        return perform(styleSheet, ec);
     }
 
-    virtual bool undo(ErrorString* errorString)
+    virtual bool undo(ExceptionCode& ec)
     {
-        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(errorString, m_styleSheetId);
+        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(0, m_styleSheetId);
         if (!styleSheet)
             return false;
-        return undo(styleSheet, errorString);
+        return undo(styleSheet, ec);
     }
 
-    virtual bool perform(InspectorStyleSheet*, ErrorString*) = 0;
+    virtual bool perform(InspectorStyleSheet*, ExceptionCode&) = 0;
 
-    virtual bool undo(InspectorStyleSheet*, ErrorString*) = 0;
+    virtual bool undo(InspectorStyleSheet*, ExceptionCode&) = 0;
 
 protected:
     InspectorCSSAgent* m_cssAgent;
@@ -262,7 +263,7 @@ public:
     {
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString*)
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode&)
     {
         if (!inspectorStyleSheet->getText(&m_oldText))
             return false;
@@ -274,7 +275,7 @@ public:
         return false;
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString*)
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode&)
     {
         if (inspectorStyleSheet->setText(m_oldText)) {
             inspectorStyleSheet->reparseStyleSheet(m_oldText);
@@ -305,10 +306,10 @@ public:
         return mergeId() + ": " + m_oldText + " -> " + m_text;
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
     {
         String oldText;
-        bool result = inspectorStyleSheet->setPropertyText(errorString, m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText);
+        bool result = inspectorStyleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
         m_oldText = oldText.stripWhiteSpace();
         // FIXME: remove this once the model handles this case.
         if (!m_oldText.endsWith(";"))
@@ -316,10 +317,10 @@ public:
         return result;
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
     {
         String placeholder;
-        return inspectorStyleSheet->setPropertyText(errorString, m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder);
+        return inspectorStyleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
     }
 
     virtual String mergeId()
@@ -354,14 +355,14 @@ public:
     {
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
     {
-        return inspectorStyleSheet->toggleProperty(errorString, m_cssId, m_propertyIndex, m_disable);
+        return inspectorStyleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ErrorString* errorString)
+    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
     {
-      return inspectorStyleSheet->toggleProperty(errorString, m_cssId, m_propertyIndex, !m_disable);
+        return inspectorStyleSheet->toggleProperty(m_cssId, m_propertyIndex, !m_disable, ec);
     }
 
 private:
@@ -597,7 +598,9 @@ void InspectorCSSAgent::getStyleSheetText(ErrorString* errorString, const String
 
 void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String& styleSheetId, const String& text)
 {
-    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(this, styleSheetId, text)), errorString);
+    ExceptionCode ec = 0;
+    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(this, styleSheetId, text)), ec);
+    *errorString = InspectorDOMAgent::toErrorString(ec);
     m_domAgent->history()->markUndoableState();
 }
 
@@ -610,9 +613,11 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
     if (!inspectorStyleSheet)
         return;
 
-    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, text, overwrite)), errorString);
+    ExceptionCode ec = 0;
+    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, text, overwrite)), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
+    *errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
 void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, bool disable, RefPtr<InspectorObject>& result)
@@ -624,9 +629,11 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
     if (!inspectorStyleSheet)
         return;
 
-    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, disable)), errorString);
+    ExceptionCode ec = 0;
+    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, disable)), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
+    *errorString = InspectorDOMAgent::toErrorString(ec);
     m_domAgent->history()->markUndoableState();
 }
 

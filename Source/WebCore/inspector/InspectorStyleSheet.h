@@ -26,6 +26,7 @@
 #define InspectorStyleSheet_h
 
 #include "CSSPropertySourceData.h"
+#include "ExceptionCode.h"
 #include "InspectorStyleTextEditor.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
@@ -131,8 +132,8 @@ public:
     PassRefPtr<InspectorObject> buildObjectForStyle() const;
     PassRefPtr<InspectorArray> buildArrayForComputedStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
-    bool setPropertyText(ErrorString*, unsigned index, const String& text, bool overwrite, String* oldText);
-    bool toggleProperty(ErrorString*, unsigned index, bool disable);
+    bool setPropertyText(unsigned index, const String& text, bool overwrite, String* oldText, ExceptionCode&);
+    bool toggleProperty(unsigned index, bool disable, ExceptionCode&);
 
 private:
     InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
@@ -174,8 +175,8 @@ public:
     PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
     PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
-    bool setPropertyText(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText);
-    bool toggleProperty(ErrorString*, const InspectorCSSId&, unsigned propertyIndex, bool disable);
+    bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText, ExceptionCode&);
+    bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable, ExceptionCode&);
 
     virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;

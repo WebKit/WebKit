@@ -44,8 +44,14 @@ InspectorTest.recordEvent = function(eventName, event)
 
 InspectorTest.patchOuterHTML = function(pattern, replacement, next)
 {
-   InspectorTest.addResult("Replacing '" + pattern + "' with '" + replacement + "'\n");
-   InspectorTest.setOuterHTML(InspectorTest.containerText.replace(pattern, replacement), next);
+    InspectorTest.addResult("Replacing '" + pattern + "' with '" + replacement + "'\n");
+    InspectorTest.setOuterHTML(InspectorTest.containerText.replace(pattern, replacement), next);
+}
+
+InspectorTest.patchOuterHTMLUseUndo = function(pattern, replacement, next)
+{
+    InspectorTest.addResult("Replacing '" + pattern + "' with '" + replacement + "'\n");
+    InspectorTest.setOuterHTMLUseUndo(InspectorTest.containerText.replace(pattern, replacement), next);
 }
 
 InspectorTest.setOuterHTML = function(newText, next)
@@ -59,33 +65,44 @@ InspectorTest.setOuterHTML = function(newText, next)
     }
 }
 
+InspectorTest.setOuterHTMLUseUndo = function(newText, next)
+{
+    InspectorTest.innerSetOuterHTML(newText, false, bringBack);
+
+    function bringBack()
+    {
+        InspectorTest.addResult("\nBringing things back\n");
+        DOMAgent.undo(InspectorTest._dumpOuterHTML.bind(InspectorTest, true, next));
+    }
+}
+
 InspectorTest.innerSetOuterHTML = function(newText, last, next)
 {
-    DOMAgent.setOuterHTML(InspectorTest.containerId, newText, dumpOuterHTML);
+    DOMAgent.setOuterHTML(InspectorTest.containerId, newText, InspectorTest._dumpOuterHTML.bind(InspectorTest, last, next));
+}
 
-    function dumpOuterHTML()
+InspectorTest._dumpOuterHTML = function(last, next)
+{
+    RuntimeAgent.evaluate("document.getElementById(\"identity\").wrapperIdentity", dumpIdentity);
+    function dumpIdentity(error, result)
     {
-        RuntimeAgent.evaluate("document.getElementById(\"identity\").wrapperIdentity", dumpIdentity);
-        function dumpIdentity(error, result)
-        {
-            InspectorTest.addResult("Wrapper identity: " + result.value);
-            InspectorTest.events.sort();
-            for (var i = 0; i < InspectorTest.events.length; ++i)
-                InspectorTest.addResult(InspectorTest.events[i]);
-            InspectorTest.events = [];
-        }
+        InspectorTest.addResult("Wrapper identity: " + result.value);
+        InspectorTest.events.sort();
+        for (var i = 0; i < InspectorTest.events.length; ++i)
+            InspectorTest.addResult(InspectorTest.events[i]);
+        InspectorTest.events = [];
+    }
 
-        DOMAgent.getOuterHTML(InspectorTest.containerId, callback);
+    DOMAgent.getOuterHTML(InspectorTest.containerId, callback);
 
-        function callback(error, text)
-        {
-            InspectorTest.addResult("==========8<==========");
-            InspectorTest.addResult(text);
-            InspectorTest.addResult("==========>8==========");
-            if (last)
-                InspectorTest.addResult("\n\n\n");
-            next();
-        }
+    function callback(error, text)
+    {
+        InspectorTest.addResult("==========8<==========");
+        InspectorTest.addResult(text);
+        InspectorTest.addResult("==========>8==========");
+        if (last)
+            InspectorTest.addResult("\n\n\n");
+        next();
     }
 }
 

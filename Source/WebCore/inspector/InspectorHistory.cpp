@@ -43,9 +43,9 @@ class UndoableStateMark : public InspectorHistory::Action {
 public:
     UndoableStateMark() : InspectorHistory::Action("[UndoableState]") { }
 
-    virtual bool perform(ErrorString*) { return true; }
+    virtual bool perform(ExceptionCode&) { return true; }
 
-    virtual bool undo(ErrorString*) { return true; }
+    virtual bool undo(ExceptionCode&) { return true; }
 
     virtual bool isUndoableStateMark() { return true; }
 };
@@ -83,9 +83,9 @@ InspectorHistory::InspectorHistory() { }
 
 InspectorHistory::~InspectorHistory() { }
 
-bool InspectorHistory::perform(PassOwnPtr<Action> action, ErrorString* errorString)
+bool InspectorHistory::perform(PassOwnPtr<Action> action, ExceptionCode& ec)
 {
-    if (!action->perform(errorString))
+    if (!action->perform(ec))
         return false;
 
     if (!m_history.isEmpty() && !action->mergeId().isEmpty() && action->mergeId() == m_history.first()->mergeId())
@@ -101,14 +101,14 @@ void InspectorHistory::markUndoableState()
     m_history.prepend(adoptPtr(new UndoableStateMark()));
 }
 
-bool InspectorHistory::undo(ErrorString* errorString)
+bool InspectorHistory::undo(ExceptionCode& ec)
 {
     while (!m_history.isEmpty() && m_history.first()->isUndoableStateMark())
         m_history.removeFirst();
 
     while (!m_history.isEmpty()) {
         OwnPtr<Action> first = m_history.takeFirst();
-        if (!first->undo(errorString)) {
+        if (!first->undo(ec)) {
             m_history.clear();
             return false;
         }

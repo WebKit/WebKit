@@ -1,3 +1,96 @@
+2012-02-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: implement undo for setOuterHTML via undo-ing nested primitive commands.
+        https://bugs.webkit.org/show_bug.cgi?id=78346
+
+        Reviewed by Yury Semikhatsky.
+
+        Tests: inspector/elements/undo-set-outer-html-2.html
+               inspector/elements/undo-set-outer-html.html
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::RemoveChildAction::RemoveChildAction):
+        (WebCore::DOMEditor::InsertBeforeAction::InsertBeforeAction):
+        (WebCore::DOMEditor::InsertBeforeAction::undo):
+        (WebCore::DOMEditor::RemoveAttributeAction::RemoveAttributeAction):
+        (WebCore::DOMEditor::SetAttributeAction::SetAttributeAction):
+        (WebCore::DOMEditor::SetOuterHTMLAction::SetOuterHTMLAction):
+        (WebCore::DOMEditor::SetOuterHTMLAction::perform):
+        (WebCore::DOMEditor::SetOuterHTMLAction::undo):
+        (DOMEditor::SetOuterHTMLAction):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::ReplaceWholeTextAction):
+        (DOMEditor::ReplaceChildNodeAction):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::ReplaceChildNodeAction):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::perform):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::undo):
+        (WebCore):
+        (DOMEditor::SetNodeValueAction):
+        (WebCore::DOMEditor::SetNodeValueAction::SetNodeValueAction):
+        (WebCore::DOMEditor::SetNodeValueAction::perform):
+        (WebCore::DOMEditor::SetNodeValueAction::undo):
+        (WebCore::DOMEditor::insertBefore):
+        (WebCore::DOMEditor::removeChild):
+        (WebCore::DOMEditor::setAttribute):
+        (WebCore::DOMEditor::removeAttribute):
+        (WebCore::DOMEditor::setOuterHTML):
+        (WebCore::DOMEditor::replaceWholeText):
+        (WebCore::DOMEditor::replaceChild):
+        (WebCore::DOMEditor::setNodeValue):
+        (WebCore::populateErrorString):
+        * inspector/DOMEditor.h:
+        (DOMEditor):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        (WebCore):
+        (WebCore::DOMPatchSupport::DOMPatchSupport):
+        (WebCore::DOMPatchSupport::patchNode):
+        (WebCore::DOMPatchSupport::innerPatchNode):
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        (WebCore::DOMPatchSupport::insertBeforeAndMarkAsUsed):
+        (WebCore::DOMPatchSupport::removeChildAndMoveToNew):
+        * inspector/DOMPatchSupport.h:
+        (WebCore):
+        (DOMPatchSupport):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::StyleSheetAction::perform):
+        (WebCore::InspectorCSSAgent::StyleSheetAction::undo):
+        (InspectorCSSAgent::StyleSheetAction):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::undo):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::perform):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::undo):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::assertStyleSheetForId):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::toErrorString):
+        (WebCore):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::undo):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorHistory.cpp:
+        (WebCore::InspectorHistory::perform):
+        (WebCore::InspectorHistory::undo):
+        * inspector/InspectorHistory.h:
+        (WebCore):
+        (Action):
+        (InspectorHistory):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setDocumentContent):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::toggleProperty):
+        (WebCore::InspectorStyleSheet::setPropertyText):
+        (WebCore::InspectorStyleSheet::toggleProperty):
+        * inspector/InspectorStyleSheet.h:
+        (InspectorStyle):
+        (InspectorStyleSheet):
+
 2012-02-10  Kentaro Hara  <haraken@chromium.org>
 
         Replace [CustomArgumentHandling] with [CallWith=ScriptArguments|CallStack]

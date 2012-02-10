@@ -280,13 +280,13 @@ PassRefPtr<InspectorArray> InspectorStyle::buildArrayForComputedStyle() const
 //
 // The propertyText (if not empty) is checked to be a valid style declaration (containing at least one property). If not,
 // the method returns false (denoting an error).
-bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, const String& propertyText, bool overwrite, String* oldText)
+bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText, bool overwrite, String* oldText, ExceptionCode& ec)
 {
     ASSERT(m_parentStyleSheet);
     DEFINE_STATIC_LOCAL(String, bogusPropertyName, ("-webkit-boguz-propertee"));
 
     if (!m_parentStyleSheet->ensureParsedDataReady()) {
-        *errorString = "Internal error: no stylesheet parsed data available";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
@@ -303,27 +303,27 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
 
         // At least one property + the bogus property added just above should be present.
         if (propertyCount < 2) {
-            *errorString = "Invalid property value";
+            ec = SYNTAX_ERR;
             return false;
         }
 
         // Check for a proper propertyText termination (the parser could at least restore to the PROPERTY_NAME state).
         if (propertyData.at(propertyCount - 1).name != bogusPropertyName) {
-            *errorString = "Invalid property value";
+            ec = SYNTAX_ERR;
             return false;
         }
     }
 
     RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
     if (!sourceData) {
-        *errorString = "Internal error: no CSS rule source found";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
     String text;
     bool success = styleText(&text);
     if (!success) {
-        *errorString = "Internal error: could not fetch style text";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
@@ -337,31 +337,31 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
     return applyStyleText(editor.styleText());
 }
 
-bool InspectorStyle::toggleProperty(ErrorString* errorString, unsigned index, bool disable)
+bool InspectorStyle::toggleProperty(unsigned index, bool disable, ExceptionCode& ec)
 {
     ASSERT(m_parentStyleSheet);
     if (!m_parentStyleSheet->ensureParsedDataReady()) {
-        *errorString = "Can toggle only source-based properties";
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return false;
     }
 
     RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
     if (!sourceData) {
-        *errorString = "Internal error: No source data for the style found";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
     String text;
     bool success = styleText(&text);
     if (!success) {
-        *errorString = "Internal error: could not fetch style text";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
     Vector<InspectorStyleProperty> allProperties;
     populateAllProperties(&allProperties);
     if (index >= allProperties.size()) {
-        *errorString = "Property index is outside of property range";
+        ec = INDEX_SIZE_ERR;
         return false;
     }
 
@@ -868,26 +868,26 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     return result.release();
 }
 
-bool InspectorStyleSheet::setPropertyText(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite, String* oldText)
+bool InspectorStyleSheet::setPropertyText(const InspectorCSSId& id, unsigned propertyIndex, const String& text, bool overwrite, String* oldText, ExceptionCode& ec)
 {
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
     if (!inspectorStyle) {
-        *errorString = "No style found for given id";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
-    return inspectorStyle->setPropertyText(errorString, propertyIndex, text, overwrite, oldText);
+    return inspectorStyle->setPropertyText(propertyIndex, text, overwrite, oldText, ec);
 }
 
-bool InspectorStyleSheet::toggleProperty(ErrorString* errorString, const InspectorCSSId& id, unsigned propertyIndex, bool disable)
+bool InspectorStyleSheet::toggleProperty(const InspectorCSSId& id, unsigned propertyIndex, bool disable, ExceptionCode& ec)
 {
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
     if (!inspectorStyle) {
-        *errorString = "No style found for given id";
+        ec = NOT_FOUND_ERR;
         return false;
     }
 
-    bool success = inspectorStyle->toggleProperty(errorString, propertyIndex, disable);
+    bool success = inspectorStyle->toggleProperty(propertyIndex, disable, ec);
     if (success) {
         if (disable)
             rememberInspectorStyle(inspectorStyle);

@@ -107,6 +107,8 @@ public:
         return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, client, inspectorState, injectedScriptManager));
     }
 
+    static String toErrorString(const ExceptionCode&);
+
     ~InspectorDOMAgent();
 
     virtual void setFrontend(InspectorFrontend*);

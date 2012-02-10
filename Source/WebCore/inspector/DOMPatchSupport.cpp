@@ -35,6 +35,7 @@
 
 #include "Attribute.h"
 #include "Base64.h"
+#include "DOMEditor.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
@@ -42,6 +43,7 @@
 #include "HTMLElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
+#include "InspectorHistory.h"
 #include "Node.h"
 
 #include <wtf/Deque.h>
@@ -67,7 +69,19 @@ struct DOMPatchSupport::Digest {
     Vector<OwnPtr<Digest> > m_children;
 };
 
-DOMPatchSupport::DOMPatchSupport(Document* document) : m_document(document) { }
+void DOMPatchSupport::patchDocument(Document* document, const String& markup)
+{
+    InspectorHistory history;
+    DOMEditor domEditor(&history);
+    DOMPatchSupport patchSupport(&domEditor, document);
+    patchSupport.patchDocument(markup);
+}
+
+DOMPatchSupport::DOMPatchSupport(DOMEditor* domEditor, Document* document)
+    : m_domEditor(domEditor)
+    , m_document(document)
+{
+}
 
 DOMPatchSupport::~DOMPatchSupport() { }
 
@@ -79,12 +93,11 @@ void DOMPatchSupport::patchDocument(const String& markup)
     parser->finish();
     parser->detach();
 
-    ExceptionCode ec = 0;
     OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), 0);
     OwnPtr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
-    innerPatchNode(oldInfo.get(), newInfo.get(), ec);
 
-    if (ec) {
+    ExceptionCode ec = 0;
+    if (!innerPatchNode(oldInfo.get(), newInfo.get(), ec)) {
         // Fall back to rewrite.
         m_document->write(markup);
         m_document->close();
@@ -125,37 +138,33 @@ Node* DOMPatchSupport::patchNode(Node* node, const String& markup, ExceptionCode
     for (Node* child = node->nextSibling(); child; child = child->nextSibling())
         newList.append(createDigest(child, 0));
 
-    innerPatchChildren(parentNode, oldList, newList, ec);
-    if (ec) {
+    if (!innerPatchChildren(parentNode, oldList, newList, ec)) {
         // Fall back to total replace.
         ec = 0;
-        parentNode->replaceChild(fragment.release(), node, ec);
-        if (ec)
+        if (!m_domEditor->replaceChild(parentNode, fragment.release(), node, ec))
             return 0;
     }
     return previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
 }
 
-void DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, ExceptionCode& ec)
+bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, ExceptionCode& ec)
 {
     if (oldDigest->m_sha1 == newDigest->m_sha1)
-        return;
+        return true;
 
     Node* oldNode = oldDigest->m_node;
     Node* newNode = newDigest->m_node;
 
-    if (newNode->nodeType() != oldNode->nodeType() || newNode->nodeName() != oldNode->nodeName()) {
-        oldNode->parentNode()->replaceChild(newNode, oldNode, ec);
-        return;
+    if (newNode->nodeType() != oldNode->nodeType() || newNode->nodeName() != oldNode->nodeName())
+        return m_domEditor->replaceChild(oldNode->parentNode(), newNode, oldNode, ec);
+
+    if (oldNode->nodeValue() != newNode->nodeValue()) {
+        if (!m_domEditor->setNodeValue(oldNode, newNode->nodeValue(), ec))
+            return false;
     }
 
-    if (oldNode->nodeValue() != newNode->nodeValue())
-        oldNode->setNodeValue(newNode->nodeValue(), ec);
-    if (ec)
-        return;
-
     if (oldNode->nodeType() != Node::ELEMENT_NODE)
-        return;
+        return true;
 
     // Patch attributes
     Element* oldElement = static_cast<Element*>(oldNode);
@@ -163,8 +172,11 @@ void DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
     if (oldDigest->m_attrsSHA1 != newDigest->m_attrsSHA1) {
         // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
         if (oldElement->hasAttributesWithoutUpdate()) {
-            while (oldElement->attributeCount())
-                oldElement->removeAttribute(0);
+            while (oldElement->attributeCount()) {
+                Attribute* attr = oldElement->attributeItem(0);
+                if (!m_domEditor->removeAttribute(oldElement, attr->localName(), ec))
+                    return false;
+            }
         }
 
         // FIXME: Create a function in Element for copying properties. setAttributesFromElement() is close but not enough for this case.
@@ -172,13 +184,15 @@ void DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
             size_t numAttrs = newElement->attributeCount();
             for (size_t i = 0; i < numAttrs; ++i) {
                 const Attribute* attribute = newElement->attributeItem(i);
-                oldElement->setAttribute(attribute->name(), attribute->value());
+                if (!m_domEditor->setAttribute(oldElement, attribute->name().localName(), attribute->value(), ec))
+                    return false;
             }
         }
     }
 
-    innerPatchChildren(oldElement, oldDigest->m_children, newDigest->m_children, ec);
+    bool result = innerPatchChildren(oldElement, oldDigest->m_children, newDigest->m_children, ec);
     m_unusedNodesMap.remove(newDigest->m_sha1);
+    return result;
 }
 
 pair<DOMPatchSupport::ResultMap, DOMPatchSupport::ResultMap>
@@ -269,7 +283,7 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPt
     return make_pair(oldMap, newMap);
 }
 
-void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Digest> >& newList, ExceptionCode& ec)
+bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Digest> >& newList, ExceptionCode& ec)
 {
     pair<ResultMap, ResultMap> resultMaps = diff(oldList, newList);
     ResultMap& oldMap = resultMaps.first;
@@ -309,14 +323,12 @@ void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
             if (anchorAfter - anchorCandidate == 1 && anchorCandidate < newList.size())
                 merges.set(newList[anchorCandidate].get(), oldList[i].get());
             else {
-                removeChild(oldList[i].get(), ec);
-                if (ec)
-                    return;
+                if (!removeChildAndMoveToNew(oldList[i].get(), ec))
+                    return false;
             }
         } else {
-            removeChild(oldList[i].get(), ec);
-            if (ec)
-                return;
+            if (!removeChildAndMoveToNew(oldList[i].get(), ec))
+                return false;
         }
     }
 
@@ -348,20 +360,16 @@ void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
 
     // 2. Patch nodes marked for merge.
     for (HashMap<Digest*, Digest*>::iterator it = merges.begin(); it != merges.end(); ++it) {
-        innerPatchNode(it->second, it->first, ec);
-        if (ec)
-            return;
+        if (!innerPatchNode(it->second, it->first, ec))
+            return false;
     }
 
     // 3. Insert missing nodes.
     for (size_t i = 0; i < newMap.size(); ++i) {
         if (newMap[i].first || merges.contains(newList[i].get()))
             continue;
-
-        ExceptionCode ec = 0;
-        insertBefore(parentNode, newList[i].get(), parentNode->childNode(i), ec);
-        if (ec)
-            return;
+        if (!insertBeforeAndMarkAsUsed(parentNode, newList[i].get(), parentNode->childNode(i), ec))
+            return false;
     }
 
     // 4. Then put all nodes that retained into their slots (sort by new index).
@@ -375,10 +383,10 @@ void DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
         if (node->hasTagName(bodyTag) || node->hasTagName(headTag))
             continue; // Never move head or body, move the rest of the nodes around them.
 
-        parentNode->insertBefore(node, anchorNode, ec);
-        if (ec)
-            return;
+        if (!m_domEditor->insertBefore(parentNode, node.release(), anchorNode, ec))
+            return false;
     }
+    return true;
 }
 
 static void addStringToSHA1(SHA1& sha1, const String& string)
@@ -431,35 +439,40 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
     return adoptPtr(digest);
 }
 
-void DOMPatchSupport::insertBefore(ContainerNode* parentNode, Digest* digest, Node* anchor, ExceptionCode& ec)
+bool DOMPatchSupport::insertBeforeAndMarkAsUsed(ContainerNode* parentNode, Digest* digest, Node* anchor, ExceptionCode& ec)
 {
-    parentNode->insertBefore(digest->m_node, anchor, ec);
+    bool result = m_domEditor->insertBefore(parentNode, digest->m_node, anchor, ec);
     markNodeAsUsed(digest);
+    return result;
 }
 
-void DOMPatchSupport::removeChild(Digest* oldDigest, ExceptionCode& ec)
+bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& ec)
 {
     RefPtr<Node> oldNode = oldDigest->m_node;
-    oldNode->parentNode()->removeChild(oldNode.get(), ec);
+    if (!m_domEditor->removeChild(oldNode->parentNode(), oldNode.get(), ec))
+        return false;
 
     // Diff works within levels. In order not to lose the node identity when user
     // prepends his HTML with "<div>" (i.e. all nodes are shifted to the next nested level),
     // prior to dropping the original node on the floor, check whether new DOM has a digest
     // with matching sha1. If it does, replace it with the original DOM chunk. Chances are
     // high that it will get merged back into the original DOM during the further patching.
-
     UnusedNodesMap::iterator it = m_unusedNodesMap.find(oldDigest->m_sha1);
     if (it != m_unusedNodesMap.end()) {
         Digest* newDigest = it->second;
         Node* newNode = newDigest->m_node;
-        newNode->parentNode()->replaceChild(oldNode, newNode, ec);
+        if (!m_domEditor->replaceChild(newNode->parentNode(), oldNode, newNode, ec))
+            return false;
         newDigest->m_node = oldNode.get();
         markNodeAsUsed(newDigest);
-        return;
+        return true;
     }
 
-    for (size_t i = 0; i < oldDigest->m_children.size(); ++i)
-        removeChild(oldDigest->m_children[i].get(), ec);
+    for (size_t i = 0; i < oldDigest->m_children.size(); ++i) {
+        if (!removeChildAndMoveToNew(oldDigest->m_children[i].get(), ec))
+            return false;
+    }
+    return true;
 }
 
 void DOMPatchSupport::markNodeAsUsed(Digest* digest)
