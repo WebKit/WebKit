@@ -1606,3 +1606,6 @@ fast/forms/listbox-clear-restore.html
 # Synthetic bold is illegible under some scaling transforms
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=78345
+security/block-test.html

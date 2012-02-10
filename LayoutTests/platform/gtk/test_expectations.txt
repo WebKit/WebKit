@@ -91,6 +91,8 @@ BUGWK76831 : svg/hixie/error/012.xml = PASS TEXT
 
 BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
 
+BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
