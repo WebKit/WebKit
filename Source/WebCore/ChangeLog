@@ -1,5 +1,24 @@
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
+        Minor ScrollAnimatorMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=78375
+
+        Reviewed by Beth Dakin.
+
+        Get rid of adjustScrollXPositionIfNecessary and adjustScrollYPositionIfNecessary.
+        Also, reduce nesting in willAdd/didAdd functions by using early returns.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::immediateScrollBy):
+
+2012-02-10  Anders Carlsson  <andersca@apple.com>
+
         Minor ScrollableArea cleanup
         https://bugs.webkit.org/show_bug.cgi?id=78372
 

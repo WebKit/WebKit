@@ -111,8 +111,6 @@ private:
 
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
 
-    float adjustScrollXPositionIfNecessary(float) const;
-    float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
     void immediateScrollTo(const FloatPoint&);
