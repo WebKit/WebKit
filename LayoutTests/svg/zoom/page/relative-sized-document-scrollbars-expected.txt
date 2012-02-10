@@ -1,6 +1,6 @@
-layer at (0,0) size 1355x1010
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 1355x1010
-  RenderSVGRoot {svg} at (12,8) size 1331x993
-    RenderSVGRect {rect} at (12,8) size 1331x993 [stroke={[type=SOLID] [color=#000000]}] [x=7.84] [y=5.84] [width=768.32] [height=572.32]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (7,5) size 786x590
+    RenderSVGRect {rect} at (7,5) size 786x590 [stroke={[type=SOLID] [color=#000000]}] [x=4.63] [y=3.47] [width=453.70] [height=340.28]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
