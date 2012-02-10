@@ -2455,9 +2455,6 @@ BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 // The background color of Apple Mac results also look wrong.
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 
-// BUGCR59415 : cannot repro the flakiness
-BUGCR59415 WIN : media/video-loop.html = PASS TIMEOUT TEXT
-
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
@@ -2674,7 +2671,8 @@ BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
+// Uncomment when rebaselining for BUGWK78367.
+// BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK55968 MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
@@ -4016,3 +4014,19 @@ BUGNOEL SKIP : compositing/overflow/overflow-scaled-descendant-overlapping.html 
 
 // Started to fail after r107349.
 BUGWK78331 : editing/spelling/spelling-marker-description.html = TEXT
+
+// Need rebaselining.
+BUGWK78367 : media/controls-after-reload.html = IMAGE
+BUGWK78367 : media/controls-strict.html = IMAGE
+BUGWK78367 : media/controls-styling.html = IMAGE
+BUGWK78367 : media/controls-without-preload.html = IMAGE
+BUGWK78367 : media/video-aspect-ratio.html = IMAGE
+// Uncomment BUGCR74979 entry above when rebaselining removes the next expectation.
+BUGWK78367 : media/video-canvas-alpha.html = IMAGE
+BUGWK78367 : media/video-display-toggle.html = IMAGE
+BUGWK78367 : media/video-layer-crash.html = IMAGE
+BUGWK78367 : media/video-playing-and-pause.html = IMAGE
+BUGWK78367 : media/video-transformed.html = IMAGE
+BUGWK78367 : media/video-volume-slider.html = IMAGE
+BUGWK78367 : media/video-zoom-controls.html = IMAGE
+BUGWK78367 : media/video-zoom.html = IMAGE
