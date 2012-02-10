@@ -3983,4 +3983,4 @@ BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-o
 BUGWK47907 : media/video-empty-source.html = IMAGE+TEXT
 
 // Started to fail after r107349.
-BUGWK78331 editing/spelling/spelling-marker-description.html = TEXT
+BUGWK78331 : editing/spelling/spelling-marker-description.html = TEXT
