@@ -1,3 +1,22 @@
+2012-02-10  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [ConvertingNullStringTo] from CloseEvent.idl
+        https://bugs.webkit.org/show_bug.cgi?id=78328
+
+        Reviewed by Adam Barth.
+
+        In CloseEvent.idl, [ConvertingNullStringTo] is a typo of [ConvertNullStringTo],
+        (although in bug 78108, [ConvertNullStringTo] was renamed to [TreatReturnedNullStringAs]).
+
+        Anyway, the spec says that "The reason attribute must return the value it was
+        initialized to. When the object is created, this attribute must be initialized to empty string."
+        http://dev.w3.org/html5/websockets/#event-definitions
+        Thus, this patch removes [ConvertingNullStringTo] from CloseEvent.idl.
+
+        Test: fast/events/constructors/close-event-constructor.html
+
+        * websockets/CloseEvent.idl:
+
 2012-02-10  Pavel Feldman  <pfeldman@google.com>
 
         [Qt] REGRESSION(r107242): It made 5 inspector tests crash in debug mode

@@ -36,7 +36,7 @@ module events {
     ] CloseEvent : Event {
         readonly attribute [InitializedByEventConstructor] boolean wasClean;
         readonly attribute [InitializedByEventConstructor] unsigned short code;
-        readonly attribute [InitializedByEventConstructor, ConvertingNullStringTo=Undefined] DOMString reason;
+        readonly attribute [InitializedByEventConstructor] DOMString reason;
     };
 
 }
