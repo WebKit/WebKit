@@ -64,6 +64,7 @@ ui.onebar = base.extends('div', {
         this.innerHTML =
             '<ul>' +
                 '<li><a href="#unexpected">Unexpected Failures</a></li>' +
+                '<li><a href="#failures">All Failures</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
             '</ul>' +
             '<div id="unexpected"></div>' +
@@ -71,15 +72,12 @@ ui.onebar = base.extends('div', {
             '<div id="results"></div>';
         this._tabNames = [
             'unexpected',
+            'failures',
             'results',
         ]
         this._tabs = $(this).tabs({
-            disabled: [1],
+            disabled: [2],
         });
-        if (config.kExperimentalFeatures) {
-            this._tabs.tabs('add', '#failures', 'All Failures (experimental)');
-            this._tabNames.push('failures');
-        }
     },
     attach: function()
     {

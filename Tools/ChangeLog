@@ -1,3 +1,14 @@
+2012-02-10  Adam Barth  <abarth@webkit.org>
+
+        Move garden-o-matic's All Failures out of experimental
+        https://bugs.webkit.org/show_bug.cgi?id=78395
+
+        Reviewed by Dimitri Glazkov.
+
+        Several folks have tried this feature and found it useful.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+
 2012-02-10  Tim Horton  <timothy_horton@apple.com>
 
         NRWT should categorize options in --help
