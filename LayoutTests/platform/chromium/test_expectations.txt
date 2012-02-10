@@ -927,8 +927,6 @@ BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT
 // Windows and Mac need rebaselining after 53378 patch.
 BUGWK53378 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 // This is a duplicate of BUGCR99500 below.
-//BUGWK53378 WIN : svg/batik/text/textProperties.svg = IMAGE
-BUGWK53378 MAC : svg/batik/text/textProperties.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
 BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
@@ -939,7 +937,6 @@ BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
-BUGWK53378 MAC : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
 BUGWK53378 MAC : svg/custom/grayscale-gradient-mask.svg = IMAGE
@@ -951,12 +948,6 @@ BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 // expectations because it's likely to get checked in again soon.
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/batik/text/textEffect.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/batik/text/textEffect.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/batik/text/textEffect3.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/batik/text/textEffect3.svg = IMAGE
-BUGWK62974 LINUX WIN : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
-BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
 BUGWK62974 : svg/text/text-altglyph-01-b.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/text/text-text-04-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
@@ -999,7 +990,6 @@ BUGCR32401 LINUX WIN : svg/custom/marker-changes.svg = IMAGE+TEXT IMAGE
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
 // New tests. We should fix these, but they don't need to block the current release
 BUGCR3244 LINUX WIN : fast/backgrounds/svg-as-mask.html = FAIL
-BUGCR3244 LINUX WIN : svg/batik/masking/maskRegions.svg = FAIL
 BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
 // More tests that fail because of masks not working properly.
 // New tests. We should fix these, but they don't need to block the current release
@@ -1562,17 +1552,6 @@ BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
 BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
-BUGCR99500 WIN : svg/batik/filters/feTile.svg = IMAGE
-BUGCR99500 WIN : svg/batik/filters/filterRegions.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/longTextOnPath.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textAnchor.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textFeatures.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textLayout.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textPCDATA.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textProperties.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textProperties2.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/textStyles.svg = IMAGE
-BUGCR99500 WIN : svg/batik/text/verticalText.svg = IMAGE
 BUGCR99500 WIN : svg/carto.net/textbox.svg = IMAGE
 BUGCR99500 WIN : svg/carto.net/window.svg = IMAGE
 BUGCR99500 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
@@ -2473,7 +2452,6 @@ BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = PASS CRASH
 
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT TEXT
-BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS CRASH TIMEOUT
 
 // Disabled scrollbars are rendered differently
 BUGWK52414 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
@@ -2510,9 +2488,6 @@ BUGCR69181 : fast/js/kde/parse.html = FAIL
 BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
 BUGCR69181 LINUX WIN RELEASE : fast/js/large-expressions.html = TEXT
 BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
-
-// Flaky on Linux since r75250
-BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = PASS IMAGE
 
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
@@ -3561,8 +3536,6 @@ BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
 //BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/batik/filters/feTile.svg = IMAGE
-BUGWK73643 MAC : svg/batik/filters/feTile.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
 //BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
 BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
