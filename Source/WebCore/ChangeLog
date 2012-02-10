@@ -1,3 +1,26 @@
+2012-02-10  Ojan Vafai  <ojan@chromium.org>
+
+        flex-pack:center and flex-item-align:center should do true centering
+        https://bugs.webkit.org/show_bug.cgi?id=77385
+
+        Reviewed by Tony Chang.
+
+        Also, removed passing totalPositiveFlexibility around. We don't
+        need to know about positive/negative flex once we run the flexing algorithm.
+        We used to need to know this in order to flex margins, but margins can
+        no longer be flexed.
+
+        Test: css3/flexbox/true-centering.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::initialPackingOffset):
+        (WebCore::packingSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Split MarkedSpace into destructor and destructor-free subspaces
