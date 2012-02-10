@@ -1403,7 +1403,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 RefPtr<CSSValueList> positionList = CSSValueList::createSpaceSeparated();
                 positionList->append(zoomAdjustedPixelValueForLength(currLayer->xPosition(), style.get(), cssValuePool));
-                positionList->append(zoomAdjustedPixelValueForLength(currLayer->xPosition(), style.get(), cssValuePool));
+                positionList->append(zoomAdjustedPixelValueForLength(currLayer->yPosition(), style.get(), cssValuePool));
                 list->append(positionList);
             }
 
