@@ -1,3 +1,24 @@
+2012-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Refactor on Qt5 Layout tests' structure
+        https://bugs.webkit.org/show_bug.cgi?id=77450
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix the scripts and related unittest due to the rename of qt-wk2 and qt-wk1
+        to qt-5.0-wk2 and qt-5.0-wk1.
+
+        * Scripts/old-run-webkit-tests:
+        (buildPlatformResultHierarchy):
+        (readSkippedFiles):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._wk2_port_name):
+        (QtPort._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest.test_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._wk2_port_name):
+
 2012-02-09  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] EWS command-line option to run the tests

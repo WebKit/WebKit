@@ -68,9 +68,9 @@ class QtPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win')
         self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux')
 
-        self._assert_search_path(['qt-wk2', 'qt-mac', 'qt-5.0', 'qt'], 'mac', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-wk2', 'qt-win', 'qt-5.0', 'qt'], 'win', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-wk2', 'qt-linux', 'qt-5.0', 'qt'], 'linux', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-5.0-wk2', 'qt-mac', 'qt-5.0', 'qt'], 'mac', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-5.0-wk2', 'qt-win', 'qt-5.0', 'qt'], 'win', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-5.0-wk2', 'qt-linux', 'qt-5.0', 'qt'], 'linux', use_webkit2=True, qt_version='5.0')
 
     def test_show_results_html_file(self):
         port = self.make_port()
