@@ -1,5 +1,11 @@
-The font size of these lines should be identical 
-The font size of these lines should be identical 
-The font size of these lines should be identical
-FAIL
-Computed font sizes do not match
+Tests that CSS3 calc() can be used with the font-size property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL getComputedStyle(document.getElementById("calc-percent"), null).fontSize should be 40px. Was 20px.
+FAIL getComputedStyle(document.getElementById("calc-percent-pixels"), null).fontSize should be 40px. Was 20px.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
