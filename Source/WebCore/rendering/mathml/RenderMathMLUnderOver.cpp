@@ -42,22 +42,20 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element* element)
     : RenderMathMLBlock(element)
 {
     // Determine what kind of under/over expression we have by element name
-    
     if (element->hasLocalName(MathMLNames::munderTag))
         m_kind = Under;
     else if (element->hasLocalName(MathMLNames::moverTag))
         m_kind = Over;
-    else if (element->hasLocalName(MathMLNames::munderoverTag))
+    else {
+        ASSERT(element->hasLocalName(MathMLNames::munderoverTag));
         m_kind = UnderOver;
-    else 
-        m_kind = Under;
-    
+    }
 }
 
 void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeChild)
 {    
     RenderMathMLBlock* row = new (renderArena()) RenderMathMLBlock(node());
-    RefPtr<RenderStyle> rowStyle = makeBlockStyle();
+    RefPtr<RenderStyle> rowStyle = createBlockStyle();
     row->setStyle(rowStyle.release());
     row->setIsAnonymous(true);
     

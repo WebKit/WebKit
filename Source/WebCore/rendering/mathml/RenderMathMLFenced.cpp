@@ -80,7 +80,7 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-PassRefPtr<RenderStyle> RenderMathMLFenced::makeOperatorStyle()
+PassRefPtr<RenderStyle> RenderMathMLFenced::createOperatorStyle()
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
@@ -92,10 +92,10 @@ PassRefPtr<RenderStyle> RenderMathMLFenced::makeOperatorStyle()
 void RenderMathMLFenced::makeFences()
 {
     RenderObject* openFence = new (renderArena()) RenderMathMLOperator(node(), m_open);
-    openFence->setStyle(makeOperatorStyle());
+    openFence->setStyle(createOperatorStyle());
     RenderBlock::addChild(openFence, firstChild());
     RenderObject* closeFence = new (renderArena()) RenderMathMLOperator(node(), m_close);
-    closeFence->setStyle(makeOperatorStyle());
+    closeFence->setStyle(createOperatorStyle());
     RenderBlock::addChild(closeFence);
 }
 
@@ -122,7 +122,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject*)
                 separator = (*m_separators.get())[count - 2];
                 
             RenderObject* separatorObj = new (renderArena()) RenderMathMLOperator(node(), separator);
-            separatorObj->setStyle(makeOperatorStyle());
+            separatorObj->setStyle(createOperatorStyle());
             RenderBlock::addChild(separatorObj, lastChild());
         }
     }

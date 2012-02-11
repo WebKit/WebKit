@@ -1,3 +1,35 @@
+2012-02-10  David Barton  <dbarton@mathscribe.com>
+
+        MathML internals - use createXXX() function naming, ASSERT()s
+        https://bugs.webkit.org/show_bug.cgi?id=78384
+
+        Reviewed by Eric Seidel.
+
+        Standard RefPtr function naming uses "createXXX" instead of "makeXXX".
+        I also added a couple of ASSERT()s.
+
+        No new tests.
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::createBlockStyle):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::createOperatorStyle):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        (RenderMathMLFenced):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::addChild):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::addChild):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::RenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::RenderMathMLUnderOver):
+        (WebCore::RenderMathMLUnderOver::addChild):
+
 2012-02-10  Dan Bernstein  <mitz@apple.com>
 
         Non-threaded scrolling build fix.

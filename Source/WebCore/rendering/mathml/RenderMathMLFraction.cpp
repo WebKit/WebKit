@@ -101,7 +101,7 @@ void RenderMathMLFraction::updateFromElement()
 void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderBlock* row = new (renderArena()) RenderMathMLBlock(node());
-    RefPtr<RenderStyle> rowStyle = makeBlockStyle();
+    RefPtr<RenderStyle> rowStyle = createBlockStyle();
     
     rowStyle->setTextAlign(CENTER);
     Length pad(static_cast<int>(rowStyle->fontSize() * gHorizontalPad), Fixed);

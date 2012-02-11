@@ -43,15 +43,15 @@ RenderMathMLSubSup::RenderMathMLSubSup(Element* element)
     : RenderMathMLBlock(element)
     , m_scripts(0)
 {
-    // Determine what kind of under/over expression we have by element name
+    // Determine what kind of sub/sup expression we have by element name
     if (element->hasLocalName(MathMLNames::msubTag))
         m_kind = Sub;
     else if (element->hasLocalName(MathMLNames::msupTag))
         m_kind = Sup;
-    else if (element->hasLocalName(MathMLNames::msubsupTag))
+    else {
+        ASSERT(element->hasLocalName(MathMLNames::msubsupTag));
         m_kind = SubSup;
-    else 
-        m_kind = SubSup;
+    }
 }
 
 void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild)

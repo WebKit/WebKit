@@ -49,7 +49,7 @@ bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
     return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
 }
 
-PassRefPtr<RenderStyle> RenderMathMLBlock::makeBlockStyle()
+PassRefPtr<RenderStyle> RenderMathMLBlock::createBlockStyle()
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());

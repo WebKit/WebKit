@@ -70,7 +70,7 @@ protected:
         
         return 0;
     }
-    virtual PassRefPtr<RenderStyle> makeBlockStyle();
+    virtual PassRefPtr<RenderStyle> createBlockStyle();
 
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock"; }

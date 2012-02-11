@@ -41,7 +41,7 @@ public:
 private:
     virtual const char* renderName() const { return "RenderMathMLFenced"; }
 
-    PassRefPtr<RenderStyle> makeOperatorStyle();
+    PassRefPtr<RenderStyle> createOperatorStyle();
     void makeFences();
     
     UChar m_open;
