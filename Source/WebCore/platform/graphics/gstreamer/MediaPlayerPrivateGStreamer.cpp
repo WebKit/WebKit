@@ -1494,8 +1494,10 @@ static HashSet<String> mimeTypeCache()
                 const gchar* name = gst_structure_get_name(structure);
                 bool cached = false;
 
-                // These formats are supported by GStreamer, but not
-                // correctly advertised.
+                // There isn't a one-to-one correspondance of caps to supported mime types in
+                // GStreamer, so we need to manually map between them. At some point in the future,
+                // GStreamer may reduce the differences between caps and mime types and we can
+                // remove mappings.
                 if (g_str_equal(name, "video/x-h264")) {
                     cache.add(String("video/mp4"));
                     cached = true;
@@ -1523,6 +1525,7 @@ static HashSet<String> mimeTypeCache()
                 if (g_str_equal(name, "audio/x-vorbis")) {
                     cache.add(String("audio/ogg"));
                     cache.add(String("audio/x-vorbis+ogg"));
+                    cache.add(String("audio/webm"));
                     cached = true;
                 }
 

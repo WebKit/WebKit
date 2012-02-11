@@ -1,3 +1,16 @@
+2012-02-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GStreamer] html5test.com says that gstreamer ports do not support WebM for audio
+        https://bugs.webkit.org/show_bug.cgi?id=78244
+
+        Reviewed by Eric Seidel.
+
+        Specifically advertise support for audio/webm when we support the vorbis
+        audio codec. This is necessary because gstreamer doesn't advertise it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache): Add an override for audio/webm.
+
 2012-02-11  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.
