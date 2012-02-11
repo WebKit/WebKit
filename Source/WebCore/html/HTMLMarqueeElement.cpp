@@ -53,7 +53,7 @@ PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& t
     return marqueeElement.release();
 }
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLMarqueeElement(Attribute* attr)
 {
     return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == scrollamountAttr || attr->name() == scrolldelayAttr || attr->name() == loopAttr || attr->name() == behaviorAttr || attr->name() == directionAttr;
 }
@@ -99,14 +99,14 @@ void HTMLMarqueeElement::collectStyleForAttribute(Attribute* attr, StyleProperty
         if (!attr->value().isEmpty())
             style->setProperty(CSSPropertyWebkitMarqueeDirection, attr->value());
     } else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLMarqueeElement(attr));
         HTMLElement::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLMarqueeElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLMarqueeElement(attr))
         setNeedsAttributeStyleUpdate();
     else if (attr->name() == truespeedAttr)
         m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;

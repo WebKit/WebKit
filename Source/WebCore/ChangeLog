@@ -1,3 +1,21 @@
+2012-02-11  Sam Weinig  <sam@webkit.org>
+
+        Fix the windows build.
+
+        Since Windows uses an all-in-one file to compile, the isRespectedPresentationAttribute()
+        functions all need unique names.
+
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLHRElement.cpp:
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMarqueeElement.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLTableCellElement.cpp:
+        * html/HTMLTablePartElement.cpp:
+        * mathml/MathMLElement.cpp:
+
 2012-02-11  Anders Carlsson  <andersca@apple.com>
 
         Overlay scrollbars don't appear when scrolling on the scrolling thread

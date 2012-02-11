@@ -75,7 +75,7 @@ int HTMLTableCellElement::cellIndex() const
     return index;
 }
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLTableCellElement(Attribute* attr)
 {
     return attr->name() == nowrapAttr || attr->name() == widthAttr || attr->name() == heightAttr;
 }
@@ -97,14 +97,14 @@ void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StyleProper
                 addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
         }
     } else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLTableCellElement(attr));
         HTMLTablePartElement::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLTableCellElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLTableCellElement(attr))
         setNeedsAttributeStyleUpdate();
     else if (attr->name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())

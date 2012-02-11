@@ -658,7 +658,7 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     m_inputType->accessKeyAction(sendMouseEvents);
 }
 
-static inline bool isRespectedPresentationAttribute(HTMLInputElement* element, Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLInputElement(HTMLInputElement* element, Attribute* attr)
 {
     return attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == heightAttr || (attr->name() == borderAttr && element->isImageButton());
 }
@@ -683,14 +683,14 @@ void HTMLInputElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
     } else if (attr->name() == borderAttr && isImageButton())
         applyBorderAttributeToStyle(attr, style);
     else {
-        ASSERT(!isRespectedPresentationAttribute(this, attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLInputElement(this, attr));
         return HTMLTextFormControlElement::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLInputElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(this, attr))
+    if (isRespectedPresentationAttributeForHTMLInputElement(this, attr))
         setNeedsAttributeStyleUpdate();
     else if (attr->name() == nameAttr) {
         checkedRadioButtons().removeButton(this);

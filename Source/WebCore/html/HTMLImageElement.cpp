@@ -78,7 +78,7 @@ PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* 
     return image.release();
 }
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLImageElement(Attribute* attr)
 {
     return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == borderAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == valignAttr;
 }
@@ -102,7 +102,7 @@ void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
     else if (attr->name() == valignAttr)
         style->setProperty(CSSPropertyVerticalAlign, attr->value());
     else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLImageElement(attr));
         HTMLElement::collectStyleForAttribute(attr, style);
     }
 }
@@ -110,7 +110,7 @@ void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
 void HTMLImageElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLImageElement(attr))
         setNeedsAttributeStyleUpdate();
     else if (attrName == altAttr) {
         if (renderer() && renderer()->isImage())

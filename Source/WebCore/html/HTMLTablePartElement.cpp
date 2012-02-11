@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLTablePartElement(Attribute* attr)
 {
     return attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == bordercolorAttr || attr->name() == valignAttr || attr->name() == alignAttr || attr->name() == heightAttr;
 }
@@ -77,14 +77,14 @@ void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StyleProper
         if (!attr->value().isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
     } else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLTablePartElement(attr));
         HTMLElement::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLTablePartElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLTablePartElement(attr))
         setNeedsAttributeStyleUpdate();
     else
         HTMLElement::parseAttribute(attr);

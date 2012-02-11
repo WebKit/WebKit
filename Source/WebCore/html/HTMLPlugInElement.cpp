@@ -140,7 +140,7 @@ Widget* HTMLPlugInElement::pluginWidget()
     return renderWidget->widget();
 }
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLPlugInElement(Attribute* attr)
 {
     return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr;
 }
@@ -160,14 +160,14 @@ void HTMLPlugInElement::collectStyleForAttribute(Attribute* attr, StylePropertyS
     } else if (attr->name() == alignAttr)
         applyAlignmentAttributeToStyle(attr, style);
     else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLPlugInElement(attr));
         HTMLFrameOwnerElement::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLPlugInElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLPlugInElement(attr))
         setNeedsAttributeStyleUpdate();
     else
         HTMLFrameOwnerElement::parseAttribute(attr);

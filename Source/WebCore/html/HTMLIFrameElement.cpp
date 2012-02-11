@@ -48,7 +48,7 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-static inline bool isRespectedPresentationAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttributeForHTMLIFrameElement(Attribute* attr)
 {
     return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == alignAttr || attr->name() == frameborderAttr;
 }
@@ -69,14 +69,14 @@ void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertyS
             addHTMLLengthToStyle(style, CSSPropertyBorderWidth, "0"); // FIXME: Pass as integer.
         }
     } else {
-        ASSERT(!isRespectedPresentationAttribute(attr));
+        ASSERT(!isRespectedPresentationAttributeForHTMLIFrameElement(attr));
         HTMLFrameElementBase::collectStyleForAttribute(attr, style);
     }
 }
 
 void HTMLIFrameElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttribute(attr))
+    if (isRespectedPresentationAttributeForHTMLIFrameElement(attr))
         setNeedsAttributeStyleUpdate();
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
