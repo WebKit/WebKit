@@ -1,3 +1,25 @@
+2012-02-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Web Inspector: Add the ability to jump to the source for a given frame
+        https://bugs.webkit.org/show_bug.cgi?id=78396
+
+        Reviewed by Tim Hatcher.
+
+        * WebCore.exp.in: Add a new exported function.
+        * inspector/InspectorController.cpp: Add and expose the InspectorPageAgent.
+        (WebCore::InspectorController::InspectorController): Set m_pageAgent.
+        * inspector/InspectorController.h: Add m_pageAgent.
+        (WebCore::InspectorController::pageAgent): Return m_pageAgent.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::showMainResourceForFrame): Get the inspector's frame ID
+            of the frame that was passed in, and add a call to evaluate on load.
+        * inspector/InspectorFrontendClientLocal.h:
+
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showMainResourceForFrame): Add a FIXME to show the source code for the main
+            resource of the given frame.
+
 2012-02-10  Vineet Chaudhary  <rgf748@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72756

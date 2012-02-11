@@ -42,6 +42,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
+#include "InspectorPageAgent.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "ScriptFunctionCall.h"
@@ -263,6 +264,12 @@ void InspectorFrontendClientLocal::stopProfilingJavaScript()
 void InspectorFrontendClientLocal::showConsole()
 {
     evaluateOnLoad("[\"showConsole\"]");
+}
+
+void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
+{
+    String frameId = m_inspectorController->pageAgent()->frameId(frame);
+    evaluateOnLoad(String::format("[\"showMainResourceForFrame\", \"%s\"]", frameId.ascii().data()));
 }
 
 unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)

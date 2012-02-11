@@ -92,6 +92,8 @@ private:
 
     void showConsole();
 
+    void showMainResourceForFrame(uint64_t frameID);
+
     void startJavaScriptDebugging();
     void stopJavaScriptDebugging();
 

@@ -93,6 +93,8 @@ public:
 
     void showConsole();
 
+    void showMainResourceForFrame(Frame*);
+
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
     void setAttachedWindow(bool);

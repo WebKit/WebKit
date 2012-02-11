@@ -1,3 +1,29 @@
+2012-02-10  Brian Weinstein  <bweinstein@apple.com>
+
+        Web Inspector: Add the ability to jump to the source for a given frame
+        https://bugs.webkit.org/show_bug.cgi?id=78396
+        
+        Add WebKit2 API for the ability to show the source of a frame in the web inspector. This calls down
+        from the WK API all the way to InspectorFrontendClientLocal::showMainResourceForFrame.
+
+        Reviewed by Tim Hatcher.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorShowMainResourceForFrame): Call WebInspectorProxy::showMainResourceForFrame.
+        * UIProcess/API/C/WKInspector.h:
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::showMainResourceForFrame): Send a message to the web process, passing
+            the frame ID of the frame we want to show the main resource of.
+        * UIProcess/WebInspectorProxy.h:
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::showMainResourceForFrame): Get the WebFrame for the frame we want to show the
+            main resource of from its ID. If we found a frame, call InspectorFrontendClientLocal::showMainResourceForFrame.
+        * WebProcess/WebPage/WebInspector.h:
+        
+        * WebProcess/WebPage/WebInspector.messages.in: Add a new message.
+
 2012-02-10  Adam Klein  <adamk@chromium.org>
 
         Enable MUTATION_OBSERVERS by default on all platforms

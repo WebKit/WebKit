@@ -85,6 +85,11 @@ InspectorFrontendAPI = {
         WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.console);
     },
 
+    showMainResourceForFrame: function(frameId)
+    {
+        // FIXME: Implement this to show the source code for the main resource of a given frame.
+    },
+
     dispatch: function(signature)
     {
         if (WebInspector.panels) {

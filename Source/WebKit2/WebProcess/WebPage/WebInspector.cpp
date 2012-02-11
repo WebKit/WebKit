@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebFrame.h"
 #include "WebInspectorFrontendClient.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebPage.h"
@@ -137,6 +138,17 @@ void WebInspector::showConsole()
     m_page->corePage()->inspectorController()->show();
     if (m_frontendClient)
         m_frontendClient->showConsole();
+}
+
+void WebInspector::showMainResourceForFrame(uint64_t frameID)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->showMainResourceForFrame(frame->coreFrame());
 }
 
 void WebInspector::startJavaScriptDebugging()

@@ -29,6 +29,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
@@ -121,6 +122,14 @@ void WebInspectorProxy::showConsole()
         return;
 
     m_page->process()->send(Messages::WebInspector::ShowConsole(), m_page->pageID());
+}
+
+void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
+{
+    if (!m_page)
+        return;
+    
+    m_page->process()->send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_page->pageID());
 }
 
 void WebInspectorProxy::attach()

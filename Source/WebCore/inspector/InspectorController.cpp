@@ -85,6 +85,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 
     OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_state.get(), m_injectedScriptManager.get()));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
+    m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
 
     OwnPtr<InspectorDOMAgent> domAgentPtr(InspectorDOMAgent::create(m_instrumentingAgents.get(), pageAgent, inspectorClient, m_state.get(), m_injectedScriptManager.get()));

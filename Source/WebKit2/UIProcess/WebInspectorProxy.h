@@ -50,6 +50,7 @@ OBJC_CLASS WKWebInspectorWKView;
 
 namespace WebKit {
 
+class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
@@ -91,6 +92,7 @@ public:
 #endif
 
     void showConsole();
+    void showMainResourceForFrame(WebFrameProxy*);
 
     bool isAttached() const { return m_isAttached; }
     void attach();

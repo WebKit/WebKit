@@ -26,6 +26,7 @@ messages -> WebInspector {
     Show()
     Close()
     ShowConsole()
+    ShowMainResourceForFrame(uint64_t frameID)
     StartJavaScriptDebugging()
     StopJavaScriptDebugging()
     StartJavaScriptProfiling()
