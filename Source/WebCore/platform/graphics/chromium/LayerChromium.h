@@ -34,6 +34,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "PlatformString.h"
@@ -107,6 +108,9 @@ public:
 
     void setOpacity(float);
     float opacity() const { return m_opacity; }
+
+    void setFilters(const FilterOperations&);
+    const FilterOperations& filters() const { return m_filters; }
 
     virtual void setOpaque(bool);
     bool opaque() const { return m_opaque; }
@@ -267,6 +271,7 @@ private:
     Color m_debugBorderColor;
     float m_debugBorderWidth;
     float m_opacity;
+    FilterOperations m_filters;
     float m_anchorPointZ;
     bool m_isDrawable;
     bool m_masksToBounds;

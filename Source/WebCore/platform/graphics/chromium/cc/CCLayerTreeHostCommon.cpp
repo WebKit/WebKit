@@ -244,7 +244,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     bool useSurfaceForMasking = layer->maskLayer();
     bool useSurfaceForReflection = layer->replicaLayer();
     bool useSurfaceForFlatDescendants = layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && layer->descendantDrawsContent();
-    if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantDrawsContent())) {
+    bool useSurfaceForFilters = layer->filters().size() > 0;
+    if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || useSurfaceForFilters || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantDrawsContent())) {
         if (!layer->renderSurface())
             layer->createRenderSurface();
 
@@ -281,6 +282,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         if (layer->replicaLayer() && layer->replicaLayer()->maskLayer())
             layer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);
+
+        renderSurface->setFilters(layer->filters());
 
         renderSurfaceLayerList.append(layer);
     } else {

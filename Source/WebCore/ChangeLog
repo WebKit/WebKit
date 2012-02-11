@@ -1,3 +1,63 @@
+2012-02-08  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Enable CSS filters on composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=77266
+
+        Reviewed by James Robinson.
+
+        Will be covered by existing tests in css3/filters (when enabled).
+
+        * WebCore.gypi:
+        Add CCRenderSurfaceFilters.* to the Chromium build.
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setFilters):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        Override setFilters() virtual from GraphicsLayer.
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setFilters):
+        Implement setFilters() to cache the filters here...
+        (WebCore::LayerChromium::pushPropertiesTo):
+        ... and push them to the CCLayerImpl at commit time.
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::filters):
+        Implement accessor.
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore::RenderSurfaceChromium::setFilters):
+        Implement stub version of setFilters(), to satisfy the templates.
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::setFilters):
+        Implement setter to receive filters at commit time.
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::filters):
+        Implement member var and accessor for filters.
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+        Add another clause here to force creation of a RenderSurface when
+        filters are present, and to forward them from the layer to the
+        RenderSurface.
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::draw):
+        (WebCore::CCRenderSurface::drawLayer):
+        Check for filters at draw time, apply them, and forward the result
+        through the drawing traversal.
+        (WebCore::CCRenderSurface::drawSurface):
+        If filter bitmap is present, bind it instead of the normal
+        RenderSurface texture.
+        (WebCore::CCRenderSurface::applyFilters):
+        Apply filters to the render surface texture, and return the result.
+        This function is a no-op for the threaded compositor, due to use
+        of the SharedGraphicsContext3D.
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::setFilters):
+        (WebCore::CCRenderSurface::filters):
+        (CCRenderSurface):
+        Filters getters and setters.
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp: Added.
+        (WebCore::CCRenderSurfaceFilters::apply):
+        External interface for this (static) class.  All internal
+        implementation and helper functions are in the unnamed namespace.
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.h: Added.
+
 2012-02-11  Andreas Kling  <awesomekling@apple.com>
 
         Node.isEqualNode() compares attributes twice.

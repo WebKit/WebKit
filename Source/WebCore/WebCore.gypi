@@ -3277,6 +3277,8 @@
             'platform/graphics/chromium/cc/CCRenderSurface.h',
             'platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.cpp',
             'platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.h',
+            'platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp',
+            'platform/graphics/chromium/cc/CCRenderSurfaceFilters.h',
             'platform/graphics/chromium/cc/CCScheduler.cpp',
             'platform/graphics/chromium/cc/CCScheduler.h',
             'platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp',

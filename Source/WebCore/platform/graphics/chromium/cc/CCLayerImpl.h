@@ -27,6 +27,7 @@
 #define CCLayerImpl_h
 
 #include "Color.h"
+#include "FilterOperations.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "TextStream.h"
@@ -100,6 +101,9 @@ public:
 
     void setBackgroundCoversViewport(bool);
     bool backgroundCoversViewport() const { return m_backgroundCoversViewport; }
+
+    void setFilters(const FilterOperations&);
+    const FilterOperations& filters() const { return m_filters; }
 
     void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
@@ -287,6 +291,8 @@ private:
     // Debug borders.
     Color m_debugBorderColor;
     float m_debugBorderWidth;
+
+    FilterOperations m_filters;
 
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;

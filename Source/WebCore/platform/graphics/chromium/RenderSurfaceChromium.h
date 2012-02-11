@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class FilterOperations;
 class LayerChromium;
 class LayerRendererChromium;
 class ManagedTexture;
@@ -75,6 +76,11 @@ public:
 
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
+
+    // We don't care about filters here, but we need to satisfy 
+    // calculateDrawTransformsAndVisibilityInternal when templated on this
+    // class.
+    void setFilters(const FilterOperations&) { }
 
     bool skipsDraw() const { return m_skipsDraw; }
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }

@@ -260,6 +260,12 @@ void GraphicsLayerChromium::setContentsOpaque(bool opaque)
     m_layer->setOpaque(m_contentsOpaque);
 }
 
+bool GraphicsLayerChromium::setFilters(const FilterOperations& filters)
+{
+    m_layer->setFilters(filters);
+    return GraphicsLayer::setFilters(filters);
+}
+
 void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
 {
     if (maskLayer == m_maskLayer)

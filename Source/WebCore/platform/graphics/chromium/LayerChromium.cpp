@@ -305,6 +305,14 @@ void LayerChromium::setReplicaLayer(LayerChromium* layer)
     setNeedsCommit();
 }
 
+void LayerChromium::setFilters(const FilterOperations& filters)
+{
+    if (m_filters == filters)
+        return;
+    m_filters = filters;
+    setNeedsCommit();
+}
+
 void LayerChromium::setOpacity(float opacity)
 {
     if (m_opacity == opacity)
@@ -411,6 +419,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
+    layer->setFilters(filters());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setScrollable(m_scrollable);
