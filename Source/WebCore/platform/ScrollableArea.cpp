@@ -122,6 +122,35 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orienta
         scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator()->currentPosition().x(), offset));
 }
 
+void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
+{
+    // Tell the derived class to scroll its contents.
+    setScrollOffset(position);
+
+    Scrollbar* verticalScrollbar = this->verticalScrollbar();
+
+    // Tell the scrollbars to update their thumb postions.
+    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
+        horizontalScrollbar->offsetDidChange();
+        if (horizontalScrollbar->isOverlayScrollbar() && !hasLayerForHorizontalScrollbar()) {
+            if (!verticalScrollbar)
+                horizontalScrollbar->invalidate();
+            else {
+                // If there is both a horizontalScrollbar and a verticalScrollbar,
+                // then we must also invalidate the corner between them.
+                IntRect boundsAndCorner = horizontalScrollbar->boundsRect();
+                boundsAndCorner.setWidth(boundsAndCorner.width() + verticalScrollbar->width());
+                horizontalScrollbar->invalidateRect(boundsAndCorner);
+            }
+        }
+    }
+    if (verticalScrollbar) {
+        verticalScrollbar->offsetDidChange();
+        if (verticalScrollbar->isOverlayScrollbar() && !hasLayerForVerticalScrollbar())
+            verticalScrollbar->invalidate();
+    }
+}
+
 void ScrollableArea::zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState)
 {
     // Requires FrameView to override this.
@@ -147,31 +176,7 @@ void ScrollableArea::setScrollOffsetFromInternals(const IntPoint& offset)
 
 void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
 {
-    // Tell the derived class to scroll its contents.
-    setScrollOffset(offset);
-
-    Scrollbar* verticalScrollbar = this->verticalScrollbar();
-
-    // Tell the scrollbars to update their thumb postions.
-    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
-        horizontalScrollbar->offsetDidChange();
-        if (horizontalScrollbar->isOverlayScrollbar() && !hasLayerForHorizontalScrollbar()) {
-            if (!verticalScrollbar)
-                horizontalScrollbar->invalidate();
-            else {
-                // If there is both a horizontalScrollbar and a verticalScrollbar,
-                // then we must also invalidate the corner between them.
-                IntRect boundsAndCorner = horizontalScrollbar->boundsRect();
-                boundsAndCorner.setWidth(boundsAndCorner.width() + verticalScrollbar->width());
-                horizontalScrollbar->invalidateRect(boundsAndCorner);
-            }
-        }
-    }
-    if (verticalScrollbar) {
-        verticalScrollbar->offsetDidChange();
-        if (verticalScrollbar->isOverlayScrollbar() && !hasLayerForVerticalScrollbar())
-            verticalScrollbar->invalidate();
-    }
+    notifyScrollPositionChanged(offset);
 }
 
 void ScrollableArea::willStartLiveResize()

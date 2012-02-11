@@ -48,6 +48,10 @@ public:
     void scrollToOffsetWithoutAnimation(const FloatPoint&);
     void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
 
+    // Should be called when the scroll position changes externally, for example if the scroll layer position
+    // is updated on the scrolling thread and we need to notify the main thread.
+    void notifyScrollPositionChanged(const IntPoint&);
+
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 
     bool handleWheelEvent(const PlatformWheelEvent&);

@@ -170,7 +170,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
         return;
 
     frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->scrollToOffsetWithoutAnimation(scrollPosition);
+    frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
 }
 
@@ -187,7 +187,7 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(c
         return;
 
     frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->scrollToOffsetWithoutAnimation(scrollPosition);
+    frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
 
     scrollLayer->setPosition(-frameView->scrollPosition());
