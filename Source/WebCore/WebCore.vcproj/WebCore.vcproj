@@ -26614,6 +26614,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FractionalLayoutUnit.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\GeolocationService.cpp"
 				>
 			</File>

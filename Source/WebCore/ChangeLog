@@ -1,3 +1,22 @@
+2012-02-10  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
+
+        Add FractionalLayoutUnit type for sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=77485
+
+        Reviewed by Eric Seidel.
+
+        Add fixed point implementation (FractionalLayoutUnit).
+
+        FractionalLayoutUnit represents values as multiples of 1/60th pixel. This allows us
+        to represent sub-pixel values using integer math and avoids floating point precision
+        problems.
+
+        No new tests.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FractionalLayoutUnit.h: Added.
+
 2012-02-10  Adam Langley  <agl@chromium.org>
 
         Don't lowercase ping URLs.
