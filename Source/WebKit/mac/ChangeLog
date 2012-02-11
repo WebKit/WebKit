@@ -1,3 +1,12 @@
+2012-02-10  Adam Klein  <adamk@chromium.org>
+
+        Enable MUTATION_OBSERVERS by default on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=78196
+
+        Reviewed by Ojan Vafai.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-02-10  Enrica Casucci  <enrica@apple.com>
 
         Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.

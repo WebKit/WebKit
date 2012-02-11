@@ -203,7 +203,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_MUTATION_OBSERVERS"
-		Value=""
+		Value="ENABLE_MUTATION_OBSERVERS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

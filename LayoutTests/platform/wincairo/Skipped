@@ -1785,6 +1785,7 @@ http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
+fast/mutation/filesystem-callback-delivery.html
 
 # LayoutTestController::nodesFromRect is not supported.
 fast/dom/nodesFromRect-basic.html
@@ -1983,9 +1984,6 @@ css3/selectors3
 # For now, Web Audio API is disabled
 webaudio/
 
-# MutationObservers are net yet enabled. http://webkit.org/b/68729
-fast/mutation
-
 # The win port has no support for <track>
 # https://bugs.webkit.org/show_bug.cgi?id=43668
 media/track
@@ -2042,3 +2040,7 @@ fast/dom/Window/window-postmessage-arrays.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73493
 fast/canvas/webgl/arraybuffer-transfer-of-control.html
+
+# Fails because MutationObservers are not notified at end-of-task
+# https://bugs.webkit.org/show_bug.cgi?id=78290
+fast/mutation/end-of-task-delivery.html

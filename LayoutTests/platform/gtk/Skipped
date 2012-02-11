@@ -280,6 +280,7 @@ http/tests/security/filesystem-iframe-from-remote.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 http/tests/workers/terminate-during-sync-operation.html
+fast/mutation/filesystem-callback-delivery.html
 
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
@@ -370,9 +371,6 @@ http/tests/security/text-track-crossorigin.html
 
 # CSS Filters is disabled
 css3/filters
-
-# MutationObservers are net yet enabled. http://webkit.org/b/68729
-fast/mutation
 
 # layoutTestController.overridePreference("WebKit*FontMap"...) is not
 # supported.
@@ -1606,6 +1604,10 @@ fast/forms/listbox-clear-restore.html
 # Synthetic bold is illegible under some scaling transforms
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
+
+# Fails because MutationObservers are not notified at end-of-task
+# https://bugs.webkit.org/show_bug.cgi?id=78290
+fast/mutation/end-of-task-delivery.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=78345
 security/block-test.html

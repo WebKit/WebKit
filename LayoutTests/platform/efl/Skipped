@@ -1045,6 +1045,7 @@ fast/animation
 fast/filesystem
 http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
+fast/mutation/end-of-task-delivery.html
 
 # The EFL port has no support for Geolocation
 fast/dom/Geolocation
@@ -1220,6 +1221,10 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # The EFL port has no global history delegate
 http/tests/globalhistory
+
+# Fails because MutationObservers are not notified at end-of-task
+# https://bugs.webkit.org/show_bug.cgi?id=78290
+fast/mutation/end-of-task-delivery.html
 
 # --------------------------------
 # Tests which are expected to fail
@@ -1959,9 +1964,6 @@ fast/forms/week
 
 # ENABLE_GAMEPAD not enabled.
 gamepad/
-
-# MutationObservers are net yet enabled. http://webkit.org/b/68729
-fast/mutation
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi

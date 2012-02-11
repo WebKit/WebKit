@@ -116,6 +116,7 @@ http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
+fast/mutation/filesystem-callback-delivery.html
 
 # ENABLE(QUOTA) is disabled.
 storage/storageinfo-missing-arguments.html
@@ -166,9 +167,6 @@ fast/regions
 
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
-
-# ENABLE(MUTATION_OBSERVERS) is not yet enabled. http://webkit.org/b/68729
-fast/mutation
 
 # USE(V8)
 
@@ -2613,7 +2611,10 @@ fast/events/touch/emulate-touch-events.html
 # https://bugs.webkit.org/show_bug.cgi?id=78092
 fast/text/international/inline-plaintext-is-isolated.html
 
+# Fails because MutationObservers are not notified at end-of-task
+# https://bugs.webkit.org/show_bug.cgi?id=78290
+fast/mutation/end-of-task-delivery.html
+
 # Synthetic bold is illegible under some scaling transforms
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
-
