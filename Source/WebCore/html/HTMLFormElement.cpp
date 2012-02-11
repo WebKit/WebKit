@@ -500,7 +500,7 @@ HTMLCollection* HTMLFormElement::elements()
 
 String HTMLFormElement::name() const
 {
-    return getAttribute(nameAttr);
+    return getNameAttribute();
 }
 
 bool HTMLFormElement::noValidate() const

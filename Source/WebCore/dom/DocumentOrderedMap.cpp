@@ -42,7 +42,7 @@ using namespace HTMLNames;
 
 inline bool keyMatchesId(AtomicStringImpl* key, Element* element)
 {
-    return element->hasID() && element->getIdAttribute().impl() == key;
+    return element->getIdAttribute().impl() == key;
 }
 
 inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)

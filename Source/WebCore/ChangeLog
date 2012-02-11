@@ -1,3 +1,64 @@
+2012-02-11  Andreas Kling  <awesomekling@apple.com>
+
+        Use Element's hasName/hasID flags to avoid unnecessary work when looking up name/id attributes.
+        <http://webkit.org/b/77845>
+
+        Reviewed by Anders Carlsson.
+
+        Have Element::getIdAttribute() check the hasID() flag before looking up the attribute.
+        Add an Element::getNameAttribute() to do the same thing with hasName().
+        Update call sites to make use of these helpers whenever possible.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesId):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::getIdAttribute):
+        (WebCore):
+        (WebCore::Element::getNameAttribute):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/StaticHashSetNodeList.cpp:
+        (WebCore::StaticHashSetNodeList::itemWithName):
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::itemWithName):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::name):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formControlName):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::name):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::name):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        (WebCore::HTMLObjectElement::formControlName):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * page/Frame.cpp:
+        (WebCore::Frame::matchLabelsAgainstElement):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+
 2012-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r107435.

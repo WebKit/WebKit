@@ -164,7 +164,7 @@ void HTMLFormCollection::updateNameCache() const
         if (associatedElement->isEnumeratable()) {
             HTMLElement* element = toHTMLElement(associatedElement);
             const AtomicString& idAttrVal = element->getIdAttribute();
-            const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
+            const AtomicString& nameAttrVal = element->getNameAttribute();
             if (!idAttrVal.isEmpty()) {
                 append(m_cache.idCache, idAttrVal, element);
                 foundInputElements.add(idAttrVal.impl());
@@ -179,7 +179,7 @@ void HTMLFormCollection::updateNameCache() const
     for (unsigned i = 0; i < f->m_imageElements.size(); ++i) {
         HTMLImageElement* element = f->m_imageElements[i];
         const AtomicString& idAttrVal = element->getIdAttribute();
-        const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
+        const AtomicString& nameAttrVal = element->getNameAttribute();
         if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
             append(m_cache.idCache, idAttrVal, element);
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))

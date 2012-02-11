@@ -293,7 +293,7 @@ void HTMLAnchorElement::setRel(const String& value)
 
 const AtomicString& HTMLAnchorElement::name() const
 {
-    return getAttribute(nameAttr);
+    return getNameAttribute();
 }
 
 short HTMLAnchorElement::tabIndex() const

@@ -164,7 +164,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
-    loader->requestObject(this, m_url, getAttribute(nameAttr), m_serviceType, paramNames, paramValues);
+    loader->requestObject(this, m_url, getNameAttribute(), m_serviceType, paramNames, paramValues);
 }
 
 bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)

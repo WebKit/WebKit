@@ -174,7 +174,7 @@ void HTMLFrameElementBase::parseAttribute(Attribute* attr)
 
 void HTMLFrameElementBase::setNameAndOpenURL()
 {
-    m_frameName = getAttribute(nameAttr);
+    m_frameName = getNameAttribute();
     if (m_frameName.isNull())
         m_frameName = getIdAttribute();
     openURL();

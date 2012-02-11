@@ -300,7 +300,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         return;
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
-    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getNameAttribute(), serviceType, paramNames, paramValues);
     if (!success && fallbackContent)
         renderFallbackContent();
 }
@@ -423,10 +423,10 @@ void HTMLObjectElement::updateDocNamedItem()
     if (isNamedItem != wasNamedItem && document()->isHTMLDocument()) {
         HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
         if (isNamedItem) {
-            document->addNamedItem(fastGetAttribute(nameAttr));
+            document->addNamedItem(getNameAttribute());
             document->addExtraNamedItem(getIdAttribute());
         } else {
-            document->removeNamedItem(fastGetAttribute(nameAttr));
+            document->removeNamedItem(getNameAttribute());
             document->removeExtraNamedItem(getIdAttribute());
         }
     }
@@ -440,7 +440,7 @@ bool HTMLObjectElement::containsJavaApplet() const
         
     for (Element* child = firstElementChild(); child; child = child->nextElementSibling()) {
         if (child->hasTagName(paramTag)
-                && equalIgnoringCase(child->getAttribute(nameAttr), "type")
+                && equalIgnoringCase(child->getNameAttribute(), "type")
                 && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
             return true;
         if (child->hasTagName(objectTag)
@@ -501,7 +501,7 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
 
 const AtomicString& HTMLObjectElement::formControlName() const
 {
-    const AtomicString& name = fastGetAttribute(nameAttr);
+    const AtomicString& name = getNameAttribute();
     return name.isNull() ? emptyAtom : name;
 }
 

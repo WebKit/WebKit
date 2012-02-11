@@ -227,7 +227,7 @@ void HTMLFormControlElement::removedFromDocument()
 
 const AtomicString& HTMLFormControlElement::formControlName() const
 {
-    const AtomicString& name = fastGetAttribute(nameAttr);
+    const AtomicString& name = getNameAttribute();
     return name.isNull() ? emptyAtom : name;
 }
 

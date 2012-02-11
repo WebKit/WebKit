@@ -94,7 +94,7 @@ String HTMLMetaElement::httpEquiv() const
 
 String HTMLMetaElement::name() const
 {
-    return getAttribute(nameAttr);
+    return getNameAttribute();
 }
 
 #if ENABLE(MICRODATA)

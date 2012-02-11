@@ -726,7 +726,7 @@ Element* SVGSVGElement::getElementById(const AtomicString& id) const
             continue;
 
         Element* element = static_cast<Element*>(node);
-        if (element->hasID() && element->getIdAttribute() == id)
+        if (element->getIdAttribute() == id)
             return element;
     }
     return 0;

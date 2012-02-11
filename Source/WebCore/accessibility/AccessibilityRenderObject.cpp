@@ -1428,14 +1428,14 @@ String AccessibilityRenderObject::accessibilityDescription() const
                 const AtomicString& title = static_cast<HTMLFrameElementBase*>(owner)->getAttribute(titleAttr);
                 if (!title.isEmpty())
                     return title;
-                return static_cast<HTMLFrameElementBase*>(owner)->getAttribute(nameAttr);
+                return static_cast<HTMLFrameElementBase*>(owner)->getNameAttribute();
             }
             if (owner->isHTMLElement())
-                return toHTMLElement(owner)->getAttribute(nameAttr);
+                return toHTMLElement(owner)->getNameAttribute();
         }
         owner = document->body();
         if (owner && owner->isHTMLElement())
-            return toHTMLElement(owner)->getAttribute(nameAttr);
+            return toHTMLElement(owner)->getNameAttribute();
     }
 
     return String();

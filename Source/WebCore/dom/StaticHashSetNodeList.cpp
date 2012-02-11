@@ -69,7 +69,7 @@ Node* StaticHashSetNodeList::itemWithName(const AtomicString& elementId) const
     ListHashSet<RefPtr<Node> >::const_iterator end = m_nodes.end();
     for ( ; it != end ; ++it) {
         Node* node = (*it).get();
-        if (node->hasID() && static_cast<Element*>(node)->getIdAttribute() == elementId)
+        if (static_cast<Element*>(node)->getIdAttribute() == elementId)
             return node;
     }
 

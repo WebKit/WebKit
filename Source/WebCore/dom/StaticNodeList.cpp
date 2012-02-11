@@ -50,8 +50,7 @@ Node* StaticNodeList::itemWithName(const AtomicString& elementId) const
     size_t length = m_nodes.size();
     for (size_t i = 0; i < length; ++i) {
         Node* node = m_nodes[i].get();
-        // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-        if (node->hasID() && static_cast<Element*>(node)->getIdAttribute() == elementId)
+        if (static_cast<Element*>(node)->getIdAttribute() == elementId)
             return node;
     }
 

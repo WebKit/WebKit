@@ -147,6 +147,8 @@ public:
     const AtomicString& getIdAttribute() const;
     void setIdAttribute(const AtomicString&);
 
+    const AtomicString& getNameAttribute() const;
+
     // Call this to get the value of the id attribute for style resolution purposes.
     // The value will already be lowercased if the document is in compatibility mode,
     // so this function is not suitable for non-style uses.
@@ -628,7 +630,12 @@ inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const
 
 inline const AtomicString& Element::getIdAttribute() const
 {
-    return fastGetAttribute(document()->idAttributeName());
+    return hasID() ? fastGetAttribute(document()->idAttributeName()) : nullAtom;
+}
+
+inline const AtomicString& Element::getNameAttribute() const
+{
+    return hasName() ? fastGetAttribute(HTMLNames::nameAttr) : nullAtom;
 }
 
 inline void Element::setIdAttribute(const AtomicString& value)
