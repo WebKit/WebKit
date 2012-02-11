@@ -1,3 +1,15 @@
+2012-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r107435.
+        http://trac.webkit.org/changeset/107435
+        https://bugs.webkit.org/show_bug.cgi?id=78410
+
+        It broke the Qt build (Requested by Ossy on #webkit).
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2012-02-10  Brian Weinstein  <bweinstein@apple.com>
 
         Web Inspector: Add the ability to jump to the source for a given frame

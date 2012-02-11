@@ -5573,12 +5573,9 @@
 		C585A6FC11D4FB3D004C3E4B /* IDBFactoryBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6C811D4FB3D004C3E4B /* IDBFactoryBackendImpl.h */; };
 		C585A6FD11D4FB3D004C3E4B /* IDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */; };
 		C585A6FE11D4FB3D004C3E4B /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6CA11D4FB3D004C3E4B /* IDBFactory.h */; };
-		C5BAC17014E30E4700008837 /* PlatformPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
-		C5F765B514E1D414006C899B /* PasteboardStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F765B414E1D414006C899B /* PasteboardStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C5F765BB14E1ECF4006C899B /* PlatformPasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F08FB91430FE8F00685849 /* MutationRecord.cpp */; };
@@ -12527,12 +12524,9 @@
 		C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactory.cpp; sourceTree = "<group>"; };
 		C585A6CA11D4FB3D004C3E4B /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactory.h; sourceTree = "<group>"; };
 		C585A6CB11D4FB3D004C3E4B /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
-		C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPasteboard.h; sourceTree = "<group>"; };
 		C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphMetricsMap.h; sourceTree = "<group>"; };
 		C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageEventDispatcher.cpp; sourceTree = "<group>"; };
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
-		C5F765B414E1D414006C899B /* PasteboardStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardStrategy.h; sourceTree = "<group>"; };
-		C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardMac.mm; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		C6F08FB91430FE8F00685849 /* MutationRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationRecord.cpp; sourceTree = "<group>"; };
@@ -15062,7 +15056,6 @@
 				CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */,
 				BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */,
 				BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */,
-				C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
@@ -19743,7 +19736,6 @@
 				BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */,
 				98EB1F941313FE0500D0E1EA /* NotImplemented.h */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
-				C5F765B414E1D414006C899B /* PasteboardStrategy.h */,
 				BC5C76281497FE1400BC4775 /* PlatformEvent.cpp */,
 				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
 				A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */,
@@ -19751,7 +19743,6 @@
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
-				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
 				1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */,
 				1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */,
@@ -24181,8 +24172,6 @@
 				1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
 				1AAADDE914DC8DF800AF64B3 /* ScrollingTreeNodeMac.h in Headers */,
-				C5F765B514E1D414006C899B /* PasteboardStrategy.h in Headers */,
-				C5BAC17014E30E4700008837 /* PlatformPasteboard.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
 				7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */,
@@ -27123,7 +27112,6 @@
 				1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */,
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
 				1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */,
-				C5F765BB14E1ECF4006C899B /* PlatformPasteboardMac.mm in Sources */,
 				7A54857F14E02D51006AE05A /* InspectorHistory.cpp in Sources */,
 				CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */,
 				7A54881814E432A1006AE05A /* DOMPatchSupport.cpp in Sources */,

@@ -66,7 +66,7 @@ bool DragData::canSmartReplace() const
 {
     //Need to call this so that the various Pasteboard type strings are intialised
     Pasteboard::generalPasteboard();
-    return [[m_pasteboard.get() types] containsObject:String(WebSmartPastePboardType)];
+    return [[m_pasteboard.get() types] containsObject:WebSmartPastePboardType];
 }
 
 bool DragData::containsColor() const
@@ -129,7 +129,7 @@ static NSArray *insertablePasteboardTypes()
 {
     static NSArray *types = nil;
     if (!types) {
-        types = [[NSArray alloc] initWithObjects:String(WebArchivePboardType), NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
+        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
 #ifdef BUILDING_ON_LEOPARD
                  NSPICTPboardType,
 #endif
@@ -157,7 +157,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
     (void)filenamePolicy;
 
     if (title) {
-        if (NSString *URLTitleString = [m_pasteboard.get() stringForType:String(WebURLNamePboardType)])
+        if (NSString *URLTitleString = [m_pasteboard.get() stringForType:WebURLNamePboardType])
             *title = URLTitleString;
     }
     

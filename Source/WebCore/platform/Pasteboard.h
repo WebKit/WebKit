@@ -29,8 +29,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
-#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -62,11 +60,11 @@ typedef struct HWND__* HWND;
 namespace WebCore {
 
 #if PLATFORM(MAC)
-extern const char* WebArchivePboardType;
-extern const char* WebSmartPastePboardType;
-extern const char* WebURLNamePboardType;
-extern const char* WebURLPboardType;
-extern const char* WebURLsWithTitlesPboardType;
+extern NSString *WebArchivePboardType;
+extern NSString *WebSmartPastePboardType;
+extern NSString *WebURLNamePboardType;
+extern NSString *WebURLPboardType;
+extern NSString *WebURLsWithTitlesPboardType;
 #endif
 
 class Clipboard;
@@ -83,7 +81,7 @@ class Pasteboard {
 public:
 #if PLATFORM(MAC)
     // This is required to support OS X services.
-    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame*);
+    void writeSelectionForTypes(NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame*);
     Pasteboard(const String& pasteboardName);
 #endif
     
@@ -111,7 +109,7 @@ private:
     Pasteboard();
 
 #if PLATFORM(MAC)
-    String m_pasteboardName;
+    RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 
 #if PLATFORM(WIN)
