@@ -411,34 +411,37 @@ bool InputHandler::shouldAcceptInputFocus()
     if (m_webPage->m_dumpRenderTree)
         return true;
 
-    if (BlackBerry::Platform::Settings::get()->alwaysShowKeyboardOnFocus())
+    if (BlackBerry::Platform::Settings::get()->alwaysShowKeyboardOnFocus()) {
+        FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus alwaysShowKeyboardOnFocus is active.");
         return true;
-
-    Frame* mainFrame = m_webPage->m_page->mainFrame();
-    Frame* focusedFrame = m_webPage->focusedOrMainFrame();
-    if (mainFrame && mainFrame->document() && focusedFrame && focusedFrame->document()) {
-        // Any user action should be respected. Mouse will be down when touch is
-        // used to focus.
-        if (focusedFrame->eventHandler()->mousePressed())
-            return true;
-
-        if (!m_webPage->m_client->hasKeyboardFocus()) {
-            FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Client does not have input focus.");
-            return false;
-        }
-
-        // Make sure the main frame is not still loading.
-        if (mainFrame->loader()->isLoading())
-            return false;
-
-        // Make sure the focused frame is loaded.
-        if (!focusedFrame->loader()->frameHasLoaded())
-            return false;
-
-        // Make sure the focused frame is not processing load events.
-        return !focusedFrame->document()->processingLoadEvent();
     }
-    return false;
+
+    Frame* focusedFrame = m_webPage->focusedOrMainFrame();
+    if (!focusedFrame) {
+        FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Frame not valid.");
+        return false;
+    }
+
+    // Any user action should be respected. Mouse will be down when touch is
+    // used to focus.
+    if (focusedFrame->eventHandler()->mousePressed()) {
+        FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Mouse is pressed focusing.");
+        return true;
+    }
+
+    if (!m_webPage->m_client->hasKeyboardFocus()) {
+        FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Client does not have input focus.");
+        return false;
+    }
+
+    if (m_webPage->isLoading()) {
+        FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus Webpage is loading.");
+        return false;
+    }
+
+    // Make sure the focused frame is not processing load events.
+    FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::shouldAcceptInputFocus returning state of processingLoadEvent (%s).", !focusedFrame->document()->processingLoadEvent() ? "true" : "false");
+    return !focusedFrame->document()->processingLoadEvent();
 }
 
 void InputHandler::setElementFocused(Element* element)

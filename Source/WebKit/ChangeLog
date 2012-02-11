@@ -1,5 +1,24 @@
 2012-02-10  Mike Fenton  <mifenton@rim.com>
 
+        BlackBerry Port - Input focus is suppressed during XHR loads
+        https://bugs.webkit.org/show_bug.cgi?id=78368
+
+        Allow JS to trigger the VKB and input focus when XHR scripting
+        is active.
+
+        This switching the loaded state to checking the webpages loaded state
+        which is only updated after initial load.   When additional loading
+        events happen for XHR, it remains false and focus events function.
+
+        Also add detailed FocusLog's to shouldAcceptInputFocus.
+
+        Reviewed by Rob Buis.
+
+        * blackberry/WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::shouldAcceptInputFocus):
+
+2012-02-10  Mike Fenton  <mifenton@rim.com>
+
         BlackBerry Port - JS focus on blur can cause recursion
         https://bugs.webkit.org/show_bug.cgi?id=78368
 
