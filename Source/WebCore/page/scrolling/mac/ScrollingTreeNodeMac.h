@@ -63,8 +63,11 @@ private:
     IntPoint scrollPosition() const;
     void setScrollLayerPosition(const IntPoint&);
 
+    IntPoint minimumScrollPosition() const;
+    IntPoint maximumScrollPosition() const;
     void scrollBy(const IntSize&);
 
+    ScrollElasticityController m_scrollElasticityController;
     RetainPtr<CALayer> m_scrollLayer;
 };
 

@@ -1,3 +1,25 @@
+2012-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Pass wheel events to a scroll elasticity controller on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=78421
+
+        Reviewed by Sam Weinig.
+
+        Add a ScrollElasticityController to ScrollingTreeNodeMac and pass wheel events to it.
+        Fix ScrollingTreeNodeMac::scrollBy to clamp by the minimum and maximum scroll positions.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        (ScrollingTreeNodeMac):
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::ScrollingTreeNodeMac):
+        (WebCore::ScrollingTreeNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeNodeMac::immediateScrollBy):
+        (WebCore::ScrollingTreeNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeNodeMac::minimumScrollPosition):
+        (WebCore):
+        (WebCore::ScrollingTreeNodeMac::maximumScrollPosition):
+        (WebCore::ScrollingTreeNodeMac::scrollBy):
+
 2012-02-11  Andreas Kling  <awesomekling@apple.com>
 
         Attribute styles should be created lazily.

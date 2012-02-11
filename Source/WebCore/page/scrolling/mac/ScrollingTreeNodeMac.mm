@@ -41,6 +41,7 @@ PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrolling
 
 ScrollingTreeNodeMac::ScrollingTreeNodeMac(ScrollingTree* scrollingTree)
     : ScrollingTreeNode(scrollingTree)
+    , m_scrollElasticityController(this)
 {
 }
 
@@ -54,8 +55,7 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 
 void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    // FXIME: This needs to handle rubberbanding.
-    scrollBy(IntSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()));
+    m_scrollElasticityController.handleWheelEvent(wheelEvent);
 }
 
 void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
@@ -117,9 +117,9 @@ IntPoint ScrollingTreeNodeMac::absoluteScrollPosition()
     return IntPoint();
 }
 
-void ScrollingTreeNodeMac::immediateScrollBy(const FloatSize&)
+void ScrollingTreeNodeMac::immediateScrollBy(const FloatSize& offset)
 {
-    // FIXME: Implement.
+    scrollBy(roundedIntSize(offset));
 }
 
 void ScrollingTreeNodeMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize&)
@@ -146,13 +146,33 @@ IntPoint ScrollingTreeNodeMac::scrollPosition() const
 void ScrollingTreeNodeMac::setScrollLayerPosition(const IntPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
-
     m_scrollLayer.get().position = CGPointMake(-position.x(), -position.y());
+}
+
+IntPoint ScrollingTreeNodeMac::minimumScrollPosition() const
+{
+    // FIXME: This should take the scroll origin into account.
+    return IntPoint(0, 0);
+}
+
+IntPoint ScrollingTreeNodeMac::maximumScrollPosition() const
+{
+    // FIXME: This should take the scroll origin into account.
+    IntPoint position(contentsSize().width() - viewportRect().width(),
+                      contentsSize().height() - viewportRect().height());
+
+    position.clampNegativeToZero();
+
+    return position;
 }
 
 void ScrollingTreeNodeMac::scrollBy(const IntSize& offset)
 {
-    setScrollPosition(scrollPosition() + offset);
+    IntPoint newScrollPosition = scrollPosition() + offset;
+    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
+    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
+
+    setScrollPosition(newScrollPosition);
 }
 
 } // namespace WebCore
