@@ -1,5 +1,28 @@
 2012-02-11  Andreas Kling  <awesomekling@apple.com>
 
+        HTMLTablePartElement: Add helper method to find parent table.
+        <http://webkit.org/b/78413>
+
+        Reviewed by Anders Carlsson.
+
+        Add HTMLTablePartElement::findParentTable() and use that in subclasses instead
+        of duplicating the code.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::additionalAttributeStyle):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalAttributeStyle):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::findParentTable):
+        (WebCore):
+        * html/HTMLTablePartElement.h:
+        (WebCore):
+        (HTMLTablePartElement):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalAttributeStyle):
+
+2012-02-11  Andreas Kling  <awesomekling@apple.com>
+
         Use Element's hasName/hasID flags to avoid unnecessary work when looking up name/id attributes.
         <http://webkit.org/b/77845>
 

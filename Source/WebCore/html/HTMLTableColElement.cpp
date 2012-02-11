@@ -72,12 +72,9 @@ StylePropertySet* HTMLTableColElement::additionalAttributeStyle()
 {
     if (!hasLocalName(colgroupTag))
         return 0;
-    ContainerNode* p = parentNode();
-    while (p && !p->hasTagName(tableTag))
-        p = p->parentNode();
-    if (!p)
-        return 0;
-    return static_cast<HTMLTableElement*>(p)->additionalGroupStyle(false);
+    if (HTMLTableElement* table = findParentTable())
+        return table->additionalGroupStyle(false);
+    return 0;
 }
 
 void HTMLTableColElement::setSpan(int n)

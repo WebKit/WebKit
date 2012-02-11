@@ -109,12 +109,9 @@ void HTMLTableCellElement::parseAttribute(Attribute* attr)
 
 StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()
 {
-    ContainerNode* p = parentNode();
-    while (p && !p->hasTagName(tableTag))
-        p = p->parentNode();
-    if (!p)
-        return 0;
-    return static_cast<HTMLTableElement*>(p)->additionalCellStyle();
+    if (HTMLTableElement* table = findParentTable())
+        return table->additionalCellStyle();
+    return 0;
 }
 
 bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const

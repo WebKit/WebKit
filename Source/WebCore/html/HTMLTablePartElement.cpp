@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTableElement.h"
 
 namespace WebCore {
 
@@ -84,6 +85,14 @@ void HTMLTablePartElement::parseAttribute(Attribute* attr)
             removeCSSProperty(CSSPropertyHeight);
     } else
         HTMLElement::parseAttribute(attr);
+}
+
+HTMLTableElement* HTMLTablePartElement::findParentTable() const
+{
+    ContainerNode* parent = parentNode();
+    while (parent && !parent->hasTagName(tableTag))
+        parent = parent->parentNode();
+    return static_cast<HTMLTableElement*>(parent);
 }
 
 }
