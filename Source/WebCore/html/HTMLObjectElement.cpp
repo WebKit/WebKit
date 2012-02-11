@@ -77,6 +77,14 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
     return renderPart(); // This will return 0 if the renderer is not a RenderPart.
 }
 
+void HTMLObjectElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == borderAttr)
+        applyBorderAttributeToStyle(attr, style);
+    else
+        HTMLPlugInImageElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLObjectElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == formAttr)
@@ -109,7 +117,7 @@ void HTMLObjectElement::parseAttribute(Attribute* attr)
     else if (attr->name() == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == borderAttr)
-        applyBorderAttribute(attr);
+        setNeedsAttributeStyleUpdate();
     else
         HTMLPlugInImageElement::parseAttribute(attr);
 }

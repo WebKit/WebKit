@@ -48,14 +48,36 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-void HTMLIFrameElement::parseAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttribute(Attribute* attr)
+{
+    return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == alignAttr || attr->name() == frameborderAttr;
+}
+
+void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == widthAttr)
-        addCSSLength(CSSPropertyWidth, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
     else if (attr->name() == heightAttr)
-        addCSSLength(CSSPropertyHeight, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
     else if (attr->name() == alignAttr)
-        addHTMLAlignment(attr);
+        applyAlignmentAttributeToStyle(attr, style);
+    else if (attr->name() == frameborderAttr) {
+        // Frame border doesn't really match the HTML4 spec definition for iframes. It simply adds
+        // a presentational hint that the border should be off if set to zero.
+        if (!attr->isNull() && !attr->value().toInt()) {
+            // Add a rule that nulls out our border width.
+            addHTMLLengthToStyle(style, CSSPropertyBorderWidth, "0"); // FIXME: Pass as integer.
+        }
+    } else {
+        ASSERT(!isRespectedPresentationAttribute(attr));
+        HTMLFrameElementBase::collectStyleForAttribute(attr, style);
+    }
+}
+
+void HTMLIFrameElement::parseAttribute(Attribute* attr)
+{
+    if (isRespectedPresentationAttribute(attr))
+        setNeedsAttributeStyleUpdate();
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
@@ -64,14 +86,6 @@ void HTMLIFrameElement::parseAttribute(Attribute* attr)
             document->addExtraNamedItem(newName);
         }
         m_name = newName;
-    } else if (attr->name() == frameborderAttr) {
-        // Frame border doesn't really match the HTML4 spec definition for iframes.  It simply adds
-        // a presentational hint that the border should be off if set to zero.
-        if (!attr->isNull() && !attr->value().toInt()) {
-            // Add a rule that nulls out our border width.
-            addCSSLength(CSSPropertyBorderWidth, "0");
-        } else
-            removeCSSProperty(CSSPropertyBorderWidth);
     } else if (attr->name() == sandboxAttr)
         setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
     else

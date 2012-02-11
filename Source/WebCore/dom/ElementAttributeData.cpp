@@ -53,11 +53,4 @@ void ElementAttributeData::destroyInlineStyleDecl()
     m_inlineStyleDecl = 0;
 }
 
-StylePropertySet* ElementAttributeData::ensureAttributeStyle(StyledElement* element)
-{
-    if (!m_attributeStyle)
-        m_attributeStyle = StylePropertySet::createAttributeStyle(element);
-    return m_attributeStyle.get();
-}
-
 }

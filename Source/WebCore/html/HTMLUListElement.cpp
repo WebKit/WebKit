@@ -47,13 +47,18 @@ PassRefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLUListElement(tagName, document));
 }
 
+void HTMLUListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == typeAttr)
+        style->setProperty(CSSPropertyListStyleType, attr->value());
+    else
+        HTMLElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLUListElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr)
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyListStyleType);
-        else
-            addCSSProperty(CSSPropertyListStyleType, attr->value());
+        setNeedsAttributeStyleUpdate();
     else
         HTMLElement::parseAttribute(attr);
 }

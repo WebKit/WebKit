@@ -1002,7 +1002,6 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
                 if (result.ranges.firstAuthorRule == -1)
                     result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
                 addMatchedDeclaration(attributeStyle);
-                result.isCacheable = false;
             }
         }
 

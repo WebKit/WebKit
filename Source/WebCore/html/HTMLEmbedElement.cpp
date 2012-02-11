@@ -74,6 +74,17 @@ RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings()
     return findWidgetRenderer(this);
 }
 
+void HTMLEmbedElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == hiddenAttr) {
+        if (equalIgnoringCase(attr->value(), "yes") || equalIgnoringCase(attr->value(), "true")) {
+            addHTMLLengthToStyle(style, CSSPropertyWidth, "0"); // FIXME: Pass as integer.
+            addHTMLLengthToStyle(style, CSSPropertyHeight, "0"); // FIXME: Pass as integer.
+        }
+    } else
+        HTMLPlugInImageElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLEmbedElement::parseAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
@@ -94,15 +105,9 @@ void HTMLEmbedElement::parseAttribute(Attribute* attr)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
-    } else if (attr->name() == hiddenAttr) {
-        if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {
-            // FIXME: Not dynamic, since we add this but don't remove it, but it may be OK for now
-            // that this rarely-used attribute won't work properly if you remove it.
-            addCSSLength(CSSPropertyWidth, "0");
-            addCSSLength(CSSPropertyHeight, "0");
-        } else
-            removeCSSProperties(CSSPropertyWidth, CSSPropertyHeight);
-    } else
+    } else if (attr->name() == hiddenAttr)
+        setNeedsAttributeStyleUpdate();
+    else
         HTMLPlugInImageElement::parseAttribute(attr);
 }
 

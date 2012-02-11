@@ -48,69 +48,63 @@ PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLHRElement(tagName, document));
 }
 
-void HTMLHRElement::parseAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttribute(Attribute* attr)
+{
+    return attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == colorAttr || attr->name() == noshadeAttr || attr->name() == sizeAttr;
+}
+
+void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == alignAttr) {
-        if (attr->value().isNull()) {
-            removeCSSProperties(CSSPropertyMarginLeft, CSSPropertyMarginRight);
-        } else if (equalIgnoringCase(attr->value(), "left")) {
-            addCSSProperty(CSSPropertyMarginLeft, "0");
-            addCSSProperty(CSSPropertyMarginRight, CSSValueAuto);
+        if (equalIgnoringCase(attr->value(), "left")) {
+            style->setProperty(CSSPropertyMarginLeft, "0"); // FIXME: Pass as integer.
+            style->setProperty(CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalIgnoringCase(attr->value(), "right")) {
-            addCSSProperty(CSSPropertyMarginLeft, CSSValueAuto);
-            addCSSProperty(CSSPropertyMarginRight, "0");
+            style->setProperty(CSSPropertyMarginLeft, CSSValueAuto);
+            style->setProperty(CSSPropertyMarginRight, "0"); // FIXME: Pass as integer.
         } else {
-            addCSSProperty(CSSPropertyMarginLeft, CSSValueAuto);
-            addCSSProperty(CSSPropertyMarginRight, CSSValueAuto);
+            style->setProperty(CSSPropertyMarginLeft, CSSValueAuto);
+            style->setProperty(CSSPropertyMarginRight, CSSValueAuto);
         }
     } else if (attr->name() == widthAttr) {
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyWidth);
-        else {
-            bool ok;
-            int v = attr->value().toInt(&ok);
-            if (ok && !v)
-                addCSSLength(CSSPropertyWidth, "1");
-            else
-                addCSSLength(CSSPropertyWidth, attr->value());
-        }
+        bool ok;
+        int v = attr->value().toInt(&ok);
+        if (ok && !v)
+            addHTMLLengthToStyle(style, CSSPropertyWidth, "1"); // FIXME: Pass as integer.
+        else
+            addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
     } else if (attr->name() == colorAttr) {
-        if (attr->value().isNull())
-            removeCSSProperties(CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle, CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle, CSSPropertyBorderColor, CSSPropertyBackgroundColor);
-        else {
-            addCSSProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
-            addCSSColor(CSSPropertyBorderColor, attr->value());
-            addCSSColor(CSSPropertyBackgroundColor, attr->value());
-        }
+        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+        addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == noshadeAttr) {
-        if (attr->value().isNull())
-            removeCSSProperties(CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle, CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle, CSSPropertyBorderColor, CSSPropertyBackgroundColor);
-        else {
-            addCSSProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-            addCSSProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
-            addCSSColor(CSSPropertyBorderColor, String("grey"));
-            addCSSColor(CSSPropertyBackgroundColor, String("grey"));
-        }
+        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+        addHTMLColorToStyle(style, CSSPropertyBorderColor, String("grey")); // FIXME: Pass as rgb() value.
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, String("grey")); // FIXME: Pass as rgb() value.
     } else if (attr->name() == sizeAttr) {
-        if (attr->value().isNull())
-            removeCSSProperties(CSSPropertyBorderBottomWidth, CSSPropertyHeight);
-        else {
-            StringImpl* si = attr->value().impl();
-            int size = si->toInt();
-            if (size <= 1) {
-                addCSSProperty(CSSPropertyBorderBottomWidth, String("0"));
-                removeCSSProperty(CSSPropertyHeight);
-            } else {
-                addCSSLength(CSSPropertyHeight, String::number(size-2));
-                removeCSSProperty(CSSPropertyBorderBottomWidth);
-            }
-        }
-    } else
+        StringImpl* si = attr->value().impl();
+        int size = si->toInt();
+        if (size <= 1)
+            style->setProperty(CSSPropertyBorderBottomWidth, String("0")); // FIXME: Pass as integer.
+        else
+            addHTMLLengthToStyle(style, CSSPropertyHeight, String::number(size - 2)); // FIXME: Pass as integer.
+    } else {
+        ASSERT(!isRespectedPresentationAttribute(attr));
+        HTMLElement::collectStyleForAttribute(attr, style);
+    }
+}
+
+void HTMLHRElement::parseAttribute(Attribute* attr)
+{
+    if (isRespectedPresentationAttribute(attr))
+        setNeedsAttributeStyleUpdate();
+    else
         HTMLElement::parseAttribute(attr);
 }
 

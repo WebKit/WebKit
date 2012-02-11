@@ -38,8 +38,8 @@ protected:
         : HTMLElement(tagName, document)
     {
     }
-
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     HTMLTableElement* findParentTable() const;
 };

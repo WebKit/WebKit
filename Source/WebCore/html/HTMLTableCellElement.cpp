@@ -75,34 +75,43 @@ int HTMLTableCellElement::cellIndex() const
     return index;
 }
 
+static inline bool isRespectedPresentationAttribute(Attribute* attr)
+{
+    return attr->name() == nowrapAttr || attr->name() == widthAttr || attr->name() == heightAttr;
+}
+
+void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == nowrapAttr) {
+        style->setProperty(CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
+    } else if (attr->name() == widthAttr) {
+        if (!attr->value().isEmpty()) {
+            int widthInt = attr->value().toInt();
+            if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
+                addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+        }
+    } else if (attr->name() == heightAttr) {
+        if (!attr->value().isEmpty()) {
+            int heightInt = attr->value().toInt();
+            if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
+                addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+        }
+    } else {
+        ASSERT(!isRespectedPresentationAttribute(attr));
+        HTMLTablePartElement::collectStyleForAttribute(attr, style);
+    }
+}
+
 void HTMLTableCellElement::parseAttribute(Attribute* attr)
 {
-    if (attr->name() == rowspanAttr) {
+    if (isRespectedPresentationAttribute(attr))
+        setNeedsAttributeStyleUpdate();
+    else if (attr->name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else if (attr->name() == colspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
-    } else if (attr->name() == nowrapAttr) {
-        if (attr->isNull())
-            removeCSSProperty(CSSPropertyWhiteSpace);
-        else
-            addCSSProperty(CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
-
-    } else if (attr->name() == widthAttr) {
-        if (!attr->value().isEmpty()) {
-            int widthInt = attr->value().toInt();
-            if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addCSSLength(CSSPropertyWidth, attr->value());
-        } else
-            removeCSSProperty(CSSPropertyWidth);
-    } else if (attr->name() == heightAttr) {
-        if (!attr->value().isEmpty()) {
-            int heightInt = attr->value().toInt();
-            if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addCSSLength(CSSPropertyHeight, attr->value());
-        } else
-            removeCSSProperty(CSSPropertyHeight);
     } else
         HTMLTablePartElement::parseAttribute(attr);
 }

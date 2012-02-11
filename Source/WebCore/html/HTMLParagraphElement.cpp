@@ -44,20 +44,26 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
-void HTMLParagraphElement::parseAttribute(Attribute* attr)
+void HTMLParagraphElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == alignAttr) {
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyTextAlign);
-        else if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitCenter);
+        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(attr->value(), "left"))
-            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitLeft);
+            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalIgnoringCase(attr->value(), "right"))
-            addCSSProperty(CSSPropertyTextAlign, CSSValueWebkitRight);
+            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(CSSPropertyTextAlign, attr->value());
+            style->setProperty(CSSPropertyTextAlign, attr->value());
     } else
+        HTMLElement::collectStyleForAttribute(attr, style);
+}
+
+void HTMLParagraphElement::parseAttribute(Attribute* attr)
+{
+    if (attr->name() == alignAttr)
+        setNeedsAttributeStyleUpdate();
+    else
         HTMLElement::parseAttribute(attr);
 }
 

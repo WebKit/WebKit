@@ -1,3 +1,206 @@
+2012-02-11  Andreas Kling  <awesomekling@apple.com>
+
+        Attribute styles should be created lazily.
+        <http://webkit.org/b/78381>
+
+        Reviewed by Antti Koivisto.
+
+        TL;DR summary: Lazily construct the StyledElement::attributeStyle() instead of
+        moving properties in/out of it in parseAttribute(). This allows us to enable
+        the matched declaration cache for elements with presentation attributes.
+
+        The matched declaration cache has been disabled for elements with presentation
+        attributes because attributeStyle() was mutable, and (simply put) the cache maps
+        a set of StylePropertySet pointers to a resulting RenderStyle. This requires
+        that the StylePropertySets are immutable.
+
+        To make them immutable, we now construct the attribute style lazily by adding
+        a flag (to Node) that gets set in parseAttribute() when a presentation attribute
+        respected by the element changes. A subsequent call to attributeStyle() checks
+        the flag and rebuilds the style by looping over the attributes and calling the
+        new virtual StyledElement::collectStyleForAttribute() on each one. Any dangling
+        references to the previous attribute style will be garbage collected by the
+        cache in CSSStyleSelector::sweepMatchedDeclarationCache().
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+
+            Enable matched declaration cache for elements with attribute style.
+
+        * dom/Node.h:
+        (WebCore::Node::attributeStyleDirty):
+        (WebCore::Node::setAttributeStyleDirty):
+        (WebCore::Node::clearAttributeStyleDirty):
+
+            Add a Node flag to signify that a presentation attribute has changed and
+            the attribute style needs to be rebuilt.
+
+        * dom/ElementAttributeData.h:
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::setAttributeStyle):
+
+            Added a setter for the attribute style, called by updateAttributeStyle().
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addHTMLLengthToStyle):
+        (WebCore::StyledElement::addHTMLColorToStyle):
+
+            Moved and renamed two of the old addCSS* helpers from StyledElement.
+
+        (WebCore::StyledElement::updateAttributeStyle):
+
+            Called by attributeStyle() in case the "attribute style dirty" flag is
+            set. Rebuilds the attribute style from scratch by looping over the
+            attribute map and calling collectStyleForAttribute() on each attribute.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::collectStyleForAttribute):
+        (WebCore::StyledElement::attributeStyle):
+        (WebCore::StyledElement::setNeedsAttributeStyleUpdate):
+
+            Helper, sets the attribute style dirty flag and marks the element for
+            full style recalc. This is what parseAttribute() calls in subclasses
+            when they encounter a presentation attribute.
+
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::collectStyleForAttribute):
+        (WebCore::HTMLBRElement::parseAttribute):
+        * html/HTMLBRElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLBodyElement::collectStyleForAttribute):
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/HTMLBodyElement.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::collectStyleForAttribute):
+        (WebCore::HTMLDivElement::parseAttribute):
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::collectStyleForAttribute):
+        (WebCore::HTMLElement::parseAttribute):
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectStyleForAttribute):
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::collectStyleForAttribute):
+        (WebCore::HTMLFontElement::parseAttribute):
+        * html/HTMLFontElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::collectStyleForAttribute):
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLHRElement::collectStyleForAttribute):
+        (WebCore::HTMLHRElement::parseAttribute):
+        * html/HTMLHRElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForAttribute):
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLImageElement::collectStyleForAttribute):
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLInputElement::collectStyleForAttribute):
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::collectStyleForAttribute):
+        (WebCore::HTMLLIElement::parseAttribute):
+        * html/HTMLLIElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLMarqueeElement::collectStyleForAttribute):
+        (WebCore::HTMLMarqueeElement::parseAttribute):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::collectStyleForAttribute):
+        (WebCore::HTMLOListElement::parseAttribute):
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::collectStyleForAttribute):
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLObjectElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::collectStyleForAttribute):
+        (WebCore::HTMLParagraphElement::parseAttribute):
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLPlugInElement::collectStyleForAttribute):
+        (WebCore::HTMLPlugInElement::parseAttribute):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::collectStyleForAttribute):
+        (WebCore::HTMLPreElement::parseAttribute):
+        * html/HTMLPreElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::collectStyleForAttribute):
+        (WebCore::HTMLTableCaptionElement::parseAttribute):
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLTableCellElement::collectStyleForAttribute):
+        (WebCore::HTMLTableCellElement::parseAttribute):
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::collectStyleForAttribute):
+        (WebCore::HTMLTableColElement::parseAttribute):
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::getBordersFromFrameAttributeValue):
+        (WebCore::HTMLTableElement::collectStyleForAttribute):
+        (WebCore::HTMLTableElement::parseAttribute):
+        * html/HTMLTableElement.h:
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::HTMLTablePartElement::collectStyleForAttribute):
+        (WebCore::HTMLTablePartElement::parseAttribute):
+        * html/HTMLTablePartElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::collectStyleForAttribute):
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::collectStyleForAttribute):
+        (WebCore::HTMLUListElement::parseAttribute):
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::collectStyleForAttribute):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * html/HTMLVideoElement.h:
+        * mathml/MathMLElement.cpp:
+        (WebCore::isRespectedPresentationAttribute):
+        (WebCore::MathMLElement::collectStyleForAttribute):
+        (WebCore::MathMLElement::parseAttribute):
+        * mathml/MathMLElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::collectStyleForAttribute):
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::collectStyleForAttribute):
+        (WebCore::SVGStyledElement::parseAttribute):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::collectStyleForAttribute):
+        (WebCore::SVGTextContentElement::parseAttribute):
+        * svg/SVGTextContentElement.h:
+
+            Split handling of presentation attributes between parseAttribute() and
+            collectStyleForAttribute() as appropriate. Some minor refactorings here and
+            there (mostly in HTMLTableElement) to avoid excessive code duplication.
+            Also sprinkled FIXMEs about inefficiencies we should clean up.
+
 2012-02-11   Arko Saha  <arko@motorola.com>
 
         HTML 5: Support click() method on HTMLElement.

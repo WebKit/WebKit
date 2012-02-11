@@ -67,6 +67,8 @@ private:
     HTMLObjectElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
+
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
 

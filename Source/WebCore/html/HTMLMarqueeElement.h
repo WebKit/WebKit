@@ -54,6 +54,7 @@ private:
     HTMLMarqueeElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     // ActiveDOMObject
     virtual bool canSuspend() const;

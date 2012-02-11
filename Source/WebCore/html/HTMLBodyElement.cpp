@@ -25,6 +25,7 @@
 #include "HTMLBodyElement.h"
 
 #include "Attribute.h"
+#include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
 #include "EventNames.h"
@@ -60,46 +61,42 @@ HTMLBodyElement::~HTMLBodyElement()
 {
 }
 
-void HTMLBodyElement::parseAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttribute(Attribute* attr)
+{
+    return attr->name() == backgroundAttr || attr->name() == marginwidthAttr || attr->name() == leftmarginAttr || attr->name() == marginheightAttr || attr->name() == topmarginAttr || attr->name() == bgcolorAttr || attr->name() == textAttr || attr->name() == bgpropertiesAttr;
+
+}
+
+void HTMLBodyElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(CSSPropertyBackgroundImage, document()->completeURL(url).string());
-        else
-            removeCSSProperty(CSSPropertyBackgroundImage);
+            style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {
-        if (attr->value().isNull())
-            removeCSSProperties(CSSPropertyMarginRight, CSSPropertyMarginLeft);
-        else {
-            addCSSLength(CSSPropertyMarginRight, attr->value());
-            addCSSLength(CSSPropertyMarginLeft, attr->value());
-        }
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attr->value());
     } else if (attr->name() == marginheightAttr || attr->name() == topmarginAttr) {
-        if (attr->value().isNull())
-            removeCSSProperties(CSSPropertyMarginBottom, CSSPropertyMarginTop);
-        else {
-            addCSSLength(CSSPropertyMarginBottom, attr->value());
-            addCSSLength(CSSPropertyMarginTop, attr->value());
-        }
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attr->value());
     } else if (attr->name() == bgcolorAttr) {
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyBackgroundColor);
-        else
-            addCSSColor(CSSPropertyBackgroundColor, attr->value());
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == textAttr) {
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyColor);
-        else
-            addCSSColor(CSSPropertyColor, attr->value());
+        addHTMLColorToStyle(style, CSSPropertyColor, attr->value());
     } else if (attr->name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attr->value(), "fixed"))
-            addCSSProperty(CSSPropertyBackgroundAttachment, CSSValueFixed);
-        else
-            removeCSSProperty(CSSPropertyBackgroundAttachment);
-    } else if (attr->name() == vlinkAttr ||
-               attr->name() == alinkAttr ||
-               attr->name() == linkAttr) {
+           style->setProperty(CSSPropertyBackgroundAttachment, CSSValueFixed);
+    } else {
+        ASSERT(!isRespectedPresentationAttribute(attr));
+        HTMLElement::collectStyleForAttribute(attr, style);
+    }
+}
+
+void HTMLBodyElement::parseAttribute(Attribute* attr)
+{
+    if (isRespectedPresentationAttribute(attr))
+        setNeedsAttributeStyleUpdate();
+    else if (attr->name() == vlinkAttr || attr->name() == alinkAttr || attr->name() == linkAttr) {
         if (attr->isNull()) {
             if (attr->name() == linkAttr)
                 document()->resetLinkColor();

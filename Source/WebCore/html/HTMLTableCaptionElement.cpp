@@ -44,15 +44,21 @@ PassRefPtr<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const Qualif
     return adoptRef(new HTMLTableCaptionElement(tagName, document));
 }
 
-void HTMLTableCaptionElement::parseAttribute(Attribute* attr)
+void HTMLTableCaptionElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == alignAttr) {
-        if (!attr->value().isEmpty())
-            addCSSProperty(CSSPropertyCaptionSide, attr->value());
-        else
-            removeCSSProperty(CSSPropertyCaptionSide);
+        if (!attr->isEmpty())
+            style->setProperty(CSSPropertyCaptionSide, attr->value());
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::collectStyleForAttribute(attr, style); // Note that we are bypassing HTMLTablePartElement here.
+}
+
+void HTMLTableCaptionElement::parseAttribute(Attribute* attr)
+{
+    if (attr->name() == alignAttr)
+        setNeedsAttributeStyleUpdate();
+    else
+        HTMLElement::parseAttribute(attr); // Note that we are bypassing HTMLTablePartElement here.
 }
 
 }

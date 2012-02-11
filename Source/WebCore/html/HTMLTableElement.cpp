@@ -26,6 +26,7 @@
 #include "HTMLTableElement.h"
 
 #include "Attribute.h"
+#include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -266,102 +267,119 @@ static bool setTableCellsChanged(Node* n)
     return cellChanged;
 }
 
+static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& borderTop, bool& borderRight, bool& borderBottom, bool& borderLeft)
+{
+    borderTop = false;
+    borderRight = false;
+    borderBottom = false;
+    borderLeft = false;
+
+    if (equalIgnoringCase(value, "above"))
+        borderTop = true;
+    else if (equalIgnoringCase(value, "below"))
+        borderBottom = true;
+    else if (equalIgnoringCase(value, "hsides"))
+        borderTop = borderBottom = true;
+    else if (equalIgnoringCase(value, "vsides"))
+        borderLeft = borderRight = true;
+    else if (equalIgnoringCase(value, "lhs"))
+        borderLeft = true;
+    else if (equalIgnoringCase(value, "rhs"))
+        borderRight = true;
+    else if (equalIgnoringCase(value, "box") || equalIgnoringCase(value, "border"))
+        borderTop = borderBottom = borderLeft = borderRight = true;
+    else if (!equalIgnoringCase(value, "void"))
+        return false;
+    return true;
+}
+
+void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+    else if (attr->name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+    else if (attr->name() == borderAttr) {
+        int border = attr->isEmpty() ? 1 : attr->value().toInt();
+        addHTMLLengthToStyle(style, CSSPropertyBorderWidth, String::number(border)); // FIXME: Pass as integer.
+    } else if (attr->name() == bordercolorAttr) {
+        if (!attr->isEmpty())
+            addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
+    } else if (attr->name() == bgcolorAttr)
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
+    else if (attr->name() == backgroundAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+        if (!url.isEmpty())
+            style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
+    } else if (attr->name() == valignAttr) {
+        if (!attr->isEmpty())
+            style->setProperty(CSSPropertyVerticalAlign, attr->value());
+    } else if (attr->name() == cellspacingAttr) {
+        if (!attr->isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attr->value());
+    } else if (attr->name() == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attr->value());
+    } else if (attr->name() == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
+    } else if (attr->name() == alignAttr) {
+        if (!attr->value().isEmpty()) {
+            if (equalIgnoringCase(attr->value(), "center")) {
+                style->setProperty(CSSPropertyWebkitMarginStart, CSSValueAuto);
+                style->setProperty(CSSPropertyWebkitMarginEnd, CSSValueAuto);
+            } else
+                style->setProperty(CSSPropertyFloat, attr->value());
+        }
+    } else if (attr->name() == rulesAttr) {
+        // The presence of a valid rules attribute causes border collapsing to be enabled.
+        if (m_rulesAttr != UnsetRules)
+            style->setProperty(CSSPropertyBorderCollapse, CSSValueCollapse);
+    } else if (attr->name() == frameAttr) {
+        bool borderTop;
+        bool borderRight;
+        bool borderBottom;
+        bool borderLeft;
+        if (getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft)) {
+            style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
+            style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
+            style->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin);
+            style->setProperty(CSSPropertyBorderRightWidth, CSSValueThin);
+            style->setProperty(CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
+            style->setProperty(CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
+            style->setProperty(CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
+            style->setProperty(CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
+        }
+    } else
+        HTMLElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLTableElement::parseAttribute(Attribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (attr->name() == widthAttr)
-        if (attr->isNull())
-            removeCSSProperty(CSSPropertyWidth);
-        else
-            addCSSLength(CSSPropertyWidth, attr->value());
-    else if (attr->name() == heightAttr)
-        if (attr->isNull())
-            removeCSSProperty(CSSPropertyHeight);
-        else
-            addCSSLength(CSSPropertyHeight, attr->value());
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == valignAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == cellspacingAttr)
+        setNeedsAttributeStyleUpdate();
     else if (attr->name() == borderAttr)  {
+        // FIXME: This attribute is a mess.
         m_borderAttr = true;
-
-        if (attr->isNull())
-            removeCSSProperty(CSSPropertyBorderWidth);
-        else {
-            int border = 0;
-            if (attr->isEmpty())
-                border = 1;
-            else
-                border = attr->value().toInt();
+        if (!attr->isNull()) {
+            int border = attr->isEmpty() ? 1 : attr->value().toInt();
             m_borderAttr = border;
-            addCSSLength(CSSPropertyBorderWidth, String::number(border));
         }
-    } else if (attr->name() == bgcolorAttr)
-        if (attr->isNull())
-            removeCSSProperty(CSSPropertyBackgroundColor);
-        else
-            addCSSColor(CSSPropertyBackgroundColor, attr->value());
-    else if (attr->name() == bordercolorAttr) {
+        setNeedsAttributeStyleUpdate();
+    } else if (attr->name() == bordercolorAttr) {
         m_borderColorAttr = !attr->isEmpty();
-        if (!attr->isEmpty())
-            addCSSColor(CSSPropertyBorderColor, attr->value());
-        else
-            removeCSSProperty(CSSPropertyBorderColor);
-    } else if (attr->name() == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
-        if (!url.isEmpty())
-            addCSSImageProperty(CSSPropertyBackgroundImage, document()->completeURL(url).string());
-        else
-            removeCSSProperty(CSSPropertyBackgroundImage);
+        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == frameAttr) {
-        // Cache the value of "frame" so that the table can examine it later.
-        m_frameAttr = false;
-        
-        // Whether or not to hide the top/right/bottom/left borders.
-        const int cTop = 0;
-        const int cRight = 1;
-        const int cBottom = 2;
-        const int cLeft = 3;
-        bool borders[4] = { false, false, false, false };
-        
-        // void, above, below, hsides, vsides, lhs, rhs, box, border
-        if (equalIgnoringCase(attr->value(), "void"))
-            m_frameAttr = true;
-        else if (equalIgnoringCase(attr->value(), "above")) {
-            m_frameAttr = true;
-            borders[cTop] = true;
-        } else if (equalIgnoringCase(attr->value(), "below")) {
-            m_frameAttr = true;
-            borders[cBottom] = true;
-        } else if (equalIgnoringCase(attr->value(), "hsides")) {
-            m_frameAttr = true;
-            borders[cTop] = borders[cBottom] = true;
-        } else if (equalIgnoringCase(attr->value(), "vsides")) {
-            m_frameAttr = true;
-            borders[cLeft] = borders[cRight] = true;
-        } else if (equalIgnoringCase(attr->value(), "lhs")) {
-            m_frameAttr = true;
-            borders[cLeft] = true;
-        } else if (equalIgnoringCase(attr->value(), "rhs")) {
-            m_frameAttr = true;
-            borders[cRight] = true;
-        } else if (equalIgnoringCase(attr->value(), "box") ||
-                   equalIgnoringCase(attr->value(), "border")) {
-            m_frameAttr = true;
-            borders[cTop] = borders[cBottom] = borders[cLeft] = borders[cRight] = true;
-        }
-        
-        // Now map in the border styles of solid and hidden respectively.
-        if (m_frameAttr) {
-            addCSSProperty(CSSPropertyBorderTopWidth, CSSValueThin);
-            addCSSProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
-            addCSSProperty(CSSPropertyBorderLeftWidth, CSSValueThin);
-            addCSSProperty(CSSPropertyBorderRightWidth, CSSValueThin);
-            addCSSProperty(CSSPropertyBorderTopStyle, borders[cTop] ? CSSValueSolid : CSSValueHidden);
-            addCSSProperty(CSSPropertyBorderBottomStyle, borders[cBottom] ? CSSValueSolid : CSSValueHidden);
-            addCSSProperty(CSSPropertyBorderLeftStyle, borders[cLeft] ? CSSValueSolid : CSSValueHidden);
-            addCSSProperty(CSSPropertyBorderRightStyle, borders[cRight] ? CSSValueSolid : CSSValueHidden);
-        } else
-            removeCSSProperties(CSSPropertyBorderTopWidth, CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth, CSSPropertyBorderRightWidth, CSSPropertyBorderTopStyle, CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle, CSSPropertyBorderRightStyle);
+        // FIXME: This attribute is a mess.
+        bool borderTop;
+        bool borderRight;
+        bool borderBottom;
+        bool borderLeft;
+        m_frameAttr = getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft);
+        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == rulesAttr) {
         m_rulesAttr = UnsetRules;
         if (equalIgnoringCase(attr->value(), "none"))
@@ -374,17 +392,8 @@ void HTMLTableElement::parseAttribute(Attribute* attr)
             m_rulesAttr = ColsRules;
         if (equalIgnoringCase(attr->value(), "all"))
             m_rulesAttr = AllRules;
-        
-        // The presence of a valid rules attribute causes border collapsing to be enabled.
-        if (m_rulesAttr != UnsetRules)
-            addCSSProperty(CSSPropertyBorderCollapse, CSSValueCollapse);
-        else
-            removeCSSProperty(CSSPropertyBorderCollapse);
-    } else if (attr->name() == cellspacingAttr) {
-        if (!attr->value().isEmpty())
-            addCSSLength(CSSPropertyBorderSpacing, attr->value());
-        else
-            removeCSSProperty(CSSPropertyBorderSpacing);
+
+        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == cellpaddingAttr) {
         if (!attr->value().isEmpty())
             m_padding = max(0, attr->value().toInt());
@@ -392,34 +401,6 @@ void HTMLTableElement::parseAttribute(Attribute* attr)
             m_padding = 1;
     } else if (attr->name() == colsAttr) {
         // ###
-    } else if (attr->name() == vspaceAttr) {
-        if (attr->isNull())
-            removeCSSProperties(CSSPropertyMarginTop, CSSPropertyMarginBottom);
-        else {
-            addCSSLength(CSSPropertyMarginTop, attr->value());
-            addCSSLength(CSSPropertyMarginBottom, attr->value());
-        }
-    } else if (attr->name() == hspaceAttr) {
-        if (attr->isNull())
-            removeCSSProperties(CSSPropertyMarginLeft, CSSPropertyMarginRight);
-        else {
-            addCSSLength(CSSPropertyMarginLeft, attr->value());
-            addCSSLength(CSSPropertyMarginRight, attr->value());
-        }
-    } else if (attr->name() == alignAttr) {
-        if (!attr->value().isEmpty()) {
-            if (equalIgnoringCase(attr->value(), "center")) {
-                addCSSProperty(CSSPropertyWebkitMarginStart, CSSValueAuto);
-                addCSSProperty(CSSPropertyWebkitMarginEnd, CSSValueAuto);
-            } else
-                addCSSProperty(CSSPropertyFloat, attr->value());
-        } else
-            removeCSSProperties(CSSPropertyWebkitMarginStart, CSSPropertyWebkitMarginEnd, CSSPropertyFloat);
-    } else if (attr->name() == valignAttr) {
-        if (!attr->value().isEmpty())
-            addCSSProperty(CSSPropertyVerticalAlign, attr->value());
-        else
-            removeCSSProperty(CSSPropertyVerticalAlign);
     } else
         HTMLElement::parseAttribute(attr);
 

@@ -292,12 +292,17 @@ bool SVGStyledElement::isAnimatableCSSProperty(const QualifiedName& attrName)
     return cssPropertyToTypeMap().contains(attrName);
 }
 
+void SVGStyledElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    int propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
+    if (propertyID > 0)
+        style->setProperty(propertyID, attr->value());
+}
+
 void SVGStyledElement::parseAttribute(Attribute* attr)
 {
-    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
-    if (propId > 0) {
-        addCSSProperty(propId, attr->value());
-        setNeedsStyleRecalc();
+    if (SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name()) > 0) {
+        setNeedsAttributeStyleUpdate();
         return;
     }
     

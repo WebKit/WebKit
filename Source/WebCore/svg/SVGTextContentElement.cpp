@@ -228,6 +228,20 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
+void SVGTextContentElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (!isSupportedAttribute(attr->name()))
+        SVGStyledElement::collectStyleForAttribute(attr, style);
+    else if (attr->name().matches(XMLNames::spaceAttr)) {
+        DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
+
+        if (attr->value() == preserveString)
+            style->setProperty(CSSPropertyWhiteSpace, CSSValuePre);
+        else
+            style->setProperty(CSSPropertyWhiteSpace, CSSValueNowrap);
+    }
+}
+
 void SVGTextContentElement::parseAttribute(Attribute* attr)
 {
     SVGParsingError parseError = NoError;
@@ -243,14 +257,8 @@ void SVGTextContentElement::parseAttribute(Attribute* attr)
     } else if (SVGTests::parseAttribute(attr)
                || SVGExternalResourcesRequired::parseAttribute(attr)) {
     } else if (SVGLangSpace::parseAttribute(attr)) {
-        if (attr->name().matches(XMLNames::spaceAttr)) {
-            DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
-
-            if (attr->value() == preserveString)
-                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePre);
-            else
-                addCSSProperty(CSSPropertyWhiteSpace, CSSValueNowrap);
-        }
+        if (attr->name().matches(XMLNames::spaceAttr))
+            setNeedsAttributeStyleUpdate();
     } else
         ASSERT_NOT_REACHED();
 

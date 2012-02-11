@@ -117,7 +117,21 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     setInnerTextValue(value());
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
-    
+
+void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == wrapAttr) {
+        if (shouldWrapText()) {
+            style->setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
+            style->setProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+        } else {
+            style->setProperty(CSSPropertyWhiteSpace, CSSValuePre);
+            style->setProperty(CSSPropertyWordWrap, CSSValueNormal);
+        }
+    } else
+        HTMLTextFormControlElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLTextAreaElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
@@ -150,14 +164,7 @@ void HTMLTextAreaElement::parseAttribute(Attribute* attr)
             wrap = SoftWrap;
         if (wrap != m_wrap) {
             m_wrap = wrap;
-
-            if (shouldWrapText()) {
-                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
-                addCSSProperty(CSSPropertyWordWrap, CSSValueBreakWord);
-            } else {
-                addCSSProperty(CSSPropertyWhiteSpace, CSSValuePre);
-                addCSSProperty(CSSPropertyWordWrap, CSSValueNormal);
-            }
+            setNeedsAttributeStyleUpdate();
 
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();

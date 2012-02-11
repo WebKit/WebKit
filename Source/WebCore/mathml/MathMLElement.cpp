@@ -48,29 +48,44 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
     return adoptRef(new MathMLElement(tagName, document));
 }
 
-void MathMLElement::parseAttribute(Attribute* attr)
+static inline bool isRespectedPresentationAttribute(Attribute* attr)
+{
+    return attr->name() == mathbackgroundAttr || attr->name() == mathsizeAttr || attr->name() == mathcolorAttr || attr->name() == fontsizeAttr || attr->name() == backgroundAttr || attr->name() == colorAttr || attr->name() == fontstyleAttr || attr->name() == fontweightAttr || attr->name() == fontfamilyAttr;
+}
+
+void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == mathbackgroundAttr)
-        addCSSProperty(CSSPropertyBackgroundColor, attr->value());
+        style->setProperty(CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == mathsizeAttr) {
         // The following three values of mathsize are handled in WebCore/css/mathml.css
         if (attr->value() != "normal" && attr->value() != "small" && attr->value() != "big")
-            addCSSProperty(CSSPropertyFontSize, attr->value());
+            style->setProperty(CSSPropertyFontSize, attr->value());
     } else if (attr->name() == mathcolorAttr)
-        addCSSProperty(CSSPropertyColor, attr->value());
+        style->setProperty(CSSPropertyColor, attr->value());
     // FIXME: deprecated attributes that should loose in a conflict with a non deprecated attribute
     else if (attr->name() == fontsizeAttr)
-        addCSSProperty(CSSPropertyFontSize, attr->value());
+        style->setProperty(CSSPropertyFontSize, attr->value());
     else if (attr->name() == backgroundAttr)
-        addCSSProperty(CSSPropertyBackgroundColor, attr->value());
+        style->setProperty(CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == colorAttr)
-        addCSSProperty(CSSPropertyColor, attr->value());
+        style->setProperty(CSSPropertyColor, attr->value());
     else if (attr->name() == fontstyleAttr)
-        addCSSProperty(CSSPropertyFontStyle, attr->value());
+        style->setProperty(CSSPropertyFontStyle, attr->value());
     else if (attr->name() == fontweightAttr)
-        addCSSProperty(CSSPropertyFontWeight, attr->value());
+        style->setProperty(CSSPropertyFontWeight, attr->value());
     else if (attr->name() == fontfamilyAttr)
-        addCSSProperty(CSSPropertyFontFamily, attr->value());
+        style->setProperty(CSSPropertyFontFamily, attr->value());
+    else {
+        ASSERT(!isRespectedPresentationAttribute(attr));
+        StyledElement::collectStyleForAttribute(attr, style);
+    }
+}
+
+void MathMLElement::parseAttribute(Attribute* attr)
+{
+    if (isRespectedPresentationAttribute(attr))
+        setNeedsAttributeStyleUpdate();
     else
         StyledElement::parseAttribute(attr);
 }

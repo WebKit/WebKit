@@ -54,6 +54,7 @@ private:
     void recalculateItemCount();
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     int m_start;
     unsigned m_itemCount;

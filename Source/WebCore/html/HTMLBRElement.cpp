@@ -48,20 +48,26 @@ PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLBRElement(tagName, document));
 }
 
-void HTMLBRElement::parseAttribute(Attribute* attr)
+void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == clearAttr) {
-        // If the string is empty, then don't add the clear property. 
+        // If the string is empty, then don't add the clear property.
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyClear);
-        else if (!attr->value().isEmpty()) {
+        if (!attr->isEmpty()) {
             if (equalIgnoringCase(attr->value(), "all"))
-                addCSSProperty(CSSPropertyClear, "both");
+                style->setProperty(CSSPropertyClear, "both");
             else
-                addCSSProperty(CSSPropertyClear, attr->value());
+                style->setProperty(CSSPropertyClear, attr->value());
         }
     } else
+        HTMLElement::collectStyleForAttribute(attr, style);
+}
+
+void HTMLBRElement::parseAttribute(Attribute* attr)
+{
+    if (attr->name() == clearAttr)
+        setNeedsAttributeStyleUpdate();
+    else
         HTMLElement::parseAttribute(attr);
 }
 

@@ -47,6 +47,14 @@ PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName&
     return adoptRef(new HTMLTableColElement(tagName, document));
 }
 
+void HTMLTableColElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+    else
+        HTMLTablePartElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLTableColElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == spanAttr) {
@@ -54,16 +62,15 @@ void HTMLTableColElement::parseAttribute(Attribute* attr)
         if (renderer() && renderer()->isTableCol())
             renderer()->updateFromElement();
     } else if (attr->name() == widthAttr) {
+        setNeedsAttributeStyleUpdate();
         if (!attr->value().isEmpty()) {
-            addCSSLength(CSSPropertyWidth, attr->value());
             if (renderer() && renderer()->isTableCol()) {
                 RenderTableCol* col = toRenderTableCol(renderer());
                 int newWidth = width().toInt();
                 if (newWidth != col->width())
                     col->setNeedsLayoutAndPrefWidthsRecalc();
             }
-        } else
-            removeCSSProperty(CSSPropertyWidth);
+        }
     } else
         HTMLTablePartElement::parseAttribute(attr);
 }

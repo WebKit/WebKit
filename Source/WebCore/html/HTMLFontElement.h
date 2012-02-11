@@ -38,6 +38,7 @@ private:
     HTMLFontElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 };
 
 } // namespace

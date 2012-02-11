@@ -300,6 +300,7 @@ public:
     virtual bool sheetLoaded() { return true; }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
+    bool attributeStyleDirty() const { return getFlag(AttributeStyleDirtyFlag); }
     bool hasName() const { return getFlag(HasNameFlag); }
     bool hasID() const { return getFlag(HasIDFlag); }
     bool hasClass() const { return getFlag(HasClassFlag); }
@@ -314,6 +315,9 @@ public:
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool isLink() const { return getFlag(IsLinkFlag); }
+
+    void setAttributeStyleDirty() { setFlag(AttributeStyleDirtyFlag); }
+    void clearAttributeStyleDirty() { clearFlag(AttributeStyleDirtyFlag); }
 
     void setHasName(bool f) { setFlag(f, HasNameFlag); }
     void setHasID(bool f) { setFlag(f, HasIDFlag); }
@@ -675,6 +679,8 @@ private:
         HasCustomStyleForRendererFlag = 1 << 29,
 
         HasNameFlag = 1 << 30,
+
+        AttributeStyleDirtyFlag = 1 << 31,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag

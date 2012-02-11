@@ -658,9 +658,41 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     m_inputType->accessKeyAction(sendMouseEvents);
 }
 
+static inline bool isRespectedPresentationAttribute(HTMLInputElement* element, Attribute* attr)
+{
+    return attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == heightAttr || (attr->name() == borderAttr && element->isImageButton());
+}
+
+void HTMLInputElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attr->value());
+    } else if (attr->name() == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attr->value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
+    } else if (attr->name() == alignAttr) {
+        if (m_inputType->shouldRespectAlignAttribute())
+            applyAlignmentAttributeToStyle(attr, style);
+    } else if (attr->name() == widthAttr) {
+        if (m_inputType->shouldRespectHeightAndWidthAttributes())
+            addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+    } else if (attr->name() == heightAttr) {
+        if (m_inputType->shouldRespectHeightAndWidthAttributes())
+            addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+    } else if (attr->name() == borderAttr && isImageButton())
+        applyBorderAttributeToStyle(attr, style);
+    else {
+        ASSERT(!isRespectedPresentationAttribute(this, attr));
+        return HTMLTextFormControlElement::collectStyleForAttribute(attr, style);
+    }
+}
+
 void HTMLInputElement::parseAttribute(Attribute* attr)
 {
-    if (attr->name() == nameAttr) {
+    if (isRespectedPresentationAttribute(this, attr))
+        setNeedsAttributeStyleUpdate();
+    else if (attr->name() == nameAttr) {
         checkedRadioButtons().removeButton(this);
         m_name = attr->value();
         checkedRadioButtons().addButton(this);
@@ -713,29 +745,6 @@ void HTMLInputElement::parseAttribute(Attribute* attr)
         m_inputType->srcAttributeChanged();
     else if (attr->name() == usemapAttr || attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
-    } else if (attr->name() == vspaceAttr) {
-        addCSSLength(CSSPropertyMarginTop, attr->value());
-        addCSSLength(CSSPropertyMarginBottom, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addCSSLength(CSSPropertyMarginLeft, attr->value());
-        addCSSLength(CSSPropertyMarginRight, attr->value());
-    } else if (attr->name() == alignAttr) {
-        if (m_inputType->shouldRespectAlignAttribute())
-            addHTMLAlignment(attr);
-        else
-            removeHTMLAlignment();
-    } else if (attr->name() == widthAttr) {
-        if (m_inputType->shouldRespectHeightAndWidthAttributes())
-            addCSSLength(CSSPropertyWidth, attr->value());
-        else
-            removeCSSProperty(CSSPropertyWidth);
-    } else if (attr->name() == heightAttr) {
-        if (m_inputType->shouldRespectHeightAndWidthAttributes())
-            addCSSLength(CSSPropertyHeight, attr->value());
-        else
-            removeCSSProperty(CSSPropertyHeight);
-    } else if (attr->name() == borderAttr && isImageButton()) {
-        applyBorderAttribute(attr);
     } else if (attr->name() == onsearchAttr) {
         // Search field and slider attributes all just cause updateFromElement to be called through style recalcing.
         setAttributeEventListener(eventNames().searchEvent, createAttributeEventListener(this, attr));

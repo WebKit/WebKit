@@ -49,27 +49,33 @@ PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLLIElement(tagName, document));
 }
 
+void HTMLLIElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == typeAttr) {
+        if (attr->value() == "a")
+            style->setProperty(CSSPropertyListStyleType, CSSValueLowerAlpha);
+        else if (attr->value() == "A")
+            style->setProperty(CSSPropertyListStyleType, CSSValueUpperAlpha);
+        else if (attr->value() == "i")
+            style->setProperty(CSSPropertyListStyleType, CSSValueLowerRoman);
+        else if (attr->value() == "I")
+            style->setProperty(CSSPropertyListStyleType, CSSValueUpperRoman);
+        else if (attr->value() == "1")
+            style->setProperty(CSSPropertyListStyleType, CSSValueDecimal);
+        else
+            style->setProperty(CSSPropertyListStyleType, attr->value());
+    } else
+        HTMLElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLLIElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == valueAttr) {
         if (renderer() && renderer()->isListItem())
             parseValue(attr->value());
-    } else if (attr->name() == typeAttr) {
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyListStyleType);
-        else if (attr->value() == "a")
-            addCSSProperty(CSSPropertyListStyleType, CSSValueLowerAlpha);
-        else if (attr->value() == "A")
-            addCSSProperty(CSSPropertyListStyleType, CSSValueUpperAlpha);
-        else if (attr->value() == "i")
-            addCSSProperty(CSSPropertyListStyleType, CSSValueLowerRoman);
-        else if (attr->value() == "I")
-            addCSSProperty(CSSPropertyListStyleType, CSSValueUpperRoman);
-        else if (attr->value() == "1")
-            addCSSProperty(CSSPropertyListStyleType, CSSValueDecimal);
-        else
-            addCSSProperty(CSSPropertyListStyleType, attr->value());
-    } else
+    } else if (attr->name() == typeAttr)
+        setNeedsAttributeStyleUpdate();
+    else
         HTMLElement::parseAttribute(attr);
 }
 

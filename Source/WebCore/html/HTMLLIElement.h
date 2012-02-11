@@ -36,6 +36,7 @@ private:
     HTMLLIElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     virtual void attach();
 

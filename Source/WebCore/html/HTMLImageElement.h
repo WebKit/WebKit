@@ -84,6 +84,7 @@ protected:
 
 private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

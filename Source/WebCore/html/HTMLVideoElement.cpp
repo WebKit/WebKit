@@ -95,6 +95,16 @@ void HTMLVideoElement::detach()
         m_imageLoader.clear();
 }
 
+void HTMLVideoElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+{
+    if (attr->name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+    else if (attr->name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+    else
+        HTMLMediaElement::collectStyleForAttribute(attr, style);
+}
+
 void HTMLVideoElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
@@ -115,16 +125,8 @@ void HTMLVideoElement::parseAttribute(Attribute* attr)
                 toRenderImage(renderer())->imageResource()->setCachedImage(0); 
         }
 #endif
-    } else if (attrName == widthAttr)
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyWidth);
-        else
-            addCSSLength(CSSPropertyWidth, attr->value());
-    else if (attrName == heightAttr)
-        if (attr->value().isNull())
-            removeCSSProperty(CSSPropertyHeight);
-        else
-            addCSSLength(CSSPropertyHeight, attr->value());
+    } else if (attrName == widthAttr || attrName == heightAttr)
+        setNeedsAttributeStyleUpdate();
     else
         HTMLMediaElement::parseAttribute(attr);
 }
