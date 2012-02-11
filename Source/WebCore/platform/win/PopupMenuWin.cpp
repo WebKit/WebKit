@@ -536,12 +536,12 @@ bool PopupMenuWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        ScrollableArea::scrollToYOffsetWithoutAnimation(index);
+        ScrollableArea::scrollToOffsetWithoutAnimation(0, index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        ScrollableArea::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
+        ScrollableArea::scrollToOffsetWithoutAnimation(0, index - visibleItems() + 1);
         return true;
     }
 

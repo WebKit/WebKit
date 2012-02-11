@@ -1,3 +1,10 @@
+2012-02-10  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+
 2012-02-10  Adam Klein  <adamk@chromium.org>
 
         Enable MUTATION_OBSERVERS by default on all platforms
