@@ -1,45 +1,29 @@
+<!DOCTYPE HTML>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
 <style> 
 body         {font-size: 12px;}
 #control     {font: normal 400 80%/2.5 sans-serif;}
 #calc-reduce {font: normal 400 -webkit-calc(80%)/2.5 sans-serif;}
 </style>
 
-<div>
+<div id="test-container">
 <span id="control">The font size and line height of these lines should be identical</span>
 <hr/>
-<span id="calc-reduce">The font size and line height of these lines should be identical</span>
+<span class="fonttest" id="calc-reduce">The font size and line height of these lines should be identical</span>
 </div>
 <hr/>
-<div id="results"></div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-var controlHeight = getComputedStyle(document.getElementById("control"), null).lineHeight;
-var controlSize = getComputedStyle(document.getElementById("control"), null).fontSize;
+description("Tests that CSS3 calc() can be used with the font property using fractional sizes");
 
-var spans = document.getElementsByTagName("span");
-var sameHeight = true;
-var sameSize = true;
+var spans = document.getElementsByClassName("fonttest");
 for (var i = 0; i < spans.length; ++i) {
     var current = spans[i];
-    if (sameHeight)
-        sameHeight = getComputedStyle(current, null).lineHeight == controlHeight;
-    if (sameSize)
-        sameSize = getComputedStyle(current, null).fontSize == controlSize;
+    shouldBeEqualToString('getComputedStyle(document.getElementById("' + current.id + '"), null).lineHeight', getComputedStyle(document.getElementById("control"), null).lineHeight);
+    shouldBeEqualToString('getComputedStyle(document.getElementById("' + current.id + '"), null).fontSize', getComputedStyle(document.getElementById("control"), null).fontSize);
 }
 
-var results = document.getElementById("results");
-if (sameHeight && sameSize) {
-    results.style.color = "green";
-    results.innerHTML = "PASS";
-} else {
-    results.style.color = "red";
-    results.innerHTML = "FAIL";    
-    if (!sameHeight)
-        results.innerHTML += "<p>Line heights do not match</p>";
-    if (!sameSize)
-        results.innerHTML += "<p>Font sizes do not match</p>";
-}
-
+if (window.layoutTestController)
+    document.body.removeChild(document.getElementById("test-container"));
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

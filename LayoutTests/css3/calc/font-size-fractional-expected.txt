@@ -1,6 +1,11 @@
-The font size and line height of these lines should be identical
-The font size and line height of these lines should be identical
-FAIL
-Line heights do not match
+Tests that CSS3 calc() can be used with the font property using fractional sizes
 
-Font sizes do not match
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL getComputedStyle(document.getElementById("calc-reduce"), null).lineHeight should be 24px. Was normal.
+FAIL getComputedStyle(document.getElementById("calc-reduce"), null).fontSize should be 10px. Was 12px.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
