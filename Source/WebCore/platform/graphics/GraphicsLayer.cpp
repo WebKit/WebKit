@@ -298,7 +298,7 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const I
         LayoutRect clipRect(clip);
         clipRect.move(offset);
 
-        m_client->paintContents(this, context, m_paintingPhase, clipRect);
+        m_client->paintContents(this, context, m_paintingPhase, pixelSnappedIntRect(clipRect));
     }
 #ifndef NDEBUG
     s_inPaintContents = false;

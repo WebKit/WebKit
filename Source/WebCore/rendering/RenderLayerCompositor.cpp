@@ -481,7 +481,7 @@ LayoutRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* l
         LayoutPoint ancestorRelOffset;
         layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
         boundingBoxRect.moveBy(ancestorRelOffset);
-        return boundingBoxRect;
+        return pixelSnappedIntRect(boundingBoxRect);
     }
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {
@@ -536,7 +536,7 @@ LayoutRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* l
     layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
     unionBounds.moveBy(ancestorRelOffset);
 
-    return unionBounds;
+    return pixelSnappedIntRect(unionBounds);
 }
 
 void RenderLayerCompositor::layerWasAdded(RenderLayer* /*parent*/, RenderLayer* /*child*/)

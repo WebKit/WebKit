@@ -673,7 +673,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             RoundedRect border = getBackgroundRoundedRect(backgroundRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance), box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
             context->fillRoundedRect(border, bgColor, style()->colorSpace());
         } else
-            context->fillRect(rect, bgColor, style()->colorSpace());
+            context->fillRect(pixelSnappedIntRect(rect), bgColor, style()->colorSpace());
         
         return;
     }
@@ -717,7 +717,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be.  It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
-        LayoutRect maskRect = rect;
+        IntRect maskRect = pixelSnappedIntRect(rect);
         maskRect.intersect(paintInfo.rect);
         
         // Now create the mask.
@@ -777,7 +777,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
-        LayoutRect backgroundRect(scrolledPaintRect);
+        IntRect backgroundRect(pixelSnappedIntRect(scrolledPaintRect));
         backgroundRect.intersect(paintInfo.rect);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
         Color baseColor;
@@ -1064,7 +1064,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         } else
             positioningAreaSize = LayoutSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
     } else {
-        geometry.setDestRect(viewRect());
+        geometry.setDestRect(pixelSnappedIntRect(viewRect()));
         positioningAreaSize = geometry.destRect().size();
     }
 
@@ -1933,7 +1933,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
 
     graphicsContext->setStrokeStyle(NoStroke);
     graphicsContext->setFillColor(color, style->colorSpace());
-    graphicsContext->drawRect(borderRect);
+    graphicsContext->drawRect(pixelSnappedIntRect(borderRect));
 }
 #else
 void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rect, const RenderStyle* style,
@@ -2634,7 +2634,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 if (!rectToClipOut.isEmpty())
                     context->clipOutRoundedRect(rectToClipOut);
 
-                RoundedRect influenceRect(shadowRect, border.radii());
+                RoundedRect influenceRect(pixelSnappedIntRect(shadowRect), border.radii());
                 influenceRect.expandRadii(2 * shadowBlur + shadowSpread);
                 if (allCornersClippedOut(influenceRect, info.rect))
                     context->fillRect(fillRect.rect(), Color::black, s->colorSpace());
@@ -2658,7 +2658,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 }
 
                 if (!rectToClipOut.isEmpty())
-                    context->clipOut(rectToClipOut);
+                    context->clipOut(pixelSnappedIntRect(rectToClipOut));
                 context->fillRect(fillRect.rect(), Color::black, s->colorSpace());
             }
         } else {
@@ -2693,7 +2693,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
             LayoutRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
-            RoundedRect roundedHole(holeRect, border.radii());
+            RoundedRect roundedHole(pixelSnappedIntRect(holeRect), border.radii());
 
             GraphicsContextStateSaver stateSaver(*context);
             if (hasBorderRadius) {
@@ -2713,7 +2713,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             else
                 context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
 
-            context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
+            context->fillRectWithRoundedHole(pixelSnappedIntRect(outerRect), roundedHole, fillColor, s->colorSpace());
         }
     }
 }

@@ -416,16 +416,16 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
     
     // We compute everything relative to the enclosing compositing layer.
-    LayoutRect ancestorCompositingBounds;
+    IntRect ancestorCompositingBounds;
     if (compAncestor) {
         ASSERT(compAncestor->backing());
-        ancestorCompositingBounds = compAncestor->backing()->compositedBounds();
+        ancestorCompositingBounds = pixelSnappedIntRect(compAncestor->backing()->compositedBounds());
     }
 
-    LayoutRect localCompositingBounds = compositedBounds();
+    IntRect localCompositingBounds = pixelSnappedIntRect(compositedBounds());
 
-    LayoutRect relativeCompositingBounds(localCompositingBounds);
-    LayoutPoint delta;
+    IntRect relativeCompositingBounds(localCompositingBounds);
+    IntPoint delta;
     m_owningLayer->convertToLayerCoords(compAncestor, delta);
     relativeCompositingBounds.moveBy(delta);
 
@@ -433,7 +433,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
-        LayoutRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
+        IntRect clippingBox = pixelSnappedIntRect(clipBox(toRenderBox(compAncestor->renderer())));
         graphicsLayerParentLocation = clippingBox.location();
     } else if (compAncestor)
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
@@ -444,7 +444,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this
         // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
         // for a compositing layer, rootLayer is the layer itself.
-        LayoutRect parentClipRect = m_owningLayer->backgroundClipRect(compAncestor, 0, true).rect(); // FIXME: Incorrect for CSS regions.
+        IntRect parentClipRect = pixelSnappedIntRect(m_owningLayer->backgroundClipRect(compAncestor, 0, true).rect()); // FIXME: Incorrect for CSS regions.
         ASSERT(parentClipRect != PaintInfo::infiniteRect());
         m_ancestorClippingLayer->setPosition(FloatPoint() + (parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
@@ -457,7 +457,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setPosition(FloatPoint() + (relativeCompositingBounds.location() - graphicsLayerParentLocation));
-    m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - LayoutPoint());
+    m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - IntPoint());
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
@@ -470,9 +470,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     // If we have a layer that clips children, position it.
-    LayoutRect clippingBox;
+    IntRect clippingBox;
     if (m_clippingLayer) {
-        clippingBox = clipBox(toRenderBox(renderer()));
+        clippingBox = pixelSnappedIntRect(clipBox(toRenderBox(renderer())));
         m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
         m_clippingLayer->setSize(clippingBox.size());
         m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - LayoutPoint());
@@ -488,10 +488,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
     
     if (m_owningLayer->hasTransform()) {
-        const LayoutRect borderBox = toRenderBox(renderer())->borderBoxRect();
+        const IntRect borderBox = pixelSnappedIntRect(toRenderBox(renderer())->borderBoxRect());
 
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
-        LayoutRect layerBounds = LayoutRect(delta, borderBox.size());
+        IntRect layerBounds = IntRect(delta, borderBox.size());
 
         // Update properties that depend on layer dimensions
         FloatPoint3D transformOrigin = computeTransformOrigin(borderBox);
@@ -524,12 +524,12 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (m_foregroundLayer) {
         FloatPoint foregroundPosition;
         FloatSize foregroundSize = newSize;
-        LayoutSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
+        IntSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
         if (m_clippingLayer) {
             // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
             // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
             foregroundSize = FloatSize(clippingBox.size());
-            foregroundOffset = clippingBox.location() - LayoutPoint();
+            foregroundOffset = clippingBox.location() - IntPoint();
         }
 
         m_foregroundLayer->setPosition(foregroundPosition);
@@ -548,7 +548,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         reflectionBacking->graphicsLayer()->setReplicatedLayerPosition(FloatPoint() + (layerBounds.location() - reflectionLayerBounds.location()));
     }
 
-    m_graphicsLayer->setContentsRect(contentsBox());
+    m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
     updateDrawsContent();
     updateAfterWidgetResize();
 }
@@ -1134,7 +1134,7 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
     context.translate(-scrollbarRect.x(), -scrollbarRect.y());
     LayoutRect transformedClip = clip;
     transformedClip.moveBy(scrollbarRect.location());
-    scrollbar->paint(&context, transformedClip);
+    scrollbar->paint(&context, pixelSnappedIntRect(transformedClip));
     context.restore();
 }
 

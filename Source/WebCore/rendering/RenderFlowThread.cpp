@@ -445,7 +445,7 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     LayoutRect regionClippingRect(paintOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
 
     PaintInfo info(paintInfo);
-    info.rect.intersect(regionClippingRect);
+    info.rect.intersect(pixelSnappedIntRect(regionClippingRect));
 
     if (!info.rect.isEmpty()) {
         context->save();

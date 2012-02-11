@@ -1678,7 +1678,7 @@ IntRect Range::boundingBox()
     const size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         result.unite(rects[i]);
-    return result;
+    return pixelSnappedIntRect(result);
 }
 
 void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed)

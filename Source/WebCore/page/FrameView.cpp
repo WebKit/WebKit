@@ -1789,7 +1789,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
         if (m_repaintCount == cRepaintRectUnionThreshold) {
             IntRect unionedRect;
             for (unsigned i = 0; i < cRepaintRectUnionThreshold; ++i)
-                unionedRect.unite(m_repaintRects[i]);
+                unionedRect.unite(pixelSnappedIntRect(m_repaintRects[i]));
             m_repaintRects.clear();
             m_repaintRects.append(unionedRect);
         }
@@ -1904,11 +1904,11 @@ void FrameView::doDeferredRepaints()
     for (unsigned i = 0; i < size; i++) {
 #if USE(TILED_BACKING_STORE)
         if (frame()->tiledBackingStore()) {
-            frame()->tiledBackingStore()->invalidate(m_repaintRects[i]);
+            frame()->tiledBackingStore()->invalidate(pixelSnappedIntRect(m_repaintRects[i]));
             continue;
         }
 #endif
-        ScrollView::repaintContentRectangle(m_repaintRects[i], false);
+        ScrollView::repaintContentRectangle(pixelSnappedIntRect(m_repaintRects[i]), false);
     }
     m_repaintRects.clear();
     m_repaintCount = 0;

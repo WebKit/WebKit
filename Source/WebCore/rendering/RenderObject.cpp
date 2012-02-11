@@ -965,7 +965,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
                 // this matters for rects in transformed contexts.
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
+                graphicsContext->drawRect(pixelSnappedIntRect(LayoutRect(x1, y1, x2 - x1, y2 - y1)));
                 graphicsContext->setShouldAntialias(wasAntialiased);
                 graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;
@@ -1110,7 +1110,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const LayoutRect& rec
     const AtomicString& href = static_cast<Element*>(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    context->setURLForRect(n->document()->completeURL(href), rect);
+    context->setURLForRect(n->document()->completeURL(href), pixelSnappedIntRect(rect));
 }
 
 void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRect& paintRect)
