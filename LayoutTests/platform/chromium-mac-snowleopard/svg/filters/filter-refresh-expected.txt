@@ -16,7 +16,7 @@ layer at (0,0) size 300x400
             {blue: type="LINEAR" slope="0.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
             {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
           [SourceGraphic]
-      RenderSVGRect {rect} at (0,10) size 30x30 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
+      RenderSVGRect {rect} at (0,10) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
     RenderSVGContainer {g} at (10,50) size 166x156
       RenderSVGContainer {g} at (10,50) size 36x36
         [filter="simple"] RenderSVGResourceFilter {filter} at (10,50) size 36x36
@@ -88,7 +88,8 @@ layer at (0,0) size 300x400
               RenderSVGRect {rect} at (90,170) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=30.00] [height=30.00]
       RenderSVGContainer {g} at (140,60) size 36x36
         [filter="simple"] RenderSVGResourceFilter {filter} at (140,60) size 36x36
-        RenderSVGRect {rect} at (140,60) size 30x30 [fill={[type=SOLID] [color=#FF0000]}] [x=140.00] [y=60.00] [width=30.00] [height=30.00]
-      RenderSVGRect {rect} at (140,100) size 30x30 [fill={[type=SOLID] [color=#FF0000]}] [x=140.00] [y=100.00] [width=30.00] [height=30.00]
-      RenderSVGRect {rect} at (140,140) size 36x36 [fill={[type=SOLID] [color=#FF0000]}] [x=140.00] [y=140.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (140,60) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=140.00] [y=60.00] [width=30.00] [height=30.00]
+      RenderSVGRect {rect} at (140,100) size 36x36 [fill={[type=SOLID] [color=#FF0000]}] [x=140.00] [y=100.00] [width=30.00] [height=30.00]
+        [filter="toGreen"] RenderSVGResourceFilter {filter} at (140,100) size 36x36
+      RenderSVGRect {rect} at (140,140) size 36x36 [fill={[type=SOLID] [color=#008000]}] [x=140.00] [y=140.00] [width=30.00] [height=30.00]
         [filter="simple"] RenderSVGResourceFilter {filter} at (140,140) size 36x36

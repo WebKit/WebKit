@@ -3569,6 +3569,7 @@ BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
+BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
