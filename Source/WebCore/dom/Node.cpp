@@ -1759,11 +1759,13 @@ bool Node::isEqualNode(Node* other) const
         NamedNodeMap* attributes = toElement(this)->updatedAttributes();
         NamedNodeMap* otherAttributes = toElement(other)->updatedAttributes();
 
-        if (attributes && !attributes->mapsEquivalent(otherAttributes))
-            return false;
-
-        if (otherAttributes && !otherAttributes->mapsEquivalent(attributes))
-            return false;
+        if (attributes) {
+            if (!attributes->mapsEquivalent(otherAttributes))
+                return false;
+        } else if (otherAttributes) {
+            if (!otherAttributes->mapsEquivalent(attributes))
+                return false;
+        }
     }
     
     Node* child = firstChild();

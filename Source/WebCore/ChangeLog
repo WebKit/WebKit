@@ -1,5 +1,25 @@
 2012-02-11  Andreas Kling  <awesomekling@apple.com>
 
+        Node.isEqualNode() compares attributes twice.
+        <http://webkit.org/b/78414>
+
+        Reviewed by Anders Carlsson.
+
+        A single pass across the attribute maps should be enough for anyone.
+
+        Added a test verifying correct behavior of Node.isEqualNode() when comparing
+        two elements, one of which has had attributes that were all removed,
+        resulting in an empty but non-null NamedNodeMap hanging off of the element.
+        Note that this change is not fixing a regression, I'm just adding the test
+        since I came close to introducing a bug here.
+
+        Test: fast/dom/isEqualNode-after-removeAttribute.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::isEqualNode):
+
+2012-02-11  Andreas Kling  <awesomekling@apple.com>
+
         HTMLTablePartElement: Add helper method to find parent table.
         <http://webkit.org/b/78413>
 
