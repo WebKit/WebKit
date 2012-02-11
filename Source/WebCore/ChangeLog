@@ -1,3 +1,10 @@
+2012-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+
 2012-02-08  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Enable CSS filters on composited layers.
