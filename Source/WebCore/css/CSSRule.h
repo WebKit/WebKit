@@ -49,10 +49,12 @@ public:
         MEDIA_RULE,
         FONT_FACE_RULE,
         PAGE_RULE,
-        // 7 used to be VARIABLES_RULE
-        WEBKIT_KEYFRAMES_RULE = 8,
+        // 7 was VARIABLES_RULE; we now match other browsers with 7 as
+        // KEYFRAMES_RULE:
+        // <https://bugs.webkit.org/show_bug.cgi?id=71293>.
+        WEBKIT_KEYFRAMES_RULE,
         WEBKIT_KEYFRAME_RULE,
-        WEBKIT_REGION_RULE
+        WEBKIT_REGION_RULE = 10
     };
 
     Type type() const { return static_cast<Type>(m_type); }
