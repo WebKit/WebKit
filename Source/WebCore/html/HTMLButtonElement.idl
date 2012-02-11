@@ -44,7 +44,9 @@ module html {
         boolean checkValidity();
         void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void click();
+#endif
 
         readonly attribute NodeList labels;
     };

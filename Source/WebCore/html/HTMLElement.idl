@@ -88,6 +88,8 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString titleDisplayString;
 #endif
+
+        void click();
     };
 
 }

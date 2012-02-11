@@ -1,3 +1,18 @@
+2012-02-11   Arko Saha  <arko@motorola.com>
+
+        HTML 5: Support click() method on HTMLElement.
+        https://bugs.webkit.org/show_bug.cgi?id=27880
+
+        Reviewed by Timothy Hatcher.
+
+        Test: fast/dom/click-method-on-html-element.html
+
+        * bindings/objc/PublicDOMInterfaces.h: Added click() method in DOMHTMLElement
+        with availability macro AVAILABLE_AFTER_WEBKIT_VERSION_5_1.
+        * html/HTMLButtonElement.idl: Moved click() method under LANGUAGE_OBJECTIVE_C.
+        * html/HTMLElement.idl: Added click() IDL method.
+        * html/HTMLInputElement.idl: Moved click() method under LANGUAGE_OBJECTIVE_C.
+
 2012-02-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GStreamer] html5test.com says that gstreamer ports do not support WebM for audio
