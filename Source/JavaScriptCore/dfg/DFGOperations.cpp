@@ -611,6 +611,70 @@ void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(Exec
         stubInfo.seen = true;
 }
 
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdStrictBuildList);
+void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue baseValue(base);
+    PutPropertySlot slot(true);
+    
+    baseValue.put(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    dfgBuildPutByIdList(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+}
+
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdNonStrictBuildList);
+void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue baseValue(base);
+    PutPropertySlot slot(false);
+    
+    baseValue.put(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    dfgBuildPutByIdList(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+}
+
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictBuildList);
+void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    JSValue value = JSValue::decode(encodedValue);
+    PutPropertySlot slot(true);
+    
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    dfgBuildPutByIdList(exec, base, *propertyName, slot, stubInfo, Direct);
+}
+
+V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictBuildList);
+void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    JSValue value = JSValue::decode(encodedValue);
+    PutPropertySlot slot(false);
+    
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    dfgBuildPutByIdList(exec, base, *propertyName, slot, stubInfo, Direct);
+}
+
 size_t DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSGlobalData* globalData = &exec->globalData();

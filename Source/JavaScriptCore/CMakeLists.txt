@@ -44,6 +44,7 @@ SET(JavaScriptCore_SOURCES
     bytecode/MethodCallLinkInfo.cpp
     bytecode/MethodCallLinkStatus.cpp
     bytecode/Opcode.cpp
+    bytecode/PolymorphicPutByIdList.cpp
     bytecode/PredictedType.cpp
     bytecode/PutByIdStatus.cpp
     bytecode/SamplingTool.cpp

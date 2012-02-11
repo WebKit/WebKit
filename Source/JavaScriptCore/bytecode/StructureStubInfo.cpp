@@ -27,6 +27,7 @@
 #include "StructureStubInfo.h"
 
 #include "JSObject.h"
+#include "PolymorphicPutByIdList.h"
 #include "ScopeChain.h"
 
 namespace JSC {
@@ -45,6 +46,9 @@ void StructureStubInfo::deref()
         delete polymorphicStructures;
         return;
     }
+    case access_put_by_id_list:
+        delete u.putByIdList.list;
+        return;
     case access_get_by_id_self:
     case access_get_by_id_proto:
     case access_get_by_id_chain:
@@ -82,18 +86,14 @@ bool StructureStubInfo::visitWeakReferences()
         break;
     case access_get_by_id_self_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
-        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize)) {
-            delete polymorphicStructures;
+        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize))
             return false;
-        }
         break;
     }
     case access_get_by_id_proto_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize)) {
-            delete polymorphicStructures;
+        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize))
             return false;
-        }
         break;
     }
     case access_put_by_id_transition_normal:
@@ -105,6 +105,10 @@ bool StructureStubInfo::visitWeakReferences()
         break;
     case access_put_by_id_replace:
         if (!Heap::isMarked(u.putByIdReplace.baseObjectStructure.get()))
+            return false;
+        break;
+    case access_put_by_id_list:
+        if (!u.putByIdList.list->visitWeak())
             return false;
         break;
     default:

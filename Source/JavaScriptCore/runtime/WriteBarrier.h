@@ -73,6 +73,13 @@ public:
         validateCell(value);
         setEarlyValue(globalData, owner, value);
     }
+    
+    // This is meant to be used like operator=, but is called copyFrom instead, in
+    // order to kindly inform the C++ compiler that its advice is not appreciated.
+    void copyFrom(const WriteBarrierBase<T>& other)
+    {
+        m_cell = other.m_cell;
+    }
 
     void setMayBeNull(JSGlobalData& globalData, const JSCell* owner, T* value)
     {

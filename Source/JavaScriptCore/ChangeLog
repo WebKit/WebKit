@@ -1,3 +1,96 @@
+2012-02-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have polymorphic put_by_id caching
+        https://bugs.webkit.org/show_bug.cgi?id=78062
+        <rdar://problem/10326439> <rdar://problem/10824839>
+
+        Reviewed by Oliver Hunt.
+        
+        Implemented polymorphic put_by_id caching in the DFG, and added much of the
+        machinery that would be needed to implement it in the old JIT as well.
+        
+        I decided against using the old PolymorphicAccessStructureList mechanism as
+        this didn't quite fit with put_by_id. In particular, I wanted the ability to
+        have one list that captured all relevant cases (including proto put_by_id
+        if we ever decided to do it). And I wanted the code to have better
+        encapsulation. And I didn't want to get confused by the fact that the
+        original (non-list) put_by_id cache may itself consist of a stub routine.
+        
+        This code is still sub-optimal (for example adding a replace to a list whose
+        previous elements are all transitions should just repatch the original code,
+        but here it will generate a stub) but it already generates a >20% speed-up
+        on V8-splay, leading to a 2% win overall in splay. Neutral elsewhere.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/PolymorphicPutByIdList.cpp: Added.
+        (JSC):
+        (JSC::PutByIdAccess::fromStructureStubInfo):
+        (JSC::PutByIdAccess::visitWeak):
+        (JSC::PolymorphicPutByIdList::PolymorphicPutByIdList):
+        (JSC::PolymorphicPutByIdList::from):
+        (JSC::PolymorphicPutByIdList::~PolymorphicPutByIdList):
+        (JSC::PolymorphicPutByIdList::isFull):
+        (JSC::PolymorphicPutByIdList::isAlmostFull):
+        (JSC::PolymorphicPutByIdList::addAccess):
+        (JSC::PolymorphicPutByIdList::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h: Added.
+        (JSC):
+        (PutByIdAccess):
+        (JSC::PutByIdAccess::PutByIdAccess):
+        (JSC::PutByIdAccess::transition):
+        (JSC::PutByIdAccess::replace):
+        (JSC::PutByIdAccess::isSet):
+        (JSC::PutByIdAccess::operator!):
+        (JSC::PutByIdAccess::type):
+        (JSC::PutByIdAccess::isTransition):
+        (JSC::PutByIdAccess::isReplace):
+        (JSC::PutByIdAccess::oldStructure):
+        (JSC::PutByIdAccess::structure):
+        (JSC::PutByIdAccess::newStructure):
+        (JSC::PutByIdAccess::chain):
+        (JSC::PutByIdAccess::stubRoutine):
+        (PolymorphicPutByIdList):
+        (JSC::PolymorphicPutByIdList::currentSlowPathTarget):
+        (JSC::PolymorphicPutByIdList::isEmpty):
+        (JSC::PolymorphicPutByIdList::size):
+        (JSC::PolymorphicPutByIdList::at):
+        (JSC::PolymorphicPutByIdList::operator[]):
+        (JSC::PolymorphicPutByIdList::kind):
+        * bytecode/PutKind.h: Added.
+        (JSC):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC):
+        (JSC::isPutByIdAccess):
+        (JSC::StructureStubInfo::initPutByIdList):
+        (StructureStubInfo):
+        (JSC::StructureStubInfo::reset):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        (DFG):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::appropriateGenericPutByIdFunction):
+        (JSC::DFG::appropriateListBuildingPutByIdFunction):
+        (DFG):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::dfgRepatchPutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        (JSC::DFG::dfgBuildPutByIdList):
+        (JSC::DFG::dfgResetPutByID):
+        * dfg/DFGRepatch.h:
+        (DFG):
+        * runtime/WriteBarrier.h:
+        (WriteBarrierBase):
+        (JSC::WriteBarrierBase::copyFrom):
+
 2012-02-10  Vineet Chaudhary  <rgf748@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72756

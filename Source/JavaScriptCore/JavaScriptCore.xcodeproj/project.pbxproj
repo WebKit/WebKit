@@ -102,6 +102,9 @@
 		0F963B2D13F854020002D9B2 /* MetaAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B2F13FC66BB0002D9B2 /* MetaAllocatorHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */; };
+		0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBC0AE71496C7C400D4FBDD /* DFGExitProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */; };
 		0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBD7E691447999600481315 /* CodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBD7E671447998F00481315 /* CodeOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -896,6 +899,9 @@
 		0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaAllocator.cpp; sourceTree = "<group>"; };
 		0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
+		0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolymorphicPutByIdList.cpp; sourceTree = "<group>"; };
+		0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolymorphicPutByIdList.h; sourceTree = "<group>"; };
+		0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutKind.h; sourceTree = "<group>"; };
 		0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFGExitProfile.cpp; sourceTree = "<group>"; };
 		0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFGExitProfile.h; sourceTree = "<group>"; };
 		0FBD7E671447998F00481315 /* CodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeOrigin.h; sourceTree = "<group>"; };
@@ -2553,6 +2559,9 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */,
+				0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */,
+				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
 				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
 				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
 				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
@@ -3128,6 +3137,8 @@
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGNodeReferenceBlob.h in Headers */,
 				0F66E16C14DF3F1600B7B2E4 /* DFGNodeUse.h in Headers */,
+				0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */,
+				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3674,6 +3685,7 @@
 				86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */,
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
+				0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

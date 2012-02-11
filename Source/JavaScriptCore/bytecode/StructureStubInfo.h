@@ -26,6 +26,8 @@
 #ifndef StructureStubInfo_h
 #define StructureStubInfo_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
@@ -36,6 +38,8 @@
 
 namespace JSC {
 
+    class PolymorphicPutByIdList;
+
     enum AccessType {
         access_get_by_id_self,
         access_get_by_id_proto,
@@ -45,6 +49,7 @@ namespace JSC {
         access_put_by_id_transition_normal,
         access_put_by_id_transition_direct,
         access_put_by_id_replace,
+        access_put_by_id_list,
         access_unset,
         access_get_by_id_generic,
         access_put_by_id_generic,
@@ -75,6 +80,7 @@ namespace JSC {
         case access_put_by_id_transition_normal:
         case access_put_by_id_transition_direct:
         case access_put_by_id_replace:
+        case access_put_by_id_list:
         case access_put_by_id_generic:
             return true;
         default:
@@ -149,10 +155,16 @@ namespace JSC {
             u.putByIdReplace.baseObjectStructure.set(globalData, owner, baseObjectStructure);
         }
         
+        void initPutByIdList(PolymorphicPutByIdList* list)
+        {
+            accessType = access_put_by_id_list;
+            u.putByIdList.list = list;
+        }
+        
         void reset()
         {
             accessType = access_unset;
-            
+            deref();
             stubRoutine = MacroAssemblerCodeRef();
         }
 
@@ -227,6 +239,9 @@ namespace JSC {
             struct {
                 WriteBarrierBase<Structure> baseObjectStructure;
             } putByIdReplace;
+            struct {
+                PolymorphicPutByIdList* list;
+            } putByIdList;
         } u;
 
         MacroAssemblerCodeRef stubRoutine;

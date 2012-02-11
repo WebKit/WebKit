@@ -26,10 +26,12 @@
 #ifndef DFGRepatch_h
 #define DFGRepatch_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGJITCompiler.h>
-#include <dfg/DFGOperations.h>
+#include "DFGJITCompiler.h"
+#include "DFGOperations.h"
 
 namespace JSC { namespace DFG {
 
@@ -37,6 +39,7 @@ void dfgRepatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlo
 void dfgBuildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void dfgBuildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
+void dfgBuildPutByIdList(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void dfgLinkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr, CodeSpecializationKind);
 void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&);
 void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);

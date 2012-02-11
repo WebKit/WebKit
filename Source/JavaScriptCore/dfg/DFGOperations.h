@@ -28,15 +28,14 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGJITCompiler.h>
+#include "DFGJITCompiler.h"
+#include "PutKind.h"
 
 namespace JSC {
 
 struct GlobalResolveInfo;
 
 namespace DFG {
-
-enum PutKind { Direct, NotDirect };
 
 extern "C" {
 
@@ -130,6 +129,10 @@ void DFG_OPERATION operationPutByIdStrictOptimize(ExecState*, EncodedJSValue enc
 void DFG_OPERATION operationPutByIdNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
 void DFG_OPERATION operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
 void DFG_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdStrictBuildList(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdNonStrictBuildList(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectStrictBuildList(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
 size_t DFG_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 size_t DFG_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
