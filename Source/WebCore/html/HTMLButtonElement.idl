@@ -30,6 +30,9 @@ module html {
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute [Reflect] DOMString name;

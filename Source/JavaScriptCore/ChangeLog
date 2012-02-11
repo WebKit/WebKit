@@ -1,3 +1,13 @@
+2012-02-10  Vineet Chaudhary  <rgf748@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72756
+        DOMHTMLElement’s accessKey property is declared as available in WebKit version that didn’t have it 
+
+        Reviewed by Timothy Hatcher.
+
+        * API/WebKitAvailability.h: Added AVAILABLE_AFTER_WEBKIT_VERSION_5_1 and
+          AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1 for the new versions.
+
 2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing windows build

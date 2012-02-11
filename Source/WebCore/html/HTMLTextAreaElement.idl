@@ -40,6 +40,9 @@ module html {
         attribute [TreatNullAs=NullString] DOMString value;
         readonly attribute unsigned long textLength;
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
         void select();
 
         readonly attribute boolean willValidate;

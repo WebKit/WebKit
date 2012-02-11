@@ -901,4 +901,23 @@
 #endif
 
 
+
+
+
+
+/*
+ * AVAILABLE_AFTER_WEBKIT_VERSION_5_1
+ * 
+ * Used on functions introduced after WebKit 5.1
+ */
+#define AVAILABLE_AFTER_WEBKIT_VERSION_5_1
+
+/* AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1
+ *
+ * Used on declarations introduced in WebKit 1.3,
+ * but later deprecated after WebKit 5.1
+ */
+#define AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1
+
+
 #endif /* __WebKitAvailability__ */

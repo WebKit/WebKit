@@ -331,6 +331,7 @@
 @end
 
 @interface DOMHTMLAnchorElement : DOMHTMLElement WEBKIT_VERSION_1_3
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(copy) NSString *charset;
 @property(copy) NSString *coords;
 @property(copy) NSString *href;
@@ -367,6 +368,7 @@
 @end
 
 @interface DOMHTMLAreaElement : DOMHTMLElement WEBKIT_VERSION_1_3
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(copy) NSString *alt;
 @property(copy) NSString *coords;
 @property(copy) NSString *href;
@@ -408,6 +410,7 @@
 @end
 
 @interface DOMHTMLButtonElement : DOMHTMLElement WEBKIT_VERSION_1_3
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(readonly, retain) DOMHTMLFormElement *form;
 @property BOOL disabled;
 @property(copy) NSString *name;
@@ -468,7 +471,7 @@
 @end
 
 @interface DOMHTMLElement : DOMElement WEBKIT_VERSION_1_3
-@property(copy) NSString *accessKey;
+@property(copy) NSString *accessKey AVAILABLE_AFTER_WEBKIT_VERSION_5_1;
 @property(copy) NSString *title;
 @property(copy) NSString *idName;
 @property(copy) NSString *lang;
@@ -601,6 +604,7 @@
 @property BOOL defaultChecked;
 @property(readonly, retain) DOMHTMLFormElement *form;
 @property(copy) NSString *accept;
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(copy) NSString *align;
 @property(copy) NSString *alt;
 @property BOOL checked;
@@ -633,11 +637,13 @@
 @end
 
 @interface DOMHTMLLabelElement : DOMHTMLElement WEBKIT_VERSION_1_3
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(readonly, retain) DOMHTMLFormElement *form;
 @property(copy) NSString *htmlFor;
 @end
 
 @interface DOMHTMLLegendElement : DOMHTMLElement WEBKIT_VERSION_1_3
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property(readonly, retain) DOMHTMLFormElement *form;
 @property(copy) NSString *align;
 @end
@@ -874,6 +880,7 @@
 @interface DOMHTMLTextAreaElement : DOMHTMLElement WEBKIT_VERSION_1_3
 @property(copy) NSString *defaultValue;
 @property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accessKey AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1;
 @property int cols;
 @property BOOL disabled;
 @property(copy) NSString *name;

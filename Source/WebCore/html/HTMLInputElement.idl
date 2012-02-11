@@ -50,6 +50,7 @@ module html {
         attribute [Reflect] boolean readOnly;
         attribute [Reflect] boolean required;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
         attribute [ObjCImplementedAsUnsignedLong] DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
 #else
         attribute unsigned long size; // Changed string -> long -> unsigned long

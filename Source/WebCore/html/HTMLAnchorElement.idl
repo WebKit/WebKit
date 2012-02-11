@@ -35,6 +35,10 @@ module html {
         attribute [Reflect] DOMString type;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString hash;
         readonly attribute DOMString host;
         readonly attribute DOMString hostname;

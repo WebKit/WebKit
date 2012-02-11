@@ -23,6 +23,9 @@ module html {
     interface HTMLLegendElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString align;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
     };
 
 }

@@ -1,3 +1,25 @@
+2012-02-10  Vineet Chaudhary  <rgf748@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72756
+        DOMHTMLElement’s accessKey property is declared as available in WebKit version that didn’t have it. 
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests.
+
+        * bindings/objc/PublicDOMInterfaces.h: Moving accessKey property to DOMHTMLElement
+          with an appropriate availability macro AVAILABLE_AFTER_WEBKIT_VERSION_5_1.
+          Also Moving accessKey property to HTMLAnchorElement, HTMLAreaElement, HTMLButtonElement,
+          HTMLInputElement, HTMLLabelElement, HTMLLegendElement  and HTMLTextAreaElement idls
+          with an availability macro AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_5_1.
+        * html/HTMLAnchorElement.idl: Adding accessKey entries back to idls under LANGUAGE_OBJECTIVE_C.
+        * html/HTMLAreaElement.idl: Ditto.
+        * html/HTMLButtonElement.idl: Ditto.
+        * html/HTMLInputElement.idl: Ditto.
+        * html/HTMLLabelElement.idl: Ditto.
+        * html/HTMLLegendElement.idl: Ditto.
+        * html/HTMLTextAreaElement.idl: Ditto.
+
 2012-02-10  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

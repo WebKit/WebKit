@@ -29,6 +29,9 @@ module html {
         attribute [Reflect] DOMString shape;
         attribute [Reflect] DOMString target;
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
         // IE Extensions
         readonly attribute DOMString hash;
         readonly attribute DOMString host;
