@@ -1,3 +1,10 @@
+2012-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Non-threaded scrolling build fix.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::requestScrollPositionUpdate):
+
 2012-02-10  Edward O'Connor  <eoconnor@apple.com>
 
         Change values for WEBKIT_KEYFRAMES_RULE, WEBKIT_KEYFRAME_RULE

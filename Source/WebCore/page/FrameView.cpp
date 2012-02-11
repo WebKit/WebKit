@@ -1766,6 +1766,8 @@ bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             return scrollingCoordinator->requestScrollPositionUpdate(this, position);
     }
+#else
+    UNUSED_PARAM(position);
 #endif
 
     return false;
