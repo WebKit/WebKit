@@ -149,4 +149,10 @@ PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
     return r.release();
 }
 
+class SameSizeAsLength {
+    int32_t value;
+    int32_t metaData;
+};
+COMPILE_ASSERT(sizeof(Length) == sizeof(SameSizeAsLength), length_should_stay_small);
+
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2012-02-11  Antti Koivisto  <antti@apple.com>
+
+        Add size assert for Length
+        https://bugs.webkit.org/show_bug.cgi?id=78420
+
+        Rubber-stamped by Andreas Kling.
+
+        Length type is memory critical and must not grow.
+
+        * platform/Length.cpp:
+        (SameSizeAsLength):
+        (WebCore):
+
 2012-02-11  Anders Carlsson  <andersca@apple.com>
 
         Pass wheel events to a scroll elasticity controller on the scrolling thread
