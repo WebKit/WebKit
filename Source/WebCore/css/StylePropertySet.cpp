@@ -45,6 +45,13 @@ using namespace std;
 
 namespace WebCore {
 
+typedef HashMap<const StylePropertySet*, OwnPtr<PropertySetCSSStyleDeclaration> > PropertySetCSSOMWrapperMap;
+static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
+{
+    DEFINE_STATIC_LOCAL(PropertySetCSSOMWrapperMap, propertySetCSSOMWrapperMapInstance, ());
+    return propertySetCSSOMWrapperMapInstance;
+}
+
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
     PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
@@ -169,6 +176,7 @@ StylePropertySet::StylePropertySet()
     : m_strictParsing(false)
     , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
+    , m_hasCSSOMWrapper(false)
     , m_parent(static_cast<CSSRule*>(0))
 {
 }
@@ -177,6 +185,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule)
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
     , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
+    , m_hasCSSOMWrapper(false)
     , m_parent(parentRule)
 {
 }
@@ -186,6 +195,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const Vector<CSSProperty
     , m_strictParsing(!parentRule || parentRule->useStrictParsing())
     , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
+    , m_hasCSSOMWrapper(false)
     , m_parent(parentRule)
 {
     m_properties.shrinkToFit();
@@ -195,6 +205,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
     , m_parentIsElement(false)
     , m_isInlineStyleDeclaration(false)
+    , m_hasCSSOMWrapper(false)
     , m_parent(parentRule)
 {
     m_properties.reserveInitialCapacity(numProperties);
@@ -220,13 +231,16 @@ StylePropertySet::StylePropertySet(StyledElement* parentElement, bool isInlineSt
     : m_strictParsing(false)
     , m_parentIsElement(true)
     , m_isInlineStyleDeclaration(isInlineStyle)
+    , m_hasCSSOMWrapper(false)
     , m_parent(parentElement)
 {
 }
 
 StylePropertySet::~StylePropertySet()
 {
-    
+    ASSERT(!m_hasCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
+    if (m_hasCSSOMWrapper)
+        propertySetCSSOMWrapperMap().remove(this);
 }
 
 CSSStyleSheet* StylePropertySet::contextStyleSheet() const
@@ -1116,9 +1130,12 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* se
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
 {
-    if (!m_cssStyleDeclaration)
-        m_cssStyleDeclaration = adoptPtr(new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this)));
-    return m_cssStyleDeclaration.get();
+    if (m_hasCSSOMWrapper)
+        return propertySetCSSOMWrapperMap().get(this);
+    m_hasCSSOMWrapper = true;
+    PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this));
+    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
+    return cssomWrapper;
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const
@@ -1247,5 +1264,12 @@ bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const CSSProperty* prope
 {
     return m_propertySet->propertyMatches(property);
 }
+
+class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
+    Vector<CSSProperty, 4> properties;
+    unsigned bitfield;
+    void* parent;
+};
+COMPILE_ASSERT(sizeof(StylePropertySet) == sizeof(SameSizeAsStylePropertySet), style_property_set_should_stay_small);
 
 } // namespace WebCore

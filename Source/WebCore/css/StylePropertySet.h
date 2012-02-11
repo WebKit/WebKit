@@ -159,6 +159,7 @@ private:
     bool m_strictParsing : 1;
     bool m_parentIsElement : 1;
     bool m_isInlineStyleDeclaration : 1;
+    mutable bool m_hasCSSOMWrapper : 1;
 
     union Parent {
         Parent(CSSRule* rule) : rule(rule) { }
@@ -166,8 +167,6 @@ private:
         CSSRule* rule;
         StyledElement* element;
     } m_parent;
-    
-    mutable OwnPtr<PropertySetCSSStyleDeclaration> m_cssStyleDeclaration;
     
     friend class PropertySetCSSStyleDeclaration;
 };

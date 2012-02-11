@@ -1,3 +1,26 @@
+2012-02-10  Antti Koivisto  <antti@apple.com>
+
+        Move CSSOM wrapper pointer out of StylePropertySet
+        https://bugs.webkit.org/show_bug.cgi?id=78406
+
+        Reviewed by Andreas Kling.
+        
+        Most StylePropertySet instances never have CSSOM wrappers so having a pointer to one in
+        each and and every object makes no sense.
+
+        Move the PropertySetCSSStyleDeclaration instances to a global HashMap. This shrinks
+        StylePropertySet by a pointer.
+        
+        Added COMPILE_ASSERT for StylePropertySet size.
+
+        * css/StylePropertySet.cpp:
+        (WebCore):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::~StylePropertySet):
+        (WebCore::StylePropertySet::ensureCSSStyleDeclaration):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+
 2012-02-10  David Barton  <dbarton@mathscribe.com>
 
         MathML internals - use createXXX() function naming, ASSERT()s
