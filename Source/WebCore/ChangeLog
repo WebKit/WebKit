@@ -1,3 +1,34 @@
+2012-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Implement more ScrollElasticityControllerClient member functions
+        https://bugs.webkit.org/show_bug.cgi?id=78425
+        <rdar://problem/10710727>
+
+        Reviewed by Sam Weinig.
+
+        * page/scrolling/ScrollingTreeNode.h:
+        (ScrollingTreeNode):
+        (WebCore::ScrollingTreeNode::horizontalScrollElasticity):
+        (WebCore::ScrollingTreeNode::verticalScrollElasticity):
+        (WebCore::ScrollingTreeNode::hasEnabledHorizontalScrollbar):
+        (WebCore::ScrollingTreeNode::hasEnabledVerticalScrollbar):
+        Add new getters.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::allowsHorizontalStretching):
+        (WebCore::ScrollingTreeNodeMac::allowsVerticalStretching):
+        (WebCore::ScrollingTreeNodeMac::stretchAmount):
+        (WebCore::ScrollingTreeNodeMac::pinnedInDirection):
+        (WebCore::ScrollingTreeNodeMac::canScrollHorizontally):
+        (WebCore::ScrollingTreeNodeMac::canScrollVertically):
+        (WebCore::ScrollingTreeNodeMac::absoluteScrollPosition):
+        (WebCore::ScrollingTreeNodeMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeNodeMac::startSnapRubberbandTimer):
+        (WebCore::ScrollingTreeNodeMac::stopSnapRubberbandTimer):
+        (WebCore::ScrollingTreeNodeMac::scrollByWithoutContentEdgeConstraints):
+        Implement ScrollElasticityControllerClient member functions.
+
 2012-02-11  Antti Koivisto  <antti@apple.com>
 
         Add size assert for Length

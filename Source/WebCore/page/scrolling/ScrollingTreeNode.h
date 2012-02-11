@@ -51,9 +51,17 @@ protected:
     explicit ScrollingTreeNode(ScrollingTree*);
 
     ScrollingTree* scrollingTree() const { return m_scrollingTree; }
+
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& contentsSize() const { return m_contentsSize; }
+
     bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
+
+    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
+    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
+
+    bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
+    bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
 
 private:
     ScrollingTree* m_scrollingTree;

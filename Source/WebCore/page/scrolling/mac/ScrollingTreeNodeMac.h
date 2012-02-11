@@ -65,9 +65,13 @@ private:
 
     IntPoint minimumScrollPosition() const;
     IntPoint maximumScrollPosition() const;
+
     void scrollBy(const IntSize&);
+    void scrollByWithoutContentEdgeConstraints(const IntSize&);
 
     ScrollElasticityController m_scrollElasticityController;
+    RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
+
     RetainPtr<CALayer> m_scrollLayer;
 };
 
