@@ -1,3 +1,21 @@
+2012-02-10  Eric Seidel  <eric@webkit.org>
+
+        AtomicMarkupTokenBase::initializeAttributes should not create a StringImpl if it doesn't need to
+        https://bugs.webkit.org/show_bug.cgi?id=78394
+
+        Reviewed by Adam Barth.
+
+        On the very next line is passes value to Attribute::create which takes
+        an AtomicString, so this code was just allocating a StringImpl (every time)
+        only to (much of the time) just release that StringImpl on the next line
+        when it got the AtomicString instead.
+
+        I discovered this while looking at DOM/Events.html, but it's unclear
+        if this fix actually makes that benchmark faster.
+
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::::initializeAttributes):
+
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
         Always update the scroll position through the scrolling coordinator

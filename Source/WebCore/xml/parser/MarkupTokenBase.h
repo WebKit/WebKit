@@ -540,7 +540,7 @@ inline void AtomicMarkupTokenBase<Token>::initializeAttributes(const typename To
         ASSERT(attribute.m_valueRange.m_start);
         ASSERT(attribute.m_valueRange.m_end);
 
-        String value(attribute.m_value.data(), attribute.m_value.size());
+        AtomicString value(attribute.m_value.data(), attribute.m_value.size());
         m_attributes->insertAttribute(Attribute::create(nameForAttribute(attribute), value), false);
     }
 }
