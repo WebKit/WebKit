@@ -151,7 +151,6 @@ EXPORTS
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@JSByteArray@JSC@@SAXPAVJSCell@2@@Z
     ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
-    ?destroy@JSNonFinalObject@JSC@@SAXPAVJSCell@2@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z

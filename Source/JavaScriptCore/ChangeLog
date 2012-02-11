@@ -1,3 +1,11 @@
+2012-02-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fixing windows build
+
+        Unreviewed build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-10  Adam Klein  <adamk@chromium.org>
 
         Enable MUTATION_OBSERVERS by default on all platforms
