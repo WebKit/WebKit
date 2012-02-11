@@ -31,7 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // nullptr_t type and nullptr object. They are defined in the same namespaces they
 // would be in compiler and library that had the support.
 
-#if COMPILER_SUPPORTS(CXX_NULLPTR)
+#include <ciso646>
+
+#if COMPILER_SUPPORTS(CXX_NULLPTR) || defined(_LIBCPP_VERSION)
 
 #include <cstddef>
 

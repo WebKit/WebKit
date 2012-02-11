@@ -1,3 +1,15 @@
+2012-02-11  Sam Weinig  <sam@webkit.org>
+
+        Prepare JavaScriptCore to build with libc++
+        <rdar://problem/10426673>
+        https://bugs.webkit.org/show_bug.cgi?id=78424
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/NullPtr.cpp:
+        * wtf/NullPtr.h:
+        libc++ provides std::nullptr emulation, so we don't have to.
+
 2012-02-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have polymorphic put_by_id caching
