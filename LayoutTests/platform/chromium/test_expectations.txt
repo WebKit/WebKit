@@ -1028,8 +1028,6 @@ BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clip
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
-BUGWK53378 MAC : svg/custom/grayscale-gradient-mask.svg = IMAGE
-BUGWK53378 MAC : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // Since r89233. May need a new baseline.
@@ -1044,9 +1042,6 @@ BUGWK62974 LINUX WIN : svg/text/text-text-06-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
-// Extended by BUGCR101797.
-BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
-BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
 // -----------------------------------------------------------------
@@ -1070,10 +1065,6 @@ BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 
 // There's no baseline at all for this!
 BUGCR32392 SKIP : svg/batik/text/smallFonts.svg = FAIL
-
-// The test is flaky and maybe platform-dependent.
-BUGCR32401 LINUX WIN : svg/custom/marker-changes.svg = IMAGE+TEXT IMAGE
-
 
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
@@ -1195,9 +1186,6 @@ BUGCR105305 CPU GPU : media/audio-repaint.html = IMAGE
 BUGCR105305 LINUX MAC CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
-BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
-BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
@@ -1642,10 +1630,8 @@ BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
 BUGCR99500 WIN : svg/carto.net/textbox.svg = IMAGE
-BUGCR99500 WIN : svg/carto.net/window.svg = IMAGE
 BUGCR99500 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
 BUGCR99500 WIN : svg/custom/js-late-clipPath-creation.svg = IMAGE
-BUGCR99500 WIN : svg/custom/linking-a-03-b-viewBox.svg = IMAGE
 BUGCR99500 WIN : svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html = IMAGE
 BUGCR99500 WIN : svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html = IMAGE
 BUGCR99500 WIN : svg/hixie/mixed/009.xml = IMAGE
@@ -1655,7 +1641,6 @@ BUGCR99500 WIN : svg/text/text-align-05-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/text-align-06-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/textPathBoundsBug.svg = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
-BUGCR99500 WIN : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
 BUGCR99500 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 
@@ -1717,7 +1702,6 @@ BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 // rebaseline after skia rev. 2527 lands
 BUGCR101797 CPU : fast/backgrounds/size/contain-and-cover.html = IMAGE
 BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
 
@@ -2126,11 +2110,6 @@ BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
 BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
 
-// The error gives a different line number than upstream.  Maybe a V8/JSC
-// difference?
-BUGCR48452 LINUX WIN : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
-BUGCR48452 LEOPARD : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
-
 BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
 BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
@@ -2168,7 +2147,6 @@ BUGCR51854 SLOW WIN : http/tests/storage/callbacks-are-called-in-correct-context
 
 // Regressions from r65229
 BUGWK43912 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = CRASH IMAGE
-BUGWK43912 LINUX WIN : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE IMAGE+TEXT
 
 // Times out frequently since the test was added
 BUGCR52017 LINUX MAC RELEASE : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
@@ -3216,7 +3194,6 @@ BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-s
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = PASS CRASH
 
-BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
@@ -3460,9 +3437,6 @@ BUGWK69124 WIN LINUX : platform/chromium/compositing/3d-corners.html = TEXT
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-rotation-hit.html = IMAGE
 BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-scaling-hit.html = IMAGE
 
-// New test in http://trac.webkit.org/changeset/96470
-BUGABARTH : svg/custom/grayscale-gradient-mask-2.svg = IMAGE
-
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
 BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
@@ -3595,10 +3569,8 @@ BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
-BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 
-BUGWK73872 WIN : svg/custom/linking-uri-01-b.svg = PASS IMAGE TIMEOUT
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
@@ -3614,10 +3586,6 @@ BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
 //BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
-BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
-BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
-BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Linear.svg = IMAGE
-BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Table.svg = IMAGE
 BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
 BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
 BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
@@ -3788,10 +3756,7 @@ BUGWK76446 : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE+TEXT
 BUGWK76446 : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE+TEXT
 
 // Caret position reported differently, should start at 0 instead of 18.
-BUGWK76446 : svg/custom/pointer-events-image-css-transform.svg = TEXT
-BUGWK76446 : svg/custom/pointer-events-image.svg = TEXT
 BUGWK76446 : svg/custom/pointer-events-text-css-transform.svg = TEXT
-BUGWK76446 : svg/custom/pointer-events-text.svg = TEXT
 
 // RenderSVGRoot now reports a correct size.
 BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT
@@ -3799,14 +3764,11 @@ BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT
 // Slight changes in RenderReplaced extents.
 BUGWK76647 : svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml = IMAGE+TEXT
-BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
-BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml = IMAGE+TEXT
 BUGWK76647 : tables/mozilla/bugs/bug101674.html = IMAGE+TEXT
 BUGWK76647 : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
 BUGWK76647 : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
-BUGWK76647 : svg/zoom/page/zoom-background-images.html = IMAGE
 
 // Just needs a rebaseline.
 BUGWK76780 : svg/filters/feImage-preserveAspectratio.svg = IMAGE+TEXT
@@ -3979,29 +3941,14 @@ BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-size
 BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = IMAGE
 
 // SVGLoad event timing changes require some rebaselines.
-BUGWK78084 : svg/custom/SVGPoint-matrixTransform.svg = IMAGE+TEXT
-BUGWK78084 : svg/custom/getTransformToElement.svg = IMAGE+TEXT
 BUGWK78084 : svg/custom/polyline-setattribute-points-null.svg = IMAGE+TEXT
-BUGWK78084 : svg/custom/repaint-on-image-bounds-change.svg = IMAGE+TEXT IMAGE
-BUGWK78084 : svg/custom/text-ctm.svg = IMAGE+TEXT
-BUGWK78084 : svg/custom/text-hit-test.svg = IMAGE+TEXT
 
 // Massive rebaselining, some rebaseline just don't make sense.
 BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
-BUGWK78115 WIN : svg/custom/use-crash-in-non-wellformed-document.svg = TEXT
 
 // feImage now supports dynamic invalidations if the target changes.
-BUGWK73860 : svg/filters/feImage-animated-transform-on-target-rect.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-change-target-id.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-late-indirect-update.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-multiple-targets-id-change.svg = IMAGE+TEXT
 BUGWK73860 : svg/filters/feImage-remove-target.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-attribute-change-with-use-indirection.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-attribute-change.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-inline-style-change.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-property-change.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-target-style-change.svg = IMAGE+TEXT
 
 BUGWK78038 DEBUG : compositing/iframes/invisible-nested-iframe-show.html = PASS CRASH
 BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS CRASH
