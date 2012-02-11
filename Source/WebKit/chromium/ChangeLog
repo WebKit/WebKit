@@ -1,3 +1,21 @@
+2012-02-10  David Grogan  <dgrogan@chromium.org>
+
+        Disable IndexedDB permissions check from shared workers
+        https://bugs.webkit.org/show_bug.cgi?id=78316
+
+        We want to temporarily bypass this check because it causes a crash
+        when called from a shared worker.  We'll have to fix it before
+        including idb on shared workers in a release but don't want to stop
+        developers from testing out idb on shared workers.
+
+        No new tests because it affects shared workers only, which aren't
+        testable by DRT.
+
+        Reviewed by Tony Chang.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIDBFromWorkerThread):
+
 2012-02-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

@@ -157,6 +157,12 @@ private:
 
 bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext* workerContext, const String& name, const WebSecurityOrigin&)
 {
+    // FIXME: Bypass checking for permission so as not to block shared worker
+    // testing until a permissions check is implemented. This has to be fixed
+    // before m19 goes to beta. http://crbug.com/112855
+    if (workerContext->isSharedWorkerContext())
+        return true;
+
     WebWorkerClientImpl* webWorkerClientImpl = static_cast<WebWorkerClientImpl*>(&workerContext->thread()->workerLoaderProxy());
     WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
 
