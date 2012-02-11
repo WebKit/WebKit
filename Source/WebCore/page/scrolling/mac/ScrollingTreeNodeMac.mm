@@ -58,6 +58,17 @@ void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent
     scrollBy(IntSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()));
 }
 
+void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
+{
+    if (shouldUpdateScrollLayerPositionOnMainThread()) {
+        scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(scrollPosition);
+        return;
+    }
+
+    setScrollLayerPosition(scrollPosition);
+    scrollingTree()->updateMainFrameScrollPosition(scrollPosition);
+}
+
 bool ScrollingTreeNodeMac::allowsHorizontalStretching()
 {
     // FIXME: Implement.
@@ -132,7 +143,7 @@ IntPoint ScrollingTreeNodeMac::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
 }
 
-void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& position)
+void ScrollingTreeNodeMac::setScrollLayerPosition(const IntPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
 
@@ -141,15 +152,7 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& position)
 
 void ScrollingTreeNodeMac::scrollBy(const IntSize& offset)
 {
-    IntPoint newScrollPosition = scrollPosition() + offset;
-
-    if (shouldUpdateScrollLayerPositionOnMainThread()) {
-        scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(newScrollPosition);
-        return;
-    }
-
-    setScrollPosition(newScrollPosition);
-    scrollingTree()->updateMainFrameScrollPosition(newScrollPosition);
+    setScrollPosition(scrollPosition() + offset);
 }
 
 } // namespace WebCore

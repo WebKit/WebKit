@@ -169,6 +169,7 @@ public:
     void scrollPositionChangedViaPlatformWidget();
     virtual void repaintFixedElementsAfterScrolling();
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
+    virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
 
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 

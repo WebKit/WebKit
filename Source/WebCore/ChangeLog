@@ -1,5 +1,46 @@
 2012-02-10  Anders Carlsson  <andersca@apple.com>
 
+        Always update the scroll position through the scrolling coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=78403
+
+        Reviewed by Sam Weinig.
+
+        To get correct behavior, we always want to update the scrolling layer position
+        on the scrolling thread. Do this by allowing the scrolling coordinator to intercept
+        scroll position update requests and send them to the scrolling tree.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        Let the scrolling coordinator have a go at updating the scroll position for this frame view.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+        If it's a frame view we're coordinating scrolling for, tell the scrolling tree to update 
+        the scroll position.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::setMainFrameScrollPosition):
+        Call through to the scrolling tree node.
+
+        * page/scrolling/ScrollingTreeNode.h:
+        Add a new pure virtual setScrollPosition member function.
+
+        (WebCore::ScrollingTreeNodeMac::setScrollPosition):
+        Move most of the code from scrollBy here.
+
+        (WebCore::ScrollingTreeNodeMac::setScrollLayerPosition):
+        Rename this member function from setScrollPosition to avoid conflicts.
+
+        (WebCore::ScrollingTreeNodeMac::scrollBy):
+        Just call setScsrollPosition.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+        Call requestScrollPositionUpdate, which allows subclasses of scrollable area to intercept
+        the scroll operation and call it asynchronously.
+
+2012-02-10  Anders Carlsson  <andersca@apple.com>
+
         ScrollableArea should have a function for noting that the scroll position changed
         https://bugs.webkit.org/show_bug.cgi?id=78402
 

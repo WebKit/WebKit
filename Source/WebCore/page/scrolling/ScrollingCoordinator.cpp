@@ -158,6 +158,18 @@ void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* fr
     scheduleTreeStateCommit();
 }
 
+bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return false;
+
+    ScrollingThread::dispatch(bind(&ScrollingTree::setMainFrameScrollPosition, m_scrollingTree.get(), scrollPosition));
+    return true;
+}
+
 void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());

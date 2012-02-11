@@ -44,6 +44,7 @@ private:
     // ScrollingTreeNode member functions.
     virtual void update(ScrollingTreeState*) OVERRIDE;
     virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
+    virtual void setScrollPosition(const IntPoint&) OVERRIDE;
 
     // ScrollElasticityController member functions.
     virtual bool allowsHorizontalStretching() OVERRIDE;
@@ -60,7 +61,7 @@ private:
     virtual void stopSnapRubberbandTimer() OVERRIDE;
 
     IntPoint scrollPosition() const;
-    void setScrollPosition(const IntPoint&);
+    void setScrollLayerPosition(const IntPoint&);
 
     void scrollBy(const IntSize&);
 

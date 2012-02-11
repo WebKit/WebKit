@@ -1759,6 +1759,18 @@ bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const
     return page->chrome()->client()->shouldRubberBandInDirection(direction);
 }
 
+bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
+{
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = m_frame->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            return scrollingCoordinator->requestScrollPositionUpdate(this, position);
+    }
+#endif
+
+    return false;
+}
+
 HostWindow* FrameView::hostWindow() const
 {
     Page* page = frame() ? frame()->page() : 0;

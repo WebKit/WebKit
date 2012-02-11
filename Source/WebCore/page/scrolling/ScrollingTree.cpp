@@ -82,6 +82,13 @@ void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     m_rootNode->handleWheelEvent(wheelEvent);
 }
 
+void ScrollingTree::setMainFrameScrollPosition(const IntPoint& scrollPosition)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    m_rootNode->setScrollPosition(scrollPosition);
+}
+
 void ScrollingTree::invalidate()
 {
     // Invalidate is dispatched by the ScrollingCoordinator class on the ScrollingThread

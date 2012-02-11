@@ -45,6 +45,7 @@ public:
 
     virtual void update(ScrollingTreeState*);
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
+    virtual void setScrollPosition(const IntPoint&) = 0;
 
 protected:
     explicit ScrollingTreeNode(ScrollingTree*);

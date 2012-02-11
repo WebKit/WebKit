@@ -52,6 +52,11 @@ public:
     // is updated on the scrolling thread and we need to notify the main thread.
     void notifyScrollPositionChanged(const IntPoint&);
 
+    // Allows subclasses to handle scroll position updates themselves. If this member function
+    // returns true, the scrollable area won't actually update the scroll position and instead
+    // expect it to happen sometime in the future.
+    virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
+
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
