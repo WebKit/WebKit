@@ -149,6 +149,8 @@ void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
         if (verticalScrollbar->isOverlayScrollbar() && !hasLayerForVerticalScrollbar())
             verticalScrollbar->invalidate();
     }
+
+    scrollAnimator()->notifyContentAreaScrolled();
 }
 
 void ScrollableArea::zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState)

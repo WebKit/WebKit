@@ -653,13 +653,7 @@ void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoin
 
 void ScrollAnimatorMac::notifyPositionChanged()
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        // This function is called when a page is going into the page cache, but the page 
-        // isn't really scrolling in that case. We should only pass the message on to the
-        // ScrollbarPainterController when we're really scrolling on an active page.
-        if (scrollableArea()->isOnActivePage())
-            [m_scrollbarPainterController.get() contentAreaScrolled];
-    }
+    notifyContentAreaScrolled();
     ScrollAnimator::notifyPositionChanged();
 }
 
@@ -869,6 +863,18 @@ bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scroll
     if (!painter)
         return false;
     return [painter knobAlpha] > 0;
+}
+
+void ScrollAnimatorMac::notifyContentAreaScrolled()
+{
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
+    // This function is called when a page is going into the page cache, but the page 
+    // isn't really scrolling in that case. We should only pass the message on to the
+    // ScrollbarPainterController when we're really scrolling on an active page.
+    if (scrollableArea()->isOnActivePage())
+        [m_scrollbarPainterController.get() contentAreaScrolled];
 }
 
 void ScrollAnimatorMac::cancelAnimations()

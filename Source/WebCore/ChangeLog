@@ -1,5 +1,27 @@
 2012-02-11  Anders Carlsson  <andersca@apple.com>
 
+        Overlay scrollbars don't appear when scrolling on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=78427
+
+        Reviewed by Sam Weinig.
+
+        Add a ScrollAnimator::notifyContentAreaScrolled and call it from ScrollAnimator::notifyContentAreaScrolled.
+        It is then overridden in ScrollAnimatorMac to tickle AppKit so that overlay scrollbars will be shown.
+
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::notifyContentAreaScrolled):
+        (ScrollAnimator):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::notifyScrollPositionChanged):
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore):
+
+2012-02-11  Anders Carlsson  <andersca@apple.com>
+
         Implement more ScrollElasticityControllerClient member functions
         https://bugs.webkit.org/show_bug.cgi?id=78425
         <rdar://problem/10710727>

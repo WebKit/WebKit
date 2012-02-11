@@ -98,6 +98,8 @@ public:
 
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
 
+    virtual void notifyContentAreaScrolled() { }
+
 protected:
     ScrollAnimator(ScrollableArea*);
 
