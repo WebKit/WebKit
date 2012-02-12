@@ -652,8 +652,8 @@ AC_MSG_RESULT([$enable_data_transfer_items])
 AC_MSG_CHECKING([whether to enable DOM mutation observer support])
 AC_ARG_ENABLE(mutation_observers,
               AC_HELP_STRING([--enable-mutation-observers],
-                             [enable DOM mutation observer support [default=yes]]),
-              [],[enable_mutation_observers="yes"])
+                             [enable DOM mutation observer support [default=no]]),
+              [],[enable_mutation_observers="no"])
 AC_MSG_RESULT([$enable_mutation_observers])
 
 # check whether to enable HTML5 client-side session and persitent storage support
