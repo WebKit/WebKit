@@ -1,3 +1,11 @@
+2012-02-12  Sam Weinig  <sam@webkit.org>
+
+        Move the NumberOfCores.h/cpp files into the WTF group of JavaScriptCore.xcodeproj.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-02-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Remove unused or empty variable definitions.
