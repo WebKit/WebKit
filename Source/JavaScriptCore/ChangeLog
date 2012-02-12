@@ -1,3 +1,18 @@
+2012-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        [DFG] Misuse of WeakJSConstants in silentFillGPR code.
+        https://bugs.webkit.org/show_bug.cgi?id=78423
+        <rdar://problem/10849353> <rdar://problem/10804043>
+
+        Reviewed by Sam Weinig.
+        
+        The code was using Node::isConstant(), when it was supposed to use Node::hasConstant().
+        This patch is a surgical fix; the bigger problem is: why do we have isConstant() and
+        hasConstant() when hasConstant() is correct and isConstant() is almost always wrong?
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentFillGPR):
+
 2012-02-11  Sam Weinig  <sam@webkit.org>
 
         Prepare JavaScriptCore to build with libc++

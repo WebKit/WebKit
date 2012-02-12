@@ -462,7 +462,7 @@ private:
 
         if (registerFormat == DataFormatCell) {
             ASSERT(info.gpr() == target);
-            if (node.isConstant()) {
+            if (node.hasConstant()) {
                 JSValue value = valueOfJSConstant(nodeIndex);
                 ASSERT(value.isCell());
                 m_jit.move(ImmPtr(value.asCell()), target);
