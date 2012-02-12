@@ -197,9 +197,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     case JSConstant:
     case WeakJSConstant: {
         JSValue value = m_graph.valueOfJSConstant(m_codeBlock, nodeIndex);
-        if (value.isCell())
-            m_haveStructures = true;
-        forNode(nodeIndex).set(value);
+        // Have to be careful here! It's tempting to call set(value), but
+        // that would be wrong, since that would constitute a proof that this
+        // value will always have the same structure. The whole point of a value
+        // having a structure is that it may change in the future - for example
+        // between when we compile the code and when we run it.
+        forNode(nodeIndex).set(predictionFromValue(value));
         break;
     }
             

@@ -1,3 +1,14 @@
+2012-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA assumes that a WeakJSConstant's structure is known
+        https://bugs.webkit.org/show_bug.cgi?id=78428
+        <rdar://problem/10849492> <rdar://problem/10849621>
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
 2012-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Qt debug build fix
