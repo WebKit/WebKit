@@ -1174,4 +1174,8 @@
 #define ENABLE_TEXT_NOTIFICATIONS_ONLY 1
 #endif
 
+#if !defined(WTF_USE_WTFURL)
+#define WTF_USE_WTFURL 0
+#endif
+
 #endif /* WTF_Platform_h */

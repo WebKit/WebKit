@@ -1,3 +1,14 @@
+2012-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add back WTFURL to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=77291
+
+        Reviewed by Adam Barth.
+
+        Add a flag to build-webkit to easily build WebKit with WTFURL.
+
+        * Scripts/build-webkit:
+
 2012-02-10  Adam Klein  <adamk@chromium.org>
 
         Enable MUTATION_OBSERVERS by default on all platforms

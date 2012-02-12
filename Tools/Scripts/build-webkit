@@ -135,6 +135,7 @@ my (
     $webTimingSupport,
     $workersSupport,
     $xsltSupport,
+    $wtfURL,
 );
 
 my @features = (
@@ -342,6 +343,9 @@ my @features = (
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$workersSupport },
 
+    { option => "wtfurl", desc => "Toogle the use of WTFURL for URL parsing",
+      define => "WTF_USE_WTFURL", default => 0, value => \$wtfURL },
+
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
 );
@@ -513,7 +517,7 @@ if (isGtk()) {
     }
 
     foreach (@features) {
-        if ($_->{option} ne "coverage") {
+        if ($_->{option} ne "coverage" && $_->{option} ne "wtfurl") {
             my $option = option($_->{define}, ${$_->{value}}, $_->{default});
             push @options, $option unless $option eq "";
         }
@@ -684,6 +688,7 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
+        push @local_options, "OTHER_CFLAGS= \$(OTHER_CFLAGS) -DWTF_USE_WTFURL=1" if $wtfURL;
         my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore");
         my $projectPath = $useGYPProject ? "gyp/$project" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);

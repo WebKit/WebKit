@@ -1,3 +1,132 @@
+2012-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add back WTFURL to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=77291
+
+        Reviewed by Adam Barth.
+
+        WTFURL was removed from WebKit in r86787.
+
+        This patch adds the code back to WTF with the following changes:
+        -Guard the feature with USE(WTFURL).
+        -Change the typename CHAR to CharacterType to follow recent WebKit conventions.
+        -Fix some coding style to make check-webkit-style happy.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Platform.h:
+        * wtf/url/api/ParsedURL.cpp: Added.
+        (WTF):
+        (WTF::ParsedURL::ParsedURL):
+        (WTF::ParsedURL::scheme):
+        (WTF::ParsedURL::username):
+        (WTF::ParsedURL::password):
+        (WTF::ParsedURL::host):
+        (WTF::ParsedURL::port):
+        (WTF::ParsedURL::path):
+        (WTF::ParsedURL::query):
+        (WTF::ParsedURL::fragment):
+        (WTF::ParsedURL::segment):
+        * wtf/url/api/ParsedURL.h: Added.
+        (WTF):
+        (ParsedURL):
+        (WTF::ParsedURL::spec):
+        * wtf/url/api/URLString.h: Added.
+        (WTF):
+        (URLString):
+        (WTF::URLString::URLString):
+        (WTF::URLString::string):
+        * wtf/url/src/RawURLBuffer.h: Added.
+        (WTF):
+        (RawURLBuffer):
+        (WTF::RawURLBuffer::RawURLBuffer):
+        (WTF::RawURLBuffer::~RawURLBuffer):
+        (WTF::RawURLBuffer::resize):
+        * wtf/url/src/URLBuffer.h: Added.
+        (WTF):
+        (URLBuffer):
+        (WTF::URLBuffer::URLBuffer):
+        (WTF::URLBuffer::~URLBuffer):
+        (WTF::URLBuffer::at):
+        (WTF::URLBuffer::set):
+        (WTF::URLBuffer::capacity):
+        (WTF::URLBuffer::length):
+        (WTF::URLBuffer::data):
+        (WTF::URLBuffer::setLength):
+        (WTF::URLBuffer::append):
+        (WTF::URLBuffer::grow):
+        * wtf/url/src/URLCharacterTypes.cpp: Added.
+        (WTF):
+        ():
+        * wtf/url/src/URLCharacterTypes.h: Added.
+        (WTF):
+        (URLCharacterTypes):
+        (WTF::URLCharacterTypes::isQueryChar):
+        (WTF::URLCharacterTypes::isIPv4Char):
+        (WTF::URLCharacterTypes::isHexChar):
+        ():
+        (WTF::URLCharacterTypes::isCharOfType):
+        * wtf/url/src/URLComponent.h: Added.
+        (WTF):
+        (URLComponent):
+        (WTF::URLComponent::URLComponent):
+        (WTF::URLComponent::fromRange):
+        (WTF::URLComponent::isValid):
+        (WTF::URLComponent::isNonEmpty):
+        (WTF::URLComponent::isEmptyOrInvalid):
+        (WTF::URLComponent::reset):
+        (WTF::URLComponent::operator==):
+        (WTF::URLComponent::begin):
+        (WTF::URLComponent::setBegin):
+        (WTF::URLComponent::length):
+        (WTF::URLComponent::setLength):
+        (WTF::URLComponent::end):
+        * wtf/url/src/URLEscape.cpp: Added.
+        (WTF):
+        ():
+        * wtf/url/src/URLEscape.h: Added.
+        (WTF):
+        (WTF::appendURLEscapedCharacter):
+        * wtf/url/src/URLParser.h: Added.
+        (WTF):
+        (URLParser):
+        ():
+        (WTF::URLParser::isPossibleAuthorityTerminator):
+        (WTF::URLParser::parseAuthority):
+        (WTF::URLParser::extractScheme):
+        (WTF::URLParser::parseAfterScheme):
+        (WTF::URLParser::parseStandardURL):
+        (WTF::URLParser::parsePath):
+        (WTF::URLParser::parsePathURL):
+        (WTF::URLParser::parseMailtoURL):
+        (WTF::URLParser::parsePort):
+        (WTF::URLParser::extractFileName):
+        (WTF::URLParser::extractQueryKeyValue):
+        (WTF::URLParser::isURLSlash):
+        (WTF::URLParser::shouldTrimFromURL):
+        (WTF::URLParser::trimURL):
+        (WTF::URLParser::consecutiveSlashes):
+        (WTF::URLParser::isPortDigit):
+        (WTF::URLParser::nextAuthorityTerminator):
+        (WTF::URLParser::parseUserInfo):
+        (WTF::URLParser::parseServerInfo):
+        * wtf/url/src/URLQueryCanonicalizer.h: Added.
+        (WTF):
+        (URLQueryCanonicalizer):
+        (WTF::URLQueryCanonicalizer::canonicalize):
+        (WTF::URLQueryCanonicalizer::isAllASCII):
+        (WTF::URLQueryCanonicalizer::isRaw8Bit):
+        (WTF::URLQueryCanonicalizer::appendRaw8BitQueryString):
+        (WTF::URLQueryCanonicalizer::convertToQueryEncoding):
+        * wtf/url/src/URLSegments.cpp: Added.
+        (WTF):
+        (WTF::URLSegments::length):
+        (WTF::URLSegments::charactersBefore):
+        * wtf/url/src/URLSegments.h: Added.
+        (WTF):
+        (URLSegments):
+        ():
+        (WTF::URLSegments::URLSegments):
+
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Old JIT put_by_id profiling counts every put_by_id_transition as taking slow path
