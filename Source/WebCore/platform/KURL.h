@@ -27,7 +27,6 @@
 #define KURL_h
 
 #include "PlatformString.h"
-#include "URLString.h"
 #include <wtf/HashMap.h>
 
 #if USE(CF)
@@ -70,7 +69,6 @@ public:
     // KURL object, or indiscernible from such.
     // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
     KURL(ParsedURLStringTag, const String&);
-    KURL(ParsedURLStringTag, const URLString&);
 #if USE(GOOGLEURL)
     KURL(WTF::HashTableDeletedValueType) : m_url(WTF::HashTableDeletedValue) { }
 #else
@@ -123,10 +121,8 @@ public:
 
 #if USE(GOOGLEURL)
     const String& string() const { return m_url.string(); }
-    URLString urlString() const { return URLString(m_url.string()); }
 #else
     const String& string() const { return m_string; }
-    URLString urlString() const { return URLString(m_string); }
 #endif
 
     String protocol() const;

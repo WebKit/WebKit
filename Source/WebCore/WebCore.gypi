@@ -303,7 +303,6 @@
             'platform/ThreadGlobalData.h',
             'platform/Timer.h',
             'platform/TreeShared.h',
-            'platform/URLString.h',
             'platform/VisitedLinkStrategy.h',
             'platform/Widget.h',
             'platform/WindowsKeyboardCodes.h',

@@ -3312,7 +3312,6 @@
 		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		970B728A144FFAC600F00A37 /* EventInterfaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 970B7289144FFAC600F00A37 /* EventInterfaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		970B72A6145008EB00F00A37 /* EventHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 970B72A5145008EB00F00A37 /* EventHeaders.h */; };
-		971491DA12FD65E8001BFEB1 /* URLString.h in Headers */ = {isa = PBXBuildFile; fileRef = 971491D912FD65E8001BFEB1 /* URLString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97205AAF123928CA00B17380 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */; };
 		97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */; };
 		97205AB51239291000B17380 /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB11239291000B17380 /* ImageDocument.cpp */; };
@@ -10157,7 +10156,6 @@
 		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
 		970B7289144FFAC600F00A37 /* EventInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInterfaces.h; sourceTree = "<group>"; };
 		970B72A5145008EB00F00A37 /* EventHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHeaders.h; sourceTree = "<group>"; };
-		971491D912FD65E8001BFEB1 /* URLString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLString.h; sourceTree = "<group>"; };
 		97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryDocument.cpp; sourceTree = "<group>"; };
 		97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryDocument.h; sourceTree = "<group>"; };
 		97205AB11239291000B17380 /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
@@ -19800,7 +19798,6 @@
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
-				971491D912FD65E8001BFEB1 /* URLString.h */,
 				2E3BBF051162DA1100B9409A /* UUID.cpp */,
 				2E3BBF061162DA1100B9409A /* UUID.h */,
 				515788C01207852C00A37C4A /* VisitedLinkStrategy.h */,
@@ -23993,7 +23990,6 @@
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
-				971491DA12FD65E8001BFEB1 /* URLString.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */,
 				BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */,

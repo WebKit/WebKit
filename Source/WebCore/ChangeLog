@@ -1,3 +1,20 @@
+2012-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Get rid of WebCore::URLString
+        https://bugs.webkit.org/show_bug.cgi?id=78429
+
+        Reviewed by Adam Barth.
+
+        URLString is unused, remove the class.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        (KURL):
+        * platform/URLString.h: Removed.
+
 2012-02-11  Sam Weinig  <sam@webkit.org>
 
         Fix the windows build.
