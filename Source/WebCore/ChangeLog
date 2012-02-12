@@ -1,3 +1,20 @@
+2012-02-12  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [JSCustomPrototypeDefineOwnProperty] to [JSCustomDefineOwnPropertyOnPrototype]
+        https://bugs.webkit.org/show_bug.cgi?id=78354
+
+        Reviewed by Adam Barth.
+
+        This patch renames [JSCustomPrototypeDefineOwnProperty] to
+        [JSCustomDefineOwnPropertyOnPrototype], for naming consistency with
+        [JSCustomDefineOwnProperty] and [JSCustomNamedGetterOnPrototype].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * page/Location.idl:
+
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to send all JSC debug logging to a file

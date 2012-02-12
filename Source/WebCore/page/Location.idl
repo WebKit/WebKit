@@ -39,7 +39,7 @@ module window {
         CustomEnumerateProperty,
         JSCustomDefineOwnProperty,
         JSCustomNamedGetterOnPrototype,
-        JSCustomPrototypeDefineOwnProperty,
+        JSCustomDefineOwnPropertyOnPrototype,
         OmitConstructor
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
