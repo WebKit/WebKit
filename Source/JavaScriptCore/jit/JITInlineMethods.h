@@ -680,6 +680,9 @@ inline void JIT::map(unsigned bytecodeOffset, int virtualRegisterIndex, Register
     m_mappedVirtualRegisterIndex = virtualRegisterIndex;
     m_mappedTag = tag;
     m_mappedPayload = payload;
+    
+    ASSERT(!canBeOptimized() || m_mappedPayload == regT0);
+    ASSERT(!canBeOptimized() || m_mappedTag == regT1);
 }
 
 inline void JIT::unmap(RegisterID registerID)

@@ -1,3 +1,15 @@
+2012-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Old 32_64 JIT should assert that its use of map() is consistent with the DFG
+        OSR exit's expectations
+        https://bugs.webkit.org/show_bug.cgi?id=78419
+        <rdar://problem/10817121>
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::map):
+
 2012-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Reduce the reentrancy limit of the interpreter for the iOS simulator
