@@ -1,3 +1,13 @@
+2012-02-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Move source files in WTF_HEADERS to WTF_SOURCES.
+        https://bugs.webkit.org/show_bug.cgi?id=78436
+
+        Reviewed by Daniel Bates.
+
+        * wtf/CMakeLists.txt: Move .cpp files from WTF_HEADERS to WTF_SOURCES,
+        and correctly sort the files which start with 'M'.
+
 2012-02-12  Sam Weinig  <sam@webkit.org>
 
         Move the NumberOfCores.h/cpp files into the WTF group of JavaScriptCore.xcodeproj.
