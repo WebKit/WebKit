@@ -1,3 +1,12 @@
+2012-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Qt debug build fix
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor): Platforms that don't use clang will allocate 
+        JSFinalObjects in the destuctor subspace, so we should remove this assert so it 
+        doesn't cause crashes.
+
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Old 32_64 JIT should assert that its use of map() is consistent with the DFG

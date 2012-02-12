@@ -71,7 +71,6 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
-    ASSERT(cell->classInfo() != &JSFinalObject::s_info);
     cell->methodTable()->destroy(cell);
 
     cell->zap();
