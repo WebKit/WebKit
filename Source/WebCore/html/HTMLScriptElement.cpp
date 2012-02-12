@@ -91,7 +91,7 @@ void HTMLScriptElement::setText(const String &value)
     int numChildren = childNodeCount();
 
     if (numChildren == 1 && firstChild()->isTextNode()) {
-        static_cast<Text*>(firstChild())->setData(value, ec);
+        toText(firstChild())->setData(value, ec);
         return;
     }
 

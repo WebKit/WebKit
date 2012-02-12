@@ -181,7 +181,7 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
     StringBuilder valueBuilder;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())
-            valueBuilder.append(static_cast<Text*>(n)->data());
+            valueBuilder.append(toText(n)->data());
     }
 
     AtomicString newValue = valueBuilder.toString();

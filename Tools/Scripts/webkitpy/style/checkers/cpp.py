@@ -2980,6 +2980,11 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
 
     check_identifier_name_in_declaration(filename, line_number, line, file_state, error)
 
+    # Check that we're not using static_cast<Text*>.
+    if search(r'\bstatic_cast<Text\*>', line):
+        error(line_number, 'readability/check', 4,
+              'Consider using toText helper function in WebCore/dom/Text.h '
+              'instead of static_cast<Text*>')
 
 def check_identifier_name_in_declaration(filename, line_number, line, file_state, error):
     """Checks if identifier names contain any underscores.

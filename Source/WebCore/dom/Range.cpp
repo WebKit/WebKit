@@ -1037,7 +1037,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
 
     bool collapsed = m_start == m_end;
     if (startIsText) {
-        RefPtr<Text> newText = static_cast<Text*>(m_start.container())->splitText(m_start.offset(), ec);
+        RefPtr<Text> newText = toText(m_start.container())->splitText(m_start.offset(), ec);
         if (ec)
             return;
         m_start.container()->parentNode()->insertBefore(newNode.release(), newText.get(), ec);
@@ -2040,7 +2040,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 }
             }
         } else if (node->isTextNode()) {
-            if (RenderObject* renderer = static_cast<Text*>(node)->renderer()) {
+            if (RenderObject* renderer = toText(node)->renderer()) {
                 RenderText* renderText = toRenderText(renderer);
                 int startOffset = (node == startContainer) ? m_start.offset() : 0;
                 int endOffset = (node == endContainer) ? m_end.offset() : INT_MAX;

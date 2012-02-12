@@ -1,3 +1,15 @@
+2012-02-12  Joe Thomas  <joethomas@motorola.com>
+
+        Add toText and isTextNode helpers in Text class.
+        https://bugs.webkit.org/show_bug.cgi?id=78140
+
+        Added a style checker to use toText rather than static_cast<Text*>.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Style checker for static_cast<Text*>.
+
 2012-02-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, disable Mutation observers build on GTK until it can

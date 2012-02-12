@@ -1123,14 +1123,14 @@ void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& en
     ASSERT(end.containerNode()->isTextNode());
 
     bool shouldUpdateStart = start.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode();
-    Text* text = static_cast<Text *>(end.deprecatedNode());
+    Text* text = toText(end.deprecatedNode());
     splitTextNode(text, end.offsetInContainerNode());
 
     Node* prevNode = text->previousSibling();
     if (!prevNode || !prevNode->isTextNode())
         return;
 
-    Position newStart = shouldUpdateStart ? Position(static_cast<Text*>(prevNode), start.offsetInContainerNode()) : start;
+    Position newStart = shouldUpdateStart ? Position(toText(prevNode), start.offsetInContainerNode()) : start;
     updateStartEnd(newStart, lastPositionInNode(prevNode));
 }
 
@@ -1162,7 +1162,7 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
     if (!firstTextNode || !firstTextNode->isTextNode())
         return;
 
-    Position newStart = shouldUpdateStart ? Position(static_cast<Text*>(firstTextNode), start.offsetInContainerNode()) : start;
+    Position newStart = shouldUpdateStart ? Position(toText(firstTextNode), start.offsetInContainerNode()) : start;
     updateStartEnd(newStart, positionAfterNode(firstTextNode));
 }
 
@@ -1433,8 +1433,8 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     while (child) {
         Node* next = child->nextSibling();
         if (child->isTextNode() && next && next->isTextNode()) {
-            Text* childText = static_cast<Text *>(child);
-            Text* nextText = static_cast<Text *>(next);
+            Text* childText = toText(child);
+            Text* nextText = toText(next);
             if (start.anchorType() == Position::PositionIsOffsetInAnchor && next == start.containerNode())
                 newStart = Position(childText, childText->length() + start.offsetInContainerNode());
             if (end.anchorType() == Position::PositionIsOffsetInAnchor && next == end.containerNode())

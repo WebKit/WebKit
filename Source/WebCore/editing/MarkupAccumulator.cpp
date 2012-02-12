@@ -419,7 +419,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* nod
 
     switch (node->nodeType()) {
     case Node::TEXT_NODE:
-        appendText(result, static_cast<Text*>(const_cast<Node*>(node)));
+        appendText(result, toText(const_cast<Node*>(node)));
         break;
     case Node::COMMENT_NODE:
         appendComment(result, static_cast<const Comment*>(node)->data());

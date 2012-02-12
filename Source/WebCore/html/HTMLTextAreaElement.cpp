@@ -367,7 +367,7 @@ String HTMLTextAreaElement::defaultValue() const
     // Since there may be comments, ignore nodes other than text nodes.
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())
-            value += static_cast<Text*>(n)->data();
+            value += toText(n)->data();
     }
 
     return value;

@@ -322,14 +322,14 @@ void InsertParagraphSeparatorCommand::doApply()
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
     if (leadingWhitespace.isNotNull() && leadingWhitespace.deprecatedNode()->isTextNode()) {
-        Text* textNode = static_cast<Text*>(leadingWhitespace.deprecatedNode());
+        Text* textNode = toText(leadingWhitespace.deprecatedNode());
         ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
         replaceTextInNodePreservingMarkers(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
     if (insertionPosition.deprecatedNode()->isTextNode()) {
-        Text* textNode = static_cast<Text*>(insertionPosition.deprecatedNode());
+        Text* textNode = toText(insertionPosition.deprecatedNode());
         bool atEnd = (unsigned)insertionPosition.deprecatedEditingOffset() >= textNode->length();
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
             splitTextNode(textNode, insertionPosition.deprecatedEditingOffset());
@@ -389,7 +389,7 @@ void InsertParagraphSeparatorCommand::doApply()
             ASSERT(!insertionPosition.deprecatedNode()->renderer() || insertionPosition.deprecatedNode()->renderer()->style()->collapseWhiteSpace());
             deleteInsignificantTextDownstream(insertionPosition);
             if (insertionPosition.deprecatedNode()->isTextNode())
-                insertTextIntoNode(static_cast<Text*>(insertionPosition.deprecatedNode()), 0, nonBreakingSpaceString());
+                insertTextIntoNode(toText(insertionPosition.deprecatedNode()), 0, nonBreakingSpaceString());
         }
     }
 

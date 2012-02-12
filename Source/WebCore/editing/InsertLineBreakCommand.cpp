@@ -137,7 +137,7 @@ void InsertLineBreakCommand::doApply()
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     } else if (pos.deprecatedNode()->isTextNode()) {
         // Split a text node
-        Text* textNode = static_cast<Text*>(pos.deprecatedNode());
+        Text* textNode = toText(pos.deprecatedNode());
         splitTextNode(textNode, pos.deprecatedEditingOffset());
         insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = firstPositionInNode(textNode);

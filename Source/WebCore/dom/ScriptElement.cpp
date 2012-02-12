@@ -355,7 +355,7 @@ String ScriptElement::scriptContent() const
         if (!n->isTextNode())
             continue;
 
-        Text* t = static_cast<Text*>(n);
+        Text* t = toText(n);
         if (foundMultipleTextNodes)
             content.append(t->data());
         else if (firstTextNode) {

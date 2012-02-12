@@ -147,7 +147,7 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
     case Node::ATTRIBUTE_NODE:
         return toV8(static_cast<Attr*>(impl), forceNewObject);
     case Node::TEXT_NODE:
-        return toV8(static_cast<Text*>(impl), forceNewObject);
+        return toV8(toText(impl), forceNewObject);
     case Node::CDATA_SECTION_NODE:
         return toV8(static_cast<CDATASection*>(impl), forceNewObject);
     case Node::ENTITY_REFERENCE_NODE:

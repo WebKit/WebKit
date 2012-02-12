@@ -364,7 +364,7 @@ static void replaceChildrenWithFragment(HTMLElement* element, PassRefPtr<Documen
     }
 
     if (hasOneTextChild(element) && hasOneTextChild(fragment.get())) {
-        static_cast<Text*>(element->firstChild())->setData(static_cast<Text*>(fragment->firstChild())->data(), ec);
+        toText(element->firstChild())->setData(toText(fragment->firstChild())->data(), ec);
         return;
     }
 
@@ -384,7 +384,7 @@ static void replaceChildrenWithText(HTMLElement* element, const String& text, Ex
 #endif
 
     if (hasOneTextChild(element)) {
-        static_cast<Text*>(element->firstChild())->setData(text, ec);
+        toText(element->firstChild())->setData(text, ec);
         return;
     }
 
@@ -433,8 +433,8 @@ static void mergeWithNextTextNode(PassRefPtr<Node> node, ExceptionCode& ec)
     if (!next || !next->isTextNode())
         return;
     
-    RefPtr<Text> textNode = static_cast<Text*>(node.get());
-    RefPtr<Text> textNext = static_cast<Text*>(next);
+    RefPtr<Text> textNode = toText(node.get());
+    RefPtr<Text> textNext = toText(next);
     textNode->appendData(textNext->data(), ec);
     if (ec)
         return;

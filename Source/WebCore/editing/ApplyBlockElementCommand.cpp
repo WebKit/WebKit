@@ -162,7 +162,7 @@ static bool isNewLineAtPosition(const Position& position)
         return false;
 
     ExceptionCode ec = 0;
-    String textAtPosition = static_cast<Text*>(textNode)->substringData(offset, 1, ec);
+    String textAtPosition = toText(textNode)->substringData(offset, 1, ec);
     if (ec)
         return false;
 
@@ -257,18 +257,18 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
 
     if (text == start.containerNode() && text->previousSibling() && text->previousSibling()->isTextNode()) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
-        start = Position(static_cast<Text*>(text->previousSibling()), start.offsetInContainerNode());
+        start = Position(toText(text->previousSibling()), start.offsetInContainerNode());
     }
     if (text == end.containerNode() && text->previousSibling() && text->previousSibling()->isTextNode()) {
         ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
-        end = Position(static_cast<Text*>(text->previousSibling()), end.offsetInContainerNode());
+        end = Position(toText(text->previousSibling()), end.offsetInContainerNode());
     }
     if (text == m_endOfLastParagraph.containerNode()) {
         if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode()) {
             // We can only fix endOfLastParagraph if the previous node was still text and hasn't been modified by script.
             if (text->previousSibling()->isTextNode()
-                && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= static_cast<Text*>(text->previousSibling())->length())
-                m_endOfLastParagraph = Position(static_cast<Text*>(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
+                && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= toText(text->previousSibling())->length())
+                m_endOfLastParagraph = Position(toText(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
         } else
             m_endOfLastParagraph = Position(text.get(), m_endOfLastParagraph.offsetInContainerNode() - 1);
     }

@@ -597,7 +597,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     document()->updateLayoutIgnorePendingStylesheets();
 
     Node* lastLeafInserted = insertedNodes.lastLeafInserted();
-    if (lastLeafInserted && lastLeafInserted->isTextNode() && !nodeHasVisibleRenderText(static_cast<Text*>(lastLeafInserted))
+    if (lastLeafInserted && lastLeafInserted->isTextNode() && !nodeHasVisibleRenderText(toText(lastLeafInserted))
         && !enclosingNodeWithTag(firstPositionInOrBeforeNode(lastLeafInserted), selectTag)
         && !enclosingNodeWithTag(firstPositionInOrBeforeNode(lastLeafInserted), scriptTag)) {
         insertedNodes.willRemoveNode(lastLeafInserted);
@@ -608,7 +608,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     // it is a top level node in the fragment and the user can't insert into those elements.
     Node* firstNodeInserted = insertedNodes.firstNodeInserted();
     lastLeafInserted = insertedNodes.lastLeafInserted();
-    if (firstNodeInserted && firstNodeInserted->isTextNode() && !nodeHasVisibleRenderText(static_cast<Text*>(firstNodeInserted))) {
+    if (firstNodeInserted && firstNodeInserted->isTextNode() && !nodeHasVisibleRenderText(toText(firstNodeInserted))) {
         insertedNodes.willRemoveNode(firstNodeInserted);
         removeNode(firstNodeInserted);
     }
@@ -1189,7 +1189,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style()->collapseWhiteSpace();
         if (endNode->isTextNode()) {
-            Text* text = static_cast<Text*>(endNode);
+            Text* text = toText(endNode);
             // FIXME: we shouldn't always be inserting the space at the end
             insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == text)
@@ -1213,7 +1213,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style()->collapseWhiteSpace();
         if (startNode->isTextNode()) {
-            insertTextIntoNode(static_cast<Text*>(startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            insertTextIntoNode(toText(startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
@@ -1279,7 +1279,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> prpListElement
     if (isMiddle) {
         int textNodeOffset = insertPos.offsetInContainerNode();
         if (insertPos.deprecatedNode()->isTextNode() && textNodeOffset > 0)
-            splitTextNode(static_cast<Text*>(insertPos.deprecatedNode()), textNodeOffset);
+            splitTextNode(toText(insertPos.deprecatedNode()), textNodeOffset);
         splitTreeToNode(insertPos.deprecatedNode(), lastNode, true);
     }
 
@@ -1333,7 +1333,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
         return false;
 
     Node* nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();
-    Text* textNode = static_cast<Text*>(fragment.firstChild());
+    Text* textNode = toText(fragment.firstChild());
     // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
 
     Position start = endingSelection().start();

@@ -153,7 +153,7 @@ Text* Position::containerText() const
 {
     switch (anchorType()) {
     case PositionIsOffsetInAnchor:
-        return m_anchorNode && m_anchorNode->isTextNode() ? static_cast<Text*>(m_anchorNode.get()) : 0;
+        return m_anchorNode && m_anchorNode->isTextNode() ? toText(m_anchorNode.get()) : 0;
     case PositionIsBeforeAnchor:
     case PositionIsAfterAnchor:
         return 0;
@@ -1018,7 +1018,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
 
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.deprecatedNode()->inSameContainingBlockFlowElement(deprecatedNode()) && prev.deprecatedNode()->isTextNode()) {
-        String string = static_cast<Text *>(prev.deprecatedNode())->data();
+        String string = toText(prev.deprecatedNode())->data();
         UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             if (isEditablePosition(prev))

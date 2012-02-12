@@ -155,7 +155,7 @@ void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
             if (n->isElementNode())
                 static_cast<Element*>(n)->recalcStyle(change);
             else if (n->isTextNode())
-                static_cast<Text*>(n)->recalcTextStyle(change);
+                toText(n)->recalcTextStyle(change);
         }
     }
 

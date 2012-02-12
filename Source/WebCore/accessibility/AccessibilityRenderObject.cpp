@@ -1212,7 +1212,7 @@ String AccessibilityRenderObject::stringValue() const
 static String accessibleNameForNode(Node* node)
 {
     if (node->isTextNode())
-        return static_cast<Text*>(node)->data();
+        return toText(node)->data();
 
     if (node->hasTagName(inputTag))
         return static_cast<HTMLInputElement*>(node)->value();

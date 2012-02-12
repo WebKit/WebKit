@@ -356,7 +356,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
     } else if (caretMinOffset(refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
     else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
-        splitTextNode(static_cast<Text *>(refChild), offset);
+        splitTextNode(toText(refChild), offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
         if (!refChild->inDocument())
@@ -532,7 +532,7 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     if (pos.offsetInContainerNode() >= caretMaxOffset(pos.containerNode()))
         return positionInParentAfterNode(tabSpan);
 
-    splitTextNodeContainingElement(static_cast<Text *>(pos.containerNode()), pos.offsetInContainerNode());
+    splitTextNodeContainingElement(toText(pos.containerNode()), pos.offsetInContainerNode());
     return positionInParentBeforeNode(tabSpan);
 }
 
@@ -590,7 +590,7 @@ bool CompositeEditCommand::canRebalance(const Position& position) const
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
         return false;
 
-    Text* textNode = static_cast<Text*>(node);
+    Text* textNode = toText(node);
     if (textNode->length() == 0)
         return false;
 
@@ -610,14 +610,14 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 
     // If the rebalance is for the single offset, and neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     int offset = position.deprecatedEditingOffset();
-    String text = static_cast<Text*>(node)->data();
+    String text = toText(node)->data();
     if (!isWhitespace(text[offset])) {
         offset--;
         if (offset < 0 || !isWhitespace(text[offset]))
             return;
     }
 
-    rebalanceWhitespaceOnTextSubstring(static_cast<Text*>(node), position.offsetInContainerNode(), position.offsetInContainerNode());
+    rebalanceWhitespaceOnTextSubstring(toText(node), position.offsetInContainerNode(), position.offsetInContainerNode());
 }
 
 void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> prpTextNode, int startOffset, int endOffset)
@@ -659,7 +659,7 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     Node* node = position.deprecatedNode();
     if (!node || !node->isTextNode())
         return;
-    Text* textNode = static_cast<Text*>(node);    
+    Text* textNode = toText(node);    
     
     if (textNode->length() == 0)
         return;
@@ -677,9 +677,9 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     Position previous(previousVisiblePos.deepEquivalent());
     
     if (isCollapsibleWhitespace(previousVisiblePos.characterAfter()) && previous.deprecatedNode()->isTextNode() && !previous.deprecatedNode()->hasTagName(brTag))
-        replaceTextInNodePreservingMarkers(static_cast<Text*>(previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(toText(previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     if (isCollapsibleWhitespace(visiblePos.characterAfter()) && position.deprecatedNode()->isTextNode() && !position.deprecatedNode()->hasTagName(brTag))
-        replaceTextInNodePreservingMarkers(static_cast<Text*>(position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(toText(position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()
@@ -784,7 +784,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
     for (Node* node = start.deprecatedNode(); node; node = next) {
         next = node->traverseNextNode();
         if (node->isTextNode()) {
-            Text* textNode = static_cast<Text*>(node);
+            Text* textNode = toText(node);
             int startOffset = node == start.deprecatedNode() ? start.deprecatedEditingOffset() : 0;
             int endOffset = node == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
             deleteInsignificantText(textNode, startOffset, endOffset);
@@ -857,7 +857,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
         return;
     }
     
-    deleteTextFromNode(static_cast<Text*>(p.anchorNode()), p.offsetInContainerNode(), 1);
+    deleteTextFromNode(toText(p.anchorNode()), p.offsetInContainerNode(), 1);
 }
 
 PassRefPtr<Node> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
@@ -1033,7 +1033,7 @@ void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
         else if (lineBreakExistsAtPosition(position)) {
             // There is a preserved '\n' at caretAfterDelete.
             // We can safely assume this is a text node.
-            Text* textNode = static_cast<Text*>(node);
+            Text* textNode = toText(node);
             if (textNode->length() == 1)
                 removeNodeAndPruneAncestors(node);
             else
@@ -1326,7 +1326,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         removeNodeAndPruneAncestors(caretPos.deprecatedNode());
     else if (caretPos.deprecatedNode()->isTextNode()) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
-        Text* textNode = static_cast<Text*>(caretPos.deprecatedNode());
+        Text* textNode = toText(caretPos.deprecatedNode());
         ContainerNode* parentNode = textNode->parentNode();
         // The preserved newline must be the first thing in the node, since otherwise the previous
         // paragraph would be quoted, and we verified that it wasn't above.

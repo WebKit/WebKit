@@ -771,7 +771,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                         break;
                     }
                     if (n->isTextNode()) {
-                        Text* textNode = static_cast<Text*>(n);
+                        Text* textNode = toText(n);
                         if (!textNode->data().isEmpty()) {
                             result = false;
                             break;

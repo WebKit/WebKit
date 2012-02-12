@@ -147,7 +147,7 @@ void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
     Node* child = firstChild();
     if (child && child->isTextNode() && !child->nextSibling())
-        static_cast<Text *>(child)->setData(text, ec);
+        toText(child)->setData(text, ec);
     else {
         removeChildren();
         appendChild(Text::create(document(), text), ec);

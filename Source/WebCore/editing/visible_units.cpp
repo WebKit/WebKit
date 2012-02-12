@@ -361,7 +361,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    return startNode->isTextNode() ? Position(static_cast<Text*>(startNode), toInlineTextBox(startBox)->start())
+    return startNode->isTextNode() ? Position(toText(startNode), toInlineTextBox(startBox)->start())
         : positionBeforeNode(startNode);
 }
 
@@ -441,7 +441,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         int endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
             endOffset += endTextBox->len();
-        pos = Position(static_cast<Text*>(endNode), endOffset);
+        pos = Position(toText(endNode), endOffset);
     } else
         pos = positionAfterNode(endNode);
     
@@ -834,7 +834,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                     i = max(0, o);
                 while (--i >= 0) {
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(static_cast<Text*>(n), i + 1), DOWNSTREAM);
+                        return VisiblePosition(Position(toText(n), i + 1), DOWNSTREAM);
                 }
             }
             node = n;
@@ -910,7 +910,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i) {
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(static_cast<Text*>(n), i), DOWNSTREAM);
+                        return VisiblePosition(Position(toText(n), i), DOWNSTREAM);
                 }
             }
             node = n;

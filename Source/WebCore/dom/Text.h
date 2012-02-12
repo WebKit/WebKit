@@ -70,6 +70,12 @@ private:
 #endif
 };
 
+inline Text* toText(Node* node)
+{
+    ASSERT(!node || node->isTextNode());
+    return static_cast<Text*>(node);
+}
+
 } // namespace WebCore
 
 #endif // Text_h

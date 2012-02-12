@@ -1,3 +1,111 @@
+2012-02-12  Joe Thomas  <joethomas@motorola.com>
+
+        Add toText and isTextNode helpers in Text class.
+        https://bugs.webkit.org/show_bug.cgi?id=78140
+
+        Added a new helper function toText() in dom/Text.h which does the type casting operation to Text object.
+        Modified the code to make use of this helper function.
+
+        Reviewed by Adam Barth.
+
+        No new tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::accessibleNameForNode):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::toV8Slow):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::normalize):
+        * dom/Position.cpp:
+        (WebCore::Position::containerText):
+        (WebCore::Position::leadingWhitespacePosition):
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::Range::getBorderAndTextQuads):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptContent):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::recalcShadowTreeStyle):
+        * dom/Text.h: Added new helper function toText.
+        (WebCore::toText): new helper function which does the type casting operation to Text object.
+        (WebCore):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::isNewLineAtPosition):
+        (WebCore::ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfNeeded):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitTextAtEnd):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::canRebalance):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+        * editing/htmlediting.cpp:
+        (WebCore::lineBreakExistsAtPosition):
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/HTMLElement.cpp:
+        (WebCore::replaceChildrenWithFragment):
+        (WebCore::replaceChildrenWithText):
+        (WebCore::mergeWithNextTextNode):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasFallbackContent):
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setText):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::setText):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultValue):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::innerTextValue):
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::text):
+        (WebCore::HTMLTitleElement::setText):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::originalText):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText):
+        (WebCore::RenderTextFragment::previousCharacter):
+
 2012-02-12  Kentaro Hara  <haraken@chromium.org>
 
         Remove [CPPCustom] from CodeGeneratorCPP.pm
