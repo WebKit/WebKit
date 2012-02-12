@@ -145,7 +145,13 @@ namespace JSC {
         }
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
-        void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
+        bool hasGetterSetterPropertiesExcludingProto() const { return m_hasGetterSetterPropertiesExcludingProto; }
+        void setHasGetterSetterProperties(bool isProto)
+        {
+            m_hasGetterSetterProperties = true;
+            if (!isProto)
+                m_hasGetterSetterPropertiesExcludingProto = true;
+        }
 
         bool hasNonEnumerableProperties() const { return m_hasNonEnumerableProperties; }
         
@@ -282,6 +288,7 @@ namespace JSC {
         unsigned m_dictionaryKind : 2;
         bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
+        bool m_hasGetterSetterPropertiesExcludingProto : 1;
         bool m_hasNonEnumerableProperties : 1;
         unsigned m_attributesInPrevious : 7;
         unsigned m_specificFunctionThrashCount : 2;

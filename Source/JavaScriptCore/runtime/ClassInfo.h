@@ -89,6 +89,9 @@ namespace JSC {
 
         typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
         GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
+
+        typedef bool (*AllowsAccessFromFunctionPtr)(JSObject*, ExecState*);
+        AllowsAccessFromFunctionPtr allowsAccessFrom;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -130,6 +133,7 @@ struct MemberCheck##member { \
         &ClassName::putDirectVirtual, \
         &ClassName::defineOwnProperty, \
         &ClassName::getOwnPropertyDescriptor, \
+        &ClassName::allowsAccessFrom, \
     }, \
     sizeof(ClassName), \
     ClassName::TypedArrayStorageType

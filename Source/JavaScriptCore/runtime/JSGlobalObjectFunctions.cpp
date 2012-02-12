@@ -714,4 +714,41 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
     return throwVMTypeError(exec);
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
+{
+    if (!exec->thisValue().isObject())
+        return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
+
+    JSObject* thisObject = asObject(exec->thisValue());
+    if (!thisObject->methodTable()->allowsAccessFrom(thisObject, exec))
+        return JSValue::encode(jsUndefined());
+
+    return JSValue::encode(thisObject->prototype());
+}
+
+EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
+{
+    JSValue value = exec->argument(0);
+
+    // Setting __proto__ of a primitive should have no effect.
+    if (!exec->thisValue().isObject())
+        return JSValue::encode(jsUndefined());
+
+    JSObject* thisObject = asObject(exec->thisValue());
+    if (!thisObject->methodTable()->allowsAccessFrom(thisObject, exec))
+        return JSValue::encode(jsUndefined());
+
+    // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
+    if (!value.isObject() && !value.isNull())
+        return JSValue::encode(jsUndefined());
+
+    if (!thisObject->isExtensible())
+        return JSValue::encode(jsUndefined());
+
+    if (!thisObject->setPrototypeWithCycleCheck(exec->globalData(), value))
+        throwError(exec, createError(exec, "cyclic __proto__ value"));
+
+    return JSValue::encode(jsUndefined());
+}
+
 } // namespace JSC

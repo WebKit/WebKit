@@ -191,6 +191,12 @@ void JSCell::putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue,
     ASSERT_NOT_REACHED();
 }
 
+bool JSCell::allowsAccessFrom(JSObject*, ExecState*)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool JSCell::defineOwnProperty(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool)
 {
     ASSERT_NOT_REACHED();
