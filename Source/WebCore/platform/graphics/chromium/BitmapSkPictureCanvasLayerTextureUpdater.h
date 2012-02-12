@@ -32,9 +32,8 @@
 
 #include "LayerTextureSubImage.h"
 #include "PlatformColor.h"
+#include "SkBitmap.h"
 #include "SkPictureCanvasLayerTextureUpdater.h"
-
-class SkDevice;
 
 namespace WebCore {
 
@@ -52,7 +51,7 @@ public:
     private:
         BitmapSkPictureCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
 
-        OwnPtr<SkDevice> m_device;
+        SkBitmap m_bitmap;
         BitmapSkPictureCanvasLayerTextureUpdater* m_textureUpdater;
     };
 

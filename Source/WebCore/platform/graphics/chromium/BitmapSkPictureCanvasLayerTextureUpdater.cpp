@@ -45,21 +45,21 @@ BitmapSkPictureCanvasLayerTextureUpdater::Texture::Texture(BitmapSkPictureCanvas
 
 void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRect& sourceRect)
 {
-    m_device = adoptPtr(new SkDevice(SkBitmap::kARGB_8888_Config, sourceRect.width(), sourceRect.height()));
-    OwnPtr<SkCanvas> canvas = adoptPtr(new SkCanvas(m_device.get()));
-    textureUpdater()->paintContentsRect(canvas.get(), sourceRect);
+    m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, sourceRect.width(), sourceRect.height());
+    m_bitmap.allocPixels();
+    SkDevice device(m_bitmap);
+    SkCanvas canvas(&device);
+    textureUpdater()->paintContentsRect(&canvas, sourceRect);
 }
 
 void BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
 {
     texture()->bindTexture(context, allocator);
 
-    ASSERT(m_device);
-    const SkBitmap* bitmap = &m_device->accessBitmap(false);
-    bitmap->lockPixels();
-    textureUpdater()->updateTextureRect(context, texture()->format(), destRect, static_cast<uint8_t*>(bitmap->getPixels()));
-    bitmap->unlockPixels();
-    m_device.clear();
+    m_bitmap.lockPixels();
+    textureUpdater()->updateTextureRect(context, texture()->format(), destRect, static_cast<uint8_t*>(m_bitmap.getPixels()));
+    m_bitmap.unlockPixels();
+    m_bitmap.reset();
 }
 
 PassRefPtr<BitmapSkPictureCanvasLayerTextureUpdater> BitmapSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)

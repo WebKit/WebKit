@@ -1,3 +1,22 @@
+2012-02-12  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Avoid unnecessary memset in per-tile layer updater.
+        https://bugs.webkit.org/show_bug.cgi?id=78426
+
+        Reviewed by Stephen White.
+
+        Use our own SkBitmap and call SkBitmap::allocPixels() instead of
+        letting SkDevice construct a SkBitmap. This avoids an unnecessary
+        memset otherwise done by SkDevice.
+
+        No new tests.
+
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+
 2012-02-12  Joe Thomas  <joethomas@motorola.com>
 
         Add toText and isTextNode helpers in Text class.
