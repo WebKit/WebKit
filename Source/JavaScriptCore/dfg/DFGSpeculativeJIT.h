@@ -1637,7 +1637,7 @@ private:
     void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex)
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        fprintf(stderr, "SpeculativeJIT was terminated.\n");
+        dataLog("SpeculativeJIT was terminated.\n");
 #endif
         if (!m_compileOkay)
             return;

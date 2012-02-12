@@ -1,3 +1,13 @@
+2012-02-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::SpeculativeJIT calls fprintf() instead of dataLog in terminateSpeculativeExecution()
+        https://bugs.webkit.org/show_bug.cgi?id=78431
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+
 2012-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Add back WTFURL to WebKit
