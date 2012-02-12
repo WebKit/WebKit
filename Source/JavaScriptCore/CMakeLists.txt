@@ -211,7 +211,6 @@ SET(JavaScriptCore_SOURCES
     yarr/YarrJIT.cpp
     yarr/YarrSyntaxChecker.cpp
 )
-SET(JavaScriptCore_HEADERS )
 
 SET(JavaScriptCore_LUT_FILES
     runtime/ArrayConstructor.cpp
