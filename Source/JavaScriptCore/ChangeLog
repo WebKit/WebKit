@@ -1,5 +1,24 @@
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Old JIT put_by_id profiling counts every put_by_id_transition as taking slow path
+        https://bugs.webkit.org/show_bug.cgi?id=78430
+        <rdar://problem/10849469> <rdar://problem/10849684>
+
+        Reviewed by Gavin Barraclough.
+        
+        The old JIT's put_by_id transition caching involves repatching the slow call to
+        a generated stub. That means that the call is counted as "slow case". So, this
+        patch inserts code to decrement the slow case count if the stub succeeds.
+        
+        Looks like a ~1% speed-up on V8.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
+2012-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         Build fix for Qt.
 
         * wtf/DataLog.h:

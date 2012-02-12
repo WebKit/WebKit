@@ -526,8 +526,16 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         }
     }
 
-    Call callTarget;
-
+    // If we succeed in all of our checks, and the code was optimizable, then make sure we
+    // decrement the rare case counter.
+#if ENABLE(VALUE_PROFILER)
+    if (m_codeBlock->canCompileWithDFG()) {
+        sub32(
+            TrustedImm32(1),
+            AbsoluteAddress(&m_codeBlock->rareCaseProfileForBytecodeOffset(stubInfo->bytecodeIndex)->m_counter));
+    }
+#endif
+    
     // emit a call only if storage realloc is needed
     bool willNeedStorageRealloc = oldStructure->propertyStorageCapacity() != newStructure->propertyStorageCapacity();
     if (willNeedStorageRealloc) {
