@@ -1,3 +1,13 @@
+2012-02-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Reduce the reentrancy limit of the interpreter for the iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=78400
+
+        Reviewed by Gavin Barraclough.
+
+        * interpreter/Interpreter.h: Lowered the maximum reentrancy limit for large thread stacks.
+        (JSC):
+
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         [DFG] Misuse of WeakJSConstants in silentFillGPR code.
