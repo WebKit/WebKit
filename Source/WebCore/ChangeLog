@@ -1,5 +1,30 @@
 2012-02-12  Kentaro Hara  <haraken@chromium.org>
 
+        Remove [CPPCustom] from CodeGeneratorCPP.pm
+        https://bugs.webkit.org/show_bug.cgi?id=78342
+
+        Reviewed by Adam Barth.
+
+        This patch removes [CPPCustom].
+
+        [CPPCustom] has been used in DOMWindow.location only to indicate that
+        DOMWindow.location should be ignored in CPP. However, there are many
+        other attributes and methods that CPP does not support (e.g. [CallWith=...],
+        [CustomSetter], etc), and they are not yet marked with [CPPCustom].
+        CPP just generates "meaningless" code for those unsupported attributes
+        and methods. Ideally we can mark all unsupported attributes and methods
+        with [CPPCustom], but it would not be so practical. Otherwise, removing
+        [CPPCustom] would make sense. The side effect of removing [CPPCustom]
+        is just that CPP will generate "meaningless" code for DOMWindow.location.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (ShouldSkipType):
+        * page/DOMWindow.idl:
+
+2012-02-12  Kentaro Hara  <haraken@chromium.org>
+
         Rename [JSCustomPrototypeDefineOwnProperty] to [JSCustomDefineOwnPropertyOnPrototype]
         https://bugs.webkit.org/show_bug.cgi?id=78354
 

@@ -192,8 +192,7 @@ sub ShouldSkipType
     my $typeInfo = shift;
 
     return 1 if $typeInfo->signature->extendedAttributes->{"Custom"}
-                or $typeInfo->signature->extendedAttributes->{"CustomGetter"}
-                or $typeInfo->signature->extendedAttributes->{"CPPCustom"};
+                or $typeInfo->signature->extendedAttributes->{"CustomGetter"};
 
     # FIXME: We don't generate bindings for SVG related interfaces yet
     return 1 if $typeInfo->signature->name =~ /getSVGDocument/;
