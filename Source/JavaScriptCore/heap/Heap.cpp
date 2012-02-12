@@ -77,7 +77,7 @@ struct GCTimer {
     }
     ~GCTimer()
     {
-        printf("%s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf)\n", m_name, m_time * 1000, m_time * 1000 / m_count, m_min*1000, m_max*1000);
+        dataLog("%s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf)\n", m_name, m_time * 1000, m_time * 1000 / m_count, m_min*1000, m_max*1000);
     }
     double m_time;
     double m_min;
@@ -127,7 +127,7 @@ struct GCCounter {
     }
     ~GCCounter()
     {
-        printf("%s: %zu values (avg. %zu, min. %zu, max. %zu)\n", m_name, m_total, m_total / m_count, m_min, m_max);
+        dataLog("%s: %zu values (avg. %zu, min. %zu, max. %zu)\n", m_name, m_total, m_total / m_count, m_min, m_max);
     }
     const char* m_name;
     size_t m_count;
@@ -381,8 +381,8 @@ void Heap::destroy()
     ASSERT(!size());
     
 #if ENABLE(SIMPLE_HEAP_PROFILING)
-    m_slotVisitor.m_visitedTypeCounts.dump(stderr, "Visited Type Counts");
-    m_destroyedTypeCounts.dump(stderr, "Destroyed Type Counts");
+    m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");
+    m_destroyedTypeCounts.dump(WTF::dataFile(), "Destroyed Type Counts");
 #endif
     
     releaseFreeBlocks();

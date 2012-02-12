@@ -42,12 +42,12 @@ void ScopeChainNode::print()
         o->methodTable()->getPropertyNames(o, globalObject->globalExec(), propertyNames, ExcludeDontEnumProperties);
         PropertyNameArray::const_iterator propEnd = propertyNames.end();
 
-        fprintf(stderr, "----- [scope %p] -----\n", o);
+        dataLog("----- [scope %p] -----\n", o);
         for (PropertyNameArray::const_iterator propIter = propertyNames.begin(); propIter != propEnd; propIter++) {
             Identifier name = *propIter;
-            fprintf(stderr, "%s, ", name.ustring().utf8().data());
+            dataLog("%s, ", name.ustring().utf8().data());
         }
-        fprintf(stderr, "\n");
+        dataLog("\n");
     }
 }
 

@@ -139,7 +139,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
 
 void CodeProfile::report()
 {
-    fprintf(stdout, "<CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
+    dataLog("<CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
 
     // How many frames of C-code to print - 0, if not verbose, 1 if verbose, up to 1024 if very verbose.
     unsigned recursionLimit = CodeProfiling::beVeryVerbose() ? 1024 : CodeProfiling::beVerbose();
@@ -176,13 +176,13 @@ void CodeProfile::report()
     }
 
     // Output the profile tree.
-    fprintf(stdout, "Total samples: %lld\n", static_cast<long long>(profile.childCount()));
+    dataLog("Total samples: %lld\n", static_cast<long long>(profile.childCount()));
     profile.dump();
     
     for (size_t i = 0 ; i < m_children.size(); ++i)
         m_children[i]->report();
 
-    fprintf(stdout, "</CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
+    dataLog("</CodeProfiling %s:%d>\n", m_file.data(), m_lineNo);
 }
 
 }

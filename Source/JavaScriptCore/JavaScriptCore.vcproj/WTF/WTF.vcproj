@@ -733,6 +733,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\DataLog.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\DataLog.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Deque.h"
 			>
 		</File>

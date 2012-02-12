@@ -35,6 +35,7 @@
 #define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
 
 #include <MacroAssembler.h>
+#include <wtf/DataLog.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -326,13 +327,13 @@ private:
         linkCount++;
         totalInitialSize += initialSize;
         totalFinalSize += finalSize;
-        printf("link %p: orig %u, compact %u (delta %u, %.2f%%)\n", 
-               code, static_cast<unsigned>(initialSize), static_cast<unsigned>(finalSize),
-               static_cast<unsigned>(initialSize - finalSize),
-               100.0 * (initialSize - finalSize) / initialSize);
-        printf("\ttotal %u: orig %u, compact %u (delta %u, %.2f%%)\n", 
-               linkCount, totalInitialSize, totalFinalSize, totalInitialSize - totalFinalSize,
-               100.0 * (totalInitialSize - totalFinalSize) / totalInitialSize);
+        dataLog("link %p: orig %u, compact %u (delta %u, %.2f%%)\n", 
+                    code, static_cast<unsigned>(initialSize), static_cast<unsigned>(finalSize),
+                    static_cast<unsigned>(initialSize - finalSize),
+                    100.0 * (initialSize - finalSize) / initialSize);
+        dataLog("\ttotal %u: orig %u, compact %u (delta %u, %.2f%%)\n", 
+                    linkCount, totalInitialSize, totalFinalSize, totalInitialSize - totalFinalSize,
+                    100.0 * (totalInitialSize - totalFinalSize) / totalInitialSize);
     }
 #endif
     
@@ -349,17 +350,17 @@ private:
         size_t tsize = size / sizeof(short);
         char nameBuf[128];
         snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit%u", codeCount++);
-        printf("\t.syntax unified\n"
-               "\t.section\t__TEXT,__text,regular,pure_instructions\n"
-               "\t.globl\t%s\n"
-               "\t.align 2\n"
-               "\t.code 16\n"
-               "\t.thumb_func\t%s\n"
-               "# %p\n"
-               "%s:\n", nameBuf, nameBuf, code, nameBuf);
+        dataLog("\t.syntax unified\n"
+                    "\t.section\t__TEXT,__text,regular,pure_instructions\n"
+                    "\t.globl\t%s\n"
+                    "\t.align 2\n"
+                    "\t.code 16\n"
+                    "\t.thumb_func\t%s\n"
+                    "# %p\n"
+                    "%s:\n", nameBuf, nameBuf, code, nameBuf);
         
         for (unsigned i = 0; i < tsize; i++)
-            printf("\t.short\t0x%x\n", tcode[i]);
+            dataLog("\t.short\t0x%x\n", tcode[i]);
 #endif
     }
 #endif

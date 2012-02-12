@@ -1,3 +1,19 @@
+2012-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to send all JSC debug logging to a file
+        https://bugs.webkit.org/show_bug.cgi?id=78418
+
+        Reviewed by Sam Weinig.
+        
+        Introduced wtf/DataLog, which defines WTF::dataFile, WTF::dataLog,
+        and WTF::dataLogV. Changed all debugging- and profiling-related printfs
+        to use WTF::dataLog() or one of its friends. By default, debug logging
+        goes to stderr, unless you change the setting in wtf/DataLog.cpp.
+
+        No new tests because behavior is unchanged.
+
+        * ForwardingHeaders/wtf/DataLog.h: Added.
+
 2012-02-11  Gavin Barraclough  <barraclough@apple.com>
 
         Move special __proto__ property to Object.prototype

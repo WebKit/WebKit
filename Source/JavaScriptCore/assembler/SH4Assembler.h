@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 #include <wtf/Vector.h>
 
 #ifndef NDEBUG
@@ -2025,7 +2026,7 @@ public:
     static void vprintfStdoutInstr(const char* format, va_list args)
     {
         if (getenv("JavaScriptCoreDumpJIT"))
-            vfprintf(stdout, format, args);
+            WTF::dataLogV(format, args);
     }
 
     static void printBlockInstr(uint16_t* first, unsigned int offset, int nbInstr)

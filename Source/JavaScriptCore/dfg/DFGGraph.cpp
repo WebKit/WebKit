@@ -80,7 +80,7 @@ const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessDa
 static void printWhiteSpace(unsigned amount)
 {
     while (amount-- > 0)
-        printf(" ");
+        dataLog(" ");
 }
 
 void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
@@ -107,13 +107,13 @@ void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
     // Print the pops.
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
         printWhiteSpace(i * 2);
-        printf("<-- %p\n", previousInlineStack[i].inlineCallFrame->executable.get());
+        dataLog("<-- %p\n", previousInlineStack[i].inlineCallFrame->executable.get());
     }
     
     // Print the pushes.
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
         printWhiteSpace(i * 2);
-        printf("--> %p\n", currentInlineStack[i].inlineCallFrame->executable.get());
+        dataLog("--> %p\n", currentInlineStack[i].inlineCallFrame->executable.get());
     }
 }
 
@@ -150,64 +150,64 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-    printf("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
+    dataLog("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
     if (node.hasResult() && !skipped && node.hasVirtualRegister())
-        printf("%u", node.virtualRegister());
+        dataLog("%u", node.virtualRegister());
     else
-        printf("-");
-    printf(">\t%s(", opName(op));
+        dataLog("-");
+    dataLog(">\t%s(", opName(op));
     bool hasPrinted = false;
     if (op & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++) {
             if (hasPrinted)
-                printf(", ");
+                dataLog(", ");
             else
                 hasPrinted = true;
-            printf("@%u", m_varArgChildren[childIdx].index());
+            dataLog("@%u", m_varArgChildren[childIdx].index());
         }
     } else {
         if (!!node.child1())
-            printf("@%u", node.child1().index());
+            dataLog("@%u", node.child1().index());
         if (!!node.child2())
-            printf(", @%u", node.child2().index());
+            dataLog(", @%u", node.child2().index());
         if (!!node.child3())
-            printf(", @%u", node.child3().index());
+            dataLog(", @%u", node.child3().index());
         hasPrinted = !!node.child1();
     }
 
     if (node.hasArithNodeFlags()) {
-        printf("%s%s", hasPrinted ? ", " : "", arithNodeFlagsAsString(node.rawArithNodeFlags()));
+        dataLog("%s%s", hasPrinted ? ", " : "", arithNodeFlagsAsString(node.rawArithNodeFlags()));
         hasPrinted = true;
     }
     if (node.hasVarNumber()) {
-        printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
+        dataLog("%svar%u", hasPrinted ? ", " : "", node.varNumber());
         hasPrinted = true;
     }
     if (node.hasIdentifier()) {
         if (codeBlock)
-            printf("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
+            dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
         else
-            printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
+            dataLog("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
         hasPrinted = true;
     }
     if (node.hasStructureSet()) {
         for (size_t i = 0; i < node.structureSet().size(); ++i) {
-            printf("%sstruct(%p)", hasPrinted ? ", " : "", node.structureSet()[i]);
+            dataLog("%sstruct(%p)", hasPrinted ? ", " : "", node.structureSet()[i]);
             hasPrinted = true;
         }
     }
     if (node.hasStructureTransitionData()) {
-        printf("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
+        dataLog("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
         hasPrinted = true;
     }
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
         if (codeBlock)
-            printf("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
+            dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
         else
-            printf("%sid%u", hasPrinted ? ", " : "", storageAccessData.identifierNumber);
+            dataLog("%sid%u", hasPrinted ? ", " : "", storageAccessData.identifierNumber);
         
-        printf(", %lu", static_cast<unsigned long>(storageAccessData.offset));
+        dataLog(", %lu", static_cast<unsigned long>(storageAccessData.offset));
         hasPrinted = true;
     }
     ASSERT(node.hasVariableAccessData() == node.hasLocal());
@@ -215,83 +215,83 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         VariableAccessData* variableAccessData = node.variableAccessData();
         int operand = variableAccessData->operand();
         if (operandIsArgument(operand))
-            printf("%sarg%u(%s)", hasPrinted ? ", " : "", operandToArgument(operand), nameOfVariableAccessData(variableAccessData));
+            dataLog("%sarg%u(%s)", hasPrinted ? ", " : "", operandToArgument(operand), nameOfVariableAccessData(variableAccessData));
         else
-            printf("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
+            dataLog("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
         hasPrinted = true;
     }
     if (node.hasConstantBuffer() && codeBlock) {
         if (hasPrinted)
-            printf(", ");
-        printf("%u:[", node.startConstant());
+            dataLog(", ");
+        dataLog("%u:[", node.startConstant());
         for (unsigned i = 0; i < node.numConstants(); ++i) {
             if (i)
-                printf(", ");
-            printf("%s", codeBlock->constantBuffer(node.startConstant())[i].description());
+                dataLog(", ");
+            dataLog("%s", codeBlock->constantBuffer(node.startConstant())[i].description());
         }
-        printf("]");
+        dataLog("]");
         hasPrinted = true;
     }
     if (op == JSConstant) {
-        printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
+        dataLog("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         if (codeBlock) {
             JSValue value = valueOfJSConstant(codeBlock, nodeIndex);
-            printf(" = %s", value.description());
+            dataLog(" = %s", value.description());
         }
         hasPrinted = true;
     }
     if (op == WeakJSConstant) {
-        printf("%s%p", hasPrinted ? ", " : "", node.weakConstant());
+        dataLog("%s%p", hasPrinted ? ", " : "", node.weakConstant());
         hasPrinted = true;
     }
     if  (node.isBranch() || node.isJump()) {
-        printf("%sT:#%u", hasPrinted ? ", " : "", node.takenBlockIndex());
+        dataLog("%sT:#%u", hasPrinted ? ", " : "", node.takenBlockIndex());
         hasPrinted = true;
     }
     if  (node.isBranch()) {
-        printf("%sF:#%u", hasPrinted ? ", " : "", node.notTakenBlockIndex());
+        dataLog("%sF:#%u", hasPrinted ? ", " : "", node.notTakenBlockIndex());
         hasPrinted = true;
     }
     (void)hasPrinted;
     
-    printf(")");
+    dataLog(")");
 
     if (!skipped) {
         if (node.hasVariableAccessData())
-            printf("  predicting %s, double ratio %lf%s", predictionToString(node.variableAccessData()->prediction()), node.variableAccessData()->doubleVoteRatio(), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
+            dataLog("  predicting %s, double ratio %lf%s", predictionToString(node.variableAccessData()->prediction()), node.variableAccessData()->doubleVoteRatio(), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasHeapPrediction())
-            printf("  predicting %s", predictionToString(node.getHeapPrediction()));
+            dataLog("  predicting %s", predictionToString(node.getHeapPrediction()));
         else if (node.hasVarNumber())
-            printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
+            dataLog("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
     }
     
-    printf("\n");
+    dataLog("\n");
 }
 
 void Graph::dump(CodeBlock* codeBlock)
 {
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
-        printf("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
-        printf("  vars before: ");
+        dataLog("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
+        dataLog("  vars before: ");
         if (block->cfaHasVisited)
-            dumpOperands(block->valuesAtHead, stdout);
+            dumpOperands(block->valuesAtHead, WTF::dataFile());
         else
-            printf("<empty>");
-        printf("\n");
-        printf("  var links: ");
-        dumpOperands(block->variablesAtHead, stdout);
-        printf("\n");
+            dataLog("<empty>");
+        dataLog("\n");
+        dataLog("  var links: ");
+        dumpOperands(block->variablesAtHead, WTF::dataFile());
+        dataLog("\n");
         for (size_t i = block->begin; i < block->end; ++i)
             dump(i, codeBlock);
-        printf("  vars after: ");
+        dataLog("  vars after: ");
         if (block->cfaHasVisited)
-            dumpOperands(block->valuesAtTail, stdout);
+            dumpOperands(block->valuesAtTail, WTF::dataFile());
         else
-            printf("<empty>");
-        printf("\n");
+            dataLog("<empty>");
+        dataLog("\n");
     }
-    printf("Phi Nodes:\n");
+    dataLog("Phi Nodes:\n");
     for (size_t i = m_blocks.last()->end; i < size(); ++i)
         dump(i, codeBlock);
 }
@@ -349,7 +349,7 @@ void Graph::predictArgumentTypes(CodeBlock* codeBlock)
         at(m_arguments[arg]).variableAccessData()->predict(profile->computeUpdatedPrediction());
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Argument [%zu] prediction: %s\n", arg, predictionToString(at(m_arguments[arg]).variableAccessData()->prediction()));
+        dataLog("Argument [%zu] prediction: %s\n", arg, predictionToString(at(m_arguments[arg]).variableAccessData()->prediction()));
 #endif
     }
 }

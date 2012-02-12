@@ -17,6 +17,7 @@ SET(WTF_HEADERS
     CryptographicallyRandomNumber.h
     CurrentTime.h
     DateMath.h
+    DataLog.h
     DecimalNumber.h
     Decoder.h
     Deque.h
@@ -140,6 +141,7 @@ SET(WTF_SOURCES
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DateMath.cpp
+    DataLog.cpp
     DecimalNumber.cpp
     DynamicAnnotations.cpp
     FastMalloc.cpp

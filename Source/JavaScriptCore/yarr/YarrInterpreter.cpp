@@ -30,6 +30,7 @@
 #include "UString.h"
 #include "Yarr.h"
 #include <wtf/BumpPointerAllocator.h>
+#include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
 
 #ifndef NDEBUG
@@ -1682,10 +1683,10 @@ public:
 #ifndef NDEBUG
     void dumpDisjunction(ByteDisjunction* disjunction)
     {
-        printf("ByteDisjunction(%p):\n\t", disjunction);
+        dataLog("ByteDisjunction(%p):\n\t", disjunction);
         for (unsigned i = 0; i < disjunction->terms.size(); ++i)
-            printf("{ %d } ", disjunction->terms[i].type);
-        printf("\n");
+            dataLog("{ %d } ", disjunction->terms[i].type);
+        dataLog("\n");
     }
 #endif
 

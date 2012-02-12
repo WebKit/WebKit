@@ -984,7 +984,7 @@ template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "SpecInt@%d   ", nodeIndex);
+    dataLog("SpecInt@%d   ", nodeIndex);
 #endif
     if (isKnownNotInteger(nodeIndex)) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
@@ -1080,7 +1080,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "SpecDouble@%d   ", nodeIndex);
+    dataLog("SpecDouble@%d   ", nodeIndex);
 #endif
     if (isKnownNotNumber(nodeIndex)) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
@@ -1210,7 +1210,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "SpecCell@%d   ", nodeIndex);
+    dataLog("SpecCell@%d   ", nodeIndex);
 #endif
     if (isKnownNotCell(nodeIndex)) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
@@ -1283,7 +1283,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-     fprintf(stderr, "SpecBool@%d   ", nodeIndex);
+     dataLog("SpecBool@%d   ", nodeIndex);
 #endif
     if (isKnownNotBoolean(nodeIndex)) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);

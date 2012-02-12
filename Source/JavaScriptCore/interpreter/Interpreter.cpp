@@ -592,10 +592,10 @@ void Interpreter::dumpCallFrame(CallFrame* callFrame)
 
 void Interpreter::dumpRegisters(CallFrame* callFrame)
 {
-    printf("Register frame: \n\n");
-    printf("-----------------------------------------------------------------------------\n");
-    printf("            use            |   address  |                value               \n");
-    printf("-----------------------------------------------------------------------------\n");
+    dataLog("Register frame: \n\n");
+    dataLog("-----------------------------------------------------------------------------\n");
+    dataLog("            use            |   address  |                value               \n");
+    dataLog("-----------------------------------------------------------------------------\n");
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     const Register* it;
@@ -605,30 +605,30 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - codeBlock->numParameters();
     v = (*it).jsValue();
 #if USE(JSVALUE32_64)
-    printf("[this]                     | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v)); ++it;
+    dataLog("[this]                     | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v)); ++it;
 #else
-    printf("[this]                     | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v)); ++it;
+    dataLog("[this]                     | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v)); ++it;
 #endif
     end = it + max(codeBlock->numParameters() - 1, 0); // - 1 to skip "this"
     if (it != end) {
         do {
             v = (*it).jsValue();
 #if USE(JSVALUE32_64)
-            printf("[param]                    | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v));
+            dataLog("[param]                    | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v));
 #else
-            printf("[param]                    | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v));
+            dataLog("[param]                    | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v));
 #endif
             ++it;
         } while (it != end);
     }
-    printf("-----------------------------------------------------------------------------\n");
-    printf("[CodeBlock]                | %10p | %p \n", it, (*it).codeBlock()); ++it;
-    printf("[ScopeChain]               | %10p | %p \n", it, (*it).scopeChain()); ++it;
-    printf("[CallerRegisters]          | %10p | %d \n", it, (*it).i()); ++it;
-    printf("[ReturnPC]                 | %10p | %p \n", it, (*it).vPC()); ++it;
-    printf("[ArgumentCount]            | %10p | %d \n", it, (*it).i()); ++it;
-    printf("[Callee]                   | %10p | %p \n", it, (*it).function()); ++it;
-    printf("-----------------------------------------------------------------------------\n");
+    dataLog("-----------------------------------------------------------------------------\n");
+    dataLog("[CodeBlock]                | %10p | %p \n", it, (*it).codeBlock()); ++it;
+    dataLog("[ScopeChain]               | %10p | %p \n", it, (*it).scopeChain()); ++it;
+    dataLog("[CallerRegisters]          | %10p | %d \n", it, (*it).i()); ++it;
+    dataLog("[ReturnPC]                 | %10p | %p \n", it, (*it).vPC()); ++it;
+    dataLog("[ArgumentCount]            | %10p | %d \n", it, (*it).i()); ++it;
+    dataLog("[Callee]                   | %10p | %p \n", it, (*it).function()); ++it;
+    dataLog("-----------------------------------------------------------------------------\n");
 
     int registerCount = 0;
 
@@ -637,30 +637,30 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         do {
             v = (*it).jsValue();
 #if USE(JSVALUE32_64)
-            printf("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
 #else
-            printf("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
 #endif
             ++it;
             ++registerCount;
         } while (it != end);
     }
-    printf("-----------------------------------------------------------------------------\n");
+    dataLog("-----------------------------------------------------------------------------\n");
 
     end = it + codeBlock->m_numCalleeRegisters - codeBlock->m_numVars;
     if (it != end) {
         do {
             v = (*it).jsValue();
 #if USE(JSVALUE32_64)
-            printf("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
 #else
-            printf("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
 #endif
             ++it;
             ++registerCount;
         } while (it != end);
     }
-    printf("-----------------------------------------------------------------------------\n");
+    dataLog("-----------------------------------------------------------------------------\n");
 }
 
 #endif

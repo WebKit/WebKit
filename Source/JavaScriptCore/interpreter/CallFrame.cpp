@@ -40,7 +40,7 @@ void CallFrame::dumpCaller()
     JSValue function;
     
     interpreter()->retrieveLastCaller(this, signedLineNumber, sourceID, urlString, function);
-    printf("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
+    dataLog("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
 }
 
 RegisterFile* CallFrame::registerFile()

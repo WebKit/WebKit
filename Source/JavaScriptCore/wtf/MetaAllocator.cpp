@@ -428,7 +428,7 @@ void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void MetaAllocator::dumpProfile()
 {
-    printf("num allocations = %u, num frees = %u\n", m_numAllocations, m_numFrees);
+    dataLog("num allocations = %u, num frees = %u\n", m_numAllocations, m_numFrees);
 }
 #endif
 

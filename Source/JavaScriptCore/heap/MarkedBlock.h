@@ -26,6 +26,7 @@
 #include "HeapBlock.h"
 
 #include <wtf/Bitmap.h>
+#include <wtf/DataLog.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/PageAllocationAligned.h>
@@ -36,9 +37,11 @@
 #define HEAP_LOG_BLOCK_STATE_TRANSITIONS 0
 
 #if HEAP_LOG_BLOCK_STATE_TRANSITIONS
-#define HEAP_LOG_BLOCK_STATE_TRANSITION(block) do {                                  \
-        printf("%s:%d %s: block %s = %p, %d\n",                                      \
-               __FILE__, __LINE__, __FUNCTION__, #block, (block), (block)->m_state); \
+#define HEAP_LOG_BLOCK_STATE_TRANSITION(block) do {                     \
+        dataLog(                                                    \
+            "%s:%d %s: block %s = %p, %d\n",                            \
+            __FILE__, __LINE__, __FUNCTION__,                           \
+            #block, (block), (block)->m_state);                         \
     } while (false)
 #else
 #define HEAP_LOG_BLOCK_STATE_TRANSITION(block) ((void)0)

@@ -67,14 +67,14 @@ void SamplingFlags::stop()
         total += s_flagCounts[i];
 
     if (total) {
-        printf("\nSamplingFlags: sample counts with flags set: (%lld total)\n", total);
+        dataLog("\nSamplingFlags: sample counts with flags set: (%lld total)\n", total);
         for (unsigned i = 0; i <= 32; ++i) {
             if (s_flagCounts[i])
-                printf("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
+                dataLog("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
         }
-        printf("\n");
+        dataLog("\n");
     } else
-    printf("\nSamplingFlags: no samples.\n\n");
+    dataLog("\nSamplingFlags: no samples.\n\n");
 }
 uint64_t SamplingFlags::s_flagCounts[33];
 
@@ -151,7 +151,7 @@ void SamplingRegion::dump()
 void SamplingRegion::dumpInternal()
 {
     if (!s_spectrum) {
-        printf("\nSamplingRegion: was never sampled.\n\n");
+        dataLog("\nSamplingRegion: was never sampled.\n\n");
         return;
     }
     
@@ -161,10 +161,10 @@ void SamplingRegion::dumpInternal()
     for (unsigned i = list.size(); i--;)
         total += list[i].count;
     
-    printf("\nSamplingRegion: sample counts for regions: (%lu samples)\n", total);
+    dataLog("\nSamplingRegion: sample counts for regions: (%lu samples)\n", total);
 
     for (unsigned i = list.size(); i--;)
-        printf("    %3.2lf%%  %s\n", (100.0 * list[i].count) / total, list[i].key);
+        dataLog("    %3.2lf%%  %s\n", (100.0 * list[i].count) / total, list[i].key);
 }
 #else // ENABLE(SAMPLING_REGIONS)
 void SamplingRegion::dump() { }
@@ -373,10 +373,10 @@ void SamplingTool::dump(ExecState* exec)
 
     // (2) Print Opcode sampling results.
 
-    printf("\nBytecode samples [*]\n");
-    printf("                             sample   %% of       %% of     |   cti     cti %%\n");
-    printf("opcode                       count     VM        total    |  count   of self\n");
-    printf("-------------------------------------------------------   |  ----------------\n");
+    dataLog("\nBytecode samples [*]\n");
+    dataLog("                             sample   %% of       %% of     |   cti     cti %%\n");
+    dataLog("opcode                       count     VM        total    |  count   of self\n");
+    dataLog("-------------------------------------------------------   |  ----------------\n");
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         long long count = opcodeSampleInfo[i].count;
@@ -391,18 +391,18 @@ void SamplingTool::dump(ExecState* exec)
         double percentOfTotal = (static_cast<double>(count) * 100) / m_sampleCount;
         long long countInCTIFunctions = opcodeSampleInfo[i].countInCTIFunctions;
         double percentInCTIFunctions = (static_cast<double>(countInCTIFunctions) * 100) / count;
-        fprintf(stdout, "%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", opcodeName, opcodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
+        debugDebugPrintf("%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", opcodeName, opcodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
     }
     
-    printf("\n[*] Samples inside host code are not charged to any Bytecode.\n\n");
-    printf("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
-    printf("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
-    printf("\tsample count:\tsamples inside this opcode\n");
-    printf("\t%% of VM:\tsample count / all opcode samples\n");
-    printf("\t%% of total:\tsample count / all samples\n");
-    printf("\t--------------\n");
-    printf("\tcti count:\tsamples inside a CTI function called by this opcode\n");
-    printf("\tcti %% of self:\tcti count / sample count\n");
+    dataLog("\n[*] Samples inside host code are not charged to any Bytecode.\n\n");
+    dataLog("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
+    dataLog("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
+    dataLog("\tsample count:\tsamples inside this opcode\n");
+    dataLog("\t%% of VM:\tsample count / all opcode samples\n");
+    dataLog("\t%% of total:\tsample count / all samples\n");
+    dataLog("\t--------------\n");
+    dataLog("\tcti count:\tsamples inside a CTI function called by this opcode\n");
+    dataLog("\tcti %% of self:\tcti count / sample count\n");
     
 #if ENABLE(CODEBLOCK_SAMPLING)
 
@@ -418,7 +418,7 @@ void SamplingTool::dump(ExecState* exec)
 
     // (4) Print data from 'codeBlockSamples' array.
 
-    printf("\nCodeBlock samples\n\n"); 
+    dataLog("\nCodeBlock samples\n\n"); 
 
     for (int i = 0; i < scopeCount; ++i) {
         ScriptSampleRecord* record = codeBlockSamples[i];
@@ -428,21 +428,21 @@ void SamplingTool::dump(ExecState* exec)
 
         if (blockPercent >= 1) {
             //Instruction* code = codeBlock->instructions().begin();
-            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
+            dataLog("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
 
-                printf("    Opcode and line number samples [*]\n\n");
+                dataLog("    Opcode and line number samples [*]\n\n");
                 for (unsigned op = 0; op < record->m_size; ++op) {
                     int count = record->m_samples[op];
                     if (count) {
-                        printf("    [% 4d] has sample count: % 4d\n", op, count);
+                        dataLog("    [% 4d] has sample count: % 4d\n", op, count);
                         unsigned line = codeBlock->lineNumberForBytecodeOffset(op);
                         lineCounts.set(line, (lineCounts.contains(line) ? lineCounts.get(line) : 0) + count);
                     }
                 }
-                printf("\n");
+                dataLog("\n");
 
                 int linesCount = lineCounts.size();
                 Vector<LineCountInfo> lineCountInfo(linesCount);
@@ -455,12 +455,12 @@ void SamplingTool::dump(ExecState* exec)
                 qsort(lineCountInfo.begin(), linesCount, sizeof(LineCountInfo), compareLineCountInfoSampling);
 
                 for (lineno = 0; lineno < linesCount; ++lineno) {
-                    printf("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
+                    dataLog("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
                 }
-                printf("\n");
-                printf("    [*] Samples inside host code are charged to the calling Bytecode.\n");
-                printf("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
-                printf("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
+                dataLog("\n");
+                dataLog("    [*] Samples inside host code are charged to the calling Bytecode.\n");
+                dataLog("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
+                dataLog("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
             }
         }
     }

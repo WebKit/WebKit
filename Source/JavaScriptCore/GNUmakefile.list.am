@@ -567,6 +567,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/CurrentTime.h \
 	Source/JavaScriptCore/wtf/DateMath.cpp \
 	Source/JavaScriptCore/wtf/DateMath.h \
+	Source/JavaScriptCore/wtf/DataLog.cpp \
+	Source/JavaScriptCore/wtf/DataLog.h \
 	Source/JavaScriptCore/wtf/DecimalNumber.cpp \
 	Source/JavaScriptCore/wtf/DecimalNumber.h \
 	Source/JavaScriptCore/wtf/Decoder.h \

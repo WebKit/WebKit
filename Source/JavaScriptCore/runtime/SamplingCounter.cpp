@@ -35,10 +35,10 @@ void AbstractSamplingCounter::dump()
 {
 #if ENABLE(SAMPLING_COUNTERS)
     if (s_abstractSamplingCounterChain != &s_abstractSamplingCounterChainEnd) {
-        printf("\nSampling Counter Values:\n");
+        dataLog("\nSampling Counter Values:\n");
         for (AbstractSamplingCounter* currCounter = s_abstractSamplingCounterChain; (currCounter != &s_abstractSamplingCounterChainEnd); currCounter = currCounter->m_next)
-            printf("\t%s\t: %lld\n", currCounter->m_name, currCounter->m_counter);
-        printf("\n\n");
+            dataLog("\t%s\t: %lld\n", currCounter->m_name, currCounter->m_counter);
+        dataLog("\n\n");
     }
     s_completed = true;
 #endif

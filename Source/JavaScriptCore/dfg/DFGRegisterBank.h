@@ -232,11 +232,11 @@ public:
         // For each register, print the VirtualRegister 'name'.
         for (uint32_t i =0; i < NUM_REGS; ++i) {
             if (m_data[i].name != InvalidVirtualRegister)
-                fprintf(stderr, "[%02d]", m_data[i].name);
+                dataLog("[%02d]", m_data[i].name);
             else
-                fprintf(stderr, "[--]");
+                dataLog("[--]");
         }
-        fprintf(stderr, "\n");
+        dataLog("\n");
     }
 #endif
 

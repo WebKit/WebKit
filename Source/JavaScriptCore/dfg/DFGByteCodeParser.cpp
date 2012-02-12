@@ -589,7 +589,7 @@ private:
         ASSERT(profile);
         PredictedType prediction = profile->computeUpdatedPrediction();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
+        dataLog("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
         
         return prediction;
@@ -626,7 +626,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         switch (m_graph[nodeIndex].op) {
@@ -642,13 +642,13 @@ private:
             if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                printf("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
+                dataLog("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
 #endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
             } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
                        || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                printf("Making ArithMul @%u take faster slow case.\n", nodeIndex);
+                dataLog("Making ArithMul @%u take faster slow case.\n", nodeIndex);
 #endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayNegZero);
             }
@@ -678,7 +678,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
@@ -912,7 +912,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Slow case count for call at @%zu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+    dataLog("Slow case count for call at @%zu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
     
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
@@ -1029,7 +1029,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     ASSERT(canInlineFunctionFor(codeBlock, kind));
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Inlining executable %p.\n", executable);
+    dataLog("Inlining executable %p.\n", executable);
 #endif
     
     // Now we know without a doubt that we are committed to inlining. So begin the process
@@ -1110,7 +1110,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         // caller. It doesn't need to be linked to, but it needs outgoing links.
         if (!inlineStackEntry.m_unlinkedBlocks.isEmpty()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Reascribing bytecode index of block %p from bc#%u to bc#%u (inline return case).\n", lastBlock, lastBlock->bytecodeBegin, m_currentIndex);
+            dataLog("Reascribing bytecode index of block %p from bc#%u to bc#%u (inline return case).\n", lastBlock, lastBlock->bytecodeBegin, m_currentIndex);
 #endif
             // For debugging purposes, set the bytecodeBegin. Note that this doesn't matter
             // for release builds because this block will never serve as a potential target
@@ -1122,7 +1122,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         m_currentBlock = m_graph.m_blocks.last().get();
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
+        dataLog("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
 #endif
         return true;
     }
@@ -1149,7 +1149,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Need to create a new basic block for the continuation at the caller.
     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_graph.size(), m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+    dataLog("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
     m_currentBlock = block.get();
     ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_caller->m_blockLinkingTargets.last()]->bytecodeBegin < nextOffset);
@@ -1161,7 +1161,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // At this point we return and continue to generate code for the caller, but
     // in the new basic block.
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Done inlining executable %p, continuing code generation in new block.\n", executable);
+    dataLog("Done inlining executable %p, continuing code generation in new block.\n", executable);
 #endif
     return true;
 }
@@ -1343,7 +1343,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Jump, OpInfo(m_currentIndex));
             else {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                printf("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
+                dataLog("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
 #endif
             }
             return shouldContinueParsing;
@@ -1767,7 +1767,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_currentIndex, identifier);
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for GetById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            dataLog("Slow case count for GetById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
             if (getByIdStatus.isSimpleDirect()
@@ -1807,7 +1807,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool hasExitSite = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache);
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for PutById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            dataLog("Slow case count for PutById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif            
 
             if (!hasExitSite && putByIdStatus.isSimpleReplace()) {
@@ -2186,12 +2186,12 @@ void ByteCodeParser::processPhiStack()
         VariableAccessData* dataForPhi = m_graph[entry.m_phi].variableAccessData();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
+        dataLog("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
 #endif
 
         for (size_t i = 0; i < predecessors.size(); ++i) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("     Dealing with predecessor block %u.\n", predecessors[i]);
+            dataLog("     Dealing with predecessor block %u.\n", predecessors[i]);
 #endif
             
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
@@ -2201,7 +2201,7 @@ void ByteCodeParser::processPhiStack()
             NodeIndex valueInPredecessor = var;
             if (valueInPredecessor == NoNode) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Did not find node, adding phi.\n");
+                dataLog("      Did not find node, adding phi.\n");
 #endif
 
                 valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))));
@@ -2213,7 +2213,7 @@ void ByteCodeParser::processPhiStack()
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Found GetLocal @%u.\n", valueInPredecessor);
+                dataLog("      Found GetLocal @%u.\n", valueInPredecessor);
 #endif
 
                 // We want to ensure that the VariableAccessDatas are identical between the
@@ -2225,7 +2225,7 @@ void ByteCodeParser::processPhiStack()
                 valueInPredecessor = m_graph[valueInPredecessor].child1().index();
             } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Found @%u.\n", valueInPredecessor);
+                dataLog("      Found @%u.\n", valueInPredecessor);
 #endif
             }
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi || m_graph[valueInPredecessor].op == Flush || (m_graph[valueInPredecessor].op == SetArgument && stackType == ArgumentPhiStack));
@@ -2236,48 +2236,48 @@ void ByteCodeParser::processPhiStack()
 
             Node* phiNode = &m_graph[entry.m_phi];
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
+            dataLog("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
 #endif
             if (phiNode->refCount()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Reffing @%u.\n", valueInPredecessor);
+                dataLog("      Reffing @%u.\n", valueInPredecessor);
 #endif
                 m_graph.ref(valueInPredecessor);
             }
 
             if (!phiNode->child1()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLog("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild1(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Children of @%u: ", entry.m_phi);
-                phiNode->dumpChildren(stdout);
-                printf(".\n");
+                dataLog("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(WTF::dataFile());
+                dataLog(".\n");
 #endif
                 continue;
             }
             if (!phiNode->child2()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLog("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild2(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Children of @%u: ", entry.m_phi);
-                phiNode->dumpChildren(stdout);
-                printf(".\n");
+                dataLog("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(WTF::dataFile());
+                dataLog(".\n");
 #endif
                 continue;
             }
             if (!phiNode->child3()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLog("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild3(NodeUse(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                printf("      Children of @%u: ", entry.m_phi);
-                phiNode->dumpChildren(stdout);
-                printf(".\n");
+                dataLog("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(WTF::dataFile());
+                dataLog(".\n");
 #endif
                 continue;
             }
@@ -2285,7 +2285,7 @@ void ByteCodeParser::processPhiStack()
             NodeIndex newPhi = addToGraph(Phi, OpInfo(dataForPhi));
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
+            dataLog("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
 #endif
 
             phiNode = &m_graph[entry.m_phi]; // reload after vector resize
@@ -2296,17 +2296,17 @@ void ByteCodeParser::processPhiStack()
             newPhiNode.children = phiNode->children;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("      Children of @%u: ", newPhi);
-            newPhiNode.dumpChildren(stdout);
-            printf(".\n");
+            dataLog("      Children of @%u: ", newPhi);
+            newPhiNode.dumpChildren(WTF::dataFile());
+            dataLog(".\n");
 #endif
 
             phiNode->children.initialize(newPhi, valueInPredecessor, NoNode);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("      Children of @%u: ", entry.m_phi);
-            phiNode->dumpChildren(stdout);
-            printf(".\n");
+            dataLog("      Children of @%u: ", entry.m_phi);
+            phiNode->dumpChildren(WTF::dataFile());
+            dataLog(".\n");
 #endif
         }
     }
@@ -2324,7 +2324,7 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
     case Jump:
         node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.takenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Linked basic block %p to %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex());
+        dataLog("Linked basic block %p to %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex());
 #endif
         break;
         
@@ -2332,13 +2332,13 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
         node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.takenBytecodeOffsetDuringParsing()));
         node.setNotTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.notTakenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Linked basic block %p to %p, #%u and %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex(), m_graph.m_blocks[node.notTakenBlockIndex()].get(), node.notTakenBlockIndex());
+        dataLog("Linked basic block %p to %p, #%u and %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex(), m_graph.m_blocks[node.notTakenBlockIndex()].get(), node.notTakenBlockIndex());
 #endif
         break;
         
     default:
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Marking basic block %p as linked.\n", block);
+        dataLog("Marking basic block %p as linked.\n", block);
 #endif
         break;
     }
@@ -2495,7 +2495,7 @@ void ByteCodeParser::parseCodeBlock()
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Parsing bytecode with limit %p bc#%u at inline depth %u.\n", m_inlineStackTop->executable(), limit, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+        dataLog("Parsing bytecode with limit %p bc#%u at inline depth %u.\n", m_inlineStackTop->executable(), limit, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
         ASSERT(m_currentIndex < limit);
 
@@ -2517,13 +2517,13 @@ void ByteCodeParser::parseCodeBlock()
                     // Change its bytecode begin and continue.
                     m_currentBlock = m_graph.m_blocks.last().get();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    printf("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
+                    dataLog("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
 #endif
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
                     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    printf("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+                    dataLog("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
                     m_currentBlock = block.get();
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex]->bytecodeBegin < m_currentIndex);
@@ -2571,14 +2571,14 @@ bool ByteCodeParser::parse()
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     determineReachability();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    printf("Processing local variable phis.\n");
+    dataLog("Processing local variable phis.\n");
 #endif
     
     m_currentProfilingIndex = m_currentIndex;
     
     processPhiStack<LocalPhiStack>();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    printf("Processing argument phis.\n");
+    dataLog("Processing argument phis.\n");
 #endif
     processPhiStack<ArgumentPhiStack>();
     

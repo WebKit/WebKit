@@ -159,7 +159,7 @@ public:
     ~DeletableSamplingCounter()
     {
         if (!s_completed)
-            fprintf(stderr, "DeletableSamplingCounter \"%s\" deleted early (with count %lld)\n", m_name, m_counter);
+            dataFile("DeletableSamplingCounter \"%s\" deleted early (with count %lld)\n", m_name, m_counter);
         // Our m_referer pointer should know where the pointer to this node is,
         // and m_next should know that this node is the previous node in the list.
         ASSERT(*m_referer == this);

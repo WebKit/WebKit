@@ -24,6 +24,7 @@
 
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -1097,7 +1098,7 @@ Vector<char> asciiDebug(String& string);
 
 void String::show() const
 {
-    fprintf(stderr, "%s\n", asciiDebug(impl()).data());
+    dataLog("%s\n", asciiDebug(impl()).data());
 }
 
 String* string(const char* s)

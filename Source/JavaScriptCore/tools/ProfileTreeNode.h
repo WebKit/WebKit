@@ -95,8 +95,8 @@ private:
             // Print the number of samples, the name of this node, and the number of samples that are stack-top
             // in this node (samples directly within this node, excluding samples in children.
             for (unsigned i = 0; i < indent; ++i)
-                fprintf(stdout, "    ");
-            fprintf(stdout, "% 8lld: %s (%lld stack top)\n",
+                dataLog("    ");
+            dataLog("% 8lld: %s (%lld stack top)\n",
                 static_cast<long long>(entry->second.count()),
                 entry->first.utf8().data(),
                 static_cast<long long>(entry->second.count() - entry->second.childCount()));

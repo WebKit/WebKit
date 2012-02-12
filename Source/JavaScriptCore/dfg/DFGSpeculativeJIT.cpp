@@ -430,33 +430,33 @@ static const char* dataFormatString(DataFormat format)
 void SpeculativeJIT::dump(const char* label)
 {
     if (label)
-        fprintf(stderr, "<%s>\n", label);
+        dataLog("<%s>\n", label);
 
-    fprintf(stderr, "  gprs:\n");
+    dataLog("  gprs:\n");
     m_gprs.dump();
-    fprintf(stderr, "  fprs:\n");
+    dataLog("  fprs:\n");
     m_fprs.dump();
-    fprintf(stderr, "  VirtualRegisters:\n");
+    dataLog("  VirtualRegisters:\n");
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
         GenerationInfo& info = m_generationInfo[i];
         if (info.alive())
-            fprintf(stderr, "    % 3d:%s%s", i, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
+            dataLog("    % 3d:%s%s", i, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
         else
-            fprintf(stderr, "    % 3d:[__][__]", i);
+            dataLog("    % 3d:[__][__]", i);
         if (info.registerFormat() == DataFormatDouble)
-            fprintf(stderr, ":fpr%d\n", info.fpr());
+            dataLog(":fpr%d\n", info.fpr());
         else if (info.registerFormat() != DataFormatNone
 #if USE(JSVALUE32_64)
             && !(info.registerFormat() & DataFormatJS)
 #endif
             ) {
             ASSERT(info.gpr() != InvalidGPRReg);
-            fprintf(stderr, ":%s\n", GPRInfo::debugName(info.gpr()));
+            dataLog(":%s\n", GPRInfo::debugName(info.gpr()));
         } else
-            fprintf(stderr, "\n");
+            dataLog("\n");
     }
     if (label)
-        fprintf(stderr, "</%s>\n", label);
+        dataLog("</%s>\n", label);
 }
 #endif
 
@@ -468,13 +468,13 @@ void SpeculativeJIT::checkConsistency()
 
     for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
         if (iter.isLocked()) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: gpr %s is locked.\n", iter.debugName());
+            dataLog("DFG_CONSISTENCY_CHECK failed: gpr %s is locked.\n", iter.debugName());
             failed = true;
         }
     }
     for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
         if (iter.isLocked()) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: fpr %s is locked.\n", iter.debugName());
+            dataLog("DFG_CONSISTENCY_CHECK failed: fpr %s is locked.\n", iter.debugName());
             failed = true;
         }
     }
@@ -502,7 +502,7 @@ void SpeculativeJIT::checkConsistency()
             GPRReg gpr = info.gpr();
             ASSERT(gpr != InvalidGPRReg);
             if (m_gprs.name(gpr) != virtualRegister) {
-                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (gpr %s).\n", virtualRegister, GPRInfo::debugName(gpr));
+                dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (gpr %s).\n", virtualRegister, GPRInfo::debugName(gpr));
                 failed = true;
             }
             break;
@@ -511,7 +511,7 @@ void SpeculativeJIT::checkConsistency()
             FPRReg fpr = info.fpr();
             ASSERT(fpr != InvalidFPRReg);
             if (m_fprs.name(fpr) != virtualRegister) {
-                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (fpr %s).\n", virtualRegister, FPRInfo::debugName(fpr));
+                dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for virtual register %d (fpr %s).\n", virtualRegister, FPRInfo::debugName(fpr));
                 failed = true;
             }
             break;
@@ -527,18 +527,18 @@ void SpeculativeJIT::checkConsistency()
         GenerationInfo& info = m_generationInfo[virtualRegister];
 #if USE(JSVALUE64)
         if (iter.regID() != info.gpr()) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
+            dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
         }
 #else
         if (!(info.registerFormat() & DataFormatJS)) {
             if (iter.regID() != info.gpr()) {
-                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
+                dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
                 failed = true;
             }
         } else {
             if (iter.regID() != info.tagGPR() && iter.regID() != info.payloadGPR()) {
-                fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
+                dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
                 failed = true;
             }
         }
@@ -552,7 +552,7 @@ void SpeculativeJIT::checkConsistency()
 
         GenerationInfo& info = m_generationInfo[virtualRegister];
         if (iter.regID() != info.fpr()) {
-            fprintf(stderr, "DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
+            dataLog("DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
         }
     }
@@ -963,7 +963,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         m_codeOriginForOSR = node.codeOrigin;
         if (!node.shouldGenerate()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
+            dataLog("SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
             switch (node.op) {
             case SetLocal:
@@ -990,7 +990,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         } else {
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            fprintf(stderr, "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
+            dataLog("SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_NODE)
             m_jit.breakpoint();
@@ -1011,20 +1011,20 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_ENABLE(DEBUG_VERBOSE)
             if (node.hasResult()) {
                 GenerationInfo& info = m_generationInfo[node.virtualRegister()];
-                fprintf(stderr, "-> %s, vr#%d", dataFormatToString(info.registerFormat()), (int)node.virtualRegister());
+                dataLog("-> %s, vr#%d", dataFormatToString(info.registerFormat()), (int)node.virtualRegister());
                 if (info.registerFormat() != DataFormatNone) {
                     if (info.registerFormat() == DataFormatDouble)
-                        fprintf(stderr, ", %s", FPRInfo::debugName(info.fpr()));
+                        dataLog(", %s", FPRInfo::debugName(info.fpr()));
 #if USE(JSVALUE32_64)
                     else if (info.registerFormat() & DataFormatJS)
-                        fprintf(stderr, ", %s %s", GPRInfo::debugName(info.tagGPR()), GPRInfo::debugName(info.payloadGPR()));
+                        dataLog(", %s %s", GPRInfo::debugName(info.tagGPR()), GPRInfo::debugName(info.payloadGPR()));
 #endif
                     else
-                        fprintf(stderr, ", %s", GPRInfo::debugName(info.gpr()));
+                        dataLog(", %s", GPRInfo::debugName(info.gpr()));
                 }
-                fprintf(stderr, "    ");
+                dataLog("    ");
             } else
-                fprintf(stderr, "    ");
+                dataLog("    ");
 #endif
         }
         
@@ -1032,14 +1032,14 @@ void SpeculativeJIT::compile(BasicBlock& block)
         for (size_t i = 0; i < m_arguments.size(); ++i)
             computeValueRecoveryFor(argumentToOperand(i)).dump(stderr);
         
-        fprintf(stderr, " : ");
+        dataLog(" : ");
         
         for (int operand = 0; operand < (int)m_variables.size(); ++operand)
             computeValueRecoveryFor(operand).dump(stderr);
 #endif
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        fprintf(stderr, "\n");
+        dataLog("\n");
 #endif
         
         // Make sure that the abstract state is rematerialized for the next node.

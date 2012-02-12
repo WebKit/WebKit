@@ -64,28 +64,28 @@ public:
         fixup();
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Graph after propagation fixup:\n");
+        dataLog("Graph after propagation fixup:\n");
         m_graph.dump(m_codeBlock);
 #endif
 
         localCSE();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Graph after CSE:\n");
+        dataLog("Graph after CSE:\n");
         m_graph.dump(m_codeBlock);
 #endif
 
         allocateVirtualRegisters();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Graph after virtual register allocation:\n");
+        dataLog("Graph after virtual register allocation:\n");
         m_graph.dump(m_codeBlock);
 #endif
 
         globalCFA();
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Graph after propagation:\n");
+        dataLog("Graph after propagation:\n");
         m_graph.dump(m_codeBlock);
 #endif
     }
@@ -118,7 +118,7 @@ private:
             flags = node.rawArithNodeFlags();
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
+        dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
 #endif
         
         flags &= NodeUsedAsMask;
@@ -222,7 +222,7 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("%s\n", changed ? "CHANGED" : "");
+        dataLog("%s\n", changed ? "CHANGED" : "");
 #endif
         
         m_changed |= changed;
@@ -231,7 +231,7 @@ private:
     void propagateArithNodeFlagsForward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Propagating arithmetic node flags forward [%u]\n", ++m_count);
+        dataLog("Propagating arithmetic node flags forward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
             propagateArithNodeFlags(m_graph[m_compileIndex]);
@@ -240,7 +240,7 @@ private:
     void propagateArithNodeFlagsBackward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Propagating arithmetic node flags backward [%u]\n", ++m_count);
+        dataLog("Propagating arithmetic node flags backward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagateArithNodeFlags(m_graph[m_compileIndex]);
@@ -293,7 +293,7 @@ private:
         NodeType op = node.op;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   %s @%u: ", Graph::opName(op), m_compileIndex);
+        dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
 #endif
         
         bool changed = false;
@@ -636,7 +636,7 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("%s\n", predictionToString(m_graph[m_compileIndex].prediction()));
+        dataLog("%s\n", predictionToString(m_graph[m_compileIndex].prediction()));
 #endif
         
         m_changed |= changed;
@@ -645,7 +645,7 @@ private:
     void propagatePredictionsForward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Propagating predictions forward [%u]\n", ++m_count);
+        dataLog("Propagating predictions forward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
             propagateNodePredictions(m_graph[m_compileIndex]);
@@ -654,7 +654,7 @@ private:
     void propagatePredictionsBackward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Propagating predictions backward [%u]\n", ++m_count);
+        dataLog("Propagating predictions backward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagateNodePredictions(m_graph[m_compileIndex]);
@@ -697,7 +697,7 @@ private:
     void doRoundOfDoubleVoting()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Voting on double uses of locals [%u]\n", m_count);
+        dataLog("Voting on double uses of locals [%u]\n", m_count);
 #endif
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
             m_graph.m_variableAccessData[i].find()->clearVotes();
@@ -820,7 +820,7 @@ private:
         NodeType op = node.op;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   %s @%u: ", Graph::opName(op), m_compileIndex);
+        dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
 #endif
         
         switch (op) {
@@ -845,7 +845,7 @@ private:
                 break;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
+            dataLog("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
             if (isArray)
                 node.op = GetArrayLength;
@@ -899,14 +899,14 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("\n");
+        dataLog("\n");
 #endif
     }
     
     void fixup()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Performing Fixup\n");
+        dataLog("Performing Fixup\n");
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
             fixupNode(m_graph[m_compileIndex]);
@@ -967,7 +967,7 @@ private:
     {
         NodeIndex result = computeStartIndexForChildren(child1, child2, child3);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("  lookback %u: ", result);
+        dataLog("  lookback %u: ", result);
 #endif
         return result;
     }
@@ -990,7 +990,7 @@ private:
             result++;
         ASSERT(result <= m_compileIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("  limit %u: ", result);
+        dataLog("  limit %u: ", result);
 #endif
         return result;
     }
@@ -1391,7 +1391,7 @@ private:
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   Replacing @%u -> @%u", m_compileIndex, replacement);
+        dataLog("   Replacing @%u -> @%u", m_compileIndex, replacement);
 #endif
         
         Node& node = m_graph[m_compileIndex];
@@ -1405,7 +1405,7 @@ private:
     void eliminate()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   Eliminating @%u", m_compileIndex);
+        dataLog("   Eliminating @%u", m_compileIndex);
 #endif
         
         Node& node = m_graph[m_compileIndex];
@@ -1431,7 +1431,7 @@ private:
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
+        dataLog("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
 #endif
         
         // NOTE: there are some nodes that we deliberately don't CSE even though we
@@ -1559,7 +1559,7 @@ private:
         
         m_lastSeen[node.op & NodeIdMask] = m_compileIndex;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("\n");
+        dataLog("\n");
 #endif
     }
     
@@ -1574,7 +1574,7 @@ private:
     void localCSE()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("Performing local CSE:");
+        dataLog("Performing local CSE:");
 #endif
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
             performBlockCSE(*m_graph.m_blocks[block]);
@@ -1583,9 +1583,9 @@ private:
     void allocateVirtualRegisters()
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Preserved vars: ");
-        m_graph.m_preservedVars.dump(stdout);
-        printf("\n");
+        dataLog("Preserved vars: ");
+        m_graph.m_preservedVars.dump(WTF::dataFile());
+        dataLog("\n");
 #endif
         ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
         unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
@@ -1629,7 +1629,7 @@ private:
         if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
             m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Num callee registers: %u\n", calleeRegisters);
+        dataLog("Num callee registers: %u\n", calleeRegisters);
 #endif
     }
     
@@ -1639,42 +1639,42 @@ private:
         if (!block->cfaShouldRevisit)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
+        dataLog("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
 #endif
         state.beginBasicBlock(block);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("      head vars: ");
-        dumpOperands(block->valuesAtHead, stdout);
-        printf("\n");
+        dataLog("      head vars: ");
+        dumpOperands(block->valuesAtHead, WTF::dataFile());
+        dataLog("\n");
 #endif
         for (NodeIndex nodeIndex = block->begin; nodeIndex < block->end; ++nodeIndex) {
             if (!m_graph[nodeIndex].shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op), nodeIndex);
-            state.dump(stdout);
-            printf("\n");
+            dataLog("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op), nodeIndex);
+            state.dump(WTF::dataFile());
+            dataLog("\n");
 #endif
             if (!state.execute(nodeIndex))
                 break;
         }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("      tail regs: ");
-        state.dump(stdout);
-        printf("\n");
+        dataLog("      tail regs: ");
+        state.dump(WTF::dataFile());
+        dataLog("\n");
 #endif
         m_changed |= state.endBasicBlock(AbstractState::MergeToSuccessors);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("      tail vars: ");
-        dumpOperands(block->valuesAtTail, stdout);
-        printf("\n");
+        dataLog("      tail vars: ");
+        dumpOperands(block->valuesAtTail, WTF::dataFile());
+        dataLog("\n");
 #endif
     }
     
     void performForwardCFA(AbstractState& state)
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        printf("CFA [%u]\n", ++m_count);
+        dataLog("CFA [%u]\n", ++m_count);
 #endif
         
         for (BlockIndex block = 0; block < m_graph.m_blocks.size(); ++block)

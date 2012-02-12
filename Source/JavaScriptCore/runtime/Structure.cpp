@@ -142,17 +142,17 @@ void Structure::dumpStatistics()
         }
     }
 
-    printf("Number of live Structures: %d\n", liveStructureSet.size());
-    printf("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
-    printf("Number of Structures that are leaf nodes: %d\n", numberLeaf);
-    printf("Number of Structures that singletons: %d\n", numberSingletons);
-    printf("Number of Structures with PropertyMaps: %d\n", numberWithPropertyMaps);
+    dataLog("Number of live Structures: %d\n", liveStructureSet.size());
+    dataLog("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
+    dataLog("Number of Structures that are leaf nodes: %d\n", numberLeaf);
+    dataLog("Number of Structures that singletons: %d\n", numberSingletons);
+    dataLog("Number of Structures with PropertyMaps: %d\n", numberWithPropertyMaps);
 
-    printf("Size of a single Structures: %d\n", static_cast<unsigned>(sizeof(Structure)));
-    printf("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
-    printf("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureSet.size()));
+    dataLog("Size of a single Structures: %d\n", static_cast<unsigned>(sizeof(Structure)));
+    dataLog("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
+    dataLog("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureSet.size()));
 #else
-    printf("Dumping Structure statistics is not enabled.\n");
+    dataLog("Dumping Structure statistics is not enabled.\n");
 #endif
 }
 
@@ -604,11 +604,11 @@ static PropertyMapStatisticsExitLogger logger;
 
 PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 {
-    printf("\nJSC::PropertyMap statistics\n\n");
-    printf("%d probes\n", numProbes);
-    printf("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
-    printf("%d rehashes\n", numRehashes);
-    printf("%d removes\n", numRemoves);
+    dataLog("\nJSC::PropertyMap statistics\n\n");
+    dataLog("%d probes\n", numProbes);
+    dataLog("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
+    dataLog("%d rehashes\n", numRehashes);
+    dataLog("%d removes\n", numRemoves);
 }
 
 #endif

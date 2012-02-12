@@ -119,26 +119,26 @@ public:
 #ifndef NDEBUG
     void dump()
     {
-        printf("    USED: [ ");
+        dataLog("    USED: [ ");
         for (unsigned i = 0; i < m_used.size(); ++i) {
             if (!m_free.contains(i)) {
-                printf("%d:", i);
+                dataLog("%d:", i);
                 if (m_used[i] == max())
-                    printf("local ");
+                    dataLog("local ");
                 else
-                    printf("%d ", m_used[i]);
+                    dataLog("%d ", m_used[i]);
             }
         }
-        printf("]\n");
+        dataLog("]\n");
 
-        printf("    FREE: [ ");
+        dataLog("    FREE: [ ");
         for (unsigned i = 0; i < m_used.size(); ++i) {
             if (m_free.contains(i) && m_used[i] != max()) {
                 ASSERT(!m_used[i]);
-                printf("%d ", i);
+                dataLog("%d ", i);
             }
         }
-        printf("]\n");
+        dataLog("]\n");
     }
 
 #endif

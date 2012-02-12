@@ -28,6 +28,7 @@
 
 #include "ProfileNode.h"
 #include <stdio.h>
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
@@ -102,7 +103,7 @@ void Profile::restoreAll()
 #ifndef NDEBUG
 void Profile::debugPrintData() const
 {
-    printf("Call graph:\n");
+    dataLog("Call graph:\n");
     m_head->debugPrintData(0);
 }
 
@@ -118,18 +119,18 @@ void Profile::debugPrintDataSampleStyle() const
     typedef Vector<NameCountPair> NameCountPairVector;
 
     FunctionCallHashCount countedFunctions;
-    printf("Call graph:\n");
+    dataLog("Call graph:\n");
     m_head->debugPrintDataSampleStyle(0, countedFunctions);
 
-    printf("\nTotal number in stack:\n");
+    dataLog("\nTotal number in stack:\n");
     NameCountPairVector sortedFunctions(countedFunctions.size());
     copyToVector(countedFunctions, sortedFunctions);
 
     std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
     for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
-        printf("        %-12d%s\n", (*it).second, UString((*it).first).utf8().data());
+        dataLog("        %-12d%s\n", (*it).second, UString((*it).first).utf8().data());
 
-    printf("\nSort by top of stack, same collapsed (when >= 5):\n");
+    dataLog("\nSort by top of stack, same collapsed (when >= 5):\n");
 }
 #endif
 

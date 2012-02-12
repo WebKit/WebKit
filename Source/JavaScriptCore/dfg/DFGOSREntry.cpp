@@ -45,7 +45,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->numberOfDFGOSREntries());
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
+    dataLog("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
 #endif
     
     JSGlobalData* globalData = &exec->globalData();
@@ -80,9 +80,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
         if (argument >= exec->argumentCountIncludingThis()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %zu was not passed, expected ", argument);
-            entry->m_expectedValues.argument(argument).dump(stdout);
-            printf(".\n");
+            dataLog("    OSR failed because argument %zu was not passed, expected ", argument);
+            entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
+            dataLog(".\n");
 #endif
             return 0;
         }
@@ -95,9 +95,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         if (!entry->m_expectedValues.argument(argument).validate(value)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %zu is %s, expected ", argument, value.description());
-            entry->m_expectedValues.argument(argument).dump(stdout);
-            printf(".\n");
+            dataLog("    OSR failed because argument %zu is %s, expected ", argument, value.description());
+            entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
+            dataLog(".\n");
 #endif
             return 0;
         }
@@ -107,7 +107,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         if (entry->m_localsForcedDouble.get(local)) {
             if (!exec->registers()[local].jsValue().isNumber()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-                printf("    OSR failed because variable %zu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
+                dataLog("    OSR failed because variable %zu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
 #endif
                 return 0;
             }
@@ -115,9 +115,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         }
         if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
-            entry->m_expectedValues.local(local).dump(stdout);
-            printf(".\n");
+            dataLog("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
+            entry->m_expectedValues.local(local).dump(WTF::dataFile());
+            dataLog(".\n");
 #endif
             return 0;
         }
@@ -132,13 +132,13 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     if (!globalData->interpreter->registerFile().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        printf("    OSR failed because stack growth failed.\n");
+        dataLog("    OSR failed because stack growth failed.\n");
 #endif
         return 0;
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("    OSR should succeed.\n");
+    dataLog("    OSR should succeed.\n");
 #endif
     
 #if USE(JSVALUE64)
@@ -158,7 +158,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     void* result = codeBlock->getJITCode().executableAddressAtOffset(entry->m_machineCodeOffset);
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("    OSR returning machine code address %p.\n", result);
+    dataLog("    OSR returning machine code address %p.\n", result);
 #endif
     
     return result;
