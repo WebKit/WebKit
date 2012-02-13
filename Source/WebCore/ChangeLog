@@ -1,5 +1,21 @@
 2012-02-12  Adam Barth  <abarth@webkit.org>
 
+        Navigator.webkitGetUserMedia doesn't need to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=78464
+
+        Reviewed by Eric Seidel.
+
+        The code generator has gotten smarter since this function was added.
+
+        * GNUmakefile.list.am:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/js/JSNavigatorCustom.cpp: Removed.
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Removed.
+        * page/Navigator.idl:
+
+2012-02-12  Adam Barth  <abarth@webkit.org>
+
         Move ENABLE(GAMEPAD) logic out of Navigator.h/cpp
         https://bugs.webkit.org/show_bug.cgi?id=78457
 
