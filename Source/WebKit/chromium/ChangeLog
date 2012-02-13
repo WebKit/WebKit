@@ -1,3 +1,21 @@
+2012-02-13  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Let WebKit::initialize call InitWebCoreSystemInterface on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=78246
+
+        This allows removing a bunch of code in chromium land (https://chromiumcodereview.appspot.com/9374020/),
+        and helps with the component build on mac (InitWebCoreSystemInterface is not an
+        exported function, and it shouldn't be).
+
+        Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm early-returns when it's
+        called twice, so it's safe to land this change, and remove the calls in client
+        code in a later CL.
+
+        Reviewed by Darin Fisher.
+
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+
 2012-02-13  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Use enum instead of bool for HTMLInputElement::setValue

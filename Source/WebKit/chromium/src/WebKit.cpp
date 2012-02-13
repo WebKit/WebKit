@@ -45,6 +45,10 @@
 #include "WorkerContextExecutionProxy.h"
 #include "v8.h"
 
+#if OS(DARWIN)
+#include "WebSystemInterface.h"
+#endif
+
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
@@ -106,6 +110,10 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 {
     ASSERT(!s_webKitInitialized);
     s_webKitInitialized = true;
+
+#if OS(DARWIN)
+    InitWebCoreSystemInterface();
+#endif
 
     ASSERT(webKitPlatformSupport);
     ASSERT(!s_webKitPlatformSupport);
