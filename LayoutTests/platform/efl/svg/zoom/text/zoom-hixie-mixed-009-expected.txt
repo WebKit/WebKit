@@ -1,0 +1,31 @@
+layer at (0,0) size 5307x8247
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x5872
+  RenderBlock {html} at (0,0) size 785x5872
+    RenderBody {body} at (8,10) size 769x5852
+      RenderBlock {p} at (0,0) size 769x5304 [color=#000080]
+        RenderText {#text} at (0,7) size 993x5290
+          text run at (0,7) width 553: "The"
+          text run at (0,415) width 730: "word"
+          text run at (0,823) width 993: "\"TEST"
+          text run at (0,1231) width 145: "\""
+          text run at (0,1639) width 949: "should"
+          text run at (0,2047) width 948: "appear"
+          text run at (0,2455) width 770: "twice"
+          text run at (0,2863) width 958: "below,"
+          text run at (0,3271) width 435: "the"
+          text run at (0,3679) width 730: "same"
+          text run at (0,4087) width 553: "size"
+          text run at (0,4495) width 652: "each"
+          text run at (0,4903) width 721: "time."
+      RenderBlock (anonymous) at (0,5314) size 769x408
+        RenderSVGRoot {svg} at (8,5528) size 400x120
+          RenderSVGRect {rect} at (8,5528) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
+          RenderSVGForeignObject {foreignObject} at (0,0) size 60x10
+            RenderBlock {div} at (0,0) size 60x12 [color=#000080]
+              RenderText {#text} at (0,0) size 24x12
+                text run at (0,0) width 24: "TEST"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {div} at (0,5732) size 400x120 [color=#000080] [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,47) size 5299x2458
+          text run at (0,47) width 5299: "TEST"
