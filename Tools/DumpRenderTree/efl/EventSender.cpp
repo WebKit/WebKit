@@ -98,6 +98,11 @@ enum EvasMouseEvent {
     EvasMouseEventClick       = EvasMouseEventMove | EvasMouseEventDown | EvasMouseEventUp,
 };
 
+enum ZoomEvent {
+    ZoomIn,
+    ZoomOut
+};
+
 static void setEvasModifiers(Evas* evas, EvasKeyModifier modifiers)
 {
     static const char* modifierNames[] = { "Control", "Shift", "Alt", "Super" };
@@ -451,6 +456,60 @@ static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+static void textZoom(ZoomEvent zoomEvent)
+{
+    Evas_Object* view = ewk_frame_view_get(browser->mainFrame());
+    if (!view)
+        return;
+
+    float zoomFactor = ewk_view_text_zoom_get(view);
+    if (zoomEvent == ZoomIn)
+        zoomFactor *= zoomMultiplierRatio;
+    else
+        zoomFactor /= zoomMultiplierRatio;
+
+    ewk_view_text_zoom_set(view, zoomFactor);
+}
+
+static void pageZoom(ZoomEvent zoomEvent)
+{
+    Evas_Object* view = ewk_frame_view_get(browser->mainFrame());
+    if (!view)
+        return;
+
+    float zoomFactor = ewk_view_page_zoom_get(view);
+    if (zoomEvent == ZoomIn)
+        zoomFactor *= zoomMultiplierRatio;
+    else
+        zoomFactor /= zoomMultiplierRatio;
+
+    ewk_view_page_zoom_set(view, zoomFactor);
+}
+
+static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    textZoom(ZoomIn);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    textZoom(ZoomOut);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef zoomPageInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    pageZoom(ZoomIn);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef zoomPageOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    pageZoom(ZoomOut);
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "mouseScrollBy", mouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "continuousMouseScrollBy", continuousMouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -460,6 +519,10 @@ static JSStaticFunction staticFunctions[] = {
     { "keyDown", keyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scheduleAsynchronousClick", scheduleAsynchronousClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scalePageBy", scalePageByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "textZoomIn", textZoomInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "textZoomOut", textZoomOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "zoomPageIn", zoomPageInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "zoomPageOut", zoomPageOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

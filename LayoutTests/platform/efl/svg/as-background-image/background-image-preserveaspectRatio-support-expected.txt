@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x496
+  RenderBlock {HTML} at (0,0) size 800x496
+    RenderBody {BODY} at (8,8) size 784x480
+      RenderTable {TABLE} at (0,0) size 670x480
+        RenderTableSection {TBODY} at (0,0) size 670x480
+          RenderTableRow {TR} at (0,2) size 670x20
+            RenderTableCell {TH} at (2,2) size 93x20 [bgcolor=#DDDD99] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,1) size 75x19
+                text run at (9,1) width 75: "viewBox?"
+            RenderTableCell {TH} at (97,2) size 163x20 [bgcolor=#DDDD99] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 161x19
+                text run at (1,1) width 161: "preserve\x{AD}Aspect\x{AD}Ratio"
+            RenderTableCell {TH} at (262,2) size 202x20 [bgcolor=#DDDD99] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (78,1) size 46x19
+                text run at (78,1) width 46: "<img>"
+            RenderTableCell {TH} at (466,2) size 202x20 [bgcolor=#DDDD99] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (80,1) size 42x19
+                text run at (80,1) width 42: "<div>"
+          RenderTableRow {TR} at (0,24) size 670x55
+            RenderTableCell {TH} at (2,127) size 93x20 [bgcolor=#DDDD99] [r=1 c=0 rs=4 cs=1]
+              RenderText {#text} at (1,1) size 91x19
+                text run at (1,1) width 91: "No viewBox"
+            RenderTableCell {TH} at (97,50) size 163x2 [bgcolor=#DDDD99] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (262,24) size 202x55 [r=1 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,25) size 202x52 [r=1 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,81) size 670x55
+            RenderTableCell {TH} at (97,98) size 163x20 [bgcolor=#DDDD99] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (62,1) size 39x19
+                text run at (62,1) width 39: "none"
+            RenderTableCell {TD} at (262,81) size 202x55 [r=2 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,82) size 202x52 [r=2 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,138) size 670x55
+            RenderTableCell {TH} at (97,155) size 163x20 [bgcolor=#DDDD99] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (63,1) size 37x19
+                text run at (63,1) width 37: "meet"
+            RenderTableCell {TD} at (262,138) size 202x55 [r=3 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,139) size 202x52 [r=3 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,195) size 670x55
+            RenderTableCell {TH} at (97,212) size 163x20 [bgcolor=#DDDD99] [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (64,1) size 35x19
+                text run at (64,1) width 35: "slice"
+            RenderTableCell {TD} at (262,195) size 202x55 [r=4 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,196) size 202x52 [r=4 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,252) size 670x55
+            RenderTableCell {TH} at (2,355) size 93x20 [bgcolor=#DDDD99] [r=5 c=0 rs=4 cs=1]
+              RenderText {#text} at (14,1) size 65x19
+                text run at (14,1) width 65: "viewBox"
+            RenderTableCell {TH} at (97,278) size 163x2 [bgcolor=#DDDD99] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (262,252) size 202x55 [r=5 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,253) size 202x52 [r=5 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,309) size 670x55
+            RenderTableCell {TH} at (97,326) size 163x20 [bgcolor=#DDDD99] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (62,1) size 39x19
+                text run at (62,1) width 39: "none"
+            RenderTableCell {TD} at (262,309) size 202x55 [r=6 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,310) size 202x52 [r=6 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,366) size 670x55
+            RenderTableCell {TH} at (97,383) size 163x20 [bgcolor=#DDDD99] [r=7 c=1 rs=1 cs=1]
+              RenderText {#text} at (63,1) size 37x19
+                text run at (63,1) width 37: "meet"
+            RenderTableCell {TD} at (262,366) size 202x55 [r=7 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,367) size 202x52 [r=7 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]
+          RenderTableRow {TR} at (0,423) size 670x55
+            RenderTableCell {TH} at (97,440) size 163x20 [bgcolor=#DDDD99] [r=8 c=1 rs=1 cs=1]
+              RenderText {#text} at (64,1) size 35x19
+                text run at (64,1) width 35: "slice"
+            RenderTableCell {TD} at (262,423) size 202x55 [r=8 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (466,424) size 202x52 [r=8 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 200x50 [border: (2px dashed #800000)]

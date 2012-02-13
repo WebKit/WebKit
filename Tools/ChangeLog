@@ -1,3 +1,21 @@
+2012-02-12  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Implement zoomPage{In,Out} and textZoom{In,Out} events.
+        https://bugs.webkit.org/show_bug.cgi?id=78091
+
+        Reviewed by Hajime Morita.
+
+        Implemented zoomPageIn, zoomPageOut, textZoomIn and textZoomOut events on EFL DRT.
+        This patch will activate around 1,900 test cases from skipped list in EFL port.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (textZoom):
+        (pageZoom):
+        (textZoomInCallback):
+        (textZoomOutCallback):
+        (zoomPageInCallback):
+        (zoomPageOutCallback):
+
 2012-02-12  Ashod Nakashian  <ashodnakashian@yahoo.com>
 
         KeywordLookupGenerator.py script fails in some cases
