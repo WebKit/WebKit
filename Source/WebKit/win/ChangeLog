@@ -1,3 +1,12 @@
+2012-02-13  Andy Estes  <aestes@apple.com>
+
+        Fix the Windows build.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createPasteboardStrategy):
+        * WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2012-02-12  Andy Estes  <aestes@apple.com>
 
         [Windows] Add API to enable inverted color drawing on a WebView

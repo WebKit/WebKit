@@ -57,6 +57,11 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
     return this;
 }
 
+PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+{
+    return 0;
+}
+
 void WebPlatformStrategies::notifyCookiesChanged()
 {
 }

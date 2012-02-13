@@ -42,6 +42,7 @@ private:
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
+    virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged();
