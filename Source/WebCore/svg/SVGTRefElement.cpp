@@ -56,7 +56,9 @@ inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* do
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new SVGTRefElement(tagName, document));
+    RefPtr<SVGTRefElement> element = adoptRef(new SVGTRefElement(tagName, document));
+    element->createShadowSubtree();
+    return element.release();
 }
 
 class SubtreeModificationEventListener : public EventListener {
@@ -144,6 +146,11 @@ SVGTRefElement::~SVGTRefElement()
     clearEventListener();
 }
 
+void SVGTRefElement::createShadowSubtree()
+{
+    ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+}
+
 void SVGTRefElement::updateReferencedText()
 {
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document());
@@ -151,11 +158,11 @@ void SVGTRefElement::updateReferencedText()
     String textContent;
     if (target->parentNode())
         textContent = target->textContent();
-    ExceptionCode ignore = 0;
-    if (!ensureShadowRoot()->firstChild())
-        shadowRoot()->appendChild(SVGShadowText::create(document(), textContent), ignore);
+
+    if (!shadowRoot()->firstChild())
+        shadowRoot()->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
     else
-        shadowRoot()->firstChild()->setTextContent(textContent, ignore);
+        shadowRoot()->firstChild()->setTextContent(textContent, ASSERT_NO_EXCEPTION);
 }
 
 bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)

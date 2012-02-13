@@ -40,6 +40,8 @@ private:
     SVGTRefElement(const QualifiedName&, Document*);
     virtual ~SVGTRefElement();
 
+    void createShadowSubtree();
+
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);

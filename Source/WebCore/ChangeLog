@@ -1,3 +1,23 @@
+2012-02-12  Shinya Kawanaka  <shinyak@google.com>
+
+        SVGTRefElement shouldn't create a shadow root dynamically.
+        https://bugs.webkit.org/show_bug.cgi?id=77938
+
+        Reviewed by Hajime Morita.
+
+        SVGTRefElement creates a shadow root dynamically. This will cause a problem to support
+        multiple shadow subtrees. So it should be created in a constructor phase.
+
+        Test: svg/custom/tref-shadowdom.html
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::create):
+        (WebCore::SVGTRefElement::createShadowSubtree):
+        (WebCore):
+        (WebCore::SVGTRefElement::updateReferencedText):
+        * svg/SVGTRefElement.h:
+        (SVGTRefElement):
+
 2012-02-12  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
