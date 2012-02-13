@@ -1189,6 +1189,13 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
             return false;
     }
 
+    if (element->fastGetAttribute(typeAttr) != m_element->fastGetAttribute(typeAttr))
+        return false;
+
+    if (element->fastGetAttribute(readonlyAttr) != m_element->fastGetAttribute(readonlyAttr))
+        return false;
+
+
     return true;
 }
 
@@ -1234,10 +1241,6 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
-    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
-    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
-    if (!additionalAttributeStyleA != !additionalAttributeStyleB)
-        return false;
     if (element->isLink() != m_element->isLink())
         return false;
     if (style->affectedByUncommonAttributeSelectors())
@@ -1248,40 +1251,19 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->focused() != m_element->focused())
         return false;
-    if (element->shadowPseudoId() != m_element->shadowPseudoId())
-        return false;
     if (element == element->document()->cssTarget())
         return false;
     if (m_element == m_element->document()->cssTarget())
         return false;
-    if (element->getAttribute(typeAttr) != m_element->getAttribute(typeAttr))
+    if (style->transitions() || style->animations())
         return false;
-    if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
+    if (element->isLink() && m_elementLinkState != style->insideLink())
         return false;
-    if (element->fastGetAttribute(langAttr) != m_element->fastGetAttribute(langAttr))
+    if (element->shadowPseudoId() != m_element->shadowPseudoId())
         return false;
-    if (element->fastGetAttribute(readonlyAttr) != m_element->fastGetAttribute(readonlyAttr))
-        return false;
-    if (element->fastGetAttribute(cellpaddingAttr) != m_element->fastGetAttribute(cellpaddingAttr))
-        return false;
-
     if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
-
-#if ENABLE(STYLE_SCOPED)
-    if (element->hasScopedHTMLStyleChild())
-        return false;
-#endif
-
-    bool isControl = element->isFormControlElement();
-
-    if (isControl != m_element->isFormControlElement())
-        return false;
-
-    if (isControl && !canShareStyleWithControl(element))
-        return false;
-
-    if (style->transitions() || style->animations())
+    if (m_element->isFormControlElement() && !canShareStyleWithControl(element))
         return false;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1302,14 +1284,26 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
         return false;
 
+    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
+    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
+    if (!additionalAttributeStyleA != !additionalAttributeStyleB)
+        return false;
+
+    if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
+        return false;
+    if (element->fastGetAttribute(langAttr) != m_element->fastGetAttribute(langAttr))
+        return false;
+
     if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
         return false;
 
     if (additionalAttributeStyleA && !attributeStylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
         return false;
 
-    if (element->isLink() && m_elementLinkState != style->insideLink())
+#if ENABLE(STYLE_SCOPED)
+    if (element->hasScopedHTMLStyleChild())
         return false;
+#endif
 
     return true;
 }
@@ -2172,7 +2166,7 @@ static inline bool selectorListContainsUncommonAttributeSelector(const CSSSelect
 
 static inline bool isCommonAttributeSelectorAttribute(const QualifiedName& attribute)
 {
-    // These are explicitly tested for equality in canShareStyleWithElement.
+    // These are explicitly tested for equality in canShareStyleWithControl.
     return attribute == typeAttr || attribute == readonlyAttr;
 }
 

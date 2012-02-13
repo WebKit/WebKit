@@ -1,3 +1,23 @@
+2012-02-13  Andreas Kling  <awesomekling@apple.com>
+
+        Avoid unnecessary work when evaluating style sharing candidates.
+        <http://webkit.org/b/78220>
+
+        Reviewed by Antti Koivisto.
+
+        Do the cheap checks (bitfields, pointers) before calling virtuals and doing hash lookups.
+        Remove comparison of attributes that are reflected in the attribute styles (cellpadding.)
+        Moved comparison of "type" and "readonly" attributes into the more specific
+        canShareStyleWithControl() since they are only relevant for input elements. Don't bother
+        calling isFormControlElement() on both elements as they already have the same tagQName().
+
+        Altogether this knocks off ~8ms worth of samples per cycle of the "Moz" page cycler test.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithControl):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::isCommonAttributeSelectorAttribute):
+
 2012-02-13  Arko Saha  <arko@motorola.com>
 
         <summary> is not keyboard accessible.
