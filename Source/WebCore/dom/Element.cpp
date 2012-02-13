@@ -616,27 +616,28 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
-    size_t index = ensureUpdatedAttributes()->getAttributeItemIndex(localName, false);
-    const QualifiedName& qName = index != notFound ? m_attributeMap->attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
+    size_t index = ensureUpdatedAttributeData()->getAttributeItemIndex(localName, false);
+    const QualifiedName& qName = index != notFound ? attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
     setAttributeInternal(index, qName, value);
 }
 
 void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    setAttributeInternal(ensureUpdatedAttributes()->getAttributeItemIndex(name), name, value);
+    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value);
 }
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
 {
-    Attribute* old = index != notFound ? m_attributeMap->attributeItem(index) : 0;
+    ElementAttributeData* attributeData = &m_attributeMap->m_attributeData;
+    Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
     if (value.isNull()) {
         if (old)
-            m_attributeMap->removeAttribute(index);
+            attributeData->removeAttribute(index, this);
         return;
     }
 
     if (!old) {
-        m_attributeMap->addAttribute(createAttribute(name, value));
+        attributeData->addAttribute(createAttribute(name, value), this);
         return;
     }
 
@@ -750,27 +751,28 @@ void Element::parserSetAttributeMap(PassOwnPtr<NamedNodeMap> list, FragmentScrip
     m_attributeMap = list;
 
     if (m_attributeMap) {
+        ElementAttributeData* attributeData = &m_attributeMap->m_attributeData;
         m_attributeMap->m_element = this;
         // If the element is created as result of a paste or drag-n-drop operation
         // we want to remove all the script and event handlers.
         if (scriptingPermission == FragmentScriptingNotAllowed) {
             unsigned i = 0;
             while (i < m_attributeMap->length()) {
-                const QualifiedName& attributeName = m_attributeMap->m_attributes[i]->name();
+                const QualifiedName& attributeName = attributeData->m_attributes[i]->name();
                 if (isEventHandlerAttribute(attributeName)) {
-                    m_attributeMap->m_attributes.remove(i);
+                    attributeData->m_attributes.remove(i);
                     continue;
                 }
 
-                if (isAttributeToRemove(attributeName, m_attributeMap->m_attributes[i]->value()))
-                    m_attributeMap->m_attributes[i]->setValue(nullAtom);
+                if (isAttributeToRemove(attributeName, attributeData->m_attributes[i]->value()))
+                    attributeData->m_attributes[i]->setValue(nullAtom);
                 i++;
             }
         }
         // Store the set of attributes that changed on the stack in case
         // attributeChanged mutates m_attributeMap.
         Vector<RefPtr<Attribute> > attributes;
-        m_attributeMap->copyAttributesToVector(attributes);
+        attributeData->copyAttributesToVector(attributes);
         for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
             attributeChanged(iter->get());
     }
@@ -1491,15 +1493,16 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
 
 void Element::removeAttribute(const String& name)
 {
-    if (!m_attributeMap)
+    ElementAttributeData* attributeData = this->attributeData();
+    if (!attributeData)
         return;
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    size_t index = m_attributeMap->getAttributeItemIndex(localName, false);
+    size_t index = attributeData->getAttributeItemIndex(localName, false);
     if (index == notFound)
         return;
 
-    m_attributeMap->removeAttribute(index);
+    attributeData->removeAttribute(index, this);
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
@@ -1526,22 +1529,22 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const S
 
 bool Element::hasAttribute(const String& name) const
 {
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return false;
 
     // This call to String::lower() seems to be required but
     // there may be a way to remove it.
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    return attrs->getAttributeItem(localName, false);
+    return attributeData->getAttributeItem(localName, false);
 }
 
 bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const
 {
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return false;
-    return attrs->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
+    return attributeData->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
 CSSStyleDeclaration *Element::style()
@@ -1728,15 +1731,12 @@ void Element::cancelFocusAppearanceUpdate()
 
 void Element::normalizeAttributes()
 {
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
-        return;
-
-    if (attrs->isEmpty())
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData || attributeData->isEmpty())
         return;
 
     Vector<RefPtr<Attribute> > attributeVector;
-    attrs->copyAttributesToVector(attributeVector);
+    attributeData->copyAttributesToVector(attributeVector);
     size_t numAttrs = attributeVector.size();
     for (size_t i = 0; i < numAttrs; ++i) {
         if (Attr* attr = attributeVector[i]->attr())

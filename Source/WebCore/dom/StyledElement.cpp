@@ -124,7 +124,7 @@ void StyledElement::updateAttributeStyle()
         collectStyleForAttribute(attribute, style.get());
     }
     clearAttributeStyleDirty();
-    ensureAttributeDataWithoutUpdate()->setAttributeStyle(style.release());
+    ensureAttributeData()->setAttributeStyle(style.release());
 }
 
 }

@@ -1,3 +1,92 @@
+2012-02-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Move attribute storage from NamedNodeMap to ElementAttributeData
+        https://bugs.webkit.org/show_bug.cgi?id=77674
+
+        Reviewed by Andreas Kling.
+
+        Move m_attributes vector from NamedNodeMap to ElementAttributeData. Make the
+        remaining callsites interact with ElementAttributeData if possible. The parsing
+        code is still interacting with NamedNodeMap, so some functions remained as
+        wrappers there. A next change will it use ElementAttributeData instead.
+
+        The code for DOM exported functions remained in NamedNodeMap. This implementation
+        should move to Element in a next change, too.
+
+        * dom/Attr.h:
+        (Attr):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::parserSetAttributeMap):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::normalizeAttributes):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::ensureUpdatedAttributes):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore):
+        (WebCore::Element::updatedAttributeData):
+        (WebCore::Element::ensureUpdatedAttributeData):
+        These *AttributeData functions are the correct correct way for callers to touch
+        the details of attribute storage. The "updated" variants will update invalid
+        attributes before return.
+
+        (WebCore::Element::setAttributesFromElement):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::~ElementAttributeData):
+        (WebCore):
+        (WebCore::ElementAttributeData::ensureInlineStyleDecl):
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::detachAttributesFromElement):
+        (WebCore::ElementAttributeData::copyAttributesToVector):
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        (WebCore::ElementAttributeData::setAttributes): Make use of the assumption that
+        this will only be called with a valid Element, since the only call site is an
+        Element method.
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::replaceAttribute): Make use of the assumption
+        this will only be called with a valid Element, since the only call site return
+        early if there's no Element.
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::length):
+        (WebCore::ElementAttributeData::isEmpty):
+        (WebCore::ElementAttributeData::attributeItem):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::getNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::item):
+        (WebCore::NamedNodeMap::detachFromElement):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::length):
+        (WebCore::NamedNodeMap::isEmpty):
+        (WebCore::NamedNodeMap::attributeItem):
+        (WebCore::NamedNodeMap::getAttributeItem):
+        (WebCore::NamedNodeMap::getAttributeItemIndex):
+        (WebCore::NamedNodeMap::shrinkToLength):
+        (WebCore::NamedNodeMap::reserveInitialCapacity):
+        (WebCore::NamedNodeMap::addAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+        (NamedNodeMap):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateAttributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * svg/properties/SVGAnimatedPropertySynchronizer.h:
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2012-02-13  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: wrong percent calculations for empty snapshot.

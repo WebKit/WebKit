@@ -37,15 +37,14 @@ struct SVGAnimatedPropertySynchronizer<true> {
         // Attribute directly to avoid a call to Element::attributeChanged
         // that could cause the SVGElement to erroneously reset its properties.
         // svg/dom/SVGStringList-basics.xhtml exercises this behavior.
-        NamedNodeMap* namedAttrMap = ownerElement->ensureUpdatedAttributes();
-        Attribute* old = namedAttrMap->getAttributeItem(attrName);
+        ElementAttributeData* attributeData = ownerElement->ensureUpdatedAttributeData();
+        Attribute* old = attributeData->getAttributeItem(attrName);
         if (old && value.isNull())
-            namedAttrMap->removeAttribute(old->name());
+            attributeData->removeAttribute(old->name(), ownerElement);
         else if (!old && !value.isNull())
-            namedAttrMap->addAttribute(ownerElement->createAttribute(attrName, value));
+            attributeData->addAttribute(ownerElement->createAttribute(attrName, value), ownerElement);
         else if (old && !value.isNull())
             old->setValue(value);
-
     }
 };
 

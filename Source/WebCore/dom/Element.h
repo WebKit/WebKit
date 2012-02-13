@@ -239,14 +239,10 @@ public:
     // Only called by the parser immediately after element construction.
     void parserSetAttributeMap(PassOwnPtr<NamedNodeMap>, FragmentScriptingPermission);
 
-    NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    NamedNodeMap* ensureAttributeMap() const;
-
     ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
-    ElementAttributeData* ensureAttributeData() const { return ensureUpdatedAttributes()->attributeData(); }
-
-    // FIXME: This method should be removed once AttributeData is moved to Element.
-    ElementAttributeData* ensureAttributeDataWithoutUpdate() const { return ensureAttributeMap()->attributeData(); }
+    ElementAttributeData* ensureAttributeData() const;
+    ElementAttributeData* updatedAttributeData() const;
+    ElementAttributeData* ensureUpdatedAttributeData() const;
 
     void setAttributesFromElement(const Element&);
 
@@ -547,7 +543,9 @@ inline Element* Element::nextElementSibling() const
 inline NamedNodeMap* Element::ensureUpdatedAttributes() const
 {
     updateInvalidAttributes();
-    return ensureAttributeMap();
+    if (!m_attributeMap)
+        createAttributeMap();
+    return m_attributeMap.get();
 }
 
 inline NamedNodeMap* Element::updatedAttributes() const
@@ -556,10 +554,29 @@ inline NamedNodeMap* Element::updatedAttributes() const
     return m_attributeMap.get();
 }
 
+inline ElementAttributeData* Element::ensureAttributeData() const
+{
+    if (!m_attributeMap)
+        createAttributeMap();
+    return m_attributeMap->attributeData();
+}
+
+inline ElementAttributeData* Element::updatedAttributeData() const
+{
+    updateInvalidAttributes();
+    return attributeData();
+}
+
+inline ElementAttributeData* Element::ensureUpdatedAttributeData() const
+{
+    updateInvalidAttributes();
+    return ensureAttributeData();
+}
+
 inline void Element::setAttributesFromElement(const Element& other)
 {
-    if (NamedNodeMap* attributeMap = other.updatedAttributes())
-        ensureUpdatedAttributes()->setAttributes(*attributeMap);
+    if (ElementAttributeData* attributeData = other.updatedAttributeData())
+        ensureUpdatedAttributeData()->setAttributes(*attributeData, this);
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
@@ -671,13 +688,6 @@ inline void Element::removeAttribute(unsigned index)
 {
     ASSERT(m_attributeMap);
     m_attributeMap->removeAttribute(index);
-}
-
-inline NamedNodeMap* Element::ensureAttributeMap() const
-{
-    if (!m_attributeMap)
-        createAttributeMap();
-    return m_attributeMap.get();
 }
 
 inline void Element::updateInvalidAttributes() const

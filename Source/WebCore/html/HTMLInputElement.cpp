@@ -547,7 +547,7 @@ void HTMLInputElement::updateType()
         registerForSuspensionCallbackIfNeeded();
 
     if (didRespectHeightAndWidth != m_inputType->shouldRespectHeightAndWidthAttributes()) {
-        ASSERT(attributeMap());
+        ASSERT(attributeData());
         if (Attribute* height = getAttributeItem(heightAttr))
             attributeChanged(height);
         if (Attribute* width = getAttributeItem(widthAttr))

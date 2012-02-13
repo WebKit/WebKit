@@ -39,6 +39,7 @@ class CSSStyleDeclaration;
 // destruction. however, this is not yet implemented.
 
 class Attr : public ContainerNode {
+    friend class ElementAttributeData;
     friend class NamedNodeMap;
 public:
     static PassRefPtr<Attr> create(Element*, Document*, PassRefPtr<Attribute>);
