@@ -300,6 +300,7 @@ WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
 WONTFIX SKIP : fast/loader/crash-copying-backforwardlist.html = TEXT
 WONTFIX SKIP : fast/harness/page-cache-crash-on-data-urls.html = TEXT
 WONTFIX SKIP : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
+WONTFIX SKIP : http/tests/navigation/https-in-page-cache.html = FAIL
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in
 // test_shell, since we'd have to use a completely different implementation from
