@@ -3996,3 +3996,5 @@ BUGWK75478 : fast/html/details-remove-summary-3-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-add-summary-4-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-remove-summary-2-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
+
+BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
