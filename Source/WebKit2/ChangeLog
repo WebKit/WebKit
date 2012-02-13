@@ -1,5 +1,18 @@
 2011-02-13  Lucas Forschler  <lforschler@apple.com>
 
+    Rollout r105763.
+
+2012-01-18  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/10516690> REGRESSION: Incomplete repaint on Flash element after pinch to zoom
+
+        Make sure to apply the scale factor before converting the location to window coordinates, and then unapply it.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+
+2011-02-13  Lucas Forschler  <lforschler@apple.com>
+
     Rollout r105100 and r104070.
 
 2011-02-06  Lucas Forschler  <lforschler@apple.com>
