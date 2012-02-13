@@ -2649,8 +2649,7 @@ BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-// Uncomment when rebaselining for BUGWK78367.
-// BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
+BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK55968 MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
@@ -3962,22 +3961,6 @@ BUGNOEL : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMA
 
 // Started to fail after r107349.
 BUGWK78331 : editing/spelling/spelling-marker-description.html = TEXT
-
-// Need rebaselining.
-BUGWK78367 : media/controls-after-reload.html = IMAGE
-BUGWK78367 : media/controls-strict.html = IMAGE
-BUGWK78367 : media/controls-styling.html = IMAGE
-BUGWK78367 : media/controls-without-preload.html = IMAGE
-BUGWK78367 : media/video-aspect-ratio.html = IMAGE
-// Uncomment BUGCR74979 entry above when rebaselining removes the next expectation.
-BUGWK78367 : media/video-canvas-alpha.html = IMAGE
-BUGWK78367 : media/video-display-toggle.html = IMAGE
-BUGWK78367 : media/video-layer-crash.html = IMAGE
-BUGWK78367 : media/video-playing-and-pause.html = IMAGE
-BUGWK78367 : media/video-transformed.html = IMAGE
-BUGWK78367 : media/video-volume-slider.html = IMAGE
-BUGWK78367 : media/video-zoom-controls.html = IMAGE
-BUGWK78367 : media/video-zoom.html = IMAGE
 
 BUGWK34147 : fast/css/font-face-synthetic-bold-italic.html = MISSING FAIL
 BUGWK34147 : fast/css/font-face-weight-matching.html = MISSING FAIL
