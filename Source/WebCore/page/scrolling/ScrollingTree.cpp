@@ -45,6 +45,8 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_rootNode(ScrollingTreeNode::create(this))
+    , m_canGoBack(false)
+    , m_canGoForward(false)
     , m_hasWheelEventHandlers(false)
 {
 }
@@ -73,6 +75,14 @@ bool ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
 
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
     return true;
+}
+
+void ScrollingTree::updateBackForwardState(bool canGoBack, bool canGoForward)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    m_canGoBack = canGoBack;
+    m_canGoForward = canGoForward;
 }
 
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)

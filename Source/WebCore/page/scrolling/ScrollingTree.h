@@ -57,6 +57,9 @@ public:
     // event must be sent again to the WebCore event handler.
     bool tryToHandleWheelEvent(const PlatformWheelEvent&);
 
+    // Must be called from the scrolling thread. Will update the back forward state of the page, used for rubber-banding.
+    void updateBackForwardState(bool canGoBack, bool canGoForward);
+
     // Must be called from the scrolling thread. Handles the wheel event.
     void handleWheelEvent(const PlatformWheelEvent&);
 
@@ -68,11 +71,17 @@ public:
     void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
     void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition);
 
+    bool canGoBack() const { return m_canGoBack; }
+    bool canGoForward() const { return m_canGoForward; }
+
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
 
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
     OwnPtr<ScrollingTreeNode> m_rootNode;
+
+    bool m_canGoBack;
+    bool m_canGoForward;
 
     Mutex m_mutex;
     Region m_nonFastScrollableRegion;

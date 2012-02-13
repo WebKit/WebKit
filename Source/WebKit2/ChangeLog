@@ -1,3 +1,25 @@
+2012-02-13  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling tree needs to know about the back forward state of the page
+        https://bugs.webkit.org/show_bug.cgi?id=78523
+        <rdar://problem/10756548>
+
+        Reviewed by Sam Weinig.
+
+        Pass the back/forward state in the WheelEvent message. This is pretty hacky but works well.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC):
+        (CoreIPC::callMemberFunction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+
 2012-02-13  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 build emits a warning about not stripping code-signed PluginProcess.app when copying it into the framework

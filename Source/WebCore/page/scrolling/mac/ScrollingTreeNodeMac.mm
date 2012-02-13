@@ -154,9 +154,14 @@ bool ScrollingTreeNodeMac::canScrollVertically()
     return hasEnabledVerticalScrollbar();
 }
 
-bool ScrollingTreeNodeMac::shouldRubberBandInDirection(ScrollDirection)
+bool ScrollingTreeNodeMac::shouldRubberBandInDirection(ScrollDirection direction)
 {
-    // FIXME: Implement.
+    if (direction == ScrollLeft)
+        return !scrollingTree()->canGoBack();
+    if (direction == ScrollRight)
+        return !scrollingTree()->canGoForward();
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 
