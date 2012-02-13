@@ -717,7 +717,8 @@ void StylePropertySet::setNeedsStyleRecalc()
             return;
 
         if (!m_isInlineStyleDeclaration) {
-            element->setNeedsStyleRecalc();
+            // If this is not an inline style, it's an attribute style, and we shouldn't mark the element for style recalc
+            // as that is handled by StyledElement::attributeChanged().
             return;
         }
 

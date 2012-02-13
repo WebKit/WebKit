@@ -1,3 +1,19 @@
+2012-02-13  Andreas Kling  <awesomekling@apple.com>
+
+        Don't mark element for style recalc when modifying its attribute style.
+        <http://webkit.org/b/78497>
+
+        Reviewed by Antti Koivisto.
+
+        StylePropertySet::setNeedsStyleRecalc() shouldn't do anything for attribute styles.
+        Their invalidation is handled exclusively by StyledElement::attributeChanged().
+        Elements with presentation attributes were being marked for style recalc twice,
+        once when the attribute changed, and again during attribute style update, below the
+        call to collectStyleForAttribute().
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::setNeedsStyleRecalc):
+
 2012-02-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move attribute storage from NamedNodeMap to ElementAttributeData
