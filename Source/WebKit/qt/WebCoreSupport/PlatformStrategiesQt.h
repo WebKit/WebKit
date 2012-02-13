@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class Page;
+class PasteboardStrategy;
 }
 
 class PlatformStrategiesQt : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
@@ -50,6 +51,7 @@ private:
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
+    virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
     
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged();

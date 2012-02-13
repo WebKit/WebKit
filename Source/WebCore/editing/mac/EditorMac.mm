@@ -289,11 +289,8 @@ void Editor::takeFindStringFromSelection()
 
 void Editor::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
 {
-    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] init]);    
-    for (size_t i = 0; i < pasteboardTypes.size(); ++i)
-        [types.get() addObject:pasteboardTypes[i]];
     Pasteboard pasteboard(pasteboardName);
-    pasteboard.writeSelectionForTypes(types.get(), selectedRange().get(), true, m_frame);
+    pasteboard.writeSelectionForTypes(pasteboardTypes, selectedRange().get(), true, m_frame);
 }
     
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)

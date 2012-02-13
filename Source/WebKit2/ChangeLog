@@ -1,3 +1,32 @@
+2012-02-13  Enrica Casucci  <enrica@apple.com>
+
+        Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.
+        https://bugs.webkit.org/show_bug.cgi?id=78282
+
+        This patch removes any accesss to the NSPasteboard object from the Pasteboard class which
+        now makes use of a new pasteboardStrategy object that is implemented both in WebKit and
+        WebKit2. The actual access to NSPasteboard is now performed inside the PlatformPasteboard
+        class. Currently both WebKit and WebKit2 use the same implementation of the PasteboardStrategy
+        interface but this one more step in the direction of removing access to NSPasteboard from
+        the WebProcess.
+        As part of the refactoring the I've reduced to a minimum the use of OBJ-C classes.
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Added implementation of PasteboardStrategy
+        interface.
+        (WebKit::WebPlatformStrategies::createPasteboardStrategy):
+        (WebKit::WebPlatformStrategies::getTypes):
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        (WebKit::WebPlatformStrategies::stringForType):
+        (WebKit::WebPlatformStrategies::copy):
+        (WebKit::WebPlatformStrategies::setTypes):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::setPathnamesForType):
+        (WebKit::WebPlatformStrategies::setStringForType):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Added PasteboardStrategy.
+
 2012-02-13  Anders Carlsson  <andersca@apple.com>
 
         The scrolling tree needs to know about the back forward state of the page

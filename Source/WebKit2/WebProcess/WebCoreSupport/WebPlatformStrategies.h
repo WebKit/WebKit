@@ -29,13 +29,14 @@
 #if USE(PLATFORM_STRATEGIES)
 
 #include <WebCore/CookiesStrategy.h>
+#include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
 
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::VisitedLinkStrategy, private WebCore::PasteboardStrategy {
 public:
     static void initialize();
     
@@ -46,6 +47,7 @@ private:
     virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
     virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
+    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
@@ -58,6 +60,20 @@ private:
     // WebCore::VisitedLinkStrategy
     virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
+
+#if PLATFORM(MAC)
+    // WebCore::PasteboardStrategy
+    virtual void getTypes(Vector<String>& types, const String& pasteboardName) OVERRIDE;
+    virtual PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+    virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+    virtual String stringForType(const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+    
+    virtual void copy(const String& fromPasteboard, const String& toPasteboard) OVERRIDE;
+    virtual void setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) OVERRIDE;
+    virtual void setBufferForType(PassRefPtr<WebCore::SharedBuffer>, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+    virtual void setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+    virtual void setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
+#endif
 
     bool m_pluginCacheIsPopulated;
     bool m_shouldRefreshPlugins;

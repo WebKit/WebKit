@@ -78,6 +78,11 @@ VisitedLinkStrategy* PlatformStrategiesQt::createVisitedLinkStrategy()
     return this;
 }
 
+PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+{
+    return 0;
+}
+
 void PlatformStrategiesQt::notifyCookiesChanged()
 {
 }

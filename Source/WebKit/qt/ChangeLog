@@ -1,3 +1,15 @@
+2012-02-13  Enrica Casucci  <enrica@apple.com>
+
+        Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.
+        https://bugs.webkit.org/show_bug.cgi?id=78282
+
+        Build fix. Unreviewed.
+
+        * WebCoreSupport/PlatformStrategiesQt.cpp:
+        (WebPlatformStrategies::createPasteboardStrategy):
+        * WebCoreSupport/PlatformStrategiesQt.h:
+        (PlatformStrategiesQt):
+
 2012-02-12  Hajime Morrita  <morrita@chromium.org>
 
         Page should have less intrusive way to associate API implementation objects.
