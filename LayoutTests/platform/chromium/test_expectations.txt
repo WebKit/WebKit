@@ -1245,9 +1245,6 @@ BUGCR10332 LINUX : css2.1/t1605-c545-txttrans-00-b-ag.html = FAIL
 // Asks for "system" fonts, which we don't support at all.
 BUGCR10335 LINUX : fast/css/css2-system-fonts.html = FAIL
 
-// Large fonts have different metrics.
-BUGCR10336 LINUX : fast/css/font-face-descriptor-multiple-values.html = FAIL
-
 // Wants Helvetica, Monaco.  It's still testing something useful, but we may
 // need to check in a wrong-looking baseline.  Windows looks wrong too.
 BUGCR10337 LINUX : fast/css/font-face-locally-installed.html = FAIL
