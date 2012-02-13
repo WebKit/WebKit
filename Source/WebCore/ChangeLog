@@ -1,5 +1,25 @@
 2012-02-13  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: <mark> element should be exposed through attributes
+        https://bugs.webkit.org/show_bug.cgi?id=75727
+
+        Reviewed by Beth Dakin.
+
+        Exposes an attribute indicating that an element has highlighting through attributedStringForRange.
+        Also allows the search mechanism to find elements with this style.
+
+        Test: platform/mac/accessibility/attributed-string-includes-highlighting.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatch):
+        (WebCore::AccessibilityObject::hasHighlighting):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (createAccessibilitySearchKeyMap):
+        (AXAttributeStringSetStyle):
+
+2012-02-13  Chris Fleizach  <cfleizach@apple.com>
+
         AX: the web area should report that focus can be set to itself
         https://bugs.webkit.org/show_bug.cgi?id=78272
 
@@ -2792,7 +2812,6 @@
         Always recompute the non-fast-scrollable region whenever a frame view's layout is updated,
         not just the main frame.
 
->>>>>>> .r107433
 2012-02-09  Chris Marrin  <cmarrin@apple.com>
 
         Implement hardware animation of CSS filters

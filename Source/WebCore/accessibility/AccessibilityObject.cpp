@@ -163,7 +163,10 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
         
     case HeadingSearchKey:
         return axObject->isHeading();
-        
+    
+    case HighlightedSearchKey:
+        return axObject->hasHighlighting();
+            
     case ItalicFontSearchKey:
         return axObject->hasItalicFont();
         
@@ -1412,6 +1415,16 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
     }
     
     return role;
+}
+
+bool AccessibilityObject::hasHighlighting() const
+{
+    for (Node* node = this->node(); node; node = node->parentNode()) {
+        if (node->hasTagName(markTag))
+            return true;
+    }
+    
+    return false;
 }
 
 const AtomicString& AccessibilityObject::placeholderValue() const

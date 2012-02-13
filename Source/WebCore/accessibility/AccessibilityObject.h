@@ -244,6 +244,7 @@ enum AccessibilitySearchKey {
     HeadingLevel6SearchKey,
     HeadingSameLevelSearchKey,
     HeadingSearchKey,
+    HighlightedSearchKey,
     ItalicFontSearchKey,
     LandmarkSearchKey,
     LinkSearchKey,
@@ -409,6 +410,7 @@ public:
     virtual bool hasSameStyle(RenderObject*) const { return false; }
     bool hasStaticText() const { return roleValue() == StaticTextRole; }
     virtual bool hasUnderline() const { return false; }
+    bool hasHighlighting() const;
 
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }

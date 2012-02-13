@@ -259,6 +259,10 @@ using namespace std;
 #define NSAccessibilityHeadingSearchKey @"AXHeadingSearchKey"
 #endif
 
+#ifndef NSAccessibilityHighlightedSearchKey
+#define NSAccessibilityHighlightedSearchKey @"AXHighlightedSearchKey"
+#endif
+
 #ifndef NSAccessibilityItalicFontSearchKey
 #define NSAccessibilityItalicFontSearchKey @"AXItalicFontSearchKey"
 #endif
@@ -467,6 +471,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
         { NSAccessibilityHeadingLevel6SearchKey, HeadingLevel6SearchKey },
         { NSAccessibilityHeadingSameLevelSearchKey, HeadingSameLevelSearchKey },
         { NSAccessibilityHeadingSearchKey, HeadingSearchKey },
+        { NSAccessibilityHighlightedSearchKey, HighlightedSearchKey },
         { NSAccessibilityItalicFontSearchKey, ItalicFontSearchKey },
         { NSAccessibilityLandmarkSearchKey, LandmarkSearchKey },
         { NSAccessibilityLinkSearchKey, LinkSearchKey },
@@ -675,6 +680,12 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
             AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, nsColor(linethrough), range);
         }
+    }
+    
+    // Indicate background highlighting.
+    for (Node* node = renderer->node(); node; node = node->parentNode()) {
+        if (node->hasTagName(markTag))
+            AXAttributeStringSetNumber(attrString, @"AXHighlight", [NSNumber numberWithBool:YES], range);
     }
 }
 

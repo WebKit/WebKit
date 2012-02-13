@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<body id="body" tabindex="0">
+
+<div tabindex="0" id="item0">item0</div>
+<div tabindex="0" id="item1"><mark>item 1</mark></div>
+<div tabindex="0" id="item2">item2</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This verifies that using the mark tag will add the appropriate attribute to the attributed string and that we can find elements with highlighting using searching.");
+
+    if (window.accessibilityController) {
+        document.getElementById("item1").focus();
+        var item1 = accessibilityController.focusedElement;
+        var markerRange = item1.textMarkerRangeForElement(item1);
+        shouldBeTrue("item1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)");
+
+        document.getElementById("item2").focus();
+        var item2 = accessibilityController.focusedElement;
+        markerRange = item2.textMarkerRangeForElement(item2);
+        shouldBeFalse("item2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)");
+
+        // Search for a highlighted element from the top of the webpage.
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+        var resultElement = body.uiElementForSearchPredicate("", true, "AXHighlightedSearchKey", "");
+        shouldBeTrue("resultElement.isEqual(item1.childAtIndex(0))");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+
