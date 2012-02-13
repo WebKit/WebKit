@@ -1,3 +1,16 @@
+2012-02-13  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=78520
+        Cleanup PageCache::canCachePageContainingThisFrame readability
+
+        Reviewed by Anders Carlsson.
+
+        No new tests. (Code cleanup, no change in behavior)
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCachePageContainingThisFrame): Store three commonly
+          getter-accessed variables in local variables for readability.
+
 2012-02-13  Timothy Hatcher  <timothy@apple.com>
 
         Don't include a separator before the "Inspect Element" context menu item when the context menu is empty.

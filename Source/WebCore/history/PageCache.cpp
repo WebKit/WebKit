@@ -251,29 +251,33 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
             return false;
     }
     
-    return frame->loader()->documentLoader()
-        && frame->loader()->documentLoader()->mainDocumentError().isNull()
+    FrameLoader* frameLoader = frame->loader();
+    DocumentLoader* documentLoader = frameLoader->documentLoader();
+    Document* document = frame->document();
+    
+    return documentLoader
+        && documentLoader->mainDocumentError().isNull()
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
-        && !(frame->loader()->documentLoader()->substituteData().isValid() && !frame->loader()->documentLoader()->substituteData().failingURL().isEmpty())
-        && (!frame->loader()->subframeLoader()->containsPlugins() || frame->page()->settings()->pageCacheSupportsPlugins())
-        && !frame->document()->url().protocolIs("https")
+        && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
+        && (!frameLoader->subframeLoader()->containsPlugins() || frame->page()->settings()->pageCacheSupportsPlugins())
+        && !document->url().protocolIs("https")
         && (!frame->domWindow() || !frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(SQL_DATABASE)
-        && !frame->document()->hasOpenDatabases()
+        && !document->hasOpenDatabases()
 #endif
 #if ENABLE(SHARED_WORKERS)
-        && !SharedWorkerRepository::hasSharedWorkers(frame->document())
+        && !SharedWorkerRepository::hasSharedWorkers(document)
 #endif
-        && !frame->document()->usingGeolocation()
-        && frame->loader()->history()->currentItem()
-        && !frame->loader()->quickRedirectComing()
-        && !frame->loader()->documentLoader()->isLoadingInAPISense()
-        && !frame->loader()->documentLoader()->isStopping()
-        && frame->document()->canSuspendActiveDOMObjects()
+        && !document->usingGeolocation()
+        && frameLoader->history()->currentItem()
+        && !frameLoader->quickRedirectComing()
+        && !documentLoader->isLoadingInAPISense()
+        && !documentLoader->isStopping()
+        && document->canSuspendActiveDOMObjects()
         // FIXME: We should investigating caching frames that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
-        && frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()
-        && frame->loader()->client()->canCachePage();
+        && documentLoader->applicationCacheHost()->canCacheInPageCache()
+        && frameLoader->client()->canCachePage();
 }
     
 bool PageCache::canCache(Page* page)
