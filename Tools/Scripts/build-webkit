@@ -284,7 +284,7 @@ my @features = (
       define => "ENABLE_ORIENTATION_EVENTS", default => isBlackBerry(), value => \$orientationEventsSupport },
 
     { option => "page-visibility-api", desc => "Page Visibility API support",
-      define => "ENABLE_PAGE_VISIBILITY_API", default => 0, value => \$pageVisibilityApiSupport },
+      define => "ENABLE_PAGE_VISIBILITY_API", default => isEfl(), value => \$pageVisibilityApiSupport },
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
@@ -302,7 +302,7 @@ my @features = (
       define => "ENABLE_SHADOW_DOM", default => 0, value => \$shadowDomSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
-      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$sharedWorkersSupport },
+      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$sharedWorkersSupport },
 
     { option => "style-scoped", desc => "Toggle <style scoped> support",
       define => "ENABLE_STYLE_SCOPED", default => 0, value => \$styleScopedSupport },
@@ -326,7 +326,7 @@ my @features = (
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
     { option => "video", desc => "Toggle Video support",
-      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$videoSupport },
+      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$videoSupport },
 
     { option => "video-track", desc => "Toggle Video Track support",
       define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk()), value => \$videoTrackSupport },
@@ -341,7 +341,7 @@ my @features = (
       define => "ENABLE_WEB_TIMING", default => 0, value=> \$webTimingSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
-      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$workersSupport },
+      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },
 
     { option => "wtfurl", desc => "Toogle the use of WTFURL for URL parsing",
       define => "WTF_USE_WTFURL", default => 0, value => \$wtfURL },

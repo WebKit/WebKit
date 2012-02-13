@@ -1,3 +1,15 @@
+2012-02-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Enable features supported by EFL port in build-webkit.
+        https://bugs.webkit.org/show_bug.cgi?id=78348
+
+        Reviewed by Ryosuke Niwa.
+
+        Sync build-webkit with OptionEfl.cmake, as some features enabled in
+        OptionEfl.cmake are not enabled in build-webkit.
+
+        * Scripts/build-webkit:
+
 2012-02-12  Joe Thomas  <joethomas@motorola.com>
 
         Add toText and isTextNode helpers in Text class.
