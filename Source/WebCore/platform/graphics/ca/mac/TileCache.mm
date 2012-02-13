@@ -331,6 +331,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer()
     [layer.get() setTileCache:this];
     [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
     [layer.get() setBorderWidth:m_tileDebugBorderWidth];
+    [layer.get() setEdgeAntialiasingMask:0];
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
