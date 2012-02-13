@@ -184,12 +184,17 @@ InjectedScript.prototype = {
 
         for (var i = 0; i < descriptors.length; ++i) {
             var descriptor = descriptors[i];
-            if (descriptor.get)
+            if ("get" in descriptor)
                 descriptor.get = this._wrapObject(descriptor.get, objectGroupName);
-            if (descriptor.set)
+            if ("set" in descriptor)
                 descriptor.set = this._wrapObject(descriptor.set, objectGroupName);
             if ("value" in descriptor)
                 descriptor.value = this._wrapObject(descriptor.value, objectGroupName);
+            if (!("configurable" in descriptor))
+                descriptor.configurable = false;
+            if (!("enumerable" in descriptor))
+                descriptor.enumerable = false;
+            
         }
         return descriptors;
     },

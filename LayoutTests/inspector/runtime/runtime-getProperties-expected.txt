@@ -36,4 +36,14 @@ Running: testGetterOnly
     enumerable : true
     writable : false
 }
+{
+    name : "set foo"
+    value : {
+        type : "undefined"
+        description : "undefined"
+        objectId : <undefined>
+    }
+    enumerable : true
+    writable : false
+}
 
