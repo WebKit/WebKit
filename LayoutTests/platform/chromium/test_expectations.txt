@@ -3163,7 +3163,7 @@ BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.htm
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS FAIL MISSING
 
 // CSS Filters support not yet enabled
-BUGWK68469 SKIP : css3/filters = PASS
+BUGWK68469 : css3/filters = FAIL
 
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS

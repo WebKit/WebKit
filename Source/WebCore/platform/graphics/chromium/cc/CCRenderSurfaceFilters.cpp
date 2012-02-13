@@ -38,6 +38,29 @@
 
 namespace {
 
+void getBrightnessMatrix(float amount, SkScalar matrix[20])
+{
+    memset(matrix, 0, 20 * sizeof(SkScalar));
+    //    Old implementation, a la the draft spec, a straight-up scale,
+    //    representing <feFunc[R|G|B] type="linear" slope="[amount]">
+    //    (See http://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#brightnessEquivalent)
+    // matrix[0] = matrix[6] = matrix[12] = amount;
+    // matrix[18] = 1;
+    //    New implementation, a translation in color space, representing
+    //    <feFunc[R|G|B] type="linear" intercept="[amount]"/>
+    //    (See https://www.w3.org/Bugs/Public/show_bug.cgi?id=15647)
+    matrix[0] = matrix[6] = matrix[12] = matrix[18] = 1;
+    matrix[4] = matrix[9] = matrix[14] = amount * 255;
+}
+
+void getContrastMatrix(float amount, SkScalar matrix[20])
+{
+    memset(matrix, 0, 20 * sizeof(SkScalar));
+    matrix[0] = matrix[6] = matrix[12] = amount;
+    matrix[4] = matrix[9] = matrix[14] = (-0.5f * amount + 0.5f) * 255;
+    matrix[18] = 1;
+}
+
 void getSaturateMatrix(float amount, SkScalar matrix[20])
 {
     matrix[0] = 0.213f + 0.787f * amount;
@@ -188,6 +211,20 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         SkCanvas canvas(&device);
         canvas.clear(0x0);
         switch (filterOperation->getOperationType()) {
+        case FilterOperation::BRIGHTNESS: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            SkScalar matrix[20];
+            getBrightnessMatrix(op->amount(), matrix);
+            applyColorMatrix(&canvas, source, matrix);
+            break;
+        }
+        case FilterOperation::CONTRAST: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            SkScalar matrix[20];
+            getContrastMatrix(op->amount(), matrix);
+            applyColorMatrix(&canvas, source, matrix);
+            break;
+        }
         case FilterOperation::GRAYSCALE: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
             SkScalar matrix[20];
@@ -205,7 +242,7 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         case FilterOperation::SATURATE: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
             SkScalar matrix[20];
-            getSaturateMatrix(1 - op->amount(), matrix);
+            getSaturateMatrix(op->amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
