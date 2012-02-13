@@ -123,7 +123,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations* f
 
     // Animation to "-webkit-transform: none".
     if (!to->size()) {
-        TransformOperations blended(*to);
+        TransformOperations blended(*from);
         for (size_t i = 0; i < blended.operations().size(); ++i)
             blended.operations()[i]->blend(0, progress, true)->apply(matrix, boxSize);
         return matrix;
@@ -131,7 +131,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations* f
 
     // Animation from "-webkit-transform: none".
     if (!from->size()) {
-        TransformOperations blended(*from);
+        TransformOperations blended(*to);
         for (size_t i = 0; i < blended.operations().size(); ++i)
             blended.operations()[i]->blend(0, 1. - progress, true)->apply(matrix, boxSize);
         return matrix;

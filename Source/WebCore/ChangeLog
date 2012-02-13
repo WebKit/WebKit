@@ -1,3 +1,18 @@
+2012-02-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] morphing-cubes animation appears too close when clicking the button
+        https://bugs.webkit.org/show_bug.cgi?id=78476
+
+        Fixed bug in TextureMapperAnimation that made transform animations that go to/from identity
+        to not work.
+
+        Reviewed by Simon Hausmann.
+
+        No behavior changes.
+
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::applyTransformAnimation):
+
 2012-02-13  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Use enum instead of bool for HTMLInputElement::setValue
