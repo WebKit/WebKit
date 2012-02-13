@@ -221,64 +221,41 @@ PassRefPtr<InspectorObject> SelectorProfile::toInspectorObject() const
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
 public:
-    StyleSheetAction(const String& name, InspectorCSSAgent* cssAgent, const String& styleSheetId)
+    StyleSheetAction(const String& name, InspectorStyleSheet* styleSheet)
         : InspectorHistory::Action(name)
-        , m_cssAgent(cssAgent)
-        , m_styleSheetId(styleSheetId)
+        , m_styleSheet(styleSheet)
     {
     }
-
-    virtual bool perform(ExceptionCode& ec)
-    {
-        ErrorString errorString;
-        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(&errorString, m_styleSheetId);
-        if (!styleSheet)
-            return false;
-        return perform(styleSheet, ec);
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        InspectorStyleSheet* styleSheet = m_cssAgent->assertStyleSheetForId(0, m_styleSheetId);
-        if (!styleSheet)
-            return false;
-        return undo(styleSheet, ec);
-    }
-
-    virtual bool perform(InspectorStyleSheet*, ExceptionCode&) = 0;
-
-    virtual bool undo(InspectorStyleSheet*, ExceptionCode&) = 0;
 
 protected:
-    InspectorCSSAgent* m_cssAgent;
-    String m_styleSheetId;
+    RefPtr<InspectorStyleSheet> m_styleSheet;
 };
 
 class InspectorCSSAgent::SetStyleSheetTextAction : public InspectorCSSAgent::StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetStyleSheetTextAction);
 public:
-    SetStyleSheetTextAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const String& text)
-        : InspectorCSSAgent::StyleSheetAction("SetStyleSheetText", cssAgent, styleSheetId)
+    SetStyleSheetTextAction(InspectorStyleSheet* styleSheet, const String& text)
+        : InspectorCSSAgent::StyleSheetAction("SetStyleSheetText", styleSheet)
         , m_text(text)
     {
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode&)
+    virtual bool perform(ExceptionCode&)
     {
-        if (!inspectorStyleSheet->getText(&m_oldText))
+        if (!m_styleSheet->getText(&m_oldText))
             return false;
 
-        if (inspectorStyleSheet->setText(m_text)) {
-            inspectorStyleSheet->reparseStyleSheet(m_text);
+        if (m_styleSheet->setText(m_text)) {
+            m_styleSheet->reparseStyleSheet(m_text);
             return true;
         }
         return false;
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode&)
+    virtual bool undo(ExceptionCode&)
     {
-        if (inspectorStyleSheet->setText(m_oldText)) {
-            inspectorStyleSheet->reparseStyleSheet(m_oldText);
+        if (m_styleSheet->setText(m_oldText)) {
+            m_styleSheet->reparseStyleSheet(m_oldText);
             return true;
         }
         return false;
@@ -292,8 +269,8 @@ private:
 class InspectorCSSAgent::SetPropertyTextAction : public InspectorCSSAgent::StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetPropertyTextAction);
 public:
-    SetPropertyTextAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const InspectorCSSId& cssId, unsigned propertyIndex, const String& text, bool overwrite)
-        : InspectorCSSAgent::StyleSheetAction("SetPropertyText", cssAgent, styleSheetId)
+    SetPropertyTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, unsigned propertyIndex, const String& text, bool overwrite)
+        : InspectorCSSAgent::StyleSheetAction("SetPropertyText", styleSheet)
         , m_cssId(cssId)
         , m_propertyIndex(propertyIndex)
         , m_text(text)
@@ -306,10 +283,10 @@ public:
         return mergeId() + ": " + m_oldText + " -> " + m_text;
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec)
     {
         String oldText;
-        bool result = inspectorStyleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
+        bool result = m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
         m_oldText = oldText.stripWhiteSpace();
         // FIXME: remove this once the model handles this case.
         if (!m_oldText.endsWith(";"))
@@ -317,15 +294,15 @@ public:
         return result;
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec)
     {
         String placeholder;
-        return inspectorStyleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
+        return m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
     }
 
     virtual String mergeId()
     {
-        return String::format("SetPropertyText %s:%u:%s", m_styleSheetId.utf8().data(), m_propertyIndex, m_overwrite ? "true" : "false");
+        return String::format("SetPropertyText %s:%u:%s", m_styleSheet->id().utf8().data(), m_propertyIndex, m_overwrite ? "true" : "false");
     }
 
     virtual void merge(PassOwnPtr<Action> action)
@@ -347,28 +324,88 @@ private:
 class InspectorCSSAgent::TogglePropertyAction : public InspectorCSSAgent::StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(TogglePropertyAction);
 public:
-    TogglePropertyAction(InspectorCSSAgent* cssAgent, const String& styleSheetId, const InspectorCSSId& cssId, unsigned propertyIndex, bool disable)
-        : InspectorCSSAgent::StyleSheetAction("ToggleProperty", cssAgent, styleSheetId)
+    TogglePropertyAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, unsigned propertyIndex, bool disable)
+        : InspectorCSSAgent::StyleSheetAction("ToggleProperty", styleSheet)
         , m_cssId(cssId)
         , m_propertyIndex(propertyIndex)
         , m_disable(disable)
     {
     }
 
-    virtual bool perform(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec)
     {
-        return inspectorStyleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
+        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
     }
 
-    virtual bool undo(InspectorStyleSheet* inspectorStyleSheet, ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec)
     {
-        return inspectorStyleSheet->toggleProperty(m_cssId, m_propertyIndex, !m_disable, ec);
+        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, !m_disable, ec);
     }
 
 private:
     InspectorCSSId m_cssId;
     unsigned m_propertyIndex;
     bool m_disable;
+};
+
+class InspectorCSSAgent::SetRuleSelectorAction : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetRuleSelectorAction);
+public:
+    SetRuleSelectorAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& selector)
+        : InspectorCSSAgent::StyleSheetAction("SetRuleSelector", styleSheet)
+        , m_cssId(cssId)
+        , m_selector(selector)
+    {
+    }
+
+    virtual bool perform(ExceptionCode& ec)
+    {
+        m_oldSelector = m_styleSheet->ruleSelector(m_cssId, ec);
+        if (ec)
+            return false;
+        return m_styleSheet->setRuleSelector(m_cssId, m_selector, ec);
+    }
+
+    virtual bool undo(ExceptionCode& ec)
+    {
+        return m_styleSheet->setRuleSelector(m_cssId, m_oldSelector, ec);
+    }
+
+private:
+    InspectorCSSId m_cssId;
+    String m_selector;
+    String m_oldSelector;
+};
+
+class InspectorCSSAgent::AddRuleAction : public InspectorCSSAgent::StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(AddRuleAction);
+public:
+    AddRuleAction(InspectorStyleSheet* styleSheet, const String& selector)
+        : InspectorCSSAgent::StyleSheetAction("AddRule", styleSheet)
+        , m_selector(selector)
+    {
+    }
+
+    virtual bool perform(ExceptionCode& ec)
+    {
+        CSSStyleRule* cssStyleRule = m_styleSheet->addRule(m_selector, ec);
+        if (ec)
+            return false;
+        m_newId = m_styleSheet->ruleId(cssStyleRule);
+        return true;
+    }
+
+    virtual bool undo(ExceptionCode& ec)
+    {
+        return m_styleSheet->deleteRule(m_newId, ec);
+    }
+
+    InspectorCSSId newRuleId() { return m_newId; }
+
+private:
+    InspectorCSSId m_newId;
+    String m_selector;
+    String m_oldSelector;
 };
 
 // static
@@ -598,8 +635,12 @@ void InspectorCSSAgent::getStyleSheetText(ErrorString* errorString, const String
 
 void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String& styleSheetId, const String& text)
 {
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
+    if (!inspectorStyleSheet)
+        return;
+
     ExceptionCode ec = 0;
-    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(this, styleSheetId, text)), ec);
+    m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(inspectorStyleSheet, text)), ec);
     *errorString = InspectorDOMAgent::toErrorString(ec);
     m_domAgent->history()->markUndoableState();
 }
@@ -614,7 +655,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, text, overwrite)), ec);
+    bool success = m_domAgent->history()->perform(adoptPtr(new SetPropertyTextAction(inspectorStyleSheet, compoundId, propertyIndex, text, overwrite)), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
@@ -630,7 +671,7 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
         return;
 
     ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(this, compoundId.styleSheetId(), compoundId, propertyIndex, disable)), ec);
+    bool success = m_domAgent->history()->perform(adoptPtr(new TogglePropertyAction(inspectorStyleSheet, compoundId, propertyIndex, disable)), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
@@ -646,27 +687,42 @@ void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<I
     if (!inspectorStyleSheet)
         return;
 
-    bool success = inspectorStyleSheet->setRuleSelector(compoundId, selector);
-    if (!success)
-        return;
+    ExceptionCode ec = 0;
+    bool success = m_domAgent->history()->perform(adoptPtr(new SetRuleSelectorAction(inspectorStyleSheet, compoundId, selector)), ec);
+    if (success)
+        result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
+    *errorString = InspectorDOMAgent::toErrorString(ec);
 
-    result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
+    if (success)
+        result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
+    m_domAgent->history()->markUndoableState();
 }
 
-void InspectorCSSAgent::addRule(ErrorString*, const int contextNodeId, const String& selector, RefPtr<InspectorObject>& result)
+void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeId, const String& selector, RefPtr<InspectorObject>& result)
 {
-    Node* node = m_domAgent->nodeForId(contextNodeId);
+    Node* node = m_domAgent->assertNode(errorString, contextNodeId);
     if (!node)
         return;
 
     InspectorStyleSheet* inspectorStyleSheet = viaInspectorStyleSheet(node->document(), true);
-    if (!inspectorStyleSheet)
+    if (!inspectorStyleSheet) {
+        *errorString = "No target stylesheet found";
         return;
-    CSSStyleRule* newRule = inspectorStyleSheet->addRule(selector);
-    if (!newRule)
-        return;
+    }
 
-    result = inspectorStyleSheet->buildObjectForRule(newRule);
+    ExceptionCode ec = 0;
+    OwnPtr<AddRuleAction> action = adoptPtr(new AddRuleAction(inspectorStyleSheet, selector));
+    AddRuleAction* rawAction = action.get();
+    bool success = m_domAgent->history()->perform(action.release(), ec);
+    if (!success) {
+        *errorString = InspectorDOMAgent::toErrorString(ec);
+        return;
+    }
+
+    InspectorCSSId ruleId = rawAction->newRuleId();
+    CSSStyleRule* rule = inspectorStyleSheet->ruleForId(ruleId);
+    result = inspectorStyleSheet->buildObjectForRule(rule);
+    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>& cssProperties)

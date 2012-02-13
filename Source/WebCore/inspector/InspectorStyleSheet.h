@@ -168,8 +168,10 @@ public:
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet.get(); }
     void reparseStyleSheet(const String&);
     bool setText(const String&);
-    bool setRuleSelector(const InspectorCSSId&, const String& selector);
-    CSSStyleRule* addRule(const String& selector);
+    String ruleSelector(const InspectorCSSId&, ExceptionCode&);
+    bool setRuleSelector(const InspectorCSSId&, const String& selector, ExceptionCode&);
+    CSSStyleRule* addRule(const String& selector, ExceptionCode&);
+    bool deleteRule(const InspectorCSSId&, ExceptionCode&);
     CSSStyleRule* ruleForId(const InspectorCSSId&) const;
     PassRefPtr<InspectorObject> buildObjectForStyleSheet();
     PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
@@ -180,6 +182,9 @@ public:
 
     virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
+
+    InspectorCSSId ruleId(CSSStyleRule*) const;
+    InspectorCSSId styleId(CSSStyleDeclaration* style) const { return ruleOrStyleId(style); }
 
 protected:
     InspectorStyleSheet(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL);
@@ -198,14 +203,14 @@ protected:
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
+    friend class InspectorStyle;
+
     static void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
     static void collectFlatRules(PassRefPtr<CSSRuleList>, Vector<CSSStyleRule*>* result);
     bool ensureText() const;
     bool ensureSourceData();
     void ensureFlatRules() const;
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
-    InspectorCSSId ruleId(CSSStyleRule* rule) const;
-    InspectorCSSId styleId(CSSStyleDeclaration* style) const { return ruleOrStyleId(style); }
     void revalidateStyle(CSSStyleDeclaration*);
     bool originalStyleSheetText(String* result) const;
     bool resourceStyleSheetText(String* result) const;
@@ -220,20 +225,18 @@ private:
     ParsedStyleSheet* m_parsedStyleSheet;
     InspectorStyleMap m_inspectorStyles;
     mutable Vector<CSSStyleRule*> m_flatRules;
-
-    friend class InspectorStyle;
 };
 
 class InspectorStyleSheetForInlineStyle : public InspectorStyleSheet {
 public:
-    static PassRefPtr<InspectorStyleSheetForInlineStyle> create(const String& id, PassRefPtr<Element> element, const String& origin);
+    static PassRefPtr<InspectorStyleSheetForInlineStyle> create(const String& id, PassRefPtr<Element>, const String& origin);
 
     void didModifyElementAttribute();
     virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
 protected:
-    InspectorStyleSheetForInlineStyle(const String& id, PassRefPtr<Element> element, const String& origin);
+    InspectorStyleSheetForInlineStyle(const String& id, PassRefPtr<Element>, const String& origin);
 
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }

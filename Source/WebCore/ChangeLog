@@ -1,3 +1,66 @@
+2012-02-13  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: wrap settings selector text and adding a rule with undoable actions.
+        https://bugs.webkit.org/show_bug.cgi?id=78482
+
+        Reviewed by Yury Semikhatsky.
+
+        Tests: inspector/styles/undo-add-new-rule.html
+               inspector/styles/undo-set-selector-text.html
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::StyleSheetAction::StyleSheetAction):
+        (InspectorCSSAgent::StyleSheetAction):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::SetStyleSheetTextAction):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::SetPropertyTextAction):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::mergeId):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::TogglePropertyAction):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::perform):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::undo):
+        (InspectorCSSAgent::SetRuleSelectorAction):
+        (WebCore::InspectorCSSAgent::SetRuleSelectorAction::SetRuleSelectorAction):
+        (WebCore::InspectorCSSAgent::SetRuleSelectorAction::perform):
+        (WebCore::InspectorCSSAgent::SetRuleSelectorAction::undo):
+        (WebCore):
+        (InspectorCSSAgent::AddRuleAction):
+        (WebCore::InspectorCSSAgent::AddRuleAction::AddRuleAction):
+        (WebCore::InspectorCSSAgent::AddRuleAction::perform):
+        (WebCore::InspectorCSSAgent::AddRuleAction::undo):
+        (WebCore::InspectorCSSAgent::AddRuleAction::newRuleId):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::bindStyleSheet):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::styleSheetChanged):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::reparseStyleSheet):
+        (WebCore::InspectorStyleSheet::ruleSelector):
+        (WebCore):
+        (WebCore::InspectorStyleSheet::setRuleSelector):
+        (WebCore::InspectorStyleSheet::addRule):
+        (WebCore::InspectorStyleSheet::deleteRule):
+        (WebCore::InspectorStyleSheet::setPropertyText):
+        (WebCore::InspectorStyleSheet::toggleProperty):
+        (WebCore::InspectorStyleSheet::fireStyleSheetChanged):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::styleId):
+        (InspectorStyleSheetForInlineStyle):
+
 2012-02-13  Hayato Ito  <hayato@chromium.org>
 
         Rename names defined in ContentInclutionSelector to more intuitive names.

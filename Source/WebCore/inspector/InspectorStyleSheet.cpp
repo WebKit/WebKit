@@ -707,19 +707,35 @@ bool InspectorStyleSheet::setText(const String& text)
     return true;
 }
 
-bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector)
+String InspectorStyleSheet::ruleSelector(const InspectorCSSId& id, ExceptionCode& ec)
 {
     CSSStyleRule* rule = ruleForId(id);
-    if (!rule)
+    if (!rule) {
+        ec = NOT_FOUND_ERR;
+        return "";
+    }
+    return rule->selectorText();
+}
+
+bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector, ExceptionCode& ec)
+{
+    CSSStyleRule* rule = ruleForId(id);
+    if (!rule) {
+        ec = NOT_FOUND_ERR;
         return false;
+    }
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
-    if (!styleSheet || !ensureParsedDataReady())
+    if (!styleSheet || !ensureParsedDataReady()) {
+        ec = NOT_FOUND_ERR;
         return false;
+    }
 
     rule->setSelectorText(selector);
     RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(rule->style());
-    if (!sourceData)
+    if (!sourceData) {
+        ec = NOT_FOUND_ERR;
         return false;
+    }
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.replace(sourceData->selectorListRange.start, sourceData->selectorListRange.end - sourceData->selectorListRange.start, selector);
@@ -727,14 +743,15 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     return true;
 }
 
-CSSStyleRule* InspectorStyleSheet::addRule(const String& selector)
+CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
 {
     String styleSheetText;
     bool success = getText(&styleSheetText);
-    if (!success)
+    if (!success) {
+        ec = NOT_FOUND_ERR;
         return 0;
+    }
 
-    ExceptionCode ec = 0;
     m_pageStyleSheet->addRule(selector, "", ec);
     if (ec)
         return 0;
@@ -752,6 +769,35 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector)
     setText(styleSheetText);
 
     return rule;
+}
+
+bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec)
+{
+    CSSStyleRule* rule = ruleForId(id);
+    if (!rule) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
+    if (!styleSheet || !ensureParsedDataReady()) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    styleSheet->deleteRule(id.ordinal(), ec);
+    if (ec)
+        return false;
+
+    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(rule->style());
+    if (!sourceData) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    String sheetText = m_parsedStyleSheet->text();
+    sheetText.remove(sourceData->selectorListRange.start, sourceData->styleSourceData->styleBodyRange.end - sourceData->selectorListRange.start + 1);
+    m_parsedStyleSheet->setText(sheetText);
+    return true;
 }
 
 CSSStyleRule* InspectorStyleSheet::ruleForId(const InspectorCSSId& id) const

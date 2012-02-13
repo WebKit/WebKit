@@ -102,6 +102,8 @@ private:
     class SetStyleSheetTextAction;
     class SetPropertyTextAction;
     class TogglePropertyAction;
+    class SetRuleSelectorAction;
+    class AddRuleAction;
 
     InspectorCSSAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*);
 
