@@ -2636,6 +2636,8 @@
             'page/Navigator.h',
             'page/NavigatorBase.cpp',
             'page/NavigatorBase.h',
+            'page/NavigatorSupplement.cpp',
+            'page/NavigatorSupplement.h',
             'page/OriginAccessEntry.cpp',
             'page/OriginAccessEntry.h',
             'page/Page.cpp',

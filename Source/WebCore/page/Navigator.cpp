@@ -45,11 +45,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(GAMEPAD)
-#include "GamepadList.h"
-#include "Gamepads.h"
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
@@ -65,6 +60,17 @@ Navigator::Navigator(Frame* frame)
 
 Navigator::~Navigator()
 {
+}
+
+void Navigator::provideSupplement(const AtomicString& name, PassOwnPtr<NavigatorSupplement> supplement)
+{
+    ASSERT(!m_suppliments.get(name.impl()));
+    m_suppliments.set(name.impl(), supplement);
+}
+
+NavigatorSupplement* Navigator::requireSupplement(const AtomicString& name)
+{
+    return m_suppliments.get(name.impl());
 }
 
 void Navigator::resetGeolocation()
@@ -288,16 +294,6 @@ void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUs
     }
 
     request->start();
-}
-#endif
-
-#if ENABLE(GAMEPAD)
-GamepadList* Navigator::gamepads()
-{
-    if (!m_gamepads)
-        m_gamepads = GamepadList::create();
-    sampleGamepads(m_gamepads.get());
-    return m_gamepads.get();
 }
 #endif
 

@@ -25522,6 +25522,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\NavigatorSupplement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\NavigatorSupplement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\OriginAccessEntry.cpp"
 				>
 			</File>

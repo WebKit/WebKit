@@ -3430,6 +3430,8 @@
 		97C078501165D5BE003A32EF /* SuffixTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C0784F1165D5BE003A32EF /* SuffixTree.h */; };
 		97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */; };
 		97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97CC3AE214E8E4A200894988 /* NavigatorSupplement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97CC3AE014E8E4A200894988 /* NavigatorSupplement.cpp */; };
+		97CC3AE314E8E4A200894988 /* NavigatorSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 97CC3AE114E8E4A200894988 /* NavigatorSupplement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */; };
 		97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D2AD0214B823A60093DF32 /* DOMWindowProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DCE20110807C750057D394 /* HistoryController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DCE1FF10807C750057D394 /* HistoryController.cpp */; };
@@ -10280,6 +10282,8 @@
 		97C1F552122855CB00EDE616 /* HTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLToken.h; path = parser/HTMLToken.h; sourceTree = "<group>"; };
 		97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSecurityPolicy.cpp; sourceTree = "<group>"; };
 		97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSecurityPolicy.h; sourceTree = "<group>"; };
+		97CC3AE014E8E4A200894988 /* NavigatorSupplement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorSupplement.cpp; sourceTree = "<group>"; };
+		97CC3AE114E8E4A200894988 /* NavigatorSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorSupplement.h; sourceTree = "<group>"; };
 		97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowProperty.cpp; sourceTree = "<group>"; };
 		97D2AD0214B823A60093DF32 /* DOMWindowProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowProperty.h; sourceTree = "<group>"; };
 		97DCE1FF10807C750057D394 /* HistoryController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryController.cpp; sourceTree = "<group>"; };
@@ -15205,6 +15209,8 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
+				97CC3AE014E8E4A200894988 /* NavigatorSupplement.cpp */,
+				97CC3AE114E8E4A200894988 /* NavigatorSupplement.h */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
@@ -24187,6 +24193,7 @@
 				4A957F0714E241300049DBFB /* WebSocketExtensionDispatcher.h in Headers */,
 				4ADE25FA14E3BB4C004C2213 /* WebSocketExtensionProcessor.h in Headers */,
 				572E92FC14E540580087FFBA /* ShadowRootList.h in Headers */,
+				97CC3AE314E8E4A200894988 /* NavigatorSupplement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27128,6 +27135,7 @@
 				7A54881814E432A1006AE05A /* DOMPatchSupport.cpp in Sources */,
 				4A957F0614E2412A0049DBFB /* WebSocketExtensionDispatcher.cpp in Sources */,
 				572E92FB14E540580087FFBA /* ShadowRootList.cpp in Sources */,
+				97CC3AE214E8E4A200894988 /* NavigatorSupplement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

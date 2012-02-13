@@ -1,3 +1,37 @@
+2012-02-12  Adam Barth  <abarth@webkit.org>
+
+        Move ENABLE(GAMEPAD) logic out of Navigator.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=78457
+
+        Reviewed by Hajime Morita.
+
+        This patch moves GAMEPAD-specific logic out of Navigator by introducing
+        the concept of a NavigatorSupplement, analogous to the recently
+        introduced PageSupplement.
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::from):
+        (WebCore):
+        (WebCore::NavigatorGamepad::webkitGamepads):
+        (WebCore::NavigatorGamepad::gamepads):
+        * Modules/gamepad/NavigatorGamepad.h:
+        (NavigatorGamepad):
+        * WebCore.gypi:
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::supplementName):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::provideSupplement):
+        (WebCore):
+        (WebCore::Navigator::requireSupplement):
+        * page/Navigator.h:
+        (Navigator):
+        * page/Page.h:
+        (Page):
+        * page/PageSupplement.h:
+            - This patch cleans up some nits in PageSupplement.
+        (WebCore):
+        (PageSupplement):
+
 2012-02-12  Kentaro Hara  <haraken@chromium.org>
 
         Add a [V8CustomToJSObject] IDL attribute

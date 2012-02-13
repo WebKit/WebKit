@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageSupplement_h
-#define PageSupplement_h
+#ifndef NavigatorSupplement_h
+#define NavigatorSupplement_h
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -33,18 +33,16 @@
 
 namespace WebCore {
 
-class Page;
-class Frame;
+class Navigator;
 
-class PageSupplement {
+class NavigatorSupplement {
 public:
-    virtual ~PageSupplement();
+    virtual ~NavigatorSupplement();
 
-    static void provideTo(Page*, const AtomicString&, PassOwnPtr<PageSupplement>);
-    static PageSupplement* from(Page*, const AtomicString&);
-    static PageSupplement* from(Frame*, const AtomicString&);
+    static void provideTo(Navigator*, const AtomicString&, PassOwnPtr<NavigatorSupplement>);
+    static NavigatorSupplement* from(Navigator*, const AtomicString&);
 };
 
 } // namespace WebCore
 
-#endif // PageSupplement_h
+#endif // NavigatorSupplement_h

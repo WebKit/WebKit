@@ -28,18 +28,26 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "NavigatorSupplement.h"
+
 namespace WebCore {
 
 class GamepadList;
 class Navigator;
 
-class NavigatorGamepad {
+class NavigatorGamepad : public NavigatorSupplement {
 public:
+    virtual ~NavigatorGamepad();
+    static NavigatorGamepad* from(Navigator*);
+
     static GamepadList* webkitGamepads(Navigator*);
+
+    GamepadList* gamepads();
 
 private:
     NavigatorGamepad();
-    ~NavigatorGamepad();
+
+    RefPtr<GamepadList> m_gamepads;
 };
 
 } // namespace WebCore

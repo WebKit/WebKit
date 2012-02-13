@@ -350,7 +350,6 @@ namespace WebCore {
 
     private:
         void initGroup();
-        void notifyDestroyedToSupplements();
 
         typedef HashMap<AtomicStringImpl*, OwnPtr<PageSupplement> > PageSupplementMap;
         PageSupplementMap m_suppliments;
