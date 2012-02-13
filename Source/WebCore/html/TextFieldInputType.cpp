@@ -189,6 +189,8 @@ bool TextFieldInputType::needsContainer() const
 
 void TextFieldInputType::createShadowSubtree()
 {
+    ASSERT(element()->shadowRoot());
+
     ASSERT(!m_innerText);
     ASSERT(!m_innerBlock);
     ASSERT(!m_innerSpinButton);
@@ -201,11 +203,11 @@ void TextFieldInputType::createShadowSubtree()
     ExceptionCode ec = 0;
     m_innerText = TextControlInnerTextElement::create(document);
     if (!createsContainer) {
-        element()->ensureShadowRoot()->appendChild(m_innerText, ec);
+        element()->shadowRoot()->appendChild(m_innerText, ec);
         return;
     }
 
-    ShadowRoot* shadowRoot = element()->ensureShadowRoot();
+    ShadowRoot* shadowRoot = element()->shadowRoot();
     m_container = HTMLDivElement::create(document);
     m_container->setShadowPseudoId("-webkit-textfield-decoration-container");
     shadowRoot->appendChild(m_container, ec);

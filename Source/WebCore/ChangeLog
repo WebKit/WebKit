@@ -1,5 +1,52 @@
 2012-02-12  Shinya Kawanaka  <shinyak@google.com>
 
+        INPUT shouldn't create ShadowRoot dynamically.
+        https://bugs.webkit.org/show_bug.cgi?id=77930
+
+        Reviewed by Dimitri Glazkov.
+
+        When input type is changed, ShadowRoot was being re-created. This makes it difficult to
+        support multiple shadow subtrees. This patch makes input re-use the existing shadow root
+        instead of re-creating a shaow root. A shadow root should be created when an element is created.
+
+        Since media control elements are implemented using input elements, these elements should also
+        create a shadow root in their construction phase.
+
+        Test: fast/dom/shadow/input-shadow-nochange.html
+        Tests related to media controls should be covered by existing tests.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createShadowSubtree):
+        * html/InputType.cpp:
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        * html/shadow/MediaControlElements.cpp:
+          Creates a shadow tree in the construction phase.
+        (WebCore::MediaControlPanelMuteButtonElement::create):
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::create):
+        (WebCore::MediaControlPlayButtonElement::create):
+        (WebCore::MediaControlSeekForwardButtonElement::create):
+        (WebCore::MediaControlSeekBackButtonElement::create):
+        (WebCore::MediaControlRewindButtonElement::create):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::create):
+
+2012-02-12  Shinya Kawanaka  <shinyak@google.com>
+
         SVGTRefElement shouldn't create a shadow root dynamically.
         https://bugs.webkit.org/show_bug.cgi?id=77938
 

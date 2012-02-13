@@ -233,6 +233,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
+    ASSERT(element()->shadowRoot());
+
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);
     track->setShadowPseudoId("-webkit-slider-runnable-track");
@@ -241,7 +243,7 @@ void RangeInputType::createShadowSubtree()
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);
     container->appendChild(TrackLimiterElement::create(document), ec);
-    element()->ensureShadowRoot()->appendChild(container.release(), ec);
+    element()->shadowRoot()->appendChild(container.release(), ec);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

@@ -51,6 +51,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "SearchInputType.h"
+#include "ShadowRoot.h"
 #include "ScriptEventListener.h"
 #include "WheelEvent.h"
 #include <wtf/MathExtras.h>
@@ -108,6 +109,9 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
 
 void HTMLInputElement::createShadowSubtree()
 {
+    ASSERT(!shadowRoot());
+    ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+
     m_inputType->createShadowSubtree();
 }
 

@@ -265,13 +265,15 @@ bool FileInputType::isFileUpload() const
 
 void FileInputType::createShadowSubtree()
 {
+    ASSERT(element()->shadowRoot());
     ExceptionCode ec = 0;
-    element()->ensureShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
+    element()->shadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
 }
 
 void FileInputType::multipleAttributeChanged()
 {
-    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->ensureShadowRoot()->firstChild());
+    ASSERT(element()->shadowRoot());
+    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->shadowRoot()->firstChild());
     if (button)
         button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }

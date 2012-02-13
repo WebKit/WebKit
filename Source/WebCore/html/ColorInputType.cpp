@@ -106,6 +106,8 @@ Color ColorInputType::valueAsColor() const
 
 void ColorInputType::createShadowSubtree()
 {
+    ASSERT(element()->shadowRoot());
+
     Document* document = element()->document();
     RefPtr<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);
     wrapperElement->setShadowPseudoId("-webkit-color-swatch-wrapper");
@@ -114,7 +116,7 @@ void ColorInputType::createShadowSubtree()
     ExceptionCode ec = 0;
     wrapperElement->appendChild(colorSwatch.release(), ec);
     ASSERT(!ec);
-    element()->ensureShadowRoot()->appendChild(wrapperElement.release(), ec);
+    element()->shadowRoot()->appendChild(wrapperElement.release(), ec);
     ASSERT(!ec);
     
     updateColorSwatch();

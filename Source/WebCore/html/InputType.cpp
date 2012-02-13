@@ -378,7 +378,8 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    element()->removeShadowRoot();
+    if (ShadowRoot* root = element()->shadowRoot())
+        root->removeAllChildren();
 }
 
 double InputType::parseToDouble(const String&, double defaultValue) const
