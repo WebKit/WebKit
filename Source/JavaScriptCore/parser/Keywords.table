@@ -1,12 +1,12 @@
-# main keywords
+# Main keywords.
 @begin mainTable 47
 
-# types
+# Types.
 null		NULLTOKEN
 true		TRUETOKEN
 false		FALSETOKEN
 
-# keywords
+# Keywords.
 break		BREAK
 case		CASE
 catch		CATCH
@@ -35,7 +35,7 @@ typeof		TYPEOF
 with		WITH
 debugger	DEBUGGER
 
-# reserved for future use
+# Reserved for future use.
 class           RESERVED
 enum            RESERVED
 export          RESERVED
@@ -46,7 +46,7 @@ super           RESERVED
 # technically RESERVED_IF_STRICT in ES5, but may be reserved in ES6.
 let             RESERVED
 
-# reserved for future use in strict code
+# Reserved for future use in strict code.
 implements      RESERVED_IF_STRICT
 interface       RESERVED_IF_STRICT
 package         RESERVED_IF_STRICT
@@ -57,4 +57,3 @@ static          RESERVED_IF_STRICT
 yield           RESERVED_IF_STRICT
 
 @end
-
