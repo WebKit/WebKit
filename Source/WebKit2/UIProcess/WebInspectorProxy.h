@@ -124,7 +124,6 @@ private:
 
     // Implemented the platform WebInspectorProxy file
     String inspectorPageURL() const;
-    String inspectorBaseURL() const;
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
