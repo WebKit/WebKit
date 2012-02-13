@@ -129,6 +129,7 @@ EXPORTS
     ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
     ?data@CString@WTF@@QBEPBDXZ
+    ?dataLog@WTF@@YAXPBDZZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
     ?dayInMonthFromDayInYear@WTF@@YAHH_N@Z
     ?dayInYear@WTF@@YAHNH@Z
@@ -150,6 +151,7 @@ EXPORTS
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@JSByteArray@JSC@@SAXPAVJSCell@2@@Z
+    ?destroy@JSCell@JSC@@KAXPAV12@@Z
     ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z

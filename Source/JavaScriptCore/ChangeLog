@@ -1,3 +1,9 @@
+2012-02-13  Jessie Berlin  <jberlin@apple.com>
+
+        Fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-13  Sam Weinig  <sam@webkit.org>
 
         Use C11's _Static_assert for COMPILE_ASSERT if it is available
