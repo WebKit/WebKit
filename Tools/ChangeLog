@@ -1,3 +1,11 @@
+2012-02-13  Ami Fischman  <fischman@chromium.org>
+
+        Add fischman as committer.
+
+        Unreviewed
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Drop support for the Curl network backend.
