@@ -1,3 +1,17 @@
+2012-02-12  Shinya Kawanaka  <shinyak@google.com>
+
+        Introduce ShadowRootList.
+        https://bugs.webkit.org/show_bug.cgi?id=78069
+
+        Reviewed by Hajime Morita.
+
+        DoublyLinkedList should have tail() method to take the last element.
+
+        * wtf/DoublyLinkedList.h:
+        (DoublyLinkedList):
+        (WTF::::tail):
+        (WTF):
+
 2012-02-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move source files in WTF_HEADERS to WTF_SOURCES.

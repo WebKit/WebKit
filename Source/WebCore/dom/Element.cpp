@@ -1152,9 +1152,26 @@ void Element::recalcStyle(StyleChange change)
         didRecalcStyle(change);
 }
 
+bool Element::hasShadowRoot() const
+{
+    if (ShadowRootList* list = shadowRootList())
+        return list->hasShadowRoot();
+    return false;
+}
+
+ShadowRootList* Element::shadowRootList() const
+{
+    if (!hasRareData())
+        return 0;
+
+    return &rareData()->m_shadowRootList;
+}
+
 ShadowRoot* Element::shadowRoot() const
 {
-    return hasRareData() ? rareData()->m_shadowRoot : 0;
+    if (ShadowRootList* list = shadowRootList())
+        return list->youngestShadowRoot();
+    return 0;
 }
 
 static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
@@ -1175,16 +1192,19 @@ static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, Excep
     return true;
 }
 
-void Element::setShadowRoot(PassRefPtr<ShadowRoot> prpShadowRoot, ExceptionCode& ec)
+void Element::setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
 {
-    RefPtr<ShadowRoot> shadowRoot = prpShadowRoot;
     if (!validateShadowRoot(document(), shadowRoot.get(), ec))
         return;
 
+    if (!hasRareData())
+        ensureRareData();
+
     removeShadowRoot();
 
-    ensureRareData()->m_shadowRoot = shadowRoot.get();
     shadowRoot->setShadowHost(this);
+    shadowRootList()->pushShadowRoot(shadowRoot.get());
+
     if (inDocument())
         shadowRoot->insertedIntoDocument();
     if (attached()) {
@@ -1204,15 +1224,12 @@ ShadowRoot* Element::ensureShadowRoot()
 
 void Element::removeShadowRoot()
 {
-    if (!hasRareData())
+    if (!hasShadowRoot())
         return;
 
-    ElementRareData* data = rareData();
-    if (RefPtr<ShadowRoot> oldRoot = data->m_shadowRoot) {
-        data->m_shadowRoot = 0;
+    while (RefPtr<ShadowRoot> oldRoot = shadowRootList()->popShadowRoot()) {
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
-        // Remove from rendering tree
         if (oldRoot->attached())
             oldRoot->detach();
 
@@ -1223,9 +1240,10 @@ void Element::removeShadowRoot()
         else
             oldRoot->removedFromTree(true);
         if (attached()) {
-            for (Node* child = firstChild(); child; child = child->nextSibling())
+            for (Node* child = firstChild(); child; child = child->nextSibling()) {
                 if (!child->attached())
                     child->lazyAttach();
+            }
         }
     }
 }

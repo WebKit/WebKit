@@ -77,6 +77,8 @@ public:
     T* head() const;
     T* removeHead();
 
+    T* tail() const;
+
     void push(T*);
     void append(T*);
     void remove(T*);
@@ -114,6 +116,11 @@ template<typename T> inline void DoublyLinkedList<T>::clear()
 template<typename T> inline T* DoublyLinkedList<T>::head() const
 {
     return m_head;
+}
+
+template<typename T> inline T* DoublyLinkedList<T>::tail() const
+{
+    return m_tail;
 }
 
 template<typename T> inline void DoublyLinkedList<T>::push(T* node)

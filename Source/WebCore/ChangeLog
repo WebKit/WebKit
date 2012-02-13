@@ -1,5 +1,75 @@
 2012-02-12  Shinya Kawanaka  <shinyak@google.com>
 
+        Introduce ShadowRootList.
+        https://bugs.webkit.org/show_bug.cgi?id=78069
+
+        Reviewed by Hajime Morita.
+
+        This is a step to implement multiple shadow subtrees.
+
+        This patch introduces a shadow root list. ShadowRootList is a doubly linked list,
+        and each shadow root now has a younger shadow root and older shadow root,
+        which are a previous element and a next element respectively.
+        Since a visual tree traversal, which will be introduced in coming patches, will need a older shadow root,
+        we make a shadow root list a doubly linked list.
+
+        However, ShadowRootList does not have more than one shadow root now.
+        This will be changed in a series of coming patches.
+
+        Element::shadowRoot(), setShadowRoot(), ensureShadowRoot(), and removeShadowRoot() are
+        emulated using ShadowRootList for a while. These API will be replaced to ShadowRootList API later.
+
+        No new tests, no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::hasShadowRoot):
+          Retruns true if an element has a shadowRoot.
+        (WebCore::Element::shadowRootList):
+          Gets shadow root list if any.
+        (WebCore::Element::shadowRoot):
+          Gets the first shadow root from the shadow root list.
+        (WebCore::Element::setShadowRoot):
+          Sets the first shadow root to the shadow root list.
+        (WebCore::Element::removeShadowRoot):
+          Removes all the shadow roots in the shadow root list.
+        * dom/Element.h:
+        (WebCore):
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+          Has shadow root lists instead of shadow root.
+        (WebCore::ElementRareData::~ElementRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        (WebCore::ShadowRoot::youngerShadowRoot):
+        (WebCore::ShadowRoot::olderShadowRoot):
+        * dom/ShadowRootList.cpp: Added.
+        (WebCore):
+        (WebCore::ShadowRootList::ShadowRootList):
+        (WebCore::ShadowRootList::~ShadowRootList):
+        (WebCore::ShadowRootList::pushShadowRoot):
+          Adds a shadow root into the list. Currently we limit the list can have only one shadow root.
+        (WebCore::ShadowRootList::popShadowRoot):
+          Removes and returns the youngest shadow root if any.
+        * dom/ShadowRootList.h: Added.
+        (WebCore):
+        (ShadowRootList):
+        (WebCore::ShadowRootList::hasShadowRoot):
+        (WebCore::ShadowRootList::youngestShadowRoot):
+        (WebCore::ShadowRootList::oldestShadowRoot):
+
+2012-02-12  Shinya Kawanaka  <shinyak@google.com>
+
         INPUT shouldn't create ShadowRoot dynamically.
         https://bugs.webkit.org/show_bug.cgi?id=77930
 

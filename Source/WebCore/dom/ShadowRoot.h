@@ -30,6 +30,7 @@
 #include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "TreeScope.h"
+#include <wtf/DoublyLinkedList.h>
 
 namespace WebCore {
 
@@ -37,7 +38,8 @@ class ContentInclusionSelector;
 class Document;
 class HTMLContentElement;
 
-class ShadowRoot : public DocumentFragment, public TreeScope {
+class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
+    friend class WTF::DoublyLinkedListNode<ShadowRoot>;
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
     static PassRefPtr<ShadowRoot> create(Element*, ExceptionCode&);
@@ -73,6 +75,9 @@ public:
     ContentInclusionSelector* inclusions() const;
     ContentInclusionSelector* ensureInclusions();
 
+    ShadowRoot* youngerShadowRoot() const { return prev(); }
+    ShadowRoot* olderShadowRoot() const { return next(); }
+
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();
@@ -84,6 +89,8 @@ private:
 
     bool hasContentElement() const;
 
+    ShadowRoot* m_prev;
+    ShadowRoot* m_next;
     bool m_applyAuthorSheets : 1;
     bool m_needsRecalculateContent : 1;
     OwnPtr<ContentInclusionSelector> m_inclusions;

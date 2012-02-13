@@ -41,6 +41,8 @@ namespace WebCore {
 ShadowRoot::ShadowRoot(Document* document)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(this)
+    , m_prev(0)
+    , m_next(0)
     , m_applyAuthorSheets(false)
     , m_needsRecalculateContent(false)
 {
@@ -55,6 +57,9 @@ ShadowRoot::ShadowRoot(Document* document)
 
 ShadowRoot::~ShadowRoot()
 {
+    ASSERT(!m_prev);
+    ASSERT(!m_next);
+
     // We must call clearRareData() here since a ShadowRoot class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
