@@ -1,3 +1,32 @@
+2012-02-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Crash in RenderFlowThread::setRegionBoxesRegionStyle
+        https://bugs.webkit.org/show_bug.cgi?id=78298
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/set-box-style-in-region-crash.html
+
+        We have to make sure that anonymous block objects get their information in RenderFlowThread
+        removed properly.
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        Correct a comment.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        Remove the information for anonymous block from render flow thread.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        (WebCore):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        Do not set region range if the flow thread does not have regions.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        Add an assert to make sure that after we remove an object, there is no remaining info
+        in any render flow thread.
+
 2012-02-13  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r107582.

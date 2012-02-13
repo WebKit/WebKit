@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .regionBox2 { width: 280px; height: 100px; }
+
+            #article { -webkit-flow-into: flow; }
+            #region { -webkit-flow-from: flow; }
+
+            @-webkit-region #region { span { background-color: red } };
+        </style>
+        <script>
+            if (window.layoutTestController) {
+                window.layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            function test()
+            {
+                try {
+                    child = document.getElementById("li");
+                    child.parentNode.removeChild(child);
+                } catch(e) {
+                }
+
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+
+            setTimeout("test()", 0);
+        </script>
+    <body>
+        <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=78298">78298</a>: Crash in RenderFlowThread::setRegionBoxesRegionStyle</p>
+        <p> This test PASSES if it does not CRASH or ASSERT.</p>
+        <div id="article">
+            <li id="li">
+                <p id="p"></p>
+            </li>
+        </div>
+        <div id="region" class="regionBox2"></div>
+    </body>
+</html>

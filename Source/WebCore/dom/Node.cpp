@@ -352,8 +352,7 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     if ((s1 && s2) && (s1->flowThread() != s2->flowThread()))
         ch = Detach;
 
-    // When either the region thread or the region index has changed,
-    // we need to prepare a separate render region object.
+    // When the region thread has changed, we need to prepare a separate render region object.
     if ((s1 && s2) && (s1->regionThread() != s2->regionThread()))
         ch = Detach;
 

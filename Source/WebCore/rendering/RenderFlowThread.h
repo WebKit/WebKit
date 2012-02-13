@@ -74,7 +74,12 @@ public:
     
     void addFlowChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     void removeFlowChild(RenderObject*);
+    void removeFlowChildInfo(RenderObject*);
     bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
+#ifndef NDEBUG
+    bool hasChild(RenderObject* child) const { return m_flowThreadChildList.contains(child); }
+    bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
+#endif
 
     void addRegionToThread(RenderRegion*);
     void removeRegionFromThread(RenderRegion*);

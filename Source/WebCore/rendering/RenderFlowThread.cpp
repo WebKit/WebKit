@@ -137,6 +137,15 @@ void RenderFlowThread::removeFlowChild(RenderObject* child)
     m_flowThreadChildList.remove(child);
 }
 
+void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
+{
+    if (child->isBox()) {
+        removeRenderBoxRegionInfo(toRenderBox(child));
+        if (child->canHaveRegionStyle())
+            clearRenderBoxCustomStyle(toRenderBox(child));
+    }
+}
+
 // Compare two regions to determine in which one the content should flow first.
 // The function returns true if the first passed region is "less" than the second passed region.
 // If the first region appears before second region in DOM,
@@ -806,6 +815,9 @@ void RenderFlowThread::clearRenderBoxCustomStyle(const RenderBox* box,
 
 void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
+    if (!hasRegions())
+        return;
+
     // FIXME: Not right for differing writing-modes.
     RenderRegion* startRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage, true);
     RenderRegion* endRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage + box->logicalHeight(), true);

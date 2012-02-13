@@ -1039,11 +1039,15 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderObject* c
     parent->setNeedsLayoutAndPrefWidthsRecalc();
     parent->setChildrenInline(child->childrenInline());
     RenderObject* nextSibling = child->nextSibling();
+
+    RenderFlowThread* childFlowThread = child->enclosingRenderFlowThread();
     RenderBlock* anonBlock = toRenderBlock(parent->children()->removeChildNode(parent, child, child->hasLayer()));
     anonBlock->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
     // Delete the now-empty block's lines and nuke it.
     if (!parent->documentBeingDestroyed())
         anonBlock->deleteLineBoxTree();
+    if (childFlowThread && !parent->documentBeingDestroyed())
+        childFlowThread->removeFlowChildInfo(anonBlock);
     anonBlock->destroy();
 }
 
