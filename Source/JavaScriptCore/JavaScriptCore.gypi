@@ -31,6 +31,7 @@
             'heap/BumpSpace.h',
             'heap/BumpSpaceInlineMethods.h',
             'heap/ConservativeRoots.h',
+            'heap/GCAssertions.h',
             'heap/Handle.h',
             'heap/HandleHeap.h',
             'heap/HeapBlock.h',

@@ -192,6 +192,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.cpp \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
+	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleHeap.cpp \
 	Source/JavaScriptCore/heap/HandleHeap.h \

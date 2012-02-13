@@ -2062,6 +2062,10 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\GCAssertions.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\MachineStackMarker.cpp"
                                     >
                             </File>

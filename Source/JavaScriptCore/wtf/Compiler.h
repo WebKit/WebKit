@@ -50,6 +50,8 @@
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_extension(c_static_assert)
 
+#define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_extension(has_trivial_destructor)
+
 #endif
 
 /* COMPILER(MSVC) - Microsoft Visual C++ */

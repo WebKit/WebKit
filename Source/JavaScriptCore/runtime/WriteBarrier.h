@@ -26,6 +26,7 @@
 #ifndef WriteBarrier_h
 #define WriteBarrier_h
 
+#include "GCAssertions.h"
 #include "HandleTypes.h"
 #include "Heap.h"
 #include "SamplingCounter.h"

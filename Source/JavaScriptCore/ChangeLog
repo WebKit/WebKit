@@ -1,3 +1,28 @@
+2012-02-13  Sam Weinig  <sam@webkit.org>
+
+        Move JSC related assertions out of Assertions.h and into their own header
+        https://bugs.webkit.org/show_bug.cgi?id=78508
+
+        Reviewed by Gavin Barraclough.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add GCAssertions.h
+
+        * heap/GCAssertions.h: Added.
+        Move assertions here.
+
+        * runtime/WriteBarrier.h:
+        Add #include of GCAssertions.h
+
+        * wtf/Assertions.h:
+        Remove JSC related assertions.
+
+        * wtf/Compiler.h:
+        Add compiler check for __has_trivial_destructor.
+
 2012-02-13  Chao-ying Fu  <fu@mips.com>
 
         Update MIPS patchOffsetGetByIdSlowCaseCall

@@ -706,6 +706,7 @@
 		BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC87CDB810712ACA000614CF /* JSONObject.lut.h */; };
 		BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBE2CAD14E985AA000593AD /* GCAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */; };
 		BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
@@ -1500,6 +1501,7 @@
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
 		BCA62DFF0E2826310004F30D /* ConstructData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstructData.cpp; sourceTree = "<group>"; };
+		BCBE2CAD14E985AA000593AD /* GCAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCAssertions.h; sourceTree = "<group>"; };
 		BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubInfo.h; sourceTree = "<group>"; };
 		BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureStubInfo.cpp; sourceTree = "<group>"; };
 		BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpConstructor.cpp; sourceTree = "<group>"; };
@@ -1829,6 +1831,7 @@
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				0F2C556D14738F2E00121E4F /* DFGCodeBlocks.cpp */,
 				0F2C556E14738F2E00121E4F /* DFGCodeBlocks.h */,
+				BCBE2CAD14E985AA000593AD /* GCAssertions.h */,
 				142E312B134FF0A600AFADB5 /* Handle.h */,
 				142E312C134FF0A600AFADB5 /* HandleHeap.cpp */,
 				142E312D134FF0A600AFADB5 /* HandleHeap.h */,
@@ -3222,6 +3225,7 @@
 				0F9FC8D114E612DA00D52AE0 /* DataLog.h in Headers */,
 				0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
+				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
