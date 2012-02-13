@@ -983,7 +983,12 @@ void ContextMenuController::addInspectElementItem()
         return;
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
-    appendItem(*separatorItem(), m_contextMenu.get());
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+    if (!m_contextMenu->items().isEmpty())
+#else
+    if (m_contextMenu->itemCount())
+#endif
+        appendItem(*separatorItem(), m_contextMenu.get());
     appendItem(InspectElementItem, m_contextMenu.get());
 }
 #endif // ENABLE(INSPECTOR)

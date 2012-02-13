@@ -1,3 +1,16 @@
+2012-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Don't include a separator before the "Inspect Element" context menu item when the context menu is empty.
+
+        https://webkit.org/b/78312
+
+        Reviewed by Brian Weinstein.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::addInspectElementItem): Check itemCount before appending the separator.
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::itemCount): Added. Implement so this builds on GTK.
+
 2012-02-13  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Define HWND_MESSAGE if not done already
