@@ -3978,3 +3978,6 @@ BUGWK78367 : media/video-transformed.html = IMAGE
 BUGWK78367 : media/video-volume-slider.html = IMAGE
 BUGWK78367 : media/video-zoom-controls.html = IMAGE
 BUGWK78367 : media/video-zoom.html = IMAGE
+
+BUGWK34147 : fast/css/font-face-synthetic-bold-italic.html = MISSING FAIL
+BUGWK34147 : fast/css/font-face-weight-matching.html = MISSING FAIL

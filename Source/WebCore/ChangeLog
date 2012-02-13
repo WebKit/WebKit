@@ -1,3 +1,27 @@
+2012-02-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        If @font-face does not provide an explicit italic/bold variant, regular is used.
+        https://bugs.webkit.org/show_bug.cgi?id=34147
+
+        Reviewed by Dan Bernstein.
+
+        Update @font-face handling code so that it matches @font-face behavior to the current draft of CSS3 Font spec. The original patch was written by yusukes@chromium.org.
+        - Drops support for "bolder", "lighter", and "all" value. These are no longer allowed.
+        - Only allows one value for font-style and font-weight.
+
+        Tests: fast/css/font-face-synthetic-bold-italic.html
+               fast/css/font-face-weight-matching.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Removed "all", "lighter", "bolder" handling code.
+        (WebCore::compareFontFaces):Updated the weight matching algortihm.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Replaced parseFontStyle() call with checking primitive values.
+        (WebCore::CSSParser::parseFontWeight): Changed to allow only primitive values.
+        (WebCore::CSSParser::createFontFaceRule): Removed checks for font-weight and font-style.
+        (WebCore::CSSParser::deleteFontFaceOnlyValues): Ditto.
+        * css/CSSParser.h: Removed parseFontStyle().
+
 2012-02-12  David Reveman  <reveman@chromium.org>
 
         [Chromium] Avoid unnecessary memset in per-tile layer updater.
