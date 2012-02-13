@@ -310,18 +310,11 @@
           # static library and rebuilds it with these global symbols
           # transformed to private_extern.
           'target_name': 'webkit_system_interface',
-          'type': 'static_library',
+          'type': 'none',
           'variables': {
             'adjusted_library_path':
                 '<(PRODUCT_DIR)/libWebKitSystemInterfaceLeopardPrivateExtern.a',
           },
-          'sources': [
-            # An empty source file is needed to convince Xcode to produce
-            # output for this target.  The resulting library won't actually
-            # contain anything.  The library at adjusted_library_path will,
-            # and that library is pushed to dependents of this target below.
-            'mac/Empty.cpp',
-          ],
           'actions': [
             {
               'action_name': 'Adjust Visibility',

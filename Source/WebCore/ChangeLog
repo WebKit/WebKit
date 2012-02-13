@@ -1,3 +1,23 @@
+2012-02-12  Nico Weber  <nicolasweber@gmx.de>
+
+        [chromium/mac] Change the type of webkit_system_interface from static_library to none
+        https://bugs.webkit.org/show_bug.cgi?id=78441
+
+        This target exists only run an action and to add a dependency to the
+        action's output to targets depending on webkit_system_interface.
+        This is what target type 'none' is for. With this, no dummy source
+        file is needed, and no empty libwebkit_system_interface.a is created.
+        This also fixes this (harmless) libtool warning:
+
+        libtool: warning for library: libwebkit_system_interface.a the table
+        of contents is empty (no object file members in the library define
+        global symbols)
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/mac/Empty.cpp: Removed.
+
 2012-02-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         If @font-face does not provide an explicit italic/bold variant, regular is used.
