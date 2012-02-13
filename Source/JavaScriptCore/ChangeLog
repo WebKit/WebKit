@@ -1,3 +1,19 @@
+2012-02-13  Sam Weinig  <sam@webkit.org>
+
+        Use C11's _Static_assert for COMPILE_ASSERT if it is available
+        https://bugs.webkit.org/show_bug.cgi?id=78506
+
+        Rubber-stamped by Antti Koivisto.
+
+        Use C11's _Static_assert for COMPILE_ASSERT if it is available to give slightly
+        better error messages.
+
+        * wtf/Assertions.h:
+        Use _Static_assert if it is available.
+
+        * wtf/Compiler.h:
+        Add COMPILER_SUPPORTS support for _Static_assert when using the LLVM Compiler.
+
 2012-02-13  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add GSList to the list of GObject types in GOwnPtr

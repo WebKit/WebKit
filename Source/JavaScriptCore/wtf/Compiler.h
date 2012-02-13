@@ -48,6 +48,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS __has_feature(cxx_deleted_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR __has_feature(cxx_nullptr)
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
+#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_extension(c_static_assert)
 
 #endif
 

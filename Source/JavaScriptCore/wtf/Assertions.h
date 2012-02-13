@@ -322,7 +322,11 @@ while (0)
 
 /* COMPILE_ASSERT */
 #ifndef COMPILE_ASSERT
+#if COMPILER_SUPPORTS(C_STATIC_ASSERT)
+#define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
+#else
 #define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
+#endif
 #endif
 
 /* FATAL */
