@@ -297,7 +297,7 @@ static double parseInt(const UString& s, const CharType* data, int radix)
     }
     if (number >= mantissaOverflowLowerBound) {
         if (radix == 10)
-            number = WTF::strtod(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), 0);
+            number = WTF::strtod<WTF::AllowTrailingJunk>(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), 0);
         else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
             number = parseIntOverflow(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
     }
@@ -369,7 +369,7 @@ static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
     }
     byteBuffer.append(0);
     char* endOfNumber;
-    double number = WTF::strtod(byteBuffer.data(), &endOfNumber);
+    double number = WTF::strtod<WTF::AllowTrailingJunk>(byteBuffer.data(), &endOfNumber);
 
     // Check if strtod found a number; if so return it.
     ptrdiff_t consumed = endOfNumber - byteBuffer.data();

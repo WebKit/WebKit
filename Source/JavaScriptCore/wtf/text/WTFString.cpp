@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
+#include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -1052,9 +1053,9 @@ static inline double toDoubleType(const CharType* data, size_t length, bool* ok,
     bytes[length] = '\0';
     char* start = bytes.data();
     char* end;
-    double val = WTF::strtod(start, &end);
+    double val = WTF::strtod<WTF::DisallowTrailingJunk>(start, &end);
     if (ok)
-        *ok = (end == 0 || *end == '\0');
+        *ok = (end == 0 || *end == '\0') && !isnan(val);
     if (didReadNumber)
         *didReadNumber = end - start;
     return val;

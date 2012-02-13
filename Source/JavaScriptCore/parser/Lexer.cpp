@@ -1328,7 +1328,7 @@ inNumberAfterDecimalPoint:
                     }
                 // Null-terminate string for strtod.
                 m_buffer8.append('\0');
-                tokenData->doubleValue = WTF::strtod(reinterpret_cast<const char*>(m_buffer8.data()), 0);
+                tokenData->doubleValue = WTF::strtod<WTF::AllowTrailingJunk>(reinterpret_cast<const char*>(m_buffer8.data()), 0);
             }
             token = NUMBER;
         }
