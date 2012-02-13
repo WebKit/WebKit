@@ -1,5 +1,12 @@
 2012-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another perf-o-matic build fix.
+
+        * Websites/webkit-perf.appspot.com/report_process_handler.py:
+        (ReportProcessHandler._create_build_if_possible):
+
+2012-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf-o-matic build fix.
 
         * Websites/webkit-perf.appspot.com/report_handler.py:

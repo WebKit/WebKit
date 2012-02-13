@@ -75,15 +75,8 @@ class ReportProcessHandler(webapp2.RequestHandler):
         builder = log.builder()
         key_name = builder.name + ':' + str(int(time.mktime(log.timestamp().timetuple())))
 
-        def execute():
-            build = Build.get_by_key_name(key_name)
-            if build:
-                return build
-
-            return Build(branch=branch, platform=platform, builder=builder, buildNumber=log.build_number(),
-                timestamp=log.timestamp(), revision=log.webkit_revision(), chromiumRevision=log.chromium_revision(),
-                key_name=key_name).put()
-        return db.run_in_transaction(execute)
+        return Build.get_or_insert(key_name, branch=branch, platform=platform, builder=builder, buildNumber=log.build_number(),
+            timestamp=log.timestamp(), revision=log.webkit_revision(), chromiumRevision=log.chromium_revision())
 
     def _add_test_if_needed(self, test_name, branch, platform):
 
