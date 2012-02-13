@@ -69,18 +69,20 @@ WebInspector.HeapSnapshotGridNode.prototype = {
     {
         var cell = document.createElement("td");
         cell.className = columnIdentifier + "-column";
-        var div = document.createElement("div");
-        var valueSpan = document.createElement("span");
-        valueSpan.textContent = this.data[columnIdentifier];
-        div.appendChild(valueSpan);
-        var percentColumn = columnIdentifier + "-percent";
-        if (percentColumn in this.data) {
-            var percentSpan = document.createElement("span");
-            percentSpan.className = "percent-column";
-            percentSpan.textContent = this.data[percentColumn];
-            div.appendChild(percentSpan);
+        if (this.dataGrid.snapshot.totalSize !== 0) {
+            var div = document.createElement("div");
+            var valueSpan = document.createElement("span");
+            valueSpan.textContent = this.data[columnIdentifier];
+            div.appendChild(valueSpan);
+            var percentColumn = columnIdentifier + "-percent";
+            if (percentColumn in this.data) {
+                var percentSpan = document.createElement("span");
+                percentSpan.className = "percent-column";
+                percentSpan.textContent = this.data[percentColumn];
+                div.appendChild(percentSpan);
+            }
+            cell.appendChild(div);
         }
-        cell.appendChild(div);
         return cell;
     },
 

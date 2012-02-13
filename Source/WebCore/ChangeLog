@@ -1,5 +1,15 @@
 2012-02-13  Alexei Filippov  <alexeif@chromium.org>
 
+        Web Inspector: wrong percent calculations for empty snapshot.
+        https://bugs.webkit.org/show_bug.cgi?id=78329
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._createValueCell):
+
+2012-02-13  Alexei Filippov  <alexeif@chromium.org>
+
         Web Inspector: add class filter to heap profiler.
         https://bugs.webkit.org/show_bug.cgi?id=78362
 
