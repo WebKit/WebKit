@@ -491,7 +491,7 @@ bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest&
     LayoutPoint transformedPoint(pointInContainer.x() - renderFlowThreadOffset.x(), pointInContainer.y() - renderFlowThreadOffset.y());
     
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
-    HitTestRequest newRequest(request.type() & HitTestRequest::IgnoreClipping);
+    HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping);
 
     RenderRegion* oldRegion = result.region();
     result.setRegion(region);

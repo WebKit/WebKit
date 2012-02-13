@@ -1,3 +1,22 @@
+2012-02-13  Raul Hudea  <rhudea@adobe.com>
+
+        [CSS Regions] Inconsistent text selection behavior in regions
+        https://bugs.webkit.org/show_bug.cgi?id=76456
+
+        Reviewed by David Hyatt.
+
+        Use the proper bounding rect when doing hit testing on flow threads.
+        Based on initial patch by Alexandru Chiculita.
+
+        Test: fast/regions/hit-test-region.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hitTestRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::nodeAtPoint):
+
 2012-02-12  Andy Estes  <aestes@apple.com>
 
         [Windows] Add API to enable inverted color drawing on a WebView

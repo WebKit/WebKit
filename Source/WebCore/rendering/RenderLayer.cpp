@@ -77,6 +77,7 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
+#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderMarquee.h"
 #include "RenderReplica.h"
@@ -3110,7 +3111,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
     renderer()->document()->updateLayout();
     
-    LayoutRect hitTestArea = renderer()->view()->documentRect();
+    LayoutRect hitTestArea = renderer()->isRenderFlowThread() ? toRenderFlowThread(renderer())->borderBoxRect() : renderer()->view()->documentRect();
     if (!request.ignoreClipping())
         hitTestArea.intersect(frameVisibleRect(renderer()));
 

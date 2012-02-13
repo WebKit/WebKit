@@ -157,7 +157,8 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    LayoutRect boundsRect(adjustedLocation, size());
+    LayoutRect boundsRect = borderBoxRectInRegion(result.region());
+    boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         // Check the contents of the RenderFlowThread.
         if (m_flowThread && m_flowThread->hitTestRegion(this, request, result, pointInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
