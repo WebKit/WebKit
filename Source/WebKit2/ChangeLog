@@ -1,3 +1,12 @@
+2012-02-13  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 build emits a warning about not stripping code-signed PluginProcess.app when copying it into the framework
+        https://bugs.webkit.org/show_bug.cgi?id=78451
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Set COPY_PHASE_STRIP to NO.
+
 2012-02-13  Sam Weinig  <sam@webkit.org>
 
         Windows build fix.
