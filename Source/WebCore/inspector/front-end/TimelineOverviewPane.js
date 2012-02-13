@@ -30,18 +30,10 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
  */
-WebInspector.TimelineOverviewPane = function(categories)
+WebInspector.TimelineOverviewPane = function(presentationModel)
 {
-    this._categories = categories;
-
-    this.statusBarFilters = document.createElement("div");
-    this.statusBarFilters.className = "status-bar-items";
-    for (var categoryName in this._categories) {
-        var category = this._categories[categoryName];
-        this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCheckboxClicked.bind(this, category)));
-    }
+    this._presentationModel = presentationModel;
 
     this._overviewGrid = new WebInspector.TimelineGrid();
     this._overviewGrid.element.id = "timeline-overview-grid";
@@ -58,11 +50,14 @@ WebInspector.TimelineOverviewPane = function(categories)
 
     this._categoryGraphs = {};
     var i = 0;
-    for (var category in this._categories) {
-        var categoryGraph = new WebInspector.TimelineCategoryGraph(this._categories[category], i++ % 2);
+    var categories = this._presentationModel.categories;
+    for (var category in categories) {
+        var categoryGraph = new WebInspector.TimelineCategoryGraph(categories[category], i++ % 2);
         this._categoryGraphs[category] = categoryGraph;
         this._overviewGrid.itemsGraphsElement.appendChild(categoryGraph.graphElement);
     }
+    this._presentationModel.addEventListener(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, this._onCategoryVisibilityChanged, this);
+
     this._overviewGrid.setScrollAndDividerTop(0, 0);
 
     this._overviewWindowElement = document.createElement("div");
@@ -111,13 +106,10 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
     },
 
-    _onCheckboxClicked: function (category, event) {
-        if (event.target.checked)
-            category.hidden = false;
-        else
-            category.hidden = true;
-        this._categoryGraphs[category.name].dimmed = !event.target.checked;
-        this.dispatchEventToListeners("filter changed");
+    _onCategoryVisibilityChanged: function(event)
+    {
+        var category = event.data;
+        this._categoryGraphs[category.name].dimmed = category.hidden;
     },
 
     _forAllRecords: function(recordsArray, callback)
@@ -135,7 +127,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._showShortEvents = showShortEvents;
         // Clear summary bars.
         var timelines = {};
-        for (var category in this._categories) {
+        for (var category in this._presentationModel.categories) {
             timelines[category] = [];
             this._categoryGraphs[category].clearChunks();
         }
@@ -158,7 +150,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._forAllRecords(records, markPercentagesForRecord.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
-        for (var category in this._categories) {
+        for (var category in this._presentationModel.categories) {
             var timeline = timelines[category];
             window.timelineSaved = timeline;
             var chunkStart = -1;
@@ -206,8 +198,6 @@ WebInspector.TimelineOverviewPane.prototype = {
     sidebarResized: function(width)
     {
         this._overviewGrid.element.style.left = width + "px";
-        // Min width = <number of buttons on the left> * 31
-        this.statusBarFilters.style.left = Math.max(7 * 31, width) + "px";
     },
 
     reset: function()
@@ -339,7 +329,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         }
         this._overviewWindowElement.style.width = (this.windowRight - this.windowLeft) * 100 + "%";
         this._overviewWindowBordersElement.style.right = (1 - this.windowRight + 2 * rulerAdjustment) * 100 + "%";
-        this.dispatchEventToListeners("window changed");
+        this._presentationModel.setWindowPosition(this.windowLeft, this.windowRight);
     },
 
     _endWindowDragging: function(event)
@@ -351,32 +341,7 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX !== 0)
             this._windowDragging(event.pageX + Math.round(event.wheelDeltaX * WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor), this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset, this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset, event);
-    },
-
-    _createTimelineCategoryStatusBarCheckbox: function(category, onCheckboxClicked)
-    {
-        var labelContainer = document.createElement("div");
-        labelContainer.addStyleClass("timeline-category-statusbar-item");
-        labelContainer.addStyleClass("timeline-category-" + category.name);
-        labelContainer.addStyleClass("status-bar-item");
-
-        var label = document.createElement("label");
-        var checkElement = document.createElement("input");
-        checkElement.type = "checkbox";
-        checkElement.className = "timeline-category-checkbox";
-        checkElement.checked = true;
-        checkElement.addEventListener("click", onCheckboxClicked, false);
-        label.appendChild(checkElement);
-
-        var typeElement = document.createElement("span");
-        typeElement.className = "type";
-        typeElement.textContent = category.title;
-        label.appendChild(typeElement);
-
-        labelContainer.appendChild(label);
-        return labelContainer;
     }
-
 }
 
 WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prototype;

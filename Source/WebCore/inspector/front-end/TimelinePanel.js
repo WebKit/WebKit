@@ -37,6 +37,13 @@ WebInspector.TimelinePanel = function()
     WebInspector.Panel.call(this, "timeline");
     this.registerRequiredCSS("timelinePanel.css");
 
+    this._presentationModel = new WebInspector.TimelinePresentationModel();
+    this._presentationModel.addCategory(new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), "rgb(47,102,236)"));
+    this._presentationModel.addCategory(new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), "rgb(157,231,119)"));
+    this._presentationModel.addCategory(new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), "rgb(164,60,255)"));
+    this._presentationModel.addEventListener(WebInspector.TimelinePresentationModel.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
+    this._presentationModel.addEventListener(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, this._scheduleRefresh.bind(this, true));
+
     this.element.appendChild(this._createTopPane());
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
     this.element.tabIndex = 0;
@@ -203,9 +210,7 @@ WebInspector.TimelinePanel.prototype = {
         topPaneSidebarTree.appendChild(memoryOverviewItem);
         memoryOverviewItem.onselect = this._memoryOverviewItemSelected.bind(this);
 
-        this._overviewPane = new WebInspector.TimelineOverviewPane(this.categories);
-        this._overviewPane.addEventListener("window changed", this._windowChanged, this);
-        this._overviewPane.addEventListener("filter changed", this._refresh, this);
+        this._overviewPane = new WebInspector.TimelineOverviewPane(this._presentationModel);
         topPaneElement.appendChild(this._overviewPane.element);
 
         var separatorElement = document.createElement("div");
@@ -229,20 +234,8 @@ WebInspector.TimelinePanel.prototype = {
         var result = [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.garbageCollectButton.element, this.clearButton.element];
         if (this._memoryStatisticsButton)
             result.push(this._memoryStatisticsButton.element);
-        result.push(this._overviewPane.statusBarFilters);
+        result.push(this.statusBarFilters);
         return result;
-    },
-
-    get categories()
-    {
-        if (!this._categories) {
-            this._categories = {
-                loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), "rgb(47,102,236)"),
-                scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), "rgb(157,231,119)"),
-                rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), "rgb(164,60,255)")
-            };
-        }
-        return this._categories;
     },
 
     get defaultFocusedElement()
@@ -254,31 +247,33 @@ WebInspector.TimelinePanel.prototype = {
     {
         if (!this._recordStylesArray) {
             var recordTypes = WebInspector.TimelineAgent.RecordType;
+            var categories = this._presentationModel.categories;
+
             var recordStyles = {};
-            recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: this.categories.scripting };
-            recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: this.categories.rendering };
-            recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: this.categories.rendering };
-            recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: this.categories.rendering };
-            recordStyles[recordTypes.ParseHTML] = { title: WebInspector.UIString("Parse"), category: this.categories.loading };
-            recordStyles[recordTypes.TimerInstall] = { title: WebInspector.UIString("Install Timer"), category: this.categories.scripting };
-            recordStyles[recordTypes.TimerRemove] = { title: WebInspector.UIString("Remove Timer"), category: this.categories.scripting };
-            recordStyles[recordTypes.TimerFire] = { title: WebInspector.UIString("Timer Fired"), category: this.categories.scripting };
-            recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: this.categories.scripting };
-            recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: this.categories.scripting };
-            recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
-            recordStyles[recordTypes.TimeStamp] = { title: WebInspector.UIString("Stamp"), category: this.categories.scripting };
-            recordStyles[recordTypes.ResourceSendRequest] = { title: WebInspector.UIString("Send Request"), category: this.categories.loading };
-            recordStyles[recordTypes.ResourceReceiveResponse] = { title: WebInspector.UIString("Receive Response"), category: this.categories.loading };
-            recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: this.categories.loading };
-            recordStyles[recordTypes.FunctionCall] = { title: WebInspector.UIString("Function Call"), category: this.categories.scripting };
-            recordStyles[recordTypes.ResourceReceivedData] = { title: WebInspector.UIString("Receive Data"), category: this.categories.loading };
-            recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: this.categories.scripting };
-            recordStyles[recordTypes.MarkDOMContent] = { title: WebInspector.UIString("DOMContent event"), category: this.categories.scripting };
-            recordStyles[recordTypes.MarkLoad] = { title: WebInspector.UIString("Load event"), category: this.categories.scripting };
-            recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: this.categories.loading };
-            recordStyles[recordTypes.RegisterAnimationFrameCallback] = { title: WebInspector.UIString("Register Animation Callback"), category: this.categories.scripting };
-            recordStyles[recordTypes.CancelAnimationFrameCallback] = { title: WebInspector.UIString("Cancel Animation Callback"), category: this.categories.scripting };
-            recordStyles[recordTypes.FireAnimationFrameEvent] = { title: WebInspector.UIString("Animation Frame Event"), category: this.categories.scripting };
+            recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: categories["scripting"] };
+            recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
+            recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: categories["rendering"] };
+            recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: categories["rendering"] };
+            recordStyles[recordTypes.ParseHTML] = { title: WebInspector.UIString("Parse"), category: categories["loading"] };
+            recordStyles[recordTypes.TimerInstall] = { title: WebInspector.UIString("Install Timer"), category: categories["scripting"] };
+            recordStyles[recordTypes.TimerRemove] = { title: WebInspector.UIString("Remove Timer"), category: categories["scripting"] };
+            recordStyles[recordTypes.TimerFire] = { title: WebInspector.UIString("Timer Fired"), category: categories["scripting"] };
+            recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: categories["scripting"] };
+            recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: categories["scripting"] };
+            recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: categories["scripting"] };
+            recordStyles[recordTypes.TimeStamp] = { title: WebInspector.UIString("Stamp"), category: categories["scripting"] };
+            recordStyles[recordTypes.ResourceSendRequest] = { title: WebInspector.UIString("Send Request"), category: categories["loading"] };
+            recordStyles[recordTypes.ResourceReceiveResponse] = { title: WebInspector.UIString("Receive Response"), category: categories["loading"] };
+            recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: categories["loading"] };
+            recordStyles[recordTypes.FunctionCall] = { title: WebInspector.UIString("Function Call"), category: categories["scripting"] };
+            recordStyles[recordTypes.ResourceReceivedData] = { title: WebInspector.UIString("Receive Data"), category: categories["loading"] };
+            recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: categories["scripting"] };
+            recordStyles[recordTypes.MarkDOMContent] = { title: WebInspector.UIString("DOMContent event"), category: categories["scripting"] };
+            recordStyles[recordTypes.MarkLoad] = { title: WebInspector.UIString("Load event"), category: categories["scripting"] };
+            recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: categories["loading"] };
+            recordStyles[recordTypes.RegisterAnimationFrameCallback] = { title: WebInspector.UIString("Register Animation Callback"), category: categories["scripting"] };
+            recordStyles[recordTypes.CancelAnimationFrameCallback] = { title: WebInspector.UIString("Cancel Animation Callback"), category: categories["scripting"] };
+            recordStyles[recordTypes.FireAnimationFrameEvent] = { title: WebInspector.UIString("Animation Frame Event"), category: categories["scripting"] };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -305,6 +300,43 @@ WebInspector.TimelinePanel.prototype = {
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";
+
+        this.statusBarFilters = document.createElement("div");
+        this.statusBarFilters.className = "status-bar-items";
+        var categories = this._presentationModel.categories;
+        for (var categoryName in categories) {
+            var category = categories[categoryName];
+            this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCategoryCheckboxClicked.bind(this, category)));
+        }
+    },
+
+    _createTimelineCategoryStatusBarCheckbox: function(category, onCheckboxClicked)
+    {
+        var labelContainer = document.createElement("div");
+        labelContainer.addStyleClass("timeline-category-statusbar-item");
+        labelContainer.addStyleClass("timeline-category-" + category.name);
+        labelContainer.addStyleClass("status-bar-item");
+
+        var label = document.createElement("label");
+        var checkElement = document.createElement("input");
+        checkElement.type = "checkbox";
+        checkElement.className = "timeline-category-checkbox";
+        checkElement.checked = true;
+        checkElement.addEventListener("click", onCheckboxClicked, false);
+        label.appendChild(checkElement);
+
+        var typeElement = document.createElement("span");
+        typeElement.className = "type";
+        typeElement.textContent = category.title;
+        label.appendChild(typeElement);
+
+        labelContainer.appendChild(label);
+        return labelContainer;
+    },
+
+    _onCategoryCheckboxClicked: function(category, event)
+    {
+        this._presentationModel.setCategoryVisibility(category, event.target.checked);
     },
 
     _registerShortcuts: function()
@@ -540,7 +572,7 @@ WebInspector.TimelinePanel.prototype = {
         for (var i = 0; i < childrenCount; ++i)
             this._innerAddRecordToTimeline(children[i], formattedRecord);
 
-        formattedRecord._calculateAggregatedStats(this.categories);
+        formattedRecord._calculateAggregatedStats(this._presentationModel.categories);
 
         if (connectedToOldRecord) {
             record = formattedRecord;
@@ -569,6 +601,9 @@ WebInspector.TimelinePanel.prototype = {
         this._topPaneSidebarElement.style.width = width + "px";
         this._scheduleRefresh(false);
         this._overviewPane.sidebarResized(width);
+        // Min width = <number of buttons on the left> * 31
+        this.statusBarFilters.style.left = Math.max(7 * 31, width) + "px";
+
         if (this._memoryStatistics)
             this._memoryStatistics.setSidebarWidth(width);
     },
@@ -638,12 +673,6 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(true);
     },
 
-    _windowChanged: function()
-    {
-        this._closeRecordDetails();
-        this._scheduleRefresh(false);
-    },
-
     _scheduleRefresh: function(preserveBoundaries)
     {
         this._closeRecordDetails();
@@ -680,8 +709,8 @@ WebInspector.TimelinePanel.prototype = {
     _updateBoundaries: function()
     {
         this._calculator.reset();
-        this._calculator.windowLeft = this._overviewPane.windowLeft;
-        this._calculator.windowRight = this._overviewPane.windowRight;
+        this._calculator.windowLeft = this._presentationModel.windowLeft;
+        this._calculator.windowRight = this._presentationModel.windowRight;
 
         for (var i = 0; i < this._rootRecord.children.length; ++i)
             this._calculator.updateBoundaries(this._rootRecord.children[i]);
@@ -850,7 +879,7 @@ WebInspector.TimelinePanel.prototype = {
     _showPopover: function(anchor, popover)
     {
         var record = anchor.row._record;
-        popover.show(record._generatePopupContent(this._calculator, this.categories), anchor);
+        popover.show(record._generatePopupContent(this._calculator, this._presentationModel.categories), anchor);
     },
 
     _closeRecordDetails: function()
@@ -1528,3 +1557,57 @@ WebInspector.TimelineModel.prototype = {
 }
 
 WebInspector.TimelineModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
+WebInspector.TimelinePresentationModel = function()
+{
+    this._categories = {};
+    this.windowLeft = 0.0;
+    this.windowRight = 1.0;
+}
+
+WebInspector.TimelinePresentationModel.Events = {
+    WindowChanged: "WindowChanged",
+    CategoryVisibilityChanged: "CategoryVisibilityChanged"
+}
+
+WebInspector.TimelinePresentationModel.prototype = {
+    get categories()
+    {
+        return this._categories;
+    },
+
+    /**
+     * @param {WebInspector.TimelineCategory} category
+     */
+    addCategory: function(category)
+    {
+        this._categories[category.name] = category;
+    },
+
+    /**
+     * @param {number} left
+     * @param {number} right
+     */
+    setWindowPosition: function(left, right)
+    {
+        this.windowLeft = left;
+        this.windowRight = right;
+        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.WindowChanged);
+    },
+
+    /**
+     * @param {WebInspector.TimelineCategory} category
+     * @param {boolean} visible
+     */
+    setCategoryVisibility: function(category, visible)
+    {
+        category.hidden = !visible;
+        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, category);
+    }
+}
+
+WebInspector.TimelinePresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
