@@ -1,3 +1,10 @@
+2012-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic build fix.
+
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+
 2012-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Perf-o-matic adds duplicated test results

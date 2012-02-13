@@ -45,7 +45,7 @@ class ReportHandler(webapp2.RequestHandler):
         headers = "\n".join([key + ': ' + value for key, value in self.request.headers.items()])
 
         # Do as best as we can to remove the password
-        request_body_without_password = re.sub(r'"password"\s*:\s*".+?",?', '', self.request.body)
+        request_body_without_password = re.sub(r',\s*"password"\s*:\s*".+?"', '', self.request.body)
         log = ReportLog(timestamp=datetime.now(), headers=headers, payload=request_body_without_password)
         log.put()
 
