@@ -60,6 +60,7 @@ typedef void (*WKCACFViewContextDidChangeCallback)(WKCACFViewRef view, void* inf
 SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewSetContextDidChangeCallback, void, __cdecl, (WKCACFViewRef view, WKCACFViewContextDidChangeCallback callback, void* info), (view, callback, info))
 SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewGetLastCommitTime, CFTimeInterval, __cdecl, (WKCACFViewRef view), (view))
 SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewSetContextUserData, void, __cdecl, (WKCACFViewRef view, void* userData), (view, userData))
+SOFT_LINK_OPTIONAL(WebKitQuartzCoreAdditions, WKCACFViewSetShouldInvertColors, void, _cdecl, (WKCACFViewRef view, bool shouldInvertColors))
 
 PassRefPtr<WKCACFViewLayerTreeHost> WKCACFViewLayerTreeHost::create()
 {
@@ -166,6 +167,12 @@ void WKCACFViewLayerTreeHost::render(const Vector<CGRect>& dirtyRects)
 {
     WKCACFViewInvalidateRects(m_view.get(), dirtyRects.data(), dirtyRects.size());
     WKCACFViewDraw(m_view.get());
+}
+
+void WKCACFViewLayerTreeHost::setShouldInvertColors(bool shouldInvertColors)
+{
+    if (WKCACFViewSetShouldInvertColorsPtr())
+        WKCACFViewSetShouldInvertColorsPtr()(m_view.get(), shouldInvertColors);
 }
 
 } // namespace WebCore

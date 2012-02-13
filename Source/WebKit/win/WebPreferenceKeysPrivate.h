@@ -83,6 +83,7 @@
 #define WebKitPDFScaleFactorPreferenceKey "WebKitPDFScaleFactor"
 #define WebKitEditableLinkBehaviorPreferenceKey "WebKitEditableLinkBehavior"
 #define WebKitEditingBehaviorPreferenceKey "WebKitEditingBehavior"
+#define WebKitShouldInvertColorsPreferenceKey "WebKitShouldInvertColors"
 
 // Window display is throttled to 60 frames per second if WebKitThrottleWindowDisplayPreferenceKey
 // is set to YES.  The window display throttle is OFF by default for compatibility with Mac OS X

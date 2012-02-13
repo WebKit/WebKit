@@ -53,6 +53,7 @@ private:
     virtual void paint();
     virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
     virtual CFTimeInterval lastCommitTime() const;
+    virtual void setShouldInvertColors(bool);
 
     RetainPtr<WKCACFViewRef> m_view;
     bool m_viewNeedsUpdate;

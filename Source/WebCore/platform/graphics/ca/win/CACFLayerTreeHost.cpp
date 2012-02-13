@@ -274,6 +274,10 @@ void CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon()
     LayerChangesFlusher::shared().flushPendingLayerChangesSoon(this);
 }
 
+void CACFLayerTreeHost::setShouldInvertColors(bool)
+{
+}
+
 void CACFLayerTreeHost::flushPendingLayerChangesNow()
 {
     // Calling out to the client could cause our last reference to go away.

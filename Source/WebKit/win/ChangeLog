@@ -1,3 +1,32 @@
+2012-02-12  Andy Estes  <aestes@apple.com>
+
+        [Windows] Add API to enable inverted color drawing on a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=77382
+
+        Reviewed by Adam Roben.
+
+        Add a new private WebPreference key called "WebKitShouldInvertColors"
+        and add private cover methods to get and set the preference. When this
+        preference changes on a WebPreference object, all WebViews listening to
+        that object will repaint to reflect the new value.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Add [setS|s]houldInvertColors()
+        cover methods for WebKitShouldInvertColorsPreferenceKey.
+        * WebPreferenceKeysPrivate.h: Add WebKitShouldInvertColorsPreferenceKey.
+        * WebPreferences.cpp:
+        (WebPreferences::shouldInvertColors):
+        (WebPreferences::setShouldInvertColors):
+        * WebPreferences.h:
+        (WebPreferences):
+        * WebView.cpp:
+        (WebView::setShouldInvertColors): If m_shouldInvertColors changes,
+        update the value on the WebView and in m_layerTreeHost, then repaint
+        the view.
+        (WebView::notifyPreferencesChanged):
+        (WebView::setAcceleratedCompositing): When creating a new layer tree
+        host, tell it whether it should be inverting colors.
+        * WebView.h:
+
 2012-02-07  MORITA Hajime  <morrita@google.com>
 
         Replacement text should be available from the marker.

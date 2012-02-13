@@ -1639,6 +1639,21 @@ HRESULT WebPreferences::setShowsToolTipOverTruncatedText(BOOL showsToolTip)
     return S_OK;
 }
 
+HRESULT WebPreferences::shouldInvertColors(BOOL* shouldInvertColors)
+{
+    if (!shouldInvertColors)
+        return E_POINTER;
+
+    *shouldInvertColors = boolValueForKey(CFSTR(WebKitShouldInvertColorsPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setShouldInvertColors(BOOL shouldInvertColors)
+{
+    setBoolValue(CFSTR(WebKitShouldInvertColorsPreferenceKey), shouldInvertColors);
+    return S_OK;
+}
+
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;

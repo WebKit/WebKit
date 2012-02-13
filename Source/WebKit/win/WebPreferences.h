@@ -468,6 +468,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE showsToolTipOverTruncatedText(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShowsToolTipOverTruncatedText(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE shouldInvertColors(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldInvertColors(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

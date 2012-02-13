@@ -1002,6 +1002,7 @@ private:
 #endif
 
     bool m_shouldInvertColors;
+    void setShouldInvertColors(bool);
 
 protected:
     static bool registerWebViewWindowClass();

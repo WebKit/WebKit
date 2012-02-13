@@ -1,3 +1,28 @@
+2012-02-12  Andy Estes  <aestes@apple.com>
+
+        [Windows] Add API to enable inverted color drawing on a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=77382
+
+        Reviewed by Adam Roben.
+
+        Implement CACFLayerTreeHost::setShouldInvertColors(), which instructs
+        the layer tree host to render composited content with inverted colors.
+
+        Test: platform/win/inverted-colors/non-composited.html
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::setShouldInvertColors):
+        (WebCore):
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        (CACFLayerTreeHost):
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp: Use
+        SOFT_LINK_OPTIONAL since WKCACFViewSetShouldInvertColors might not
+        exist in older versions of WebKitQuartzCoreAdditions.
+        (WebCore::WKCACFViewLayerTreeHost::setShouldInvertColors):
+        (WebCore):
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+        (WKCACFViewLayerTreeHost):
+
 2012-02-13  Anders Carlsson  <andersca@apple.com>
 
         The scrolling tree needs to know about the back forward state of the page

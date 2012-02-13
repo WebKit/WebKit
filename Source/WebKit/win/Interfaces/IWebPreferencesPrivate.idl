@@ -140,4 +140,6 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT setShowsToolTipOverTruncatedText([in] BOOL);
     HRESULT showsToolTipOverTruncatedText([out, retval] BOOL*);
 
+    HRESULT setShouldInvertColors([in] BOOL);
+    HRESULT shouldInvertColors([out, retval] BOOL*);
 }

@@ -65,6 +65,7 @@ public:
     virtual void paint();
     virtual void resize() = 0;
     void flushPendingGraphicsLayerChangesSoon();
+    virtual void setShouldInvertColors(bool);
 
     // AbstractCACFLayerTreeHost
     virtual void flushPendingLayerChangesNow();

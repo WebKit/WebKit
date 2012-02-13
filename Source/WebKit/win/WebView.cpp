@@ -2072,6 +2072,23 @@ void WebView::setIsBeingDestroyed()
     ::SetWindowLongPtrW(m_viewWindow, 0, 0);
 }
 
+void WebView::setShouldInvertColors(bool shouldInvertColors)
+{
+    if (m_shouldInvertColors == shouldInvertColors)
+        return;
+
+    m_shouldInvertColors = shouldInvertColors;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost)
+        m_layerTreeHost->setShouldInvertColors(shouldInvertColors);
+#endif
+
+    RECT windowRect = {0};
+    frameRect(&windowRect);
+    repaint(windowRect, true, true);
+}
+
 bool WebView::registerWebViewWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
@@ -4922,6 +4939,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setMediaPlaybackAllowsInline(enabled);
 
+    hr = prefsPrivate->shouldInvertColors(&enabled);
+    if (FAILED(hr))
+        return hr;
+    setShouldInvertColors(enabled);
+
     return S_OK;
 }
 
@@ -6462,6 +6484,8 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         m_layerTreeHost = CACFLayerTreeHost::create();
         if (m_layerTreeHost) {
             m_isAcceleratedCompositing = true;
+
+            m_layerTreeHost->setShouldInvertColors(m_shouldInvertColors);
 
             m_layerTreeHost->setClient(this);
             ASSERT(m_viewWindow);
