@@ -25,10 +25,12 @@
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "ResourceHandle.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StorageTracker.h"
 #include "StorageTrackerClientEfl.h"
+#include "ewk_auth_soup.h"
 #include "ewk_logging.h"
 #include "ewk_network.h"
 #include "ewk_private.h"
@@ -39,21 +41,12 @@
 #include <Edje.h>
 #include <Eina.h>
 #include <Evas.h>
+#include <glib-object.h>
+#include <glib.h>
+#include <libsoup/soup.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <wtf/Threading.h>
-
-#if ENABLE(GLIB_SUPPORT)
-#include <glib-object.h>
-#include <glib.h>
-#endif
-
-#if USE(SOUP)
-// REMOVE-ME: see todo below
-#include "ResourceHandle.h"
-#include "ewk_auth_soup.h"
-#include <libsoup/soup.h>
-#endif
 
 static int _ewkInitCount = 0;
 
@@ -146,13 +139,11 @@ static WebCore::StorageTrackerClientEfl* trackerClient()
 Eina_Bool _ewk_init_body(void)
 {
 
-#if ENABLE(GLIB_SUPPORT)
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate())
         WRN("Ecore was not compiled with GLib support, some plugins will not "
             "work (ie: Adobe Flash)");
-#endif
 
     WebCore::ScriptController::initializeThreading();
     WebCore::initializeLoggingChannelsIfNecessary();
@@ -184,17 +175,12 @@ Eina_Bool _ewk_init_body(void)
 
     WebCore::StorageTracker::initializeTracker(webkitDirectory.utf8().data(), trackerClient());
 
-    // TODO: this should move to WebCore, already reported to webkit-gtk folks:
-#if USE(SOUP)
-    if (1) {
-        SoupSession* session = WebCore::ResourceHandle::defaultSession();
-        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
-        soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
+    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
 
-        SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));
-        soup_session_add_feature(session, auth_dialog);
-    }
-#endif
+    SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));
+    soup_session_add_feature(session, auth_dialog);
 
     return true;
 }

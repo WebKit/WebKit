@@ -1,6 +1,8 @@
 LIST(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
     efl/OwnPtrEfl.cpp
+    gobject/GOwnPtr.cpp
+    gobject/GRefPtr.cpp
 
     OSAllocatorPosix.cpp
     ThreadIdentifierDataPthreads.cpp
@@ -9,24 +11,9 @@ LIST(APPEND WTF_SOURCES
     unicode/icu/CollatorICU.cpp
 )
 
-IF (ENABLE_GLIB_SUPPORT)
-  LIST(APPEND WTF_SOURCES
-    gobject/GOwnPtr.cpp
-    gobject/GRefPtr.cpp
-  )
-
-  LIST(APPEND WTF_INCLUDE_DIRECTORIES
-    ${Glib_INCLUDE_DIRS}
-    ${JAVASCRIPTCORE_DIR}/wtf/gobject
-  )
-
-  LIST(APPEND WTF_LIBRARIES
-    ${Glib_LIBRARIES}
-  )
-ENDIF ()
-
 LIST(APPEND WTF_LIBRARIES
     pthread
+    ${Glib_LIBRARIES}
     ${ICU_LIBRARIES}
     ${ICU_I18N_LIBRARIES}
     ${ECORE_LIBRARIES}
@@ -46,6 +33,8 @@ LIST(APPEND WTF_INCLUDE_DIRECTORIES
     ${ECORE_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
+    ${Glib_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
+    ${JAVASCRIPTCORE_DIR}/wtf/gobject
     ${JAVASCRIPTCORE_DIR}/wtf/unicode/
 )

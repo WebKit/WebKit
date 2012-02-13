@@ -20,20 +20,14 @@
 #include "config.h"
 #include "ewk_auth.h"
 
-#ifdef WTF_USE_SOUP
 #include "ewk_auth_soup.h"
-#endif
 
 void ewk_auth_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)
 {
-#if USE(SOUP)
     ewk_auth_soup_show_dialog_callback_set(callback);
-#endif
 }
 
 void ewk_auth_credentials_set(char* username, char* password, void* data)
 {
-#if USE(SOUP)
     ewk_auth_soup_credentials_set(username, password, data);
-#endif
 }

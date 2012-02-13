@@ -21,18 +21,14 @@
 #include "ewk_network.h"
 
 #include "NetworkStateNotifier.h"
+#include "ResourceHandle.h"
 #include "ewk_logging.h"
 #include <Eina.h>
-#include <wtf/text/CString.h>
-
-#if USE(SOUP)
-#include "ResourceHandle.h"
 #include <libsoup/soup.h>
-#endif
+#include <wtf/text/CString.h>
 
 void ewk_network_proxy_uri_set(const char* proxy)
 {
-#if USE(SOUP)
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
 
     if (!proxy) {
@@ -46,14 +42,10 @@ void ewk_network_proxy_uri_set(const char* proxy)
 
     g_object_set(session, SOUP_SESSION_PROXY_URI, uri, NULL);
     soup_uri_free(uri);
-#elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN(1);
-#endif
 }
 
 const char* ewk_network_proxy_uri_get(void)
 {
-#if USE(SOUP)
     SoupURI* uri;
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     g_object_get(session, SOUP_SESSION_PROXY_URI, &uri, NULL);
@@ -65,9 +57,6 @@ const char* ewk_network_proxy_uri_get(void)
 
     WTF::String proxy = soup_uri_to_string(uri, false);
     return eina_stringshare_add(proxy.utf8().data());
-#elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
-#endif
 }
 
 void ewk_network_state_notifier_online_set(Eina_Bool online)
@@ -79,47 +68,35 @@ Eina_Bool ewk_network_tls_certificate_check_get()
 {
     bool checkCertificates = false;
 
-#if USE(SOUP)
     SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
     g_object_get(defaultSession, "ssl-strict", &checkCertificates, NULL);
-#endif
 
     return checkCertificates;
 }
 
 void ewk_network_tls_certificate_check_set(Eina_Bool checkCertificates)
 {
-#if USE(SOUP)
     SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
     g_object_set(defaultSession, "ssl-strict", checkCertificates, NULL);
-#endif
 }
 
 const char* ewk_network_tls_ca_certificates_path_get()
 {
     const char* bundlePath = 0;
 
-#if USE(SOUP)
     SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
     g_object_get(defaultSession, "ssl-ca-file", &bundlePath, NULL);
-#endif
 
     return bundlePath;
 }
 
 void ewk_network_tls_ca_certificates_path_set(const char* bundlePath)
 {
-#if USE(SOUP)
     SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
     g_object_set(defaultSession, "ssl-ca-file", bundlePath, NULL);
-#endif
 }
 
 SoupSession* ewk_network_default_soup_session_get()
 {
-#if USE(SOUP)
     return WebCore::ResourceHandle::defaultSession();
-#else
-    return 0;
-#endif
 }

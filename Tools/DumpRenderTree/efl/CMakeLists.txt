@@ -35,9 +35,10 @@ SET(DumpRenderTree_LIBRARIES
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
     ${SQLITE_LIBRARIES}
+    ${Glib_LIBRARIES}
+    ${LIBSOUP24_LIBRARIES}
 )
 
-SET(DumpRenderTree_LIBRARIES ${DumpRenderTree_LIBRARIES})
 SET(DumpRenderTree_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     ${WEBKIT_DIR}/efl
@@ -58,6 +59,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/graphics/cairo
     ${WEBCORE_DIR}/platform/network
+    ${WEBCORE_DIR}/platform/network/soup
     ${WEBCORE_DIR}/plugins
     ${WEBCORE_DIR}/rendering
     ${WEBCORE_DIR}/rendering/style
@@ -75,6 +77,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/runtime
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${JAVASCRIPTCORE_DIR}/wtf
+    ${JAVASCRIPTCORE_DIR}/wtf/gobject
     ${JAVASCRIPTCORE_DIR}/wtf/efl
     ${TOOLS_DIR}/DumpRenderTree
     ${TOOLS_DIR}/DumpRenderTree/cairo
@@ -87,6 +90,8 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${EDJE_INCLUDE_DIRS}
     ${EFLDEPS_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
+    ${Glib_INCLUDE_DIRS}
+    ${LIBSOUP24_INCLUDE_DIRS}
 )
 
 SET(DumpRenderTree_LINK_FLAGS
@@ -94,29 +99,8 @@ SET(DumpRenderTree_LINK_FLAGS
     ${EDJE_LDFLAGS}
     ${EFLDEPS_LDFLAGS}
     ${EVAS_LDFLAGS}
+    ${LIBSOUP24_LDFLAGS}
 )
-
-IF (ENABLE_GLIB_SUPPORT)
-    LIST(APPEND DumpRenderTree_INCLUDE_DIRECTORIES "${JAVASCRIPTCORE_DIR}/wtf/gobject")
-
-    LIST(APPEND DumpRenderTree_LIBRARIES
-        ${Gdk_LIBRARIES}
-        ${Glib_LIBRARIES}
-        ${Gthread_LIBRARIES}
-    )
-ENDIF ()
-
-IF (WTF_USE_SOUP)
-    LIST(APPEND DumpRenderTree_LIBRARIES ${LIBSOUP24_LIBRARIES})
-    LIST(APPEND DumpRenderTree_LINK_FLAGS ${LIBSOUP24_LDFLAGS})
-    LIST(APPEND DumpRenderTree_INCLUDE_DIRECTORIES ${LIBSOUP24_INCLUDE_DIRS} ${WEBCORE_DIR}/platform/network/soup)
-ENDIF ()
-
-IF (WTF_USE_CURL)
-    LIST(APPEND DumpRenderTree_LIBRARIES ${CURL_LIBRARIES})
-    LIST(APPEND DumpRenderTree_LINK_FLAGS ${CURL_LDFLAGS})
-    LIST(APPEND DumpRenderTree_INCLUDE_DIRECTORIES ${WEBCORE_DIR}/platform/network/curl)
-ENDIF ()
 
 ADD_DEFINITIONS(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
                 -DDATA_DIR="${THEME_BINARY_DIR}")

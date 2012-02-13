@@ -1606,7 +1606,6 @@ Eina_Bool ewk_frame_mixed_content_run_get(const Evas_Object* ewkFrame)
 
 Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
 {
-#if USE(SOUP)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EWK_CERTIFICATE_STATUS_NO_CERTIFICATE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, EWK_CERTIFICATE_STATUS_NO_CERTIFICATE);
 
@@ -1626,9 +1625,6 @@ Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
         return EWK_CERTIFICATE_STATUS_TRUSTED;
 
     return EWK_CERTIFICATE_STATUS_UNTRUSTED;
-#endif
-
-    return EWK_CERTIFICATE_STATUS_NO_CERTIFICATE;
 }
 
 /**

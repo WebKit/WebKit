@@ -1,3 +1,47 @@
+2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Drop support for the Curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=77874
+
+        Reviewed by Eric Seidel.
+
+        Nobody seems to be maintaining the Curl backend in WebCore, the
+        EFL port developers all seem to be using the Soup backend and the
+        port itself has many features which are only implemented for the
+        latter.
+
+        * CMakeListsEfl.txt: Unconditionally build soup-dependent files
+        and always add the glib/soup include directories and libraries.
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveResponse):
+        Remove USE(SOUP) checks.
+        * ewk/ewk_auth.cpp:
+        (ewk_auth_show_dialog_callback_set): Ditto.
+        (ewk_auth_credentials_set): Ditto.
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set): Ditto.
+        (ewk_cookies_clear): Ditto.
+        (ewk_cookies_get_all): Ditto.
+        (ewk_cookies_cookie_del): Ditto.
+        (ewk_cookies_cookie_free): Ditto.
+        (ewk_cookies_policy_set): Ditto.
+        (ewk_cookies_policy_get): Ditto.
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_certificate_status_get): Ditto.
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body): Ditto.
+        * ewk/ewk_network.cpp:
+        (ewk_network_proxy_uri_set): Ditto.
+        (ewk_network_proxy_uri_get): Ditto.
+        (ewk_network_tls_certificate_check_get): Ditto.
+        (ewk_network_tls_certificate_check_set): Ditto.
+        (ewk_network_tls_ca_certificates_path_get): Ditto.
+        (ewk_network_tls_ca_certificates_path_set): Ditto.
+        (ewk_network_default_soup_session_get): Ditto.
+        * ewk/ewk_network.h: Update apidox for
+        ewk_network_default_soup_session_get() now that libsoup is the
+        only available backend.
+
 2012-02-09  Gustavo Lima Chaves  <glima@profusion.mobi>
 
         [EFL] Introducing functions to set local storage db path and clear

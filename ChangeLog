@@ -1,3 +1,20 @@
+2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Drop support for the Curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=77874
+
+        Reviewed by Eric Seidel.
+
+        Nobody seems to be maintaining the Curl backend in WebCore, the
+        EFL port developers all seem to be using the Soup backend and the
+        port itself has many features which are only implemented for the
+        latter.
+
+        * Source/cmake/OptionsEfl.cmake: Remove network backend selection
+        checks and unconditionally require Glib and Libsoup, bump the
+        required LibSoup version to the same one the GTK+ port looks for,
+        since we share the same network backend.
+
 2012-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another perf-o-matic build fix.

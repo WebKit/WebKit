@@ -1,3 +1,20 @@
+2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Drop support for the Curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=77874
+
+        Reviewed by Eric Seidel.
+
+        Nobody seems to be maintaining the Curl backend in WebCore, the
+        EFL port developers all seem to be using the Soup backend and the
+        port itself has many features which are only implemented for the
+        latter.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Always link to glib/libsoup
+        and always add the required include directories.
+        * EWebLauncher/CMakeLists.txt: Add the required glib/libsoup
+        include directories and link to them.
+
 2012-02-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Update pywebsocket to 0.7.1

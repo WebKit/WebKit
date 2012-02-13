@@ -26,12 +26,11 @@
 #define ewk_network_h
 
 #include <Eina.h>
+#include <libsoup/soup-session.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct _SoupSession SoupSession;
 
 /**
  * Sets the given proxy URI to network backend.
@@ -113,11 +112,7 @@ EAPI void             ewk_network_tls_ca_certificates_path_set(const char *path)
 /**
  * Returns the default @c SoupSession used by all views.
  *
- * This function is meaningful only if WebKit has been compiled with the
- * @c Soup network backend.
- *
- * @return The default @c SoupSession in use, or @c NULL if another network
- *         backend was used.
+ * @return The default @c SoupSession in use.
  */
 EAPI SoupSession     *ewk_network_default_soup_session_get(void);
 

@@ -9,6 +9,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/page/efl"
   "${WEBCORE_DIR}/platform/efl"
   "${WEBCORE_DIR}/platform/graphics/efl"
+  "${WEBCORE_DIR}/platform/network/soup"
   "${WEBCORE_DIR}/platform/text/efl"
   "${WEBCORE_DIR}/plugins/efl"
   "${WEBKIT_DIR}/efl/WebCoreSupport"
@@ -71,6 +72,15 @@ LIST(APPEND WebCore_SOURCES
   platform/image-decoders/jpeg/JPEGImageDecoder.cpp
   platform/image-decoders/png/PNGImageDecoder.cpp
   platform/image-decoders/webp/WEBPImageDecoder.cpp
+  platform/network/soup/CookieJarSoup.cpp
+  platform/network/soup/CredentialStorageSoup.cpp
+  platform/network/soup/GOwnPtrSoup.cpp
+  platform/network/soup/ProxyServerSoup.cpp
+  platform/network/soup/ResourceHandleSoup.cpp
+  platform/network/soup/ResourceRequestSoup.cpp
+  platform/network/soup/ResourceResponseSoup.cpp
+  platform/network/soup/SocketStreamHandleSoup.cpp
+  platform/network/soup/SoupURIUtils.cpp
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
 )
@@ -162,41 +172,6 @@ IF (WTF_USE_CAIRO)
   ENDIF ()
 ENDIF ()
 
-IF (WTF_USE_SOUP)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/network/soup"
-    "${WEBCORE_DIR}/platform/network/soup/cache"
-    "${WEBCORE_DIR}/platform/network/soup/cache/webkit"
-  )
-  LIST(APPEND WebCore_SOURCES
-    platform/network/soup/CookieJarSoup.cpp
-    platform/network/soup/CredentialStorageSoup.cpp
-    platform/network/soup/GOwnPtrSoup.cpp
-    platform/network/soup/ProxyServerSoup.cpp
-    platform/network/soup/ResourceHandleSoup.cpp
-    platform/network/soup/ResourceRequestSoup.cpp
-    platform/network/soup/ResourceResponseSoup.cpp
-    platform/network/soup/SocketStreamHandleSoup.cpp
-    platform/network/soup/SoupURIUtils.cpp
-  )
-ENDIF ()
-
-IF (WTF_USE_CURL)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/network/curl"
-  )
-  LIST(APPEND WebCore_SOURCES
-    platform/network/curl/CookieJarCurl.cpp
-    platform/network/curl/CredentialStorageCurl.cpp
-    platform/network/curl/DNSCurl.cpp
-    platform/network/curl/FormDataStreamCurl.cpp
-    platform/network/curl/ProxyServerCurl.cpp
-    platform/network/curl/ResourceHandleCurl.cpp
-    platform/network/curl/ResourceHandleManager.cpp
-    platform/network/curl/SocketStreamHandleCurl.cpp
-  )
-ENDIF ()
-
 IF (WTF_USE_ICU_UNICODE)
   LIST(APPEND WebCore_SOURCES
     editing/SmartReplaceICU.cpp
@@ -237,19 +212,9 @@ LIST(APPEND WebCore_LIBRARIES
   ${LIBXML2_LIBRARIES}
   ${LIBXSLT_LIBRARIES}
   ${SQLITE_LIBRARIES}
+  ${Glib_LIBRARIES}
+  ${LIBSOUP24_LIBRARIES}
 )
-
-IF (WTF_USE_SOUP)
-  LIST(APPEND WebCore_LIBRARIES
-    ${LIBSOUP24_LIBRARIES}
-  )
-ENDIF ()
-
-IF (WTF_USE_CURL)
-  LIST(APPEND WebCore_LIBRARIES
-    ${CURL_LIBRARIES}
-  )
-ENDIF ()
 
 IF (ENABLE_VIDEO)
   LIST(APPEND WebCore_LIBRARIES
@@ -270,6 +235,8 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${LIBXML2_INCLUDE_DIR}
   ${LIBXSLT_INCLUDE_DIR}
   ${SQLITE_INCLUDE_DIR}
+  ${Glib_INCLUDE_DIRS}
+  ${LIBSOUP24_INCLUDE_DIRS}
 )
 
 IF (ENABLE_VIDEO)
@@ -278,15 +245,6 @@ IF (ENABLE_VIDEO)
     ${GStreamer-Interfaces_INCLUDE_DIRS}
     ${GStreamer-Pbutils_INCLUDE_DIRS}
     ${GStreamer-Video_INCLUDE_DIRS}
-  )
-ENDIF ()
-
-IF (ENABLE_GLIB_SUPPORT)
-  LIST(APPEND WebCore_LIBRARIES
-    ${Glib_LIBRARIES}
-  )
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${Glib_INCLUDE_DIRS}
   )
 ENDIF ()
 
@@ -309,18 +267,6 @@ IF (ENABLE_WEBGL)
     platform/graphics/opengl/Extensions3DOpenGL.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-  )
-ENDIF ()
-
-IF (WTF_USE_SOUP)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${LIBSOUP24_INCLUDE_DIRS}
-  )
-ENDIF ()
-
-IF (WTF_USE_CURL)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${CURL_INCLUDE_DIRS}
   )
 ENDIF ()
 

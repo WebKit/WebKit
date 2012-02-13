@@ -10,6 +10,7 @@ LIST(APPEND WebKit_LINK_FLAGS
 LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     "${WEBKIT_DIR}/efl/WebCoreSupport"
+    "${JAVASCRIPTCORE_DIR}/wtf/gobject"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     ${Cairo_INCLUDE_DIRS}
@@ -20,6 +21,8 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
+    ${Glib_INCLUDE_DIRS}
+    ${LIBSOUP24_INCLUDE_DIRS}
 )
 
 IF (ENABLE_SVG)
@@ -77,10 +80,13 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/InspectorClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
 
+    efl/ewk/ewk_auth.cpp
+    efl/ewk/ewk_auth_soup.cpp
     efl/ewk/ewk_contextmenu.cpp
     efl/ewk/ewk_cookies.cpp
     efl/ewk/ewk_frame.cpp
     efl/ewk/ewk_history.cpp
+    efl/ewk/ewk_js.cpp
     efl/ewk/ewk_main.cpp
     efl/ewk/ewk_network.cpp
     efl/ewk/ewk_security_policy.cpp
@@ -93,7 +99,6 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_view_single.cpp
     efl/ewk/ewk_view_tiled.cpp
     efl/ewk/ewk_window_features.cpp
-    efl/ewk/ewk_js.cpp
 )
 
 LIST(APPEND WebKit_LIBRARIES
@@ -107,33 +112,9 @@ LIST(APPEND WebKit_LIBRARIES
     ${PNG_LIBRARY}
     ${JPEG_LIBRARY}
     ${CMAKE_DL_LIBS}
-)
-
-IF (ENABLE_GLIB_SUPPORT)
-  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-    ${Gdk_INCLUDE_DIRS}
-    ${Glib_INCLUDE_DIRS}
-    ${JAVASCRIPTCORE_DIR}/wtf/gobject
-  )
-  LIST(APPEND WebKit_LIBRARIES
     ${Glib_LIBRARIES}
-    ${Gdk_LIBRARIES}
-  )
-ENDIF ()
-
-IF (WTF_USE_SOUP)
-  LIST(APPEND WebKit_INCLUDE_DIRECTORIES ${LIBSOUP24_INCLUDE_DIRS})
-  LIST(APPEND WebKit_LIBRARIES ${LIBSOUP24_LIBRARIES})
-  LIST(APPEND WebKit_SOURCES
-    efl/ewk/ewk_auth.cpp
-    efl/ewk/ewk_auth_soup.cpp
-  )
-ENDIF ()
-
-IF (WTF_USE_CURL)
-  LIST(APPEND WebKit_INCLUDE_DIRECTORIES ${CURL_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
-  LIST(APPEND WebKit_LIBRARIES ${CURL_LIBRARIES} ${ZLIB_LIBRARIES})
-ENDIF ()
+    ${LIBSOUP24_LIBRARIES}
+)
 
 SET(WebKit_THEME_DEFINITION "")
 IF (ENABLE_PROGRESS_TAG)
@@ -236,6 +217,7 @@ UNSET(LIBS_PRIVATE)
 SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/EWebKit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth_soup.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_contextmenu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_cookies.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_frame.h
@@ -249,10 +231,6 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
 )
-
-IF (WTF_USE_SOUP)
-    LIST(APPEND EWebKit_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth_soup.h)
-ENDIF ()
 
 INSTALL(FILES ${EWebKit_HEADERS}
         DESTINATION include/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})

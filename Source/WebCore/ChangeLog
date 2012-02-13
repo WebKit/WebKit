@@ -1,3 +1,21 @@
+2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Drop support for the Curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=77874
+
+        Reviewed by Eric Seidel.
+
+        Nobody seems to be maintaining the Curl backend in WebCore, the
+        EFL port developers all seem to be using the Soup backend and the
+        port itself has many features which are only implemented for the
+        latter.
+
+        No new tests, just some dependency plumbing.
+
+        * PlatformEfl.cmake: Build the glib/soup source files
+        unconditionally.
+        * platform/efl/FileSystemEfl.cpp: Remove ENABLE(GLIB_SUPPORT) check.
+
 2012-02-13  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: wrap settings selector text and adding a rule with undoable actions.

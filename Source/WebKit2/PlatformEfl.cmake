@@ -44,6 +44,8 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/Plugins/efl/PluginInfoStoreEfl.cpp
     UIProcess/Plugins/efl/PluginProcessProxyEfl.cpp
 
+    WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
+
     WebProcess/Downloads/efl/DownloadEfl.cpp
     WebProcess/Downloads/efl/FileDownloaderEfl.cpp
 
@@ -62,8 +64,10 @@ LIST(APPEND WebKit2_SOURCES
 )
 
 LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}/wtf/gobject"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
+    "${WEBCORE_DIR}/platform/network/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/UIProcess/API/efl/"
     "${WEBKIT2_DIR}/WebProcess/Downloads/efl"
@@ -77,6 +81,8 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIRS}
     ${SQLITE_INCLUDE_DIRS}
+    ${Glib_INCLUDE_DIRS}
+    ${LIBSOUP24_INCLUDE_DIRS}
 )
 
 LIST(APPEND WebKit2_LIBRARIES
@@ -90,6 +96,8 @@ LIST(APPEND WebKit2_LIBRARIES
     ${PNG_LIBRARY}
     ${JPEG_LIBRARY}
     ${CMAKE_DL_LIBS}
+    ${Glib_LIBRARIES}
+    ${LIBSOUP24_LIBRARIES}
 )
 
 LIST (APPEND WebProcess_SOURCES
@@ -112,39 +120,7 @@ ADD_CUSTOM_TARGET(forwarding-headerEfl
 )
 SET(ForwardingHeaders_NAME forwarding-headerEfl)
 
-IF (WTF_USE_SOUP)
-    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/network/soup"
-        ${LIBSOUP24_INCLUDE_DIRS}
-    )
-    LIST(APPEND WebKit2_LIBRARIES ${LIBSOUP24_LIBRARIES})
-    LIST(APPEND WebKit2_SOURCES
-        WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
-    )
-
-    ADD_CUSTOM_TARGET(forwarding-headerSoup
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
-    )
-    SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
-ENDIF ()
-
-IF (WTF_USE_CURL)
-    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/network/curl"
-        ${CURL_INCLUDE_DIRS}
-    )
-    LIST(APPEND WebKit2_LIBRARIES ${CURL_LIBRARIES})
-    LIST(APPEND WebKit2_SOURCES
-        WebProcess/Cookies/curl/WebCookieManagerCurl.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_GLIB_SUPPORT)
-    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
-        ${Glib_INCLUDE_DIRS}
-        ${JAVASCRIPTCORE_DIR}/wtf/gobject
-    )
-    LIST(APPEND WebKit2_LIBRARIES
-        ${Glib_LIBRARIES}
-    )
-ENDIF ()
+ADD_CUSTOM_TARGET(forwarding-headerSoup
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
+)
+SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
