@@ -2228,11 +2228,6 @@ fast/block/float/overhanging-float-remove-from-absolute-position-block.html
 fast/block/float/overhanging-float-remove-from-fixed-position-block2.html
 fast/block/float/overhanging-float-remove-from-fixed-position-block.html
 
-# New tests introduced in r88307, but fail on Qt
-# https://bugs.webkit.org/show_bug.cgi?id=54417
-fast/events/touch/touch-gesture-click.html
-fast/events/touch/touch-gesture-scroll.html
-
 # new tests without expected files, need investigation
 css3/images/cross-fade-background-size.html
 css3/images/cross-fade-tiled.html
@@ -2439,18 +2434,9 @@ fast/events/touch/gesture/gesture-scroll.html
 # https://bugs.webkit.org/show_bug.cgi?id=62847
 fast/parser/xhtml-innerhtml-null-byte.xhtml
 
-# new failing inspector tests
-inspector/console/console-trace-in-eval.html
-
-# Test fails because script pretty-print does not work in inspector on JSC when paused on breakpoint. 
+# Test fails because script pretty-print does not work in inspector on JSC when paused on breakpoint.
 # https://bugs.webkit.org/show_bug.cgi?id=71120
 inspector/debugger/selected-call-frame-after-formatting-source.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=64927
-inspector/styles/css-live-edit.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=64928
-inspector/styles/get-set-stylesheet-text.html
 
 # [Qt]REGRESSION(r92254): It made 2 tests timeout
 # https://bugs.webkit.org/show_bug.cgi?id=65609
@@ -2508,10 +2494,6 @@ fast/multicol/positive-leading.html
 fast/multicol/overflow-unsplittable.html
 fast/multicol/overflow-across-columns.html
 
-# [Qt] inspector/styles/styles-disable-inherited.html make the next test fail after r96257
-# https://bugs.webkit.org/show_bug.cgi?id=69257
-inspector/styles/styles-disable-inherited.html
-
 # [Qt] fast/text/line-initial-and-final-swashes.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=69719
 fast/text/line-initial-and-final-swashes.html
@@ -2559,17 +2541,9 @@ fast/viewport/viewport-warnings-3.html
 fast/events/constructors/track-event-constructor.html
 http/tests/security/text-track-crossorigin.html
 
-# [Qt] inspector/elements/elements-panel-selection-on-refresh.html crashing
-# https://bugs.webkit.org/show_bug.cgi?id=72504
-inspector/elements/elements-panel-selection-on-refresh.html
-
 # [Qt] fast/canvas/canvas-lineWidth.html timeouts intermittently on 64 bit
 # https://bugs.webkit.org/show_bug.cgi?id=72694
 fast/canvas/canvas-lineWidth.html
-
-# [Qt] inspector/extensions/extensions-events.html crashing after r100926
-# https://bugs.webkit.org/show_bug.cgi?id=72932
-inspector/extensions/extensions-events.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73493
 fast/canvas/webgl/arraybuffer-transfer-of-control.html
@@ -2625,10 +2599,6 @@ fast/text/international/inline-plaintext-is-isolated.html
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
 fast/mutation/end-of-task-delivery.html
-
-# Synthetic bold is illegible under some scaling transforms
-# https://bugs.webkit.org/show_bug.cgi?id=78044
-fast/text/synthetic-bold-transformed.html
 
 # [Qt] REGRESSION(r107518): It broke many tests
 # https://bugs.webkit.org/show_bug.cgi?id=78471
