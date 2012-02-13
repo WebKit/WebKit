@@ -21,7 +21,8 @@
 module html {
 
     interface [
-        CustomNamedGetter
+        CustomNamedGetter,
+        V8CustomToJSObject
     ] HTMLDocument : Document {
         [JSCustom, V8Custom] void open();
         void close();

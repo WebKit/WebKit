@@ -35,7 +35,8 @@ module threads {
         IsWorkerContext,
         JSLegacyParent=JSWorkerContextBase,
         JSNoStaticTables,
-        OmitConstructor
+        OmitConstructor,
+        V8CustomToJSObject
     ] WorkerContext {
 
         // WorkerGlobalScope

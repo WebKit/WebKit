@@ -40,7 +40,8 @@ module window {
         JSCustomDefineOwnProperty,
         JSCustomNamedGetterOnPrototype,
         JSCustomDefineOwnPropertyOnPrototype,
-        OmitConstructor
+        OmitConstructor,
+        V8CustomToJSObject
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
                  attribute [DoNotCheckDomainSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;

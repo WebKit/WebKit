@@ -31,6 +31,7 @@ module core {
         CustomDeleteProperty,
         CustomEnumerateProperty,
         CustomNamedSetter,
+        V8CustomToJSObject
     ] DOMStringMap {
     };
 

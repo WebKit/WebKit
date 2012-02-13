@@ -31,7 +31,8 @@ module html {
     interface [
         OmitConstructor,
         NumericIndexedGetter,
-        CustomIndexedSetter
+        CustomIndexedSetter,
+        V8CustomToJSObject
     ] CanvasPixelArray {
 #if !defined(V8_BINDING) || !V8_BINDING
         readonly attribute long length;

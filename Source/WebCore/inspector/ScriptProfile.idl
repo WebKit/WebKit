@@ -28,7 +28,8 @@ module core {
 
     interface [
         Conditional=JAVASCRIPT_DEBUGGER,
-        OmitConstructor
+        OmitConstructor,
+        V8CustomToJSObject
     ] ScriptProfile {
         readonly attribute DOMString title;
         readonly attribute unsigned long uid;

@@ -39,7 +39,8 @@ module window {
         ExtendsDOMGlobalObject,
         JSGenerateToNativeObject,
         ReplaceableConstructor,
-        JSLegacyParent=JSDOMWindowBase
+        JSLegacyParent=JSDOMWindowBase,
+        V8CustomToJSObject
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;

@@ -3106,22 +3106,8 @@ sub HasCustomToV8Implementation {
     my $dataNode = shift;
     my $interfaceName = shift;
 
-    # We generate a custom converter (but JSC doesn't) for the following:
-    return 1 if $interfaceName eq "CSSStyleSheet";
-    return 1 if $interfaceName eq "CanvasPixelArray";
-    return 1 if $interfaceName eq "DOMStringMap";
-    return 1 if $interfaceName eq "DOMWindow";
-    return 1 if $interfaceName eq "DOMTokenList";
-    return 1 if $interfaceName eq "Element";
-    return 1 if $interfaceName eq "HTMLDocument";
-    return 1 if $interfaceName eq "HTMLElement";
-    return 1 if $interfaceName eq "Location";
-    return 1 if $interfaceName eq "NamedNodeMap";
-    return 1 if $interfaceName eq "SVGDocument";
-    return 1 if $interfaceName eq "SVGElement";
-    return 1 if $interfaceName eq "ScriptProfile";
-    return 1 if $interfaceName eq "ScriptProfileNode";
-    return 1 if $interfaceName eq "WorkerContext";
+    return 1 if $dataNode->extendedAttributes->{"V8CustomToJSObject"};
+
     # We don't generate a custom converter (but JSC does) for the following:
     return 0 if $interfaceName eq "AbstractWorker";
     return 0 if $interfaceName eq "CanvasRenderingContext";

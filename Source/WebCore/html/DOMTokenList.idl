@@ -26,7 +26,8 @@ module core {
 
     interface [
         JSGenerateIsReachable=ImplElementRoot,
-        IndexedGetter
+        IndexedGetter,
+        V8CustomToJSObject
     ] DOMTokenList {
         readonly attribute unsigned long length;
         [TreatReturnedNullStringAs=Null] DOMString item(in unsigned long index);

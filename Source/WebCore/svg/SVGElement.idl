@@ -24,7 +24,8 @@ module svg {
 
     interface [
         JSGenerateToNativeObject,
-        Conditional=SVG
+        Conditional=SVG,
+        V8CustomToJSObject
     ] SVGElement : Element {
         attribute [Reflect] DOMString id;
         attribute [TreatNullAs=NullString] DOMString xmlbase setter raises(DOMException);

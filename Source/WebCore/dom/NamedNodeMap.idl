@@ -24,7 +24,8 @@ module core {
         JSGenerateIsReachable=ImplElementRoot,
         JSCustomMarkFunction,
         IndexedGetter,
-        NamedGetter
+        NamedGetter,
+        V8CustomToJSObject
     ] NamedNodeMap {
 
         Node getNamedItem(in [Optional=DefaultIsUndefined] DOMString name);

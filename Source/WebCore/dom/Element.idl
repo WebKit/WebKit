@@ -22,7 +22,8 @@ module core {
 
     interface [
         JSGenerateToNativeObject,
-        JSInlineGetOwnPropertySlot
+        JSInlineGetOwnPropertySlot,
+        V8CustomToJSObject
     ] Element : Node {
 
         // DOM Level 1 Core
