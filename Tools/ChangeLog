@@ -1,3 +1,16 @@
+2012-02-12  Joe Thomas  <joethomas@motorola.com>
+
+        Add toText and isTextNode helpers in Text class.
+        https://bugs.webkit.org/show_bug.cgi?id=78140
+
+        Unit test case for the new style checker introduced.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        (CppStyleTest.test_static_cast_readability): Added a unit test case.
+
 2012-02-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Enable features supported by EFL port in build-webkit.

@@ -759,6 +759,14 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_language_rules_check('foo.cpp', statement, error_message)
         self.assert_language_rules_check('foo.h', statement, error_message)
 
+    # Test for static_cast readability.
+    def test_static_cast_readability(self):
+        self.assert_lint(
+            'Text* x = static_cast<Text*>(foo);',
+            'Consider using toText helper function in WebCore/dom/Text.h '
+            'instead of static_cast<Text*>'
+            '  [readability/check] [4]')
+
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.
     #
