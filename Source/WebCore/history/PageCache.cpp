@@ -199,11 +199,11 @@ static void logCanCachePageDecision(Page* page)
         cannotCache = true;
     }
 #if ENABLE(DEVICE_ORIENTATION)
-    if (page->deviceMotionController() && page->deviceMotionController()->isActive()) {
+    if (DeviceMotionController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceMotion");
         cannotCache = true;
     }
-    if (page->deviceOrientationController() && page->deviceOrientationController()->isActive()) {
+    if (DeviceOrientationController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceOrientation");
         cannotCache = true;
     }
@@ -296,8 +296,8 @@ bool PageCache::canCache(Page* page)
         && page->backForward()->isActive()
         && page->settings()->usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION)
-        && !(page->deviceMotionController() && page->deviceMotionController()->isActive())
-        && !(page->deviceOrientationController() && page->deviceOrientationController()->isActive())
+        && !DeviceMotionController::isActiveAt(page)
+        && !DeviceOrientationController::isActiveAt(page)
 #endif
         && loadType != FrameLoadTypeReload
         && loadType != FrameLoadTypeReloadFromOrigin

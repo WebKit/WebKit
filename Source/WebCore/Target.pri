@@ -1000,6 +1000,7 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
+    page/PageSupplement.cpp \
     page/PageVisibilityState.cpp \
     page/Performance.cpp \
     page/PerformanceNavigation.cpp \
@@ -2062,6 +2063,7 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
+    page/PageSupplement.h \
     page/PageVisibilityState.h \
     page/PrintContext.h \
     page/Screen.h \

@@ -137,4 +137,22 @@ void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* 
         listenersVector[i]->dispatchEvent(event);
 }
 
+const AtomicString& DeviceOrientationController::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("deviceOrientation"));
+    return name;
+}
+
+bool DeviceOrientationController::isActiveAt(Page* page)
+{
+    if (DeviceOrientationController* self = DeviceOrientationController::from(page))
+        return self->isActive();
+    return false;
+}
+
+void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
+{
+    PageSupplement::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
+}
+
 } // namespace WebCore

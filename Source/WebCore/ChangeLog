@@ -1,3 +1,85 @@
+2012-02-12  Hajime Morrita  <morrita@chromium.org>
+
+        Page should have less intrusive way to associate API implementation objects.
+        https://bugs.webkit.org/show_bug.cgi?id=78085
+
+        Reviewed by Adam Barth.
+
+        Introducing PageSupplement interface to attach behind-the-flag-ish
+        objects to Page instances.
+
+        This change aims to improve modularity of Modules/ entries. With
+        PageSupplement mechinary, we can eliminate ifdef conditionals from
+        Page.h/Page.cpp and are able to add Modules/ entries without
+        touching non-Module WebCore files. WebKit API classes like WebPage
+        can "provide" these objects dynamically during the Page setup phase.
+
+        In this change, DeviceMotionController and
+        DeviceOrientationController is updated to adopt PageSupplement
+        inteface for an illustrative purpose because they are going to
+        move into Modules/ shortly. Other Page associated API backing
+        objects also should be transformed to PageSupplement family.
+
+        Reviewed by Adam Barth.
+
+        No new tests. No behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceMotionClient.h:
+        (WebCore):
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::supplementName):
+        (WebCore):
+        (WebCore::DeviceMotionController::isActiveAt):
+        (WebCore::provideDeviceMotionTo):
+        * dom/DeviceMotionController.h:
+        (DeviceMotionController):
+        (WebCore::DeviceMotionController::from):
+        * dom/DeviceOrientationClient.h:
+        (WebCore):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::supplementName):
+        (WebCore):
+        (WebCore::DeviceOrientationController::isActiveAt):
+        (WebCore::provideDeviceOrientationTo):
+        * dom/DeviceOrientationController.h:
+        (DeviceOrientationController):
+        (WebCore::DeviceOrientationController::from):
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        * history/PageCache.cpp:
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCache):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/PageSupplement.cpp:
+        (WebCore::PageSupplement::~PageSupplement):
+        (WebCore::PageSupplement::provideTo):
+        (WebCore::PageSupplement::from):
+        * page/PageSupplement.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::provideSupplement):
+        (WebCore):
+        (WebCore::Page::requireSupplement):
+        (WebCore::Page::notifyDestroyedToSupplements):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+        (WebCore):
+        (PageClients):
+        (Page):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2012-02-12  Nico Weber  <nicolasweber@gmx.de>
 
         [chromium/mac] Change the type of webkit_system_interface from static_library to none

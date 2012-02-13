@@ -135,4 +135,22 @@ void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotio
         listenersVector[i]->dispatchEvent(event);
 }
 
+const AtomicString& DeviceMotionController::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("deviceMotion"));
+    return name;
+}
+
+bool DeviceMotionController::isActiveAt(Page* page)
+{
+    if (DeviceMotionController* self = DeviceMotionController::from(page))
+        return self->isActive();
+    return false;
+}
+
+void provideDeviceMotionTo(Page* page, DeviceMotionClient* client)
+{
+    PageSupplement::provideTo(page, DeviceMotionController::supplementName(), DeviceMotionController::create(client));
+}
+
 } // namespace WebCore

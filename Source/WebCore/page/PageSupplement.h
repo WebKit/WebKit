@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientationClient_h
-#define DeviceOrientationClient_h
+#ifndef PageSupplement_h
+#define PageSupplement_h
+
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class DeviceOrientation;
-class DeviceOrientationController;
 class Page;
+class Frame;
 
-class DeviceOrientationClient {
+
+class PageSupplement {
 public:
-    virtual ~DeviceOrientationClient() {}
+    virtual ~PageSupplement();
 
-    virtual void setController(DeviceOrientationController*) = 0;
-    virtual void startUpdating() = 0;
-    virtual void stopUpdating() = 0;
-    virtual DeviceOrientation* lastOrientation() const = 0;
-    virtual void deviceOrientationControllerDestroyed() = 0;
+    static void provideTo(Page*, const AtomicString&, PassOwnPtr<PageSupplement>);
+    static PageSupplement* from(Page*, const AtomicString&);
+    static PageSupplement* from(Frame*, const AtomicString&);
+private:
+    OwnPtr<PageSupplement> m_self;
 };
-
-void provideDeviceOrientationTo(Page*, DeviceOrientationClient*);
 
 } // namespace WebCore
 
-#endif // DeviceOrientationClient_h
+#endif // PageSupplement_h

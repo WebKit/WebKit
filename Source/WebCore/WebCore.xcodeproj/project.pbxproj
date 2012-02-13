@@ -3545,6 +3545,8 @@
 		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
+		A71E083714E3CEAF006A4619 /* PageSupplement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71E083514E3CEAF006A4619 /* PageSupplement.cpp */; };
+		A71E083814E3CEAF006A4619 /* PageSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = A71E083614E3CEAF006A4619 /* PageSupplement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10403,6 +10405,8 @@
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
+		A71E083514E3CEAF006A4619 /* PageSupplement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageSupplement.cpp; sourceTree = "<group>"; };
+		A71E083614E3CEAF006A4619 /* PageSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageSupplement.h; sourceTree = "<group>"; };
 		A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformExportMacros.h; sourceTree = "<group>"; };
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
@@ -15205,6 +15209,8 @@
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
+				A71E083514E3CEAF006A4619 /* PageSupplement.cpp */,
+				A71E083614E3CEAF006A4619 /* PageSupplement.h */,
 				FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */,
 				FFD5B978135CC97800D5E92A /* PageVisibilityState.h */,
 				8A844D0111D3C18E0014065C /* Performance.cpp */,
@@ -23227,6 +23233,7 @@
 				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
 				F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */,
 				371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */,
+				A71E083814E3CEAF006A4619 /* PageSupplement.h in Headers */,
 				E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */,
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
 				FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */,
@@ -26360,6 +26367,7 @@
 				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
 				F34742E41343633C00531BC2 /* PageScriptDebugServer.cpp in Sources */,
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
+				A71E083714E3CEAF006A4619 /* PageSupplement.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
 				FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */,

@@ -24,11 +24,13 @@
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
 #include "LayoutTypes.h"
+#include "PageSupplement.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
@@ -52,10 +54,6 @@ namespace WebCore {
     class ChromeClient;
     class ContextMenuClient;
     class ContextMenuController;
-    class DeviceMotionClient;
-    class DeviceMotionController;
-    class DeviceOrientationClient;
-    class DeviceOrientationController;
     class Document;
     class DragCaretController;
     class DragClient;
@@ -118,8 +116,6 @@ namespace WebCore {
             DragClient* dragClient;
             InspectorClient* inspectorClient;
             GeolocationClient* geolocationClient;
-            DeviceMotionClient* deviceMotionClient;
-            DeviceOrientationClient* deviceOrientationClient;
             RefPtr<BackForwardList> backForwardClient;
             SpeechInputClient* speechInputClient;
             NotificationPresenter* notificationClient;
@@ -183,10 +179,6 @@ namespace WebCore {
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
-#endif
-#if ENABLE(DEVICE_ORIENTATION)
-        DeviceMotionController* deviceMotionController() const { return m_deviceMotionController.get(); }
-        DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
 #endif
 #if ENABLE(NOTIFICATIONS)
         NotificationController* notificationController() const { return m_notificationController.get(); }
@@ -352,9 +344,16 @@ namespace WebCore {
         void setRelevantRepaintedObjectsCounterThreshold(uint64_t);
         void startCountingRelevantRepaintedObjects();
         void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
-        
+
+        void provideSupplement(const AtomicString&, PassOwnPtr<PageSupplement>);
+        PageSupplement* requireSupplement(const AtomicString&);
+
     private:
         void initGroup();
+        void notifyDestroyedToSupplements();
+
+        typedef HashMap<AtomicStringImpl*, OwnPtr<PageSupplement> > PageSupplementMap;
+        PageSupplementMap m_suppliments;
 
 #if ASSERT_DISABLED
         void checkFrameCountConsistency() const { }
@@ -382,10 +381,6 @@ namespace WebCore {
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         OwnPtr<GeolocationController> m_geolocationController;
-#endif
-#if ENABLE(DEVICE_ORIENTATION)
-        OwnPtr<DeviceMotionController> m_deviceMotionController;
-        OwnPtr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 #if ENABLE(NOTIFICATIONS)
         OwnPtr<NotificationController> m_notificationController;

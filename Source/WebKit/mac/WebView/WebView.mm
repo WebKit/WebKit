@@ -745,10 +745,10 @@ static NSString *leakOutlookQuirksUserScriptContents()
 #if ENABLE(NOTIFICATIONS)
     pageClients.notificationClient = new WebNotificationClient(self);
 #endif
-#if ENABLE(DEVICE_ORIENTATION)
-    pageClients.deviceOrientationClient = new WebDeviceOrientationClient(self);
-#endif
     _private->page = new Page(pageClients);
+#if ENABLE(DEVICE_ORIENTATION)
+    WebCore::provideDeviceOrientationTo(_private->page, new WebDeviceOrientationClient(self));
+#endif
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);

@@ -1946,10 +1946,11 @@ void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
     if (!page())
         return;
 
-    if (page()->deviceMotionController())
-        page()->deviceMotionController()->suspendEventsForAllListeners(domWindow());
-    if (page()->deviceOrientationController())
-        page()->deviceOrientationController()->suspendEventsForAllListeners(domWindow());
+    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
+        controller->suspendEventsForAllListeners(domWindow());
+    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
+        controller->suspendEventsForAllListeners(domWindow());
+
 #endif
 }
 
@@ -1961,10 +1962,10 @@ void Document::resumeActiveDOMObjects()
     if (!page())
         return;
 
-    if (page()->deviceMotionController())
-        page()->deviceMotionController()->resumeEventsForAllListeners(domWindow());
-    if (page()->deviceOrientationController())
-        page()->deviceOrientationController()->resumeEventsForAllListeners(domWindow());
+    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
+        controller->resumeEventsForAllListeners(domWindow());
+    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
+        controller->resumeEventsForAllListeners(domWindow());
 #endif
 }
 

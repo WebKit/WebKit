@@ -393,7 +393,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(INPUT_SPEECH)
     pageClients.speechInputClient = m_speechInputClient.get();
 #endif
-    pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
     pageClients.geolocationClient = m_geolocationClientProxy.get();
 #if ENABLE(NOTIFICATIONS)
     pageClients.notificationClient = notificationPresenterImpl();
@@ -404,7 +403,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
 
     m_page = adoptPtr(new Page(pageClients));
-
+    provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());
     m_geolocationClientProxy->setController(m_page->geolocationController());
 
     m_page->setGroupName(pageGroupName);

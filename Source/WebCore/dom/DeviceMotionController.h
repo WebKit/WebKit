@@ -27,6 +27,7 @@
 #define DeviceMotionController_h
 
 #include "DOMWindow.h"
+#include "PageSupplement.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 
@@ -35,7 +36,7 @@ namespace WebCore {
 class DeviceMotionData;
 class DeviceMotionClient;
 
-class DeviceMotionController {
+class DeviceMotionController : public PageSupplement {
 public:
     ~DeviceMotionController();
 
@@ -51,6 +52,11 @@ public:
     void didChangeDeviceMotion(DeviceMotionData*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
+
+    static const AtomicString& supplementName();
+    static DeviceMotionController* from(Frame* frame) { return static_cast<DeviceMotionController*>(PageSupplement::from(frame, supplementName())); }
+    static DeviceMotionController* from(Page* page) { return static_cast<DeviceMotionController*>(PageSupplement::from(page, supplementName())); }
+    static bool isActiveAt(Page*);
 
 private:
     DeviceMotionController(DeviceMotionClient*);

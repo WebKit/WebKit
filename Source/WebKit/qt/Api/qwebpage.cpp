@@ -322,14 +322,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.editorClient = new EditorClientQt(q);
     pageClients.dragClient = new DragClientQt(q);
     pageClients.inspectorClient = new InspectorClientQt(q);
-#if ENABLE(DEVICE_ORIENTATION)
-    if (useMock)
-        pageClients.deviceOrientationClient = new DeviceOrientationClientMock;
-    else
-        pageClients.deviceOrientationClient = new DeviceOrientationClientQt;
-
-    pageClients.deviceMotionClient = new DeviceMotionClientQt;
-#endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (useMock)
         pageClients.geolocationClient = new GeolocationClientMock;
@@ -340,6 +332,13 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.notificationClient = NotificationPresenterClientQt::notificationPresenter();
 #endif
     page = new Page(pageClients);
+#if ENABLE(DEVICE_ORIENTATION)
+    if (useMock)
+        WebCore::provideDeviceOrientationTo(page, new DeviceOrientationClientMock);
+    else
+        WebCore::provideDeviceOrientationTo(page, new DeviceOrientationClientQt);
+    WebCore::provideDeviceMotionTo(page, new DeviceMotionClientQt);
+#endif
 
     // By default each page is put into their own unique page group, which affects popup windows
     // and visited links. Page groups (per process only) is a feature making it possible to use

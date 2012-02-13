@@ -2730,6 +2730,8 @@ webcore_sources += \
 	Source/WebCore/page/PageGroupLoadDeferrer.h \
 	Source/WebCore/page/PageSerializer.cpp \
 	Source/WebCore/page/PageSerializer.h \
+	Source/WebCore/page/PageSupplement.cpp \
+	Source/WebCore/page/PageSupplement.h \
 	Source/WebCore/page/PageVisibilityState.cpp \
 	Source/WebCore/page/PageVisibilityState.h \
 	Source/WebCore/page/Performance.cpp \

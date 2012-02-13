@@ -25558,6 +25558,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PageSupplement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageSupplement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\PageVisibilityState.cpp"
 				>
 			</File>

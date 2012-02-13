@@ -29,8 +29,6 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
-#include "DeviceMotionController.h"
-#include "DeviceOrientationController.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "EditorClient.h"
@@ -140,10 +138,6 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     , m_geolocationController(GeolocationController::create(this, pageClients.geolocationClient))
 #endif
-#if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? DeviceMotionController::create(pageClients.deviceMotionClient) : nullptr)
-    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? DeviceOrientationController::create(this, pageClients.deviceOrientationClient) : nullptr)
-#endif
 #if ENABLE(NOTIFICATIONS)
     , m_notificationController(NotificationController::create(this, pageClients.notificationClient))
 #endif
@@ -232,6 +226,7 @@ Page::~Page()
 #ifndef NDEBUG
     pageCounter.decrement();
 #endif
+
 }
 
 ViewportArguments Page::viewportArguments() const
@@ -1090,6 +1085,17 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
     }
 }
 
+void Page::provideSupplement(const AtomicString& name, PassOwnPtr<PageSupplement> supplement)
+{
+    ASSERT(!m_suppliments.get(name.impl()));
+    m_suppliments.set(name.impl(), supplement);
+}
+
+PageSupplement* Page::requireSupplement(const AtomicString& name)
+{
+    return m_suppliments.get(name.impl());
+}
+
 Page::PageClients::PageClients()
     : chromeClient(0)
     , contextMenuClient(0)
@@ -1097,8 +1103,6 @@ Page::PageClients::PageClients()
     , dragClient(0)
     , inspectorClient(0)
     , geolocationClient(0)
-    , deviceMotionClient(0)
-    , deviceOrientationClient(0)
     , speechInputClient(0)
     , notificationClient(0)
     , userMediaClient(0)
