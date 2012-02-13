@@ -43,6 +43,7 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
+#include "WindowsExtras.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -763,24 +764,14 @@ void PopupMenuWin::registerClass()
 
 LRESULT CALLBACK PopupMenuWin::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#if OS(WINCE)
-    LONG longPtr = GetWindowLong(hWnd, 0);
-#else
-    LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
-#endif
-    
-    if (PopupMenuWin* popup = reinterpret_cast<PopupMenuWin*>(longPtr))
+    if (PopupMenuWin* popup = static_cast<PopupMenuWin*>(getWindowPointer(hWnd, 0)))
         return popup->wndProc(hWnd, message, wParam, lParam);
-    
+
     if (message == WM_CREATE) {
         LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 
         // Associate the PopupMenu with the window.
-#if OS(WINCE)
-        ::SetWindowLong(hWnd, 0, (LONG)createStruct->lpCreateParams);
-#else
-        ::SetWindowLongPtr(hWnd, 0, (LONG_PTR)createStruct->lpCreateParams);
-#endif
+        setWindowPointer(hWnd, 0, createStruct->lpCreateParams);
         return 0;
     }
 

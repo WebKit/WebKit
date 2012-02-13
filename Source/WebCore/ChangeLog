@@ -1,3 +1,21 @@
+2012-02-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Add WindowsExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=78340
+
+        Reviewed by Adam Roben.
+
+        Add a new file to share common code for Win32/WinCE differences.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::PopupMenuWndProc):
+        * platform/win/RunLoopWin.cpp:
+        (WebCore::RunLoop::RunLoopWndProc):
+        * platform/win/WindowsExtras.h: Added.
+        (WebCore):
+        (WebCore::getWindowPointer):
+        (WebCore::setWindowPointer):
+
 2012-02-13  Andreas Kling  <awesomekling@apple.com>
 
         Don't mark element for style recalc when modifying its attribute style.

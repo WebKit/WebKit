@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RunLoop.h"
 
+#include "WindowsExtras.h"
 #include <wtf/CurrentTime.h>
 
 using namespace std;
@@ -37,16 +38,14 @@ static const LPWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
 
 LRESULT CALLBACK RunLoop::RunLoopWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    LONG_PTR longPtr = ::GetWindowLongPtr(hWnd, 0);
-    
-    if (RunLoop* runLoop = reinterpret_cast<RunLoop*>(longPtr))
+    if (RunLoop* runLoop = static_cast<RunLoop*>(getWindowPointer(hWnd, 0)))
         return runLoop->wndProc(hWnd, message, wParam, lParam);
 
     if (message == WM_CREATE) {
         LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 
         // Associate the RunLoop with the window.
-        ::SetWindowLongPtr(hWnd, 0, (LONG_PTR)createStruct->lpCreateParams);
+        setWindowPointer(hWnd, 0, createStruct->lpCreateParams);
         return 0;
     }
 
