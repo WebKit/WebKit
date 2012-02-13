@@ -1,3 +1,14 @@
+2012-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Yet another perf-o-matic build fix. It turns out that a task of the same name can't be
+        queued for days after the first task is completed. So don't use it. Updating persistent
+        caches more often than necessary is better than never updating them.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_manifest_update):
+        (schedule_dashboard_update):
+        (schedule_runs_update):
+
 2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Revise configuration for MHTML
