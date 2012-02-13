@@ -44,8 +44,6 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestInterface);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestInterface);
-
 /* Hash table */
 
 static const HashTableValue JSTestInterfaceTableValues[] =
@@ -85,8 +83,6 @@ COMPILE_ASSERT(1 == TestInterface::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPL
 #if ENABLE(Condition11) || ENABLE(Condition12)
 COMPILE_ASSERT(2 == TestInterface::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 #endif
-
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestInterfaceConstructor);
 
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, &JSTestInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
@@ -205,7 +201,12 @@ JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* glob
 void JSTestInterface::destroy(JSC::JSCell* cell)
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
-    thisObject->releaseImplIfNotNull();
+    thisObject->JSTestInterface::~JSTestInterface();
+}
+
+JSTestInterface::~JSTestInterface()
+{
+    releaseImplIfNotNull();
 }
 
 bool JSTestInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

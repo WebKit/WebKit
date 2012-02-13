@@ -1,3 +1,64 @@
+2012-02-12  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore):
+        (WebCore::JSTestActiveDOMObject::destroy):
+        (WebCore::JSTestActiveDOMObject::~JSTestActiveDOMObject):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (JSTestActiveDOMObject):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore):
+        (WebCore::JSTestCustomNamedGetter::destroy):
+        (WebCore::JSTestCustomNamedGetter::~JSTestCustomNamedGetter):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (JSTestCustomNamedGetter):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore):
+        (WebCore::JSTestEventConstructor::destroy):
+        (WebCore::JSTestEventConstructor::~JSTestEventConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (JSTestEventConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore):
+        (WebCore::JSTestEventTarget::destroy):
+        (WebCore::JSTestEventTarget::~JSTestEventTarget):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (JSTestEventTarget):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore):
+        (WebCore::JSTestInterface::destroy):
+        (WebCore::JSTestInterface::~JSTestInterface):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (JSTestInterface):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore):
+        (WebCore::JSTestMediaQueryListListener::destroy):
+        (WebCore::JSTestMediaQueryListListener::~JSTestMediaQueryListListener):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (JSTestMediaQueryListListener):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore):
+        (WebCore::JSTestNamedConstructor::destroy):
+        (WebCore::JSTestNamedConstructor::~JSTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (JSTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::JSTestObj::destroy):
+        (WebCore::JSTestObj::~JSTestObj):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (JSTestObj):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        (WebCore::JSTestSerializedScriptValueInterface::destroy):
+        (WebCore::JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (JSTestSerializedScriptValueInterface):
+
 2012-02-12  Abhishek Arya  <inferno@chromium.org>
 
         Regression (r104528): Crash when moving nodes across documents.

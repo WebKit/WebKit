@@ -32,8 +32,6 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestNamedConstructor);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestNamedConstructor);
-
 /* Hash table for constructor */
 
 static const HashTableValue JSTestNamedConstructorTableValues[] =
@@ -51,8 +49,6 @@ static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
 };
 
 static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, JSTestNamedConstructorConstructorTableValues, 0 };
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestNamedConstructorConstructor);
-
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -157,7 +153,12 @@ JSObject* JSTestNamedConstructor::createPrototype(ExecState* exec, JSGlobalObjec
 void JSTestNamedConstructor::destroy(JSC::JSCell* cell)
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(cell);
-    thisObject->releaseImplIfNotNull();
+    thisObject->JSTestNamedConstructor::~JSTestNamedConstructor();
+}
+
+JSTestNamedConstructor::~JSTestNamedConstructor()
+{
+    releaseImplIfNotNull();
 }
 
 bool JSTestNamedConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -72,8 +72,6 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestObj);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestObj);
-
 /* Hash table */
 
 static const HashTableValue JSTestObjTableValues[] =
@@ -189,8 +187,6 @@ COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrong
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
-
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestObjConstructor);
 
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &Base::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
@@ -346,7 +342,12 @@ JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObje
 void JSTestObj::destroy(JSC::JSCell* cell)
 {
     JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
-    thisObject->releaseImplIfNotNull();
+    thisObject->JSTestObj::~JSTestObj();
+}
+
+JSTestObj::~JSTestObj()
+{
+    releaseImplIfNotNull();
 }
 
 bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -33,8 +33,6 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestCustomNamedGetter);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestCustomNamedGetter);
-
 /* Hash table */
 
 static const HashTableValue JSTestCustomNamedGetterTableValues[] =
@@ -52,8 +50,6 @@ static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[] =
 };
 
 static const HashTable JSTestCustomNamedGetterConstructorTable = { 1, 0, JSTestCustomNamedGetterConstructorTableValues, 0 };
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestCustomNamedGetterConstructor);
-
 const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, &JSTestCustomNamedGetterConstructorTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -128,7 +124,12 @@ JSObject* JSTestCustomNamedGetter::createPrototype(ExecState* exec, JSGlobalObje
 void JSTestCustomNamedGetter::destroy(JSC::JSCell* cell)
 {
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(cell);
-    thisObject->releaseImplIfNotNull();
+    thisObject->JSTestCustomNamedGetter::~JSTestCustomNamedGetter();
+}
+
+JSTestCustomNamedGetter::~JSTestCustomNamedGetter()
+{
+    releaseImplIfNotNull();
 }
 
 bool JSTestCustomNamedGetter::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -36,8 +36,6 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestSerializedScriptValueInterface);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestSerializedScriptValueInterface);
-
 /* Hash table */
 
 static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
@@ -59,8 +57,6 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTable
 };
 
 static const HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestSerializedScriptValueInterfaceConstructor);
-
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &Base::s_info, &JSTestSerializedScriptValueInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
 JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -143,7 +139,12 @@ JSObject* JSTestSerializedScriptValueInterface::createPrototype(ExecState* exec,
 void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
 {
     JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
-    thisObject->releaseImplIfNotNull();
+    thisObject->JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface();
+}
+
+JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface()
+{
+    releaseImplIfNotNull();
 }
 
 bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
