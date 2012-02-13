@@ -824,15 +824,14 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         if (gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog))) {
-            GSList* filenames = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+            GOwnPtr<GSList> filenames(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
             Vector<String> names;
-            for (GSList* item = filenames ; item ; item = item->next) {
+            for (GSList* item = filenames.get() ; item ; item = item->next) {
                 if (!item->data)
                     continue;
                 names.append(filenameToString(static_cast<char*>(item->data)));
                 g_free(item->data);
             }
-            g_slist_free(filenames);
             chooser->chooseFiles(names);
         } else {
             gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));

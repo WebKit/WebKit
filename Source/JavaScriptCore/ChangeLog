@@ -1,3 +1,20 @@
+2012-02-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add GSList to the list of GObject types in GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=78487
+
+        Reviewed by Philippe Normand.
+
+        Handle the GSList type in GOwnPtr, by calling g_slist_free in the
+        implementation of the freeOwnedGPtr template function.
+
+        * wtf/gobject/GOwnPtr.cpp:
+        (WTF::GSList):
+        (WTF):
+        * wtf/gobject/GOwnPtr.h:
+        (WTF):
+        * wtf/gobject/GTypedefs.h:
+
 2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Drop support for the Curl network backend.

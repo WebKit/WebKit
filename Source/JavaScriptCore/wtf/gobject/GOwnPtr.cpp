@@ -37,6 +37,11 @@ template <> void freeOwnedGPtr<GList>(GList* ptr)
     g_list_free(ptr);
 }
 
+template <> void freeOwnedGPtr<GSList>(GSList* ptr)
+{
+    g_slist_free(ptr);
+}
+
 template <> void freeOwnedGPtr<GPatternSpec>(GPatternSpec* ptr)
 {
     if (ptr)

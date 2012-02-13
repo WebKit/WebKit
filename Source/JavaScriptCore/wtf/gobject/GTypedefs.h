@@ -53,6 +53,7 @@ typedef struct _GInputStream GInputStream;
 typedef struct _GList GList;
 typedef struct _GPatternSpec GPatternSpec;
 typedef struct _GPollableOutputStream GPollableOutputStream;
+typedef struct _GSList GSList;
 typedef struct _GSocketClient GSocketClient;
 typedef struct _GSocketConnection GSocketConnection;
 typedef struct _GSource GSource;
