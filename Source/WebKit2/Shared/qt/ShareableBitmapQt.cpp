@@ -38,8 +38,15 @@ namespace WebKit {
 
 QImage ShareableBitmap::createQImage()
 {
+    ref(); // Balanced by deref in releaseSharedMemoryData
     return QImage(reinterpret_cast<uchar*>(data()), m_size.width(), m_size.height(), m_size.width() * 4,
-                  m_flags & SupportsAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32);
+                  m_flags & SupportsAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32,
+                  releaseSharedMemoryData, this);
+}
+
+void ShareableBitmap::releaseSharedMemoryData(void* typelessBitmap)
+{
+    static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createQImage.
 }
 
 PassRefPtr<Image> ShareableBitmap::createImage()
