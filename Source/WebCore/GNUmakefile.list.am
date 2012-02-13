@@ -876,6 +876,7 @@ dom_binding_idls += \
 	$(WebCore)/mediastream/MediaStreamList.idl \
 	$(WebCore)/mediastream/MediaStreamTrack.idl \
 	$(WebCore)/mediastream/MediaStreamTrackList.idl \
+	$(WebCore)/mediastream/NavigatorMediaStream.idl \
 	$(WebCore)/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/mediastream/NavigatorUserMediaSuccessCallback.idl \
@@ -2618,6 +2619,8 @@ webcore_sources += \
 	Source/WebCore/mediastream/MediaStreamTrack.h \
 	Source/WebCore/mediastream/MediaStreamTrackList.cpp \
 	Source/WebCore/mediastream/MediaStreamTrackList.h \
+	Source/WebCore/mediastream/NavigatorMediaStream.cpp \
+	Source/WebCore/mediastream/NavigatorMediaStream.h \
 	Source/WebCore/mediastream/NavigatorUserMediaError.h \
 	Source/WebCore/mediastream/NavigatorUserMediaErrorCallback.h \
 	Source/WebCore/mediastream/NavigatorUserMediaSuccessCallback.h \

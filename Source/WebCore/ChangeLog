@@ -1,5 +1,35 @@
 2012-02-12  Adam Barth  <abarth@webkit.org>
 
+        Remove ENABLE(MEDIA_STREAM) from Navigator.h
+        https://bugs.webkit.org/show_bug.cgi?id=78467
+
+        Reviewed by Kentaro Hara.
+
+        Navigator.webkitGetUser media doesn't really have anything to do with
+        Navigator.cpp.  This patch moves it into the mediastream directory and
+        removes the ENABLE(MEDIA_STREAM) ifdefs in Navigator.h and
+        Navigator.cpp.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * mediastream/NavigatorMediaStream.cpp: Added.
+        (WebCore):
+        (WebCore::NavigatorMediaStream::NavigatorMediaStream):
+        (WebCore::NavigatorMediaStream::~NavigatorMediaStream):
+        (WebCore::NavigatorMediaStream::webkitGetUserMedia):
+        * mediastream/NavigatorMediaStream.h: Added.
+        (WebCore):
+        (NavigatorMediaStream):
+        * mediastream/NavigatorMediaStream.idl: Added.
+        * page/Navigator.cpp:
+        (WebCore):
+        * page/Navigator.h:
+        (WebCore):
+        (Navigator):
+        * page/Navigator.idl:
+
+2012-02-12  Adam Barth  <abarth@webkit.org>
+
         Navigator.webkitGetUserMedia doesn't need to be custom
         https://bugs.webkit.org/show_bug.cgi?id=78464
 
