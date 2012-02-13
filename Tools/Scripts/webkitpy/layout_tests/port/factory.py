@@ -42,6 +42,7 @@ class BuilderOptions(object):
 
 class PortFactory(object):
     PORT_CLASSES = (
+        'chromium_android.ChromiumAndroidPort',
         'chromium_gpu.ChromiumGpuLinuxPort',
         'chromium_gpu.ChromiumGpuMacPort',
         'chromium_gpu.ChromiumGpuWinPort',
@@ -59,7 +60,7 @@ class PortFactory(object):
         'qt.QtPort',
         'test.TestPort',
         'win.WinPort',
-        )
+    )
 
     def __init__(self, host):
         self._host = host
