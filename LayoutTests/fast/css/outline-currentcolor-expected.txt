@@ -1,0 +1,2 @@
+Test that outline-color is non-inherit and currentColor is handled correctly. The test passes if 3 boxes with green outlines followed by the text "PASS" are displayed below.
+PASS

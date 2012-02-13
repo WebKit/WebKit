@@ -1,3 +1,20 @@
+2012-02-12  David Barr  <davidbarr@chromium.org>
+
+        CSS3 currentColor on outline-color gets treated as inherit
+        https://bugs.webkit.org/show_bug.cgi?id=73180
+
+        Reviewed by Antti Koivisto.
+
+        The CSS2 and CSS3 UI modules state that outline-color
+        is not inherited. Make it so.
+        http://www.w3.org/TR/CSS2/ui.html#propdef-outline-color
+        http://www.w3.org/TR/css3-ui/#outline-color
+
+        Test: fast/css/outline-currentcolor.html
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+
 2012-02-12  Antti Koivisto  <antti@apple.com>
 
         CSSPageRule should inherit from CSSRule instead of CSSStyleRule
