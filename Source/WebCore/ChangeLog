@@ -1,3 +1,25 @@
+2012-02-09  Ojan Vafai  <ojan@chromium.org>
+
+        nesting horizontal flexboxes is broken
+        https://bugs.webkit.org/show_bug.cgi?id=76867
+
+        Reviewed by David Hyatt.
+
+        This is copied from RenderDeprecatedFlexibleBox and updated
+        for RenderFlexibleBox and to handle vertical writing mode.
+
+        Tests: css3/flexbox/preferred-widths-orthogonal.html
+               css3/flexbox/preferred-widths.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::marginWidthForChild):
+        (WebCore):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-02-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Crash in RenderFlowThread::setRegionBoxesRegionStyle

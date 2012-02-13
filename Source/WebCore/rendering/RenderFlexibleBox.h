@@ -43,7 +43,7 @@ public:
     virtual const char* renderName() const;
 
     virtual bool isFlexibleBox() const { return true; }
-
+    virtual void computePreferredLogicalWidths();
     virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
 
     bool isHorizontalFlow() const;

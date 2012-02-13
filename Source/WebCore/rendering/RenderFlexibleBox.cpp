@@ -114,6 +114,84 @@ const char* RenderFlexibleBox::renderName() const
     return "RenderFlexibleBox";
 }
 
+static LayoutUnit marginLogicalWidthForChild(RenderBox* child, RenderStyle* parentStyle)
+{
+    // A margin has three types: fixed, percentage, and auto (variable).
+    // Auto and percentage margins become 0 when computing min/max width.
+    // Fixed margins can be added in as is.
+    Length marginLeft = child->style()->marginStartUsing(parentStyle);
+    Length marginRight = child->style()->marginEndUsing(parentStyle);
+    LayoutUnit margin = 0;
+    if (marginLeft.isFixed())
+        margin += marginLeft.value();
+    if (marginRight.isFixed())
+        margin += marginRight.value();
+    return margin;
+}
+
+void RenderFlexibleBox::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    RenderStyle* styleToUse = style();
+    if (styleToUse->logicalWidth().isFixed() && styleToUse->logicalWidth().value() > 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(styleToUse->logicalWidth().value());
+    else {
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isPositioned())
+                continue;
+
+            LayoutUnit margin = marginLogicalWidthForChild(child, style());
+            bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
+            LayoutUnit minPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->minPreferredLogicalWidth();
+            LayoutUnit maxPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->maxPreferredLogicalWidth();
+            minPreferredLogicalWidth += margin;
+            maxPreferredLogicalWidth += margin;
+            if (!isColumnFlow()) {
+                m_minPreferredLogicalWidth += minPreferredLogicalWidth;
+                m_maxPreferredLogicalWidth += maxPreferredLogicalWidth;
+            } else {
+                m_minPreferredLogicalWidth = std::max(minPreferredLogicalWidth, m_minPreferredLogicalWidth);
+                m_maxPreferredLogicalWidth = std::max(maxPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+            }
+        }
+
+        m_maxPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    }
+
+    LayoutUnit scrollbarWidth = 0;
+    if (hasOverflowClip()) {
+        if (isHorizontalWritingMode() && styleToUse->overflowY() == OSCROLL) {
+            layer()->setHasVerticalScrollbar(true);
+            scrollbarWidth = verticalScrollbarWidth();
+        } else if (!isHorizontalWritingMode() && styleToUse->overflowX() == OSCROLL) {
+            layer()->setHasHorizontalScrollbar(true);
+            scrollbarWidth = horizontalScrollbarHeight();
+        }
+    }
+
+    m_maxPreferredLogicalWidth += scrollbarWidth;
+    m_minPreferredLogicalWidth += scrollbarWidth;
+
+    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
+    }
+
+    if (styleToUse->logicalMaxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
+    }
+
+    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth += borderAndPadding;
+    m_maxPreferredLogicalWidth += borderAndPadding;
+
+    setPreferredLogicalWidthsDirty(false);
+}
+
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 {
     ASSERT(needsLayout());

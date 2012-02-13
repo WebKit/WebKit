@@ -5023,6 +5023,8 @@ void RenderBlock::computePreferredLogicalWidths()
         }
 
         int scrollbarWidth = 0;
+        // FIXME: This should only be done for horizontal writing mode.
+        // For vertical writing mode, this should check overflowX and use the horizontalScrollbarHeight.
         if (hasOverflowClip() && styleToUse->overflowY() == OSCROLL) {
             layer()->setHasVerticalScrollbar(true);
             scrollbarWidth = verticalScrollbarWidth();
