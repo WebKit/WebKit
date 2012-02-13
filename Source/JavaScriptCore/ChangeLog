@@ -1,3 +1,13 @@
+2012-02-13  Chao-ying Fu  <fu@mips.com>
+
+        Update MIPS patchOffsetGetByIdSlowCaseCall
+        https://bugs.webkit.org/show_bug.cgi?id=78392
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JIT.h:
+        (JIT):
+
 2012-02-13  Patrick Gansterer  <paroga@webkit.org>
 
         Remove obsolete #if from ThreadSpecific.h
