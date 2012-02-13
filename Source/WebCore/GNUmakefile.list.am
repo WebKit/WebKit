@@ -5697,10 +5697,6 @@ endif  # END ENABLE_WEBGL
 # ---
 if ENABLE_MHTML
 webcore_sources += \
-	Source/WebCore/loader/archive/Archive.cpp \
-	Source/WebCore/loader/archive/Archive.h \
-	Source/WebCore/loader/archive/ArchiveFactory.cpp \
-	Source/WebCore/loader/archive/ArchiveFactory.h \
 	Source/WebCore/loader/archive/mhtml/MHTMLArchive.cpp \
 	Source/WebCore/loader/archive/mhtml/MHTMLArchive.h \
 	Source/WebCore/loader/archive/mhtml/MHTMLParser.cpp \

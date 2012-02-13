@@ -588,7 +588,9 @@ endif  # END USE_CLUTTER
 # ---
 if ENABLE_MHTML
 FEATURE_DEFINES += ENABLE_MHTML=1
-webcore_cppflags += -DENABLE_MHTML=1
+webcore_cppflags += \
+	-DENABLE_MHTML=1 \
+	-I$(srcdir)/Source/WebCore/loader/archive/mhtml
 endif  # END ENABLE_MHTML
 
 # ---

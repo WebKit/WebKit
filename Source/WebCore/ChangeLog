@@ -1,3 +1,19 @@
+2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] Revise configuration for MHTML
+        https://bugs.webkit.org/show_bug.cgi?id=78364
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added mhtml directory and removed target files duplicated to build when enabling mhtml.
+        Archive.cpp, ArchiveFactory.cpp & their headers are included at the above line.
+        This duplication has caused build-break if mhtml is enabled.
+
+        No new tests, since no new features.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2012-02-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Drop support for the Curl network backend.

@@ -805,6 +805,14 @@ AC_ARG_ENABLE(mathml,
               [],[enable_mathml="yes"])
 AC_MSG_RESULT([$enable_mathml])
 
+# check whether to enable MHTML support
+AC_MSG_CHECKING([whether to enable MHTML support])
+AC_ARG_ENABLE(mhtml,
+              AC_HELP_STRING([--enable-mhtml],
+                             [enable support for MHTML [default=no]]),
+              [],[enable_mhtml="no"])
+AC_MSG_RESULT([$enable_mhtml])
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -1427,6 +1435,7 @@ Features:
  MathML support                                           : $enable_mathml
  Media source                                             : $enable_media_source
  Media statistics                                         : $enable_media_statistics
+ MHTML support                                            : $enable_mhtml
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 meter element support                              : $enable_meter_tag
  HTML5 microdata support                                  : $enable_microdata
