@@ -2629,3 +2629,14 @@ fast/mutation/end-of-task-delivery.html
 # Synthetic bold is illegible under some scaling transforms
 # https://bugs.webkit.org/show_bug.cgi?id=78044
 fast/text/synthetic-bold-transformed.html
+
+# [Qt] REGRESSION(r107518): It broke many tests
+# https://bugs.webkit.org/show_bug.cgi?id=78471
+fast/history/timed-refresh-in-cached-frame.html
+fast/images/animated-gif-restored-from-bfcache.html
+fast/events/suspend-timers.html
+fast/overflow/horizontal-scroll-after-back.html
+fast/media/media-query-list-04.html
+fast/events/pagehide-timeout.html
+fast/events/pageshow-pagehide-on-back-cached.html
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
