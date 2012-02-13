@@ -1,5 +1,23 @@
 2012-02-13  Andreas Kling  <awesomekling@apple.com>
 
+        Make HTMLTableCaptionElement inherit from HTMLElement.
+        <http://webkit.org/b/78505>
+
+        Reviewed by Antti Koivisto.
+
+        HTMLTableCaptionElement was already bypassing its base class (HTMLTablePartElement)
+        and calling up to HTMLElement in all its overrides. Just make it an HTMLElement
+        instead since it doesn't use anything from HTMLTablePartElement.
+        Remove parseAttribute() overload since it's no longer needed.
+
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::HTMLTableCaptionElement):
+        (WebCore::HTMLTableCaptionElement::isPresentationAttribute):
+        (WebCore::HTMLTableCaptionElement::collectStyleForAttribute):
+        * html/HTMLTableCaptionElement.h:
+
+2012-02-13  Andreas Kling  <awesomekling@apple.com>
+
         HTMLMarqueeElement: Don't cache presence of truespeed attribute.
         <http://webkit.org/b/78483>
 

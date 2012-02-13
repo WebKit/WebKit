@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLTableCaptionElement::HTMLTableCaptionElement(const QualifiedName& tagName, Document* document)
-    : HTMLTablePartElement(tagName, document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(captionTag));
 }
@@ -48,7 +48,7 @@ bool HTMLTableCaptionElement::isPresentationAttribute(Attribute* attr) const
 {
     if (attr->name() == alignAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr); // Note that we are bypassing HTMLTablePartElement here.
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLTableCaptionElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -57,12 +57,7 @@ void HTMLTableCaptionElement::collectStyleForAttribute(Attribute* attr, StylePro
         if (!attr->isEmpty())
             style->setProperty(CSSPropertyCaptionSide, attr->value());
     } else
-        HTMLElement::collectStyleForAttribute(attr, style); // Note that we are bypassing HTMLTablePartElement here.
-}
-
-void HTMLTableCaptionElement::parseAttribute(Attribute* attr)
-{
-    HTMLElement::parseAttribute(attr); // Note that we are bypassing HTMLTablePartElement here.
+        HTMLElement::collectStyleForAttribute(attr, style);
 }
 
 }
