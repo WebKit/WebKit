@@ -29,6 +29,10 @@
 
 namespace WebCore {
 
+#ifndef HWND_MESSAGE
+const HWND HWND_MESSAGE = 0;
+#endif
+
 inline void* getWindowPointer(HWND hWnd, int index)
 {
 #if OS(WINCE)
