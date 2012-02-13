@@ -86,13 +86,12 @@ bool RunLoop::registerRunLoopMessageWindowClass()
 {
     // FIXME: This really only needs to be called once.
 
-    WNDCLASSEX windowClass = { 0 };
-    windowClass.cbSize          = sizeof(windowClass);
+    WNDCLASS windowClass = { 0 };
     windowClass.lpfnWndProc     = RunLoop::RunLoopWndProc;
     windowClass.cbWndExtra      = sizeof(RunLoop*);
     windowClass.lpszClassName   = kRunLoopMessageWindowClassName;
 
-    return !!::RegisterClassEx(&windowClass);
+    return !!::RegisterClass(&windowClass);
 }
 
 RunLoop::RunLoop()

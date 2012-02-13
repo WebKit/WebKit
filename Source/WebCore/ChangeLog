@@ -1,3 +1,13 @@
+2012-02-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Port RunLoop to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=76781
+
+        Reviewed by Adam Roben.
+
+        * platform/win/RunLoopWin.cpp:
+        (WebCore::RunLoop::registerRunLoopMessageWindowClass):
+
 2012-02-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Make ScriptsNavigator default file selector.
