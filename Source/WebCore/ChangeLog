@@ -1,3 +1,20 @@
+2012-02-13  Andreas Kling  <awesomekling@apple.com>
+
+        HTMLMarqueeElement: Don't cache presence of truespeed attribute.
+        <http://webkit.org/b/78483>
+
+        Reviewed by Antti Koivisto.
+
+        Out-of-line minimumDelay() and look up the "truespeed" attribute there instead
+        of caching the minimum delay in parseAttribute().
+        Remove HTMLMarqueeElement::parseAttribute() as it's no longer needed.
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+        (WebCore::HTMLMarqueeElement::minimumDelay):
+        * html/HTMLMarqueeElement.h:
+        (HTMLMarqueeElement):
+
 2012-02-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] factor common timeline UI state into TimelinePresentationModel

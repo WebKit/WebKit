@@ -35,13 +35,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// WinIE uses 60ms as the minimum delay by default.
-const int defaultMinimumDelay = 60;
-
 inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document, this)
-    , m_minimumDelay(defaultMinimumDelay)
 {
     ASSERT(hasTagName(marqueeTag));
 }
@@ -51,6 +47,15 @@ PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& t
     RefPtr<HTMLMarqueeElement> marqueeElement(adoptRef(new HTMLMarqueeElement(tagName, document)));
     marqueeElement->suspendIfNeeded();
     return marqueeElement.release();
+}
+
+int HTMLMarqueeElement::minimumDelay() const
+{
+    if (fastGetAttribute(truespeedAttr).isEmpty()) {
+        // WinIE uses 60ms as the minimum delay by default.
+        return 60;
+    }
+    return 0;
 }
 
 bool HTMLMarqueeElement::isPresentationAttribute(Attribute* attr) const
@@ -102,15 +107,6 @@ void HTMLMarqueeElement::collectStyleForAttribute(Attribute* attr, StyleProperty
             style->setProperty(CSSPropertyWebkitMarqueeDirection, attr->value());
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLMarqueeElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == truespeedAttr) {
-        // FIXME: Factor this out and remove HTMLMarqueeElement::parseAttribute().
-        m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;
-    } else
-        HTMLElement::parseAttribute(attr);
 }
 
 void HTMLMarqueeElement::start()
