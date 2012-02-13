@@ -3108,20 +3108,6 @@ sub HasCustomToV8Implementation {
 
     return 1 if $dataNode->extendedAttributes->{"V8CustomToJSObject"};
 
-    # We don't generate a custom converter (but JSC does) for the following:
-    return 0 if $interfaceName eq "AbstractWorker";
-    return 0 if $interfaceName eq "CanvasRenderingContext";
-    return 0 if $interfaceName eq "SVGElementInstance";
-    return 0 if $interfaceName eq "NodeList";
-    return 0 if $interfaceName eq "CSSRuleList";
-    return 0 if $interfaceName eq "CSSStyleDeclaration";
-    return 0 if $interfaceName eq "MediaList";
-    return 0 if $interfaceName eq "StyleSheetList";
-    return 0 if $interfaceName eq "DOMImplementation";
-    return 0 if $interfaceName eq "DOMStringMap";
-    return 0 if $interfaceName eq "DOMTokenList";
-    return 0 if $interfaceName eq "TextTrack";
-
     # For everything else, do what JSC does.
     return $dataNode->extendedAttributes->{"JSCustomToJS"};
 }

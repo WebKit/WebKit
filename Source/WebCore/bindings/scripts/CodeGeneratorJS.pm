@@ -1003,7 +1003,7 @@ sub GenerateHeader
         push(@headerContent, "\n");
     }
 
-    if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToJS"} || $dataNode->extendedAttributes->{"JSCustomToJS"}) {
+    if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToJS"} || ($dataNode->extendedAttributes->{"JSCustomToJS"} || $dataNode->extendedAttributes->{"JSCustomToJSObject"})) {
         push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
@@ -2310,7 +2310,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJS"}) and !$dataNode->extendedAttributes->{"JSCustomToJS"}) {
+    if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJS"}) and !($dataNode->extendedAttributes->{"JSCustomToJS"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"})) {
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {
