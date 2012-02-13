@@ -55,7 +55,7 @@ private:
     virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;
 

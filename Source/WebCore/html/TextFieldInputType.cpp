@@ -77,9 +77,9 @@ bool TextFieldInputType::canSetSuggestedValue()
     return true;
 }
 
-void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, bool sendChangeEvent)
+void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    InputType::setValue(sanitizedValue, valueChanged, sendChangeEvent);
+    InputType::setValue(sanitizedValue, valueChanged, eventBehavior);
 
     if (valueChanged)
         element()->updateInnerTextValue();

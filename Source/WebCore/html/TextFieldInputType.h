@@ -73,7 +73,7 @@ private:
     virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void dispatchChangeEventInResponseToSetValue() OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;

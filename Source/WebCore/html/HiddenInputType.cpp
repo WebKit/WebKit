@@ -87,7 +87,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void HiddenInputType::setValue(const String& sanitizedValue, bool, bool)
+void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
     element()->setAttribute(valueAttr, sanitizedValue);
 }

@@ -52,7 +52,7 @@ private:
     virtual double valueAsDate() const OVERRIDE;
     virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;
     virtual double valueAsNumber() const OVERRIDE;
-    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const OVERRIDE;
+    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
     virtual bool rangeUnderflow(const String&) const OVERRIDE;

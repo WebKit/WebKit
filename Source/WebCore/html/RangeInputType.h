@@ -46,7 +46,7 @@ private:
     virtual bool isRangeControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual double valueAsNumber() const OVERRIDE;
-    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const OVERRIDE;
+    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;
     virtual bool rangeUnderflow(const String&) const OVERRIDE;
     virtual bool rangeOverflow(const String&) const OVERRIDE;
@@ -66,7 +66,7 @@ private:
     virtual String serialize(double) const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual void minOrMaxAttributeChanged() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String& proposedValue) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;

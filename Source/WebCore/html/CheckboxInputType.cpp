@@ -80,7 +80,7 @@ PassOwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
     if (state->indeterminate)
         element()->setIndeterminate(false);
 
-    element()->setChecked(!state->checked, true);
+    element()->setChecked(!state->checked, DispatchChangeEvent);
 
     return state.release();
 }

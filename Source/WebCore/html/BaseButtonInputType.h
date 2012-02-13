@@ -48,7 +48,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual bool storesValueSeparateFromAttribute() OVERRIDE;
-    virtual void setValue(const String&, bool, bool) OVERRIDE;
+    virtual void setValue(const String&, bool, TextFieldEventBehavior) OVERRIDE;
 };
 
 } // namespace WebCore

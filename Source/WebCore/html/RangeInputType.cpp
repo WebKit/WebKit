@@ -78,9 +78,9 @@ double RangeInputType::valueAsNumber() const
     return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
-void RangeInputType::setValueAsNumber(double newValue, bool sendChangeEvent, ExceptionCode&) const
+void RangeInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode&) const
 {
-    element()->setValue(serialize(newValue), sendChangeEvent);
+    element()->setValue(serialize(newValue), eventBehavior);
 }
 
 bool RangeInputType::supportsRequired() const
@@ -220,8 +220,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
     if (newValue != current) {
         ExceptionCode ec;
-        bool sendChangeEvent = true;
-        setValueAsNumber(newValue, sendChangeEvent, ec);
+        TextFieldEventBehavior eventBehavior = DispatchChangeEvent;
+        setValueAsNumber(newValue, eventBehavior, ec);
 
         if (AXObjectCache::accessibilityEnabled())
             element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
@@ -287,9 +287,9 @@ void RangeInputType::minOrMaxAttributeChanged()
     element()->setNeedsStyleRecalc();
 }
 
-void RangeInputType::setValue(const String& value, bool valueChanged, bool sendChangeEvent)
+void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    InputType::setValue(value, valueChanged, sendChangeEvent);
+    InputType::setValue(value, valueChanged, eventBehavior);
 
     if (!valueChanged)
         return;

@@ -1,3 +1,13 @@
+2012-02-13  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Use enum instead of bool for HTMLInputElement::setValue
+        https://bugs.webkit.org/show_bug.cgi?id=75217
+
+        Reviewed by Kent Tamura.
+
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::setValue): Use enum for HTMLInputElement::setValue
+
 2012-02-12  Hajime Morrita  <morrita@chromium.org>
 
         Page should have less intrusive way to associate API implementation objects.

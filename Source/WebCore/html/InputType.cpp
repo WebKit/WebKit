@@ -192,7 +192,7 @@ double InputType::valueAsNumber() const
     return numeric_limits<double>::quiet_NaN();
 }
 
-void InputType::setValueAsNumber(double, bool, ExceptionCode& ec) const
+void InputType::setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode& ec) const
 {
     ec = INVALID_STATE_ERR;
 }
@@ -536,9 +536,9 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void InputType::setValue(const String& sanitizedValue, bool, bool sendChangeEvent)
+void InputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior eventBehavior)
 {
-    element()->setValueInternal(sanitizedValue, sendChangeEvent);
+    element()->setValueInternal(sanitizedValue, eventBehavior);
     element()->setNeedsStyleRecalc();
 }
 

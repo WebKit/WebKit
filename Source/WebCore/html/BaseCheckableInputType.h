@@ -50,7 +50,7 @@ private:
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual String fallbackValue() const OVERRIDE;
     virtual bool storesValueSeparateFromAttribute() OVERRIDE;
-    virtual void setValue(const String&, bool, bool) OVERRIDE;
+    virtual void setValue(const String&, bool, TextFieldEventBehavior) OVERRIDE;
     virtual bool isCheckable() OVERRIDE;
 };
 

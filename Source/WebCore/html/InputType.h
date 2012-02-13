@@ -32,6 +32,7 @@
 #ifndef InputType_h
 #define InputType_h
 
+#include "HTMLTextFormControlElement.h"
 #include <wtf/Forward.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
@@ -126,7 +127,7 @@ public:
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const;
+    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const;
 
     // Validation functions
 
@@ -225,7 +226,7 @@ public:
     virtual bool shouldSendChangeEventAfterCheckedChanged();
     virtual bool canSetValue(const String&);
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior);
     virtual void dispatchChangeEventInResponseToSetValue();
     virtual bool shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute();

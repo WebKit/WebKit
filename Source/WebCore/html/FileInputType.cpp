@@ -217,7 +217,7 @@ bool FileInputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void FileInputType::setValue(const String&, bool, bool)
+void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
 {
     m_fileList->clear();
     m_icon.clear();

@@ -51,7 +51,7 @@ private:
     virtual bool storesValueSeparateFromAttribute() OVERRIDE;
     virtual bool isHiddenType() const OVERRIDE;
     virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
-    virtual void setValue(const String&, bool, bool) OVERRIDE;
+    virtual void setValue(const String&, bool, TextFieldEventBehavior) OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
 };
 

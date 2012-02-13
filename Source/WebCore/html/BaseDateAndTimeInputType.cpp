@@ -65,9 +65,9 @@ double BaseDateAndTimeInputType::valueAsNumber() const
     return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
-void BaseDateAndTimeInputType::setValueAsNumber(double newValue, bool sendChangeEvent, ExceptionCode&) const
+void BaseDateAndTimeInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode&) const
 {
-    element()->setValue(serialize(newValue), sendChangeEvent);
+    element()->setValue(serialize(newValue), eventBehavior);
 }
 
 bool BaseDateAndTimeInputType::typeMismatchFor(const String& value) const

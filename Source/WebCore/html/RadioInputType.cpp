@@ -161,7 +161,7 @@ PassOwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
         element()->setIndeterminate(false);
 #endif
 
-    element()->setChecked(true, true);
+    element()->setChecked(true, DispatchChangeEvent);
 
     return state.release();
 }

@@ -100,7 +100,7 @@ bool BaseButtonInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseButtonInputType::setValue(const String& sanitizedValue, bool, bool)
+void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
     element()->setAttribute(valueAttr, sanitizedValue);
 }

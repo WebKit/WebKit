@@ -353,7 +353,7 @@ bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(AnyStepHandling anyS
     return true;
 }
 
-void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, bool sendChangeEvent, ExceptionCode& ec)
+void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, TextFieldEventBehavior eventBehavior, ExceptionCode& ec)
 {
     double step;
     unsigned stepDecimalPlaces, currentDecimalPlaces;
@@ -393,7 +393,7 @@ void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, 
     if (newValue > m_inputType->maximum())
         newValue = m_inputType->maximum();
 
-    setValueAsNumber(newValue, ec, sendChangeEvent);
+    setValueAsNumber(newValue, ec, eventBehavior);
 
     if (AXObjectCache::accessibilityEnabled())
          document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
@@ -420,14 +420,12 @@ double HTMLInputElement::alignValueForStep(double newValue, double step, unsigne
 
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
 {
-    bool sendChangeEvent = false;
-    applyStep(n, RejectAny, sendChangeEvent, ec);
+    applyStep(n, RejectAny, DispatchNoEvent, ec);
 }
 
 void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 {
-    bool sendChangeEvent = false;
-    applyStep(-n, RejectAny, sendChangeEvent, ec);
+    applyStep(-n, RejectAny, DispatchNoEvent, ec);
 }
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -911,7 +909,7 @@ bool HTMLInputElement::isTextType() const
     return m_inputType->isTextType();
 }
 
-void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
+void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventBehavior)
 {
     if (checked() == nowChecked)
         return;
@@ -936,7 +934,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     // unchecked to match other browsers. DOM is not a useful standard for this
     // because it says only to fire change events at "lose focus" time, which is
     // definitely wrong in practice for these types of elements.
-    if (sendChangeEvent && inDocument() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
+    if (eventBehavior != DispatchNoEvent && inDocument() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
         setTextAsOfLastFormControlChangeEvent(String());
         dispatchFormControlChangeEvent();
     }
@@ -1010,7 +1008,7 @@ String HTMLInputElement::valueWithDefault() const
 void HTMLInputElement::setValueForUser(const String& value)
 {
     // Call setValue and make it send a change event.
-    setValue(value, true);
+    setValue(value, DispatchChangeEvent);
 }
 
 const String& HTMLInputElement::suggestedValue() const
@@ -1028,7 +1026,7 @@ void HTMLInputElement::setSuggestedValue(const String& value)
     updateInnerTextValue();
 }
 
-void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
+void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
 {
     if (!m_inputType->canSetValue(value))
         return;
@@ -1040,25 +1038,25 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
     m_suggestedValue = String(); // Prevent TextFieldInputType::setValue from using the suggested value.
-    m_inputType->setValue(sanitizedValue, valueChanged, sendChangeEvent);
+    m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior);
 
     if (!valueChanged)
         return;
 
-    if (sendChangeEvent)
+    if (eventBehavior != DispatchNoEvent)
         m_inputType->dispatchChangeEventInResponseToSetValue();
 
-    // FIXME: Why do we do this when !sendChangeEvent?
-    if (isTextField() && (!focused() || !sendChangeEvent))
+    // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
+    if (isTextField() && (!focused() || eventBehavior == DispatchNoEvent))
         setTextAsOfLastFormControlChangeEvent(value);
 
     notifyFormStateChanged();
 }
 
-void HTMLInputElement::setValueInternal(const String& sanitizedValue, bool sendChangeEvent)
+void HTMLInputElement::setValueInternal(const String& sanitizedValue, TextFieldEventBehavior eventBehavior)
 {
     m_valueIfDirty = sanitizedValue;
-    m_wasModifiedByUser = sendChangeEvent;
+    m_wasModifiedByUser = eventBehavior != DispatchNoEvent;
     setNeedsValidityCheck();
 }
 
@@ -1077,13 +1075,13 @@ double HTMLInputElement::valueAsNumber() const
     return m_inputType->valueAsNumber();
 }
 
-void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, bool sendChangeEvent)
+void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
 {
     if (!isfinite(newValue)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    m_inputType->setValueAsNumber(newValue, sendChangeEvent, ec);
+    m_inputType->setValueAsNumber(newValue, eventBehavior, ec);
 }
 
 String HTMLInputElement::placeholder() const
@@ -1637,7 +1635,6 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
     double current = m_inputType->parseToDouble(currentStringValue, nan);
-    const bool sendChangeEvent = true;
     if (!isfinite(current)) {
         ExceptionCode ec;
         current = m_inputType->defaultValueForStepUp();
@@ -1646,10 +1643,10 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             current = m_inputType->minimum() - nextDiff;
         if (current > m_inputType->maximum() - nextDiff)
             current = m_inputType->maximum() - nextDiff;
-        setValueAsNumber(current, ec, sendChangeEvent);
+        setValueAsNumber(current, ec, DispatchChangeEvent);
     }
     if ((sign > 0 && current < m_inputType->minimum()) || (sign < 0 && current > m_inputType->maximum()))
-        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()), sendChangeEvent);
+        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()), DispatchChangeEvent);
     else {
         ExceptionCode ec;
         if (stepMismatch(value())) {
@@ -1669,14 +1666,14 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             if (newValue > m_inputType->maximum())
                 newValue = m_inputType->maximum();
 
-            setValueAsNumber(newValue, ec, n == 1 || n == -1);
+            setValueAsNumber(newValue, ec, n == 1 || n == -1 ? DispatchChangeEvent : DispatchNoEvent);
             current = newValue;
             if (n > 1)
-                applyStep(n - 1, AnyIsDefaultStep, sendChangeEvent, ec);
+                applyStep(n - 1, AnyIsDefaultStep, DispatchChangeEvent, ec);
             else if (n < -1)
-                applyStep(n + 1, AnyIsDefaultStep, sendChangeEvent, ec);
+                applyStep(n + 1, AnyIsDefaultStep, DispatchChangeEvent, ec);
         } else
-            applyStep(n, AnyIsDefaultStep, sendChangeEvent, ec);
+            applyStep(n, AnyIsDefaultStep, DispatchChangeEvent, ec);
     }
 }
 

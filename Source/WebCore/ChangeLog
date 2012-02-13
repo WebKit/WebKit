@@ -1,3 +1,71 @@
+2012-02-13  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Use enum instead of bool for HTMLInputElement::setValue
+        https://bugs.webkit.org/show_bug.cgi?id=75217
+
+        Reviewed by Kent Tamura.
+
+        Use TextFieldEventBehavior enum instead of sendChangeEvent bool
+        parameter for HTMLInputElement::setValue method. This new enum
+        parameter will be extended to dispatch input and change events
+        when user agent populates input field as specified in
+        "Common events behavior" of HTML5 standard.
+
+        This patch is required for fixing bug 75067 "[Forms] Spin buttons
+        of number input type should fire both input and change event."
+
+        No new tests. Existing tests cover this patch.
+
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::setValue):
+        * html/BaseButtonInputType.h:
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::setValue):
+        * html/BaseCheckableInputType.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsNumber):
+        * html/BaseDateAndTimeInputType.h:
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::willDispatchClick):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::setValue):
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setValue):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::applyStep):
+        (WebCore::HTMLInputElement::stepUp):
+        (WebCore::HTMLInputElement::stepDown):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setValueForUser):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueInternal):
+        (WebCore::HTMLInputElement::setValueAsNumber):
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextFormControlElement.h:
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::setValue):
+        * html/HiddenInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::setValueAsNumber):
+        (WebCore::InputType::setValue):
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValueAsNumber):
+        * html/NumberInputType.h:
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::willDispatchClick):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::setValueAsNumber):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        (WebCore::RangeInputType::setValue):
+        * html/RangeInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue):
+        * html/TextFieldInputType.h:
+
 2012-02-13  Andreas Kling  <awesomekling@apple.com>
 
         Move attribute style invalidation to attributeChanged().

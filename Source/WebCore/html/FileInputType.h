@@ -59,7 +59,7 @@ private:
     virtual bool canSetValue(const String&) OVERRIDE;
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
     virtual bool storesValueSeparateFromAttribute() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void receiveDroppedFiles(const Vector<String>&) OVERRIDE;
     virtual Icon* icon() const OVERRIDE;
     virtual bool isFileUpload() const OVERRIDE;

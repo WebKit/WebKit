@@ -34,6 +34,7 @@ class RenderTextControl;
 class VisiblePosition;
 
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
+enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
