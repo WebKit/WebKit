@@ -1,3 +1,23 @@
+2011-02-13  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 106388
+
+    2012-01-31  Jon Lee  <jonlee@apple.com>
+
+            Hidden form elements do not save their state prior to form submission
+            https://bugs.webkit.org/show_bug.cgi?id=77391
+            <rdar://problem/10563108>
+
+            Reviewed by Brady Eidson.
+
+            The test changes the value of the hidden input element via Javascript prior to
+            submitting the form. The form action goes back one page, and we check to see
+            that the hidden input value is what it was set to by Javascript, rather than what
+            it was originally assigned.
+
+            * fast/forms/state-restore-hidden-expected.txt: Added.
+            * fast/forms/state-restore-hidden.html: Added.
+
 2011-02-09  Lucas Forschler  <lforschler@apple.com>
 
     Merge 106596
