@@ -51,13 +51,20 @@ class RenderObject;
 class RenderStyle;
 class WebKitAnimationList;
 
+enum SetChanged {
+    DoNotCallSetChanged = 0,
+    CallSetChanged = 1
+};
+
 class AnimationControllerPrivate {
     WTF_MAKE_NONCOPYABLE(AnimationControllerPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationControllerPrivate(Frame*);
     ~AnimationControllerPrivate();
 
-    void updateAnimationTimer(bool callSetChanged = false);
+    // Returns the time until the next animation needs to be serviced, or -1 if there are none.
+    double updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
+    void updateAnimationTimer(SetChanged callSetChanged = DoNotCallSetChanged);
 
     PassRefPtr<CompositeAnimation> accessCompositeAnimation(RenderObject*);
     bool clear(RenderObject*);
@@ -71,6 +78,9 @@ public:
 
     void suspendAnimations();
     void resumeAnimations();
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void animationFrameCallbackFired();
+#endif
 
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);

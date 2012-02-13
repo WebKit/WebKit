@@ -51,8 +51,10 @@
         document.getElementById("container").className = "right";
         window.setTimeout(function() {
           document.getElementById("container").className = "";
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          window.setTimeout(function() {
+            if (window.layoutTestController)
+              layoutTestController.notifyDone();
+          }, 250);
         }, 250);
       }
 

@@ -1,3 +1,24 @@
+2012-02-13  Joel Webber  <jgw@google.com>
+
+        Use requestAnimationFrame callbacks to pump CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=64591
+
+        Reviewed by James Robinson.
+
+        No new tests needed (covered by tests in animations/*).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::serviceScriptedAnimations):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimations):
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle):
+        (WebCore::AnimationControllerPrivate::animationFrameCallbackFired):
+        (WebCore::AnimationController::updateAnimations):
+        (WebCore::AnimationController::serviceAnimations):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+
 2012-02-13  Patrick Gansterer  <paroga@webkit.org>
 
         Add WindowsExtras.h

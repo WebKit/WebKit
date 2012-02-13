@@ -997,6 +997,9 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
+// Need rebaselining after bug 64591
+BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAIL
+
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 
