@@ -1,3 +1,9 @@
+2012-02-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r107485.
+
+        * bytecode/PolymorphicPutByIdList.cpp:
+
 2012-02-13  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78434

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PolymorphicPutByIdList.h"
 
+#if ENABLE(JIT)
+
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -143,3 +145,4 @@ bool PolymorphicPutByIdList::visitWeak() const
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)
