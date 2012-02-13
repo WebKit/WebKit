@@ -78,7 +78,7 @@ VisitedLinkStrategy* PlatformStrategiesQt::createVisitedLinkStrategy()
     return this;
 }
 
-PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+PasteboardStrategy* PlatformStrategiesQt::createPasteboardStrategy()
 {
     return 0;
 }
