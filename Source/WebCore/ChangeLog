@@ -1,3 +1,17 @@
+2012-02-12  Abhishek Arya  <inferno@chromium.org>
+
+        Regression (r104528): Crash when moving nodes across documents.
+        https://bugs.webkit.org/show_bug.cgi?id=78432
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/dom/node-move-to-new-document-crash-main.html
+
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+
 2012-02-12  Hajime Morrita  <morrita@chromium.org>
 
         Page should have less intrusive way to associate API implementation objects.
