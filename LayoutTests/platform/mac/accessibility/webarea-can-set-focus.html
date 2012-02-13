@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the web area's focus can be settable.");
+
+    if (window.accessibilityController) {
+
+          var tree = document.getElementById("body");
+          body.focus();
+
+          // Test tree attributes.
+          body = accessibilityController.focusedElement;
+          shouldBe("body.isFocusable", "true");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

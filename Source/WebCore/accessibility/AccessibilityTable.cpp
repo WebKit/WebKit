@@ -170,7 +170,7 @@ bool AccessibilityTable::isDataTable() const
             if (!row && isTHCell)
                 headersInFirstRowCount++;
 
-            // If the first column is comprised of all <tg> tags, assume it is a data table.
+            // If the first column is comprised of all <th> tags, assume it is a data table.
             if (!col && isTHCell)
                 headersInFirstColumnCount++;
             

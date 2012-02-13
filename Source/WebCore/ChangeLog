@@ -1,3 +1,18 @@
+2012-02-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: the web area should report that focus can be set to itself
+        https://bugs.webkit.org/show_bug.cgi?id=78272
+
+        Reviewed by Beth Dakin.
+
+        Test: platform/mac/accessibility/webarea-can-set-focus.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+           Fixed erroneous comment.
+
 2012-02-13  Patrick Gansterer  <paroga@webkit.org>
 
         Port RunLoop to WinCE
