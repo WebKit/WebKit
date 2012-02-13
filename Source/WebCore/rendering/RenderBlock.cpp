@@ -447,15 +447,19 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
 RenderBlock* RenderBlock::clone() const
 {
     RenderBlock* cloneBlock;
-    if (isAnonymousBlock())
+    if (isAnonymousBlock()) {
         cloneBlock = createAnonymousBlock();
+        cloneBlock->setChildrenInline(childrenInline());
+    }
     else {
         cloneBlock = new (renderArena()) RenderBlock(node());
         cloneBlock->setStyle(style());
-        if (!childrenInline() && cloneBlock->firstChild() && cloneBlock->firstChild()->isInline())
-            cloneBlock->makeChildrenNonInline();
+
+        // This takes care of setting the right value of childrenInline in case
+        // generated content is added to cloneBlock and 'this' does not have
+        // generated content added yet.
+        cloneBlock->setChildrenInline(cloneBlock->firstChild() ? cloneBlock->firstChild()->isInline() : childrenInline());
     }
-    cloneBlock->setChildrenInline(childrenInline());
     return cloneBlock;
 }
 
@@ -494,7 +498,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         cloneBlock = blockCurr->clone();
 
         // Insert our child clone as the first child.
-        cloneBlock->children()->appendChildNode(cloneBlock, cloneChild);
+        cloneBlock->addChildIgnoringContinuation(cloneChild, 0);
 
         // Hook the clone up as a continuation of |curr|.  Note we do encounter
         // anonymous blocks possibly as we walk up the block chain.  When we split an
@@ -885,21 +889,31 @@ RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
     return rootBox;
 }
 
-void RenderBlock::moveChildTo(RenderBlock* to, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
+void RenderBlock::moveChildTo(RenderBlock* toBlock, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
 {
     ASSERT(this == child->parent());
-    ASSERT(!beforeChild || to == beforeChild->parent());
-    to->children()->insertChildNode(to, children()->removeChildNode(this, child, fullRemoveInsert), beforeChild, fullRemoveInsert);
+    ASSERT(!beforeChild || toBlock == beforeChild->parent());
+    if (fullRemoveInsert) {
+        // Takes care of adding the new child correctly if toBlock and fromBlock
+        // have different kind of children (block vs inline).
+        toBlock->addChildIgnoringContinuation(children()->removeChildNode(this, child), beforeChild);
+    } else
+        toBlock->children()->insertChildNode(toBlock, children()->removeChildNode(this, child, false), beforeChild, false);
 }
 
-void RenderBlock::moveChildrenTo(RenderBlock* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
+void RenderBlock::moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
 {
-    ASSERT(!beforeChild || to == beforeChild->parent());
+    ASSERT(!beforeChild || toBlock == beforeChild->parent());
     RenderObject* nextChild = startChild;
     while (nextChild && nextChild != endChild) {
         RenderObject* child = nextChild;
         nextChild = child->nextSibling();
-        to->children()->insertChildNode(to, children()->removeChildNode(this, child, fullRemoveInsert), beforeChild, fullRemoveInsert);
+        if (fullRemoveInsert) {
+            // Takes care of adding the new child correctly if toBlock and fromBlock
+            // have different kind of children (block vs inline).
+            toBlock->addChildIgnoringContinuation(children()->removeChildNode(this, child), beforeChild);
+        } else
+            toBlock->children()->insertChildNode(toBlock, children()->removeChildNode(this, child, false), beforeChild, false);
         if (child == endChild)
             return;
     }

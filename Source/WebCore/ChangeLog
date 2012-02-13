@@ -1,3 +1,29 @@
+2012-02-13  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect children placement in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=78160
+
+        Reviewed by David Hyatt.
+
+        Test: fast/multicol/span/clone-before-after-content-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone): no longer need to take care of making
+        children noninline (remove fix r105769) since moveChild functions take
+        care of adding the child properly if type of children differ. this
+        function just makes sure to set the right value of childrenInline property.
+        (WebCore::RenderBlock::splitBlocks): similar to moveChild functions below.
+        (WebCore::RenderBlock::moveChildTo): when child is fullRemoveInsert (across
+        different parents, e.g clones), we should use addChild function to make sure
+        it handles the case of different type of children between fromBlock and
+        toBlock correctly (specifically making children non-inline/wrapping inline
+        children under anonymous blocks.).
+        (WebCore::RenderBlock::moveChildrenTo):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::moveAllChildrenTo): Rename to->toBlock.
+        (WebCore::RenderBlock::moveChildrenTo): Rename to->toBlock.
+
 2012-02-13  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Implement Brightness and Contrast filters on composited

@@ -365,22 +365,22 @@ protected:
     {
         return moveChildTo(to, child, 0, fullRemoveInsert);
     }
-    void moveChildTo(RenderBlock* to, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
-    void moveAllChildrenTo(RenderBlock* to, bool fullRemoveInsert = false)
+    void moveChildTo(RenderBlock* toBlock, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
+    void moveAllChildrenTo(RenderBlock* toBlock, bool fullRemoveInsert = false)
     {
-        return moveAllChildrenTo(to, 0, fullRemoveInsert);
+        return moveAllChildrenTo(toBlock, 0, fullRemoveInsert);
     }
-    void moveAllChildrenTo(RenderBlock* to, RenderObject* beforeChild, bool fullRemoveInsert = false)
+    void moveAllChildrenTo(RenderBlock* toBlock, RenderObject* beforeChild, bool fullRemoveInsert = false)
     {
-        return moveChildrenTo(to, firstChild(), 0, beforeChild, fullRemoveInsert);
+        return moveChildrenTo(toBlock, firstChild(), 0, beforeChild, fullRemoveInsert);
     }
     // Move all of the kids from |startChild| up to but excluding |endChild|.  0 can be passed as the endChild to denote
     // that all the kids from |startChild| onwards should be added.
-    void moveChildrenTo(RenderBlock* to, RenderObject* startChild, RenderObject* endChild, bool fullRemoveInsert = false)
+    void moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, bool fullRemoveInsert = false)
     {
-        return moveChildrenTo(to, startChild, endChild, 0, fullRemoveInsert);
+        return moveChildrenTo(toBlock, startChild, endChild, 0, fullRemoveInsert);
     }
-    void moveChildrenTo(RenderBlock* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
+    void moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
     
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockRareData::positiveMarginBeforeDefault(this); }
     LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockRareData::negativeMarginBeforeDefault(this); }
