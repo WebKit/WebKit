@@ -55,7 +55,7 @@ def get_persistent_cache(name):
     if value:
         return value
     cache = PersistentCache.get_by_key_name(name)
-    memcache.set(name, cache)
+    memcache.set(name, cache.value)
     return cache.value
 
 

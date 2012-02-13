@@ -117,6 +117,10 @@ class TestResult(db.Model):
     valueMin = db.FloatProperty()
     valueMax = db.FloatProperty()
 
+    @staticmethod
+    def key_name(build, test_name):
+        return build.key().name() + ':' + test_name
+
 
 # Temporarily store log reports sent by bots
 class ReportLog(db.Model):

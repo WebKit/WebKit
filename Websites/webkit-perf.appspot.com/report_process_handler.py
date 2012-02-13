@@ -53,24 +53,14 @@ class ReportProcessHandler(webapp2.RequestHandler):
             self.response.out.write("Not processed")
             return
 
-        def _float_or_none(dictionary, key):
-            value = dictionary.get(key)
-            if value:
-                return float(value)
-            return None
-
         branch = log.branch()
         platform = log.platform()
         build = self._create_build_if_possible(log, branch, platform)
 
         for test_name, result in log.results().iteritems():
             test = self._add_test_if_needed(test_name, branch, platform)
+            self._add_test_result_if_needed(test_name, build, result)
             schedule_runs_update(test.id, branch.id, platform.id)
-            if isinstance(result, dict):
-                TestResult(name=test_name, build=build, value=float(result['avg']), valueMedian=_float_or_none(result, 'median'),
-                    valueStdev=_float_or_none(result, 'stdev'), valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max')).put()
-            else:
-                TestResult(name=test_name, build=build, value=float(result)).put()
 
         log = ReportLog.get(log.key())
         log.delete()
@@ -110,3 +100,19 @@ class ReportProcessHandler(webapp2.RequestHandler):
             test.put()
             return returnValue
         return create_in_transaction_with_numeric_id_holder(execute) or Test.get_by_key_name(test_name)
+
+    def _add_test_result_if_needed(self, test_name, build, result):
+        key_name = TestResult.key_name(build, test_name)
+
+        def _float_or_none(dictionary, key):
+            value = dictionary.get(key)
+            if value:
+                return float(value)
+            return None
+
+        if not isinstance(result, dict):
+            return TestResult.get_or_insert(key_name, name=test_name, build=build, value=float(result))
+
+        return TestResult.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
+            valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
+            valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))
