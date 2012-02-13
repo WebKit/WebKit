@@ -711,6 +711,8 @@ WebInspector.DataGrid.prototype = {
 
         if (this.expanded)
             child._attach();
+        if (!this.revealed)
+            child.revealed = false;
     },
 
     removeChild: function(child)

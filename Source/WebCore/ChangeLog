@@ -1,3 +1,22 @@
+2012-02-13  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: add class filter to heap profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=78362
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertChild):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype._performSorting):
+        (WebInspector.HeapSnapshotConstructorsDataGrid):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._nameFilterChanged):
+        (WebInspector.DetailedHeapshotView.prototype._changeNameFilter):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view .constructors-view-grid):
+        (.detailed-heapshot-view .constructors-view-toolbar):
+        (.detailed-heapshot-view .constructors-view-toolbar input.constructors-view-filter):
+
 2012-02-13  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: In Inspector.json PropertyDescriptor.writable should be declared optional

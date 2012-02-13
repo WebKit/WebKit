@@ -84,7 +84,9 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         children.sort(sortFunction);
         for (var i = 0, l = children.length; i < l; ++i) {
             var child = children[i];
+            var revealed = child.revealed;
             this.appendChild(child);
+            child.revealed = revealed;
             if (child.expanded)
                 child.sort();
         }
@@ -296,6 +298,16 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
 
         loader(profileIndex, firstSnapshotLoaded.bind(this));
     },
+
+    _nameFilterChanged: function(filterString)
+    {
+        var filter = filterString.toLowerCase();
+        for (var i = 0, l = this.children.length; i < l; ++i) {
+            var node = this.children[i];
+            if (node.depth === 0)
+                node.revealed = node._name.toLowerCase().indexOf(filter) !== -1;
+        }
+    }
 };
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
@@ -443,7 +455,18 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
 
     this.constructorsView = new WebInspector.View();
     this.constructorsView.element.addStyleClass("view");
+
+    this.constructorsViewToolbar = document.createElement("div");
+    this.constructorsViewToolbar.addStyleClass("constructors-view-toolbar");
+    this.constructorsViewFilter = document.createElement("input");
+    this.constructorsViewFilter.addStyleClass("constructors-view-filter");
+    this.constructorsViewFilter.setAttribute("placeholder", WebInspector.UIString("Class filter"));
+    this.constructorsViewFilter.addEventListener("keyup", this._changeNameFilter.bind(this), false);
+    this.constructorsViewToolbar.appendChild(this.constructorsViewFilter);
+    this.constructorsView.element.appendChild(this.constructorsViewToolbar);
+
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
+    this.constructorsDataGrid.element.addStyleClass("constructors-view-grid");
     this.constructorsDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.constructorsDataGrid.show(this.constructorsView.element);
     this.constructorsDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._selectionChanged, this);
@@ -774,6 +797,11 @@ WebInspector.DetailedHeapshotView.prototype = {
         // Then perform the search again with the same query and callback.
         this._searchFinishedCallback(this, -this._searchResults.length);
         this.performSearch(this.currentQuery, this._searchFinishedCallback);
+    },
+
+    _changeNameFilter: function()
+    {
+        this.dataGrid._nameFilterChanged(this.constructorsViewFilter.value);
     },
 
     _profiles: function()
