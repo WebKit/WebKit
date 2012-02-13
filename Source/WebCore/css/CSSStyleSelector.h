@@ -299,7 +299,7 @@ private:
     static bool isValidRegionStyleProperty(int id);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
-    void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
+    void matchPageRulesForList(Vector<CSSPageRule*>& matchedRules, const Vector<CSSPageRule*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
     bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     bool isFirstPage(int pageIndex) const;

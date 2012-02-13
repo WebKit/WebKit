@@ -1,3 +1,40 @@
+2012-02-12  Antti Koivisto  <antti@apple.com>
+
+        CSSPageRule should inherit from CSSRule instead of CSSStyleRule
+        https://bugs.webkit.org/show_bug.cgi?id=78452
+
+        Reviewed by Anders Carlsson.
+
+        This matches CSSOM and eliminates the only subclass of CSSStyleRule, enabling further refactoring.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        (WebCore::CSSPageRule::~CSSPageRule):
+        (WebCore):
+        (WebCore::CSSPageRule::selectorText):
+        (WebCore::CSSPageRule::setSelectorText):
+        (WebCore::CSSPageRule::cssText):
+        * css/CSSPageRule.h:
+        (CSSPageRule):
+        (WebCore::CSSPageRule::style):
+        (WebCore::CSSPageRule::selector):
+        (WebCore::CSSPageRule::properties):
+        (WebCore::CSSPageRule::adoptSelectorVector):
+        (WebCore::CSSPageRule::setDeclaration):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::cssText):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::generateSelectorText):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleSet::pageRules):
+        (RuleSet):
+        (WebCore::RuleSet::addPageRule):
+        (WebCore::comparePageRules):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        (WebCore::CSSStyleSelector::matchPageRulesForList):
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector):
+
 2012-02-12  Shinya Kawanaka  <shinyak@google.com>
 
         Introduce ShadowRootList.

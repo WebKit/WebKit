@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line, CSSRule::Type type)
-    : CSSRule(parent, type)
+CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line)
+    : CSSRule(parent, CSSRule::STYLE_RULE)
 {
     setSourceLine(line);
 
@@ -68,17 +68,13 @@ inline void CSSStyleRule::cleanup()
 
 String CSSStyleRule::generateSelectorText() const
 {
-    if (isPageRule())
-        return static_cast<const CSSPageRule*>(this)->pageSelectorText();
-    else {
-        StringBuilder builder;
-        for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
-            if (s != selectorList().first())
-                builder.append(", ");
-            builder.append(s->selectorText());
-        }
-        return builder.toString();
+    StringBuilder builder;
+    for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
+        if (s != selectorList().first())
+            builder.append(", ");
+        builder.append(s->selectorText());
     }
+    return builder.toString();
 }
 
 String CSSStyleRule::selectorText() const

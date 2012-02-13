@@ -242,7 +242,7 @@ public:
     const Vector<RuleData>* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
     const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
-    const Vector<RuleData>* pageRules() const { return &m_pageRules; }
+    const Vector<CSSPageRule*>& pageRules() const { return m_pageRules; }
 
 public:
     AtomRuleMap m_idRules;
@@ -252,7 +252,7 @@ public:
     Vector<RuleData> m_linkPseudoClassRules;
     Vector<RuleData> m_focusPseudoClassRules;
     Vector<RuleData> m_universalRules;
-    Vector<RuleData> m_pageRules;
+    Vector<CSSPageRule*> m_pageRules;
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;
     CSSStyleSelector::Features m_features;
@@ -2314,7 +2314,7 @@ void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* selector)
 
 void RuleSet::addPageRule(CSSPageRule* rule)
 {
-    m_pageRules.append(RuleData(rule, rule->selectorList().first(), m_pageRules.size()));
+    m_pageRules.append(rule);
 }
 
 void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
@@ -2723,52 +2723,48 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     addToMatchedDeclarationCache(m_style.get(), m_parentStyle, cacheHash, matchResult);
 }
 
-void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+static inline bool comparePageRules(const CSSPageRule* r1, const CSSPageRule* r2)
 {
-    m_matchedRules.clear();
-
-    if (!rules)
-        return;
-
-    matchPageRulesForList(rules->pageRules(), isLeftPage, isFirstPage, pageName);
-
-    // If we didn't match any rules, we're done.
-    if (m_matchedRules.isEmpty())
-        return;
-
-    // Sort the set of matched rules.
-    sortMatchedRules();
-
-    // Now transfer the set of matched rules over to our list of decls.
-    for (unsigned i = 0; i < m_matchedRules.size(); i++)
-        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
+    return r1->selector()->specificity() < r2->selector()->specificity();
 }
 
-void CSSStyleSelector::matchPageRulesForList(const Vector<RuleData>* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     if (!rules)
         return;
 
-    unsigned size = rules->size();
+    Vector<CSSPageRule*> matchedPageRules;
+    matchPageRulesForList(matchedPageRules, rules->pageRules(), isLeftPage, isFirstPage, pageName);
+    if (matchedPageRules.isEmpty())
+        return;
+
+    std::stable_sort(matchedPageRules.begin(), matchedPageRules.end(), comparePageRules);
+
+    for (unsigned i = 0; i < matchedPageRules.size(); i++)
+        addMatchedDeclaration(matchedPageRules[i]->properties());
+}
+
+void CSSStyleSelector::matchPageRulesForList(Vector<CSSPageRule*>& matchedRules, const Vector<CSSPageRule*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+{
+    unsigned size = rules.size();
     for (unsigned i = 0; i < size; ++i) {
-        const RuleData& ruleData = rules->at(i);
-        CSSStyleRule* rule = ruleData.rule();
-        const AtomicString& selectorLocalName = ruleData.selector()->tag().localName();
+        CSSPageRule* rule = rules[i];
+        const AtomicString& selectorLocalName = rule->selector()->tag().localName();
         if (selectorLocalName != starAtom && selectorLocalName != pageName)
             continue;
-        CSSSelector::PseudoType pseudoType = ruleData.selector()->pseudoType();
+        CSSSelector::PseudoType pseudoType = rule->selector()->pseudoType();
         if ((pseudoType == CSSSelector::PseudoLeftPage && !isLeftPage)
             || (pseudoType == CSSSelector::PseudoRightPage && isLeftPage)
             || (pseudoType == CSSSelector::PseudoFirstPage && !isFirstPage))
             continue;
 
         // If the rule has no properties to apply, then ignore it.
-        StylePropertySet* decl = rule->declaration();
-        if (!decl || decl->isEmpty())
+        StylePropertySet* properties = rule->properties();
+        if (!properties || properties->isEmpty())
             continue;
 
         // Add this rule to our list of matched rules.
-        addMatchedRule(&ruleData);
+        matchedRules.append(rule);
     }
 }
 

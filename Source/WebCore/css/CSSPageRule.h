@@ -22,7 +22,9 @@
 #ifndef CSSPageRule_h
 #define CSSPageRule_h
 
-#include "CSSStyleRule.h"
+#include "CSSRule.h"
+#include "CSSSelectorList.h"
+#include "StylePropertySet.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -31,17 +33,32 @@ namespace WebCore {
 class CSSSelector;
 class CSSSelectorList;
 
-class CSSPageRule : public CSSStyleRule {
+class CSSPageRule : public CSSRule {
 public:
     static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent, int sourceLine)
     {
         return adoptRef(new CSSPageRule(parent, sourceLine));
     }
+    ~CSSPageRule();
 
-    String pageSelectorText() const;
+    CSSStyleDeclaration* style() const { return m_style->ensureCSSStyleDeclaration(); }
+
+    String selectorText() const;
+    void setSelectorText(const String&);
+
+    String cssText() const;
+    
+    const CSSSelector* selector() const { return m_selectorList.first(); }
+    StylePropertySet* properties() const { return m_style.get(); }
+    
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void setDeclaration(PassRefPtr<StylePropertySet> style) { ASSERT(style->parentRuleInternal() == this); m_style = style; }
 
 private:
     CSSPageRule(CSSStyleSheet* parent, int sourceLine);
+
+    RefPtr<StylePropertySet> m_style;
+    CSSSelectorList m_selectorList;
 };
 
 } // namespace WebCore

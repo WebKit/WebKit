@@ -57,10 +57,9 @@ public:
 
     using CSSRule::sourceLine;
 
-protected:
-    CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type = CSSRule::STYLE_RULE);
-
 private:
+    CSSStyleRule(CSSStyleSheet* parent, int sourceLine);
+
     void cleanup();
     String generateSelectorText() const;
 
