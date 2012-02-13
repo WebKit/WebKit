@@ -53,7 +53,9 @@ public:
     void setStringForType(const String&, const String& pasteboardType);
 
 private:
+#if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
+#endif
 };
 
 }
