@@ -643,6 +643,10 @@ WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.ht
 // Chrome uses its quota manager and doesn't respect the 5mb limit.
 WONTFIX SKIP : storage/indexeddb/database-quota.html = TEXT
 
+// WebKitShouldInvertColors isn't implemented, but it doesn't look like we
+// need to implement this.
+WONTFIX : platform/win/inverted-colors/non-composited.html = IMAGE+TEXT
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
