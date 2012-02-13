@@ -77,12 +77,11 @@ private:
     // have exited). It's unlikely that any user of this call will be in that situation - and having
     // a destructor defined can be confusing, given that it has such strong pre-requisites to work correctly.
     ~ThreadSpecific();
-    
+
     T* get();
     void set(T*);
     void static destroy(void* ptr);
 
-#if USE(PTHREADS) || PLATFORM(QT) || PLATFORM(GTK) || OS(WINDOWS)
     struct Data {
         WTF_MAKE_NONCOPYABLE(Data);
     public:
@@ -94,7 +93,6 @@ private:
         void (*destructor)(void*);
 #endif
     };
-#endif
 
 #if USE(PTHREADS)
     pthread_key_t m_key;
@@ -239,6 +237,6 @@ inline T& ThreadSpecific<T>::operator*()
     return *operator T*();
 }
 
-}
+} // namespace WTF
 
-#endif
+#endif // WTF_ThreadSpecific_h

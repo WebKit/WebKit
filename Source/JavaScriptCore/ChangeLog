@@ -1,3 +1,16 @@
+2012-02-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove obsolete #if from ThreadSpecific.h
+        https://bugs.webkit.org/show_bug.cgi?id=78485
+
+        Reviewed by Adam Roben.
+
+        Since alle platform use either pthread or Win32 for threading,
+        we can remove all PLATFORM() preprocessor statements.
+
+        * wtf/ThreadSpecific.h:
+        (ThreadSpecific):
+
 2012-02-13  Jessie Berlin  <jberlin@apple.com>
 
         Fix the Windows build.
