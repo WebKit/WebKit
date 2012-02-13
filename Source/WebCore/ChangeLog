@@ -1,3 +1,14 @@
+2012-02-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: get rid of cycles in containment view of an object.
+        https://bugs.webkit.org/show_bug.cgi?id=78462
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotObjectNode.prototype.updateHasChildren):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+
 2012-02-12  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(MEDIA_STREAM) from Navigator.h

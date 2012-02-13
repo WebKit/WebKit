@@ -379,16 +379,14 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
 WebInspector.HeapSnapshotObjectNode.prototype = {
     updateHasChildren: function(parentGridNode)
     {
-        if (this.showRetainingEdges) {
-            this._parentGridNode = parentGridNode;
-            var ancestor = parentGridNode;
-            while (ancestor) {
-                if (ancestor.snapshotNodeId === this.snapshotNodeId) {
-                    this._cycledWithAncestorGridNode = ancestor;
-                    return;
-                }
-                ancestor = ancestor._parentGridNode;
+        this._parentGridNode = parentGridNode;
+        var ancestor = parentGridNode;
+        while (ancestor) {
+            if (ancestor.snapshotNodeId === this.snapshotNodeId) {
+                this._cycledWithAncestorGridNode = ancestor;
+                return;
             }
+            ancestor = ancestor._parentGridNode;
         }
         WebInspector.HeapSnapshotGenericObjectNode.prototype.updateHasChildren.call(this);
     },
@@ -468,7 +466,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _prefixObjectCell: function(div, data)
     {
-        if (this.showRetainingEdges && this._cycledWithAncestorGridNode)
+        if (this._cycledWithAncestorGridNode)
             div.className += " cycled-ancessor-node";
 
         var nameSpan = document.createElement("span");
