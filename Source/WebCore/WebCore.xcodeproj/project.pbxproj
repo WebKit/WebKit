@@ -1605,12 +1605,12 @@
 		572E92FB14E540580087FFBA /* ShadowRootList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572E92F914E540580087FFBA /* ShadowRootList.cpp */; };
 		572E92FC14E540580087FFBA /* ShadowRootList.h in Headers */ = {isa = PBXBuildFile; fileRef = 572E92FA14E540580087FFBA /* ShadowRootList.h */; };
 		573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */; };
-		57B791A314C6A62900F202D1 /* ContentInclusionSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */; };
-		57B791A414C6A62900F202D1 /* ContentInclusionSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */; };
 		57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */; };
 		57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */; };
 		57B791A914C6A63300F202D1 /* HTMLContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */; };
 		57B791AA14C6A63300F202D1 /* HTMLContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A814C6A63300F202D1 /* HTMLContentElement.h */; };
+		57B791A314C6A62900F202D1 /* HTMLContentSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B7919F14C6A62900F202D1 /* HTMLContentSelector.cpp */; };
+		57B791A414C6A62900F202D1 /* HTMLContentSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A014C6A62900F202D1 /* HTMLContentSelector.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8472,12 +8472,12 @@
 		572E92FA14E540580087FFBA /* ShadowRootList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShadowRootList.h; path = dom/ShadowRootList.h; sourceTree = "<group>"; };
 		573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTypeBuilder.cpp; sourceTree = "<group>"; };
 		573D134614CE39FF0057ABCA /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
-		57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentInclusionSelector.cpp; sourceTree = "<group>"; };
-		57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentInclusionSelector.h; sourceTree = "<group>"; };
 		57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSelectorQuery.cpp; sourceTree = "<group>"; };
 		57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSelectorQuery.h; sourceTree = "<group>"; };
 		57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLContentElement.cpp; sourceTree = "<group>"; };
 		57B791A814C6A63300F202D1 /* HTMLContentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLContentElement.h; sourceTree = "<group>"; };
+		57B7919F14C6A62900F202D1 /* HTMLContentSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLContentSelector.cpp; sourceTree = "<group>"; };
+		57B791A014C6A62900F202D1 /* HTMLContentSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLContentSelector.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
@@ -14351,8 +14351,6 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
-				57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */,
-				57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */,
 				57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */,
 				57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */,
 				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
@@ -14360,6 +14358,8 @@
 				57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */,
 				57B791A814C6A63300F202D1 /* HTMLContentElement.h */,
 				A7B7749614CF6353004044BB /* HTMLContentElement.idl */,
+				57B7919F14C6A62900F202D1 /* HTMLContentSelector.cpp */,
+				57B791A014C6A62900F202D1 /* HTMLContentSelector.h */,
 				4ABDFF0714DBE312004D117D /* HTMLShadowElement.cpp */,
 				4ABDFF0814DBE312004D117D /* HTMLShadowElement.h */,
 				4ABDFF0914DBE312004D117D /* HTMLShadowElement.idl */,
@@ -21290,7 +21290,6 @@
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
 				BC5EB9810E82072500B25965 /* ContentData.h in Headers */,
-				57B791A414C6A62900F202D1 /* ContentInclusionSelector.h in Headers */,
 				59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
 				57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */,
@@ -22313,6 +22312,7 @@
 				A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */,
 				977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */,
 				57B791AA14C6A63300F202D1 /* HTMLContentElement.h in Headers */,
+				57B791A414C6A62900F202D1 /* HTMLContentSelector.h in Headers */,
 				E1A31663134BCAE8007C9A4F /* HTMLConverter.h in Headers */,
 				F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */,
 				D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */,
@@ -24709,7 +24709,6 @@
 				41F0618F0F5F069800A07EAC /* ConsoleMessage.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */,
 				BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */,
-				57B791A314C6A62900F202D1 /* ContentInclusionSelector.cpp in Sources */,
 				59102FBB14327D3B003C9D04 /* ContentSearchUtils.cpp in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
 				57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */,
@@ -25369,6 +25368,7 @@
 				A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */,
 				977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */,
 				57B791A914C6A63300F202D1 /* HTMLContentElement.cpp in Sources */,
+				57B791A314C6A62900F202D1 /* HTMLContentSelector.cpp in Sources */,
 				5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */,
 				F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */,
 				D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */,

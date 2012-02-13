@@ -226,7 +226,7 @@ Element* Internals::includerFor(Node* node, ExceptionCode& ec)
         return 0;
     }
 
-    return NodeRenderingContext(node).includer();
+    return NodeRenderingContext(node).insertionPoint();
 }
 
 String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)

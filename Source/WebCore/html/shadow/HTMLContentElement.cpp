@@ -27,8 +27,8 @@
 #include "config.h"
 #include "HTMLContentElement.h"
 
-#include "ContentInclusionSelector.h"
 #include "ContentSelectorQuery.h"
+#include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
@@ -60,7 +60,7 @@ PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& t
 
 HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
     : HTMLElement(name, document)
-    , m_inclusions(adoptPtr(new ShadowInclusionList()))
+    , m_selections(adoptPtr(new HTMLContentSelectionList()))
 {
 }
 
@@ -74,31 +74,31 @@ void HTMLContentElement::attach()
 
     // Before calling StyledElement::attach, selector must be calculated.
     if (root) {
-        ContentInclusionSelector* selector = root->ensureInclusions();
-        selector->unselect(m_inclusions.get());
-        selector->select(this, m_inclusions.get());
+        HTMLContentSelector* selector = root->ensureSelector();
+        selector->unselect(m_selections.get());
+        selector->select(this, m_selections.get());
     }
 
     HTMLElement::attach();
 
     if (root) {
-        for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
-            inclusion->content()->attach();
+        for (HTMLContentSeleciton* selection = m_selections->first(); selection; selection = selection->next())
+            selection->node()->attach();
     }
 }
 
 void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (ContentInclusionSelector* selector = root->inclusions())
-            selector->unselect(m_inclusions.get());
+        if (HTMLContentSelector* selector = root->selector())
+            selector->unselect(m_selections.get());
 
-        // When content element is detached, shadow tree should be recreated to re-calculate inclusions for
+        // When content element is detached, shadow tree should be recreated to re-calculate selector for
         // other content elements.
         root->setNeedsReattachHostChildrenAndShadow();
     }
 
-    ASSERT(m_inclusions->isEmpty());
+    ASSERT(m_selections->isEmpty());
     HTMLElement::detach();
 }
 

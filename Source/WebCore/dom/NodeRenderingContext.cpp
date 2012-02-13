@@ -27,8 +27,8 @@
 #include "NodeRenderingContext.h"
 
 #include "ContainerNode.h"
-#include "ContentInclusionSelector.h"
 #include "HTMLContentElement.h"
+#include "HTMLContentSelector.h"
 #include "Node.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
@@ -48,7 +48,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
-    , m_includer(0)
+    , m_insertionPoint(0)
     , m_style(0)
     , m_parentFlowRenderer(0)
 {
@@ -68,10 +68,10 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         m_visualParentShadowRoot = toElement(parent)->shadowRoot();
 
         if (m_visualParentShadowRoot) {
-            if ((m_includer = m_visualParentShadowRoot->includerFor(m_node))
-                && m_visualParentShadowRoot->isInclusionSelectorActive()) {
+            if ((m_insertionPoint = m_visualParentShadowRoot->insertionPointFor(m_node))
+                && m_visualParentShadowRoot->isSelectorActive()) {
                 m_phase = AttachContentForwarded;
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_includer).parentNodeForRenderingAndStyle();
+                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                 return;
             }
 
@@ -82,7 +82,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
 
         if (parent->isContentElement()) {
             HTMLContentElement* shadowContentElement = toHTMLContentElement(parent);
-            if (!shadowContentElement->hasInclusion()) {
+            if (!shadowContentElement->hasSelection()) {
                 m_phase = AttachContentFallback;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
                 return;
@@ -99,7 +99,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
-    , m_includer(0)
+    , m_insertionPoint(0)
     , m_style(style)
     , m_parentFlowRenderer(0)
 {
@@ -122,12 +122,12 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 static RenderObject* nextRendererOf(HTMLContentElement* parent, Node* current)
 {
-    ShadowInclusion* currentInclusion = parent->inclusions()->find(current);
-    if (!currentInclusion)
+    HTMLContentSeleciton* currentSelection = parent->selections()->find(current);
+    if (!currentSelection)
         return 0;
 
-    for (ShadowInclusion* inclusion = currentInclusion->next(); inclusion; inclusion = inclusion->next()) {
-        if (RenderObject* renderer = inclusion->content()->renderer())
+    for (HTMLContentSeleciton* selection = currentSelection->next(); selection; selection = selection->next()) {
+        if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
 
@@ -138,10 +138,10 @@ static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* curren
 {
     RenderObject* lastRenderer = 0;
 
-    for (ShadowInclusion* inclusion = parent->inclusions()->first(); inclusion; inclusion = inclusion->next()) {
-        if (inclusion->content() == current)
+    for (HTMLContentSeleciton* selection = parent->selections()->first(); selection; selection = selection->next()) {
+        if (selection->node() == current)
             break;
-        if (RenderObject* renderer = inclusion->content()->renderer())
+        if (RenderObject* renderer = selection->node()->renderer())
             lastRenderer = renderer;
     }
 
@@ -150,8 +150,8 @@ static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* curren
 
 static RenderObject* firstRendererOf(HTMLContentElement* parent)
 {
-    for (ShadowInclusion* inclusion = parent->inclusions()->first(); inclusion; inclusion = inclusion->next()) {
-        if (RenderObject* renderer = inclusion->content()->renderer())
+    for (HTMLContentSeleciton* selection = parent->selections()->first(); selection; selection = selection->next()) {
+        if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
 
@@ -160,8 +160,8 @@ static RenderObject* firstRendererOf(HTMLContentElement* parent)
 
 static RenderObject* lastRendererOf(HTMLContentElement* parent)
 {
-    for (ShadowInclusion* inclusion = parent->inclusions()->last(); inclusion; inclusion = inclusion->previous()) {
-        if (RenderObject* renderer = inclusion->content()->renderer())
+    for (HTMLContentSeleciton* selection = parent->selections()->last(); selection; selection = selection->previous()) {
+        if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
 
@@ -178,9 +178,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return m_parentFlowRenderer->nextRendererForNode(m_node);
 
     if (m_phase == AttachContentForwarded) {
-        if (RenderObject* found = nextRendererOf(m_includer, m_node))
+        if (RenderObject* found = nextRendererOf(m_insertionPoint, m_node))
             return found;
-        return NodeRenderingContext(m_includer).nextRenderer();
+        return NodeRenderingContext(m_insertionPoint).nextRenderer();
     }
 
     // Avoid an O(n^2) problem with this function by not checking for
@@ -217,9 +217,9 @@ RenderObject* NodeRenderingContext::previousRenderer() const
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
     if (m_phase == AttachContentForwarded) {
-        if (RenderObject* found = previousRendererOf(m_includer, m_node))
+        if (RenderObject* found = previousRendererOf(m_insertionPoint, m_node))
             return found;
-        return NodeRenderingContext(m_includer).previousRenderer();
+        return NodeRenderingContext(m_insertionPoint).previousRenderer();
     }
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does

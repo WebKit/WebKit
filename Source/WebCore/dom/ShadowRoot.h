@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-class ContentInclusionSelector;
 class Document;
 class HTMLContentElement;
+class HTMLContentSelector;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
@@ -60,9 +60,9 @@ public:
     void clearNeedsReattachHostChildrenAndShadow();
     bool needsReattachHostChildrenAndShadow();
 
-    HTMLContentElement* includerFor(Node*) const;
+    HTMLContentElement* insertionPointFor(Node*) const;
     void hostChildrenChanged();
-    bool isInclusionSelectorActive() const;
+    bool isSelectorActive() const;
 
     virtual void attach();
     void reattachHostChildrenAndShadow();
@@ -72,8 +72,8 @@ public:
 
     Element* host() const { return shadowHost(); }
 
-    ContentInclusionSelector* inclusions() const;
-    ContentInclusionSelector* ensureInclusions();
+    HTMLContentSelector* selector() const;
+    HTMLContentSelector* ensureSelector();
 
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }
@@ -93,7 +93,7 @@ private:
     ShadowRoot* m_next;
     bool m_applyAuthorSheets : 1;
     bool m_needsRecalculateContent : 1;
-    OwnPtr<ContentInclusionSelector> m_inclusions;
+    OwnPtr<HTMLContentSelector> m_selector;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)

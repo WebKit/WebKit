@@ -60881,14 +60881,6 @@
 				Name="shadow"
 				>
 				<File
-					RelativePath="..\html\shadow\ContentInclusionSelector.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\ContentInclusionSelector.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\ContentSelectorQuery.cpp"
 					>
 				</File>
@@ -60958,6 +60950,14 @@
 				</File>
 				<File
 					RelativePath="..\html\shadow\HTMLContentElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\HTMLContentSelector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\HTMLContentSelector.h"
 					>
 				</File>
 				<File

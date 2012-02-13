@@ -52,7 +52,7 @@ public:
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
-    HTMLContentElement* includer() const;
+    HTMLContentElement* insertionPoint() const;
 
     RenderStyle* style() const;
     void setStyle(PassRefPtr<RenderStyle>);
@@ -87,7 +87,7 @@ private:
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
-    HTMLContentElement* m_includer;
+    HTMLContentElement* m_insertionPoint;
     RefPtr<RenderStyle> m_style;
     RenderFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;
@@ -109,9 +109,9 @@ inline RenderStyle* NodeRenderingContext::style() const
     return m_style.get();
 }
 
-inline HTMLContentElement* NodeRenderingContext::includer() const
+inline HTMLContentElement* NodeRenderingContext::insertionPoint() const
 {
-    return m_includer;
+    return m_insertionPoint;
 }
 
 class NodeRendererFactory {

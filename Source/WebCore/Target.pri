@@ -843,9 +843,9 @@ SOURCES += \
     html/parser/TextViewSourceParser.cpp \
     html/parser/XSSAuditor.cpp \
     html/shadow/ContentSelectorQuery.cpp \
-    html/shadow/ContentInclusionSelector.cpp \
     html/shadow/DetailsMarkerControl.cpp \
     html/shadow/HTMLContentElement.cpp \
+    html/shadow/HTMLContentSelector.cpp \
     html/shadow/HTMLShadowElement.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/MediaControlRootElement.cpp \
@@ -1911,8 +1911,8 @@ HEADERS += \
     html/parser/HTMLViewSourceParser.h \
     html/parser/XSSAuditor.h \
     html/shadow/ContentSelectorQuery.h \
-    html/shadow/ContentInclusionSelector.h \
     html/shadow/HTMLContentElement.h \
+    html/shadow/HTMLContentSelector.h \
     html/shadow/HTMLShadowElement.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \

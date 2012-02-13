@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "ContentInclusionSelector.h"
+#include "HTMLContentSelector.h"
 
 #include "ContentSelectorQuery.h"
 #include "HTMLContentElement.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void ShadowInclusion::append(PassRefPtr<ShadowInclusion> next)
+void HTMLContentSeleciton::append(PassRefPtr<HTMLContentSeleciton> next)
 {
     ASSERT(!m_next);
     ASSERT(!next->previous());
@@ -42,13 +42,13 @@ void ShadowInclusion::append(PassRefPtr<ShadowInclusion> next)
     m_next->m_previous = this;
 }
 
-void ShadowInclusion::unlink()
+void HTMLContentSeleciton::unlink()
 {
     ASSERT(!m_previous); // Can be called only for a head.
-    RefPtr<ShadowInclusion> item = this;
+    RefPtr<HTMLContentSeleciton> item = this;
     while (item) {
         ASSERT(!item->previous());
-        RefPtr<ShadowInclusion> nextItem = item->m_next;
+        RefPtr<HTMLContentSeleciton> nextItem = item->m_next;
         item->m_next.clear();
         if (nextItem)
             nextItem->m_previous.clear();
@@ -56,26 +56,26 @@ void ShadowInclusion::unlink()
     }
 }
 
-ShadowInclusionList::ShadowInclusionList()
+HTMLContentSelectionList::HTMLContentSelectionList()
 {
 }
 
-ShadowInclusionList::~ShadowInclusionList()
+HTMLContentSelectionList::~HTMLContentSelectionList()
 {
     ASSERT(isEmpty());
 }
 
-ShadowInclusion* ShadowInclusionList::find(Node* content) const
+HTMLContentSeleciton* HTMLContentSelectionList::find(Node* node) const
 {
-    for (ShadowInclusion* item = first(); item; item = item->next()) {
-        if (content == item->content())
+    for (HTMLContentSeleciton* item = first(); item; item = item->next()) {
+        if (node == item->node())
             return item;
     }
     
     return 0;
 }
 
-void ShadowInclusionList::clear()
+void HTMLContentSelectionList::clear()
 {
     if (isEmpty()) {
         ASSERT(!m_last);
@@ -87,7 +87,7 @@ void ShadowInclusionList::clear()
     m_last.clear();
 }
 
-void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
+void HTMLContentSelectionList::append(PassRefPtr<HTMLContentSeleciton> child)
 {
     if (isEmpty()) {
         ASSERT(!m_last);
@@ -99,18 +99,18 @@ void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
     m_last = m_last->next();
 }
 
-ContentInclusionSelector::ContentInclusionSelector()
+HTMLContentSelector::HTMLContentSelector()
 {
 }
 
-ContentInclusionSelector::~ContentInclusionSelector()
+HTMLContentSelector::~HTMLContentSelector()
 {
     ASSERT(m_candidates.isEmpty());
 }
 
-void ContentInclusionSelector::select(HTMLContentElement* contentElement, ShadowInclusionList* inclusions)
+void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContentSelectionList* selections)
 {
-    ASSERT(inclusions->isEmpty());
+    ASSERT(selections->isEmpty());
 
     ContentSelectorQuery query(contentElement);
     for (size_t i = 0; i < m_candidates.size(); ++i) {
@@ -120,31 +120,31 @@ void ContentInclusionSelector::select(HTMLContentElement* contentElement, Shadow
         if (!query.matches(child))
             continue;
 
-        RefPtr<ShadowInclusion> inclusion = ShadowInclusion::create(contentElement, child);
-        inclusions->append(inclusion);
-        m_inclusionSet.add(inclusion.get());
+        RefPtr<HTMLContentSeleciton> selection = HTMLContentSeleciton::create(contentElement, child);
+        selections->append(selection);
+        m_selectionSet.add(selection.get());
         m_candidates[i] = 0;
     }
 }
 
-void ContentInclusionSelector::unselect(ShadowInclusionList* list)
+void HTMLContentSelector::unselect(HTMLContentSelectionList* list)
 {
-    for (ShadowInclusion* inclusion = list->first(); inclusion; inclusion = inclusion->next())
-        m_inclusionSet.remove(inclusion);
+    for (HTMLContentSeleciton* selection = list->first(); selection; selection = selection->next())
+        m_selectionSet.remove(selection);
     list->clear();
 }
 
-ShadowInclusion* ContentInclusionSelector::findFor(Node* key) const
+HTMLContentSeleciton* HTMLContentSelector::findFor(Node* key) const
 {
-    return m_inclusionSet.find(key);
+    return m_selectionSet.find(key);
 }
 
-void ContentInclusionSelector::didSelect()
+void HTMLContentSelector::didSelect()
 {
     m_candidates.clear();
 }
 
-void ContentInclusionSelector::willSelectOver(ShadowRoot* scope)
+void HTMLContentSelector::willSelectOver(ShadowRoot* scope)
 {
     if (!m_candidates.isEmpty())
         return;

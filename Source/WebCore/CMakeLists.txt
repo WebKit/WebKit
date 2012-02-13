@@ -864,9 +864,9 @@ SET(WebCore_SOURCES
     html/parser/XSSAuditor.cpp
 
     html/shadow/ContentSelectorQuery.cpp
-    html/shadow/ContentInclusionSelector.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
+    html/shadow/HTMLContentSelector.cpp
     html/shadow/HTMLShadowElement.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp

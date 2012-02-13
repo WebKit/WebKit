@@ -31,14 +31,14 @@
 #ifndef HTMLContentElement_h
 #define HTMLContentElement_h
 
-#include "ContentInclusionSelector.h"
+#include "HTMLContentSelector.h"
 #include "HTMLElement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class ContentSelectorQuery;
-class ShadowInclusionList;
+class HTMLContentSelectionList;
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of HTMLContentElement.
 // You should create HTMLContentElement during the host construction.
@@ -60,8 +60,8 @@ public:
     // See https://bugs.webkit.org/show_bug.cgi?id=76261
     void setSelect(const AtomicString&);
 
-    const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
-    bool hasInclusion() const { return inclusions()->first(); }
+    const HTMLContentSelectionList* selections() const { return m_selections.get(); }
+    bool hasSelection() const { return selections()->first(); }
 
     virtual bool isSelectValid() const;
 
@@ -75,7 +75,7 @@ private:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    OwnPtr<ShadowInclusionList> m_inclusions;
+    OwnPtr<HTMLContentSelectionList> m_selections;
 };
 
 inline HTMLContentElement* toHTMLContentElement(Node* node)

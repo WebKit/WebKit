@@ -1,3 +1,96 @@
+2012-02-13  Hayato Ito  <hayato@chromium.org>
+
+        Rename names defined in ContentInclutionSelector to more intuitive names.
+        https://bugs.webkit.org/show_bug.cgi?id=78333
+
+        Reviewed by Hajime Morita.
+
+        This is just refactoring, renaming non-intuitive names to more intuitive names
+        so that they match the terms in the spec.
+
+        No tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::nextRendererOf):
+        (WebCore::previousRendererOf):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::insertionPoint):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertionPointFor):
+        (WebCore::ShadowRoot::isSelectorActive):
+        (WebCore::ShadowRoot::attach):
+        (WebCore::ShadowRoot::selector):
+        (WebCore::ShadowRoot::ensureSelector):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        (ShadowRoot):
+        * html/shadow/ContentInclusionSelector.h: Removed.
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        * html/shadow/HTMLContentElement.h:
+        (WebCore):
+        (WebCore::HTMLContentElement::selections):
+        (WebCore::HTMLContentElement::hasSelection):
+        (HTMLContentElement):
+        * html/shadow/HTMLContentSelector.cpp: Renamed from Source/WebCore/html/shadow/ContentInclusionSelector.cpp.
+        (WebCore):
+        (WebCore::HTMLContentSeleciton::append):
+        (WebCore::HTMLContentSeleciton::unlink):
+        (WebCore::HTMLContentSelectionList::HTMLContentSelectionList):
+        (WebCore::HTMLContentSelectionList::~HTMLContentSelectionList):
+        (WebCore::HTMLContentSelectionList::find):
+        (WebCore::HTMLContentSelectionList::clear):
+        (WebCore::HTMLContentSelectionList::append):
+        (WebCore::HTMLContentSelector::HTMLContentSelector):
+        (WebCore::HTMLContentSelector::~HTMLContentSelector):
+        (WebCore::HTMLContentSelector::select):
+        (WebCore::HTMLContentSelector::unselect):
+        (WebCore::HTMLContentSelector::findFor):
+        (WebCore::HTMLContentSelector::didSelect):
+        (WebCore::HTMLContentSelector::willSelectOver):
+        * html/shadow/HTMLContentSelector.h: Added.
+        (WebCore):
+        (HTMLContentSeleciton):
+        (WebCore::HTMLContentSeleciton::insertionPoint):
+        (WebCore::HTMLContentSeleciton::node):
+        (WebCore::HTMLContentSeleciton::next):
+        (WebCore::HTMLContentSeleciton::previous):
+        (WebCore::HTMLContentSeleciton::HTMLContentSeleciton):
+        (WebCore::HTMLContentSeleciton::create):
+        (HTMLContentSelectionList):
+        (WebCore::HTMLContentSelectionList::first):
+        (WebCore::HTMLContentSelectionList::last):
+        (WebCore::HTMLContentSelectionList::isEmpty):
+        (HTMLContentSelectionSet):
+        (WebCore::HTMLContentSelectionSet::add):
+        (WebCore::HTMLContentSelectionSet::remove):
+        (WebCore::HTMLContentSelectionSet::isEmpty):
+        (Translator):
+        (WebCore::HTMLContentSelectionSet::Translator::hash):
+        (WebCore::HTMLContentSelectionSet::Translator::equal):
+        (WebCore::HTMLContentSelectionSet::Hash::hash):
+        (WebCore::HTMLContentSelectionSet::Hash::equal):
+        (Hash):
+        (WebCore::HTMLContentSelectionSet::find):
+        (HTMLContentSelector):
+        (WebCore::HTMLContentSelector::hasCandidates):
+        * testing/Internals.cpp:
+        (WebCore::Internals::includerFor):
+
 2012-02-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] morphing-cubes animation appears too close when clicking the button
