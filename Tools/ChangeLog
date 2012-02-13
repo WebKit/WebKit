@@ -1,3 +1,20 @@
+2012-02-13  Adam Barth  <abarth@webkit.org>
+
+        NRWT's HTTP servers should support additional directories for resources
+        https://bugs.webkit.org/show_bug.cgi?id=78528
+
+        Reviewed by Eric Seidel.
+
+        This functionality will be used by the Chromium-Android port.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.start_http_server):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__):
+        (Lighttpd._prepare_config):
+
 2012-02-13  Ami Fischman  <fischman@chromium.org>
 
         Add fischman as committer.

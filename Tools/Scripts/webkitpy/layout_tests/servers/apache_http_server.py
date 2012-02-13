@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
-    def __init__(self, port_obj, output_dir):
+    def __init__(self, port_obj, output_dir, additional_dirs=None):
         """Args:
           port_obj: handle to the platform-specific routines
           output_dir: the absolute path to the layout test result directory
@@ -86,6 +86,14 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", "")),
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "start"]
+
+        if additional_dirs:
+            for alias, path in additional_dirs.iteritems():
+                start_cmd += ['-c', "\'Alias %s \"%s\"\'" % (alias, path),
+                        # Disable CGI handler for additional dirs.
+                        '-c', "\'<Location %s>\'" % alias,
+                        '-c', "\'RemoveHandler .cgi .pl\'",
+                        '-c', "\'</Location>\'"]
 
         stop_cmd = [executable,
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
