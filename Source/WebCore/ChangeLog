@@ -1,3 +1,16 @@
+2012-02-13  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/7196487> and https://bugs.webkit.org/show_bug.cgi?id=26777
+        Add https pages to the page cache in some cases
+
+        Reviewed by Anders Carlsson.
+
+        Test: http/tests/navigation/https-in-page-cache.html
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCachePageContainingThisFrame): Allow HTTPS pages that do not specify cache-control: no-cache
+          or cache-control: no-store into the page cache. This will match Firefox's behavior for HTTPS in their bfcache.
+
 2012-02-10  Enrica Casucci  <enrica@apple.com>
 
         Refactor Mac platform implementation of the Pasteboard class to use Platform Strategies.

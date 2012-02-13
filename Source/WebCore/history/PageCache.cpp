@@ -260,7 +260,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader->subframeLoader()->containsPlugins() || frame->page()->settings()->pageCacheSupportsPlugins())
-        && !document->url().protocolIs("https")
+        && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
         && (!frame->domWindow() || !frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(SQL_DATABASE)
         && !document->hasOpenDatabases()
