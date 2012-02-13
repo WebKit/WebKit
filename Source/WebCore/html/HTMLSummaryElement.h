@@ -40,6 +40,8 @@ private:
 
     void createShadowSubtree();
     HTMLDetailsElement* detailsElement() const;
+
+    bool supportsFocus() const OVERRIDE;
 };
 
 }

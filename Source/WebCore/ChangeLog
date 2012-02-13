@@ -1,3 +1,22 @@
+2012-02-13  Arko Saha  <arko@motorola.com>
+
+        <summary> is not keyboard accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=75478
+
+        Reviewed by Hajime Morita.
+
+        Toggle the content of <details> element on pressing Enter or Spacebar
+        key on a focused <summary> element.
+
+        Test: fast/html/details-keyboard-show-hide.html
+
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::supportsFocus):
+        (WebCore):
+        (WebCore::HTMLSummaryElement::defaultEventHandler):
+        * html/HTMLSummaryElement.h:
+        (HTMLSummaryElement):
+
 2012-02-13  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78434

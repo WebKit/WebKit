@@ -3978,3 +3978,21 @@ BUGWK78367 : media/video-zoom.html = IMAGE
 
 BUGWK34147 : fast/css/font-face-synthetic-bold-italic.html = MISSING FAIL
 BUGWK34147 : fast/css/font-face-weight-matching.html = MISSING FAIL
+
+// Needs a rebaseline.
+BUGWK75478 : fast/html/details-add-summary-10-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-8-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-1-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-2-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-6-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-7-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-5-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-5-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-1-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-6-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-4-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-3-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-3-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-4-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-remove-summary-2-and-click.html = IMAGE
+BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
