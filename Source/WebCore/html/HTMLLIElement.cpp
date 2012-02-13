@@ -49,6 +49,13 @@ PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLLIElement(tagName, document));
 }
 
+bool HTMLLIElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == typeAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLLIElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == typeAttr) {
@@ -73,9 +80,7 @@ void HTMLLIElement::parseAttribute(Attribute* attr)
     if (attr->name() == valueAttr) {
         if (renderer() && renderer()->isListItem())
             parseValue(attr->value());
-    } else if (attr->name() == typeAttr)
-        setNeedsAttributeStyleUpdate();
-    else
+    } else
         HTMLElement::parseAttribute(attr);
 }
 

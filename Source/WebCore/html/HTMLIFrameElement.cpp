@@ -48,9 +48,11 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLIFrameElement(Attribute* attr)
+bool HTMLIFrameElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == alignAttr || attr->name() == frameborderAttr;
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == alignAttr || attr->name() == frameborderAttr)
+        return true;
+    return HTMLFrameElementBase::isPresentationAttribute(attr);
 }
 
 void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -68,17 +70,13 @@ void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertyS
             // Add a rule that nulls out our border width.
             addHTMLLengthToStyle(style, CSSPropertyBorderWidth, "0"); // FIXME: Pass as integer.
         }
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLIFrameElement(attr));
+    } else
         HTMLFrameElementBase::collectStyleForAttribute(attr, style);
-    }
 }
 
 void HTMLIFrameElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttributeForHTMLIFrameElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == nameAttr) {
+    if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());

@@ -44,6 +44,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual bool isPresentationAttribute(Attribute*) const OVERRIDE;
     virtual void defaultEventHandler(Event*);
     virtual bool appendFormData(FormDataList&, bool);
 

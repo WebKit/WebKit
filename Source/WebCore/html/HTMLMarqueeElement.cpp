@@ -53,9 +53,11 @@ PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& t
     return marqueeElement.release();
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLMarqueeElement(Attribute* attr)
+bool HTMLMarqueeElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == scrollamountAttr || attr->name() == scrolldelayAttr || attr->name() == loopAttr || attr->name() == behaviorAttr || attr->name() == directionAttr;
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == scrollamountAttr || attr->name() == scrolldelayAttr || attr->name() == loopAttr || attr->name() == behaviorAttr || attr->name() == directionAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLMarqueeElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -98,19 +100,16 @@ void HTMLMarqueeElement::collectStyleForAttribute(Attribute* attr, StyleProperty
     } else if (attr->name() == directionAttr) {
         if (!attr->value().isEmpty())
             style->setProperty(CSSPropertyWebkitMarqueeDirection, attr->value());
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLMarqueeElement(attr));
+    } else
         HTMLElement::collectStyleForAttribute(attr, style);
-    }
 }
 
 void HTMLMarqueeElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttributeForHTMLMarqueeElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == truespeedAttr)
+    if (attr->name() == truespeedAttr) {
+        // FIXME: Factor this out and remove HTMLMarqueeElement::parseAttribute().
         m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;
-    else
+    } else
         HTMLElement::parseAttribute(attr);
 }
 

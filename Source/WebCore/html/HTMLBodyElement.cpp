@@ -61,10 +61,11 @@ HTMLBodyElement::~HTMLBodyElement()
 {
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLBodyElement(Attribute* attr)
+bool HTMLBodyElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == backgroundAttr || attr->name() == marginwidthAttr || attr->name() == leftmarginAttr || attr->name() == marginheightAttr || attr->name() == topmarginAttr || attr->name() == bgcolorAttr || attr->name() == textAttr || attr->name() == bgpropertiesAttr;
-
+    if (attr->name() == backgroundAttr || attr->name() == marginwidthAttr || attr->name() == leftmarginAttr || attr->name() == marginheightAttr || attr->name() == topmarginAttr || attr->name() == bgcolorAttr || attr->name() == textAttr || attr->name() == bgpropertiesAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLBodyElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -86,17 +87,13 @@ void HTMLBodyElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
     } else if (attr->name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attr->value(), "fixed"))
            style->setProperty(CSSPropertyBackgroundAttachment, CSSValueFixed);
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLBodyElement(attr));
+    } else
         HTMLElement::collectStyleForAttribute(attr, style);
-    }
 }
 
 void HTMLBodyElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttributeForHTMLBodyElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == vlinkAttr || attr->name() == alinkAttr || attr->name() == linkAttr) {
+    if (attr->name() == vlinkAttr || attr->name() == alinkAttr || attr->name() == linkAttr) {
         if (attr->isNull()) {
             if (attr->name() == linkAttr)
                 document()->resetLinkColor();

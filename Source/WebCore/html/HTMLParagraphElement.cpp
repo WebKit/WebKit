@@ -44,6 +44,13 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
+bool HTMLParagraphElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == alignAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLParagraphElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == alignAttr) {
@@ -57,14 +64,6 @@ void HTMLParagraphElement::collectStyleForAttribute(Attribute* attr, StyleProper
             style->setProperty(CSSPropertyTextAlign, attr->value());
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLParagraphElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == alignAttr)
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 }

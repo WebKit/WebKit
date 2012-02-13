@@ -47,6 +47,13 @@ PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName&
     return adoptRef(new HTMLTableColElement(tagName, document));
 }
 
+bool HTMLTableColElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == widthAttr)
+        return true;
+    return HTMLTablePartElement::isPresentationAttribute(attr);
+}
+
 void HTMLTableColElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == widthAttr)
@@ -62,7 +69,6 @@ void HTMLTableColElement::parseAttribute(Attribute* attr)
         if (renderer() && renderer()->isTableCol())
             renderer()->updateFromElement();
     } else if (attr->name() == widthAttr) {
-        setNeedsAttributeStyleUpdate();
         if (!attr->value().isEmpty()) {
             if (renderer() && renderer()->isTableCol()) {
                 RenderTableCol* col = toRenderTableCol(renderer());

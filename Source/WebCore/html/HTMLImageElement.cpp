@@ -78,9 +78,11 @@ PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* 
     return image.release();
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLImageElement(Attribute* attr)
+bool HTMLImageElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == borderAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == valignAttr;
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == borderAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == valignAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -101,18 +103,14 @@ void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         applyAlignmentAttributeToStyle(attr, style);
     else if (attr->name() == valignAttr)
         style->setProperty(CSSPropertyVerticalAlign, attr->value());
-    else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLImageElement(attr));
+    else
         HTMLElement::collectStyleForAttribute(attr, style);
-    }
 }
 
 void HTMLImageElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
-    if (isRespectedPresentationAttributeForHTMLImageElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else if (attrName == altAttr) {
+    if (attrName == altAttr) {
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
     } else if (attrName == srcAttr)

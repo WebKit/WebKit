@@ -54,6 +54,13 @@ PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLOListElement(tagName, document));
 }
 
+bool HTMLOListElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == typeAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLOListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == typeAttr) {
@@ -73,9 +80,7 @@ void HTMLOListElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
 
 void HTMLOListElement::parseAttribute(Attribute* attr)
 {
-    if (attr->name() == typeAttr)
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == startAttr) {
+    if (attr->name() == startAttr) {
         int oldStart = start();
         bool canParse;
         int parsedStart = attr->value().toInt(&canParse);

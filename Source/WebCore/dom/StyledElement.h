@@ -53,12 +53,11 @@ protected:
     {
     }
 
-    void setNeedsAttributeStyleUpdate();
-
     virtual void attributeChanged(Attribute*) OVERRIDE;
     virtual void parseAttribute(Attribute*);
     virtual void copyNonAttributeProperties(const Element*);
 
+    virtual bool isPresentationAttribute(Attribute*) const { return false; }
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
@@ -97,12 +96,6 @@ inline StylePropertySet* StyledElement::attributeStyle()
     if (attributeStyleDirty())
         updateAttributeStyle();
     return attributeData() ? attributeData()->attributeStyle() : 0;
-}
-
-inline void StyledElement::setNeedsAttributeStyleUpdate()
-{
-    setAttributeStyleDirty();
-    setNeedsStyleRecalc();
 }
 
 } //namespace

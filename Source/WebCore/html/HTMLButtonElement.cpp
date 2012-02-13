@@ -79,6 +79,17 @@ const AtomicString& HTMLButtonElement::formControlType() const
     return emptyAtom;
 }
 
+bool HTMLButtonElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == alignAttr) {
+        // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
+        // See http://bugs.webkit.org/show_bug.cgi?id=12071
+        return false;
+    }
+
+    return HTMLFormControlElement::isPresentationAttribute(attr);
+}
+
 void HTMLButtonElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == typeAttr) {
@@ -89,9 +100,6 @@ void HTMLButtonElement::parseAttribute(Attribute* attr)
         else
             m_type = SUBMIT;
         setNeedsWillValidateCheck();
-    } else if (attr->name() == alignAttr) {
-        // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
-        // See http://bugs.webkit.org/show_bug.cgi?id=12071
     } else
         HTMLFormControlElement::parseAttribute(attr);
 }

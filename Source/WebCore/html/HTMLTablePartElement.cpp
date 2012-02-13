@@ -38,9 +38,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool isRespectedPresentationAttributeForHTMLTablePartElement(Attribute* attr)
+bool HTMLTablePartElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == bordercolorAttr || attr->name() == valignAttr || attr->name() == alignAttr || attr->name() == heightAttr;
+    if (attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == bordercolorAttr || attr->name() == valignAttr || attr->name() == alignAttr || attr->name() == heightAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -76,18 +78,8 @@ void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StyleProper
     } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLTablePartElement(attr));
+    } else
         HTMLElement::collectStyleForAttribute(attr, style);
-    }
-}
-
-void HTMLTablePartElement::parseAttribute(Attribute* attr)
-{
-    if (isRespectedPresentationAttributeForHTMLTablePartElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 HTMLTableElement* HTMLTablePartElement::findParentTable() const

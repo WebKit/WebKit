@@ -47,20 +47,19 @@ PassRefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLUListElement(tagName, document));
 }
 
+bool HTMLUListElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == typeAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLUListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == typeAttr)
         style->setProperty(CSSPropertyListStyleType, attr->value());
     else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLUListElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == typeAttr)
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 }

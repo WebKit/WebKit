@@ -58,7 +58,7 @@ protected:
 
     virtual void detach();
     virtual void removedFromDocument();
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual bool isPresentationAttribute(Attribute*) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     bool m_inBeforeLoadEventHandler;

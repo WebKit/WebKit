@@ -105,6 +105,13 @@ void HTMLVideoElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         HTMLMediaElement::collectStyleForAttribute(attr, style);
 }
 
+bool HTMLVideoElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == widthAttr || attr->name() == heightAttr)
+        return true;
+    return HTMLMediaElement::isPresentationAttribute(attr);
+}
+
 void HTMLVideoElement::parseAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
@@ -125,9 +132,7 @@ void HTMLVideoElement::parseAttribute(Attribute* attr)
                 toRenderImage(renderer())->imageResource()->setCachedImage(0); 
         }
 #endif
-    } else if (attrName == widthAttr || attrName == heightAttr)
-        setNeedsAttributeStyleUpdate();
-    else
+    } else
         HTMLMediaElement::parseAttribute(attr);
 }
 

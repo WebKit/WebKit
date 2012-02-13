@@ -42,25 +42,19 @@ PassRefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, 
     return adoptRef(new HTMLPreElement(tagName, document));
 }
 
+bool HTMLPreElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == wrapAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLPreElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == wrapAttr)
         style->setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
     else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLPreElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == widthAttr) {
-        // FIXME: Implement this some day.  Width on a <pre> is the # of characters that
-        // we should size the pre to.  We basically need to take the width of a space,
-        // multiply by the value of the attribute and then set that as the width CSS
-        // property.
-    } else if (attr->name() == wrapAttr)
-        setNeedsAttributeStyleUpdate();
-    else
-        return HTMLElement::parseAttribute(attr);
 }
 
 }

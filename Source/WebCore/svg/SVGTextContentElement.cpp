@@ -228,6 +228,13 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
+bool SVGTextContentElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name().matches(XMLNames::spaceAttr))
+        return true;
+    return SVGStyledElement::isPresentationAttribute(attr);
+}
+
 void SVGTextContentElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (!isSupportedAttribute(attr->name()))
@@ -257,8 +264,6 @@ void SVGTextContentElement::parseAttribute(Attribute* attr)
     } else if (SVGTests::parseAttribute(attr)
                || SVGExternalResourcesRequired::parseAttribute(attr)) {
     } else if (SVGLangSpace::parseAttribute(attr)) {
-        if (attr->name().matches(XMLNames::spaceAttr))
-            setNeedsAttributeStyleUpdate();
     } else
         ASSERT_NOT_REACHED();
 

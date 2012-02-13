@@ -75,9 +75,11 @@ int HTMLTableCellElement::cellIndex() const
     return index;
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLTableCellElement(Attribute* attr)
+bool HTMLTableCellElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == nowrapAttr || attr->name() == widthAttr || attr->name() == heightAttr;
+    if (attr->name() == nowrapAttr || attr->name() == widthAttr || attr->name() == heightAttr)
+        return true;
+    return HTMLTablePartElement::isPresentationAttribute(attr);
 }
 
 void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -96,17 +98,13 @@ void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StyleProper
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
                 addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
         }
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLTableCellElement(attr));
+    } else
         HTMLTablePartElement::collectStyleForAttribute(attr, style);
-    }
 }
 
 void HTMLTableCellElement::parseAttribute(Attribute* attr)
 {
-    if (isRespectedPresentationAttributeForHTMLTableCellElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == rowspanAttr) {
+    if (attr->name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else if (attr->name() == colspanAttr) {

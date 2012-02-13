@@ -77,6 +77,13 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
     return renderPart(); // This will return 0 if the renderer is not a RenderPart.
 }
 
+bool HTMLObjectElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == borderAttr)
+        return true;
+    return HTMLPlugInImageElement::isPresentationAttribute(attr);
+}
+
 void HTMLObjectElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == borderAttr)
@@ -116,8 +123,6 @@ void HTMLObjectElement::parseAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == borderAttr)
-        setNeedsAttributeStyleUpdate();
     else
         HTMLPlugInImageElement::parseAttribute(attr);
 }

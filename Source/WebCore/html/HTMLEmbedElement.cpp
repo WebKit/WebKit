@@ -74,6 +74,13 @@ RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings()
     return findWidgetRenderer(this);
 }
 
+bool HTMLEmbedElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == hiddenAttr)
+        return true;
+    return HTMLPlugInImageElement::isPresentationAttribute(attr);
+}
+
 void HTMLEmbedElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == hiddenAttr) {
@@ -105,9 +112,7 @@ void HTMLEmbedElement::parseAttribute(Attribute* attr)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
-    } else if (attr->name() == hiddenAttr)
-        setNeedsAttributeStyleUpdate();
-    else
+    } else
         HTMLPlugInImageElement::parseAttribute(attr);
 }
 

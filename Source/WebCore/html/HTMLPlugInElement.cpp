@@ -140,9 +140,11 @@ Widget* HTMLPlugInElement::pluginWidget()
     return renderWidget->widget();
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLPlugInElement(Attribute* attr)
+bool HTMLPlugInElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr;
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr)
+        return true;
+    return HTMLFrameOwnerElement::isPresentationAttribute(attr);
 }
 
 void HTMLPlugInElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -159,18 +161,8 @@ void HTMLPlugInElement::collectStyleForAttribute(Attribute* attr, StylePropertyS
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
     } else if (attr->name() == alignAttr)
         applyAlignmentAttributeToStyle(attr, style);
-    else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLPlugInElement(attr));
-        HTMLFrameOwnerElement::collectStyleForAttribute(attr, style);
-    }
-}
-
-void HTMLPlugInElement::parseAttribute(Attribute* attr)
-{
-    if (isRespectedPresentationAttributeForHTMLPlugInElement(attr))
-        setNeedsAttributeStyleUpdate();
     else
-        HTMLFrameOwnerElement::parseAttribute(attr);
+        HTMLFrameOwnerElement::collectStyleForAttribute(attr, style);
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event* event)

@@ -118,6 +118,19 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
+bool HTMLTextAreaElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == alignAttr) {
+        // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
+        // See http://bugs.webkit.org/show_bug.cgi?id=7075
+        return false;
+    }
+
+    if (attr->name() == wrapAttr)
+        return true;
+    return HTMLTextFormControlElement::isPresentationAttribute(attr);
+}
+
 void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == wrapAttr) {
@@ -164,16 +177,11 @@ void HTMLTextAreaElement::parseAttribute(Attribute* attr)
             wrap = SoftWrap;
         if (wrap != m_wrap) {
             m_wrap = wrap;
-            setNeedsAttributeStyleUpdate();
-
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (attr->name() == accesskeyAttr) {
         // ignore for the moment
-    } else if (attr->name() == alignAttr) {
-        // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
-        // See http://bugs.webkit.org/show_bug.cgi?id=7075
     } else if (attr->name() == maxlengthAttr)
         setNeedsValidityCheck();
     else

@@ -66,6 +66,11 @@ void StyledElement::attributeChanged(Attribute* attr)
     if (!(attr->name() == styleAttr && isSynchronizingStyleAttribute()))
         parseAttribute(attr);
 
+    if (isPresentationAttribute(attr)) {
+        setAttributeStyleDirty();
+        setNeedsStyleRecalc();
+    }
+
     Element::attributeChanged(attr);
 }
 

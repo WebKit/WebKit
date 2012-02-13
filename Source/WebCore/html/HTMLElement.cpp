@@ -161,6 +161,13 @@ void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StyleProper
     }
 }
 
+bool HTMLElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == alignAttr || attr->name() == contenteditableAttr || attr->name() == hiddenAttr || attr->name() == langAttr || attr->name().matches(XMLNames::langAttr) || attr->name() == draggableAttr || attr->name() == dirAttr)
+        return true;
+    return StyledElement::isPresentationAttribute(attr);
+}
+
 void HTMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == alignAttr) {
@@ -212,8 +219,8 @@ void HTMLElement::parseAttribute(Attribute* attr)
     if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
         return StyledElement::parseAttribute(attr);
 
-    if (attr->name() == alignAttr || attr->name() == contenteditableAttr || attr->name() == hiddenAttr || attr->name() == langAttr || attr->name().matches(XMLNames::langAttr) || attr->name() == draggableAttr)
-        setNeedsAttributeStyleUpdate();
+    if (attr->name() == dirAttr)
+        dirAttributeChanged(attr);
     else if (attr->name() == tabindexAttr) {
         int tabindex = 0;
         if (attr->isEmpty())
@@ -222,9 +229,6 @@ void HTMLElement::parseAttribute(Attribute* attr)
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
-    } else if (attr->name() == dirAttr) {
-        setNeedsAttributeStyleUpdate();
-        dirAttributeChanged(attr);
 #if ENABLE(MICRODATA)
     } else if (attr->name() == itempropAttr) {
         setItemProp(attr->value());

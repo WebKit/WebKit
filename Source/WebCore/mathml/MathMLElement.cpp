@@ -48,9 +48,11 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
     return adoptRef(new MathMLElement(tagName, document));
 }
 
-static inline bool isRespectedPresentationAttributeForMathMLElement(Attribute* attr)
+bool MathMLElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == mathbackgroundAttr || attr->name() == mathsizeAttr || attr->name() == mathcolorAttr || attr->name() == fontsizeAttr || attr->name() == backgroundAttr || attr->name() == colorAttr || attr->name() == fontstyleAttr || attr->name() == fontweightAttr || attr->name() == fontfamilyAttr;
+    if (attr->name() == mathbackgroundAttr || attr->name() == mathsizeAttr || attr->name() == mathcolorAttr || attr->name() == fontsizeAttr || attr->name() == backgroundAttr || attr->name() == colorAttr || attr->name() == fontstyleAttr || attr->name() == fontweightAttr || attr->name() == fontfamilyAttr)
+        return true;
+    return StyledElement::isPresentationAttribute(attr);
 }
 
 void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -77,19 +79,11 @@ void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
     else if (attr->name() == fontfamilyAttr)
         style->setProperty(CSSPropertyFontFamily, attr->value());
     else {
-        ASSERT(!isRespectedPresentationAttributeForMathMLElement(attr));
+        ASSERT(!isPresentationAttribute(attr));
         StyledElement::collectStyleForAttribute(attr, style);
     }
 }
 
-void MathMLElement::parseAttribute(Attribute* attr)
-{
-    if (isRespectedPresentationAttributeForMathMLElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else
-        StyledElement::parseAttribute(attr);
-}
-    
 }
 
 #endif // ENABLE(MATHML)

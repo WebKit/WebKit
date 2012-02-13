@@ -158,6 +158,13 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
     return true;
 }
 
+bool HTMLFontElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == sizeAttr || attr->name() == colorAttr || attr->name() == faceAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == sizeAttr) {
@@ -170,14 +177,6 @@ void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
         style->setProperty(CSSPropertyFontFamily, attr->value());
     else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLFontElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == sizeAttr || attr->name() == colorAttr || attr->name() == faceAttr)
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 }

@@ -48,6 +48,13 @@ PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLBRElement(tagName, document));
 }
 
+bool HTMLBRElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == clearAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == clearAttr) {
@@ -61,14 +68,6 @@ void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         }
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
-}
-
-void HTMLBRElement::parseAttribute(Attribute* attr)
-{
-    if (attr->name() == clearAttr)
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle* style)

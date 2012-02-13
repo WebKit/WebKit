@@ -354,24 +354,27 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         HTMLElement::collectStyleForAttribute(attr, style);
 }
 
+bool HTMLTableElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == valignAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == cellspacingAttr || attr->name() == borderAttr || attr->name() == bordercolorAttr || attr->name() == frameAttr || attr->name() == rulesAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
+}
+
 void HTMLTableElement::parseAttribute(Attribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == valignAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == cellspacingAttr)
-        setNeedsAttributeStyleUpdate();
-    else if (attr->name() == borderAttr)  {
+    if (attr->name() == borderAttr)  {
         // FIXME: This attribute is a mess.
         m_borderAttr = true;
         if (!attr->isNull()) {
             int border = attr->isEmpty() ? 1 : attr->value().toInt();
             m_borderAttr = border;
         }
-        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == bordercolorAttr) {
         m_borderColorAttr = !attr->isEmpty();
-        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == frameAttr) {
         // FIXME: This attribute is a mess.
         bool borderTop;
@@ -379,7 +382,6 @@ void HTMLTableElement::parseAttribute(Attribute* attr)
         bool borderBottom;
         bool borderLeft;
         m_frameAttr = getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft);
-        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == rulesAttr) {
         m_rulesAttr = UnsetRules;
         if (equalIgnoringCase(attr->value(), "none"))
@@ -392,8 +394,6 @@ void HTMLTableElement::parseAttribute(Attribute* attr)
             m_rulesAttr = ColsRules;
         if (equalIgnoringCase(attr->value(), "all"))
             m_rulesAttr = AllRules;
-
-        setNeedsAttributeStyleUpdate();
     } else if (attr->name() == cellpaddingAttr) {
         if (!attr->value().isEmpty())
             m_padding = max(0, attr->value().toInt());

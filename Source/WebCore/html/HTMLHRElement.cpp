@@ -48,9 +48,11 @@ PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLHRElement(tagName, document));
 }
 
-static inline bool isRespectedPresentationAttributeForHTMLHRElement(Attribute* attr)
+bool HTMLHRElement::isPresentationAttribute(Attribute* attr) const
 {
-    return attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == colorAttr || attr->name() == noshadeAttr || attr->name() == sizeAttr;
+    if (attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == colorAttr || attr->name() == noshadeAttr || attr->name() == sizeAttr)
+        return true;
+    return HTMLElement::isPresentationAttribute(attr);
 }
 
 void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
@@ -94,18 +96,8 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
             style->setProperty(CSSPropertyBorderBottomWidth, String("0")); // FIXME: Pass as integer.
         else
             addHTMLLengthToStyle(style, CSSPropertyHeight, String::number(size - 2)); // FIXME: Pass as integer.
-    } else {
-        ASSERT(!isRespectedPresentationAttributeForHTMLHRElement(attr));
+    } else
         HTMLElement::collectStyleForAttribute(attr, style);
-    }
-}
-
-void HTMLHRElement::parseAttribute(Attribute* attr)
-{
-    if (isRespectedPresentationAttributeForHTMLHRElement(attr))
-        setNeedsAttributeStyleUpdate();
-    else
-        HTMLElement::parseAttribute(attr);
 }
 
 }

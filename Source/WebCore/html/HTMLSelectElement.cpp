@@ -256,6 +256,17 @@ void HTMLSelectElement::setValue(const String &value)
     setSelectedIndex(-1);
 }
 
+bool HTMLSelectElement::isPresentationAttribute(Attribute* attr) const
+{
+    if (attr->name() == alignAttr) {
+        // Don't map 'align' attribute. This matches what Firefox, Opera and IE do.
+        // See http://bugs.webkit.org/show_bug.cgi?id=12072
+        return false;
+    }
+
+    return HTMLFormControlElementWithState::isPresentationAttribute(attr);
+}
+
 void HTMLSelectElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == sizeAttr) {
@@ -282,9 +293,6 @@ void HTMLSelectElement::parseAttribute(Attribute* attr)
         parseMultipleAttribute(attr);
     else if (attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment.
-    } else if (attr->name() == alignAttr) {
-        // Don't map 'align' attribute. This matches what Firefox, Opera and IE do.
-        // See http://bugs.webkit.org/show_bug.cgi?id=12072
     } else if (attr->name() == onchangeAttr)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     else

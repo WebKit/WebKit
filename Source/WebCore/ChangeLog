@@ -1,3 +1,157 @@
+2012-02-13  Andreas Kling  <awesomekling@apple.com>
+
+        Move attribute style invalidation to attributeChanged().
+        <http://webkit.org/b/78461>
+
+        Reviewed by Antti Koivisto.
+
+        Moved attribute style invalidation out of the parseAttribute() overloads
+        and added an "isPresentationAttribute(Attribute*) virtual to StyledElement.
+        Returning true for a given Attribute will cause attribute style invalidation
+        when that attribute passes through attributeChanged().
+
+        Removed a couple of parseAttribute() overloads whose only remaining purpose
+        was invalidating attribute style.
+
+        For form elements that deliberately don't map the "align" attribute, added
+        short-circuits in isPresentationAttribute instead of falling back to the
+        respective base class (which may othweise then map "align")
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::isPresentationAttribute):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::isPresentationAttribute):
+        * html/HTMLBRElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::isPresentationAttribute):
+        (WebCore::HTMLBodyElement::collectStyleForAttribute):
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/HTMLBodyElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::isPresentationAttribute):
+        (WebCore::HTMLButtonElement::parseAttribute):
+        * html/HTMLButtonElement.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::isPresentationAttribute):
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isPresentationAttribute):
+        (WebCore::HTMLElement::parseAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::isPresentationAttribute):
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::isPresentationAttribute):
+        * html/HTMLFontElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::isPresentationAttribute):
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::isPresentationAttribute):
+        (WebCore::HTMLHRElement::collectStyleForAttribute):
+        * html/HTMLHRElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::isPresentationAttribute):
+        (WebCore::HTMLIFrameElement::collectStyleForAttribute):
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isPresentationAttribute):
+        (WebCore::HTMLImageElement::collectStyleForAttribute):
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isPresentationAttribute):
+        (WebCore::HTMLInputElement::collectStyleForAttribute):
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::isPresentationAttribute):
+        (WebCore::HTMLLIElement::parseAttribute):
+        * html/HTMLLIElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::isPresentationAttribute):
+        (WebCore::HTMLMarqueeElement::collectStyleForAttribute):
+        (WebCore::HTMLMarqueeElement::parseAttribute):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::isPresentationAttribute):
+        (WebCore::HTMLOListElement::parseAttribute):
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isPresentationAttribute):
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLObjectElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::isPresentationAttribute):
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isPresentationAttribute):
+        (WebCore::HTMLPlugInElement::collectStyleForAttribute):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::isPresentationAttribute):
+        (WebCore::HTMLPreElement::collectStyleForAttribute):
+        * html/HTMLPreElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::isPresentationAttribute):
+        (WebCore::HTMLSelectElement::parseAttribute):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::isPresentationAttribute):
+        (WebCore::HTMLTableCaptionElement::parseAttribute):
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::isPresentationAttribute):
+        (WebCore::HTMLTableCellElement::collectStyleForAttribute):
+        (WebCore::HTMLTableCellElement::parseAttribute):
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::isPresentationAttribute):
+        (WebCore::HTMLTableColElement::parseAttribute):
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::isPresentationAttribute):
+        (WebCore::HTMLTableElement::parseAttribute):
+        * html/HTMLTableElement.h:
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::isPresentationAttribute):
+        (WebCore::HTMLTablePartElement::collectStyleForAttribute):
+        * html/HTMLTablePartElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::isPresentationAttribute):
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::isPresentationAttribute):
+        (WebCore::HTMLUListElement::collectStyleForAttribute):
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::isPresentationAttribute):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * html/HTMLVideoElement.h:
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationAttribute):
+        (WebCore::MathMLElement::collectStyleForAttribute):
+        * mathml/MathMLElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isPresentationAttribute):
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isPresentationAttribute):
+        (WebCore::SVGStyledElement::parseAttribute):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isPresentationAttribute):
+        (WebCore::SVGTextContentElement::parseAttribute):
+        * svg/SVGTextContentElement.h:
+
 2012-02-13  Kentaro Hara  <haraken@chromium.org>
 
         Add [JSCustomToJSObject] IDL attribute to interfaces that have
