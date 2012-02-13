@@ -217,7 +217,6 @@ WebInspector.ScriptsNavigator.prototype = {
             }
             treeElement = parent;
         }
-        this._scriptTreeElementsByUISourceCode.remove(uiSourceCode);
     },
     
     _showScriptFoldersSettingChanged: function()
@@ -228,8 +227,7 @@ WebInspector.ScriptsNavigator.prototype = {
         for (var i = 0; i < uiSourceCodes.length; ++i)
             this.addUISourceCode(uiSourceCodes[i]);
         
-        if (this._lastSelectedUISourceCode)
-            this.revealUISourceCode(this._lastSelectedUISourceCode);
+        this.revealUISourceCode(this._lastSelectedUISourceCode);
     },
     
     reset: function()

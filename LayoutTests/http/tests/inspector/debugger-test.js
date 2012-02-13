@@ -153,13 +153,14 @@ InspectorTest._resumedScript = function()
     }
 };
 
-InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callback)
+InspectorTest.showScriptSource = function(scriptName, callback)
 {
-    var uiSourceCodes = panel._presentationModel.uiSourceCodes();
-    for (var i = 0; i < uiSourceCodes.length; ++i) {
-        if (uiSourceCodes[i].fileName === scriptName) {
-            panel.showUISourceCode(uiSourceCodes[i]);
-            var sourceFrame = panel.visibleView;
+    var filesSelect = document.getElementById("scripts-files");
+    for (var i = 0; i < filesSelect.length; ++i) {
+        if (filesSelect[i]._uiSourceCode && filesSelect[i]._uiSourceCode.fileName === scriptName) {
+            filesSelect.selectedIndex = i;
+            WebInspector.panels.scripts._fileSelector._filesSelectChanged();
+            var sourceFrame = WebInspector.panels.scripts.visibleView;
             if (sourceFrame.loaded)
                 callback(sourceFrame);
             else
@@ -167,47 +168,7 @@ InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callb
             return;
         }
     }
-    InspectorTest.addSniffer(panel, "_addUISourceCode", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
-};
-
-InspectorTest.showScriptSource = function(scriptName, callback)
-{
-    InspectorTest.showScriptSourceOnScriptsPanel(WebInspector.panels.scripts, scriptName, callback)
-};
-
-InspectorTest.dumpScriptsNavigator = function(navigator)
-{
-    InspectorTest.addResult("Dumping ScriptsNavigator 'Scripts' tab:");
-    dumpNavigatorTreeOutline(navigator._navigatorScriptsTree);
-    InspectorTest.addResult("Dumping ScriptsNavigator 'Content scripts' tab:");
-    dumpNavigatorTreeOutline(navigator._navigatorContentScriptsTree);
-
-    function dumpNavigatorTreeElement(prefix, treeElement)
-    {
-        InspectorTest.addResult(prefix + treeElement.titleText);
-        for (var i = 0; i < treeElement.children.length; ++i)
-            dumpNavigatorTreeElement(prefix + "  ", treeElement.children[i]);
-    }
-
-    function dumpNavigatorTreeOutline(treeOutline)
-    {
-        for (var i = 0; i < treeOutline.children.length; ++i)
-            dumpNavigatorTreeElement("  ", treeOutline.children[i]);
-    }
-};
-
-InspectorTest.dumpComboBoxFileSelector = function(comboBoxFileSelector)
-{
-    var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
-    InspectorTest.addResult("Dumping ComboBoxFileSelector:");
-    var select = comboBoxFileSelector._filesSelectElement;
-    for (var i = 0; i < select.length; ++i) {
-        var option = select[i];
-        var text = option.text.replace(/.*LayoutTests/, "LayoutTests");
-        text = text.replace(/\u00a0/g, " ").replace(/\u2026/g, "...");
-        var tooltip = option.title.replace(rootURL, "<root>/");
-        InspectorTest.addResult(text + (tooltip ? "(" + tooltip + ")" : ""));
-    }
+    InspectorTest.addSniffer(WebInspector.panels.scripts._fileSelector, "_addOptionToFilesSelect", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabled)
