@@ -104,7 +104,6 @@ namespace JSC {
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
-        JS_EXPORT_PRIVATE static bool allowsAccessFrom(JSObject*, ExecState*);
 
         JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
@@ -551,6 +550,12 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Ide
         return true;
     }
 
+    // non-standard Netscape extension
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        slot.setValue(prototype());
+        return true;
+    }
+
     return false;
 }
 
@@ -798,6 +803,8 @@ inline JSValue JSValue::get(ExecState* exec, const Identifier& propertyName, Pro
 {
     if (UNLIKELY(!isCell())) {
         JSObject* prototype = synthesizePrototype(exec);
+        if (propertyName == exec->propertyNames().underscoreProto)
+            return prototype;
         if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
         return slot.getValue(exec, propertyName);

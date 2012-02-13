@@ -132,19 +132,33 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     JSGlobalData& globalData = exec->globalData();
 
-    // Check if there are any setters or getters in the prototype chain
-    JSValue prototype;
-    if (propertyName != exec->propertyNames().underscoreProto) {
-        for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
-            prototype = obj->prototype();
-            if (prototype.isNull()) {
-                if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
-                    throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-                return;
-            }
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
+        if (!value.isObject() && !value.isNull())
+            return;
+
+        if (!thisObject->isExtensible()) {
+            if (slot.isStrictMode())
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
         }
+            
+        if (!thisObject->setPrototypeWithCycleCheck(globalData, value))
+            throwError(exec, createError(exec, "cyclic __proto__ value"));
+        return;
     }
 
+    // Check if there are any setters or getters in the prototype chain
+    JSValue prototype;
+    for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
+        prototype = obj->prototype();
+        if (prototype.isNull()) {
+            if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
+        }
+    }
+    
     unsigned attributes;
     JSCell* specificValue;
     if ((thisObject->structure()->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
@@ -201,14 +215,10 @@ void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identif
     object->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, value, attributes, slot, getJSFunction(value));
 }
 
-bool JSObject::allowsAccessFrom(JSObject*, ExecState*)
-{
-    return true;
-}
-
 void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(value.isGetterSetter() && (attributes & Accessor));
+    ASSERT(propertyName != globalData.propertyNames->underscoreProto);
 
     PutPropertySlot slot;
     putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getJSFunction(value));
@@ -219,7 +229,7 @@ void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& pro
     if (slot.type() != PutPropertySlot::NewProperty)
         setStructure(globalData, Structure::attributeChangeTransition(globalData, structure(), propertyName, attributes));
 
-    structure()->setHasGetterSetterProperties(propertyName == globalData.propertyNames->underscoreProto);
+    structure()->setHasGetterSetterProperties(true);
 }
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
@@ -619,6 +629,11 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
 
 bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
+    // __proto__ is magic; we don't currently support setting it as a regular property.
+    // Silent filter out calls to set __proto__ at an early stage; pretend all is okay.
+    if (propertyName == exec->propertyNames().underscoreProto)
+        return true;
+
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
     if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, current)) {

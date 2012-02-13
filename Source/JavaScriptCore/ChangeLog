@@ -1,3 +1,43 @@
+2012-02-13  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=78434
+        Unreviewed - temporarily reverting r107498 will I fix a couple of testcases.
+
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        (JSC):
+        * runtime/JSCell.cpp:
+        (JSC):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC):
+        * runtime/JSGlobalObjectFunctions.h:
+        (JSC):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSValue::get):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot):
+        * runtime/JSValue.h:
+        (JSValue):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        (JSC::Structure::setHasGetterSetterProperties):
+        (Structure):
+
 2012-02-12  Ashod Nakashian  <ashodnakashian@yahoo.com>
 
         KeywordLookupGenerator.py script fails in some cases

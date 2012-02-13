@@ -55,14 +55,7 @@ shouldBeTrue("Object.__proto__.isPrototypeOf(Date)");
 shouldBeTrue("Object.__proto__.isPrototypeOf(Number)");
 shouldBeTrue("Object.__proto__.isPrototypeOf(String)");
 
-shouldBeTrue("var wasSet = false; var o = { }; o.__defineGetter__(\"__proto__\", function() { wasSet = true }); o.__proto__; wasSet;");
-shouldBeTrue("var wasSet = false; var o = { }; o.__defineSetter__(\"__proto__\", function() { wasSet = true }); o.__proto__ = {}; wasSet;");
-shouldBeTrue("var wasSet = false; var o = { }; Object.defineProperty(o, \"__proto__\", { \"get\": function() { wasSet = true } }); o.__proto__; wasSet;");
+shouldBeFalse("var wasSet = false; var o = { }; o.__defineGetter__(\"__proto__\", function() { wasSet = true }); o.__proto__; wasSet;");
+shouldBeFalse("var wasSet = false; var o = { }; o.__defineSetter__(\"__proto__\", function() { wasSet = true }); o.__proto__ = {}; wasSet;");
+shouldBeFalse("var wasSet = false; var o = { }; Object.defineProperty(o, \"__proto__\", { \"get\": function() { wasSet = true } }); o.__proto__; wasSet;");
 shouldBeFalse("var wasSet = false; var o = { }; Object.defineProperty(o, \"__proto__\", { \"__proto__\": function(x) { wasSet = true } }); o.__proto__ = {}; wasSet;");
-
-// Deleting Object.prototype.__proto__ removes the ability to set the object's prototype.
-shouldBeTrue("var o = {}; o.__proto__ = { x:true }; o.x");
-shouldBeFalse("var o = {}; o.__proto__ = { x:true }; o.hasOwnProperty('__proto__')");
-delete Object.prototype.__proto__;
-shouldBeUndefined("var o = {}; o.__proto__ = { x:true }; o.x");
-shouldBeTrue("var o = {}; o.__proto__ = { x:true }; o.hasOwnProperty('__proto__')");

@@ -161,7 +161,6 @@ namespace JSC {
         static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
         static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
-        static bool allowsAccessFrom(JSObject*, ExecState*);
 
     private:
         const ClassInfo* m_classInfo;

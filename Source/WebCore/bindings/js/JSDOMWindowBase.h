@@ -63,8 +63,7 @@ namespace WebCore {
         static bool supportsProfiling(const JSC::JSGlobalObject*);
         static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
         static bool shouldInterruptScript(const JSC::JSGlobalObject*);
-        static bool allowsAccessFrom(JSC::JSObject*, JSC::ExecState*);
-        
+
         bool allowsAccessFrom(JSC::ExecState*) const;
         bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
         bool allowsAccessFrom(JSC::ExecState*, String& message) const;

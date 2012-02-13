@@ -347,10 +347,10 @@ invalid("L: L1: L2: L3: L4: L: ;");
 invalid("for(var a,b 'this shouldn\'t be allowed' false ; ) ;");
 invalid("for(var a,b '");
 
-valid("function __proto__(){}")
-valid("(function __proto__(){})")
-valid("'use strict'; function __proto__(){}")
-valid("'use strict'; (function __proto__(){})")
+invalid("function __proto__(){}")
+invalid("(function __proto__(){})")
+invalid("'use strict'; function __proto__(){}")
+invalid("'use strict'; (function __proto__(){})")
 
 valid("if (0) $foo; ")
 valid("if (0) _foo; ")

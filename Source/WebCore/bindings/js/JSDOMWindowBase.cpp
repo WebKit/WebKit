@@ -92,11 +92,6 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
     printErrorMessageForFrame(impl()->frame(), message);
 }
 
-bool JSDOMWindowBase::allowsAccessFrom(JSObject* thisObject, ExecState* exec)
-{
-    return static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec);
-}
-
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 {
 #if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)

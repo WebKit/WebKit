@@ -774,6 +774,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     functionScope->setIsFunction();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
+        failIfTrueWithMessage(*name == m_globalData->propertyNames->underscoreProto, "Cannot name a function __proto__");
         next();
         if (!nameIsInContainingScope)
             failIfFalseIfStrict(functionScope->declareVariable(name));
