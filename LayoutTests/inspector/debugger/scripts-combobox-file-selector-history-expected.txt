@@ -1,0 +1,1 @@
+Tests scripts panel combo box file selector history.

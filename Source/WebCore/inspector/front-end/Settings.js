@@ -168,8 +168,6 @@ WebInspector.ExperimentsSettings = function()
     this._enabledForTest = {};
     
     // Add currently running experiments here.
-    // FIXME: Move out from experiments once navigator is production-ready.
-    this.useScriptsNavigator = this._createExperiment("useScriptsNavigator", "Use file navigator and tabbed editor container in scripts panel");
     this.sourceFrameAlwaysEditable = this._createExperiment("sourceFrameAlwaysEditable", "Make resources always editable");
     this.freeFlowDOMEditing = this._createExperiment("freeFlowDOMEditing", "Enable free flow DOM editing");
     this.showMemoryCounters = this._createExperiment("showMemoryCounters", "Show memory counters in Timeline panel");

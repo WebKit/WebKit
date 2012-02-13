@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+function test()
+{
+    // Always use indentation in scripts drop box
+    WebInspector._isMac = false;
+
+    var navigatorFileSelector = new WebInspector.ScriptsNavigator();
+    var comboBoxFileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector();
+
+    function addUISourceCode(url, isContentScript)
+    {
+        var uiSourceCode = new WebInspector.UISourceCode(0, url, null, null);
+        uiSourceCode.isContentScript = isContentScript;
+        navigatorFileSelector.addUISourceCode(uiSourceCode);
+        comboBoxFileSelector.addUISourceCode(uiSourceCode);
+    }
+
+    var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
+    addUISourceCode(rootURL + "foo/bar/script.js", false);
+    addUISourceCode(rootURL + "foo/bar/contentScript2.js?a=1", true);
+    addUISourceCode(rootURL + "foo/bar/script.js?a=2", false);
+    addUISourceCode(rootURL + "foo/bar/contentScript.js?a=2", true);
+    addUISourceCode(rootURL + "foo/bar/script.js?a=1", false);
+    addUISourceCode(rootURL + "foo/baz/script.js", false);
+    addUISourceCode(rootURL + "foo/bar/contentScript.js?a=1", true);
+    addUISourceCode("http://example.com/?a=b", false);
+    addUISourceCode("?a=b", false);
+    addUISourceCode("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
+
+    InspectorTest.dumpComboBoxFileSelector(comboBoxFileSelector)
+    InspectorTest.dumpScriptsNavigator(navigatorFileSelector);
+
+    InspectorTest.completeTest();
+}
+</script>
+
+</head>
+<body onload="runTest()">
+<p>
+Tests scripts panel file selectors.
+</p>
+</body>
+
+</html>

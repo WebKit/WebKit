@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
 
 <script>
 
@@ -9,12 +10,15 @@ function test()
     // Always use indentation in scripts drop box
     WebInspector._isMac = false;
 
+    var uiSourceCodes;
     function createDebuggerPresentationModelMock()
     {
         var model = new WebInspector.Object();
         model.breakpointsForUISourceCode = function() { return []; };
         model.messagesForUISourceCode = function() { return []; };
         model.canEditScriptSource = function() { return true; };
+        uiSourceCodes = [];
+        model.uiSourceCodes = function() { return uiSourceCodes.slice(); };
         return model;
     }
     function createUISouceCode(url)
@@ -25,19 +29,8 @@ function test()
             InspectorTest.addResult("Source requested for " + url);
             callback("");
         };
+        uiSourceCodes.push(uiSourceCode);
         return uiSourceCode;
-    }
-
-    function showSourceFrame(panel, fileName)
-    {
-        var select = panel._fileSelector._filesSelectElement;
-        for (var i = 0; i < select.length; ++i) {
-            if (select[i].text.indexOf(fileName) === -1)
-                continue;
-            select.selectedIndex = i;
-            panel._fileSelector._filesSelectChanged();
-            break;
-        }
     }
 
     InspectorTest.runTestSuite([
@@ -45,6 +38,28 @@ function test()
         {
             var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
+            panel.show();
+
+            var uiSourceCodeBAZ = createUISouceCode("baz.js");
+            panel._uiSourceCodeAdded({ data: createUISouceCode("foo.js") });
+            panel._uiSourceCodeAdded({ data: createUISouceCode("bar.js") });
+            panel._uiSourceCodeAdded({ data: uiSourceCodeBAZ });
+
+            InspectorTest.dumpScriptsNavigator(panel._navigator);
+
+            // Select "baz.js".
+            panel._showFile(uiSourceCodeBAZ);
+            panel.detach();
+
+            next();
+        },
+
+        function testInitialLoadWithComboBoxFileSelector(next)
+        {
+            var model = createDebuggerPresentationModelMock();
+            WebInspector.settings.useScriptsNavigator.set(false);
+            var panel = new WebInspector.ScriptsPanel(model);
+            WebInspector.settings.useScriptsNavigator.set(true);
             panel.show();
 
             panel._uiSourceCodeAdded({ data: createUISouceCode("foo.js") });
@@ -68,102 +83,6 @@ function test()
             next();
         },
 
-        function testHistory(next)
-        {
-            var model = createDebuggerPresentationModelMock();
-            var panel = new WebInspector.ScriptsPanel(model);
-            panel.show();
-
-            var files = ["index.html", "script1.js", "script2.js", "script3.js"];
-            for (var i = 0; i < files.length; ++i)
-                panel._uiSourceCodeAdded({ data: createUISouceCode(files[i]) });
-
-            function checkCurrentlySelectedFileName(fileName)
-            {
-                var index = panel._fileSelector._filesSelectElement.selectedIndex;
-                var text = panel._fileSelector._filesSelectElement[index].text;
-                InspectorTest.assertTrue(text.indexOf(fileName) !== -1,
-                    "Wrong option text. Expected <" + fileName + ">, found <" + text + ">.");
-            }
-
-            for (var i = 0; i < files.length; ++i)
-                showSourceFrame(panel, files[i]);
-            checkCurrentlySelectedFileName("script3.js");
-            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled, "Forward should be disabled.");
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("script2.js");
-            InspectorTest.assertEquals(false, panel._fileSelector.forwardButton.disabled, "Forward should be enabled after back button click.");
-
-            panel._fileSelector.forwardButton.click();
-            checkCurrentlySelectedFileName("script3.js");
-            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled, "Forward should be disabled after forward button click.");
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("script2.js");
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("script1.js");
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("index.html");
-
-            panel._fileSelector.forwardButton.click();
-            panel._fileSelector.forwardButton.click();
-            checkCurrentlySelectedFileName("script2.js");
-
-            showSourceFrame(panel, "script1.js");
-            checkCurrentlySelectedFileName("script1.js");
-            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled);
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("script2.js");
-
-            panel._fileSelector.backButton.click();
-            checkCurrentlySelectedFileName("index.html");
-
-            panel.detach();
-            next();
-        },
-
-        function testFilesSelect(next)
-        {
-            var model = createDebuggerPresentationModelMock();
-            var panel = new WebInspector.ScriptsPanel(model);
-            panel.show();
-
-            var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
-            var nextId = 0;
-            function addOption(url, isContentScript)
-            {
-                var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
-                uiSourceCode.isContentScript = isContentScript;
-                panel._fileSelector._addOptionToFilesSelect(uiSourceCode);
-            }
-            addOption(rootURL + "foo/bar/script.js", false);
-            addOption(rootURL + "foo/bar/contentScript2.js?a=1", true);
-            addOption(rootURL + "foo/bar/script.js?a=2", false);
-            addOption(rootURL + "foo/bar/contentScript.js?a=2", true);
-            addOption(rootURL + "foo/bar/script.js?a=1", false);
-            addOption(rootURL + "foo/baz/script.js", false);
-            addOption(rootURL + "foo/bar/contentScript.js?a=1", true);
-            addOption("http://example.com/?a=b", false);
-            addOption("?a=b", false);
-            addOption("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
-
-            var select = panel._fileSelector._filesSelectElement;
-            for (var i = 0; i < select.length; ++i) {
-                var option = select[i];
-                var text = option.text.replace(/.*LayoutTests/, "LayoutTests");
-                text = text.replace(/\u00a0/g, " ").replace(/\u2026/g, "...");
-                var tooltip = option.title.replace(rootURL, "<root>/");
-                InspectorTest.addResult(text + (tooltip ? "(" + tooltip + ")" : ""));
-            }
-
-            panel.detach();
-            next();
-        },
-
         function testSourceReplaced(next)
         {
             var model = createDebuggerPresentationModelMock();
@@ -174,23 +93,63 @@ function test()
             var compiledSourceCode = createUISouceCode("compiled.js");
             panel._uiSourceCodeAdded({ data: compiledSourceCode });
 
-            InspectorTest.assertEquals(2, panel._fileSelector._filesSelectElement.length);
+            InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
             var source1SourceCode = createUISouceCode("source1.js");
             var source2SourceCode = createUISouceCode("source2.js");
             panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [compiledSourceCode], uiSourceCodeList: [source1SourceCode, source2SourceCode] }});
 
-            InspectorTest.assertEquals(3, panel._fileSelector._filesSelectElement.length);
-            showSourceFrame(panel, "source2.js");
-            showSourceFrame(panel, "source1.js");
+            InspectorTest.dumpScriptsNavigator(panel._navigator);
+            InspectorTest.showScriptSourceOnScriptsPanel(panel, "source2.js", step2);
 
-            // Unplug compiler source mapping.
-            panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [source1SourceCode, source2SourceCode], uiSourceCodeList: [compiledSourceCode] }});
-            InspectorTest.assertEquals(2, panel._fileSelector._filesSelectElement.length);
+            function step2() {
+                InspectorTest.showScriptSourceOnScriptsPanel(panel, "source1.js", step3);
+            }
 
-            panel.detach();
-            next();
+            function step3() {
+                // Unplug compiler source mapping.
+                panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [source1SourceCode, source2SourceCode], uiSourceCodeList: [compiledSourceCode] }});
+                InspectorTest.dumpScriptsNavigator(panel._navigator);
+
+                panel.detach();
+                next();
+            }
+        },
+
+        function testSourceReplacedWithComboBoxFileSelector(next)
+        {
+            var model = createDebuggerPresentationModelMock();
+            WebInspector.settings.useScriptsNavigator.set(false);
+            var panel = new WebInspector.ScriptsPanel(model);
+            WebInspector.settings.useScriptsNavigator.set(true);
+            panel.show();
+
+            panel._uiSourceCodeAdded({ data: createUISouceCode("foo.js") });
+            var compiledSourceCode = createUISouceCode("compiled.js");
+            panel._uiSourceCodeAdded({ data: compiledSourceCode });
+
+            InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
+
+            // Plug compiler source mapping.
+            var source1SourceCode = createUISouceCode("source1.js");
+            var source2SourceCode = createUISouceCode("source2.js");
+            panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [compiledSourceCode], uiSourceCodeList: [source1SourceCode, source2SourceCode] }});
+            InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
+            InspectorTest.showScriptSourceOnScriptsPanel(panel, "source2.js", step2);
+
+            function step2() {
+                InspectorTest.showScriptSourceOnScriptsPanel(panel, "source1.js", step3);
+            }
+
+            function step3() {
+                // Unplug compiler source mapping.
+                panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [source1SourceCode, source2SourceCode], uiSourceCodeList: [compiledSourceCode] }});
+                InspectorTest.dumpComboBoxFileSelector(panel._fileSelector);
+
+                panel.detach();
+                next();
+            }
         }
     ]);
 };

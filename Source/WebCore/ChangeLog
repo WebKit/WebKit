@@ -1,3 +1,32 @@
+2012-02-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Make ScriptsNavigator default file selector.
+        https://bugs.webkit.org/show_bug.cgi?id=78349
+
+        Reviewed by Pavel Feldman.
+
+        Moved ScriptsNavigator out of experiments.
+        Introduced new setting "useScriptsNavigator" with true as default value.
+        Updated scripts panel tests related to file selector.
+
+        Tests: inspector/debugger/scripts-combobox-file-selector-history.html
+               inspector/debugger/scripts-file-selector.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCodes):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype._removeUISourceCode):
+        (WebInspector.ScriptsNavigator.prototype._showScriptFoldersSettingChanged):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded):
+        (WebInspector.ScriptsPanel.prototype._addUISourceCode):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2012-02-13  Andreas Kling  <awesomekling@apple.com>
 
         Make HTMLTableCaptionElement inherit from HTMLElement.
