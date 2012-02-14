@@ -1,3 +1,19 @@
+2012-02-14  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Upstream backing store related classes
+        https://bugs.webkit.org/show_bug.cgi?id=78517
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebKitSupport/BackingStoreClient.cpp: Added.
+        * blackberry/WebKitSupport/BackingStoreClient.h: Added.
+        * blackberry/WebKitSupport/BackingStoreCompositingSurface.cpp: Added.
+        * blackberry/WebKitSupport/BackingStoreCompositingSurface.h: Added.
+        * blackberry/WebKitSupport/BackingStoreTile.cpp: Added.
+        * blackberry/WebKitSupport/BackingStoreTile.h: Added.
+
 2012-02-13  Nima Ghanavatian  <nghanavatian@rim.com>
 
         Initial upstreaming of selection handling code for BlackBerry port
