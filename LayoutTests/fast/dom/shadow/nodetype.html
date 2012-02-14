@@ -16,9 +16,9 @@ This tests the shadow host's and shadow root's nodeType.
         var shadow = internals.shadowRoot(keygen);
         var shadowChild = shadow.firstChild;
         shouldBe('keygen.nodeType', 'Node.ELEMENT_NODE');
-        shouldBe('shadow.nodeType', '14');
+        shouldBe('shadow.nodeType', 'Node.DOCUMENT_FRAGMENT_NODE');
         shouldBeNonNull('shadowChild');
-        shouldBeTrue('shadowChild.nodeType != 14');
+        shouldBeTrue('shadowChild.nodeType != Node.DOCUMENT_FRAGMENT_NODE');
     }
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

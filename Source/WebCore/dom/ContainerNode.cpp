@@ -69,7 +69,7 @@ static inline void collectNodes(Node* node, NodeVector& nodes)
 
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
-    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE || node->isShadowRoot()) {
         nodes.append(node);
         return;
     }
@@ -298,7 +298,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     // that no callers call with ref count == 0 and parent = 0 (as of this
     // writing, there are definitely callers who call that way).
 
-    bool isFragment = newChild->nodeType() == DOCUMENT_FRAGMENT_NODE;
+    bool isFragment = newChild->nodeType() == DOCUMENT_FRAGMENT_NODE && !newChild->isShadowRoot();
 
     // Add the new child(ren)
     RefPtr<Node> child = isFragment ? newChild->firstChild() : newChild;

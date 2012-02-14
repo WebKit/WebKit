@@ -256,9 +256,6 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
         case Node::DOCUMENT_FRAGMENT_NODE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DocumentFragment, node);
             break;
-        case Node::SHADOW_ROOT_NODE:
-            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Node, node);
-            break;
         case Node::ENTITY_REFERENCE_NODE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, EntityReference, node);
             break;

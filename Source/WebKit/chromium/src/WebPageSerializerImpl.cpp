@@ -417,7 +417,6 @@ void WebPageSerializerImpl::buildContentForNode(Node* node,
     case Node::ATTRIBUTE_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
-    case Node::SHADOW_ROOT_NODE:
         // Should not exist.
         ASSERT_NOT_REACHED();
         break;

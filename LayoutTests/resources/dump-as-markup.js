@@ -215,8 +215,9 @@ Markup._get = function(node, depth)
                 str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';
 
         break;
-    case 14: // See SHADOW_ROOT_NODE on Node::NodeType
-        str += "<shadow:root>";
+    case Node.DOCUMENT_FRAGMENT_NODE:
+        if (node.nodeName == "#shadow-root")
+          str += "<shadow:root>";
     }
 
     for (var i = 0, len = node.childNodes.length; i < len; i++) {

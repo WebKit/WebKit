@@ -425,10 +425,17 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
         position.moveToOffset(positionOffset - oldLength + newLength);
 }
 
+static inline bool nodeIsDetachedFromDocument(Node* node)
+{
+    ASSERT(node);
+    Node* highest = highestAncestor(node);
+    return highest->nodeType() == Node::DOCUMENT_FRAGMENT_NODE && !highest->isShadowRoot();
+}
+
 void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
     // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
-    if (isNone() || !node || highestAncestor(node)->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
+    if (isNone() || !node || nodeIsDetachedFromDocument(node))
         return;
 
     Position base = m_selection.base();
