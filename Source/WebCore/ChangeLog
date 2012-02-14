@@ -1,3 +1,20 @@
+2012-02-13  Arun Patole  <bmf834@motorola.com>
+
+        Chrome crashes when attempting to add cue to track element
+        https://bugs.webkit.org/show_bug.cgi?id=77951
+
+        Reviewed by Eric Carlson.
+
+        Allocate text track's text track list of cues before using it.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::cues):
+        (WebCore::TextTrack::addCue):
+        (WebCore::TextTrack::removeCue): return if text track list of cues is not allocated.
+        (WebCore::TextTrack::ensureTextTrackCueList):Added.
+        * html/TextTrack.h:
+        (TextTrack):
+
 2012-02-13  Andy Estes  <aestes@apple.com>
 
         Fix the Windows build.

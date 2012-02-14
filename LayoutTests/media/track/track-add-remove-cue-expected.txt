@@ -30,6 +30,22 @@ EXPECTED (cues[1].startTime == '31') OK
 EXPECTED (cues[2].startTime == '33') OK
 EXPECTED (cues[3].startTime == '61') OK
 
+*** create a new cue and add it to a track created with video.addTextTrack, make sure it is inserted correctly.
+RUN(newTrack = video.addTextTrack("subtitles", "French subtitles", "fr"))
+RUN(newTrack.addCue(new TextTrackCue("test", 0.0, 1.0, "Test!")))
+RUN(newCue = newTrack.cues[0])
+EXPECTED (newCue.track == '[object TextTrack]') OK
+EXPECTED (newCue.id == 'test') OK
+EXPECTED (newCue.startTime == '0') OK
+EXPECTED (newCue.endTime == '1') OK
+EXPECTED (newCue.pauseOnExit == 'false') OK
+EXPECTED (newCue.direction == 'horizontal') OK
+EXPECTED (newCue.snapToLines == 'true') OK
+EXPECTED (newCue.linePosition == '-1') OK
+EXPECTED (newCue.textPosition == '50') OK
+EXPECTED (newCue.size == '100') OK
+EXPECTED (newCue.alignment == 'middle') OK
+
 *** Remove a cue created with addCue().
 RUN(testTrack.track.removeCue(textCue))
 EXPECTED (textCue.track == 'null') OK

@@ -155,16 +155,13 @@ TextTrack::Mode TextTrack::mode() const
 
 TextTrackCueList* TextTrack::cues()
 {
-    if (!m_cues)
-        m_cues = TextTrackCueList::create();    
-
     // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
     // then the cues attribute must return a live TextTrackCueList object ...
     // Otherwise, it must return null. When an object is returned, the
     // same object must be returned each time.
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-cues
-    if (m_cues && m_mode != TextTrack::DISABLED)
-        return m_cues.get();
+    if (m_mode != TextTrack::DISABLED)
+        return ensureTextTrackCueList();
     return 0;
 }
 
@@ -208,7 +205,7 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
     // 3. If the given cue is already listed in the method's TextTrack object's text
     // track's text track list of cues, then throw an InvalidStateError exception.
     // 4. Add cue to the method's TextTrack object's text track's text track list of cues.
-    if (!m_cues->add(cue)) {
+    if (!ensureTextTrackCueList()->add(cue)) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -236,7 +233,7 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
     // 2. If the given cue is not currently listed in the method's TextTrack 
     // object's text track's text track list of cues, then throw a NotFoundError exception.
     // 3. Remove cue from the method's TextTrack object's text track's text track list of cues.
-    if (!m_cues->remove(cue)) {
+    if (!m_cues || !m_cues->remove(cue)) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -269,6 +266,14 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
 
     // ... and add it back again.
     m_client->textTrackAddCue(this, cue);
+}
+
+TextTrackCueList* TextTrack::ensureTextTrackCueList()
+{
+    if (!m_cues)
+        m_cues = TextTrackCueList::create();
+
+    return m_cues.get();
 }
 
 } // namespace WebCore

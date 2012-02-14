@@ -114,6 +114,7 @@ protected:
     RefPtr<TextTrackCueList> m_cues;
 
 private:
+    TextTrackCueList* ensureTextTrackCueList();
     HTMLMediaElement* m_mediaElement;
     String m_kind;
     String m_label;
