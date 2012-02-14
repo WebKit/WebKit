@@ -1576,9 +1576,6 @@ fast/text/font-kerning.html
 # Needs custom policy delegate enhancement to log downloads
 http/tests/download
 
-# https://bugs.webkit.org/show_bug.cgi?id=76632
-fast/forms/implicit-submission.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=77015
 fast/events/clear-drag-state.html
 fast/events/clear-edit-drag-state.html
