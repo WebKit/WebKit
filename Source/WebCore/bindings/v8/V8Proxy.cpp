@@ -428,6 +428,9 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
 
     v8::Local<v8::Value> result;
     {
+#if PLATFORM(CHROMIUM)
+        TRACE_EVENT0("v8", "v8.callFunction");
+#endif
         V8RecursionScope recursionScope(frame ? frame->document() : 0);
         result = function->Call(receiver, argc, args);
     }
@@ -442,6 +445,10 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
 
 v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, int argc, v8::Handle<v8::Value> args[])
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT0("v8", "v8.newInstance");
+#endif
+
     // No artificial limitations on the depth of recursion, see comment in
     // V8Proxy::callFunction.
     v8::Local<v8::Value> result;

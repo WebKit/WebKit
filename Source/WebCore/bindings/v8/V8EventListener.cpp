@@ -79,10 +79,6 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT("V8EventListener::callListenerFunction", this, 0);
-#endif
-
     if (V8Proxy* proxy = V8Proxy::retrieve(context)) {
         Frame* frame = static_cast<Document*>(context)->frame();
         if (frame->script()->canExecuteScripts(AboutToExecuteScript))
