@@ -1,3 +1,15 @@
+2012-02-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Upstreaming DOMSupport files
+        https://bugs.webkit.org/show_bug.cgi?id=78607
+
+        Reviewed by Rob Buis.
+
+        Initial upstreaming, no new tests.
+
+        * blackberry/WebKitSupport/DOMSupport.cpp: Added.
+        * blackberry/WebKitSupport/DOMSupport.h: Added.
+
 2012-02-14  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Remove OpenVG references
