@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function testFunction()
+{
+    functionBar();
+}
+
+function functionBar()
+{
+    functionBaz();
+}
+
+function functionBaz()
+{
+    debugger;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        InspectorFrontendHost.copyText = InspectorTest.addResult.bind(InspectorTest);
+        WebInspector.panels.scripts.sidebarPanes.callstack._copyStackTrace();
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger will copy valid stack trace upon context menu action.
+</p>
+
+</body>
+</html>

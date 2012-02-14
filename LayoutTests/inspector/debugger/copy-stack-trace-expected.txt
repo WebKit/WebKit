@@ -1,0 +1,12 @@
+Tests that debugger will copy valid stack trace upon context menu action.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+functionBaz (copy-stack-trace.html:19)
+functionBar (copy-stack-trace.html:14)
+testFunction (copy-stack-trace.html:9)
+
+Script execution resumed.
+Debugger was disabled.
+
