@@ -1,3 +1,10 @@
+2012-02-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Typo fix after r107707.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::updateBackingStore):
+
 2012-02-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] extract TimelineOverviewWindow from TimelineOverviewPanel
