@@ -1,3 +1,14 @@
+2012-02-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Merge WebKitEfl.cmake into FindEFL.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=78566
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/FindEFL.cmake: Move the code to find edje_cc here from
+        WebKitEfl.cmake.
+        * Source/cmake/WebKitEfl.cmake: Removed.
+
 2012-02-14  Shinya Kawanaka  <shinyak@google.com>
 
         Use youngestShadowRoot and oldestShadowRoot instead of Element::shadowRoot().
