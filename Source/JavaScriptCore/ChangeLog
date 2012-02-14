@@ -1,3 +1,9 @@
+2012-02-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        More windows build fixing
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-13  Oliver Hunt  <oliver@apple.com>
 
         Executing out of bounds in JSC::Yarr::YarrCodeBlock::execute / JSC::RegExp::match
