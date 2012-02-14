@@ -49,6 +49,7 @@ public:
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , refreshRate(0)
+            , perTilePainting(false)
             , partialSwapEnabled(false) { }
 
         bool acceleratePainting;
@@ -56,6 +57,7 @@ public:
         bool showFPSCounter;
         bool showPlatformLayerTree;
         double refreshRate;
+        bool perTilePainting;
         bool partialSwapEnabled;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;

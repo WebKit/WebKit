@@ -1,3 +1,18 @@
+2012-02-14  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Expose perTilePainting setting through WebLayerTreeView::Settings interface.
+        https://bugs.webkit.org/show_bug.cgi?id=76937
+
+        Reviewed by James Robinson.
+
+        Add perTilePainting to WebLayerTreeView::Settings.
+
+        * public/platform/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+
 2012-02-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Make ScriptsNavigator default file selector.
