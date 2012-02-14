@@ -47,6 +47,21 @@ DEVICE_DRT_STDERR = DEVICE_DRT_DIR + 'DumpRenderTree.stderr'
 DEVICE_FORWARDER_PATH = DEVICE_DRT_DIR + 'forwarder'
 DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 
+# This only works for single core devices so far.
+# FIXME: Find a solution for multi-core devices.
+SCALING_GOVERNOR = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+
+# All the test cases are still served to DumpRenderTree through file protocol,
+# but we use a file-to-http feature to bridge the file request to host's http
+# server to get the real test files and corresponding resources.
+TEST_PATH_PREFIX = '/all-tests'
+
+# All ports the Android forwarder to forward.
+# 8000, 8080 and 8443 are for http/https tests.
+# 8880 and 9323 are for websocket tests
+# (see http_server.py, apache_http_server.py and websocket_server.py).
+FORWARD_PORTS = '8000 8080 8443 8880 9323'
+
 MS_TRUETYPE_FONTS_DIR = '/usr/share/fonts/truetype/msttcorefonts/'
 
 # List of fonts that layout tests expect, copied from DumpRenderTree/gtk/TestShellGtk.cpp.
@@ -194,6 +209,13 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         self._push_executable()
         self._push_fonts()
         self._setup_system_font_for_test()
+        self._synchronize_datetime()
+
+        # Start the HTTP server so that the device can access the test cases.
+        chromium.ChromiumPort.start_http_server(self, additional_dirs={TEST_PATH_PREFIX: self.layout_tests_dir()})
+
+        _log.debug('Starting forwarder')
+        cmd = self._run_adb_command(['shell', '%s %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
 
     def stop_helper(self):
         self._restore_system_font()
@@ -287,6 +309,36 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         _log.debug('Pushing test resources')
         for resource in TEST_RESOURCES_TO_PUSH:
             self._push_to_device(self.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
+
+    def _synchronize_datetime(self):
+        # The date/time between host and device may not be synchronized.
+        # We need to make them synchronized, otherwise tests might fail.
+        try:
+            # Get seconds since 1970-01-01 00:00:00 UTC.
+            host_datetime = self._executive.run_command(['date', '-u', '+%s'])
+        except:
+            # Reset to 1970-01-01 00:00:00 UTC.
+            host_datetime = 0
+        self._run_adb_command(['shell', 'date -u %s' % (host_datetime)])
+
+    def _check_version(self, dir, version):
+        assert(dir.endswith('/'))
+        try:
+            device_version = int(self._run_adb_command(['shell', 'cat %sVERSION || echo 0' % dir]))
+            return device_version == version
+        except:
+            return False
+
+    def _run_adb_command(self, cmd, ignore_error=False):
+        if ignore_error:
+            error_handler = self._executive.ignore_error
+        else:
+            error_handler = None
+        return self._executive.run_command(self._adb_command + cmd, error_handler=error_handler)
+
+    def _copy_device_file(self, from_file, to_file, ignore_error=False):
+        # 'cp' is unavailable on Android, so use 'dd' instead.
+        return self._run_adb_command(['shell', 'dd', 'if=' + from_file, 'of=' + to_file], ignore_error)
 
     def _push_to_device(self, host_path, device_path, ignore_error=False):
         return self._run_adb_command(['push', host_path, device_path], ignore_error)
