@@ -104,9 +104,6 @@ BUGWK68610 SKIP : fast/dom/MicroData = PASS
 BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
-BUGNOEL : fast/images/gray-scale-jpeg-with-color-profile.html = IMAGE
-BUGNOEL : fast/images/image-css3-content-data.html = IMAGE
-BUGNOEL : fast/images/ycbcr-with-cmyk-color-profile.html = IMAGE
 BUGNOEL : fast/replaced/absolute-image-sizing.html = IMAGE
 BUGNOEL : fast/replaced/image-onload.html = IMAGE
 BUGNOEL : fast/replaced/image-sizing.html = IMAGE
