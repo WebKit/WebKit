@@ -125,9 +125,15 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
 
+        # The chromium-android port always uses the GPU code path, so we set
+        # these options here, almost as if this was the chromium-gpu-android
+        # port.
+        self._options.accelerated_2d_canvas = True
+        self._options.accelerated_video = True
+
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
-        # TODO: we may support other architectures in the future.
+        # FIXME: we may support other architectures in the future.
         self._architecture = 'arm'
         self._original_governor = None
         self._android_base_dir = None
