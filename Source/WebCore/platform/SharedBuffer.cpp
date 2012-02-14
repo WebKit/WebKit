@@ -233,16 +233,19 @@ const Vector<char>& SharedBuffer::buffer() const
 
 unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) const
 {
-    if (hasPlatformData() || m_purgeableBuffer) {
-        someData = data() + position;
-        return size() - position;
-    }
-
-    if (position >= m_size) {
+    unsigned totalSize = size();
+    if (position >= totalSize) {
         someData = 0;
         return 0;
     }
 
+    if (hasPlatformData() || m_purgeableBuffer) {
+        ASSERT(position < size());
+        someData = data() + position;
+        return totalSize - position;
+    }
+
+    ASSERT(position < m_size);
     unsigned consecutiveSize = m_buffer.size();
     if (position < consecutiveSize) {
         someData = m_buffer.data() + position;
@@ -254,7 +257,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     unsigned maxSegmentedSize = segments * segmentSize;
     unsigned segment = segmentIndex(position);
     if (segment < segments) {
-        unsigned bytesLeft = m_size - consecutiveSize;
+        unsigned bytesLeft = totalSize - consecutiveSize;
         unsigned segmentedSize = min(maxSegmentedSize, bytesLeft);
 
         unsigned positionInSegment = offsetInSegment(position);

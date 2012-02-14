@@ -41,6 +41,25 @@
 
 2012-02-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        SharedBuffer::getSomeData() can potentially return a pointer past the data
+        https://bugs.webkit.org/show_bug.cgi?id=77799
+
+        Reviewed by David Kilzer.
+
+        The expected behavior from SharedBuffer::getSomeData() is to return a size and pointer of value 0
+        if position is past the data.
+
+        However, the code handling the memory mapped data is before the code ensuring the aforementioned
+        condition. It is possible to return a pointer past the data, and a non-null size.
+
+        This patch aims at preventing such invalid memory access by checking position is in the boundaries
+        before any attempt is made to return the data.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::getSomeData):
+
+2012-02-13  Benjamin Poulain  <bpoulain@apple.com>
+
         SharedBuffer::getSomeData() must support m_dataArray if NETWORK_CFDATA_ARRAY_CALLBACK is defined
         https://bugs.webkit.org/show_bug.cgi?id=77718
 
