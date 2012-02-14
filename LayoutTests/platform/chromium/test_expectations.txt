@@ -3470,6 +3470,9 @@ BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSI
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-nonexistence-form-id.html = MISSING PASS
 BUGWK72039 LINUX MAC DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
+BUGWK78620 LINUX WIN : fast/forms/formaction-attribute.html = MISSING PASS
+BUGWK78620 LINUX : fast/forms/formmethod-attribute-button-html.html = MISSING PASS
+BUGWK78620 LINUX : fast/forms/formmethod-attribute-input-html.html = MISSING PASS
 
 BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/overflow/003.xml = PASS TEXT
