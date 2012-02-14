@@ -876,11 +876,6 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case ATTRIBUTE_NODE:
         return Attr::create(0, this, static_cast<Attr*>(importedNode)->attr()->clone());
     case DOCUMENT_FRAGMENT_NODE: {
-        if (importedNode->isShadowRoot()) {
-            // ShadowRoot nodes should not be explicitly importable.
-            // Either they are imported along with their host node, or created implicitly.
-            break;
-        }
         DocumentFragment* oldFragment = static_cast<DocumentFragment*>(importedNode);
         RefPtr<DocumentFragment> newFragment = createDocumentFragment();
         if (deep) {
@@ -903,6 +898,9 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
     case XPATH_NAMESPACE_NODE:
+    case SHADOW_ROOT_NODE:
+        // ShadowRoot nodes should not be explicitly importable.
+        // Either they are imported along with their host node, or created implicitly.
         break;
     }
     ec = NOT_SUPPORTED_ERR;
@@ -2858,6 +2856,7 @@ bool Document::childTypeAllowed(NodeType type) const
     case NOTATION_NODE:
     case TEXT_NODE:
     case XPATH_NAMESPACE_NODE:
+    case SHADOW_ROOT_NODE:
         return false;
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
@@ -2927,6 +2926,9 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
             case ELEMENT_NODE:
                 numElements++;
                 break;
+            case SHADOW_ROOT_NODE:
+                ASSERT_NOT_REACHED();
+                return false;
             }
         }
     } else {
@@ -2940,6 +2942,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
         case NOTATION_NODE:
         case TEXT_NODE:
         case XPATH_NAMESPACE_NODE:
+        case SHADOW_ROOT_NODE:
             return false;
         case COMMENT_NODE:
         case PROCESSING_INSTRUCTION_NODE:

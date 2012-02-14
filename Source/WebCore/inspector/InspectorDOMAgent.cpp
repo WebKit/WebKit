@@ -402,7 +402,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>& root)
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
 {
     Node* node = nodeForId(nodeId);
-    if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) || node->isShadowRoot())
+    if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
         return;
     if (m_childrenRequested.contains(nodeId))
         return;
@@ -1160,9 +1160,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         localName = node->localName();
         break;
     case Node::DOCUMENT_FRAGMENT_NODE:
-        if (!node->isShadowRoot())
-            break;
-        // Fall through
+        break;
     case Node::DOCUMENT_NODE:
     case Node::ELEMENT_NODE:
     default:

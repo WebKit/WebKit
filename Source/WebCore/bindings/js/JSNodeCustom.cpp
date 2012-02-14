@@ -254,11 +254,10 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            // In case of ShadowRoot, a cached ShadowRoot binding is always used and this
-            // code path never be used in current API set.
-            // Once we have such APIs, we should call CREATE_DOM_WRAPPER using ShadowRoot.
-            ASSERT(!node->isShadowRoot());
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, DocumentFragment, node);
+            break;
+        case Node::SHADOW_ROOT_NODE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Node, node);
             break;
         case Node::ENTITY_REFERENCE_NODE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, EntityReference, node);

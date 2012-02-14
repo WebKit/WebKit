@@ -1,3 +1,62 @@
+2012-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r107661.
+        http://trac.webkit.org/changeset/107661
+        https://bugs.webkit.org/show_bug.cgi?id=78591
+
+        crash on lion/qt bots (Requested by hayato on #webkit).
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/objc/DOM.mm:
+        (kitClass):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::toV8Slow):
+        * dom/ContainerNode.cpp:
+        (WebCore::collectTargetNodes):
+        (WebCore::ContainerNode::replaceChild):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        (WebCore::Document::childTypeAllowed):
+        (WebCore::Document::canReplaceChild):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupPrefix):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::appendTextContent):
+        (WebCore::Node::setTextContent):
+        * dom/Node.h:
+        * dom/Range.cpp:
+        (WebCore::lengthOfContentsInNode):
+        (WebCore::Range::processContentsBetweenOffsets):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::checkNodeWOffset):
+        (WebCore::Range::checkNodeBA):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::selectNodeContents):
+        (WebCore::Range::surroundContents):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::nodeType):
+        (WebCore):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        (WebCore::toShadowRoot):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::textWillBeReplaced):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isRootNode):
+        (WebCore::HTMLElementStack::pushRootNode):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::isInHTMLNamespace):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode):
+
 2012-02-14  Hayato Ito  <hayato@chromium.org>
 
         Fix typo. HTMLContentSeleciton -> HTMLContentSelection.

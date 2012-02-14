@@ -125,6 +125,11 @@ String ShadowRoot::nodeName() const
     return "#shadow-root";
 }
 
+Node::NodeType ShadowRoot::nodeType() const
+{
+    return SHADOW_ROOT_NODE;
+}
+
 PassRefPtr<Node> ShadowRoot::cloneNode(bool)
 {
     // ShadowRoot should not be arbitrarily cloned.

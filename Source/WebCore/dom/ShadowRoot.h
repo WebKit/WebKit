@@ -83,6 +83,7 @@ private:
     virtual ~ShadowRoot();
 
     virtual String nodeName() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
 
@@ -112,7 +113,7 @@ inline bool ShadowRoot::needsReattachHostChildrenAndShadow()
 
 inline ShadowRoot* toShadowRoot(Node* node)
 {
-    ASSERT(!node || node->isShadowRoot());
+    ASSERT(!node || node->nodeType() == Node::SHADOW_ROOT_NODE);
     return static_cast<ShadowRoot*>(node);
 }
 

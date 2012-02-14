@@ -227,10 +227,7 @@ void Node::dumpStatistics()
                 break;
             }
             case DOCUMENT_FRAGMENT_NODE: {
-                if (node->isShadowRoot())
-                    ++shadowRootNodes;
-                else
-                    ++fragmentNodes;
+                ++fragmentNodes;
                 break;
             }
             case NOTATION_NODE: {
@@ -239,6 +236,10 @@ void Node::dumpStatistics()
             }
             case XPATH_NAMESPACE_NODE: {
                 ++xpathNSNodes;
+                break;
+            }
+            case SHADOW_ROOT_NODE: {
+                ++shadowRootNodes;
                 break;
             }
         }
@@ -1844,6 +1845,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE:
             return false;
         case ATTRIBUTE_NODE: {
             const Attr* attr = static_cast<const Attr*>(this);
@@ -1877,6 +1879,7 @@ String Node::lookupPrefix(const AtomicString &namespaceURI) const
         case NOTATION_NODE:
         case DOCUMENT_FRAGMENT_NODE:
         case DOCUMENT_TYPE_NODE:
+        case SHADOW_ROOT_NODE:
             return String();
         case ATTRIBUTE_NODE: {
             const Attr *attr = static_cast<const Attr *>(this);
@@ -1935,6 +1938,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE:
             return String();
         case ATTRIBUTE_NODE: {
             const Attr *attr = static_cast<const Attr *>(this);
@@ -2002,6 +2006,7 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
     case Node::ENTITY_NODE:
     case Node::ENTITY_REFERENCE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
+    case Node::SHADOW_ROOT_NODE:
         isNullString = false;
         for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
             if (child->nodeType() == Node::COMMENT_NODE || child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
@@ -2039,7 +2044,8 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case ATTRIBUTE_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
-        case DOCUMENT_FRAGMENT_NODE: {
+        case DOCUMENT_FRAGMENT_NODE:
+        case SHADOW_ROOT_NODE: {
             ContainerNode* container = toContainerNode(this);
 #if ENABLE(MUTATION_OBSERVERS)
             ChildListMutationScope mutation(this);
