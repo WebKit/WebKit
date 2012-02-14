@@ -16,22 +16,22 @@ function loadData()
     // discard third resource content once we see its size exceeds limit,
     // and finally replace first resource content with the last resource content.
 
-    doXHR("GET", "resources/resource.php?size=200", true, xhrLoaded1);
+    doXHR("GET", "resources/resource.php?size=200", false, xhrLoaded1);
 }
 
 function xhrLoaded1()
 {
-    doXHR("GET", "resources/resource.php?size=100", true, xhrLoaded2);
+    doXHR("GET", "resources/resource.php?size=100", false, xhrLoaded2);
 }
 
 function xhrLoaded2()
 {
-    doXHR("GET", "resources/resource.php?size=201", true, xhrLoaded3);
+    doXHR("GET", "resources/resource.php?size=201", false, xhrLoaded3);
 }
 
 function xhrLoaded3()
 {
-    doXHR("GET", "resources/resource.php?size=100", true, allXHRsLoaded);
+    doXHR("GET", "resources/resource.php?size=100", false, allXHRsLoaded);
 }
 
 function allXHRsLoaded()

@@ -1037,7 +1037,10 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
     // FIXME: Set m_responseBlob to something here in the ResponseTypeBlob case.
 #endif
 
-    InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(scriptExecutionContext(), identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber);
+    // For Asynchronous XHRs, the inspector can grab the data directly off of the CachedResource. For sync XHRs, we need to
+    // provide the data here, since no CachedResource was involved.
+    if (!m_async)
+        InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(scriptExecutionContext(), identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber);
 
     bool hadLoader = m_loader;
     m_loader = 0;

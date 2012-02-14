@@ -523,8 +523,13 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
-    // FIXME: Currently, all CachedRawResources are always reloaded. Some of them should be cacheable.
-    if (existingResource->type() == CachedResource::RawResource)
+    if (existingResource->type() == CachedResource::RawResource && !static_cast<CachedRawResource*>(existingResource)->canReuse())
+         return Reload;
+
+    // Certain requests (e.g., XHRs) might have manually set headers that require revalidation.
+    // FIXME: In theory, this should be a Revalidate case. In practice, the MemoryCache revalidation path assumes a whole bunch
+    // of things about how revalidation works that manual headers violate, so punt to Reload instead.
+    if (request.isConditional())
         return Reload;
     
     // Don't reload resources while pasting.

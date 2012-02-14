@@ -1,3 +1,41 @@
+2012-02-13  Nate Chapin  <japhet@chromium.org>
+
+        Reuse CachedRawResources (e.g., XHRs) that are stored
+        in the MemoryCache when appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=76564
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, expected behavior covered by existing tests.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL): Objects shouldn't remain in the
+            MemoryCache if revokeObjectURL is called on them.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent): Add CachedRawResource support.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setCacheDisabled): Immediately
+            evict resources, rather than waiting for navigation, since XHRs
+            should hit the cache if it has been disabled.
+        * loader/cache/CachedRawResource.cpp:
+        (CachedRawResourceCallback): Encapsulates the async callback for
+            a cache hit for CachedRawResources.
+        (WebCore::CachedRawResource::sendCallbacks): Do the work defered in didAddClient.
+        (WebCore::CachedRawResource::didAddClient): Scheduled a CachedRawResourceCallback if
+            we already have a response, since async XHRs may not play nicely with receiving
+            their data synchronously.
+        (WebCore::CachedRawResource::removeClient): Ensure we cancel a callback to a client if
+            it removes itself.
+        (WebCore::CachedRawResource::canReuse): Provide some basic rules for when a
+            CachedRawResource can be reused.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Don't automatically reload
+            CachedRawResources, and add a check for whether this request has already been
+            made conditional.
+        * xml/XMLHttpRequest.cpp:
+
 2012-02-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque flag on SkBitmap in per-tile layer updater

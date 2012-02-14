@@ -253,7 +253,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             type = InspectorPageAgent::ScriptResource;
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
             type = InspectorPageAgent::ImageResource;
-        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
+        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && !loader->isCommitted())
             type = InspectorPageAgent::DocumentResource;
 
         m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
@@ -529,6 +529,8 @@ void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
 void InspectorResourceAgent::setCacheDisabled(ErrorString*, bool cacheDisabled)
 {
     m_state->setBoolean(ResourceAgentState::cacheDisabled, cacheDisabled);
+    if (cacheDisabled)
+        memoryCache()->evictResources();
 }
 
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)

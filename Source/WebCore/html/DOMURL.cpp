@@ -34,6 +34,7 @@
 #include "Blob.h"
 #include "BlobURL.h"
 #include "KURL.h"
+#include "MemoryCache.h"
 #include "PublicURLManager.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -89,6 +90,8 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
         return;
 
     KURL url(KURL(), urlString);
+    if (CachedResource* resource = memoryCache()->resourceForURL(url))
+        memoryCache()->remove(resource);
 
     HashSet<String>& blobURLs = scriptExecutionContext->publicURLManager().blobURLs();
     if (blobURLs.contains(url.string())) {

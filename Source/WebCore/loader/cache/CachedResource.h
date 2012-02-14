@@ -110,7 +110,7 @@ public:
     void setLoadPriority(ResourceLoadPriority);
 
     void addClient(CachedResourceClient*);
-    void removeClient(CachedResourceClient*);
+    virtual void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty(); }
     void deleteIfPossible();
 

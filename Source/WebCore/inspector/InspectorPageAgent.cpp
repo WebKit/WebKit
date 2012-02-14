@@ -121,7 +121,7 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
 static bool hasTextContent(CachedResource* cachedResource)
 {
     InspectorPageAgent::ResourceType type = InspectorPageAgent::cachedResourceType(*cachedResource);
-    return type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource;
+    return type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource || type == InspectorPageAgent::XHRResource;
 }
 
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
@@ -143,12 +143,16 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     }
 
     if (cachedResource) {
+        SharedBuffer* buffer = cachedResource->data();
         switch (cachedResource->type()) {
         case CachedResource::CSSStyleSheet:
             *result = static_cast<CachedCSSStyleSheet*>(cachedResource)->sheetText();
             return true;
         case CachedResource::Script:
             *result = static_cast<CachedScript*>(cachedResource)->script();
+            return true;
+        case CachedResource::RawResource:
+            *result = String(buffer->data(), buffer->size());
             return true;
         default:
             if (hasZeroSize) {
@@ -254,6 +258,8 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
         return InspectorPageAgent::StylesheetResource;
     case CachedResource::Script:
         return InspectorPageAgent::ScriptResource;
+    case CachedResource::RawResource:
+        return InspectorPageAgent::XHRResource;
     default:
         break;
     }
