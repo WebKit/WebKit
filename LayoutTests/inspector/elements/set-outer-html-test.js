@@ -33,6 +33,8 @@ InspectorTest.setUpTestSuite = function(next)
 
 InspectorTest.recordEvent = function(eventName, event)
 {
+    if (!event.data)
+        return;
     var node = event.data.node || event.data;
     var parent = event.data.parent;
     for (var currentNode = parent || node; currentNode; currentNode = currentNode.parentNode) {
@@ -72,7 +74,7 @@ InspectorTest.setOuterHTMLUseUndo = function(newText, next)
     function bringBack()
     {
         InspectorTest.addResult("\nBringing things back\n");
-        DOMAgent.undo(InspectorTest._dumpOuterHTML.bind(InspectorTest, true, next));
+        WebInspector.domAgent.undo(InspectorTest._dumpOuterHTML.bind(InspectorTest, true, next));
     }
 }
 

@@ -410,7 +410,7 @@ InspectorTest.generateUndoTest = function(testBody)
         {
             InspectorTest.addResult("Post-action:");
             InspectorTest.dumpElementsTree(testNode);
-            DOMAgent.undo(step2);
+            WebInspector.domAgent.undo(step2);
         }
 
         function step2()

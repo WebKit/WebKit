@@ -928,7 +928,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+005A") { // Z key
-            DOMAgent.undo(this._updateSidebars.bind(this));
+            WebInspector.domAgent.undo(this._updateSidebars.bind(this));
             return;
         }
 

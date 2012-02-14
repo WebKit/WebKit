@@ -677,7 +677,9 @@ WebInspector.DOMAgent.Events = {
     DocumentUpdated: "DocumentUpdated",
     ChildNodeCountUpdated: "ChildNodeCountUpdated",
     InspectElementRequested: "InspectElementRequested",
-    StyleInvalidated: "StyleInvalidated"
+    StyleInvalidated: "StyleInvalidated",
+    UndoRequested: "UndoRequested",
+    UndoCompleted: "UndoCompleted"
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -1159,6 +1161,21 @@ WebInspector.DOMAgent.prototype = {
     _emulateTouchEventsChanged: function()
     {
         DOMAgent.setTouchEmulationEnabled(WebInspector.settings.emulateTouchEvents.get());
+    },
+
+    /**
+     * @param {function(?Protocol.Error)=} callback
+     */
+    undo: function(callback)
+    {
+        function mycallback(error)
+        {
+            this.dispatchEventToListeners(WebInspector.DOMAgent.Events.UndoCompleted);
+            callback(error);
+        }
+
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.UndoRequested);
+        DOMAgent.undo(callback);
     }
 }
 

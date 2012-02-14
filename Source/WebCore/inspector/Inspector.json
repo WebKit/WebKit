@@ -1607,10 +1607,14 @@
         "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
         "types": [
             {
+                "id": "StyleSheetId",
+                "type": "string"
+            },
+            {
                 "id": "CSSStyleId",
                 "type": "object",
                 "properties": [
-                    { "name": "styleSheetId", "type": "string", "description": "Enclosing stylesheet identifier." },
+                    { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Enclosing stylesheet identifier." },
                     { "name": "ordinal", "type": "integer", "description": "The style ordinal within the stylesheet." }
                 ],
                 "description": "This object identifies a CSS style in a unique way."
@@ -1619,7 +1623,7 @@
                 "id": "CSSRuleId",
                 "type": "object",
                 "properties": [
-                    { "name": "styleSheetId", "type": "string", "description": "Enclosing stylesheet identifier." },
+                    { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Enclosing stylesheet identifier." },
                     { "name": "ordinal", "type": "integer", "description": "The rule ordinal within the stylesheet." }
                 ],
                 "description": "This object identifies a CSS rule in a unique way."
@@ -1655,7 +1659,7 @@
                 "id": "CSSStyleSheetHeader",
                 "type": "object",
                 "properties": [
-                    { "name": "styleSheetId", "type": "string", "description": "The stylesheet identifier."},
+                    { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "The stylesheet identifier."},
                     { "name": "sourceURL", "type": "string", "description": "Stylesheet resource URL."},
                     { "name": "title", "type": "string", "description": "Stylesheet title."},
                     { "name": "disabled", "type": "boolean", "description": "Denotes whether the stylesheet is disabled."}
@@ -1666,7 +1670,7 @@
                 "id": "CSSStyleSheetBody",
                 "type": "object",
                 "properties": [
-                    { "name": "styleSheetId", "type": "string", "description": "The stylesheet identifier."},
+                    { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "The stylesheet identifier."},
                     { "name": "rules", "type": "array", "items": { "$ref": "CSSRule" }, "description": "Stylesheet resource URL."},
                     { "name": "text", "type": "string", "optional": true, "description": "Stylesheet resource contents (if available)."}
                 ],
@@ -1827,7 +1831,7 @@
             {
                 "name": "getStyleSheet",
                 "parameters": [
-                    { "name": "styleSheetId", "type": "string" }
+                    { "name": "styleSheetId", "$ref": "StyleSheetId" }
                 ],
                 "returns": [
                     { "name": "styleSheet", "$ref": "CSSStyleSheetBody", "description": "Stylesheet contents for the specified <code>styleSheetId</code>." }
@@ -1837,7 +1841,7 @@
             {
                 "name": "getStyleSheetText",
                 "parameters": [
-                    { "name": "styleSheetId", "type": "string" }
+                    { "name": "styleSheetId", "$ref": "StyleSheetId" }
                 ],
                 "returns": [
                     { "name": "text", "type": "string", "description": "The stylesheet text." }
@@ -1847,7 +1851,7 @@
             {
                 "name": "setStyleSheetText",
                 "parameters": [
-                    { "name": "styleSheetId", "type": "string" },
+                    { "name": "styleSheetId", "$ref": "StyleSheetId" },
                     { "name": "text", "type": "string" }
                 ],
                 "description": "Sets the new stylesheet text, thereby invalidating all existing <code>CSSStyleId</code>'s and <code>CSSRuleId</code>'s contained by this stylesheet."
@@ -1920,6 +1924,13 @@
             {
                 "name": "mediaQueryResultChanged",
                 "description": "Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features."
+            },
+            {
+                "name": "styleSheetChanged",
+                "parameters": [
+                    { "name": "styleSheetId", "$ref": "StyleSheetId" }
+                ],
+                "description": "Fired whenever a stylesheet is changed as a result of the client operation."
             }
         ]
     },

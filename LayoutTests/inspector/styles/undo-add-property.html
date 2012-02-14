@@ -34,7 +34,7 @@ function test()
     {
         InspectorTest.addResult("After adding property");
         InspectorTest.dumpSelectedElementStyles(true);
-        DOMAgent.undo(step3);
+        WebInspector.domAgent.undo(step3);
     }
 
     function step3()

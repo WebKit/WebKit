@@ -653,9 +653,9 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
     return m_format;
 }
 
-PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL)
+PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL, Listener* listener)
 {
-    return adoptRef(new InspectorStyleSheet(id, pageStyleSheet, origin, documentURL));
+    return adoptRef(new InspectorStyleSheet(id, pageStyleSheet, origin, documentURL, listener));
 }
 
 // static
@@ -666,12 +666,13 @@ String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
     return emptyString();
 }
 
-InspectorStyleSheet::InspectorStyleSheet(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL)
+InspectorStyleSheet::InspectorStyleSheet(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL, Listener* listener)
     : m_id(id)
     , m_pageStyleSheet(pageStyleSheet)
     , m_origin(origin)
     , m_documentURL(documentURL)
     , m_isRevalidating(false)
+    , m_listener(listener)
 {
     m_parsedStyleSheet = new ParsedStyleSheet();
 }
@@ -694,6 +695,7 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
     m_pageStyleSheet->parseString(text, m_pageStyleSheet->useStrictParsing());
     m_pageStyleSheet->styleSheetChanged();
     m_inspectorStyles.clear();
+    fireStyleSheetChanged();
 }
 
 bool InspectorStyleSheet::setText(const String& text)
@@ -740,6 +742,7 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     String sheetText = m_parsedStyleSheet->text();
     sheetText.replace(sourceData->selectorListRange.start, sourceData->selectorListRange.end - sourceData->selectorListRange.start, selector);
     m_parsedStyleSheet->setText(sheetText);
+    fireStyleSheetChanged();
     return true;
 }
 
@@ -767,6 +770,8 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     styleSheetText += " {}";
     // Using setText() as this operation changes the style sheet rule set.
     setText(styleSheetText);
+
+    fireStyleSheetChanged();
 
     return rule;
 }
@@ -797,6 +802,7 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->selectorListRange.start, sourceData->styleSourceData->styleBodyRange.end - sourceData->selectorListRange.start + 1);
     m_parsedStyleSheet->setText(sheetText);
+    fireStyleSheetChanged();
     return true;
 }
 
@@ -922,7 +928,10 @@ bool InspectorStyleSheet::setPropertyText(const InspectorCSSId& id, unsigned pro
         return false;
     }
 
-    return inspectorStyle->setPropertyText(propertyIndex, text, overwrite, oldText, ec);
+    bool success = inspectorStyle->setPropertyText(propertyIndex, text, overwrite, oldText, ec);
+    if (success)
+        fireStyleSheetChanged();
+    return success;
 }
 
 bool InspectorStyleSheet::toggleProperty(const InspectorCSSId& id, unsigned propertyIndex, bool disable, ExceptionCode& ec)
@@ -939,6 +948,7 @@ bool InspectorStyleSheet::toggleProperty(const InspectorCSSId& id, unsigned prop
             rememberInspectorStyle(inspectorStyle);
         else if (!inspectorStyle->hasDisabledProperties())
             forgetInspectorStyle(inspectorStyle->cssStyle());
+        fireStyleSheetChanged();
     }
     return success;
 }
@@ -958,6 +968,12 @@ CSSStyleDeclaration* InspectorStyleSheet::styleForId(const InspectorCSSId& id) c
         return 0;
 
     return rule->style();
+}
+
+void InspectorStyleSheet::fireStyleSheetChanged()
+{
+    if (m_listener)
+        m_listener->styleSheetChanged(this);
 }
 
 PassRefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const InspectorCSSId& id)
@@ -1264,13 +1280,13 @@ void InspectorStyleSheet::collectFlatRules(PassRefPtr<CSSRuleList> ruleList, Vec
     }
 }
 
-PassRefPtr<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(const String& id, PassRefPtr<Element> element, const String& origin)
+PassRefPtr<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(const String& id, PassRefPtr<Element> element, const String& origin, Listener* listener)
 {
-    return adoptRef(new InspectorStyleSheetForInlineStyle(id, element, origin));
+    return adoptRef(new InspectorStyleSheetForInlineStyle(id, element, origin, listener));
 }
 
-InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const String& id, PassRefPtr<Element> element, const String& origin)
-    : InspectorStyleSheet(id, 0, origin, "")
+InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const String& id, PassRefPtr<Element> element, const String& origin, Listener* listener)
+    : InspectorStyleSheet(id, 0, origin, "", listener)
     , m_element(element)
     , m_ruleSourceData(0)
     , m_isStyleTextValid(false)

@@ -54,7 +54,11 @@ class SelectorProfile;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorCSSAgent : public InspectorBaseAgent<InspectorCSSAgent>, public InspectorDOMAgent::DOMListener, public InspectorBackendDispatcher::CSSCommandHandler {
+class InspectorCSSAgent
+    : public InspectorBaseAgent<InspectorCSSAgent>
+    , public InspectorDOMAgent::DOMListener
+    , public InspectorBackendDispatcher::CSSCommandHandler
+    , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
@@ -125,10 +129,13 @@ private:
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList* ruleList);
     PassRefPtr<InspectorObject> buildObjectForAttributesStyle(Element*);
 
-    // InspectorDOMAgent::DOMListener interface
+    // InspectorDOMAgent::DOMListener implementation
     virtual void didRemoveDocument(Document*);
     virtual void didRemoveDOMNode(Node*);
     virtual void didModifyDOMAttr(Element*);
+
+    // InspectorCSSAgent::Listener implementation
+    virtual void styleSheetChanged(InspectorStyleSheet*);
 
     void clearPseudoState(bool recalcStyles);
 

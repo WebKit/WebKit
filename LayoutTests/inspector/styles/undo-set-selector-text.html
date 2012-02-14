@@ -29,7 +29,7 @@ function test()
     {
         InspectorTest.addResult("=== After selector modification ===");
         InspectorTest.dumpSelectedElementStyles(true);
-        DOMAgent.undo();
+        WebInspector.domAgent.undo();
         InspectorTest.selectNodeAndWaitForStyles("inspected", step3);
     }
 

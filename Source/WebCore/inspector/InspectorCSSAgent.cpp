@@ -261,6 +261,19 @@ public:
         return false;
     }
 
+    virtual String mergeId()
+    {
+        return String::format("SetStyleSheetText %s", m_styleSheet->id().utf8().data());
+    }
+
+    virtual void merge(PassOwnPtr<Action> action)
+    {
+        ASSERT(action->mergeId() == mergeId());
+
+        SetStyleSheetTextAction* other = static_cast<SetStyleSheetTextAction*>(action.get());
+        m_text = other->m_text;
+    }
+
 private:
     String m_text;
     String m_oldText;
@@ -642,7 +655,6 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String
     ExceptionCode ec = 0;
     m_domAgent->history()->perform(adoptPtr(new SetStyleSheetTextAction(inspectorStyleSheet, text)), ec);
     *errorString = InspectorDOMAgent::toErrorString(ec);
-    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>& result)
@@ -788,7 +800,7 @@ InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Elem
             return 0;
 
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        RefPtr<InspectorStyleSheetForInlineStyle> inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(newStyleSheetId, element, "regular");
+        RefPtr<InspectorStyleSheetForInlineStyle> inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(newStyleSheetId, element, "regular", this);
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet);
         m_nodeToInspectorStyleSheet.set(element, inspectorStyleSheet);
         return inspectorStyleSheet.get();
@@ -831,7 +843,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     if (!inspectorStyleSheet) {
         String id = String::number(m_lastStyleSheetId++);
         Document* document = styleSheet->findDocument();
-        inspectorStyleSheet = InspectorStyleSheet::create(id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document));
+        inspectorStyleSheet = InspectorStyleSheet::create(id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);
     }
@@ -872,7 +884,7 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
         return 0;
     CSSStyleSheet* cssStyleSheet = static_cast<CSSStyleSheet*>(styleSheet);
     String id = String::number(m_lastStyleSheetId++);
-    inspectorStyleSheet = InspectorStyleSheet::create(id, cssStyleSheet, "inspector", InspectorDOMAgent::documentURLString(document));
+    inspectorStyleSheet = InspectorStyleSheet::create(id, cssStyleSheet, "inspector", InspectorDOMAgent::documentURLString(document), this);
     m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
     m_cssStyleSheetToInspectorStyleSheet.set(cssStyleSheet, inspectorStyleSheet);
     m_documentToInspectorStyleSheet.set(document, inspectorStyleSheet);
@@ -974,6 +986,12 @@ void InspectorCSSAgent::didModifyDOMAttr(Element* element)
         return;
 
     it->second->didModifyElementAttribute();
+}
+
+void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)
+{
+    if (m_frontend)
+        m_frontend->styleSheetChanged(styleSheet->id());
 }
 
 void InspectorCSSAgent::clearPseudoState(bool recalcStyles)
