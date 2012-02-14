@@ -2047,8 +2047,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.line.width.basic.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.line.width.transformed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
@@ -2608,7 +2608,6 @@ BUGWK77550 GPU : canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = 
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
 BUGBSALOMON GPU : fast/canvas/arc360.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/canvas-composite-fill-repaint.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
@@ -3369,10 +3368,6 @@ BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-4.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-5.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-6.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-7.html = IMAGE
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
 BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
