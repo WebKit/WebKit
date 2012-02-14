@@ -317,6 +317,7 @@ PASS WebKitCSSKeyframesRule.toString() is '[object WebKitCSSKeyframesRuleConstru
 PASS WebKitCSSMatrix.toString() is '[object WebKitCSSMatrixConstructor]'
 PASS WebKitCSSRegionRule.toString() is '[object WebKitCSSRegionRuleConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
+PASS WebKitMutationObserver.toString() is '[object WebKitMutationObserverConstructor]'
 PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'
 PASS WebKitTransitionEvent.toString() is '[object WebKitTransitionEventConstructor]'
 PASS WebSocket.toString() is '[object WebSocketConstructor]'

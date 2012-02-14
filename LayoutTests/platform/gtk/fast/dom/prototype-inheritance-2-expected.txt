@@ -452,6 +452,7 @@ Never found TextTrackList
 Never found WebKitCSSMatrix
 Never found WebKitCSSRegionRule
 Never found WebKitCSSTransformValue
+Never found WebKitMutationObserver
 Never found WebKitPoint
 Never found WebSocket
 Never found Worker
