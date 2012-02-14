@@ -73,7 +73,63 @@ public:
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
-
+    using MacroAssemblerBase::invert;
+    
+    static DoubleCondition invert(DoubleCondition cond)
+    {
+        switch (cond) {
+        case DoubleEqual:
+            return DoubleNotEqualOrUnordered;
+        case DoubleNotEqual:
+            return DoubleEqualOrUnordered;
+        case DoubleGreaterThan:
+            return DoubleLessThanOrEqualOrUnordered;
+        case DoubleGreaterThanOrEqual:
+            return DoubleLessThanOrUnordered;
+        case DoubleLessThan:
+            return DoubleGreaterThanOrEqualOrUnordered;
+        case DoubleLessThanOrEqual:
+            return DoubleGreaterThanOrUnordered;
+        case DoubleEqualOrUnordered:
+            return DoubleNotEqual;
+        case DoubleNotEqualOrUnordered:
+            return DoubleEqual;
+        case DoubleGreaterThanOrUnordered:
+            return DoubleLessThanOrEqual;
+        case DoubleGreaterThanOrEqualOrUnordered:
+            return DoubleLessThan;
+        case DoubleLessThanOrUnordered:
+            return DoubleGreaterThanOrEqual;
+        case DoubleLessThanOrEqualOrUnordered:
+            return DoubleGreaterThan;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    
+    static bool isInvertible(ResultCondition cond)
+    {
+        switch (cond) {
+        case Zero:
+        case NonZero:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    static ResultCondition invert(ResultCondition cond)
+    {
+        switch (cond) {
+        case Zero:
+            return NonZero;
+        case NonZero:
+            return Zero;
+        default:
+            ASSERT_NOT_REACHED();
+            return Zero; // Make compiler happy for release builds.
+        }
+    }
 
     // Platform agnostic onvenience functions,
     // described in terms of other macro assembly methods.

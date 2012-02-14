@@ -71,6 +71,8 @@
 #define DFG_ENABLE_SUCCESS_STATS 0
 // Used to enable conditionally supported opcodes that currently result in performance regressions.
 #define DFG_ENABLE_RESTRICTIONS 1
+// Enable verification that the DFG is able to insert code for control flow edges.
+#define DFG_ENABLE_EDGE_CODE_VERIFICATION 1
 
 namespace JSC { namespace DFG {
 

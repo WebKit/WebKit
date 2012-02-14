@@ -803,10 +803,8 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNod
     SpeculateDoubleOperand op1(this, node.child1());
     SpeculateDoubleOperand op2(this, node.child2());
     
-    addBranch(m_jit.branchDouble(condition, op1.fpr(), op2.fpr()), taken);
-    
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
+    branchDouble(condition, op1.fpr(), op2.fpr(), taken);
+    jump(notTaken);
 }
 
 void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, const ClassInfo* classInfo, PredictionChecker predictionCheck)
@@ -835,9 +833,8 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
     if (!predictionCheck(m_state.forNode(node.child2()).m_type))
         speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node.child2().index(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(classInfo)));
     
-    addBranch(m_jit.branchPtr(condition, op1GPR, op2GPR), taken);
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
+    branchPtr(condition, op1GPR, op2GPR, taken);
+    jump(notTaken);
 }
 
 void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition condition)
@@ -858,20 +855,18 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
     if (isInt32Constant(node.child1().index())) {
         int32_t imm = valueOfInt32Constant(node.child1().index());
         SpeculateIntegerOperand op2(this, node.child2());
-        addBranch(m_jit.branch32(condition, JITCompiler::Imm32(imm), op2.gpr()), taken);
+        branch32(condition, JITCompiler::Imm32(imm), op2.gpr(), taken);
     } else if (isInt32Constant(node.child2().index())) {
         SpeculateIntegerOperand op1(this, node.child1());
         int32_t imm = valueOfInt32Constant(node.child2().index());
-        addBranch(m_jit.branch32(condition, op1.gpr(), JITCompiler::Imm32(imm)), taken);
+        branch32(condition, op1.gpr(), JITCompiler::Imm32(imm), taken);
     } else {
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
-        addBranch(m_jit.branch32(condition, op1.gpr(), op2.gpr()), taken);
+        branch32(condition, op1.gpr(), op2.gpr(), taken);
     }
 
-    // Check for fall through, otherwise we need to jump.
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
+    jump(notTaken);
 }
 
 // Returns true if the compare is fused with a subsequent branch.
@@ -957,6 +952,13 @@ void SpeculativeJIT::compile(BasicBlock& block)
     
     m_lastSetOperand = std::numeric_limits<int>::max();
     m_codeOriginForOSR = CodeOrigin();
+    
+    if (DFG_ENABLE_EDGE_CODE_VERIFICATION) {
+        JITCompiler::Jump verificationSucceeded =
+            m_jit.branch32(JITCompiler::Equal, GPRInfo::regT0, Imm32(m_block));
+        m_jit.breakpoint();
+        verificationSucceeded.link(&m_jit);
+    }
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = at(m_compileIndex);
@@ -1218,6 +1220,9 @@ bool SpeculativeJIT::compile()
 {
     checkArgumentTypes();
 
+    if (DFG_ENABLE_EDGE_CODE_VERIFICATION)
+        m_jit.move(Imm32(0), GPRInfo::regT0);
+
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
         compile(*m_jit.graph().m_blocks[m_block]);
@@ -1225,13 +1230,37 @@ bool SpeculativeJIT::compile()
     return true;
 }
 
-void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
+void SpeculativeJIT::createOSREntries()
 {
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
         BasicBlock& block = *m_jit.graph().m_blocks[blockIndex];
-        if (block.isOSRTarget)
-            m_jit.noticeOSREntry(block, m_blockHeads[blockIndex], linkBuffer);
+        if (!block.isOSRTarget)
+            continue;
+
+        // Currently we only need to create OSR entry trampolines when using edge code
+        // verification. But in the future, we'll need this for other things as well (like
+        // when we have global reg alloc).
+        // If we don't need OSR entry trampolin
+        if (!DFG_ENABLE_EDGE_CODE_VERIFICATION) {
+            m_osrEntryHeads.append(m_blockHeads[blockIndex]);
+            continue;
+        }
+        
+        m_osrEntryHeads.append(m_jit.label());
+        m_jit.move(Imm32(blockIndex), GPRInfo::regT0);
+        m_jit.jump().linkTo(m_blockHeads[blockIndex], &m_jit);
     }
+}
+
+void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
+{
+    unsigned osrEntryIndex = 0;
+    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
+        BasicBlock& block = *m_jit.graph().m_blocks[blockIndex];
+        if (block.isOSRTarget)
+            m_jit.noticeOSREntry(block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
+    }
+    ASSERT(osrEntryIndex == m_osrEntryHeads.size());
 }
 
 ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
@@ -2433,24 +2462,23 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node& node, NodeUse value, JSVal
         }
 
 #if USE(JSVALUE64)
-        addBranch(m_jit.branchPtr(condition, op1.gpr(), MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(JSValue::encode(constant)))), taken);
+        branchPtr(condition, op1.gpr(), MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(JSValue::encode(constant))), taken);
 #else
         GPRReg payloadGPR = op1.payloadGPR();
         GPRReg tagGPR = op1.tagGPR();
         if (condition == MacroAssembler::Equal) {
             // Drop down if not equal, go elsewhere if equal.
             MacroAssembler::Jump notEqual = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag()));
-            addBranch(m_jit.branch32(MacroAssembler::Equal, payloadGPR, MacroAssembler::Imm32(constant.payload())), taken);
+            branch32(MacroAssembler::Equal, payloadGPR, MacroAssembler::Imm32(constant.payload()), taken);
             notEqual.link(&m_jit);
         } else {
             // Drop down if equal, go elsehwere if not equal.
-            addBranch(m_jit.branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag())), taken);
-            addBranch(m_jit.branch32(MacroAssembler::NotEqual, payloadGPR, MacroAssembler::Imm32(constant.payload())), taken);
+            branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag()), taken);
+            branch32(MacroAssembler::NotEqual, payloadGPR, MacroAssembler::Imm32(constant.payload()), taken);
         }
 #endif
         
-        if (notTaken != (m_block + 1))
-            addBranch(m_jit.jump(), notTaken);
+        jump(notTaken);
         
         use(node.child1());
         use(node.child2());

@@ -212,6 +212,9 @@ void JITCompiler::compile(JITCode& entry)
     SpeculativeJIT speculative(*this);
     compileBody(speculative);
 
+    // Create OSR entry trampolines if necessary.
+    speculative.createOSREntries();
+
     LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock);
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
@@ -269,6 +272,9 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     Call callArityCheck = call();
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jump(fromArityCheck);
+    
+    // Create OSR entry trampolines if necessary.
+    speculative.createOSREntries();
 
 
     // === Link ===

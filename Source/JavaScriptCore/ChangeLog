@@ -1,3 +1,67 @@
+2012-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to emit code on control flow edges
+        https://bugs.webkit.org/show_bug.cgi?id=78515
+
+        Reviewed by Gavin Barraclough.
+        
+        This gets us a few steps closer to being able to perform global register allocation,
+        by allowing us to have landing pads on control flow edges. This will let us reshuffle
+        registers if it happens to be necessary due to different reg alloc decisions in
+        differen blocks.
+        
+        This also introduces the notion of a landing pad for OSR entry, which will allow us
+        to emit code that places data into registers when we're entering into the DFG from
+        the old JIT.
+        
+        Finally, this patch introduces a verification mode that checks that the landing pads
+        are actually emitted and do actually work as advertised. When verification is disabled,
+        this has no effect on behavior.
+
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::invert):
+        (JSC::MacroAssembler::isInvertible):
+        * dfg/DFGCommon.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::branchDouble):
+        (JSC::DFG::SpeculativeJIT::branchDoubleNonZero):
+        (JSC::DFG::SpeculativeJIT::branch32):
+        (JSC::DFG::SpeculativeJIT::branchTest32):
+        (JSC::DFG::SpeculativeJIT::branchPtr):
+        (JSC::DFG::SpeculativeJIT::branchTestPtr):
+        (JSC::DFG::SpeculativeJIT::branchTest8):
+        (JSC::DFG::SpeculativeJIT::jump):
+        (JSC::DFG::SpeculativeJIT::haveEdgeCodeToEmit):
+        (JSC::DFG::SpeculativeJIT::emitEdgeCode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-02-14  Filip Pizlo  <fpizlo@apple.com>
 
         Assertion failure under JSC::DFG::AbstractState::execute loading economist.com
