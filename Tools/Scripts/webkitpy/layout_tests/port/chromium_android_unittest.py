@@ -34,7 +34,8 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import chromium_android
 from webkitpy.layout_tests.port import port_testcase
 
-# FIXME: Add this test once runs.
-# class ChromiumAndroidPortTest(port_testcase.PortTestCase):
-#     port_name = 'chromium-android'
-#     port_maker = chromium_android.ChromiumAndroidPort
+
+class ChromiumAndroidPortTest(port_testcase.PortTestCase):
+    port_name = 'chromium-android'
+    port_maker = chromium_android.ChromiumAndroidPort
+    default_worker_model = 'inline'

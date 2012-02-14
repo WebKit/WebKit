@@ -82,6 +82,20 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
 
+        self._operating_system = 'android'
+        self._version = 'icecreamsandwich'
+        # TODO: we may support other architectures in the future.
+        self._architecture = 'arm'
+        self._original_governor = None
+        self._android_base_dir = None
+
+        self._host_port = host.port_factory.get('chromium', **kwargs)
+
+        self._adb_command = ['adb']
+        adb_args = self.get_option('adb_args')
+        if adb_args:
+            self._adb_command += shlex.split(adb_args)
+
     def default_child_processes(self):
         # Currently we only use one process, but it might be helpful to use
         # more that one process in the future to improve performance.
@@ -129,3 +143,39 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def stop_helper(self):
         # FIXME: Not implemented (yet!)
         pass
+
+    def _build_path(self, *comps):
+        return self._host_port._build_path(*comps)
+
+    def _path_to_apache(self):
+        return self._host_port._path_to_apache()
+
+    def _path_to_apache_config_file(self):
+        return self._host_port._path_to_apache_config_file()
+
+    def _path_to_driver(self, configuration=None):
+        # Returns the host path to driver which will be pushed to the device.
+        if not configuration:
+            configuration = self.get_option('configuration')
+        return self._build_path(configuration, 'DumpRenderTree')
+
+    def _path_to_helper(self):
+        return self._build_path(self.get_option('configuration'), 'forwarder')
+
+    def _path_to_image_diff(self):
+        return self._host_port._path_to_image_diff()
+
+    def _path_to_lighttpd(self):
+        return self._host_port._path_to_lighttpd()
+
+    def _path_to_lighttpd_modules(self):
+        return self._host_port._path_to_lighttpd_modules()
+
+    def _path_to_lighttpd_php(self):
+        return self._host_port._path_to_lighttpd_php()
+
+    def _path_to_wdiff(self):
+        return self._host_port._path_to_wdiff()
+
+    def _shut_down_http_server(self, pid):
+        return self._host_port._shut_down_http_server(pid)
