@@ -677,6 +677,7 @@ BUGCR8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 
 // Incrorect results, in incorrect international font metrics.
 BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = IMAGE+TEXT
+BUGWK78544 LINUX : fast/text/atsui-multiple-renderers.html = PASS IMAGE IMAGE+TEXT
 BUGCR20521 LINUX WIN : fast/text/atsui-pointtooffset-calls-cg.html = TIMEOUT FAIL
 BUGCR20521 LINUX WIN : fast/text/atsui-rtl-override-selection.html = FAIL
 
@@ -2966,8 +2967,11 @@ BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = PASS IMAGE
+BUGWK78544 LINUX : fast/text/international/thai-line-breaks.html = PASS IMAGE IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
+BUGWK78544 LINUX : fast/text/international/thai-baht-space.html = PASS IMAGE IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = PASS IMAGE+TEXT
+BUGWK78544 : platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
 
@@ -3619,6 +3623,7 @@ BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRA
 
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/complex-character-based-fallback.html = IMAGE+TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/danda-space.html = IMAGE+TEXT
+BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-baht-space.html = IMAGE+TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/chromium-complex-text-non-printable.html = IMAGE
 BUGWK73991 WIN7 VISTA RELEASE : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
