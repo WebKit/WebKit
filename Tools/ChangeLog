@@ -1,5 +1,29 @@
 2012-02-13  Adam Barth  <abarth@webkit.org>
 
+        chromium_android.py should implement "virtual" methods from ChromiumPort
+        https://bugs.webkit.org/show_bug.cgi?id=78545
+
+        Reviewed by Dirk Pranke.
+
+        This patch adds basic implementations that specialize a bunch of
+        functions from ChromiumPort.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.default_child_processes):
+        (ChromiumAndroidPort.baseline_search_path):
+        (ChromiumAndroidPort.check_build):
+        (ChromiumAndroidPort.check_sys_deps):
+        (ChromiumAndroidPort.default_worker_model):
+        (ChromiumAndroidPort.test_expectations):
+        (ChromiumAndroidPort.start_http_server):
+        (ChromiumAndroidPort.stop_http_server):
+        (ChromiumAndroidPort.start_helper):
+        (ChromiumAndroidPort.stop_helper):
+
+2012-02-13  Adam Barth  <abarth@webkit.org>
+
         Add a skeleton ChromiumAndroid port to webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=78543
 
