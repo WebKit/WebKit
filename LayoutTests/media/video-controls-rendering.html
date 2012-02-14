@@ -12,6 +12,8 @@
     <video controls style="position: absolute; width: 320px;"></video>
 </div>
 <script>
+if (window.internals)
+    window.internals.settings.setMockScrollbarsEnabled(true);
 init();
 setSrcByTagName('video', findMediaFile('video', 'content/test'));
 </script>

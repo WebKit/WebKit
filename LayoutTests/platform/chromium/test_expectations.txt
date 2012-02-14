@@ -3972,8 +3972,9 @@ BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
 BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK78529 LINUX DEBUG GPU : media/video-controls-rendering.html = IMAGE
-BUGWK78529 LINUX DEBUG GPU : media/video-zoom.html = IMAGE
+
+BUGWK78634 CPU GPU : media/video-controls-rendering.html = IMAGE
+BUGWK78634 CPU GPU : media/video-zoom.html = IMAGE
 
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
