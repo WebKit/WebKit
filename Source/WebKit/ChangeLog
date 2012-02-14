@@ -1,3 +1,24 @@
+2012-02-14  Andy Chen  <andchen@rim.com>
+
+        Initial upstreaming for find-in-page for BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=78615
+
+        Create a new class InPageSearchManager for find-in-page and
+        remove the functions in SelectionHandler
+
+        Reviewed by Rob Buis.
+
+        * blackberry/CMakeListsBlackBerry.txt:
+        * blackberry/WebKitSupport/InPageSearchManager.cpp: Added.
+        (BlackBerry::WebKit::InPageSearchManager::InPageSearchManager):
+        (BlackBerry::WebKit::InPageSearchManager::~InPageSearchManager):
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::clearTextMatches):
+        (BlackBerry::WebKit::InPageSearchManager::setMarkerActive):
+        * blackberry/WebKitSupport/InPageSearchManager.h: Added.
+        * blackberry/WebKitSupport/SelectionHandler.cpp:
+        * blackberry/WebKitSupport/SelectionHandler.h:
+
 2012-02-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry WebCoreSupport FrameLoaderClientBlackBerry class

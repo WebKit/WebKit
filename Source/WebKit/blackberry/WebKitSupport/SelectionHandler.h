@@ -53,7 +53,6 @@ public:
     void cancelSelection();
     WebString selectedText() const;
 
-    bool findNextString(const WTF::String&, bool);
     bool selectionContains(const WebCore::IntPoint&);
 
     void setSelection(const WebCore::IntPoint& start, const WebCore::IntPoint& end);

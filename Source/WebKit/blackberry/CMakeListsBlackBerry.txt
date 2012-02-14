@@ -68,6 +68,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/BackingStoreClient.cpp
     blackberry/WebKitSupport/DOMSupport.cpp
     blackberry/WebKitSupport/FrameLayers.cpp
+    blackberry/WebKitSupport/InPageSearchManager.cpp
     blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/OutOfMemoryHandler.cpp
     blackberry/WebKitSupport/RenderQueue.cpp

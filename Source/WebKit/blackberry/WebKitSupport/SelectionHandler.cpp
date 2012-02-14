@@ -88,30 +88,6 @@ WebString SelectionHandler::selectedText() const
     return m_webPage->focusedOrMainFrame()->editor()->selectedText();
 }
 
-bool SelectionHandler::findNextString(const WTF::String& searchString, bool forward)
-{
-    if (searchString.isEmpty()) {
-        cancelSelection();
-        return false;
-    }
-
-    ASSERT(m_webPage->m_page);
-
-    m_webPage->m_page->unmarkAllTextMatches();
-
-    bool result = m_webPage->m_page->findString(searchString, WTF::TextCaseInsensitive, forward ? FindDirectionForward : FindDirectionBackward, true /* should wrap */);
-    if (result && m_webPage->focusedOrMainFrame()->selection()->selectionType() == VisibleSelection::NoSelection) {
-        // Word was found but could not be selected on this page.
-        result = m_webPage->m_page->markAllMatchesForText(searchString, WTF::TextCaseInsensitive, true /* should highlight */, 0 /* limit to match 0 = unlimited */);
-    }
-
-    // Defocus the input field if one is active.
-    if (m_webPage->m_inputHandler->isInputMode())
-        m_webPage->m_inputHandler->nodeFocused(0);
-
-    return result;
-}
-
 void SelectionHandler::getConsolidatedRegionOfTextQuadsForSelection(const VisibleSelection& selection, BlackBerry::Platform::IntRectRegion& region) const
 {
     ASSERT(region.isEmpty());
