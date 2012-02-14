@@ -170,12 +170,9 @@ static inline QualifiedName constructQualifiedName(const SVGElement* svgElement,
 
 static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& timeList)
 {
-    size_t timeListSize = timeList.size();
-    for (size_t i = 0; i < timeListSize; ++i) {
-        if (!timeList[i].originIsScript())
-            continue;
-        timeList.remove(i);
-        --timeListSize;
+    for (int i = timeList.size() - 1; i >= 0; --i) {
+        if (timeList[i].originIsScript())
+            timeList.remove(i);
     }
 }
 
@@ -189,9 +186,6 @@ void SVGSMILElement::reset()
     m_lastPercent = 0;
     m_lastRepeat = 0;
     m_nextProgressTime = 0;
-
-    clearTimesWithDynamicOrigins(m_beginTimes);
-    clearTimesWithDynamicOrigins(m_endTimes);
     resolveFirstInterval();
 }
 
@@ -1054,7 +1048,13 @@ void SVGSMILElement::beginByLinkActivation()
     SMILTime elapsed = this->elapsed();
     addBeginTime(elapsed, elapsed);
 }
-    
+
+void SVGSMILElement::endedActiveInterval()
+{
+    clearTimesWithDynamicOrigins(m_beginTimes);
+    clearTimesWithDynamicOrigins(m_endTimes);
+}
+
 }
 
 #endif

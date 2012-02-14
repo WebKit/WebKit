@@ -624,9 +624,5 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMI
     calculateAnimatedValue(effectivePercent, repeat, resultElement);
 }
 
-void SVGAnimationElement::endedActiveInterval()
-{
-}
-
 }
 #endif // ENABLE(SVG)

@@ -117,7 +117,7 @@ protected:
 private:
     virtual void startedActiveInterval() = 0;
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
-    virtual void endedActiveInterval() = 0;
+    void endedActiveInterval();
 
     enum BeginOrEnd {
         Begin,

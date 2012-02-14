@@ -104,7 +104,6 @@ protected:
     // from SVGSMILElement
     virtual void startedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
-    virtual void endedActiveInterval();
 
 private:
     virtual void attributeChanged(Attribute*) OVERRIDE;
