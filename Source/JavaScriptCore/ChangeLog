@@ -1,3 +1,9 @@
+2012-02-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Replace old strtod with new strtod
