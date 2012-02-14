@@ -30,6 +30,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -815,10 +816,15 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
 #endif
 }
 
-bool StylePropertySet::setProperty(int propertyID, int value, bool important, bool notifyChanged)
+bool StylePropertySet::setProperty(int propertyID, int identifier, bool important, bool notifyChanged)
 {
-    CSSProperty property(propertyID, CSSPrimitiveValue::createIdentifier(value), important);
-    setProperty(property);
+    RefPtr<CSSPrimitiveValue> value;
+    if (m_parentIsElement && parentElement() && parentElement()->document())
+        value = parentElement()->document()->cssValuePool()->createIdentifierValue(identifier);
+    else
+        value = CSSPrimitiveValue::createIdentifier(identifier);
+
+    setProperty(CSSProperty(propertyID, value.release(), important));
     if (notifyChanged)
         setNeedsStyleRecalc();
     return true;

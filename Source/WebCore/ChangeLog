@@ -1,3 +1,19 @@
+2012-02-14  Andreas Kling  <awesomekling@apple.com>
+
+        StylePropertySet: Try to find a CSSValuePool for identifier values.
+        <http://webkit.org/b/78590>
+
+        Reviewed by Antti Koivisto.
+
+        For StylePropertySets with a parent element (inline and attribute style),
+        grab at the parentElement()->document() to locate a CSSValuePool.
+        This code will change soon in the CSSOM refactoring and moreso once we
+        figure out how to have a global CSSValuePool, but I'm hoping it will buy
+        us some perf back in the meantime.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::setProperty):
+
 2012-02-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Convert svg/animations to use SMIL methods for driving the timeline
