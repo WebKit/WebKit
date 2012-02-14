@@ -1,3 +1,17 @@
+2012-02-13  Loïc Yhuel  <loic.yhuel_ext@softathome.com>
+
+        Allow to configure ENABLE_FTPDIR in build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=65098
+
+        Reviewed by Eric Seidel.
+
+        Allow to disable ENABLE_FTPDIR by command line.
+        Remove ENABLE_FTPDIR from --minimal build
+
+        * Scripts/build-webkit: Add entries for ENABLE_FTPDIR (enabled by default)
+        * qmake/mkspecs/features/features.prf: ENABLE_FTPDIR must be set to match Platform.h,
+        as, for Qt platform, build-webkit does not add on command line what it thinks to be default values
+
 2012-02-13  Shinya Kawanaka  <shinyak@chromium.org>
 
         Add shinyak as committer.
