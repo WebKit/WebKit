@@ -44,6 +44,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "Text.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -187,7 +188,7 @@ void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
         m_messageBody = 0;
         HTMLElement* host = toHTMLElement(m_element);
         ExceptionCode ec;
-        host->shadowRoot()->removeChild(m_bubble.get(), ec);
+        host->shadowRootList()->oldestShadowRoot()->removeChild(m_bubble.get(), ec);
         m_bubble = 0;
     }
     m_message = String();

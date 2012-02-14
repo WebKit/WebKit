@@ -28,12 +28,13 @@
 #include "Document.h"
 #include "NodeRareData.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 
 namespace WebCore {
 
 static inline ShadowRoot* shadowRootFor(Node* node)
 {
-    return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
+    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->youngestShadowRoot() : 0;
 }
 
 void TreeScopeAdopter::moveTreeToNewScope(Node* root) const

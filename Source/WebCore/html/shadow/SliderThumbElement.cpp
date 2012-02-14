@@ -43,6 +43,7 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "StepRange.h"
 #include <wtf/MathExtras.h>
 
@@ -66,7 +67,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 SliderThumbElement* sliderThumbElementOf(Node* node)
 {
     ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
+    ShadowRoot* shadow = node->toInputElement()->shadowRootList()->oldestShadowRoot();
     ASSERT(shadow);
     Node* thumb = shadow->firstChild()->firstChild()->firstChild();
     ASSERT(thumb);
@@ -141,7 +142,7 @@ void RenderSliderContainer::layout()
     Length inputHeight = input->renderer()->style()->height();
     RenderObject* trackRenderer = node()->firstChild()->renderer();
     if (!isVertical && input->renderer()->isSlider() && !inputHeight.isFixed() && !inputHeight.isPercent()) {
-        RenderObject* thumbRenderer = input->shadowRoot()->firstChild()->firstChild()->firstChild()->renderer();
+        RenderObject* thumbRenderer = input->shadowRootList()->oldestShadowRoot()->firstChild()->firstChild()->firstChild()->renderer();
         if (thumbRenderer) {
             style()->setHeight(thumbRenderer->style()->height());
             if (trackRenderer)
@@ -355,7 +356,8 @@ const AtomicString& TrackLimiterElement::shadowPseudoId() const
 TrackLimiterElement* trackLimiterElementOf(Node* node)
 {
     ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
+    ASSERT(node->toInputElement()->hasShadowRoot());
+    ShadowRoot* shadow = node->toInputElement()->shadowRootList()->oldestShadowRoot();
     ASSERT(shadow);
     Node* limiter = shadow->firstChild()->lastChild();
     ASSERT(limiter);

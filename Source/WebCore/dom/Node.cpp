@@ -86,6 +86,7 @@
 #include "ScopedEventQueue.h"
 #include "SelectorQuery.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "StaticNodeList.h"
 #include "StorageEvent.h"
 #include "TagNodeList.h"
@@ -808,7 +809,7 @@ bool Node::hasNonEmptyBoundingBox() const
 
 inline static ShadowRoot* shadowRoot(Node* node)
 {
-    return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
+    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->youngestShadowRoot() : 0;
 }
 
 inline void Node::setStyleChange(StyleChangeType changeType)

@@ -258,7 +258,6 @@ public:
 
     // FIXME: These API will be moved to ShadowRootList.
     // https://bugs.webkit.org/show_bug.cgi?id=78313
-    ShadowRoot* shadowRoot() const;
     void setShadowRoot(PassRefPtr<ShadowRoot>, ExceptionCode&);
     ShadowRoot* ensureShadowRoot();
     void removeShadowRoot();

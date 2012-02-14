@@ -97,7 +97,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
 
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPurpose purpose, ExceptionCode& ec)
 {
-    if (!element || element->shadowRoot()) {
+    if (!element || element->hasShadowRoot()) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
@@ -109,7 +109,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
         return 0;
     }
 
-    ASSERT(purpose != CreatingUserAgentShadowRoot || !element->shadowRoot());
+    ASSERT(purpose != CreatingUserAgentShadowRoot || !element->hasShadowRoot());
     RefPtr<ShadowRoot> shadowRoot = create(element->document());
 
     ec = 0;

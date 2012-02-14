@@ -59,4 +59,58 @@ ShadowRoot* ShadowRootList::popShadowRoot()
     return m_shadowRoots.removeHead();
 }
 
+void ShadowRootList::insertedIntoDocument()
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->insertedIntoDocument();
+}
+
+void ShadowRootList::removedFromDocument()
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->removedFromDocument();
+}
+
+void ShadowRootList::insertedIntoTree(bool deep)
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->insertedIntoTree(deep);
+}
+
+void ShadowRootList::removedFromTree(bool deep)
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->removedFromTree(deep);
+}
+
+void ShadowRootList::hostChildrenChanged()
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->hostChildrenChanged();
+}
+
+void ShadowRootList::attach()
+{
+    // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
+    // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
+    ASSERT(m_shadowRoots.size() <= 1);
+
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        if (!root->attached())
+            root->attach();
+    }
+}
+
+void ShadowRootList::detach()
+{
+    // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
+    // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
+    ASSERT(m_shadowRoots.size() <= 1);
+
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        if (root->attached())
+            root->detach();
+    }
+}
+
 }

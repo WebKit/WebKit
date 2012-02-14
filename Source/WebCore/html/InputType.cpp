@@ -56,6 +56,7 @@
 #include "ResetInputType.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "SubmitInputType.h"
 #include "TelephoneInputType.h"
 #include "TextInputType.h"
@@ -378,7 +379,10 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    if (ShadowRoot* root = element()->shadowRoot())
+    if (!element()->hasShadowRoot())
+        return;
+
+    if (ShadowRoot* root = element()->shadowRootList()->oldestShadowRoot())
         root->removeAllChildren();
 }
 

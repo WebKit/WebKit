@@ -54,6 +54,7 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
 #include "htmlediting.h" // For firstPositionInOrBeforeNode
@@ -154,7 +155,7 @@ void FocusController::setFocused(bool focused)
 
 static inline ShadowRoot* shadowRoot(Node* node)
 {
-    return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
+    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->youngestShadowRoot() : 0;
 }
 
 static inline bool isTreeScopeOwner(Node* node)

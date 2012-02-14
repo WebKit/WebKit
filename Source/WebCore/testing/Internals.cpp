@@ -50,6 +50,7 @@
 #include "RenderTreeAsText.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
 
@@ -185,20 +186,43 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
         return 0;
     }
 
-    if (ShadowRoot* root = host->shadowRoot())
-        return root;
+    if (host->hasShadowRoot())
+        return host->shadowRootList()->youngestShadowRoot();
 
     return ShadowRoot::create(host, ec).get();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* host, ExceptionCode& ec)
 {
+    // FIXME: Internals::shadowRoot() in tests should be converted to youngestShadowRoot() or oldestShadowRoot().
+    // https://bugs.webkit.org/show_bug.cgi?id=78465
+    return youngestShadowRoot(host, ec);
+}
+
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngestShadowRoot(Element* host, ExceptionCode& ec)
+{
     if (!host) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
 
-    return host->shadowRoot();
+    if (!host->hasShadowRoot())
+        return 0;
+
+    return host->shadowRootList()->youngestShadowRoot();
+}
+
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Element* host, ExceptionCode& ec)
+{
+    if (!host) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    if (!host->hasShadowRoot())
+        return 0;
+
+    return host->shadowRootList()->oldestShadowRoot();
 }
 
 void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)

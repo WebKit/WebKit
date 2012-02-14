@@ -1,3 +1,113 @@
+2012-02-14  Shinya Kawanaka  <shinyak@google.com>
+
+        Use youngestShadowRoot and oldestShadowRoot instead of Element::shadowRoot().
+        https://bugs.webkit.org/show_bug.cgi?id=78455
+
+        Reviewed by Hajime Morita.
+
+        Element::shadowRoot() was used for these 3 purposes.
+        1. checks a shadow root exists.
+        2. gets author shadow root.
+        3. gets user agent shadow root.
+
+        We have to distinguish them when implementing multiple shadow subtrees.
+
+        Calling for (1), (2), and (3) are convered to hasShadowRoot(),
+        ShadowRootList()->youngestShadowRoot(), and ShadowRootList()->oldestShadowRoot() respectively.
+
+        No new tests, no change in behavior.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/Element.cpp:
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        (WebCore::Element::insertedIntoTree):
+        (WebCore::Element::removedFromTree):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::ensureShadowRoot):
+        (WebCore::Element::childrenChanged):
+        (WebCore::Element::focus):
+        * dom/Element.h:
+        (Element):
+        * dom/EventDispatcher.cpp:
+        (WebCore::isShadowHost):
+        * dom/Node.cpp:
+        (WebCore::shadowRoot):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowRootList.cpp:
+        (WebCore::ShadowRootList::insertedIntoDocument):
+        (WebCore):
+        (WebCore::ShadowRootList::removedFromDocument):
+        (WebCore::ShadowRootList::insertedIntoTree):
+        (WebCore::ShadowRootList::removedFromTree):
+        (WebCore::ShadowRootList::hostChildrenChanged):
+        (WebCore::ShadowRootList::attach):
+        (WebCore::ShadowRootList::detach):
+        * dom/ShadowRootList.h:
+        (ShadowRootList):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::shadowRootFor):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createShadowSubtree):
+        (WebCore::HTMLDetailsElement::findMainSummary):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createShadowSubtree):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaControls):
+        (WebCore::HTMLMediaElement::hasMediaControls):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createShadowSubtree):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createShadowSubtree):
+        (WebCore::HTMLTextAreaElement::innerTextElement):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/InputType.cpp:
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::deleteBubbleTree):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbElementOf):
+        (WebCore::RenderSliderContainer::layout):
+        (WebCore::trackLimiterElementOf):
+        * page/FocusController.cpp:
+        (WebCore::shadowRoot):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::uploadButton):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot):
+        (WebCore::Internals::shadowRoot):
+        (WebCore):
+        (WebCore::Internals::youngestShadowRoot):
+        (WebCore::Internals::oldestShadowRoot):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Elements panel needs to be able to preview images

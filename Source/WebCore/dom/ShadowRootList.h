@@ -48,6 +48,16 @@ public:
     void pushShadowRoot(ShadowRoot*);
     ShadowRoot* popShadowRoot();
 
+    void insertedIntoDocument();
+    void removedFromDocument();
+    void insertedIntoTree(bool deep);
+    void removedFromTree(bool deep);
+
+    void hostChildrenChanged();
+
+    void attach();
+    void detach();
+
 private:
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     WTF_MAKE_NONCOPYABLE(ShadowRootList);

@@ -35,6 +35,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -65,7 +66,8 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     m_location = LocationLightChild;
 
     if (parent->isElementNode()) {
-        m_visualParentShadowRoot = toElement(parent)->shadowRoot();
+        if (toElement(parent)->hasShadowRoot())
+            m_visualParentShadowRoot = toElement(parent)->shadowRootList()->youngestShadowRoot();
 
         if (m_visualParentShadowRoot) {
             if ((m_insertionPoint = m_visualParentShadowRoot->insertionPointFor(m_node))

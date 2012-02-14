@@ -234,7 +234,7 @@ void HTMLMeterElement::didElementStateChange()
 
 void HTMLMeterElement::createShadowSubtree()
 {
-    ASSERT(!shadowRoot());
+    ASSERT(!hasShadowRoot());
 
     RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
     m_value = MeterValueElement::create(document());

@@ -127,7 +127,7 @@ static inline bool isShadowRootOrSVGShadowRoot(const Node* node)
 
 static inline bool isShadowHost(Node* node)
 {
-    return node->isElementNode() && toElement(node)->shadowRoot();
+    return node->isElementNode() && toElement(node)->hasShadowRoot();
 }
 
 PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors)

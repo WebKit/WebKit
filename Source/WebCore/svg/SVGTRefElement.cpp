@@ -31,6 +31,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "SVGDocument.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
@@ -159,10 +160,12 @@ void SVGTRefElement::updateReferencedText()
     if (target->parentNode())
         textContent = target->textContent();
 
-    if (!shadowRoot()->firstChild())
-        shadowRoot()->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
+    ASSERT(hasShadowRoot());
+    ShadowRoot* root = shadowRootList()->oldestShadowRoot();
+    if (!root->firstChild())
+        root->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
     else
-        shadowRoot()->firstChild()->setTextContent(textContent, ASSERT_NO_EXCEPTION);
+        root->firstChild()->setTextContent(textContent, ASSERT_NO_EXCEPTION);
 }
 
 bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)

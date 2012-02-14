@@ -109,7 +109,7 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
 
 void HTMLInputElement::createShadowSubtree()
 {
-    ASSERT(!shadowRoot());
+    ASSERT(!hasShadowRoot());
     ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION);
 
     m_inputType->createShadowSubtree();

@@ -33,6 +33,7 @@
 #include "HTMLOptionElement.h"
 #include "SSLKeyGenerator.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
 
@@ -85,7 +86,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
         option->appendChild(Text::create(document, keys[i]), ec);
     }
 
-    ASSERT(!shadowRoot());
+    ASSERT(!hasShadowRoot());
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(select, ec);
 }
@@ -130,8 +131,8 @@ void HTMLKeygenElement::reset()
 
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
-    ShadowRoot* shadow = shadowRoot();
-    ASSERT(shadow);
+    ASSERT(hasShadowRoot());
+    ShadowRoot* shadow = shadowRootList()->oldestShadowRoot();
     return shadow ? toHTMLSelectElement(shadow->firstChild()) : 0;
 }
 

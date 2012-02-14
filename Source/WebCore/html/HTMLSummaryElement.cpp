@@ -31,8 +31,8 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
-
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 
 namespace WebCore {
 
@@ -74,7 +74,7 @@ RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle
 
 void HTMLSummaryElement::createShadowSubtree()
 {
-    ASSERT(!shadowRoot());
+    ASSERT(!hasShadowRoot());
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, true);
     root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, true);

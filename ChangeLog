@@ -1,3 +1,14 @@
+2012-02-14  Shinya Kawanaka  <shinyak@google.com>
+
+        Use youngestShadowRoot and oldestShadowRoot instead of Element::shadowRoot().
+        https://bugs.webkit.org/show_bug.cgi?id=78455
+
+        Reviewed by Hajime Morita.
+
+        Exports necessary symbols.
+
+        * Source/autotools/symbols.filter:
+
 2012-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another perf-o-matic build fix. It turns out that a task of the same name can't be

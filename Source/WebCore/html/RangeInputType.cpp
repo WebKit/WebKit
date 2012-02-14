@@ -42,6 +42,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
 #include <limits>
@@ -157,7 +158,10 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
         return;
 
     Node* targetNode = event->target()->toNode();
-    if (event->button() != LeftButton || !targetNode || (targetNode != element() && !targetNode->isDescendantOf(element()->shadowRoot())))
+    if (event->button() != LeftButton || !targetNode)
+        return;
+    ASSERT(element()->hasShadowRoot());
+    if (targetNode != element() && !targetNode->isDescendantOf(element()->shadowRootList()->oldestShadowRoot()))
         return;
     SliderThumbElement* thumb = sliderThumbElementOf(element());
     if (targetNode == thumb)
@@ -233,7 +237,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadowRoot());
+    ASSERT(element()->hasShadowRoot());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);
@@ -243,7 +247,7 @@ void RangeInputType::createShadowSubtree()
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);
     container->appendChild(TrackLimiterElement::create(document), ec);
-    element()->shadowRoot()->appendChild(container.release(), ec);
+    element()->shadowRootList()->oldestShadowRoot()->appendChild(container.release(), ec);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

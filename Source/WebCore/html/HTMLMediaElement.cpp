@@ -71,6 +71,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include "TimeRanges.h"
 #include "UUID.h"
 #include <limits>
@@ -3519,15 +3520,15 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
 MediaControls* HTMLMediaElement::mediaControls()
 {
-    return toMediaControls(shadowRoot()->firstChild());
+    return toMediaControls(shadowRootList()->oldestShadowRoot()->firstChild());
 }
 
 bool HTMLMediaElement::hasMediaControls()
 {
-    if (!shadowRoot())
+    if (!hasShadowRoot())
         return false;
 
-    Node* node = shadowRoot()->firstChild();
+    Node* node = shadowRootList()->oldestShadowRoot()->firstChild();
     return node && node->isMediaControls();
 }
 
