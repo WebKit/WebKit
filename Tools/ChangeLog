@@ -1,3 +1,19 @@
+2012-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT is broken for the default port
+        https://bugs.webkit.org/show_bug.cgi?id=78640
+    
+        Reviewed by Tony Chang.
+
+        The change in r107718 (bug 78565) broke NRWT if you didn't
+        specify any sort of --platform flag or equivalent. I didn't
+        catch this because it's a full integration test (which we don't
+        have an automated test for) and I missed this command line
+        variant when testing interactively.
+
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.run):
+
 2012-02-14  Ramya Chandrasekaran  <cramya@google.com>
 
         Last character display for passwords in Android.

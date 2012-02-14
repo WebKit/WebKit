@@ -88,7 +88,7 @@ class Worker(manager_worker_broker.AbstractWorker):
             self._port = port
         else:
             # We are running in a child process and need to create a new Host.
-            if 'test' in self._options.platform:
+            if self._options.platform and 'test' in self._options.platform:
                 # It is lame to import mocks into real code, but this allows us to use the test port in multi-process tests as well.
                 from webkitpy.common.host_mock import MockHost
                 host = MockHost()
