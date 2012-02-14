@@ -1,3 +1,13 @@
+2012-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac][Win][WK2] Switch to RFC 6455 protocol for WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=78541
+        <rdar://problem/10036695>
+
+        Reviewed by Kent Tamura.
+
+        * Shared/WebPreferencesStore.h: (WebKit): Changed default value of the preference.
+
 2012-02-13  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Remove obsolete zoom animation pathway.

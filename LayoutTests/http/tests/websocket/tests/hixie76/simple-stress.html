@@ -8,6 +8,7 @@ var numSmallMessages = 1000;
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 }
 
 function log(message)

@@ -268,7 +268,7 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMemoryInfoEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), kCFBooleanTrue);

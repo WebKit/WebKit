@@ -10,6 +10,8 @@
 description("Make sure Web Socket connection failed if origin mismatches.");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var connected = false;
 var origin;

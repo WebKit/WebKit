@@ -4,6 +4,7 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 }
 
 var socketCount = 50;

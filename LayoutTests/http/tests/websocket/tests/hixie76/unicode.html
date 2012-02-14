@@ -10,6 +10,8 @@
 description("Web Socket unicode message test");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 function endTest()
 {

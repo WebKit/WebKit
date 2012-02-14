@@ -10,6 +10,8 @@
 description("Make sure WebSocket correctly skip lengthed frame.");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var received_messages = [];
 var expected_messages = ["hello", "world"];

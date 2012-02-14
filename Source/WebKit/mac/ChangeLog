@@ -1,3 +1,14 @@
+2012-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac][Win][WK2] Switch to RFC 6455 protocol for WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=78541
+        <rdar://problem/10036695>
+
+        Reviewed by Kent Tamura.
+
+        * WebView/WebPreferences.mm: (+[WebPreferences initialize]): Changed default value of the
+        preference.
+
 2012-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Convert svg/animations to use SMIL methods for driving the timeline

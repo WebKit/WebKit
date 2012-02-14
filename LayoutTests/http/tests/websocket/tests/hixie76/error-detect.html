@@ -10,6 +10,8 @@
 description("Make sure WebSocket correctly fire error event for unknown frame type.");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var errorCount = 0;
 

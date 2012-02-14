@@ -10,6 +10,8 @@
 description('Handshake should fail when the first line does not end with CRLF.');
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var connected = false;
 var origin;

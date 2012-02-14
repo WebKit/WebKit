@@ -9,6 +9,9 @@
 <script type="text/javascript">
 description("Test WebSocket URL parsing.");
 
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+
 // Invalid url will fail to be parsed.
 shouldThrow('new WebSocket("ws://javascript:a")');
 

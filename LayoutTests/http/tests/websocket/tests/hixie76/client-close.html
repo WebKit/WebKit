@@ -10,6 +10,8 @@
 description("WebSocket: Test client-initiated close.");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/client-close");
 var closeEvent;

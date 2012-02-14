@@ -384,7 +384,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
-        [NSNumber numberWithBool:YES],  WebKitHixie76WebSocketProtocolEnabledKey,
+        [NSNumber numberWithBool:NO],  WebKitHixie76WebSocketProtocolEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,

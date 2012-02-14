@@ -10,6 +10,8 @@
 description("Web Socket Cross Origin test");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var origin;
 

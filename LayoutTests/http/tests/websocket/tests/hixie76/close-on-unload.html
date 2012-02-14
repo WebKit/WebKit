@@ -10,6 +10,8 @@
 description("Test if Web Socket is closed on unload");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var frameDiv;
 var closedSocket;

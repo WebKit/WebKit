@@ -10,6 +10,8 @@
 description('Handshake request should contain random challenge values.');
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var challenge1;
 var challenge2;

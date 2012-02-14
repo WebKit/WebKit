@@ -10,6 +10,8 @@
 description("Web Socket bufferedAmount after closed");
 
 window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hixie76/simple");
 
