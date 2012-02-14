@@ -1,3 +1,11 @@
+2012-02-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Add shinyak as committer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-13  Adam Barth  <abarth@webkit.org>
 
         Implement start/stop_helper for ChromiumAndroidPort
