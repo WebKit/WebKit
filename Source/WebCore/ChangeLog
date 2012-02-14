@@ -1,3 +1,12 @@
+2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r107683: protect inspector sidebar from updating
+        while inserting new rule.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+
 2012-02-14  Rick Byers  <rbyers@.com>
 
         Extend Chromium V8 tracing to cover more cases

@@ -1436,8 +1436,11 @@ WebInspector.BlankStylePropertiesSection.prototype = {
             this.expand();
             if (this.element.parentElement) // Might have been detached already.
                 this._moveEditorFromSelector(moveDirection);
+
+            delete this._parentPane._userOperation;
         }
 
+        this._parentPane._userOperation = true;
         WebInspector.cssModel.addRule(this.pane.node.id, newContent, successCallback.bind(this), this.editingSelectorCancelled.bind(this));
     },
 
