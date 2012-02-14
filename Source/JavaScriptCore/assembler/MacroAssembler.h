@@ -104,6 +104,7 @@ public:
             return DoubleGreaterThan;
         default:
             ASSERT_NOT_REACHED();
+            return DoubleEqual; // make compiler happy
         }
     }
     

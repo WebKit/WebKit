@@ -1,3 +1,11 @@
+2012-02-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build and configuration goof.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::invert):
+        * dfg/DFGCommon.h:
+
 2012-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to emit code on control flow edges
