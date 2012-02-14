@@ -2613,7 +2613,7 @@ fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
-fast/workers/worker-crash-with-invalid-location.html:
+fast/workers/worker-crash-with-invalid-location.html
 http/tests/inspector/inspect-element.html
 http/tests/inspector/network/network-shared-worker.html
 http/tests/inspector/network/network-worker.html
@@ -2623,3 +2623,7 @@ http/tests/inspector/network/network-worker.html
 fast/viewport/viewport-67.html
 fast/viewport/viewport-68.html
 fast/viewport/viewport-warnings-5.html
+
+# [Qt] http/tests/navigation/https-in-page-cache.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=78597
+http/tests/navigation/https-in-page-cache.html
