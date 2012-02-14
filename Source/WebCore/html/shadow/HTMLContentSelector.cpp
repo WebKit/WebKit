@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void HTMLContentSeleciton::append(PassRefPtr<HTMLContentSeleciton> next)
+void HTMLContentSelection::append(PassRefPtr<HTMLContentSelection> next)
 {
     ASSERT(!m_next);
     ASSERT(!next->previous());
@@ -42,13 +42,13 @@ void HTMLContentSeleciton::append(PassRefPtr<HTMLContentSeleciton> next)
     m_next->m_previous = this;
 }
 
-void HTMLContentSeleciton::unlink()
+void HTMLContentSelection::unlink()
 {
     ASSERT(!m_previous); // Can be called only for a head.
-    RefPtr<HTMLContentSeleciton> item = this;
+    RefPtr<HTMLContentSelection> item = this;
     while (item) {
         ASSERT(!item->previous());
-        RefPtr<HTMLContentSeleciton> nextItem = item->m_next;
+        RefPtr<HTMLContentSelection> nextItem = item->m_next;
         item->m_next.clear();
         if (nextItem)
             nextItem->m_previous.clear();
@@ -65,9 +65,9 @@ HTMLContentSelectionList::~HTMLContentSelectionList()
     ASSERT(isEmpty());
 }
 
-HTMLContentSeleciton* HTMLContentSelectionList::find(Node* node) const
+HTMLContentSelection* HTMLContentSelectionList::find(Node* node) const
 {
-    for (HTMLContentSeleciton* item = first(); item; item = item->next()) {
+    for (HTMLContentSelection* item = first(); item; item = item->next()) {
         if (node == item->node())
             return item;
     }
@@ -87,7 +87,7 @@ void HTMLContentSelectionList::clear()
     m_last.clear();
 }
 
-void HTMLContentSelectionList::append(PassRefPtr<HTMLContentSeleciton> child)
+void HTMLContentSelectionList::append(PassRefPtr<HTMLContentSelection> child)
 {
     if (isEmpty()) {
         ASSERT(!m_last);
@@ -120,7 +120,7 @@ void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContent
         if (!query.matches(child))
             continue;
 
-        RefPtr<HTMLContentSeleciton> selection = HTMLContentSeleciton::create(contentElement, child);
+        RefPtr<HTMLContentSelection> selection = HTMLContentSelection::create(contentElement, child);
         selections->append(selection);
         m_selectionSet.add(selection.get());
         m_candidates[i] = 0;
@@ -129,12 +129,12 @@ void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContent
 
 void HTMLContentSelector::unselect(HTMLContentSelectionList* list)
 {
-    for (HTMLContentSeleciton* selection = list->first(); selection; selection = selection->next())
+    for (HTMLContentSelection* selection = list->first(); selection; selection = selection->next())
         m_selectionSet.remove(selection);
     list->clear();
 }
 
-HTMLContentSeleciton* HTMLContentSelector::findFor(Node* key) const
+HTMLContentSelection* HTMLContentSelector::findFor(Node* key) const
 {
     return m_selectionSet.find(key);
 }

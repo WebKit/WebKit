@@ -82,7 +82,7 @@ void HTMLContentElement::attach()
     HTMLElement::attach();
 
     if (root) {
-        for (HTMLContentSeleciton* selection = m_selections->first(); selection; selection = selection->next())
+        for (HTMLContentSelection* selection = m_selections->first(); selection; selection = selection->next())
             selection->node()->attach();
     }
 }

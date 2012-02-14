@@ -43,34 +43,34 @@ class HTMLContentElement;
 class Node;
 class ShadowRoot;
 
-class HTMLContentSeleciton : public RefCounted<HTMLContentSeleciton> {
+class HTMLContentSelection : public RefCounted<HTMLContentSelection> {
 public:
-    static PassRefPtr<HTMLContentSeleciton> create(HTMLContentElement*, Node*);
+    static PassRefPtr<HTMLContentSelection> create(HTMLContentElement*, Node*);
 
     HTMLContentElement* insertionPoint() const { return m_insertionPoint; }
     Node* node() const { return m_node.get(); }
-    HTMLContentSeleciton* next() const { return m_next.get(); }
-    HTMLContentSeleciton* previous() const { return m_previous.get(); }
+    HTMLContentSelection* next() const { return m_next.get(); }
+    HTMLContentSelection* previous() const { return m_previous.get(); }
 
-    void append(PassRefPtr<HTMLContentSeleciton>);
+    void append(PassRefPtr<HTMLContentSelection>);
     void unlink();
 
 private:
-    HTMLContentSeleciton(HTMLContentElement*, Node*);
+    HTMLContentSelection(HTMLContentElement*, Node*);
 
     HTMLContentElement* m_insertionPoint;
     RefPtr<Node> m_node;
-    RefPtr<HTMLContentSeleciton> m_next;
-    RefPtr<HTMLContentSeleciton> m_previous;
+    RefPtr<HTMLContentSelection> m_next;
+    RefPtr<HTMLContentSelection> m_previous;
 };
 
-inline HTMLContentSeleciton::HTMLContentSeleciton(HTMLContentElement* insertionPoint, Node* node)
+inline HTMLContentSelection::HTMLContentSelection(HTMLContentElement* insertionPoint, Node* node)
     : m_insertionPoint(insertionPoint), m_node(node)
 { }
 
-inline PassRefPtr<HTMLContentSeleciton> HTMLContentSeleciton::create(HTMLContentElement* insertionPoint, Node* node)
+inline PassRefPtr<HTMLContentSelection> HTMLContentSelection::create(HTMLContentElement* insertionPoint, Node* node)
 {
-    return adoptRef(new HTMLContentSeleciton(insertionPoint, node));
+    return adoptRef(new HTMLContentSelection(insertionPoint, node));
 }
 
 class HTMLContentSelectionList {
@@ -78,46 +78,46 @@ public:
     HTMLContentSelectionList();
     ~HTMLContentSelectionList();
 
-    HTMLContentSeleciton* first() const { return m_first.get(); }
-    HTMLContentSeleciton* last() const { return m_last.get(); }
-    HTMLContentSeleciton* find(Node*) const;
+    HTMLContentSelection* first() const { return m_first.get(); }
+    HTMLContentSelection* last() const { return m_last.get(); }
+    HTMLContentSelection* find(Node*) const;
     bool isEmpty() const { return !m_first; }
 
     void clear();
-    void append(PassRefPtr<HTMLContentSeleciton>);
+    void append(PassRefPtr<HTMLContentSelection>);
 
 private:
-    RefPtr<HTMLContentSeleciton> m_first;
-    RefPtr<HTMLContentSeleciton> m_last;
+    RefPtr<HTMLContentSelection> m_first;
+    RefPtr<HTMLContentSelection> m_last;
 };
 
 
 class HTMLContentSelectionSet {
 public:
-    void add(HTMLContentSeleciton* value) { m_set.add(value); }
-    void remove(HTMLContentSeleciton* value) { m_set.remove(value); }
+    void add(HTMLContentSelection* value) { m_set.add(value); }
+    void remove(HTMLContentSelection* value) { m_set.remove(value); }
     bool isEmpty() const { return m_set.isEmpty(); }
-    HTMLContentSeleciton* find(Node* key) const;
+    HTMLContentSelection* find(Node* key) const;
 
 private:
     struct Translator {
     public:
         static unsigned hash(const Node* key) { return PtrHash<const Node*>::hash(key); }
-        static bool equal(const HTMLContentSeleciton* selection, const Node* node) { return selection->node() == node; }
+        static bool equal(const HTMLContentSelection* selection, const Node* node) { return selection->node() == node; }
     };
 
     struct Hash {
-        static unsigned hash(HTMLContentSeleciton* key) { return PtrHash<const Node*>::hash(key->node()); }
-        static bool equal(HTMLContentSeleciton* a, HTMLContentSeleciton* b) { return a->node() == b->node(); }
+        static unsigned hash(HTMLContentSelection* key) { return PtrHash<const Node*>::hash(key->node()); }
+        static bool equal(HTMLContentSelection* a, HTMLContentSelection* b) { return a->node() == b->node(); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    typedef HashSet<HTMLContentSeleciton*, Hash> PointerSet;
+    typedef HashSet<HTMLContentSelection*, Hash> PointerSet;
 
     PointerSet m_set;
 };
 
-inline HTMLContentSeleciton* HTMLContentSelectionSet::find(Node* key) const
+inline HTMLContentSelection* HTMLContentSelectionSet::find(Node* key) const
 {
     PointerSet::iterator found = m_set.find<Node*, HTMLContentSelectionSet::Translator>(key);
     return found != m_set.end() ? *found : 0;
@@ -131,7 +131,7 @@ public:
 
     void select(HTMLContentElement*, HTMLContentSelectionList*);
     void unselect(HTMLContentSelectionList*);
-    HTMLContentSeleciton* findFor(Node* key) const;
+    HTMLContentSelection* findFor(Node* key) const;
 
     void willSelectOver(ShadowRoot*);
     void didSelect();

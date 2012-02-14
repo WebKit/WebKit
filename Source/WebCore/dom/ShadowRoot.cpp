@@ -175,7 +175,7 @@ HTMLContentElement* ShadowRoot::insertionPointFor(Node* node) const
 {
     if (!m_selector)
         return 0;
-    HTMLContentSeleciton* found = m_selector->findFor(node);
+    HTMLContentSelection* found = m_selector->findFor(node);
     if (!found)
         return 0;
     return found->insertionPoint();

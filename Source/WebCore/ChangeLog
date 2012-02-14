@@ -1,3 +1,47 @@
+2012-02-14  Hayato Ito  <hayato@chromium.org>
+
+        Fix typo. HTMLContentSeleciton -> HTMLContentSelection.
+        https://bugs.webkit.org/show_bug.cgi?id=78571
+
+        Reviewed by Hajime Morita.
+
+        No tests. No change in behavior.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::nextRendererOf):
+        (WebCore::previousRendererOf):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertionPointFor):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+        * html/shadow/HTMLContentSelector.cpp:
+        (WebCore::HTMLContentSelection::append):
+        (WebCore::HTMLContentSelection::unlink):
+        (WebCore::HTMLContentSelectionList::find):
+        (WebCore::HTMLContentSelectionList::append):
+        (WebCore::HTMLContentSelector::select):
+        (WebCore::HTMLContentSelector::unselect):
+        (WebCore::HTMLContentSelector::findFor):
+        * html/shadow/HTMLContentSelector.h:
+        (HTMLContentSelection):
+        (WebCore::HTMLContentSelection::next):
+        (WebCore::HTMLContentSelection::previous):
+        (WebCore::HTMLContentSelection::HTMLContentSelection):
+        (WebCore::HTMLContentSelection::create):
+        (WebCore::HTMLContentSelectionList::first):
+        (WebCore::HTMLContentSelectionList::last):
+        (HTMLContentSelectionList):
+        (WebCore::HTMLContentSelectionSet::add):
+        (WebCore::HTMLContentSelectionSet::remove):
+        (HTMLContentSelectionSet):
+        (WebCore::HTMLContentSelectionSet::Translator::equal):
+        (WebCore::HTMLContentSelectionSet::Hash::hash):
+        (WebCore::HTMLContentSelectionSet::Hash::equal):
+        (WebCore::HTMLContentSelectionSet::find):
+        (HTMLContentSelector):
+
 2012-02-14  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: embed calc expressions in CSSPrimitiveValue

@@ -122,11 +122,11 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 static RenderObject* nextRendererOf(HTMLContentElement* parent, Node* current)
 {
-    HTMLContentSeleciton* currentSelection = parent->selections()->find(current);
+    HTMLContentSelection* currentSelection = parent->selections()->find(current);
     if (!currentSelection)
         return 0;
 
-    for (HTMLContentSeleciton* selection = currentSelection->next(); selection; selection = selection->next()) {
+    for (HTMLContentSelection* selection = currentSelection->next(); selection; selection = selection->next()) {
         if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
@@ -138,7 +138,7 @@ static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* curren
 {
     RenderObject* lastRenderer = 0;
 
-    for (HTMLContentSeleciton* selection = parent->selections()->first(); selection; selection = selection->next()) {
+    for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
         if (selection->node() == current)
             break;
         if (RenderObject* renderer = selection->node()->renderer())
@@ -150,7 +150,7 @@ static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* curren
 
 static RenderObject* firstRendererOf(HTMLContentElement* parent)
 {
-    for (HTMLContentSeleciton* selection = parent->selections()->first(); selection; selection = selection->next()) {
+    for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
         if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
@@ -160,7 +160,7 @@ static RenderObject* firstRendererOf(HTMLContentElement* parent)
 
 static RenderObject* lastRendererOf(HTMLContentElement* parent)
 {
-    for (HTMLContentSeleciton* selection = parent->selections()->last(); selection; selection = selection->previous()) {
+    for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
         if (RenderObject* renderer = selection->node()->renderer())
             return renderer;
     }
