@@ -39,6 +39,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
+BUGCR24182 SLOW DEBUG MAC : svg/hixie/perf/007.xml = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
@@ -3971,6 +3972,8 @@ BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
 BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK78529 LINUX DEBUG GPU : media/video-controls-rendering.html = IMAGE
+BUGWK78529 LINUX DEBUG GPU : media/video-zoom.html = IMAGE
 
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
