@@ -1,3 +1,15 @@
+2012-02-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Regression] r107650 broke the windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=78569
+
+        Build fix, Unreviewed.
+
+        The variable defined in switch statement should not escape from the switch statement.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRegionOverflow):
+
 2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Mutation Observers build is broken
