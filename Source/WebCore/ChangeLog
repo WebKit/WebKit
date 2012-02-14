@@ -1,3 +1,18 @@
+2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: List expansion arrows is pointing down even
+        when the list of eventListeners are hidden in the Elements tab
+        https://bugs.webkit.org/show_bug.cgi?id=78360
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/elementsPanel.css:
+        (.section .event-bar .header):
+        (.section .event-bars .event-bar .header .title):
+        (.section .event-bar .header .subtitle):
+        (.section .event-bar .header::before):
+        (.section .event-bar.expanded .header::before):
+
 2012-02-14  Hayato Ito  <hayato@chromium.org>
 
         Make ShadowRoot.nodeType return DOCUMENT_FRAGMENT_NODE.

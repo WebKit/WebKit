@@ -479,9 +479,9 @@
     width: 8px;
     height: 8px;
     opacity: 0.75;
-    content: url(Images/treeRightTriangleBlack.png);
+    content: url(Images/treeRightTriangleBlack.png) !important;
 }
 
 .event-bars .event-bar.expanded .header::before {
-    content: url(Images/treeDownTriangleBlack.png);
+    content: url(Images/treeDownTriangleBlack.png) !important;
 }
