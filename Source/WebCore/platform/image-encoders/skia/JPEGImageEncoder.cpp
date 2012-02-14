@@ -136,7 +136,8 @@ static bool encodePixels(IntSize imageSize, unsigned char* inputPixels, bool pre
 
 #if defined(JCS_EXTENSIONS)
     if (premultiplied) {
-        cinfo.in_color_space = JCS_EXT_BGRX;
+        cinfo.in_color_space = SK_B32_SHIFT ? JCS_EXT_RGBX : JCS_EXT_BGRX;
+
         cinfo.input_components = 4;
 
         jpeg_set_defaults(&cinfo);

@@ -1,3 +1,13 @@
+2012-02-14  Eric Seidel  <eric@webkit.org>
+
+        Upstream Android's support for SK_B32_SHIFT to JPEGImageEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=78540
+
+        Reviewed by Adam Barth.
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::encodePixels):
+
 2012-02-13  Pavel Feldman  <pfeldman@chromium.org>
 
         [Qt] inspector/styles/undo-add-new-rule.html crashes
