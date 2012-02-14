@@ -1,3 +1,16 @@
+2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] Mutation Observers build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=78433
+
+        Reviewed by Martin Robinson.
+
+        Added some files missed.
+
+        No new tests since no new feature.
+
+        * GNUmakefile.list.am:
+
 2012-02-13  Hayato Ito  <hayato@chromium.org>
 
         Make ShadowRoot.nodeType return DOCUMENT_FRAGMENT_NODE.

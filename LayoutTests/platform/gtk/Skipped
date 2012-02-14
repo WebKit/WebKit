@@ -280,6 +280,7 @@ http/tests/security/filesystem-iframe-from-remote.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 http/tests/workers/terminate-during-sync-operation.html
+fast/mutation/filesystem-callback-delivery.html
 
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
@@ -1607,9 +1608,11 @@ fast/text/synthetic-bold-transformed.html
 # https://bugs.webkit.org/show_bug.cgi?id=78345
 security/block-test.html
 
-# MutationObservers are not enabled. http://webkit.org/b/78433
-fast/mutation
-
 # https://bugs.webkit.org/show_bug.cgi?id=78434
 fast/dom/Window/window-custom-prototype.html
 http/tests/security/cross-frame-access-object-getPrototypeOf.html
+
+# GTK port DRT doesn't support some API like scheduleAsynchronousKeyDown.
+# http://webkit.org/b/78481, http://webkit.org/b/78290
+fast/mutation/end-of-task-delivery.html
+fast/mutation/inline-event-listener.html

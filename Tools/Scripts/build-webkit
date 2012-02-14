@@ -276,7 +276,7 @@ my @features = (
       define => "ENABLE_MICRODATA", default => 0, value => \$microdataSupport },
 
     { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
-      define => "ENABLE_MUTATION_OBSERVERS", default => !isGtk(), value => \$mutationObserversSupport },
+      define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },

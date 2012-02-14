@@ -388,6 +388,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessagePort.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
+	DerivedSources/WebCore/JSMutationCallback.cpp \
+	DerivedSources/WebCore/JSMutationCallback.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSMutationRecord.cpp \
@@ -587,6 +589,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSRegionRule.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.h \
+	DerivedSources/WebCore/JSWebKitMutationObserver.cpp \
+	DerivedSources/WebCore/JSWebKitMutationObserver.h \
 	DerivedSources/WebCore/JSWebKitNamedFlow.cpp \
 	DerivedSources/WebCore/JSWebKitNamedFlow.h \
 	DerivedSources/WebCore/JSWebKitPoint.cpp \
@@ -705,6 +709,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/MessageEvent.idl \
 	$(WebCore)/dom/MessagePort.idl \
 	$(WebCore)/dom/MouseEvent.idl \
+	$(WebCore)/dom/MutationCallback.idl \
 	$(WebCore)/dom/MutationEvent.idl \
 	$(WebCore)/dom/MutationRecord.idl \
 	$(WebCore)/dom/NamedNodeMap.idl \
@@ -729,6 +734,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/TreeWalker.idl \
 	$(WebCore)/dom/UIEvent.idl \
 	$(WebCore)/dom/WebKitAnimationEvent.idl \
+	$(WebCore)/dom/WebKitMutationObserver.idl \
 	$(WebCore)/dom/WebKitNamedFlow.idl \
 	$(WebCore)/dom/WebKitTransitionEvent.idl \
 	$(WebCore)/dom/WheelEvent.idl \

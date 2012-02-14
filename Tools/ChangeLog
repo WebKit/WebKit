@@ -1,3 +1,14 @@
+2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] Mutation Observers build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=78433
+
+        Reviewed by Martin Robinson.
+
+        Enabled mutation observers as a default feature for GTK port, too.
+
+        * Scripts/build-webkit:
+
 2012-02-13  Loïc Yhuel  <loic.yhuel_ext@softathome.com>
 
         Allow to configure ENABLE_FTPDIR in build-webkit
