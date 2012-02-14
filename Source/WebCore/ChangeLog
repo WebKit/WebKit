@@ -1,3 +1,37 @@
+2012-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Force slow-scrolling mode when there are position:fixed elements on a page
+        https://bugs.webkit.org/show_bug.cgi?id=78553
+        <rdar://problem/10247934>
+
+        Reviewed by Dan Bernstein.
+
+        Eventually, the scrolling tree will know about fixed positioning layers so their position can be updated
+        when the scroll layer position is updated. For now we'll take the simple route however.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addFixedObject):
+        (WebCore::FrameView::removeFixedObject):
+        Inform the scrolling coordinator when the number of fixed objects changes between 0 and 1.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::hasFixedObjects):
+        Make this public.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange):
+        Call updateShouldUpdateScrollLayerPositionOnMainThread.
+
+        (WebCore::ScrollingCoordinator::frameViewHasFixedObjectsDidChange):
+        Call updateShouldUpdateScrollLayerPositionOnMainThread.
+
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition):
+        Make sure to update compositing layers here. Normally, they will be updated by layout but doing a layout
+        here is too intrusive since it could potentially change the size of the page.
+
+        (WebCore::ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread):
+        If we have fixed objects or slow repaint objects we need to update the scroll layer position on the main thread.
+
 2012-02-13  Adrienne Walker  <enne@google.com>
 
         [chromium] Use HashMap<..., OwnPtr<Tile>> for compositor tilemap

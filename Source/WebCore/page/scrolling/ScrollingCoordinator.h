@@ -74,6 +74,12 @@ public:
     // Should be called whenever the slow repaint objects counter changes between zero and one.
     void frameViewHasSlowRepaintObjectsDidChange(FrameView*);
 
+    // Should be called whenever the fixed objects counter changes between zero and one.
+    // FIXME: This is a temporary workaround so that we'll fall into main thread scrolling mode
+    // if a page has fixed elements. The scrolling tree should know about the fixed elements
+    // so it can make sure they stay fixed even when we scroll on the scrolling thread.
+    void frameViewHasFixedObjectsDidChange(FrameView*);
+
     // Should be called whenever the scroll layer for the given frame view changes.
     void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
 
@@ -97,6 +103,7 @@ private:
     explicit ScrollingCoordinator(Page*);
 
     void recomputeWheelEventHandlerCount();
+    void updateShouldUpdateScrollLayerPositionOnMainThread();
 
     void scheduleTreeStateCommit();
     void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);

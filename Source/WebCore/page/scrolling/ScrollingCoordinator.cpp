@@ -154,8 +154,18 @@ void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* fr
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(frameView->hasSlowRepaintObjects());
-    scheduleTreeStateCommit();
+    updateShouldUpdateScrollLayerPositionOnMainThread();
+}
+
+void ScrollingCoordinator::frameViewHasFixedObjectsDidChange(FrameView* frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
+
+    updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
 bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
@@ -198,6 +208,7 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(c
     if (!scrollLayer)
         return;
 
+    frameView->updateCompositingLayers();
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
@@ -214,6 +225,17 @@ void ScrollingCoordinator::recomputeWheelEventHandlerCount()
     }
 
     m_scrollingTreeState->setWheelEventHandlerCount(wheelEventHandlerCount);
+    scheduleTreeStateCommit();
+}
+
+void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
+{
+    FrameView* frameView = m_page->mainFrame()->view();
+
+    // FIXME: Having fixed objects on the page should not trigger the slow path.
+    bool shouldUpdateScrollLayerPositionOnMainThread = frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects();
+
+    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(shouldUpdateScrollLayerPositionOnMainThread);
     scheduleTreeStateCommit();
 }
 
