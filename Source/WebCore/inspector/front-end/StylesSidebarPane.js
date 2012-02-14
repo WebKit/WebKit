@@ -1606,6 +1606,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var nameElement = document.createElement("span");
         nameElement.className = "webkit-css-property";
         nameElement.textContent = this.name;
+        nameElement.title = this.property.propertyText;
         this.nameElement = nameElement;
 
         var valueElement = document.createElement("span");
@@ -1786,8 +1787,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
         if (this.property.inactive)
             this.listItemElement.addStyleClass("inactive");
-
-        this.tooltip = this.property.propertyText;
     },
 
     _updatePane: function(userCallback)

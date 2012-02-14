@@ -9,25 +9,35 @@ var test = function()
 {
     WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
 
+    var treeElement;
     InspectorTest.nodeWithId("image", step1);
 
     function step1(node)
     {
-        var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
-        treeElement._createTooltipForNode();
-        InspectorTest.runAfterPendingDispatches(step2.bind(this, treeElement));
+        treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+        WebInspector.panels.elements._loadDimensionsForNode(treeElement, step2);
     }
 
-    function step2(treeElement)
+    function step2(dimensions)
     {
-        const EXPECTED_TOOLTIP_TEXT = "215 \xd7 174 pixels";
+        const EXPECTED_WIDTH = 215;
+        const EXPECTED_HEIGHT = 174;
 
-        var tooltipText = treeElement.tooltip;
-        if (tooltipText === EXPECTED_TOOLTIP_TEXT)
-            InspectorTest.addResult("PASSED, tooltip text is \"" + EXPECTED_TOOLTIP_TEXT + "\".");
-        else
-            InspectorTest.addResult("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was \"" + tooltipText + "\".");
+        if (!dimensions)
+            InspectorTest.addResult("FAILED, no dimensions on treeElement.");
+        else {
+            if (dimensions.offsetWidth === dimensions.naturalWidth && dimensions.offsetHeight == dimensions.naturalHeight
+                && dimensions.offsetWidth === EXPECTED_WIDTH && dimensions.offsetHeight === EXPECTED_HEIGHT)
+                InspectorTest.addResult("PASSED, image dimensions for tooltip: " + EXPECTED_WIDTH + "x" + EXPECTED_HEIGHT + ".");
+            else
+                InspectorTest.addResult("FAILED, image dimensions for tooltip: " + formatDimensions(dimensions) + " (should be " + EXPECTED_WIDTH + "x" + EXPECTED_HEIGHT + ").");
+        }
         InspectorTest.completeTest();
+    }
+
+    function formatDimensions(dimensions)
+    {
+        return dimensions.offsetWidth + "x" + dimensions.offsetHeight + " (natural: " + dimensions.naturalWidth + "x" + dimensions.naturalHeight + ")";
     }
 }
 

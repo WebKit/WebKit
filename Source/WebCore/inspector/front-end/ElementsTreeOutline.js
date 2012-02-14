@@ -292,10 +292,6 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (element) {
             element.hovered = true;
             this._previousHoveredElement = element;
-
-            // Lazily compute tag-specific tooltips.
-            if (element.representedObject && !element.tooltip)
-                element._createTooltipForNode();
         }
 
         WebInspector.domAgent.highlightDOMNode(element ? element.representedObject.id : 0);
@@ -703,48 +699,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
         // Whether index-th child is visible in the children tree
         return this.expandedChildCount > index;
-    },
-
-    _createTooltipForNode: function()
-    {
-        var node = /** @type {WebInspector.DOMNode} */ this.representedObject;
-        if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
-            return;
-
-        function setTooltip(result)
-        {
-            if (!result || result.type !== "string")
-                return;
-
-            try {
-                var properties = JSON.parse(result.description);
-                var offsetWidth = properties[0];
-                var offsetHeight = properties[1];
-                var naturalWidth = properties[2];
-                var naturalHeight = properties[3];
-                if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
-                    this.tooltip = WebInspector.UIString("%d \xd7 %d pixels", offsetWidth, offsetHeight);
-                else
-                    this.tooltip = WebInspector.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)", offsetWidth, offsetHeight, naturalWidth, naturalHeight);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function dimensions()
-            {
-                return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
-            }
-
-            object.callFunction(dimensions, setTooltip.bind(this));
-            object.release();
-        }
-        WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
     },
 
     updateSelection: function()

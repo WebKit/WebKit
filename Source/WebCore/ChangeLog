@@ -1,3 +1,30 @@
+2012-02-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Elements panel needs to be able to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=21570
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.willHide):
+        (WebInspector.ElementsPanel.prototype._getPopoverAnchor):
+        (WebInspector.ElementsPanel.prototype._loadDimensionsForNode.resolvedNode.dimensions):
+        (WebInspector.ElementsPanel.prototype._loadDimensionsForNode.resolvedNode):
+        (WebInspector.ElementsPanel.prototype._loadDimensionsForNode):
+        (WebInspector.ElementsPanel.prototype._showPopover.dimensionsCallback):
+        (WebInspector.ElementsPanel.prototype._showPopover.showPopover):
+        (WebInspector.ElementsPanel.prototype._showPopover.buildPopoverContents):
+        (WebInspector.ElementsPanel.prototype._showPopover):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._onmousemove):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.get g):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle):
+        * inspector/front-end/elementsPanel.css:
+        (.image-preview-container):
+        (.image-preview-container img):
+
 2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: List expansion arrows is pointing down even

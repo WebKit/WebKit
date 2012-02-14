@@ -1,5 +1,5 @@
 Tests the tooltip for the image on hover.
 
 
-PASSED, tooltip text is "215 × 174 pixels".
+PASSED, image dimensions for tooltip: 215x174.
 

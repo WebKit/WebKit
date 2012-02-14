@@ -485,3 +485,16 @@
 .event-bars .event-bar.expanded .header::before {
     content: url(Images/treeDownTriangleBlack.png) !important;
 }
+
+.image-preview-container {
+    background: transparent;
+    text-align: center;
+    padding-left: 11px;
+}
+
+.image-preview-container img {
+    margin: 2px auto;
+    background-image: url(Images/checker.png);
+    -webkit-user-select: text;
+    -webkit-user-drag: auto;
+}
