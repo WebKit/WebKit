@@ -22,19 +22,20 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerTreeHostProxy.h"
 
+#include "GraphicsLayerTextureMapper.h"
+#include "LayerBackingStore.h"
 #include "LayerTreeHostMessages.h"
 #include "MainThread.h"
 #include "MessageID.h"
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
+#include "TextureMapperBackingStore.h"
+#include "TextureMapperNode.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLayerTreeInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include "texmap/GraphicsLayerTextureMapper.h"
-#include "texmap/TextureMapper.h"
-#include "texmap/TextureMapperNode.h"
 #include <QDateTime>
 #include <cairo/OpenGLShims.h>
 
@@ -149,8 +150,7 @@ PassOwnPtr<GraphicsLayer> LayerTreeHostProxy::createLayer(WebLayerID layerID)
 {
     GraphicsLayer* newLayer = new GraphicsLayerTextureMapper(this);
     TextureMapperNode* node = toTextureMapperNode(newLayer);
-    node->setID(layerID);
-    node->setTileOwnership(TextureMapperNode::ExternallyManagedTiles);
+    node->setShouldUpdateBackingStoreFromLayer(false);
     return adoptPtr(newLayer);
 }
 
@@ -235,21 +235,13 @@ void LayerTreeHostProxy::updateViewport()
     m_drawingAreaProxy->updateViewport();
 }
 
-int LayerTreeHostProxy::remoteTileIDToNodeTileID(int tileID) const
-{
-    HashMap<int, int>::const_iterator it = m_tileToNodeTile.find(tileID);
-    if (it == m_tileToNodeTile.end())
-        return 0;
-    return it->second;
-}
-
 void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
 {
     WebLayerID id = layerInfo.id;
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
     GraphicsLayer* layer = it->second;
-    bool needsToUpdateImageTiles = layerInfo.imageIsUpdated || layerInfo.contentsRect != layer->contentsRect();
+    bool needsToUpdateImageTiles = layerInfo.imageIsUpdated || (layerInfo.contentsRect != layer->contentsRect() && layerInfo.imageBackingStoreID);
 
     layer->setName(layerInfo.name);
 
@@ -348,69 +340,41 @@ void LayerTreeHostProxy::setRootLayerID(WebLayerID layerID)
     m_rootLayer->addChild(layer);
 }
 
+PassRefPtr<LayerBackingStore> LayerTreeHostProxy::getBackingStore(WebLayerID id)
+{
+    ensureLayer(id);
+    TextureMapperNode* node = toTextureMapperNode(layerByID(id));
+    RefPtr<LayerBackingStore> backingStore = static_cast<LayerBackingStore*>(node->backingStore().get());
+    if (!backingStore) {
+        backingStore = LayerBackingStore::create();
+        node->setBackingStore(backingStore.get());
+    }
+    ASSERT(backingStore);
+    return backingStore;
+}
+
 void LayerTreeHostProxy::createTile(WebLayerID layerID, int tileID, float scale)
 {
-    ensureLayer(layerID);
-    TextureMapperNode* node = toTextureMapperNode(layerByID(layerID));
-
-    int nodeTileID = node->createContentsTile(scale);
-    m_tileToNodeTile.add(tileID, nodeTileID);
+    getBackingStore(layerID)->createTile(tileID, scale);
 }
 
 void LayerTreeHostProxy::removeTile(WebLayerID layerID, int tileID)
 {
-    TextureMapperNode* node = toTextureMapperNode(layerByID(layerID));
-    if (!node)
-        return;
-
-    int nodeTileID = remoteTileIDToNodeTileID(tileID);
-    if (!nodeTileID)
-        return;
-
-    node->removeContentsTile(nodeTileID);
-    m_tileToNodeTile.remove(tileID);
+    getBackingStore(layerID)->removeTile(tileID);
 }
 
 void LayerTreeHostProxy::updateTile(WebLayerID layerID, int tileID, const IntRect& sourceRect, const IntRect& targetRect, ShareableBitmap* bitmap)
 {
-    ensureLayer(layerID);
-    TextureMapperNode* node = toTextureMapperNode(layerByID(layerID));
-    if (!node)
-        return;
-
-    int nodeTileID = remoteTileIDToNodeTileID(tileID);
-    if (!nodeTileID)
-        return;
-
-    node->setTextureMapper(m_textureMapper.get());
-    QImage image = bitmap->createQImage();
-    node->setContentsTileBackBuffer(nodeTileID, sourceRect, targetRect, image.constBits());
+    RefPtr<LayerBackingStore> backingStore = getBackingStore(layerID);
+    backingStore->updateTile(tileID, sourceRect, targetRect, bitmap);
+    m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
 void LayerTreeHostProxy::createImage(int64_t imageID, ShareableBitmap* bitmap)
 {
-    TiledImage tiledImage;
-    static const int TileDimension = 1024;
-    QImage image = bitmap->createQImage();
-    bool imageHasAlpha = image.hasAlphaChannel();
-    IntRect imageRect(0, 0, image.width(), image.height());
-    for (int y = 0; y < image.height(); y += TileDimension) {
-        for (int x = 0; x < image.width(); x += TileDimension) {
-            QImage subImage;
-            IntRect rect(x, y, TileDimension, TileDimension);
-            rect.intersect(imageRect);
-            if (QSize(rect.size()) == image.size())
-                subImage = image;
-            else
-                subImage = image.copy(rect);
-            RefPtr<BitmapTexture> texture = m_textureMapper->createTexture();
-            texture->reset(rect.size(), !imageHasAlpha);
-            texture->updateContents(subImage.constBits(), IntRect(IntPoint::zero(), rect.size()));
-            tiledImage.add(rect.location(), texture);
-        }
-    }
-
-    m_directlyCompositedImages.set(imageID, tiledImage);
+    RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
+    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get());
+    m_directlyCompositedImages.set(imageID, backingStore);
 }
 
 void LayerTreeHostProxy::destroyImage(int64_t imageID)
@@ -420,38 +384,25 @@ void LayerTreeHostProxy::destroyImage(int64_t imageID)
 
 void LayerTreeHostProxy::assignImageToLayer(GraphicsLayer* layer, int64_t imageID)
 {
-    TextureMapperNode* node = toTextureMapperNode(layer);
-    if (!node)
-        return;
+    HashMap<int64_t, RefPtr<TextureMapperBackingStore> >::iterator it = m_directlyCompositedImages.find(imageID);
+    ASSERT(it != m_directlyCompositedImages.end());
+    layer->setContentsToMedia(it->second.get());
+}
 
-    if (!imageID) {
-        node->clearAllDirectlyCompositedImageTiles();
-        return;
-    }
+void LayerTreeHostProxy::swapBuffers()
+{
+    HashSet<RefPtr<LayerBackingStore> >::iterator end = m_backingStoresWithPendingBuffers.end();
+    for (HashSet<RefPtr<LayerBackingStore> >::iterator it = m_backingStoresWithPendingBuffers.begin(); it != end; ++it)
+        (*it)->swapBuffers(m_textureMapper.get());
 
-    FloatSize size(layer->size());
-    FloatRect contentsRect(layer->contentsRect());
-    float horizontalFactor = contentsRect.width() / size.width();
-    float verticalFactor = contentsRect.height() / size.height();
-    HashMap<int64_t, TiledImage>::iterator it = m_directlyCompositedImages.find(imageID);
-    if (it == m_directlyCompositedImages.end())
-        return;
-
-    TiledImage::iterator endTileIterator = it->second.end();
-    for (TiledImage::iterator tileIt = it->second.begin(); tileIt != endTileIterator; ++tileIt) {
-        FloatRect sourceRect(FloatPoint(tileIt->first), FloatSize(tileIt->second->size()));
-        FloatRect targetRect(sourceRect.x() * horizontalFactor + contentsRect.x(),
-                             sourceRect.y() * verticalFactor + contentsRect.y(),
-                             sourceRect.width() * horizontalFactor,
-                             sourceRect.height() * verticalFactor);
-        int newTileID = node->createContentsTile(1.0);
-        node->setTileBackBufferTextureForDirectlyCompositedImage(newTileID, IntRect(sourceRect), targetRect, tileIt->second.get());
-    }
+    m_backingStoresWithPendingBuffers.clear();
 }
 
 void LayerTreeHostProxy::flushLayerChanges()
 {
     m_rootLayer->syncCompositingState(FloatRect());
+    swapBuffers();
+
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
 }
@@ -629,12 +580,11 @@ void LayerTreeHostProxy::purgeGLResources()
     TextureMapperNode* node = toTextureMapperNode(rootLayer());
 
     if (node)
-        node->purgeNodeTexturesRecursive();
+        node->clearBackingStoresRecursive();
 
     m_directlyCompositedImages.clear();
-
     m_textureMapper.clear();
-
+    m_backingStoresWithPendingBuffers.clear();
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
 }
 

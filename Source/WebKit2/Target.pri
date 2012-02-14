@@ -253,6 +253,7 @@ HEADERS += \
     UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
+    UIProcess/qt/LayerBackingStore.h \
     UIProcess/qt/QtWebContext.h \
     UIProcess/qt/QtWebPageEventHandler.h \
     UIProcess/qt/QtGestureRecognizer.h \
@@ -581,6 +582,7 @@ SOURCES += \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/QtWebContext.cpp \
+    UIProcess/qt/LayerBackingStore.cpp \
     UIProcess/qt/LayerTreeHostProxyQt.cpp \
     UIProcess/qt/QtWebPageEventHandler.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \

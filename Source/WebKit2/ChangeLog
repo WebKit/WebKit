@@ -1,3 +1,36 @@
+2012-02-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][Texmap] Refactor backing-store code in TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=78305
+
+        Move the backing-store code to LayerTreeBackingStore, implementing the virtual functions
+        in TextureMapperBackingStore.
+        We save the double-buffered tile in the backing-store, and then convert them to regular
+        tiles in updateContents, based on the order of painting.
+        Use TextureMapperCompositedImage for images instead of saving our own composited image
+        registry.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri:
+        * UIProcess/LayerTreeHostProxy.h:
+        (WebKit):
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerBackingStore.cpp: Added.
+        * UIProcess/qt/LayerBackingStore.h: Added.
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::createLayer):
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        (WebKit::LayerTreeHostProxy::getBackingStore):
+        (WebKit::LayerTreeHostProxy::createTile):
+        (WebKit::LayerTreeHostProxy::removeTile):
+        (WebKit::LayerTreeHostProxy::updateTile):
+        (WebKit::LayerTreeHostProxy::createImage):
+        (WebKit::LayerTreeHostProxy::assignImageToLayer):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+        * WebProcess.pro:
+
+
 2012-02-14  Shinya Kawanaka  <shinyak@google.com>
 
         Use youngestShadowRoot and oldestShadowRoot instead of Element::shadowRoot().

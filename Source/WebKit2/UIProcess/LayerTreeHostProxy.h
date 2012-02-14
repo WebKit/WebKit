@@ -30,15 +30,17 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RunLoop.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
-#include "TextureMapperNode.h"
+#include "TextureMapperBackingStore.h"
 #endif
 
 namespace WebKit {
 
+class LayerBackingStore;
 class WebLayerInfo;
 class WebLayerUpdateInfo;
 
@@ -98,12 +100,6 @@ protected:
 #endif
 
 #if PLATFORM(QT)
-    typedef HashMap<WebCore::IntPoint, RefPtr<WebCore::BitmapTexture> > TiledImage;
-    WebCore::TextureMapperNode::NodeRectMap m_nodeVisualContentsRectMap;
-    HashMap<int, int> m_tileToNodeTile;
-    int remoteTileIDToNodeTileID(int tileID) const;
-    HashMap<int64_t, TiledImage> m_directlyCompositedImages;
-
     void scheduleWebViewUpdate();
     void synchronizeViewport();
     void deleteLayer(WebLayerID);
@@ -118,11 +114,14 @@ protected:
     void flushLayerChanges();
     void ensureRootLayer();
     void ensureLayer(WebLayerID);
-
+    PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
+    void swapBuffers();
 #endif
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
+    HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
+    HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
 
 #if PLATFORM(QT)
     void didFireViewportUpdateTimer(WebCore::Timer<LayerTreeHostProxy>*);

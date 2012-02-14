@@ -20,15 +20,13 @@
 #include "config.h"
 #include "TextureMapperNode.h"
 
+#include "stdio.h"
+
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayerTextureMapper.h"
 #include "ImageBuffer.h"
 #include "MathExtras.h"
-
-namespace {
-    static const float gTileDimension = 1024.0;
-}
 
 namespace WebCore {
 
@@ -49,6 +47,16 @@ TextureMapperNode* TextureMapperNode::rootLayer()
 void TextureMapperNode::setTransform(const TransformationMatrix& matrix)
 {
     m_transform.setLocalTransform(matrix);
+}
+
+void TextureMapperNode::clearBackingStoresRecursive()
+{
+    m_backingStore.clear();
+    m_contentsLayer = 0;
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->clearBackingStoresRecursive();
+    if (m_state.maskLayer)
+        m_state.maskLayer->clearBackingStoresRecursive();
 }
 
 void TextureMapperNode::computeTransformsRecursive()
@@ -81,100 +89,27 @@ void TextureMapperNode::computeTransformsRecursive()
         sortByZOrder(m_children, 0, m_children.size());
 }
 
-void TextureMapperNode::computeTiles()
+void TextureMapperNode::updateBackingStore(TextureMapper* textureMapper, GraphicsLayer* layer)
 {
-#if USE(TILED_BACKING_STORE)
-    if (m_state.tileOwnership == ExternallyManagedTiles)
+    if (!layer || !textureMapper)
         return;
-#endif
-    if (m_currentContent.contentType == HTMLContentType && !m_state.drawsContent) {
-        m_ownedTiles.clear();
+
+    if (!m_shouldUpdateBackingStoreFromLayer)
         return;
-    }
-    Vector<FloatRect> tilesToAdd;
-    Vector<int> tilesToRemove;
-    const int TileEraseThreshold = 6;
-    FloatSize size = contentSize();
-    FloatRect contentRect(0, 0, size.width(), size.height());
 
-    for (float y = 0; y < contentRect.height(); y += gTileDimension) {
-        for (float x = 0; x < contentRect.width(); x += gTileDimension) {
-            FloatRect tileRect(x, y, gTileDimension, gTileDimension);
-            tileRect.intersect(contentRect);
-            tilesToAdd.append(tileRect);
-        }
-    }
-
-    for (int i = m_ownedTiles.size() - 1; i >= 0; --i) {
-        const FloatRect oldTile = m_ownedTiles[i].rect;
-        bool found = false;
-
-        for (int j = tilesToAdd.size() - 1; j >= 0; --j) {
-            const FloatRect newTile = tilesToAdd[j];
-            if (oldTile != newTile)
-                continue;
-
-            found = true;
-            tilesToAdd.remove(j);
-            break;
-        }
-
-        if (!found)
-            tilesToRemove.append(i);
-    }
-
-    for (size_t i = 0; i < tilesToAdd.size(); ++i) {
-        if (!tilesToRemove.isEmpty()) {
-            OwnedTile& tile = m_ownedTiles[tilesToRemove[0]];
-            tilesToRemove.remove(0);
-            tile.rect = tilesToAdd[i];
-            tile.needsReset = true;
-            continue;
-        }
-
-        OwnedTile tile;
-        tile.rect = tilesToAdd[i];
-        tile.needsReset = true;
-        m_ownedTiles.append(tile);
-    }
-
-    for (size_t i = 0; i < tilesToRemove.size() && m_ownedTiles.size() > TileEraseThreshold; ++i)
-        m_ownedTiles.remove(tilesToRemove[i]);
-}
-
-void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
-{
-#if USE(TILED_BACKING_STORE)
-    if (m_state.tileOwnership == ExternallyManagedTiles)
-        return;
-#endif
-
-    if (m_size.isEmpty() || !layer || (!m_state.drawsContent && m_currentContent.contentType == HTMLContentType)) {
-        m_ownedTiles.clear();
+    if (!m_state.drawsContent || m_size.isEmpty()) {
+        m_backingStore.clear();
         return;
     }
 
-    if (!textureMapper)
-        return;
-
-    IntRect dirtyRect = enclosingIntRect(m_currentContent.needsDisplay ? entireRect() : m_currentContent.needsDisplayRect);
-
-    for (size_t tileIndex = 0; tileIndex < m_ownedTiles.size(); ++tileIndex) {
-        OwnedTile& tile = m_ownedTiles[tileIndex];
-        if (!tile.texture)
-            tile.texture = textureMapper->createTexture();
-        RefPtr<BitmapTexture>& texture = tile.texture;
-        IntSize tileSize = enclosingIntRect(tile.rect).size();
-
-        if (tile.needsReset || texture->contentSize() != tileSize || !texture->isValid()) {
-            tile.needsReset = false;
-            texture->reset(tileSize, m_state.contentsOpaque);
-            dirtyRect.unite(enclosingIntRect(tile.rect));
-        }
-    }
-
+    IntRect dirtyRect = enclosingIntRect(m_state.needsDisplay ? layerRect() : m_state.needsDisplayRect);
     if (dirtyRect.isEmpty())
         return;
+
+    if (!m_backingStore)
+        m_backingStore = TextureMapperTiledBackingStore::create();
+
+    ASSERT(dynamic_cast<TextuerMapperTiledBackingStore*>(m_backingStore.get()));
 
     // Paint the entire dirty rect into an image buffer. This ensures we only paint once.
     OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
@@ -183,8 +118,6 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
     context->setTextDrawingMode(textureMapper->textDrawingMode());
     context->translate(-dirtyRect.x(), -dirtyRect.y());
     layer->paintGraphicsLayerContents(*context, dirtyRect);
-    if (m_currentContent.contentType == DirectImageContentType)
-        context->drawImage(m_currentContent.image.get(), ColorSpaceDeviceRGB, m_state.contentsRect);
 
     RefPtr<Image> image;
 
@@ -195,104 +128,35 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
     image = imageBuffer->copyImage(CopyBackingStore);
 #endif
 
-    // Divide the image to tiles.
-    for (size_t tileIndex = 0; tileIndex < m_ownedTiles.size(); ++tileIndex) {
-        OwnedTile& tile = m_ownedTiles[tileIndex];
-        IntRect targetRect = enclosingIntRect(tile.rect);
-        targetRect.intersect(dirtyRect);
-        if (targetRect.isEmpty())
-            continue;
-        IntRect sourceRect = targetRect;
-
-        // Normalize sourceRect to the buffer's coordinates.
-        sourceRect.move(-dirtyRect.x(), -dirtyRect.y());
-
-        // Normalize targetRect to the texture's coordinqates.
-        targetRect.move(-tile.rect.x(), -tile.rect.y());
-        tile.texture->updateContents(image.get(), targetRect, sourceRect, BitmapTexture::RGBAFormat);
-    }
-
-    m_currentContent.needsDisplay = false;
-    m_currentContent.needsDisplayRect = IntRect();
+    static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
 }
 
 void TextureMapperNode::paint()
 {
-    if (m_size.isEmpty())
-        return;
-
     computeTransformsRecursive();
 
-    TextureMapperPaintOptions opt;
-    opt.textureMapper = m_textureMapper;
-    opt.textureMapper->bindSurface(0);
-    paintRecursive(opt);
-}
-
-FloatRect TextureMapperNode::targetRectForTileRect(const FloatRect& targetRect, const FloatRect& tileRect) const
-{
-    return FloatRect(
-                targetRect.x() + (tileRect.x() - targetRect.x()),
-                targetRect.y() + (tileRect.y() - targetRect.y()),
-                tileRect.width(),
-                tileRect.height());
+    TextureMapperPaintOptions options;
+    options.textureMapper = m_textureMapper;
+    options.textureMapper->bindSurface(0);
+    paintRecursive(options);
 }
 
 void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
 {
-    if (m_size.isEmpty() || (!m_state.drawsContent && m_currentContent.contentType == HTMLContentType))
-        return;
-
-    float opacity = options.opacity;
-    BitmapTexture* mask = options.mask;
-    FloatRect targetRect = this->targetRect();
-
     // We apply the following transform to compensate for painting into a surface, and then apply the offset so that the painting fits in the target rect.
     TransformationMatrix transform =
             TransformationMatrix(options.transform)
             .multiply(m_transform.combined())
             .translate(options.offset.width(), options.offset.height());
 
-#if USE(TILED_BACKING_STORE)
-    Vector<ExternallyManagedTile> tilesToPaint;
+    float opacity = options.opacity;
+    RefPtr<BitmapTexture> mask = options.mask;
 
-    if (m_state.tileOwnership == ExternallyManagedTiles) {
-        // Sort tiles, with current scale factor last.
-        Vector<ExternallyManagedTile*> tiles;
-        HashMap<int, ExternallyManagedTile>::iterator end = m_externallyManagedTiles.end();
-        for (HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.begin(); it != end; ++it) {
-            if (!it->second.frontBuffer.texture)
-                continue;
+    if (m_backingStore)
+        m_backingStore->paintToTextureMapper(options.textureMapper, layerRect(), transform, opacity, mask.get());
 
-            if (it->second.scale == m_state.contentScale) {
-                tiles.append(&it->second);
-                continue;
-            }
-
-            // This creates a transitional effect looks good only when there's no transparency, so we only use it when the opacity for the layer is above a certain threshold.
-            if (opacity > 0.95)
-                tiles.prepend(&it->second);
-        }
-
-        for (int i = 0; i < tiles.size(); ++i) {
-            ExternallyManagedTile& tile = *tiles[i];
-            FloatRect rect = tile.frontBuffer.targetRect;
-            BitmapTexture& texture = *tile.frontBuffer.texture;
-            options.textureMapper->drawTexture(texture, rect, transform, opacity, mask);
-        }
-        return;
-    }
-#endif
-
-    // Now we paint owned tiles, if we're in OwnedTileMode.
-    for (size_t i = 0; i < m_ownedTiles.size(); ++i) {
-        BitmapTexture* texture = m_ownedTiles[i].texture.get();
-        const FloatRect rect = targetRectForTileRect(targetRect, m_ownedTiles[i].rect);
-        options.textureMapper->drawTexture(*texture, rect, transform, opacity, mask);
-    }
-
-    if (m_currentContent.contentType == MediaContentType && m_currentContent.media)
-        m_currentContent.media->paintToTextureMapper(options.textureMapper, targetRect, transform, opacity, mask);
+    if (m_contentsLayer)
+        m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, opacity, mask.get());
 }
 
 int TextureMapperNode::compareGraphicsLayersZValue(const void* a, const void* b)
@@ -332,7 +196,7 @@ IntRect TextureMapperNode::intermediateSurfaceRect(const TransformationMatrix& m
 {
     IntRect rect;
     TransformationMatrix localTransform = TransformationMatrix(matrix).multiply(m_transform.combined());
-    rect = enclosingIntRect(localTransform.mapRect(entireRect()));
+    rect = enclosingIntRect(localTransform.mapRect(layerRect()));
     if (!m_state.masksToBounds && !m_state.maskLayer) {
         for (int i = 0; i < m_children.size(); ++i)
             rect.unite(m_children[i]->intermediateSurfaceRect(matrix));
@@ -433,7 +297,7 @@ void TextureMapperNode::paintRecursive(const TextureMapperPaintOptions& options)
     if (m_state.replicaLayer)
         maskTexture = 0;
 
-    options.textureMapper->bindSurface(options.surface);
+    options.textureMapper->bindSurface(options.surface.get());
     TransformationMatrix targetTransform =
             TransformationMatrix(options.transform)
                 .multiply(m_transform.combined())
@@ -450,89 +314,6 @@ TextureMapperNode::~TextureMapperNode()
         m_parent->m_children.remove(m_parent->m_children.find(this));
 }
 
-#if USE(TILED_BACKING_STORE)
-int TextureMapperNode::createContentsTile(float scale)
-{
-    static int nextID = 0;
-    int id = ++nextID;
-    m_externallyManagedTiles.add(id, ExternallyManagedTile(scale));
-    m_state.contentScale = scale;
-    return id;
-}
-
-void TextureMapperNode::removeContentsTile(int id)
-{
-    m_externallyManagedTiles.remove(id);
-}
-
-void TextureMapperNode::purgeNodeTexturesRecursive()
-{
-    m_externallyManagedTiles.clear();
-
-    for (int i = m_children.size() - 1; i >= 0; --i)
-        m_children[i]->purgeNodeTexturesRecursive();
-}
-
-void TextureMapperNode::setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture* texture)
-{
-    HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.find(id);
-
-    if (it == m_externallyManagedTiles.end())
-        return;
-
-    ExternallyManagedTile& tile = it->second;
-
-    tile.backBuffer.sourceRect = sourceRect;
-    tile.backBuffer.targetRect = targetRect;
-    tile.backBuffer.texture = texture;
-    tile.isBackBufferUpdated = true;
-    tile.isDirectlyCompositedImage = true;
-}
-
-void TextureMapperNode::clearAllDirectlyCompositedImageTiles()
-{
-    for (HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.begin(); it != m_externallyManagedTiles.end(); ++it) {
-        if (it->second.isDirectlyCompositedImage)
-            m_externallyManagedTiles.remove(it);
-    }
-}
-
-void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void* data)
-{
-    ASSERT(m_textureMapper);
-
-    HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.find(id);
-    if (it == m_externallyManagedTiles.end())
-        return;
-
-    ExternallyManagedTile& tile = it->second;
-
-    tile.backBuffer.sourceRect = sourceRect;
-    tile.backBuffer.targetRect = FloatRect(targetRect);
-    tile.backBuffer.targetRect.scale(1.0 / tile.scale);
-
-    if (!tile.backBuffer.texture)
-        tile.backBuffer.texture = m_textureMapper->createTexture();
-    tile.backBuffer.texture->reset(sourceRect.size(), false);
-    tile.backBuffer.texture->updateContents(data, sourceRect);
-    tile.isBackBufferUpdated = true;
-}
-
-void TextureMapperNode::swapContentsBuffers()
-{
-    HashMap<int, ExternallyManagedTile>::iterator end = m_externallyManagedTiles.end();
-    for (HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.begin(); it != end; ++it) {
-        ExternallyManagedTile& tile = it->second;
-        if (!tile.isBackBufferUpdated)
-            continue;
-        tile.isBackBufferUpdated = false;
-        ExternallyManagedTileBuffer swapBuffer = tile.frontBuffer;
-        tile.frontBuffer = tile.backBuffer;
-        tile.backBuffer = swapBuffer;
-    }
-}
-#endif
-
 void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, int options)
 {
     syncCompositingState(graphicsLayer, rootLayer()->m_textureMapper, options);
@@ -541,14 +322,11 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
 void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper)
 {
     int changeMask = graphicsLayer->changeMask();
-    const TextureMapperNode::ContentData& pendingContent = graphicsLayer->pendingContent();
-#if USE(TILED_BACKING_STORE)
-    swapContentsBuffers();
-#endif
-    if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty() && pendingContent.needsDisplayRect.isEmpty() && !pendingContent.needsDisplay)
+
+    if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty())
         return;
 
-    if (m_currentContent.contentType == HTMLContentType && (changeMask & ParentChange)) {
+    if (changeMask & ParentChange) {
         TextureMapperNode* newParent = toTextureMapperNode(graphicsLayer->parent());
         if (newParent != m_parent) {
             // Remove node from current from child list first.
@@ -580,16 +358,7 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
         }
     }
 
-    if (changeMask & (SizeChange | ContentsRectChange)) {
-        FloatSize wantedSize(graphicsLayer->size().width(), graphicsLayer->size().height());
-        if (wantedSize.isEmpty() && pendingContent.contentType == HTMLContentType)
-            wantedSize = FloatSize(graphicsLayer->contentsRect().width(), graphicsLayer->contentsRect().height());
-
-        if (wantedSize != m_size)
-            m_ownedTiles.clear();
-
-        m_size = wantedSize;
-    }
+    m_size = graphicsLayer->size();
 
     if (changeMask & MaskLayerChange) {
        if (TextureMapperNode* layer = toTextureMapperNode(graphicsLayer->maskLayer()))
@@ -619,13 +388,10 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     m_state.backfaceVisibility = graphicsLayer->backfaceVisibility();
     m_state.childrenTransform = graphicsLayer->childrenTransform();
     m_state.opacity = graphicsLayer->opacity();
-
-    m_currentContent.contentType = pendingContent.contentType;
-    m_currentContent.image = pendingContent.image;
-    m_currentContent.media = pendingContent.media;
-    m_currentContent.needsDisplay = m_currentContent.needsDisplay || pendingContent.needsDisplay;
-    if (!m_currentContent.needsDisplay)
-        m_currentContent.needsDisplayRect.unite(pendingContent.needsDisplayRect);
+    m_state.needsDisplay = m_state.needsDisplay || graphicsLayer->needsDisplay();
+    if (!m_state.needsDisplay)
+        m_state.needsDisplayRect.unite(graphicsLayer->needsDisplayRect());
+    m_contentsLayer = graphicsLayer->contentsLayer();
 
     m_transform.setPosition(m_state.pos);
     m_transform.setAnchorPoint(m_state.anchorPoint);
@@ -666,6 +432,9 @@ void TextureMapperNode::syncAnimationsRecursively()
 
 void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
 {
+    if (!textureMapper)
+        return;
+
     if (graphicsLayer && !(options & ComputationsOnly)) {
         syncCompositingStateSelf(graphicsLayer, textureMapper);
         graphicsLayer->didSynchronize();
@@ -683,10 +452,7 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
         m_state.replicaLayer->syncCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->replicaLayer()), textureMapper);
 
     syncAnimations();
-    computeTiles();
-
-    if (graphicsLayer)
-        renderContent(textureMapper, graphicsLayer);
+    updateBackingStore(textureMapper, graphicsLayer);
 
     if (!(options & TraverseDescendants))
         options = ComputationsOnly;

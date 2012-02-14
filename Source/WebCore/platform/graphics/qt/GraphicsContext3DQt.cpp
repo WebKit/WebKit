@@ -74,7 +74,7 @@ public:
 
     QGLWidget* getViewportGLWidget();
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask) const;
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 
     void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
@@ -142,7 +142,7 @@ static inline quint32 swapBgrToRgb(quint32 pixel)
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask) const
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask)
 {
     blitMultisampleFramebufferAndRestoreContext();
 

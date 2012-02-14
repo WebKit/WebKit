@@ -64,8 +64,6 @@ public:
     virtual void setPreserves3D(bool b);
     virtual void setMasksToBounds(bool b);
     virtual void setDrawsContent(bool b);
-    virtual void setBackgroundColor(const Color&);
-    virtual void clearBackgroundColor();
     virtual void setContentsOpaque(bool b);
     virtual void setBackfaceVisibility(bool b);
     virtual void setOpacity(float opacity);
@@ -77,10 +75,9 @@ public:
     virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
-    virtual PlatformLayer* platformLayer() const;
+    virtual PlatformLayer* platformLayer() const { return 0; }
 
     void notifyChange(TextureMapperNode::ChangeMask changeMask);
-    inline TextureMapperNode::ContentData& pendingContent() { return m_pendingContent; }
     inline int changeMask() const { return m_changeMask; }
     void didSynchronize();
 
@@ -89,12 +86,19 @@ public:
     virtual void removeAnimation(const String&);
 
     TextureMapperNode* node() const { return m_node.get(); }
+    TextureMapperPlatformLayer* contentsLayer() const { return m_contentsLayer; }
+    bool needsDisplay() const { return m_needsDisplay; }
+    IntRect needsDisplayRect() const { return enclosingIntRect(m_needsDisplayRect); }
 
 private:
     OwnPtr<TextureMapperNode> m_node;
+    RefPtr<TextureMapperBackingStore> m_compositedImage;
+    RefPtr<Image> m_image;
     bool m_syncQueued;
     int m_changeMask;
-    TextureMapperNode::ContentData m_pendingContent;
+    bool m_needsDisplay;
+    TextureMapperPlatformLayer* m_contentsLayer;
+    FloatRect m_needsDisplayRect;
     TextureMapperAnimations m_animations;
     void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
     Timer<GraphicsLayerTextureMapper> m_animationStartedTimer;

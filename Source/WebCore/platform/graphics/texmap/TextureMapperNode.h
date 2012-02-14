@@ -28,6 +28,7 @@
 #include "LayerTransform.h"
 #include "TextureMapper.h"
 #include "TextureMapperAnimation.h"
+#include "TextureMapperBackingStore.h"
 #include "Timer.h"
 #include "TransformOperations.h"
 #include <wtf/CurrentTime.h>
@@ -42,16 +43,14 @@ class GraphicsLayerTextureMapper;
 
 class TextureMapperPaintOptions {
 public:
-    BitmapTexture* surface;
-    BitmapTexture* mask;
+    RefPtr<BitmapTexture> surface;
+    RefPtr<BitmapTexture> mask;
     float opacity;
     TransformationMatrix transform;
     IntSize offset;
     TextureMapper* textureMapper;
     TextureMapperPaintOptions()
-        : surface(0)
-        , mask(0)
-        , opacity(1)
+        : opacity(1)
         , textureMapper(0)
     { }
 };
@@ -97,37 +96,13 @@ public:
         ComputationsOnly = 2
     };
 
-    enum TileOwnership {
-        OwnedTiles,
-        ExternallyManagedTiles
-    };
-
-    typedef HashMap<TextureMapperNode*, FloatRect> NodeRectMap;
-
-    // The compositor lets us special-case images and colors, so we try to do so.
-    enum ContentType { HTMLContentType, DirectImageContentType, ColorContentType, MediaContentType, Canvas3DContentType};
-    struct ContentData {
-        FloatRect needsDisplayRect;
-        bool needsDisplay;
-        Color backgroundColor;
-
-        ContentType contentType;
-        RefPtr<Image> image;
-        const TextureMapperPlatformLayer* media;
-        ContentData()
-            : needsDisplay(false)
-            , contentType(HTMLContentType)
-            , image(0)
-            , media(0)
-        {
-        }
-    };
-
     TextureMapperNode()
         : m_parent(0)
         , m_effectTarget(0)
+        , m_contentsLayer(0)
         , m_opacity(1)
         , m_centerZ(0)
+        , m_shouldUpdateBackingStoreFromLayer(true)
         , m_textureMapper(0)
     { }
 
@@ -144,19 +119,10 @@ public:
 
     void paint();
 
-#if USE(TILED_BACKING_STORE)
-    void setTileOwnership(TileOwnership ownership) { m_state.tileOwnership = ownership; }
-    int createContentsTile(float scale);
-    void removeContentsTile(int id);
-    void setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void*);
-    void setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture*);
-    void clearAllDirectlyCompositedImageTiles();
-    void purgeNodeTexturesRecursive();
-#endif
-    void setID(int id) { m_id = id; }
-    int id() const { return m_id; }
-
-    const TextureMapperPlatformLayer* media() const { return m_currentContent.media; }
+    void setShouldUpdateBackingStoreFromLayer(bool b) { m_shouldUpdateBackingStoreFromLayer = b; }
+    void setBackingStore(TextureMapperBackingStore* backingStore) { m_backingStore = backingStore; }
+    PassRefPtr<TextureMapperBackingStore> backingStore() { return m_backingStore; }
+    void clearBackingStoresRecursive();
 
 private:
     TextureMapperNode* rootLayer();
@@ -174,13 +140,13 @@ private:
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperNode* >& array, int first, int last);
 
-    BitmapTexture* texture() { return m_ownedTiles.isEmpty() ? 0 : m_ownedTiles[0].texture.get(); }
+    PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintSelf(const TextureMapperPaintOptions&);
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
-    void renderContent(TextureMapper*, GraphicsLayer*);
+    void updateBackingStore(TextureMapper*, GraphicsLayer*);
 
     void syncAnimations();
     bool isVisible() const;
@@ -188,63 +154,21 @@ private:
 
     LayerTransform m_transform;
 
-    inline FloatRect targetRect() const
+    inline FloatRect layerRect() const
     {
-        return m_currentContent.contentType == HTMLContentType ? entireRect() : m_state.contentsRect;
+        return FloatRect(FloatPoint::zero(), m_size);
     }
-
-    inline FloatRect entireRect() const
-    {
-        return FloatRect(0, 0, m_size.width(), m_size.height());
-    }
-
-    FloatSize contentSize() const
-    {
-        return m_currentContent.contentType == DirectImageContentType && m_currentContent.image ? m_currentContent.image->size() : m_size;
-    }
-    struct OwnedTile {
-        FloatRect rect;
-        RefPtr<BitmapTexture> texture;
-        bool needsReset;
-    };
-
-    Vector<OwnedTile> m_ownedTiles;
-
-#if USE(TILED_BACKING_STORE)
-    struct ExternallyManagedTileBuffer {
-        FloatRect sourceRect;
-        FloatRect targetRect;
-        RefPtr<BitmapTexture> texture;
-    };
-
-    struct ExternallyManagedTile {
-        bool isBackBufferUpdated;
-        bool isDirectlyCompositedImage;
-        float scale;
-        ExternallyManagedTileBuffer frontBuffer;
-        ExternallyManagedTileBuffer backBuffer;
-
-        ExternallyManagedTile(float scale = 1.0)
-            : isBackBufferUpdated(false)
-            , isDirectlyCompositedImage(false)
-            , scale(scale)
-        {
-        }
-    };
-
-    HashMap<int, ExternallyManagedTile> m_externallyManagedTiles;
-#endif
-
-    ContentData m_currentContent;
 
     Vector<TextureMapperNode*> m_children;
     TextureMapperNode* m_parent;
     TextureMapperNode* m_effectTarget;
+    RefPtr<TextureMapperBackingStore> m_backingStore;
+    TextureMapperPlatformLayer* m_contentsLayer;
     FloatSize m_size;
     float m_opacity;
     float m_centerZ;
     String m_name;
-    int m_id;
+    bool m_shouldUpdateBackingStoreFromLayer;
 
     struct State {
         FloatPoint pos;
@@ -254,6 +178,7 @@ private:
         TransformationMatrix childrenTransform;
         float opacity;
         FloatRect contentsRect;
+        FloatRect needsDisplayRect;
         int descendantsWithContent;
         TextureMapperNode* maskLayer;
         TextureMapperNode* replicaLayer;
@@ -263,13 +188,9 @@ private:
         bool contentsOpaque : 1;
         bool backfaceVisibility : 1;
         bool visible : 1;
-        bool needsReset: 1;
+        bool needsDisplay: 1;
         bool mightHaveOverlaps : 1;
         bool needsRepaint;
-        float contentScale;
-#if USE(TILED_BACKING_STORE)
-        TileOwnership tileOwnership;
-#endif
         State()
             : opacity(1.f)
             , maskLayer(0)
@@ -280,13 +201,9 @@ private:
             , contentsOpaque(false)
             , backfaceVisibility(false)
             , visible(true)
-            , needsReset(false)
+            , needsDisplay(true)
             , mightHaveOverlaps(false)
             , needsRepaint(false)
-            , contentScale(1.0f)
-#if USE(TILED_BACKING_STORE)
-            , tileOwnership(OwnedTiles)
-#endif
         {
         }
     };

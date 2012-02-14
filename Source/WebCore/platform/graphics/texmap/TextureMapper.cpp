@@ -73,7 +73,6 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
     return selectedTexture;
 }
 
-
 PassOwnPtr<TextureMapper> TextureMapper::create(AccelerationMode mode)
 {
     if (mode == SoftwareMode)

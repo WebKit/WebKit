@@ -46,6 +46,7 @@ public:
     virtual void beginPainting();
     virtual void endPainting();
     virtual void endClip();
+    virtual IntSize maxTextureSize() { return IntSize(2000, 2000); }
     virtual PassRefPtr<BitmapTexture> createTexture();
     virtual const char* type() const;
     static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }

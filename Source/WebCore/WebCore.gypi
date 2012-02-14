@@ -3586,6 +3586,8 @@
             'platform/graphics/texmap/TextureMapper.h',
             'platform/graphics/texmap/TextureMapperAnimation.cpp',
             'platform/graphics/texmap/TextureMapperAnimation.h',
+            'platform/graphics/texmap/TextureMapperBackingStore.cpp',
+            'platform/graphics/texmap/TextureMapperBackingStore.h',
             'platform/graphics/texmap/TextureMapperImageBuffer.cpp',
             'platform/graphics/texmap/TextureMapperImageBuffer.h',
             'platform/graphics/texmap/TextureMapperNode.cpp',

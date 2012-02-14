@@ -1,3 +1,78 @@
+2012-02-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][Texmap] Refactor backing-store code in TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=78305
+
+        Instead of dealing with tiling inside of TextureMapperNode, we now deal with that in a new
+        TextureMapperBackingStore class. Since the class is abstract, WebKit2 can overload it to
+        support remotely-managed tiles.
+        The backing-store for directly composited images is handled separately, in a new class
+        TextureMapperCompositedImage. The TextureMapper implementation decides the dimension of
+        the tiles, for example 2000 in the case of OpenGL.
+        Also, directly composited content is now handled correctly, by painting it after the regular
+        content and not as part of the same texture.
+
+        To make this work, the functions in TextureMapperPlatformLayers had to become non-const,
+        thus the changes to that file and GraphicsContext3DQt.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new functionality, no new tests.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/opengl/TextureMapperGL.h:
+        (WebCore::TextureMapperGL::maxTextureDimension):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::didSynchronize):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerTextureMapper::addChildBelow):
+        (WebCore):
+        (WebCore::GraphicsLayerTextureMapper::getContentsLayer):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToImage):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::platformLayer):
+        (WebCore::GraphicsLayerTextureMapper::needsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::needsDisplayRect):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::maxTextureDimension):
+        (TextureMapper):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp: Added.
+        * platform/graphics/texmap/TextureMapperBackingStore.h: Added.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::backingStore):
+        (WebCore::TextureMapperNode::updateBackingStore):
+        (WebCore::TextureMapperNode::paint):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::intermediateSurfaceRect):
+        (WebCore::TextureMapperNode::paintRecursive):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (TextureMapperPaintOptions):
+        (WebCore::TextureMapperPaintOptions::TextureMapperPaintOptions):
+        (WebCore::TextureMapperNode::TextureMapperNode):
+        (TextureMapperNode):
+        (WebCore::TextureMapperNode::setBackingStore):
+        (WebCore::TextureMapperNode::texture):
+        (WebCore::TextureMapperNode::layerRect):
+        (WebCore::TextureMapperNode::createBackingStore):
+        (State):
+        (WebCore::TextureMapperNode::State::State):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (TextureMapperPlatformLayer):
+        (WebCore::TextureMapperPlatformLayer::swapBuffers):
+
 2012-02-14  Shinya Kawanaka  <shinyak@google.com>
 
         Use youngestShadowRoot and oldestShadowRoot instead of Element::shadowRoot().

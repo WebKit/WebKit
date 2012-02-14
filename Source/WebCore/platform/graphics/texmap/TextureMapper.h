@@ -106,6 +106,8 @@ public:
     virtual void beginPainting() { }
     virtual void endPainting() { }
 
+    virtual IntSize maxTextureSize() const { return IntSize(INT_MAX, INT_MAX); }
+
     // A surface is released implicitly when dereferenced.
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
 
