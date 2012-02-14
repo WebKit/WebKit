@@ -872,4 +872,31 @@ WebKitNamedFlow* RenderFlowThread::ensureNamedFlow()
     return m_namedFlow.get();
 }
 
+void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge)
+{
+    LayoutUnit height = oldClientAfterEdge;
+    // FIXME: the visual overflow of middle region (if it is the last one to contain any content in a render flow thread)
+    // might not be taken into account because the render flow thread height is greater that that regions height + its visual overflow
+    // because of how computeLogicalHeight is implemented for RenderFlowThread (as a sum of all regions height).
+    // This means that the middle region will be marked as fit (even if it has visual overflow flowing into the next region)
+    if (hasRenderOverflow())
+        height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
+
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid()) {
+            region->setRegionState(RenderRegion::RegionUndefined);
+            continue;
+        }
+        LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->regionRect().y() : region->regionRect().x());
+        LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->regionRect().maxY() : region->regionRect().maxX());
+        RenderRegion::RegionState state = RenderRegion::RegionFit;
+        if (flowMin <= 0)
+            state = RenderRegion::RegionEmpty;
+        if (flowMax > 0)
+            state = RenderRegion::RegionOverflow;
+        region->setRegionState(state);
+    }
+}
+
 } // namespace WebCore

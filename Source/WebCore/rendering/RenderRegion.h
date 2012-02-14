@@ -81,6 +81,16 @@ public:
     bool isLastRegion() const;
 
     void clearBoxStyleInRegion(const RenderBox*);
+
+    enum RegionState {
+        RegionUndefined,
+        RegionEmpty,
+        RegionFit,
+        RegionOverflow
+    };
+
+    RegionState regionState() const { return isValid() ? m_regionState : RegionUndefined; }
+    void setRegionState(RegionState regionState) { m_regionState = regionState; }
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
@@ -109,6 +119,7 @@ private:
 
     bool m_isValid;
     bool m_hasCustomRegionStyle;
+    RegionState m_regionState;
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

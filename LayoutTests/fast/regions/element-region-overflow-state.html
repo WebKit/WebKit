@@ -1,0 +1,113 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2, #region_3 {
+    -webkit-flow-from: no_article;
+    overflow:visible;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1 { height:110px; width:200px; }
+#region_2 { height:110px; width:200px; }
+#region_3 { height:110px; width:200px; }
+</style>
+</head>
+<body>
+<div id="description" class="block"></div>
+<div id="article">
+    <div>
+        <div id="content" style="height: 216px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="region_2"></div>
+<div id="region_3"></div>
+
+<div id="console" class="block"></div>
+
+<script>
+    description("Tests Element.webkitRegionOverflow attribute")
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+    function regionOverflow(id) {
+        var e = document.getElementById(id);
+        return e.webkitRegionOverflow;
+    }
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_3");
+        r.style.webkitFlowFrom = flowName;
+    }
+    function addVisualOverflow() {
+        var c = document.getElementById("article");
+        c.style.webkitBoxShadow="0px 30px lime";
+    }
+    function addMoreContent() {
+        var c = document.getElementById("content");
+        c.style.height = 326;
+    }
+    function test() {
+        shouldBeEqualToString("regionOverflow('article')", "undefined");
+        shouldBeEqualToString("regionOverflow('region_1')", "undefined");
+        shouldBeEqualToString("regionOverflow('region_2')", "undefined");
+        shouldBeEqualToString("regionOverflow('region_3')", "undefined");
+
+        document.body.offsetTop; // force layout
+        debug("After first layout");
+
+        shouldBeEqualToString("regionOverflow('region_1')", "empty");
+        shouldBeEqualToString("regionOverflow('region_2')", "empty");
+        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+
+        debug("Flow content");
+        flowContent("article");
+        document.body.offsetTop; // force layout
+
+        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
+        shouldBeEqualToString("regionOverflow('region_2')", "fit");
+        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+
+        debug("Add more content");
+        addMoreContent();
+        document.body.offsetTop; // force layout
+
+        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
+        shouldBeEqualToString("regionOverflow('region_2')", "overflow");
+        shouldBeEqualToString("regionOverflow('region_3')", "fit");
+
+        debug("Add visual overflow");
+        addVisualOverflow();
+        document.body.offsetTop; // force layout
+
+        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
+        shouldBeEqualToString("regionOverflow('region_2')", "overflow");
+        shouldBeEqualToString("regionOverflow('region_3')", "overflow");
+
+        debug("Empty content");
+        flowContent("no_article");
+        document.body.offsetTop; // force layout
+
+        shouldBeEqualToString("regionOverflow('region_1')", "empty");
+        shouldBeEqualToString("regionOverflow('region_2')", "empty");
+        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+    }
+
+    window.addEventListener("load", test, false);
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

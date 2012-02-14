@@ -133,6 +133,7 @@ public:
                                       const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
                                       const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
     WebKitNamedFlow* ensureNamedFlow();
+    void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }

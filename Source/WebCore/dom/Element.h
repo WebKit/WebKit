@@ -402,6 +402,8 @@ public:
 
     PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
 
+    const AtomicString& webkitRegionOverflow() const;
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)

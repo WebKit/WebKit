@@ -47,6 +47,7 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_parentFlowThread(0)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
+    , m_regionState(RegionUndefined)
 {
 }
 

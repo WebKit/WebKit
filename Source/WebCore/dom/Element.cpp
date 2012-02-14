@@ -57,6 +57,7 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderLayer.h"
+#include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "Settings.h"
@@ -1987,6 +1988,28 @@ PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
         return 0;
     
     return animController->animationsForRenderer(renderer());
+}
+
+const AtomicString& Element::webkitRegionOverflow() const
+{
+    if (renderer() && renderer()->isRenderRegion()) {
+        RenderRegion* region = toRenderRegion(renderer());
+        switch (region->regionState()) {
+        case RenderRegion::RegionFit:
+            DEFINE_STATIC_LOCAL(AtomicString, fitState, ("fit"));
+            return fitState;
+        case RenderRegion::RegionEmpty:
+            DEFINE_STATIC_LOCAL(AtomicString, emptyState, ("empty"));
+            return emptyState;
+        case RenderRegion::RegionOverflow:
+            DEFINE_STATIC_LOCAL(AtomicString, overflowState, ("overflow"));
+            return overflowState;
+        default:
+            break;
+        }
+    }
+    DEFINE_STATIC_LOCAL(AtomicString, undefinedState, ("undefined"));
+    return undefinedState;
 }
 
 #ifndef NDEBUG
