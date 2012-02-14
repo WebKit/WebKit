@@ -1,3 +1,13 @@
+2012-02-13  Rob Flack  <flackr@chromium.org>
+
+        Add Linux ChromiumOS test results to flakiness dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=78495
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
 2012-02-13  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Mutation Observers build is broken

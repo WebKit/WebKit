@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Google Inc. All rights reserved.
+// Copyright (C) 2012 Google Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -177,7 +177,10 @@ function handleValidHashParameterWrapper(key, value)
 
     case 'group':
         validateParameter(g_currentState, key, value,
-            function() { return value in LAYOUT_TESTS_BUILDER_GROUPS; });
+            function() {
+              return value in LAYOUT_TESTS_BUILDER_GROUPS ||
+                  value in CHROMIUM_GTESTS_BUILDER_GROUPS;
+            });
         return true;
 
     // FIXME: remove support for this parameter once the waterfall starts to

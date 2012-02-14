@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Google Inc. All rights reserved.
+// Copyright (C) 2012 Google Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -41,6 +41,7 @@ BuilderMaster.prototype.getLogPath = function(builder, buildNumber)
 };
 
 CHROMIUM_BUILDER_MASTER = new BuilderMaster('Chromium', 'http://build.chromium.org/p/chromium/builders/');
+CHROMIUMOS_BUILDER_MASTER = new BuilderMaster('ChromiumChromiumOS', 'http://build.chromium.org/p/chromium.chromiumos/builders/');
 CHROMIUM_WEBKIT_BUILDER_MASTER = new BuilderMaster('ChromiumWebkit', 'http://build.chromium.org/p/chromium.webkit/builders/');
 CHROMIUM_GPU_BUILDER_MASTER = new BuilderMaster('ChromiumGPU', 'http://build.chromium.org/p/chromium.gpu/builders/');
 WEBKIT_BUILDER_MASTER = new BuilderMaster('webkit.org', 'http://build.webkit.org/builders/');
@@ -152,6 +153,7 @@ var LAYOUT_TESTS_BUILDER_GROUPS = {
 
 var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
     'Chromium': '@DEPS - chromium.org',
+    'ChromiumChromiumOS': '@DEPS CrOS - chromium.org',
     'ChromiumWebkit': '@ToT - chromium.org',
     'webkit.org': '@ToT - webkit.org'
 };
@@ -209,7 +211,13 @@ var CHROMIUM_GTESTS_DEPS_BUILDERS = [
 ];
 associateBuildersWithMaster(CHROMIUM_GTESTS_DEPS_BUILDERS, CHROMIUM_BUILDER_MASTER);
 
-var CHROMIUM_GTESTS_TOT_BUILDERS = [
+var CHROMIUMOS_GTESTS_DEPS_BUILDERS = [
+    ['Linux ChromiumOS', BuilderGroup.DEFAULT_BUILDER],
+    ['Linux ChromiumOS Tests (dbg)'],
+];
+associateBuildersWithMaster(CHROMIUMOS_GTESTS_DEPS_BUILDERS, CHROMIUMOS_BUILDER_MASTER);
+
+ var CHROMIUM_GTESTS_TOT_BUILDERS = [
     ['Win (dbg)', BuilderGroup.DEFAULT_BUILDER],
     ['Mac10.6 Tests'],
     ['Linux Tests'],
@@ -218,6 +226,7 @@ associateBuildersWithMaster(CHROMIUM_GTESTS_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDE
 
 var CHROMIUM_GTESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_GTESTS_DEPS_BUILDERS),
+    '@DEPS CrOS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUMOS_GTESTS_DEPS_BUILDERS),
     '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GTESTS_TOT_BUILDERS),
 };
 
