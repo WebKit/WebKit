@@ -1,3 +1,52 @@
+2012-02-14  Levi Weintraub  <leviw@chromium.org>
+
+        Update usage of LayoutUnits in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=78511
+
+        Reviewed by Simon Fraser.
+
+        Updating RenderLayer to properly use LayoutUnits. See descriptions below for the rationale behind all
+        the changes. Also adding a roundedIntSize method that takes a LayoutSize.
+
+        No new tests. No change in behavior.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::roundedIntSize): Inline method that currently does nothing, but will round a LayoutSize
+        to an IntSize.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions): Switching repaint and outline boxes to LayoutRects, as
+        it's important to keep the precision of these rects until handing off to the embedder (in FrameView).
+        (WebCore::RenderLayer::computeRepaintRects): Repaint rects should be preserved in subpixel units until
+        being passed to the embedding layer. This prevents needless repaints.
+        (WebCore::RenderLayer::convertToPixelSnappedLayerCoords): Convenience function to return pixel snapped rects
+        (WebCore):
+        (WebCore::RenderLayer::convertToLayerCoords): Fixing a style flaw.
+        (WebCore::RenderLayer::scrollRectToVisible): Pixel snapping the rect when handing off to the embedder.
+        (WebCore::RenderLayer::maximumScrollPosition): Scroll offsets are rounded.
+        (WebCore::RenderLayer::scrollCornerRect): Scrollbars are drawn natively and should be positioned on pixel
+        boundaries.
+        (WebCore::RenderLayer::scrollCornerAndResizerRect): Resize corner doesn't influence the size/position of
+        render objects. It is only painted and hit tested. Therefor it should use integers.
+        (WebCore::RenderLayer::offsetFromResizeCorner): Ditto.
+        (WebCore::RenderLayer::positionOverflowControls): Overflow controls are drawn natively and should be
+        positioned on integer boundaries.
+        (WebCore::RenderLayer::paintOverflowControls): Ditto.
+        (WebCore::RenderLayer::paintScrollCorner): Ditto.
+        (WebCore::RenderLayer::drawPlatformResizerImage): Ditto.
+        (WebCore::RenderLayer::paintResizer): Ditto.
+        (WebCore::RenderLayer::hitTestOverflowControls): Hit testing & overflow controls both use integers.
+        (WebCore::RenderLayer::clipToRect): Clipping to actual painted (pixel snapped) layer bounds in the
+        graphics context.
+        (WebCore::RenderLayer::paintLayerContents): Calling paintOverflowControls at pixel bounds.
+        (WebCore::RenderLayer::hitTest): Intersecting the hit test area with pixel snapped boundaries.
+        (WebCore::RenderLayer::setBackingNeedsRepaintInRect): Sending pixelSnapped rects to the backing
+        store, which only cares about pixels, and hence integers.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::scrolledContentOffset): RenderLayer's scroll offsets are used in platform
+        code, so we need to return them as integers. Rounding the scroll overflow before adding it to the
+        scroll offset, which was already stored in integers.
+        (RenderLayer):
+
 2012-02-14  Abhishek Arya  <inferno@chromium.org>
 
         Crash in NavigationScheduler::schedule.

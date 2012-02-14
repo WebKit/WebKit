@@ -56,6 +56,11 @@ inline IntRect pixelSnappedIntRect(const LayoutRect& rect)
     return rect;
 }
 
+inline IntSize roundedIntSize(const LayoutSize& s)
+{
+    return s;
+}
+
 inline LayoutSize roundedLayoutSize(const FloatSize& s)
 {
     return roundedIntSize(s);
