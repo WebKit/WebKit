@@ -60,6 +60,7 @@ public:
     void checkNotify();
 
     void beginLoadIfNeeded(CachedResourceLoader* dl);
+    bool stillNeedsLoad() const { return !m_loadInitiated; }
 
     bool ensureCustomFontData();
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);

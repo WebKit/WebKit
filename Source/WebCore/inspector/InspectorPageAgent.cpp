@@ -36,6 +36,8 @@
 
 #include "Base64.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedFont.h"
+#include "CachedImage.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedScript.h"
@@ -394,8 +396,27 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
 
     const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it)
-        result.append(it->second.get());
+    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
+        CachedResource* cachedResource = it->second.get();
+
+        switch (cachedResource->type()) {
+        case CachedResource::ImageResource:
+            // Skip images that were not auto loaded (images disabled in the user agent).
+            if (static_cast<CachedImage*>(cachedResource)->stillNeedsLoad())
+                continue;
+            break;
+        case CachedResource::FontResource:
+            // Skip fonts that were referenced in CSS but never used/downloaded.
+            if (static_cast<CachedFont*>(cachedResource)->stillNeedsLoad())
+                continue;
+            break;
+        default:
+            // All other CachedResource types download immediately.
+            break;
+        }
+
+        result.append(cachedResource);
+    }
 
     return result;
 }

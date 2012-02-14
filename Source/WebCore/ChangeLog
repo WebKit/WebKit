@@ -1,5 +1,22 @@
 2012-02-12  Timothy Hatcher  <timothy@apple.com>
 
+        Don't include CachedResources that haven't downloaded when populating the Web Inspector on load.
+
+        https://webkit.org/b/78447
+        rdar://problem/10843542
+
+        Reviewed by Brian Weinstein.
+
+        Test: inspector/protocol/page-agent.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourcesForFrame): Skip CachedFonts and CachedImages that
+        return true for stillNeedsLoad.
+        * loader/cache/CachedFont.h:
+        (WebCore::CachedFont::stillNeedsLoad): Added.
+
+2012-02-12  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: include failed and canceled in FrameResourceTree.
 
         https://webkit.org/b/78445
