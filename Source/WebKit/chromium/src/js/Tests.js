@@ -308,7 +308,6 @@ TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch = function()
 
     this.showPanel("scripts");
 
-
     function switchToElementsTab() {
         test.showPanel("elements");
         setTimeout(switchToScriptsTab, 0);
@@ -320,19 +319,17 @@ TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch = function()
     }
 
     function checkScriptsPanel() {
-        test.assertTrue(!!WebInspector.panels.scripts.visibleView, "No visible script view.");
         test.assertTrue(test._scriptsAreParsed(["debugger_test_page.html"]), "Some scripts are missing.");
         checkNoDuplicates();
         test.releaseControl();
     }
 
     function checkNoDuplicates() {
-        var scriptSelect = document.getElementById("scripts-files");
-        var options = scriptSelect.options;
-        for (var i = 0; i < options.length; i++) {
-            var scriptName = options[i].text;
-            for (var j = i + 1; j < options.length; j++)
-                test.assertTrue(scriptName !== options[j].text, "Found script duplicates: " + test.optionsToString_(options));
+        var uiSourceCodes = test.nonAnonymousUISourceCodes_();
+        for (var i = 0; i < uiSourceCodes.length; i++) {
+            var scriptName = uiSourceCodes[i].fileName;
+            for (var j = i + 1; j < uiSourceCodes.length; j++)
+                test.assertTrue(scriptName !== uiSourceCodes[j].fileName, "Found script duplicates: " + test.uiSourceCodesToString_(uiSourceCodes));
         }
     }
 
@@ -584,70 +581,32 @@ TestSuite.prototype.waitForTestResultsInConsole = function()
 
 
 /**
- * Serializes options collection to string.
- * @param {HTMLOptionsCollection} options
+ * Serializes array of uiSourceCodes to string.
+ * @param {Array.<WebInspectorUISourceCode>} uiSourceCodes
  * @return {string}
  */
-TestSuite.prototype.optionsToString_ = function(options)
+TestSuite.prototype.uiSourceCodesToString_ = function(uiSourceCodes)
 {
     var names = [];
-    for (var i = 0; i < options.length; i++)
-        names.push('"' + options[i].text + '"');
+    for (var i = 0; i < uiSourceCodes.length; i++)
+        names.push('"' + uiSourceCodes[i].fileName + '"');
     return names.join(",");
 };
 
 
 /**
- * Ensures that main HTML resource is selected in Scripts panel and that its
- * source frame is setup. Invokes the callback when the condition is satisfied.
- * @param {HTMLOptionsCollection} options
- * @param {function(WebInspector.SourceView,string)} callback
+ * Returns all loaded non anonymous uiSourceCodes.
+ * @return {Array.<WebInspectorUISourceCode>}
  */
-TestSuite.prototype.showMainPageScriptSource_ = function(scriptName, callback)
+TestSuite.prototype.nonAnonymousUISourceCodes_ = function()
 {
-    var test = this;
-
-    var scriptSelect = document.getElementById("scripts-files");
-    var options = scriptSelect.options;
-
-    test.assertTrue(options.length, "Scripts list is empty");
-
-    // Select page's script if it's not current option.
-    var scriptResource;
-    if (options[scriptSelect.selectedIndex].text === scriptName)
-        scriptResource = options[scriptSelect.selectedIndex].representedObject;
-    else {
-        var pageScriptIndex = -1;
-        for (var i = 0; i < options.length; i++) {
-            if (options[i].text === scriptName) {
-                pageScriptIndex = i;
-                break;
-            }
-        }
-        test.assertTrue(-1 !== pageScriptIndex, "Script with url " + scriptName + " not found among " + test.optionsToString_(options));
-        scriptResource = options[pageScriptIndex].representedObject;
-
-        // Current panel is "Scripts".
-        WebInspector.inspectorView.currentPanel()._showScriptOrResource(scriptResource);
-        test.assertEquals(pageScriptIndex, scriptSelect.selectedIndex, "Unexpected selected option index.");
+    function filterOutAnonymous(uiSourceCode)
+    {
+        return !!uiSourceCode.url;
     }
 
-    test.assertTrue(scriptResource instanceof WebInspector.Resource,
-                    "Unexpected resource class.");
-    test.assertTrue(!!scriptResource.url, "Resource URL is null.");
-    test.assertTrue(scriptResource.url.search(scriptName + "$") !== -1, "Main HTML resource should be selected.");
-
-    var scriptsPanel = WebInspector.panels.scripts;
-
-    var view = scriptsPanel.visibleView;
-    test.assertTrue(view instanceof WebInspector.SourceView);
-
-    if (!view.sourceFrame._loaded) {
-        test.addSniffer(view, "_sourceFrameSetupFinished", function(event) {
-            callback(view, scriptResource.url);
-        });
-    } else
-        callback(view, scriptResource.url);
+    var uiSourceCodes = WebInspector.panels.scripts._presentationModel.uiSourceCodes();
+    return uiSourceCodes.filter(filterOutAnonymous);
 };
 
 
@@ -680,14 +639,12 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
  */
 TestSuite.prototype._scriptsAreParsed = function(expected)
 {
-    var scriptSelect = document.getElementById("scripts-files");
-    var options = scriptSelect.options;
-
+    var uiSourceCodes = this.nonAnonymousUISourceCodes_();
     // Check that at least all the expected scripts are present.
     var missing = expected.slice(0);
-    for (var i = 0 ; i < options.length; i++) {
-        for (var j = 0; j < missing.length; j++) {
-            if (options[i].text.search(missing[j]) !== -1) {
+    for (var i = 0; i < uiSourceCodes.length; ++i) {
+        for (var j = 0; j < missing.length; ++j) {
+            if (uiSourceCodes[i].fileName.search(missing[j]) !== -1) {
                 missing.splice(j, 1);
                 break;
             }
@@ -744,7 +701,7 @@ TestSuite.prototype._waitUntilScriptsAreParsed = function(expectedScripts, callb
         if (test._scriptsAreParsed(expectedScripts))
             callback();
         else
-            test.addSniffer(WebInspector.panels.scripts, "_uiSourceCodeAdded", waitForAllScripts);
+            test.addSniffer(WebInspector.panels.scripts, "_addUISourceCode", waitForAllScripts);
     }
 
     waitForAllScripts();

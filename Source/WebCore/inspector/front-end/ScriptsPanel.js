@@ -60,7 +60,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
     this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
 
-    if (WebInspector.experimentsSettings.useScriptsNavigator.isEnabled()) {
+    WebInspector.settings.useScriptsNavigator = WebInspector.settings.createSetting("useScriptsNavigator", true);
+    if (WebInspector.settings.useScriptsNavigator.get()) {
         const initialNavigatorWidth = 225;
         const minimalViewsContainerWidthPercent = 50;
         this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
@@ -258,6 +259,15 @@ WebInspector.ScriptsPanel.prototype = {
             // Anonymous sources are shown only when stepping.
             return;
         }
+
+        this._addUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _addUISourceCode: function(uiSourceCode)
+    {
         this._fileSelector.addUISourceCode(uiSourceCode);
         this._editorContainer.uiSourceCodeAdded(uiSourceCode);
     },
@@ -604,7 +614,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         // Anonymous scripts are not added to files select by default.
-        this._fileSelector.addUISourceCode(uiLocation.uiSourceCode);
+        this._addUISourceCode(uiLocation.uiSourceCode);
 
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.setExecutionLine(uiLocation.lineNumber);

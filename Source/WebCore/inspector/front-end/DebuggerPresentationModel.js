@@ -183,6 +183,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var result = [];
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
+            if (!this._rawSourceCodes[i].sourceMapping)
+                continue;
             var uiSourceCodeList = this._rawSourceCodes[i].sourceMapping.uiSourceCodeList();
             for (var j = 0; j < uiSourceCodeList.length; ++j)
                 result.push(uiSourceCodeList[j]);
