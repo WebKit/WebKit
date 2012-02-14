@@ -55,8 +55,6 @@ BLACKBERRY_EXPORT bool base64Encode(const std::vector<char>& binary, std::string
 BLACKBERRY_EXPORT void unescapeURL(const std::string& escaped, std::string& url);
 BLACKBERRY_EXPORT void escapeURL(const std::string& url, std::string& escaped);
 
-BLACKBERRY_EXPORT bool getExtensionForMimeType(const std::string& mime, std::string& extension);
-
 } // namespace WebKit
 } // namespace BlackBerry
 

@@ -21,7 +21,6 @@
 
 #include "Base64.h"
 #include "KURL.h"
-#include "MIMETypeRegistry.h"
 #include "TextCodecICU.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -132,19 +131,6 @@ void escapeURL(const std::string& url, std::string& escaped)
 
     escaped.clear();
     escaped.append(utf8.data(), utf8.length());
-}
-
-bool getExtensionForMimeType(const std::string& mime, std::string& extension)
-{
-    String mimeType(mime.data(), mime.length());
-    String preferredExtension = WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
-    if (preferredExtension.isEmpty())
-        return false;
-
-    CString utf8 = preferredExtension.utf8();
-    extension.clear();
-    extension.append(utf8.data(), utf8.length());
-    return true;
 }
 
 } // namespace WebKit

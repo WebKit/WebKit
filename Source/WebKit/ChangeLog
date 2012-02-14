@@ -1,3 +1,22 @@
+2012-02-14  Lianghui Chen  <liachen@rim.com>
+
+        Separate mimetype and file extension mapping API from WebKit/blackberry/Api/WebKitTextCodec and complete it.
+        https://bugs.webkit.org/show_bug.cgi?id=78605
+
+        Reviewed by Rob Buis.
+
+        Now the MIME type and file extension mapping API are in WebKitMIMETypeConverter.
+
+        * blackberry/Api/WebKitMIMETypeConverter.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::getExtensionForMimeType):
+        (BlackBerry::WebKit::getMimeTypeForExtension):
+        * blackberry/Api/WebKitMIMETypeConverter.h: Added.
+        (WebKit):
+        * blackberry/Api/WebKitTextCodec.cpp:
+        * blackberry/Api/WebKitTextCodec.h:
+        * blackberry/CMakeListsBlackBerry.txt:
+
 2012-02-14  Ed Baker  <edbaker@rim.com>
 
         [BlackBerry] Dragging a selection handle outside of the content bounding box does not update the selection range correctly
