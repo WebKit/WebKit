@@ -773,7 +773,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
 
 bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec)
 {
-    CSSStyleRule* rule = ruleForId(id);
+    RefPtr<CSSStyleRule> rule = ruleForId(id);
     if (!rule) {
         ec = NOT_FOUND_ERR;
         return false;

@@ -1,3 +1,13 @@
+2012-02-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        [Qt] inspector/styles/undo-add-new-rule.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=78502
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::deleteRule):
+
 2012-02-13  Nate Chapin  <japhet@chromium.org>
 
         Reuse CachedRawResources (e.g., XHRs) that are stored

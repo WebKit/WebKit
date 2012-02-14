@@ -3975,7 +3975,6 @@ BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
-BUGWK78522 DEBUG : inspector/styles/undo-add-new-rule.html = CRASH
 BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
