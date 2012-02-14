@@ -46,8 +46,6 @@
   var maxPerBlock = Xs.length / (idealTime / delay);
   var maxBlocks = Xs.length / maxPerBlock;
   var count = 0;
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
   function repaintTest() {
     for (var subcount = 0; subcount < maxPerBlock; subcount += 1) {
       var index = count * maxPerBlock + subcount;
@@ -63,13 +61,16 @@
     }
     ++count;
     if (count < maxBlocks) {
-      window.setTimeout(repaintTest, delay);
-      t.firstChild.data = 'Test in progress... ' + count + ' of ' + maxBlocks;
+      if (window.layoutTestController)
+        repaintTest();
+      else {
+        window.setTimeout(repaintTest, delay);
+        t.firstChild.data = 'Test in progress... ' + count + ' of ' + maxBlocks;
+      }
     } else {
-      if (window.layoutTestController) {
+      if (window.layoutTestController)
         t.firstChild.data = 'Test completed';
-        layoutTestController.notifyDone();
-      } else {
+      else {
         var end = new Date();
         var elapsed = (end - start) / 1000;
         t.firstChild.data = 'Test completed in ' + elapsed.toFixed(2) + 's.';
