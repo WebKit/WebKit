@@ -1,3 +1,15 @@
+2012-02-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebCoreSupport FrameLoaderClientBlackBerry class
+        https://bugs.webkit.org/show_bug.cgi?id=78275
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.h: Added.
+
 2012-02-14  Lianghui Chen  <liachen@rim.com>
 
         Separate mimetype and file extension mapping API from WebKit/blackberry/Api/WebKitTextCodec and complete it.
