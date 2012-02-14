@@ -1,3 +1,18 @@
+2012-02-14  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: add isZero implementations to catch divide by zero
+        https://bugs.webkit.org/show_bug.cgi?id=78603
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcPrimitiveValue::isZero):
+        (CSSCalcPrimitiveValue):
+        (WebCore::CSSCalcBinaryOperation::isZero):
+        (CSSCalcBinaryOperation):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+
 2012-02-12  Timothy Hatcher  <timothy@apple.com>
 
         Don't include CachedResources that haven't downloaded when populating the Web Inspector on load.

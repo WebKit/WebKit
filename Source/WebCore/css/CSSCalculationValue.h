@@ -59,12 +59,12 @@ class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     
     virtual ~CSSCalcExpressionNode() = 0;  
+    virtual bool isZero() const = 0;
     virtual double doubleValue() const = 0;  
     virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     
     CalculationCategory category() const { return m_category; }    
     bool isInteger() const { return m_isInteger; }
-    bool isZero() const { return false; }
     
 protected:
     CSSCalcExpressionNode(CalculationCategory category, bool isInteger)

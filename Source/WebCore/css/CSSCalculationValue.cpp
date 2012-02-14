@@ -99,6 +99,11 @@ public:
         return adoptRef(new CSSCalcPrimitiveValue(value, isInteger));
     }
     
+    virtual bool isZero() const
+    {
+        return !m_value->getDoubleValue();
+    }
+
     virtual String cssText() const
     {
         return m_value->cssText();
@@ -193,6 +198,11 @@ public:
         return adoptRef(new CSSCalcBinaryOperation(leftSide, rightSide, op, newCategory));
     }
     
+    virtual bool isZero() const
+    {
+        return !doubleValue();
+    }
+
     virtual double doubleValue() const 
     {
         return evaluate(m_leftSide->doubleValue(), m_rightSide->doubleValue());
