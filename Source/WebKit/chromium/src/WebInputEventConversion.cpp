@@ -389,6 +389,10 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const MouseEven
     windowY = p.y();
     x = event.absoluteLocation().x() - widget->location().x();
     y = event.absoluteLocation().y() - widget->location().y();
+#if ENABLE(POINTER_LOCK)
+    movementX = event.webkitMovementX();
+    movementY = event.webkitMovementY();
+#endif
     clickCount = event.detail();
 }
 
