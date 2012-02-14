@@ -1,3 +1,18 @@
+2012-02-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Set opaque flag on SkBitmap in per-tile layer updater
+        https://bugs.webkit.org/show_bug.cgi?id=78498
+
+        Reviewed by Stephen White.
+
+        No new tests.
+
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h:
+        (SkPictureCanvasLayerTextureUpdater):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::layerIsOpaque):
+
 2012-02-13  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Remove obsolete zoom animation pathway.

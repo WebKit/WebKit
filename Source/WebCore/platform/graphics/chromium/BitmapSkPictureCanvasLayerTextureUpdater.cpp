@@ -47,6 +47,7 @@ void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRec
 {
     m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, sourceRect.width(), sourceRect.height());
     m_bitmap.allocPixels();
+    m_bitmap.setIsOpaque(m_textureUpdater->layerIsOpaque());
     SkDevice device(m_bitmap);
     SkCanvas canvas(&device);
     textureUpdater()->paintContentsRect(&canvas, sourceRect);
