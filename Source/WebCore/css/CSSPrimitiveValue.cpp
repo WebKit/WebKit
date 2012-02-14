@@ -21,12 +21,14 @@
 #include "config.h"
 #include "CSSPrimitiveValue.h"
 
+#include "CSSCalculationValue.h"
 #include "CSSHelper.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSWrapShapes.h"
+#include "CalculationValue.h"
 #include "Color.h"
 #include "Counter.h"
 #include "ExceptionCode.h"
@@ -52,6 +54,9 @@ namespace WebCore {
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitTypes unitType)
 {
     switch (unitType) {
+    case CSSPrimitiveValue:: CSS_CALC:
+    case CSSPrimitiveValue:: CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSSPrimitiveValue:: CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSPrimitiveValue:: CSS_CM:
     case CSSPrimitiveValue:: CSS_DEG:
     case CSSPrimitiveValue:: CSS_DIMENSION:
@@ -137,6 +142,27 @@ static CSSTextCache& cssTextCache()
     return cache;
 }
 
+unsigned short CSSPrimitiveValue::primitiveType() const 
+{
+    if (m_primitiveUnitType != CSSPrimitiveValue::CSS_CALC)
+        return m_primitiveUnitType; 
+    
+    switch (m_value.calc->category()) {
+    case CalcNumber:
+        return CSSPrimitiveValue::CSS_NUMBER;
+    case CalcPercent:
+        return CSSPrimitiveValue::CSS_PERCENTAGE;
+    case CalcLength:
+        return CSSPrimitiveValue::CSS_PX;
+    case CalcPercentNumber:
+        return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER;
+    case CalcPercentLength:
+        return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+    case CalcOther:
+        return CSSPrimitiveValue::CSS_UNKNOWN;
+    }
+    return CSSPrimitiveValue::CSS_UNKNOWN;
+}
 static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
 {
     ASSERT_ARG(valueOrPropertyID, valueOrPropertyID >= 0);
@@ -284,6 +310,13 @@ void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
     m_value.pair = p.leakRef();
 }
 
+void CSSPrimitiveValue::init(PassRefPtr<CSSCalcValue> c)
+{
+    m_primitiveUnitType = CSS_CALC;
+    m_hasCachedCSSText = false;
+    m_value.calc = c.leakRef();
+}
+
 void CSSPrimitiveValue::init(PassRefPtr<CSSWrapShape> shape)
 {
     m_primitiveUnitType = CSS_SHAPE;
@@ -324,6 +357,9 @@ void CSSPrimitiveValue::cleanup()
                 m_value.region->deref();
             break;
 #endif
+        case CSS_CALC:
+            m_value.calc->deref();
+            break;
         case CSS_SHAPE:
             m_value.shape->deref();
             break;
@@ -437,12 +473,23 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             // 1 pc == 12 pt
             factor = cssPixelsPerInch * 12.0 / 72.0;
             break;
+        case CSS_CALC_PERCENTAGE_WITH_LENGTH:
+        case CSS_CALC_PERCENTAGE_WITH_NUMBER:
+            ASSERT_NOT_REACHED();
+            return -1.0;
         default:
             ASSERT_NOT_REACHED();
             return -1.0;
     }
 
-    double result = getDoubleValue() * factor;
+    double computedValue;
+    if (m_primitiveUnitType == CSS_CALC)
+        // The multiplier is passed in as 1.0 here to ensure it is only applied once
+        computedValue = m_value.calc->computeLengthPx(style, rootStyle, 1.0, computingFontSize);
+    else
+        computedValue = getDoubleValue();
+    
+    double result = computedValue * factor;
     if (!applyZoomMultiplier || multiplier == 1.0f)
         return result;
 
@@ -528,6 +575,11 @@ double CSSPrimitiveValue::getDoubleValue(unsigned short unitType) const
     return result;
 }
 
+double CSSPrimitiveValue::getDoubleValue() const
+{ 
+    return m_primitiveUnitType != CSS_CALC ? m_value.num : m_value.calc->doubleValue();
+}
+
 CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(UnitCategory category)
 {
     // The canonical unit type is chosen according to the way CSSParser::validUnit() chooses the default unit
@@ -554,12 +606,13 @@ bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, doub
 {
     if (!isValidCSSUnitTypeForDoubleConversion(static_cast<UnitTypes>(m_primitiveUnitType)) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
         return false;
-    if (requestedUnitType == static_cast<UnitTypes>(m_primitiveUnitType) || requestedUnitType == CSS_DIMENSION) {
-        *result = m_value.num;
+
+    UnitTypes sourceUnitType = static_cast<UnitTypes>(primitiveType());
+    if (requestedUnitType == sourceUnitType || requestedUnitType == CSS_DIMENSION) {
+        *result = getDoubleValue();
         return true;
     }
 
-    UnitTypes sourceUnitType = static_cast<UnitTypes>(m_primitiveUnitType);
     UnitCategory sourceCategory = unitCategory(sourceUnitType);
     ASSERT(sourceCategory != UOther);
 
@@ -585,7 +638,7 @@ bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, doub
             return false;
     }
 
-    double convertedValue = m_value.num;
+    double convertedValue = getDoubleValue();
 
     // First convert the value from m_primitiveUnitType to canonical type.
     double factor = conversionToCanonicalUnitsScaleFactor(sourceUnitType);
@@ -957,6 +1010,9 @@ String CSSPrimitiveValue::customCssText() const
         }
         case CSS_PARSER_IDENTIFIER:
             text = quoteCSSStringIfNeeded(m_value.string);
+            break;
+        case CSS_CALC:
+            text = m_value.calc->cssText();
             break;
         case CSS_SHAPE:
             text = m_value.shape->cssText();

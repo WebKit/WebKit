@@ -800,10 +800,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
 {
     if (m_parsedCalculation) {
         ASSERT(isCalculation(value));
-        // FIXME calc() http://webkit.org/b/16662: create a CSSPrimitiveValue here, ie
-        // return CSSPrimitiveValue::create(m_parsedCalculation.release());
-        m_parsedCalculation.release();
-        return 0;
+        return CSSPrimitiveValue::create(m_parsedCalculation.release());
     }
                
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
@@ -904,9 +901,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int id, CSSP
     if (value->unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
     if (isCalculation(value))
-        // FIXME calc()  http://webkit.org/b/16662: create a primitive value here, ie
-        // return CSSPrimitiveValue::create(m_parsedCalculation.release());
-        m_parsedCalculation.release();
+        return CSSPrimitiveValue::create(m_parsedCalculation.release());
 
     return 0;
 }

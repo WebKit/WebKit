@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CSSCalcValue;
 class Counter;
 class DashboardRegion;
 class Pair;
@@ -102,7 +103,11 @@ public:
         CSS_SHAPE = 110,
 
         // Used by border images.
-        CSS_QUAD = 111
+        CSS_QUAD = 111,
+
+        CSS_CALC = 112,
+        CSS_CALC_PERCENTAGE_WITH_NUMBER = 113,
+        CSS_CALC_PERCENTAGE_WITH_LENGTH = 114
     };
 
     // This enum follows the CSSParser::Units enum augmented with UNIT_FREQUENCY for frequencies.
@@ -133,19 +138,21 @@ public:
     bool isIdent() const { return m_primitiveUnitType == CSS_IDENT; }
     bool isLength() const
     {
-        return (m_primitiveUnitType >= CSS_EMS && m_primitiveUnitType <= CSS_PC)
-               || m_primitiveUnitType == CSS_REMS;
+        unsigned short type = primitiveType();
+        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS;
     }
-    bool isNumber() const { return m_primitiveUnitType == CSS_NUMBER; }
-    bool isPercentage() const { return m_primitiveUnitType == CSS_PERCENTAGE; }
-    bool isPx() const { return m_primitiveUnitType == CSS_PX; }
+    bool isNumber() const { return primitiveType() == CSS_NUMBER; }
+    bool isPercentage() const { return primitiveType() == CSS_PERCENTAGE; }
+    bool isPx() const { return primitiveType() == CSS_PX; }
     bool isRect() const { return m_primitiveUnitType == CSS_RECT; }
     bool isRGBColor() const { return m_primitiveUnitType == CSS_RGBCOLOR; }
     bool isShape() const { return m_primitiveUnitType == CSS_SHAPE; }
     bool isString() const { return m_primitiveUnitType == CSS_STRING; }
     bool isTime() const { return m_primitiveUnitType == CSS_S || m_primitiveUnitType == CSS_MS; }
     bool isURI() const { return m_primitiveUnitType == CSS_URI; }
-
+    bool isCalculated() const { return m_primitiveUnitType == CSS_CALC; }
+    bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_NUMBER; }
+    bool isCalculatedPercentageWithLength() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_LENGTH; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int identifier) { return adoptRef(new CSSPrimitiveValue(identifier)); }
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }
@@ -172,7 +179,7 @@ public:
 
     void cleanup();
 
-    unsigned short primitiveType() const { return m_primitiveUnitType; }
+    unsigned short primitiveType() const;
 
     double computeDegrees();
 
@@ -211,7 +218,7 @@ public:
 
     double getDoubleValue(unsigned short unitType, ExceptionCode&) const;
     double getDoubleValue(unsigned short unitType) const;
-    double getDoubleValue() const { return m_value.num; }
+    double getDoubleValue() const;
 
     void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
     float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return getValue<float>(unitType, ec); }
@@ -224,7 +231,7 @@ public:
 
     template<typename T> inline T getValue(unsigned short unitType, ExceptionCode& ec) const { return clampTo<T>(getDoubleValue(unitType, ec)); }
     template<typename T> inline T getValue(unsigned short unitType) const { return clampTo<T>(getDoubleValue(unitType)); }
-    template<typename T> inline T getValue() const { return clampTo<T>(m_value.num); }
+    template<typename T> inline T getValue() const { return clampTo<T>(getDoubleValue()); }
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue(ExceptionCode&) const;
@@ -248,6 +255,8 @@ public:
     DashboardRegion* getDashboardRegionValue() const { return m_primitiveUnitType != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 
     CSSWrapShape* getShapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? 0 : m_value.shape; }
+    
+    CSSCalcValue* cssCalcValue() const { return m_primitiveUnitType != CSS_CALC ? 0 : m_value.calc; }
 
     int getIdent() const { return m_primitiveUnitType == CSS_IDENT ? m_value.ident : 0; }
 
@@ -301,7 +310,7 @@ private:
     void init(PassRefPtr<Quad>);
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
     void init(PassRefPtr<CSSWrapShape>);
-
+    void init(PassRefPtr<CSSCalcValue>);
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
     double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, float multiplier, bool computingFontSize);
@@ -317,6 +326,7 @@ private:
         Pair* pair;
         DashboardRegion* region;
         CSSWrapShape* shape;
+        CSSCalcValue* calc;
     } m_value;
 };
 

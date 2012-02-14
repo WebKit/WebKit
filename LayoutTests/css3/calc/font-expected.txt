@@ -3,13 +3,13 @@ Tests that CSS3 calc() can be used with the font property
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL getComputedStyle(document.getElementById("calc-size"), null).lineHeight should be 63px. Was normal.
-FAIL getComputedStyle(document.getElementById("calc-size"), null).fontSize should be 24px. Was 16px.
-FAIL getComputedStyle(document.getElementById("calc-height"), null).lineHeight should be 63px. Was normal.
+PASS getComputedStyle(document.getElementById("calc-size"), null).lineHeight is "63px"
+PASS getComputedStyle(document.getElementById("calc-size"), null).fontSize is "24px"
+PASS getComputedStyle(document.getElementById("calc-height"), null).lineHeight is "63px"
 PASS getComputedStyle(document.getElementById("calc-height"), null).fontSize is "24px"
-FAIL getComputedStyle(document.getElementById("calc-both"), null).lineHeight should be 63px. Was normal.
-FAIL getComputedStyle(document.getElementById("calc-both"), null).fontSize should be 24px. Was 16px.
-FAIL getComputedStyle(document.getElementById("calc-percent-size"), null).lineHeight should be 63px. Was normal.
+PASS getComputedStyle(document.getElementById("calc-both"), null).lineHeight is "63px"
+PASS getComputedStyle(document.getElementById("calc-both"), null).fontSize is "24px"
+PASS getComputedStyle(document.getElementById("calc-percent-size"), null).lineHeight is "63px"
 FAIL getComputedStyle(document.getElementById("calc-percent-size"), null).fontSize should be 24px. Was 16px.
 PASS successfullyParsed is true
 

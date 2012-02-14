@@ -1,3 +1,56 @@
+2012-02-14  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: embed calc expressions in CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=78446
+
+        Reviewed by Ojan Vafai.
+        
+        Adds calc expressions to CSSPrimitiveValue. This enables simple (ie no mixing of
+        percents with numbers/lengths) expressions to be evaluated on most properties.
+
+        Tests: css3/calc/block-mask-overlay-image-outset-expected.html
+               css3/calc/css3-radial-gradients-expected.html
+               css3/calc/gradient-color-stops-expected.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::computeLengthPx):
+        (WebCore):
+        (WebCore::CSSCalcPrimitiveValue::doubleValue):
+        (CSSCalcPrimitiveValue):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (CSSCalcBinaryOperation):
+        (WebCore::CSSCalcBinaryOperation::computeLengthPx):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+        (CSSCalcValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::primitiveType):
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        (WebCore::CSSPrimitiveValue::getDoubleValue):
+        (WebCore::CSSPrimitiveValue::getDoubleValueInternal):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::isLength):
+        (WebCore::CSSPrimitiveValue::isNumber):
+        (WebCore::CSSPrimitiveValue::isPercentage):
+        (WebCore::CSSPrimitiveValue::isPx):
+        (WebCore::CSSPrimitiveValue::isCalculated):
+        (WebCore::CSSPrimitiveValue::isCalculatedPercentageNumber):
+        (WebCore::CSSPrimitiveValue::isCalculatedPercentageLength):
+        (CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::getValue):
+        (WebCore::CSSPrimitiveValue::cssCalcValue):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+
 2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up to r107683: protect inspector sidebar from updating

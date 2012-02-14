@@ -1,5 +1,5 @@
-FAIL document.getElementById("stimulus").offsetWidth should be 416. Was 278.
-FAIL document.getElementById("stimulus").offsetHeight should be 205. Was 136.
+PASS document.getElementById("stimulus").offsetWidth is 416
+PASS document.getElementById("stimulus").offsetHeight is 205
 PASS successfullyParsed is true
 
 TEST COMPLETE
