@@ -93,7 +93,6 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     } else if (attributeData())
         attributeData()->clearClass();
     setNeedsStyleRecalc();
-    dispatchSubtreeModifiedEvent();
 }
 
 void StyledElement::parseAttribute(Attribute* attr)

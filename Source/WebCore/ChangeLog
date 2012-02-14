@@ -1,3 +1,15 @@
+2012-02-14  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to incorrect firing of mutation event during class attribute parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=78537
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/dom/class-attr-change-double-mutation-fire.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+
 2012-02-14  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: add isZero implementations to catch divide by zero
