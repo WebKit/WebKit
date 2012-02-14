@@ -1,3 +1,30 @@
+2012-02-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        SharedBuffer::getSomeData() must support m_dataArray if NETWORK_CFDATA_ARRAY_CALLBACK is defined
+        https://bugs.webkit.org/show_bug.cgi?id=77718
+
+        Reviewed by David Kilzer.
+
+        Previously, the last part of SharedBuffer::getSomeData() was systematically accessing
+        the data from the segments. When NETWORK_CFDATA_ARRAY_CALLBACK is defined, there can
+        be data in m_dataArray past the segment.
+
+        The previous code was making invalid memory access pass the segment vector. This patch
+        adds support for getting the data out of m_dataArray to make SharedBuffer::getSomeData()
+        works with NETWORK_CFDATA_ARRAY_CALLBACK.
+
+        This is covered by existing tests when NETWORK_CFDATA_ARRAY_CALLBACK is defined.
+        The test 'fast/events/constructors/track-event-constructor.html' is a reliable test
+        for this.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::getSomeData):
+        * platform/SharedBuffer.h:
+        (SharedBuffer):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore):
+        (WebCore::SharedBuffer::copySomeDataFromDataArray):
+
 2012-02-13  Anders Carlsson  <andersca@apple.com>
 
         Force slow-scrolling mode when there are position:fixed elements on a page

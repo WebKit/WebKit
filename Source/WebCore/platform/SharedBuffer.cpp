@@ -250,14 +250,25 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     }
  
     position -= consecutiveSize;
-    unsigned segmentedSize = m_size - consecutiveSize;
     unsigned segments = m_segments.size();
+    unsigned maxSegmentedSize = segments * segmentSize;
     unsigned segment = segmentIndex(position);
-    ASSERT(segment < segments);
+    if (segment < segments) {
+        unsigned bytesLeft = m_size - consecutiveSize;
+        unsigned segmentedSize = min(maxSegmentedSize, bytesLeft);
 
-    unsigned positionInSegment = offsetInSegment(position);
-    someData = m_segments[segment] + positionInSegment;
-    return segment == segments - 1 ? segmentedSize - position : segmentSize - positionInSegment;
+        unsigned positionInSegment = offsetInSegment(position);
+        someData = m_segments[segment] + positionInSegment;
+        return segment == segments - 1 ? segmentedSize - position : segmentSize - positionInSegment;
+    }
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    ASSERT(maxSegmentedSize <= position);
+    position -= maxSegmentedSize;
+    return copySomeDataFromDataArray(someData, position);
+#else
+    ASSERT_NOT_REACHED();
+    return 0;
+#endif
 }
 
 #if !USE(CF) || PLATFORM(QT)

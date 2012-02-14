@@ -136,6 +136,7 @@ private:
 #if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
     void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
+    unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
 #endif
 #if USE(CF)
     SharedBuffer(CFDataRef);

@@ -115,6 +115,23 @@ void SharedBuffer::copyDataArrayAndClear(char *destination, unsigned bytesToCopy
     }
     m_dataArray.clear();
 }
+
+unsigned SharedBuffer::copySomeDataFromDataArray(const char*& someData, unsigned position) const
+{
+    Vector<RetainPtr<CFDataRef> >::const_iterator end = m_dataArray.end();
+    unsigned totalOffset = 0;
+    for (Vector<RetainPtr<CFDataRef> >::const_iterator it = m_dataArray.begin(); it != end; ++it) {
+        unsigned dataLen = static_cast<unsigned>(CFDataGetLength(it->get()));
+        ASSERT(totalOffset <= position);
+        unsigned localOffset = position - totalOffset;
+        if (localOffset < dataLen) {
+            someData = reinterpret_cast<const char *>(CFDataGetBytePtr(it->get())) + localOffset;
+            return dataLen - localOffset;
+        }
+        totalOffset += dataLen;
+    }
+    return 0;
+}
 #endif
 
 }
