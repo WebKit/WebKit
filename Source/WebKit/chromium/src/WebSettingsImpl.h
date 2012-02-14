@@ -124,6 +124,8 @@ public:
     virtual void setFullScreenEnabled(bool);
     virtual void setAllowDisplayOfInsecureContent(bool);
     virtual void setAllowRunningOfInsecureContent(bool);
+    virtual void setPasswordEchoEnabled(bool);
+    virtual void setPasswordEchoDurationInSeconds(double);
     virtual void setShouldPrintBackgrounds(bool);
     virtual void setEnableScrollAnimator(bool);
     virtual void setHixie76WebSocketProtocolEnabled(bool);

@@ -1,3 +1,13 @@
+2012-02-14  Ramya Chandrasekaran  <cramya@google.com>
+
+        Last character display for passwords in Android.
+        https://bugs.webkit.org/show_bug.cgi?id=78532
+
+        Reviewed by Adam Barth.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2012-02-14  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Invalid dates should not be valid keys

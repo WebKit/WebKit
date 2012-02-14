@@ -241,4 +241,5 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setFullScreenEnabled(true);
     settings->setValidationMessageTimerMagnification(-1);
     settings->setVisualWordMovementEnabled(false);
+    settings->setPasswordEchoEnabled(false);
 }

@@ -457,6 +457,16 @@ void WebSettingsImpl::setAllowRunningOfInsecureContent(bool enabled)
     m_settings->setAllowRunningOfInsecureContent(enabled);
 }
 
+void WebSettingsImpl::setPasswordEchoEnabled(bool flag)
+{
+    m_settings->setPasswordEchoEnabled(flag);
+}
+
+void WebSettingsImpl::setPasswordEchoDurationInSeconds(double durationInSeconds)
+{
+    m_settings->setPasswordEchoDurationInSeconds(durationInSeconds);
+}
+
 void WebSettingsImpl::setShouldPrintBackgrounds(bool enabled)
 {
     m_settings->setShouldPrintBackgrounds(enabled);
