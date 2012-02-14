@@ -4147,6 +4147,8 @@ bool CSSParser::parseFont(bool important)
     // Optional font-style, font-variant and font-weight.
     while (value) {
         int id = value->id;
+        if (id == CSSValueInitial || id == CSSValueInherit)
+            return false;
         if (id) {
             if (id == CSSValueNormal) {
                 // It's the initial value for all three, so mark the corresponding longhand as explicit.
@@ -4216,6 +4218,9 @@ bool CSSParser::parseFont(bool important)
     if (!value)
         return false;
 
+    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
+        return false;
+
     // Set undefined values to default.
     if (!font->style)
         font->style = cssValuePool()->createIdentifierValue(CSSValueNormal);
@@ -4232,6 +4237,9 @@ bool CSSParser::parseFont(bool important)
         font->size = createPrimitiveNumericValue(value);
     value = m_valueList->next();
     if (!font->size || !value)
+        return false;
+
+    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
         return false;
 
     if (value->unit == CSSParserValue::Operator && value->iValue == '/') {
@@ -4251,6 +4259,9 @@ bool CSSParser::parseFont(bool important)
         if (!value)
             return false;
     }
+
+    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
+        return false;
 
     if (!font->lineHeight)
         font->lineHeight = cssValuePool()->createIdentifierValue(CSSValueNormal);
@@ -4283,6 +4294,8 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
 
     FontFamilyValue* currFamily = 0;
     while (value) {
+        if (value->id == CSSValueInitial || value->id == CSSValueInherit)
+            return 0;
         CSSParserValue* nextValue = m_valueList->next();
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == CSSParserValue::Operator && nextValue->iValue == ',');

@@ -1,3 +1,20 @@
+2012-02-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        font shorthand with inherit keyword incorrectly parsed and rendered
+        https://bugs.webkit.org/show_bug.cgi?id=20181
+
+        Reviewed by Tony Chang.
+
+        As stated in http://www.w3.org/TR/CSS21/changes.html#q142
+        if the inherit (and also by extension initial) is encountered in the
+        middle of the shorthand then the property becomes invalid.
+
+        Test: fast/css/font-shorthand-mix-inherit.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+
 2012-02-14  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to incorrect firing of mutation event during class attribute parsing.
