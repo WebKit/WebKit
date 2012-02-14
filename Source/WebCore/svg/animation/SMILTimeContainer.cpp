@@ -123,13 +123,13 @@ void SMILTimeContainer::resume()
 
 void SMILTimeContainer::setElapsed(SMILTime time)
 {
+    // If the documment didn't begin yet, record a new start time, we'll seek to once its possible.
     if (!m_beginTime) {
         m_presetStartTime = time.value();
         return;
     }
 
-    double now = currentTime();
-    m_beginTime = now - time.value();
+    m_beginTime = currentTime() - time.value();
     m_accumulatedPauseTime = 0;
 
     Vector<SVGSMILElement*> toReset;
@@ -137,8 +137,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     for (unsigned n = 0; n < toReset.size(); ++n)
         toReset[n]->reset();
 
-    if (isPaused())
-        updateAnimations(now - m_beginTime - m_accumulatedPauseTime);
+    updateAnimations(time);
 }
 
 void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
@@ -157,8 +156,7 @@ void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
 {
     ASSERT(m_beginTime);
     ASSERT(!m_pauseTime);
-    SMILTime elapsed = this->elapsed();
-    updateAnimations(elapsed);
+    updateAnimations(elapsed());
 }
 
 void SMILTimeContainer::updateDocumentOrderIndexes()
@@ -228,41 +226,12 @@ String SMILTimeContainer::baseValueFor(ElementAttributePair key)
     return baseValue;
 }
 
-void SMILTimeContainer::sampleAnimationAtTime(const String& elementId, double newTime)
-{
-    ASSERT(m_beginTime);
-    ASSERT(!isPaused());
-
-    // Fast-forward to the time DRT wants to sample
-    m_timer.stop();
-
-    updateAnimations(elapsed(), newTime, elementId);
-}
-
-void SMILTimeContainer::updateAnimations(SMILTime elapsed, double nextManualSampleTime, const String& nextSamplingTarget)
+void SMILTimeContainer::updateAnimations(SMILTime elapsed)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
 
     Vector<SVGSMILElement*> toAnimate;
     copyToVector(m_scheduledAnimations, toAnimate);
-
-    if (nextManualSampleTime) {
-        SMILTime samplingDiff;
-        for (unsigned n = 0; n < toAnimate.size(); ++n) {
-            SVGSMILElement* animation = toAnimate[n];
-            ASSERT(animation->timeContainer() == this);
-
-            SVGElement* targetElement = animation->targetElement();
-            // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-            if (!targetElement || !targetElement->hasID() || targetElement->idForStyleResolution() != nextSamplingTarget)
-                continue;
-
-            samplingDiff = animation->intervalBegin();
-            break;
-        }
-
-        elapsed = SMILTime(nextManualSampleTime) + samplingDiff;
-    }
 
     // Sort according to priority. Elements with later begin time have higher priority.
     // In case of a tie, document order decides. 

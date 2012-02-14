@@ -21,38 +21,36 @@ text.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-	shouldBe("text.x.animVal.getItem(0).value", "50");
-	shouldBe("text.x.animVal.getItem(1).value", "70");
-	shouldBe("text.x.animVal.getItem(2).value", "90");
-	shouldBe("text.x.animVal.getItem(3).value", "110");
+    shouldBe("text.x.animVal.getItem(0).value", "50");
+    shouldBe("text.x.animVal.getItem(1).value", "70");
+    shouldBe("text.x.animVal.getItem(2).value", "90");
+    shouldBe("text.x.animVal.getItem(3).value", "110");
 }
 
 function sample2() {
-	shouldBe("text.x.animVal.getItem(0).value", "55");
-	shouldBe("text.x.animVal.getItem(1).value", "80");
-	shouldBe("text.x.animVal.getItem(2).value", "105");
-	shouldBe("text.x.animVal.getItem(3).value", "130");
+    shouldBe("text.x.animVal.getItem(0).value", "55");
+    shouldBe("text.x.animVal.getItem(1).value", "80");
+    shouldBe("text.x.animVal.getItem(2).value", "105");
+    shouldBe("text.x.animVal.getItem(3).value", "130");
 }
 
 function sample3() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "60", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "90", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "120", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "150", 0.01);
+    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "60", 0.01);
+    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "90", 0.01);
+    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "120", 0.01);
+    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "150", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "text", sample1],
-        ["animation", 2.0,    "text", sample2],
-        ["animation", 3.9999, "text", sample3],
-        ["animation", 4.0 ,   "text", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(51, 49)", 0);
 var successfullyParsed = true;

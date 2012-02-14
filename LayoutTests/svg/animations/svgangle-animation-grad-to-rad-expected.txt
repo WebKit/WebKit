@@ -9,8 +9,8 @@ PASS marker.orientAngle.animVal.value is 0
 PASS marker.orientAngle.baseVal.value is 0
 PASS marker.orientAngle.animVal.value is 90
 PASS marker.orientAngle.baseVal.value is 90
-PASS marker.orientAngle.animVal.value is 180
-PASS marker.orientAngle.baseVal.value is 180
+PASS marker.orientAngle.animVal.value is 179.96
+PASS marker.orientAngle.baseVal.value is 179.96
 PASS marker.orientAngle.animVal.value is 0
 PASS marker.orientAngle.baseVal.value is 0
 PASS successfullyParsed is true

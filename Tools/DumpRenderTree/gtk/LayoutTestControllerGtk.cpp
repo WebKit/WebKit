@@ -787,16 +787,6 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
     return returnValue;
 }
 
-bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
-{    
-    gchar* name = JSStringCopyUTF8CString(animationId);
-    gchar* element = JSStringCopyUTF8CString(elementId);
-    bool returnValue = DumpRenderTreeSupportGtk::pauseSVGAnimation(mainFrame, name, time, element);
-    g_free(name);
-    g_free(element);
-    return returnValue;
-}
-
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
     return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);

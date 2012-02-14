@@ -109,8 +109,8 @@ public:
     virtual void applyResultsToTarget() = 0;
 
 protected:
-    void addBeginTime(SMILTime eventTime, SMILTime endTime);
-    void addEndTime(SMILTime eventTime, SMILTime endTime);
+    void addBeginTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
+    void addEndTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
 
     void setInactive() { m_activeState = Inactive; }
 
@@ -199,8 +199,8 @@ private:
     TimeDependentSet m_timeDependents;
 
     // Instance time lists
-    Vector<SMILTime> m_beginTimes;
-    Vector<SMILTime> m_endTimes;
+    Vector<SMILTimeWithOrigin> m_beginTimes;
+    Vector<SMILTimeWithOrigin> m_endTimes;
 
     // This is the upcoming or current interval
     SMILTime m_intervalBegin;

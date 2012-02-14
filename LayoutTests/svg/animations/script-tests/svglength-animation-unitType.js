@@ -36,16 +36,14 @@ function sample3() {
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample1],
-        ["animation", 1.5,    "rect", sample2],
-        ["animation", 2.5,    "rect", sample3],
-        ["animation", 4.0 ,   "rect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0, sample1],
+        ["animation", 1.5, sample2],
+        ["animation", 2.5, sample3],
+        ["animation", 4.0, sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 30)", 0);
 var successfullyParsed = true;

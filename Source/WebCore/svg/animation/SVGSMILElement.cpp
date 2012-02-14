@@ -134,7 +134,7 @@ SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document* doc)
     , m_cachedMin(invalidCachedTime)
     , m_cachedMax(invalidCachedTime)
 {
-    reset();
+    resolveFirstInterval();
 }
 
 SVGSMILElement::~SVGSMILElement()
@@ -168,6 +168,17 @@ static inline QualifiedName constructQualifiedName(const SVGElement* svgElement,
     return QualifiedName(nullAtom, localName, namespaceURI);
 }
 
+static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& timeList)
+{
+    size_t timeListSize = timeList.size();
+    for (size_t i = 0; i < timeListSize; ++i) {
+        if (!timeList[i].originIsScript())
+            continue;
+        timeList.remove(i);
+        --timeListSize;
+    }
+}
+
 void SVGSMILElement::reset()
 {
     m_activeState = Inactive;
@@ -179,6 +190,8 @@ void SVGSMILElement::reset()
     m_lastRepeat = 0;
     m_nextProgressTime = 0;
 
+    clearTimesWithDynamicOrigins(m_beginTimes);
+    clearTimesWithDynamicOrigins(m_endTimes);
     resolveFirstInterval();
 }
 
@@ -200,7 +213,7 @@ void SVGSMILElement::insertedIntoDocument()
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
     if (!fastHasAttribute(SVGNames::beginAttr))
-        m_beginTimes.append(0);
+        m_beginTimes.append(SMILTimeWithOrigin());
 
     if (m_isWaitingForFirstInterval) {
         resolveFirstInterval();
@@ -282,7 +295,7 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
     return result;
 }
     
-static void sortTimeList(Vector<SMILTime>& timeList)
+static void sortTimeList(Vector<SMILTimeWithOrigin>& timeList)
 {
     std::sort(timeList.begin(), timeList.end());
 }
@@ -364,12 +377,12 @@ bool SVGSMILElement::isSMILElement(Node* node)
     
 void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd beginOrEnd)
 {
-    Vector<SMILTime>& timeList = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
+    Vector<SMILTimeWithOrigin>& timeList = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
     if (beginOrEnd == End)
         m_hasEndEventConditions = false;
     HashSet<double> existing;
     for (unsigned n = 0; n < timeList.size(); ++n)
-        existing.add(timeList[n].value());
+        existing.add(timeList[n].time().value());
     Vector<String> splitString;
     parseString.split(';', splitString);
     for (unsigned n = 0; n < splitString.size(); ++n) {
@@ -377,7 +390,7 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
         if (value.isUnresolved())
             parseCondition(splitString[n], beginOrEnd);
         else if (!existing.contains(value.value()))
-            timeList.append(value);
+            timeList.append(SMILTimeWithOrigin(value, SMILTimeWithOrigin::ParserOrigin));
     }
     sortTimeList(timeList);
 }
@@ -616,67 +629,67 @@ SMILTime SVGSMILElement::simpleDuration() const
 {
     return min(dur(), SMILTime::indefinite());
 }
-    
-void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime)
+
+void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime, SMILTimeWithOrigin::Origin origin)
 {
-    m_beginTimes.append(beginTime);
+    m_beginTimes.append(SMILTimeWithOrigin(beginTime, origin));
     sortTimeList(m_beginTimes);
     beginListChanged(eventTime);
 }
-    
-void SVGSMILElement::addEndTime(SMILTime eventTime, SMILTime endTime)
+
+void SVGSMILElement::addEndTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin origin)
 {
-    m_endTimes.append(endTime);
+    m_endTimes.append(SMILTimeWithOrigin(endTime, origin));
     sortTimeList(m_endTimes);
     endListChanged(eventTime);
 }
-    
-inline SMILTime extractTimeFromVector(const SMILTime* position)
+
+inline SMILTime extractTimeFromVector(const SMILTimeWithOrigin* position)
 {
-    return *position;
+    return position->time();
 }
 
 SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const
 {
-    const Vector<SMILTime>& list = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
+    const Vector<SMILTimeWithOrigin>& list = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
     int sizeOfList = list.size();
 
     if (!sizeOfList)
         return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
 
-    const SMILTime* result = binarySearch<const SMILTime, SMILTime, extractTimeFromVector>(list.begin(), sizeOfList, minimumTime, WTF::KeyMustNotBePresentInArray);
+    const SMILTimeWithOrigin* result = binarySearch<const SMILTimeWithOrigin, SMILTime, extractTimeFromVector>(list.begin(), sizeOfList, minimumTime, WTF::KeyMustNotBePresentInArray);
     int indexOfResult = result - list.begin();
-
-    if (sizeOfList - 1 > indexOfResult && list[indexOfResult] < minimumTime)
+    if (sizeOfList - 1 > indexOfResult && list[indexOfResult].time() < minimumTime)
         ++indexOfResult;
 
     ASSERT(indexOfResult < sizeOfList);
+    const SMILTime& currentTime = list[indexOfResult].time();
 
     // "The special value "indefinite" does not yield an instance time in the begin list."
-    if (list[indexOfResult].isIndefinite() && beginOrEnd == Begin)
+    if (currentTime.isIndefinite() && beginOrEnd == Begin)
         return SMILTime::unresolved();
 
-    if (list[indexOfResult] < minimumTime)
+    if (currentTime < minimumTime)
         return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
 
     // If the equals is NOT accepted, we have to find a bigger one.
-    if (list[indexOfResult] == minimumTime && !equalsMinimumOK) {
+    if (currentTime == minimumTime && !equalsMinimumOK) {
         if (indexOfResult + 1 >= sizeOfList)
             return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
     }
 
-    while (indexOfResult < sizeOfList - 1 && list[indexOfResult] == list[indexOfResult + 1])
+    while (indexOfResult < sizeOfList - 1 && currentTime == list[indexOfResult + 1].time())
         ++indexOfResult;
 
-    if (list[indexOfResult] > minimumTime)
-        return list[indexOfResult];
-    if (list[indexOfResult] == minimumTime) {
+    if (currentTime > minimumTime)
+        return currentTime;
+    if (currentTime == minimumTime) {
         if (indexOfResult + 1 < sizeOfList - 1)
-            return list[indexOfResult + 1];
+            return list[indexOfResult + 1].time();
         return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
     }
 
-    return list[indexOfResult];
+    return currentTime;
 }
 
 SMILTime SVGSMILElement::repeatingDuration() const

@@ -1626,7 +1626,6 @@ _wkCreateAXUIElementRef
 
 #if ENABLE(SVG)
 __ZN7WebCore14SVGSMILElement13isSMILElementEPNS_4NodeE
-__ZN7WebCore21SVGDocumentExtensions21sampleAnimationAtTimeERKN3WTF6StringEPNS_14SVGSMILElementEd
 __ZN7WebCore8Document13svgExtensionsEv
 __ZN7WebCore8Document19accessSVGExtensionsEv
 #endif

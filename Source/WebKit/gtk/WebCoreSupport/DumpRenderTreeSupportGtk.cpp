@@ -69,11 +69,6 @@
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
 
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#include "SVGSMILElement.h"
-#endif
-
 using namespace JSC;
 using namespace WebCore;
 using namespace WebKit;
@@ -393,22 +388,6 @@ bool DumpRenderTreeSupportGtk::pauseTransition(WebKitWebFrame* frame, const char
     if (!coreElement || !coreElement->renderer())
         return false;
     return core(frame)->animation()->pauseTransitionAtTime(coreElement->renderer(), AtomicString(name), time);
-}
-
-bool DumpRenderTreeSupportGtk::pauseSVGAnimation(WebKitWebFrame* frame, const char* animationId, double time, const char* elementId)
-{
-    ASSERT(core(frame));
-#if ENABLE(SVG)
-    Document* document = core(frame)->document();
-    if (!document || !document->svgExtensions())
-        return false;
-    Element* coreElement = document->getElementById(AtomicString(animationId));
-    if (!coreElement || !SVGSMILElement::isSMILElement(coreElement))
-        return false;
-    return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreElement), time);
-#else
-    return false;
-#endif
 }
 
 CString DumpRenderTreeSupportGtk::markerTextForListItem(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject)

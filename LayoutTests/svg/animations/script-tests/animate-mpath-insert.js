@@ -46,13 +46,13 @@ function endSample() {
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.01, "g", startSample],
-        ["animation", 3.99, "g", endSample]
+        ["animation", 0.01, startSample],
+        ["animation", 3.99, endSample]
     ];
     
     runAnimationTest(expectedValues);
 }
 
-window.setTimeout("triggerUpdate(10, 40)", 0);
+window.clickX = 30;
+window.clickY = 30;
 var successfullyParsed = true;
-

@@ -184,7 +184,6 @@ public slots:
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);
-    bool sampleSVGAnimationForElementAtTime(const QString& animationId, double time, const QString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const QString& elementId);
 
     unsigned numberOfActiveAnimations() const;

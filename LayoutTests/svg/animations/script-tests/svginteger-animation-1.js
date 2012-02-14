@@ -36,32 +36,30 @@ feConvlveMatrix.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-	shouldBe("feConvolveMatrix.targetX.animVal", "0");
-	// shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.animVal", "0");
+    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function sample2() {
-	shouldBe("feConvolveMatrix.targetX.animVal", "1");
-	// shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.animVal", "1");
+    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function sample3() {
-	shouldBe("feConvolveMatrix.targetX.animVal", "2");
-	// shouldBe("feConvolveMatrix.targetX.baseVal", "0");
+    shouldBe("feConvolveMatrix.targetX.animVal", "2");
+    // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "feConvolveMatrix", sample1],
-        ["animation", 2.0,    "feConvolveMatrix", sample2],
-        ["animation", 3.9999, "feConvolveMatrix", sample3],
-        ["animation", 4.1 ,   "feConvolveMatrix", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(51, 49)", 0);
 var successfullyParsed = true;

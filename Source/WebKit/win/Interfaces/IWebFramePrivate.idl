@@ -98,8 +98,6 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT counterValueForElementById([in] BSTR id, [out, retval] BSTR* result);
 
-    HRESULT pauseSVGAnimation([in] BSTR elementId, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* animationWasRunning);
-
     HRESULT visibleContentRect([out, retval] RECT*);
 
     HRESULT pageNumberForElementById([in] BSTR id, [in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);

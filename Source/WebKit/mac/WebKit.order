@@ -2308,7 +2308,6 @@ __ZN3WTF6VectorINS_6RefPtrIN7WebCore14SecurityOriginEEELm0EED1Ev
 -[WebStorageManager syncLocalStorage]
 -[WebStorageManager deleteOrigin:]
 -[WebStorageManager diskUsageForOrigin:]
--[WebFrame(WebPrivate) _pauseSVGAnimation:onSMILNode:atTime:]
 __ZN3WTF6RefPtrIN7WebCore7ArchiveEED1Ev
 __ZN3WTF10RefCountedIN7WebCore7ArchiveEE5derefEv
 -[WebDataSource webArchive]

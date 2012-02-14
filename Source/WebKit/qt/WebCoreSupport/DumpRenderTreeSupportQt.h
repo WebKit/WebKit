@@ -112,7 +112,6 @@ public:
 
     static bool pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
     static bool pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
-    static bool pauseSVGAnimation(QWebFrame*, const QString& animationId, double time, const QString& elementId);
     static void suspendActiveDOMObjects(QWebFrame* frame);
     static void resumeActiveDOMObjects(QWebFrame* frame);
 

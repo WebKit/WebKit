@@ -8,6 +8,7 @@ rect.setAttribute("width", "100px");
 rect.setAttribute("height", "100px");
 rect.setAttribute("fill", "red");
 rect.setAttribute("color", "green");
+rect.setAttribute("onclick", "executeTest()");
 
 var animateCurrentColor = createSVGElement("animateColor");
 animateCurrentColor.setAttribute("id", "animateCurrentColor");
@@ -38,17 +39,14 @@ function sample3() {
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animateCurrentColor", 0.0,    "rect", sample1],
-        ["animateCurrentColor", 1.5,    "rect", sample2],
-        ["animateCurrentColor", 3.0,    "rect", sample3]
+        // [animationId, time, sampleCallback]
+        ["animateCurrentColor", 0.0, sample1],
+        ["animateCurrentColor", 1.5, sample2],
+        ["animateCurrentColor", 3.0, sample3]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-rect.setAttribute("onclick", "executeTest()");
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;
 

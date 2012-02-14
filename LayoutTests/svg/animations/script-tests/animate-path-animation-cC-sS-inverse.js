@@ -83,30 +83,28 @@ function sample4() {
     shouldBe("path.pathSegList.getItem(1).pathSegTypeAsLetter", "'C'");
     shouldBeCloseEnough("path.pathSegList.getItem(1).x", "20", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(1).y", "20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "-20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "-20", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "19.98", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "-19.98", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "19.98", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "-19.98", 0.01);
     shouldBe("path.pathSegList.getItem(2).pathSegTypeAsLetter", "'S'");
-    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "-20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(2).y", "20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "20", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "-19.98", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y", "19.98", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "20.01", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "40", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "path", sample1],
-        ["animation", 1.0,    "path", sample2],
-        ["animation", 3.0,    "path", sample3],
-        ["animation", 3.9999, "path", sample4],
-        ["animation", 4.0 ,   "path", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.0,   sample2],
+        ["animation", 3.0,   sample3],
+        ["animation", 3.999, sample4],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

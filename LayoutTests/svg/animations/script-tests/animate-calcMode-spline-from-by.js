@@ -31,50 +31,28 @@ function sample1() {
 }
 
 function sample2() {
-    var ok = isCloseEnough(rect.x.animVal.value, 18.8, 0.01);
-    if (ok)
-        testPassed("rect.x.animVal.value is almost 18.8, after first half");
-    else
-        testFailed("rect.x.animVal.value is NOT almost 51, as expected");
-
-    ok = isCloseEnough(rect.x.baseVal.value, 18.8, 0.01);
-    if (ok)
-        testPassed("rect.x.baseVal.value is almost 18.8, after first half");
-    else
-        testFailed("rect.x.baseVal.value is NOT almost 18.8, as expected");
+    // Check half-time conditions
+    shouldBeCloseEnough("rect.x.animVal.value", "18.8", 0.01);
+    shouldBeCloseEnough("rect.x.baseVal.value", "18.8", 0.01);
 }
 
 function sample3() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
-    // shouldBe("rect.x.animVal.value", "0");
-    // shouldBe("rect.x.baseVal.value", "200");
-
     // Check just before-end conditions
-    var ok = isCloseEnough(rect.x.animVal.value, 0, 0.01);
-    if (ok)
-        testPassed("rect.x.animVal.value is almost 0, just before-end");
-    else
-        testFailed("rect.x.animVal.value is NOT almost 0, as expected");
-
-    ok = isCloseEnough(rect.x.baseVal.value, 0, 0.01);
-    if (ok)
-        testPassed("rect.x.baseVal.value is almost 0, just before-end");
-    else
-        testFailed("rect.x.baseVal.value is NOT almost 0, as expected");
+    shouldBeCloseEnough("rect.x.animVal.value", "0.01", 0.01);
+    shouldBeCloseEnough("rect.x.baseVal.value", "0.01", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample1],
-        ["animation", 2.0,    "rect", sample2],
-        ["animation", 3.9999, "rect", sample3],
-        ["animation", 4.0 ,   "rect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(150, 30)", 0);
+window.clickX = 150;
 var successfullyParsed = true;

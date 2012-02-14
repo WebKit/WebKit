@@ -48,29 +48,27 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.x", "50", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.y", "50", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "150", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "150", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.x", "49.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.y", "49.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "149.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "149.98", 0.01);
 
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "50", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "50", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "150", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "150", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "49.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "49.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "149.98", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "149.98", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "svg", sample1],
-        ["animation", 2.0,    "svg", sample2],
-        ["animation", 3.9999, "svg", sample3],
-        ["animation", 4.0 ,   "svg", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 30)", 0);
 var successfullyParsed = true;

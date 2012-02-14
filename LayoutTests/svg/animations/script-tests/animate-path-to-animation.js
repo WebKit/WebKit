@@ -26,45 +26,25 @@ function sample1() {
 }
 
 function sample2() {
-    var ok = isCloseEnough(path.pathSegList.getItem(0).x, 20, 0.01);
-    if (ok)
-        testPassed("path.pathSegList.getItem(0).x is almost 20, after first half");
-    else
-        testFailed("path.pathSegList.getItem(0).x was NOT almost 20, as expected");
-
-    ok = isCloseEnough(path.pathSegList.getItem(0).y, 20, 0.01);
-    if (ok)
-        testPassed("path.pathSegList.getItem(0).y is almost 20, after first half");
-    else
-        testFailed("path.pathSegList.getItem(0).y was NOT almost 20, as expected");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "20", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "20", 0.01);
 }
 
 function sample3() {
-    var ok = isCloseEnough(path.pathSegList.getItem(0).x, 0, 0.01);
-    if (ok)
-        testPassed("path.pathSegList.getItem(0).x is almost 0, after first half");
-    else
-        testFailed("path.pathSegList.getItem(0).x was NOT almost 0, as expected");
-
-    ok = isCloseEnough(path.pathSegList.getItem(0).y, 0, 0.01);
-    if (ok)
-        testPassed("path.pathSegList.getItem(0).y is almost 0, after first half");
-    else
-        testFailed("path.pathSegList.getItem(0).y was NOT almost 0, as expected");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "0.01", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "0.01", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "path", sample1],
-        ["animation", 2.0,    "path", sample2],
-        ["animation", 3.9999, "path", sample3],
-        ["animation", 4.0 ,   "path", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

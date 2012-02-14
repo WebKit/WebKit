@@ -5,11 +5,11 @@ Test calcMode discrete with from-to animation on numbers. You should see a green
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS rect.x.baseVal.value is 100
-PASS rect.x.baseVal.value is 100
-PASS rect.x.baseVal.value is 0
-PASS rect.x.baseVal.value is 0
-PASS rect.x.baseVal.value is 100
+PASS rect.x.animVal.value is 100
+PASS rect.x.animVal.value is 100
+PASS rect.x.animVal.value is 0
+PASS rect.x.animVal.value is 0
+PASS rect.x.animVal.value is 100
 PASS successfullyParsed is true
 
 TEST COMPLETE

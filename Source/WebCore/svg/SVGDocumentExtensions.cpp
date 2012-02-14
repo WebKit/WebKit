@@ -132,17 +132,6 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
     }
 }
 
-bool SVGDocumentExtensions::sampleAnimationAtTime(const String& elementId, SVGSMILElement* element, double time)
-{
-    ASSERT(element);
-    SMILTimeContainer* container = element->timeContainer();
-    if (!container || container->isPaused())
-        return false;
-
-    container->sampleAnimationAtTime(elementId, time);
-    return true;
-}
-
 void SVGDocumentExtensions::addAnimationElementToTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
 {
     ASSERT(targetElement);

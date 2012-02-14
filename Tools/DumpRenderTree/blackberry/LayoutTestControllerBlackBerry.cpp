@@ -38,8 +38,6 @@
 #include "OwnArrayPtr.h"
 #include "Page.h"
 #include "RenderTreeAsText.h"
-#include "SVGDocumentExtensions.h"
-#include "SVGSMILElement.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -529,34 +527,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, i
 {
     notImplemented();
     return 0;
-}
-
-bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
-{
-#if ENABLE(SVG_ANIMATION)
-    if (!mainFrame)
-        return false;
-
-    int aLen = JSStringGetMaximumUTF8CStringSize(animationId);
-    int eLen = JSStringGetMaximumUTF8CStringSize(elementId);
-    OwnArrayPtr<char> aId = adoptArrayPtr(new char[aLen]);
-    OwnArrayPtr<char> eId = adoptArrayPtr(new char[eLen]);
-
-    JSStringGetUTF8CString(animationId, aId.get(), aLen);
-    JSStringGetUTF8CString(elementId, eId.get(), eLen);
-
-    WebCore::Document* document = mainFrame->document();
-    if (!document || !document->svgExtensions())
-        return false;
-
-    WebCore::Node* node = mainFrame->document()->getElementById(aId.get());
-    if (!node || !WebCore::SVGSMILElement::isSMILElement(node))
-        return false;
-
-    return document->accessSVGExtensions()->sampleAnimationAtTime(eId.get(), static_cast<WebCore::SVGSMILElement*>(node), time);
-#else
-    return false;
-#endif
 }
 
 int LayoutTestController::pageNumberForElementById(JSStringRef, float, float)

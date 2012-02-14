@@ -80,17 +80,15 @@ function sample4() {
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "path", sample1],
-        ["animation", 1.0,    "path", sample2],
-        ["animation", 3.0,    "path", sample3],
-        ["animation", 3.9999, "path", sample4],
-        ["animation", 4.0 ,   "path", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.0,   sample2],
+        ["animation", 3.0,   sample3],
+        ["animation", 3.999, sample4],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

@@ -40,32 +40,30 @@ feGaussianBlur.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-	shouldBe("feGaussianBlur.stdDeviationX.animVal", "5");
-	shouldBe("feGaussianBlur.stdDeviationY.animVal", "5");
+    shouldBe("feGaussianBlur.stdDeviationX.animVal", "5");
+    shouldBe("feGaussianBlur.stdDeviationY.animVal", "5");
 }
 
 function sample2() {
-	shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "22.5", 0.01);
-	shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "7.5", 0.01);
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "22.5", 0.01);
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "7.5", 0.01);
 }
 
 function sample3() {
-	shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "40", 0.01);
-	shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "10", 0.01);
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "40", 0.01);
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "10", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "blur", sample1],
-        ["animation", 2.0,    "blur", sample2],
-        ["animation", 3.9999, "blur", sample3],
-        ["animation", 4.0 ,   "blur", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(60, 60)", 0);
 var successfullyParsed = true;

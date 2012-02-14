@@ -23,28 +23,26 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
     // Check initial/end conditions
-    shouldBe("rect.x.baseVal.value", "100");
+    shouldBe("rect.x.animVal.value", "100");
 }
 
 function sample2() {
-    shouldBe("rect.x.baseVal.value", "0");
+    shouldBe("rect.x.animVal.value", "0");
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample1],
-        ["animation", 1.0,    "rect", sample1],
-        ["animation", 3.0,    "rect", sample2],
-        ["animation", 3.9999, "rect", sample2],
-        ["animation", 4.0 ,   "rect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.0,   sample1],
+        ["animation", 3.0,   sample2],
+        ["animation", 3.999, sample2],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(150, 30)", 0);
+window.clickX = 150;
 var successfullyParsed = true;

@@ -52,7 +52,6 @@ public:
     static int numberOfPages(const Evas_Object* ewkFrame, float pageWidth, float pageHeight);
     static int numberOfPagesForElementId(const Evas_Object* ewkFrame, const char* elementId, float pageWidth, float pageHeight);
     static bool pauseAnimation(Evas_Object* ewkFrame, const char* name, const char* elementId, double time);
-    static bool pauseSVGAnimation(Evas_Object* ewkFrame, const char* animationId, const char* elementId, double time);
     static bool pauseTransition(Evas_Object* ewkFrame, const char* name, const char* elementId, double time);
     static unsigned pendingUnloadEventCount(const Evas_Object* ewkFrame);
     static String renderTreeDump(Evas_Object* ewkFrame);

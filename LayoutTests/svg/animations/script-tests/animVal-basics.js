@@ -28,46 +28,27 @@ function sample1() {
 }
 
 function sample2() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
-    // shouldBe("rect.width.animVal.value", "150");
-    // shouldBe("rect.width.baseVal.value", "200");
-
     // Check half-time conditions
     shouldBe("rect.width.animVal.value", "150");
     shouldBe("rect.width.baseVal.value", "150");
 }
 
 function sample3() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
-    // shouldBe("rect.width.animVal.value", "100");
-    // shouldBe("rect.width.baseVal.value", "200");
-
     // Check just before-end conditions
-    var ok = isCloseEnough(rect.width.animVal.value, 100, 0.01);
-    if (ok)
-        testPassed("rect.width.animVal.value is almost 100, just before-end");
-    else
-        testFailed("rect.width.animVal.value is NOT almost 100, as expected");
-
-    ok = isCloseEnough(rect.width.baseVal.value, 100, 0.01);
-    if (ok)
-        testPassed("rect.width.baseVal.value is almost 100, just before-end");
-    else
-        testFailed("rect.width.baseVal.value is NOT almost 100, as expected");
+    shouldBeCloseEnough("rect.width.animVal.value", "100", 1);
+    shouldBeCloseEnough("rect.width.baseVal.value", "100", 1);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample1],
-        ["animation", 2.0,    "rect", sample2],
-        ["animation", 3.9999, "rect", sample3],
-        ["animation", 4.0 ,   "rect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(15, 30)", 0);
 var successfullyParsed = true;

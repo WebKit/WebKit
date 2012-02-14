@@ -23,7 +23,6 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    // Check initial/end conditions
     shouldBeEqualToString("document.defaultView.getComputedStyle(rect).getPropertyValue('color')", "rgba(255, 0, 0, 0.597656)");
 }
 
@@ -37,18 +36,16 @@ function sample3() {
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample3],
-        ["animation", 0.001,  "rect", sample1],
-        ["animation", 1.0,    "rect", sample1],
-        ["animation", 3.0,    "rect", sample2],
-        ["animation", 3.9999, "rect", sample2],
-        ["animation", 4.0 ,   "rect", sample3]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,    sample3],
+        ["animation", 0.001,  sample1],
+        ["animation", 1.0,    sample1],
+        ["animation", 3.0,    sample2],
+        ["animation", 3.9999, sample2],
+        ["animation", 4.0 ,   sample3]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

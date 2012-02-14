@@ -83,30 +83,28 @@ function sample4() {
     shouldBe("path.pathSegList.getItem(1).pathSegTypeAsLetter", "'c'");
     shouldBeCloseEnough("path.pathSegList.getItem(1).x", "40", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(1).y", "40", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "0", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "0.01", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "40", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "0", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "0.01", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "40", 0.01);
     shouldBe("path.pathSegList.getItem(2).pathSegTypeAsLetter", "'s'");
-    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "0", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "-0.01", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(2).y", "-40", 0.01);
     shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "40", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "0", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "0.01", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "path", sample1],
-        ["animation", 1.0,    "path", sample2],
-        ["animation", 3.0,    "path", sample3],
-        ["animation", 3.9999, "path", sample4],
-        ["animation", 4.0 ,   "path", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.0,   sample2],
+        ["animation", 3.0,   sample3],
+        ["animation", 3.999, sample4],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

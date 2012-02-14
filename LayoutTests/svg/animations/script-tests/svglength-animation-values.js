@@ -42,24 +42,22 @@ function sample4() {
 }
 
 function sample5() {
-    shouldBeCloseEnough("rect.width.animVal.value", "266.7", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "266.7", 0.01);
+    shouldBeCloseEnough("rect.width.animVal.value", "266.98", 0.01);
+    shouldBeCloseEnough("rect.width.baseVal.value", "266.98", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "rect", sample1],
-        ["animation", 1.0,    "rect", sample2],
-        ["animation", 2.0,    "rect", sample3],
-        ["animation", 3.0,    "rect", sample4],
-        ["animation", 3.9999, "rect", sample5],
-        ["animation", 4.0 ,   "rect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.0,   sample2],
+        ["animation", 2.0,   sample3],
+        ["animation", 3.0,   sample4],
+        ["animation", 3.999, sample5],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 30)", 0);
 var successfullyParsed = true;

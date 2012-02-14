@@ -25,34 +25,25 @@ animateMotion.setAttribute("begin", "click")
 g.appendChild(animateMotion)
 rootSVGElement.appendChild(g)
 
-function passIfCloseEnough(name, value, error) {
-    passed = isCloseEnough(eval(name), value, error);
-    if (passed) {
-        testPassed(name + " is almost " + value + " (within " + error + ")");
-    } else {
-        testFailed(name + " is " + eval(name) + " but should be within " + error + " of " + value);  
-    }
-}
-
 function startSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 132, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", -90, 20);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "132", 5);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "-90", 5);
 }
 
 function endSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 332, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", 550, 20);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "332", 5);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "550", 5);
 }
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.01, "g", startSample],
-        ["animation", 3.99, "g", endSample]
+        ["animation", 0.01, startSample],
+        ["animation", 3.99, endSample]
     ];
     
     runAnimationTest(expectedValues);
 }
 
-window.setTimeout("triggerUpdate(310, 40)", 0);
+window.clickX = 310;
+window.clickY = 30;
 var successfullyParsed = true;
-

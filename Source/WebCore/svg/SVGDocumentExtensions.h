@@ -56,7 +56,6 @@ public:
     void startAnimations();
     void pauseAnimations();
     void unpauseAnimations();
-    bool sampleAnimationAtTime(const String& elementId, SVGSMILElement*, double time);
     void dispatchSVGLoadEventToOutermostSVGElements();
     
     void addAnimationElementToTarget(SVGSMILElement*, SVGElement*);

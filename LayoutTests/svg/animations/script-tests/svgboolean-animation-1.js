@@ -35,29 +35,27 @@ feConvolveMatrix.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-	shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
+    shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
 }
 
 function sample2() {
-	shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
+    shouldBe("feConvolveMatrix.preserveAlpha.animVal", "false");
 }
 
 function sample3() {
-	shouldBe("feConvolveMatrix.preserveAlpha.animVal", "true");
+    shouldBe("feConvolveMatrix.preserveAlpha.animVal", "true");
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "effect", sample1],
-        ["animation", 2.0,    "effect", sample2],
-        ["animation", 3.9999, "effect", sample3],
-        ["animation", 4.0 ,   "effect", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;

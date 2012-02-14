@@ -10,6 +10,7 @@ rect.setAttribute("id", "rect");
 rect.setAttribute("width", "100px");
 rect.setAttribute("height", "100px");
 rect.setAttribute("fill", "red");
+rect.setAttribute("onclick", "executeTest()");
 g.appendChild(rect);
 
 var animateInherit = createSVGElement("animateColor");
@@ -41,17 +42,13 @@ function sample3() {
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animateInherit", 0.0,    "rect", sample1],
-        ["animateInherit", 1.5,    "rect", sample2],
-        ["animateInherit", 3.0,    "rect", sample3]
+        // [animationId, time, sampleCallback]
+        ["animateInherit", 0.0, sample1],
+        ["animateInherit", 1.5, sample2],
+        ["animateInherit", 3.0, sample3]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-rect.setAttribute("onclick", "executeTest()");
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;
-

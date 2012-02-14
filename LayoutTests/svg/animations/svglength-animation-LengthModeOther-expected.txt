@@ -9,8 +9,8 @@ PASS circle.r.animVal.value is 10
 PASS circle.r.baseVal.value is 10
 PASS circle.r.animVal.value is 132.475
 PASS circle.r.baseVal.value is 132.475
-PASS circle.r.animVal.value is 254.9
-PASS circle.r.baseVal.value is 254.9
+PASS circle.r.animVal.value is 254.89
+PASS circle.r.baseVal.value is 254.89
 PASS circle.r.animVal.value is 10
 PASS circle.r.baseVal.value is 10
 PASS successfullyParsed is true

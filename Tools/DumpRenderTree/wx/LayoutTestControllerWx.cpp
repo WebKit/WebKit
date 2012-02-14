@@ -399,12 +399,6 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return false;
 }
 
-bool LayoutTestController::sampleSVGAnimationForElementAtTime(JSStringRef animationId, double time, JSStringRef elementId)
-{
-    // FIXME: implement
-    return false;
-}
-
 void LayoutTestController::setCacheModel(int)
 {
     // FIXME: implement

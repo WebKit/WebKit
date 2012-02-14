@@ -63,15 +63,12 @@ public:
 
     void setDocumentOrderIndexesDirty() { m_documentOrderIndexesDirty = true; }
 
-    // Move to a specific time. Only used for DRT testing purposes.
-    void sampleAnimationAtTime(const String& elementId, double seconds);
-
 private:
     SMILTimeContainer(SVGSVGElement* owner);
     
     void timerFired(Timer<SMILTimeContainer>*);
     void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
-    void updateAnimations(SMILTime elapsed, double nextManualSampleTime = 0, const String& nextSamplingTarget = String());
+    void updateAnimations(SMILTime elapsed);
     
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);

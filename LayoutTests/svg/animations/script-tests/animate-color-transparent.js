@@ -7,6 +7,7 @@ rect.setAttribute("id", "test");
 rect.setAttribute("width", "100px");
 rect.setAttribute("height", "100px");
 rect.setAttribute("fill", "#00FF00");
+rect.setAttribute("onclick", "executeTest()");
 
 var animate = createSVGElement("animateColor");
 animate.setAttribute("id", "animation");
@@ -20,27 +21,22 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function expectTransparent() {
-    // Check initial/end conditions
     shouldBe("rect.style.fill", "'#00ff00'");
 }
 
 function expectOtherColor() {
-    // Check half-time conditions
     shouldBe("rect.style.fill", "'#7f0000'");
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "test", expectTransparent],
-        ["animation", 1.5,    "test", expectOtherColor]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0, expectTransparent],
+        ["animation", 1.5, expectOtherColor]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-rect.setAttribute("onclick", "executeTest()");
-window.setTimeout("triggerUpdate(50, 50)", 0);
 var successfullyParsed = true;
 

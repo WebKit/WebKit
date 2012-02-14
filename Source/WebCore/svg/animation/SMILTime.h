@@ -55,6 +55,32 @@ private:
     double m_time;
 };
 
+class SMILTimeWithOrigin {
+public:
+    enum Origin {
+        ParserOrigin,
+        ScriptOrigin
+    };
+
+    SMILTimeWithOrigin()
+        : m_origin(ParserOrigin)
+    {
+    }
+
+    SMILTimeWithOrigin(const SMILTime& time, Origin origin)
+        : m_time(time)
+        , m_origin(origin)
+    {
+    }
+
+    const SMILTime& time() const { return m_time; }
+    bool originIsScript() const { return m_origin == ScriptOrigin; }
+
+private:
+    SMILTime m_time;
+    Origin m_origin;
+};
+
 inline bool operator==(const SMILTime& a, const SMILTime& b) { return a.isFinite() && a.value() == b.value(); }
 inline bool operator!(const SMILTime& a) { return !a.isFinite() || !a.value(); }
 inline bool operator!=(const SMILTime& a, const SMILTime& b) { return !operator==(a, b); }
@@ -62,6 +88,7 @@ inline bool operator>(const SMILTime& a, const SMILTime& b) { return a.value() >
 inline bool operator<(const SMILTime& a, const SMILTime& b) { return a.value() < b.value(); }
 inline bool operator>=(const SMILTime& a, const SMILTime& b) { return a.value() > b.value() || operator==(a, b); }
 inline bool operator<=(const SMILTime& a, const SMILTime& b) { return a.value() < b.value() || operator==(a, b); }
+inline bool operator<(const SMILTimeWithOrigin& a, const SMILTimeWithOrigin& b) { return a.time() < b.time(); }
 
 SMILTime operator+(const SMILTime&, const SMILTime&);
 SMILTime operator-(const SMILTime&, const SMILTime&);

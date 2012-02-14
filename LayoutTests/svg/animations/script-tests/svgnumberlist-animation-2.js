@@ -23,38 +23,36 @@ rootSVGElement.appendChild(text);
 
 // Setup animation test
 function sample1() {
-	shouldBe("text.rotate.animVal.getItem(0).value", "0");
-	shouldBe("text.rotate.animVal.getItem(1).value", "45");
-	shouldBe("text.rotate.animVal.getItem(2).value", "90");
-	shouldBe("text.rotate.animVal.getItem(3).value", "135");
+    shouldBe("text.rotate.animVal.getItem(0).value", "0");
+    shouldBe("text.rotate.animVal.getItem(1).value", "45");
+    shouldBe("text.rotate.animVal.getItem(2).value", "90");
+    shouldBe("text.rotate.animVal.getItem(3).value", "153");
 }
 
 function sample2() {
-	shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "22.5", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "67.5", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "112.5", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "157.5", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "22.5", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "67.5", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "112.5", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "157.5", 0.01);
 }
 
 function sample3() {
-	shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "45", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "90", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "135", 0.01);
-	shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "180", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "44.99", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "89.98", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "134.99", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "179.99", 0.01);
 }
 
 function executeTest() {
     const expectedValues = [
-        // [animationId, time, elementId, sampleCallback]
-        ["animation", 0.0,    "text", sample1],
-        ["animation", 2.0,    "text", sample2],
-        ["animation", 3.9999, "text", sample3],
-        ["animation", 4.0 ,   "text", sample1]
+        // [animationId, time, sampleCallback]
+        ["animation", 0.0,   sample1],
+        ["animation", 2.0,   sample2],
+        ["animation", 3.999, sample3],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);
 }
 
-// Begin test async
-window.setTimeout("triggerUpdate(41, 59)", 0);
 var successfullyParsed = true;

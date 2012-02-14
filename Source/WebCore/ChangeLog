@@ -1,3 +1,74 @@
+2012-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Convert svg/animations to use SMIL methods for driving the timeline
+        https://bugs.webkit.org/show_bug.cgi?id=78422
+
+        Reviewed by Dirk Schulze.
+
+        Switch the svg/animations tests to use SVGSVGElement.setCurrentTime to drive the animation timeline.
+        This should fix all flakiness we previously had with these tests - and as nice side-effect we're now
+        using the standard SVG methods to drive the timeline, and thus have more coverage for these methods.
+        It already exposed several SMIL bugs, that had to be fixed, before this worked:
+
+        - beginElement()/endElement() modify the begin/end times of a SVGSMILElement. When beginElement() is
+          called a new begin time is added to the list - and the same happens for endElement() with the end list.
+          Unfortunately the begin/end times never get removed again, leading to incorrect instance time resolving
+          when begin/endElement is called repeatedly, combined with moving the timeline through setCurrentTime.
+
+          SMIL3 specifically demands that all 'dynamic' times in the begin/endTimes list, such that got inserted
+          via beginElement/endElement - get removed if the begin/endTimes list is updated. Why?
+          When calling beginElement, then endElement, then beginElement again, the begin/endTimes lists should be
+          identical, w/o leftovers from any previous begin/endElement call.
+
+          To keep track of that introduce SMILTimeWithOrigin, which holds a SMILTime and an Origin enum,
+          which determines whether this SMILTime was created by the parser or dynamically created via
+          beginElement/endElement.
+
+        - SMILTimeContainer::setElapsed() (called by SVGSVGElement::setCurrentTime) forgot to update the
+          animation state, when it was not paused.
+
+        - document.getElementsByTagName('animateMotion')[0], always returned 'object SVGElement', instead of
+          SVGAnimateMotion element making it impossible to query the animation start time, as the interfaces
+          from SVGAnimationElement were not available. Fix that by removing the last hacks from svgtags.in,
+          now that all IDLs are available.
+
+        Now that we use SVGSVGElement::setCurrentTime to drive the animation testing, we can remove
+        the DRT specific sampleSVGAnimationAtTime functionality, and its code springled all over WebCore.
+
+        Covered by all existing tests in svg/animations.
+
+        * WebCore.exp.in: Remove sampleAnimationAtTime() symbols.
+        * WebCore.order: Ditto.
+        * svg/SVGAnimationElement.cpp: Add a flag to begin/endElement, SMILTimeWithOrigin::ScriptOrigin, to indicate that these are dynamic SMILTimes, added by a script. 
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/SVGDocumentExtensions.cpp: Remove sampleAnimationAtTime.
+        * svg/SVGDocumentExtensions.h: Ditto.
+        * svg/animation/SMILTime.h: Add SMILTimeWithOrigin helper.
+        (SMILTimeWithOrigin): Needs a SMILTime and an Origin enum entry.
+        (WebCore::SMILTimeWithOrigin::SMILTimeWithOrigin):
+        (WebCore::SMILTimeWithOrigin::time): Returns the SMILTime.
+        (WebCore::SMILTimeWithOrigin::originIsScript): Determines if this SMILTime got added by a script.
+        (WebCore::operator<): Used by std::sort.
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::setElapsed): Always call updateAnimations, even if the animation is not paused. Use the right elpased time value, to seek precisely to the desired position.
+        (WebCore::SMILTimeContainer::timerFired): Cleanup code, no need for a local variable 'elapsed'.
+        (WebCore::SMILTimeContainer::updateAnimations): Remove DRT specific sampling code, which is no longer needed.
+        * svg/animation/SMILTimeContainer.h: Remove sampleAnimationAtTime.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::SVGSMILElement): Only call resolveFirstInterval, not reset, from the constructor - it wastes unnecessary time, as everything is already initialized.
+        (WebCore::clearTimesWithDynamicOrigins): Helper function to clear all SMILTimes from the begin/endTimes list, that are dynamic.
+        (WebCore::SVGSMILElement::reset): Clear begin/endTimes lists, on any reset() call (when driving the animation timeline through setElapsed).
+        (WebCore::SVGSMILElement::insertedIntoDocument): m_beginTimes now stores SMILTimeWithOrigins, adapt the code.
+        (WebCore::sortTimeList): Ditto.
+        (WebCore::SVGSMILElement::parseBeginOrEnd): Ditto.
+        (WebCore::SVGSMILElement::addBeginTime): Ditto.
+        (WebCore::SVGSMILElement::addEndTime): Ditto.
+        (WebCore::extractTimeFromVector): Ditto.
+        (WebCore::SVGSMILElement::findInstanceTime): Ditto.
+        * svg/animation/SVGSMILElement.h: 
+        * svg/svgtags.in: Enable animateMotion/hkern/mpath JS interfaces, which were not enabled, despite their IDLs existed.
+
 2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [REGRESSION] Copy Stack Trace is broken

@@ -36,13 +36,13 @@ PASS path.pathSegList.getItem(2).y is 15
 PASS path.pathSegList.getItem(3).pathSegTypeAsLetter is 'H'
 PASS path.pathSegList.getItem(3).x is 0
 PASS path.pathSegList.getItem(0).pathSegTypeAsLetter is 'M'
-PASS path.pathSegList.getItem(0).x is -30
-PASS path.pathSegList.getItem(0).y is -30
+PASS path.pathSegList.getItem(0).x is -29.98
+PASS path.pathSegList.getItem(0).y is -29.98
 PASS path.pathSegList.getItem(1).pathSegTypeAsLetter is 'L'
-PASS path.pathSegList.getItem(1).x is 30
+PASS path.pathSegList.getItem(1).x is 29.98
 PASS path.pathSegList.getItem(1).y is 0
 PASS path.pathSegList.getItem(2).pathSegTypeAsLetter is 'V'
-PASS path.pathSegList.getItem(2).y is 30
+PASS path.pathSegList.getItem(2).y is 29.98
 PASS path.pathSegList.getItem(3).pathSegTypeAsLetter is 'H'
 PASS path.pathSegList.getItem(3).x is 0
 PASS path.pathSegList.getItem(0).pathSegTypeAsLetter is 'M'

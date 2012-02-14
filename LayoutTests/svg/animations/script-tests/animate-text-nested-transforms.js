@@ -10,7 +10,7 @@ text.setAttribute("onclick", "executeTest()")
 
 var animateMotion = createSVGElement("animateMotion")
 animateMotion.setAttribute("id", "animation")
-animateMotion.setAttribute("dur", "1s")
+animateMotion.setAttribute("dur", "4s")
 animateMotion.setAttribute("repeatCount", "1")
 animateMotion.setAttribute("rotate", "auto")
 animateMotion.setAttribute("path", "M 100,250 C 100,50 400,50 400,250")
@@ -18,34 +18,25 @@ animateMotion.setAttribute("begin", "click")
 text.appendChild(animateMotion)
 rootSVGElement.appendChild(text)
 
-function passIfCloseEnough(name, value, error) {
-    passed = isCloseEnough(eval(name), value, error);
-    if (passed) {
-        testPassed(name + " is almost " + value + " (within " + error + ")");
-    } else {
-        testFailed(name + " is " + eval(name) + " but should be within " + error + " of " + value);  
-    }
-}
-
 function startSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 196, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", -186, 20);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "118.65", 0.01);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "-161.03", 0.01);
 }
 
 function endSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 370, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", 547, 20);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "366.89", 1);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "549.93", 1);
 }
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.1, "text", startSample],
-        ["animation", 1.0, "text", endSample]
+        ["animation", 0.01, startSample],
+        ["animation", 3.999, endSample]
     ];
     
     runAnimationTest(expectedValues);
 }
 
-window.setTimeout("triggerUpdate(310, 30)", 0);
+window.clickX = 310;
+window.clickY = 30;
 var successfullyParsed = true;
-
