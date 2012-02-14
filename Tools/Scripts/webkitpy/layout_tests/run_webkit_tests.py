@@ -198,7 +198,7 @@ def parse_args(args=None):
     """Provides a default set of command line args.
 
     Returns a tuple of options, args from optparse"""
-    
+
     option_group_definitions = []
 
     # FIXME: All of these options should be stored closer to the code which
@@ -470,7 +470,7 @@ def parse_args(args=None):
 
 def main():
     options, args = parse_args()
-    if options.platform and options.platform.startswith('test'):
+    if options.platform and 'test' in options.platform:
         # It's a bit lame to import mocks into real code, but this allows the user
         # to run tests against the test platform interactively, which is useful for
         # debugging test failures.

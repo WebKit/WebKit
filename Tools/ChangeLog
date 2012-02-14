@@ -1,3 +1,29 @@
+2012-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: create ports in Workers, not in manager_worker_broker
+        https://bugs.webkit.org/show_bug.cgi?id=78565
+
+        Reviewed by Tony Chang.
+
+        We will now create the Port object (if necessary) in the Worker
+        directly, so that the manager_worker_broker module doesn't need
+        all of this layout_test-specific logic. Part of the fixes for
+        bug 78171.
+
+        These changes are all well-tested by the existing tests in
+        run_webkit_tests_integrationtest.py.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_Process.run):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.safe_init):
+        (Worker.run):
+        (Worker.cleanup):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (main): Fix a minor bug where running the 'mock-test' port didn't work right.
+
 2012-02-14  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] check that we're not running multiple modal dialogs at the same time

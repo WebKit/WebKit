@@ -33,10 +33,12 @@ import sys
 import threading
 import time
 
+from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.views import printing
 
 
 _log = logging.getLogger(__name__)
@@ -54,18 +56,18 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._driver = None
         self._tests_run_file = None
         self._tests_run_filename = None
+        self._printer = None
 
     def __del__(self):
         self.cleanup()
 
-    def safe_init(self, port):
+    def safe_init(self):
         """This method should only be called when it is is safe for the mixin
         to create state that can't be Pickled.
 
         This routine exists so that the mixin can be created and then marshaled
         across into a child process."""
-        self._port = port
-        self._filesystem = port.host.filesystem
+        self._filesystem = self._port.host.filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size or 0
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
@@ -82,7 +84,31 @@ class Worker(manager_worker_broker.AbstractWorker):
         return self._name
 
     def run(self, port):
-        self.safe_init(port)
+        if port:
+            self._port = port
+        else:
+            # We are running in a child process and need to create a new Host.
+            if 'test' in self._options.platform:
+                # It is lame to import mocks into real code, but this allows us to use the test port in multi-process tests as well.
+                from webkitpy.common.host_mock import MockHost
+                host = MockHost()
+            else:
+                host = Host()
+
+            options = self._options
+            self._port = host.port_factory.get(options.platform, options)
+
+            # The unix multiprocessing implementation clones the
+            # log handler configuration into the child processes,
+            # but the win implementation doesn't.
+            configure_logging = (sys.platform == 'win32')
+
+            # FIXME: This won't work if the calling process is logging
+            # somewhere other than sys.stderr and sys.stdout, but I'm not sure
+            # if this will be an issue in practice.
+            self._printer = printing.Printer(self._port, options, sys.stderr, sys.stdout, configure_logging)
+
+        self.safe_init()
 
         exception_msg = ""
         _log.debug("%s starting" % self._name)
@@ -139,6 +165,9 @@ class Worker(manager_worker_broker.AbstractWorker):
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
+        if self._printer:
+            self._printer.cleanup()
+            self._printer = None
 
     def timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
