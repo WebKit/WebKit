@@ -1,3 +1,28 @@
+2012-02-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] extract TimelineOverviewWindow from TimelineOverviewPanel
+        https://bugs.webkit.org/show_bug.cgi?id=78599
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.reset):
+        (WebInspector.TimelineOverviewPane.prototype.scrollWindow):
+        (WebInspector.TimelineOverviewWindow):
+        (WebInspector.TimelineOverviewWindow.prototype.reset):
+        (WebInspector.TimelineOverviewWindow.prototype.scrollWindow):
+        (WebInspector.TimelineOverviewWindow.prototype._windowResizeDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._dragWindow):
+        (WebInspector.TimelineOverviewWindow.prototype._windowSelectorDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._endWindowSelectorDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._windowDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._resizeWindowRight):
+        (WebInspector.TimelineOverviewWindow.prototype._resizeWindowMaximum):
+        (WebInspector.TimelineOverviewWindow.prototype._setWindowPosition):
+        (WebInspector.TimelineOverviewWindow.prototype._endWindowDragging):
+        (WebInspector.TimelinePanel.WindowSelector):
+
 2012-02-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Make ScriptsNavigator default file selector.
