@@ -459,7 +459,7 @@
 #define WTF_USE_CA 1
 #endif
 
-/* USE(SKIA) for Win/Linux, CG for Mac, unless enabled */
+/* USE(SKIA) for Win/Linux/Mac/Android */
 #if PLATFORM(CHROMIUM)
 #if OS(DARWIN)
 #if USE(SKIA_ON_MAC_CHROMIUM)
@@ -470,6 +470,9 @@
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 1
 #define WTF_USE_ICCJPEG 1
+#elif OS(ANDROID)
+#define WTF_USE_SKIA 1
+#define WTF_USE_GLES2_RENDERING 0
 #else
 #define WTF_USE_SKIA 1
 #define WTF_USE_CHROMIUM_NET 1
