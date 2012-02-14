@@ -1,5 +1,12 @@
 2012-02-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, build fix for non-DFG platforms.
+
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+
+2012-02-14  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build and configuration goof.
 
         * assembler/MacroAssembler.h:

@@ -73,6 +73,9 @@ public:
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
+
+    // Utilities used by the DFG JIT.
+#if ENABLE(DFG_JIT)
     using MacroAssemblerBase::invert;
     
     static DoubleCondition invert(DoubleCondition cond)
@@ -131,6 +134,7 @@ public:
             return Zero; // Make compiler happy for release builds.
         }
     }
+#endif
 
     // Platform agnostic onvenience functions,
     // described in terms of other macro assembly methods.
