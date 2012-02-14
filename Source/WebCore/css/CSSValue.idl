@@ -21,7 +21,7 @@
 module css {
 
     interface [
-        JSCustomToJS,
+        CustomToJSObject,
         JSCustomIsReachable,
         JSCustomFinalize,
         ObjCPolymorphic,

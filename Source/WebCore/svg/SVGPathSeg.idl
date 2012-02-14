@@ -28,7 +28,7 @@ module svg {
 
     interface [
         Conditional=SVG,
-        JSCustomToJS,
+        CustomToJSObject,
         ObjCPolymorphic
     ] SVGPathSeg {
         // Path Segment Types

@@ -24,7 +24,7 @@ module css {
     interface [
         JSCustomMarkFunction,
         JSGenerateIsReachable,
-        JSCustomToJS,
+        CustomToJSObject,
         ObjCPolymorphic,
         V8DependentLifetime
     ] CSSRule {

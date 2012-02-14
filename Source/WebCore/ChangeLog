@@ -1,3 +1,49 @@
+2012-02-13  Kentaro Hara  <haraken@chromium.org>
+
+        Add [CustomToJSObject] to interfaces which have custom toJS() and toV8()
+        https://bugs.webkit.org/show_bug.cgi?id=78489
+
+        Reviewed by Adam Barth.
+
+        This is the final step to remove hard-coding from HasCustomToV8Implementation()
+        in CodeGeneratorV8.pm. This patch replaces [JSCustomToJS] with [CustomToJSObject]
+        for interfaces which have custom toJS() and custom toV8().
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+
+        * bindings/scripts/test/TestTypedArray.idl:
+        * css/CSSRule.idl:
+        * css/CSSValue.idl:
+        * css/StyleSheet.idl:
+        * dom/Document.idl:
+        * dom/Event.idl:
+        * dom/Node.idl:
+        * fileapi/Blob.idl:
+        * fileapi/Entry.idl:
+        * fileapi/EntrySync.idl:
+        * html/HTMLCollection.idl:
+        * html/ImageData.idl:
+        * html/canvas/ArrayBufferView.idl:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * storage/IDBAny.idl:
+        * storage/IDBKey.idl:
+        * svg/SVGPathSeg.idl:
+
 2012-02-13  Arun Patole  <bmf834@motorola.com>
 
         Chrome crashes when attempting to add cue to track element

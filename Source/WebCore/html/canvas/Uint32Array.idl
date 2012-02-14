@@ -31,7 +31,7 @@ module html {
         CustomIndexedSetter,
         JSGenerateToNativeObject,
         JSNoStaticTables,
-        JSCustomToJS,
+        CustomToJSObject,
         DoNotCheckConstants
     ] Uint32Array : ArrayBufferView {
         const unsigned int BYTES_PER_ELEMENT = 4;

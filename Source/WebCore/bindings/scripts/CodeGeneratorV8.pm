@@ -447,7 +447,7 @@ END
 }
 END
 
-    if (!HasCustomToV8Implementation($dataNode, $interfaceName)) {
+    if (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
         push(@headerContent, <<END);
 
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectParameter})
@@ -3099,17 +3099,6 @@ END
     return wrapper;
 }
 END
-}
-
-sub HasCustomToV8Implementation {
-    # FIXME: This subroutine is lame. Probably should be an .idl attribute (CustomToV8)?
-    my $dataNode = shift;
-    my $interfaceName = shift;
-
-    return 1 if $dataNode->extendedAttributes->{"V8CustomToJSObject"};
-
-    # For everything else, do what JSC does.
-    return $dataNode->extendedAttributes->{"JSCustomToJS"};
 }
 
 sub GetDomMapFunction

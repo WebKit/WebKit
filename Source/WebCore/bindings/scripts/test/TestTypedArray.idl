@@ -31,7 +31,7 @@ module html {
         CustomIndexedSetter,
         JSGenerateToNativeObject,
         JSNoStaticTables,
-        JSCustomToJS,
+        CustomToJSObject,
         DoNotCheckConstants
     ] Float64Array : ArrayBufferView {
         Int32Array foo(in Float32Array array);

@@ -23,7 +23,7 @@ module html {
     interface [
         IndexedGetter,
         NamedGetter,
-        JSCustomToJS,
+        CustomToJSObject,
         JSGenerateIsReachable,
         ObjCPolymorphic
     ] HTMLCollection {
