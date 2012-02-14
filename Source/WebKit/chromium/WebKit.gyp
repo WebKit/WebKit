@@ -372,8 +372,6 @@
                 'src/BackForwardListChromium.h',
                 'src/BlobRegistryProxy.cpp',
                 'src/BlobRegistryProxy.h',
-                'src/BoundObject.cpp',
-                'src/BoundObject.h',
                 'src/CCThreadImpl.cpp',
                 'src/CCThreadImpl.h',
                 'src/ChromeClientImpl.cpp',

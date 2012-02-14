@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebDevToolsFrontendImpl.h"
 
-#include "BoundObject.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "DOMWindow.h"

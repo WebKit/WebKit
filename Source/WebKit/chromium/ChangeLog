@@ -1,3 +1,17 @@
+2012-02-13  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Remove BoundObject
+        https://bugs.webkit.org/show_bug.cgi?id=78531
+
+        Reviewed by Pavel Feldman.
+
+        Remove the BoundObject class, references to it were removed in r56999.
+
+        * WebKit.gyp:
+        * src/BoundObject.cpp: Removed.
+        * src/BoundObject.h: Removed.
+        * src/WebDevToolsFrontendImpl.cpp:
+
 2012-02-13  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Remove obsolete zoom animation pathway.
