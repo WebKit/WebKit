@@ -1,3 +1,16 @@
+2012-02-14  Andreas Kling  <awesomekling@apple.com>
+
+        Avoid full style recalc when presentation attributes change.
+        <http://webkit.org/b/78636>
+
+        Reviewed by Antti Koivisto.
+
+        Use setNeedsStyleRecalc(InlineStyleChange) when a presentation attribute changes
+        to reduce the amount of work done in recalcStyle().
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
 2012-02-14  Ramya Chandrasekaran  <cramya@google.com>
 
         Last character display for passwords in Android.

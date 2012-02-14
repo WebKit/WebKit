@@ -68,7 +68,7 @@ void StyledElement::attributeChanged(Attribute* attr)
 
     if (isPresentationAttribute(attr)) {
         setAttributeStyleDirty();
-        setNeedsStyleRecalc();
+        setNeedsStyleRecalc(InlineStyleChange);
     }
 
     Element::attributeChanged(attr);
