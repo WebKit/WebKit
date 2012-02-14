@@ -38,4 +38,4 @@ from webkitpy.layout_tests.port import port_testcase
 class ChromiumAndroidPortTest(port_testcase.PortTestCase):
     port_name = 'chromium-android'
     port_maker = chromium_android.ChromiumAndroidPort
-    default_worker_model = 'inline'
+    expected_default_worker_model = 'inline'

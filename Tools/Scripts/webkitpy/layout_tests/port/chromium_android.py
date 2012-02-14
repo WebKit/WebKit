@@ -26,7 +26,26 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.layout_tests.port import chromium
+from webkitpy.layout_tests.port import factory
+
+
+_log = logging.getLogger(__name__)
+
+
+# The root directory for test resources, which has the same structure as the
+# source root directory of Chromium.
+# This path is defined in base/base_paths_android.cc and
+# webkit/support/platform_support_android.cc.
+DEVICE_SOURCE_ROOT_DIR = '/data/local/tmp/'
+
+DEVICE_DRT_DIR = '/data/drt/'
+DEVICE_DRT_PATH = DEVICE_DRT_DIR + 'DumpRenderTree'
+DEVICE_DRT_STDERR = DEVICE_DRT_DIR + 'DumpRenderTree.stderr'
+DEVICE_FORWARDER_PATH = DEVICE_DRT_DIR + 'forwarder'
+DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 
 MS_TRUETYPE_FONTS_DIR = '/usr/share/fonts/truetype/msttcorefonts/'
 
@@ -66,6 +85,30 @@ HOST_FONT_FILES = [
 # Should increase this version after changing HOST_FONT_FILES.
 FONT_FILES_VERSION = 1
 
+DEVICE_FONTS_DIR = DEVICE_DRT_DIR + 'fonts/'
+DEVICE_FIRST_FALLBACK_FONT = '/system/fonts/DroidNaskh-Regular.ttf'
+
+# The layout tests directory on device, which has two usages:
+# 1. as a virtual path in file urls that will be bridged to HTTP.
+# 2. pointing to some files that are pushed to the device for tests that
+# don't work on file-over-http (e.g. blob protocol tests).
+DEVICE_LAYOUT_TESTS_DIR = (DEVICE_SOURCE_ROOT_DIR + 'third_party/WebKit/LayoutTests/')
+
+# Test resources that need to be accessed as files directly.
+# Each item can be the relative path of a directory or a file.
+TEST_RESOURCES_TO_PUSH = [
+    # Blob tests need to access files directly.
+    'editing/pasteboard/resources',
+    'fast/files/resources',
+    'http/tests/local/resources',
+    'http/tests/local/formdata/resources',
+    # User style URLs are accessed as local files in webkit_support.
+    'http/tests/security/resources/cssStyle.css',
+    # Media tests need to access audio/video as files.
+    'media/content',
+    'compositing/resources/video.mp4',
+]
+
 
 class ChromiumAndroidPort(chromium.ChromiumPort):
     port_name = 'chromium-android'
@@ -89,7 +132,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         self._original_governor = None
         self._android_base_dir = None
 
-        self._host_port = host.port_factory.get('chromium', **kwargs)
+        self._host_port = factory.PortFactory(host).get('chromium', **kwargs)
 
         self._adb_command = ['adb']
         adb_args = self.get_option('adb_args')
@@ -137,12 +180,20 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         pass
 
     def start_helper(self):
-        # FIXME: Not implemented (yet!)
-        pass
+        self._setup_performance()
+        # Required by webkit_support::GetWebKitRootDirFilePath().
+        # Other directories will be created automatically by adb push.
+        self._run_adb_command(['shell', 'mkdir', '-p',
+                               DEVICE_SOURCE_ROOT_DIR + 'chrome'])
+        self._push_executable()
+        self._push_fonts()
+        self._setup_system_font_for_test()
 
     def stop_helper(self):
-        # FIXME: Not implemented (yet!)
-        pass
+        self._restore_system_font()
+        # Leave the forwarder and tests httpd server there because they are
+        # useful for debugging and do no harm to subsequent tests.
+        self._teardown_performance()
 
     def _build_path(self, *comps):
         return self._host_port._build_path(*comps)
@@ -179,3 +230,78 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def _shut_down_http_server(self, pid):
         return self._host_port._shut_down_http_server(pid)
+
+    def _push_executable(self):
+        drt_host_path = self._path_to_driver()
+        forwarder_host_path = self._path_to_helper()
+        drt_jar_host_path = drt_host_path + '.jar'
+        host_stamp = int(float(max(os.stat(drt_host_path).st_mtime,
+                                   os.stat(forwarder_host_path).st_mtime,
+                                   os.stat(drt_jar_host_path).st_mtime)))
+        device_stamp = int(float(self._run_adb_command([
+            'shell', 'cat %s 2>/dev/null || echo 0' % DEVICE_DRT_STAMP_PATH])))
+        if device_stamp < host_stamp:
+            _log.debug('Pushing executable')
+            self._kill_device_process(DEVICE_FORWARDER_PATH)
+            self._push_to_device(forwarder_host_path, DEVICE_FORWARDER_PATH)
+            self._push_to_device(drt_host_path, DEVICE_DRT_PATH)
+            self._push_to_device(drt_host_path + '.pak', DEVICE_DRT_PATH + '.pak')
+            self._push_to_device(drt_host_path + '_resources', DEVICE_DRT_PATH + '_resources')
+            self._push_to_device(drt_jar_host_path, DEVICE_DRT_PATH + '.jar')
+            # Version control of test resources is dependent on executables,
+            # because we will always rebuild executables when resources are
+            # updated.
+            self._push_test_resources()
+            self._run_adb_command(['shell', 'echo %d >%s' % (host_stamp, DEVICE_DRT_STAMP_PATH)])
+
+    def _push_fonts(self):
+        if not self._check_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION):
+            _log.debug('Pushing fonts')
+            path_to_ahem_font = self._build_path(self.get_option('configuration'), 'AHEM____.TTF')
+            self._push_to_device(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
+            for (host_dir, font_file) in HOST_FONT_FILES:
+                self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
+            self._update_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION)
+
+    def _setup_system_font_for_test(self):
+        # The DejaVu font implicitly used by some CSS 2.1 tests should be added
+        # into the font fallback list of the system. DroidNaskh-Regular.ttf is
+        # the first font in Android Skia's font fallback list. Fortunately the
+        # DejaVu font also contains Naskh glyphs.
+        # First remount /system in read/write mode.
+        self._run_adb_command(['remount'])
+        self._copy_device_file(DEVICE_FONTS_DIR + 'DejaVuSans.ttf', DEVICE_FIRST_FALLBACK_FONT)
+
+    def _restore_system_font(self):
+        # First remount /system in read/write mode.
+        self._run_adb_command(['remount'])
+        self._push_to_device(os.environ['OUT'] + DEVICE_FIRST_FALLBACK_FONT, DEVICE_FIRST_FALLBACK_FONT)
+
+    def _push_test_resources(self):
+        _log.debug('Pushing test resources')
+        for resource in TEST_RESOURCES_TO_PUSH:
+            self._push_to_device(self.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
+
+    def _push_to_device(self, host_path, device_path, ignore_error=False):
+        return self._run_adb_command(['push', host_path, device_path], ignore_error)
+
+    def _pull_from_device(self, device_path, host_path, ignore_error=False):
+        return self._run_adb_command(['pull', device_path, host_path], ignore_error)
+
+    def _kill_device_process(self, name):
+        ps_result = self._run_adb_command(['shell', 'ps']).split('\n')
+        for line in ps_result:
+            if line.find(name) > 0:
+                pid = line.split()[1]
+                self._run_adb_command(['shell', 'kill', pid])
+
+    def _setup_performance(self):
+        # Disable CPU scaling and drop ram cache to reduce noise in tests
+        if not self._original_governor:
+            self._original_governor = self._run_adb_command(['shell', 'cat', SCALING_GOVERNOR])
+            self._run_adb_command(['shell', 'echo', 'performance', '>', SCALING_GOVERNOR])
+
+    def _teardown_performance(self):
+        if self._original_governor:
+            self._run_adb_command(['shell', 'echo', self._original_governor, SCALING_GOVERNOR])
+        self._original_governor = None

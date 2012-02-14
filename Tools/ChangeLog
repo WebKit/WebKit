@@ -1,5 +1,40 @@
 2012-02-13  Adam Barth  <abarth@webkit.org>
 
+        Implement start/stop_helper for ChromiumAndroidPort
+        https://bugs.webkit.org/show_bug.cgi?id=78558
+
+        Reviewed by Dirk Pranke.
+
+        These functions (and their dependencies) set up the Android device for
+        testing.
+
+        This patch also includes a few tweaks on the previous patch recommended
+        by dpranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.start_helper):
+        (ChromiumAndroidPort.stop_helper):
+        (ChromiumAndroidPort._shut_down_http_server):
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort._push_executable):
+        (ChromiumAndroidPort._push_fonts):
+        (ChromiumAndroidPort._restore_system_font):
+        (ChromiumAndroidPort._push_test_resources):
+        (ChromiumAndroidPort._push_to_device):
+        (ChromiumAndroidPort._pull_from_device):
+        (ChromiumAndroidPort._kill_device_process):
+        (ChromiumAndroidPort._setup_performance):
+        (ChromiumAndroidPort._teardown_performance):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.make_port):
+        (PortTestCase.test_default_worker_model):
+
+2012-02-13  Adam Barth  <abarth@webkit.org>
+
         Implement enough of ChromiumAndroidPort to make ChromiumAndroidPortTest pass
         https://bugs.webkit.org/show_bug.cgi?id=78550
 
