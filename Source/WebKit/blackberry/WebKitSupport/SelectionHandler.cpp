@@ -170,7 +170,7 @@ static VisiblePosition visiblePositionForPointIgnoringClipping(const Frame& fram
     return visiblePos;
 }
 
-static unsigned short directionOfPointRelativeToRect(const IntPoint& point, const IntRect& rect)
+static unsigned short directionOfPointRelativeToRect(const IntPoint& point, const IntRect& rect, const bool useTopPadding = true, const bool useBottomPadding = true)
 {
     ASSERT(!rect.contains(point));
 
@@ -179,9 +179,9 @@ static unsigned short directionOfPointRelativeToRect(const IntPoint& point, cons
 
     // Do height movement check first but add padding. We may be off on both x & y axis and only
     // want to move in one direction at a time.
-    if (point.y() + verticalPadding < rect.y())
+    if (point.y() + (useTopPadding ? verticalPadding : 0) < rect.y())
         return KEYCODE_UP;
-    if (point.y() > rect.maxY() + verticalPadding)
+    if (point.y() > rect.maxY() + (useBottomPadding ? verticalPadding : 0))
         return KEYCODE_DOWN;
     if (point.x() < rect.location().x())
         return KEYCODE_LEFT;
@@ -342,10 +342,11 @@ unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHand
                                       : controller->selection().visibleEnd().absoluteCaretBounds();
 
     IntRect nodeBoundingBox = focusedFrame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect();
+    nodeBoundingBox.inflate(-1);
 
     // Start handle is outside of the field. Treat it as the changed handle and move
     // relative to the start caret rect.
-    unsigned short character = directionOfPointRelativeToRect(selectionPoint, caretRect);
+    unsigned short character = directionOfPointRelativeToRect(selectionPoint, caretRect, isStartHandle /*useTopPadding*/, !isStartHandle /*useBottomPadding*/);
 
     // Prevent incorrect movement, handles can only extend the selection this way
     // to prevent inversion of the handles.
@@ -353,16 +354,16 @@ unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHand
         || !isStartHandle && (character == KEYCODE_LEFT || character == KEYCODE_UP))
         character = 0;
 
-    VisiblePosition newVisiblePosition = controller->selection().start();
+    VisiblePosition newVisiblePosition = isStartHandle ? controller->selection().extent() : controller->selection().base();
     // Extend the selection to the bounds of the box before doing incremental scroll if the point is outside the node.
     // Don't extend selection and handle the character at the same time.
     if (pointIsOutsideOfBoundingBoxInDirection(character, selectionPoint, nodeBoundingBox))
         newVisiblePosition = directionalVisiblePositionAtExtentOfBox(focusedFrame, nodeBoundingBox, character, selectionPoint);
 
     if (isStartHandle)
-        newSelection = VisibleSelection(newVisiblePosition, newSelection.visibleEnd(), true /*isDirectional*/);
+        newSelection = VisibleSelection(newVisiblePosition, newSelection.extent(), true /*isDirectional*/);
     else
-        newSelection = VisibleSelection(newSelection.visibleStart(), newVisiblePosition, true /*isDirectional*/);
+        newSelection = VisibleSelection(newSelection.base(), newVisiblePosition, true /*isDirectional*/);
 
     // If no selection will be changed, return the character to extend using navigation.
     if (controller->selection() == newSelection)
@@ -432,6 +433,26 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     return true;
 }
 
+IntPoint SelectionHandler::clipPointToFocusNode(const IntPoint& point)
+{
+    Frame* focusedFrame = m_webPage->focusedOrMainFrame();
+    FrameSelection* controller = focusedFrame->selection();
+
+    if (!focusedFrame->document()->focusedNode() || !focusedFrame->document()->focusedNode()->renderer())
+        return point;
+
+    IntRect focusedNodeBoundingBox = focusedFrame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect();
+    focusedNodeBoundingBox.inflate(-1);
+
+    IntPoint clippedPoint = point;
+    if (!focusedNodeBoundingBox.contains(clippedPoint))
+        clippedPoint = IntPoint(
+            point.x() < focusedNodeBoundingBox.x() ? focusedNodeBoundingBox.x() : std::min(focusedNodeBoundingBox.maxX(), point.x()),
+            point.y() < focusedNodeBoundingBox.y() ? focusedNodeBoundingBox.y() : std::min(focusedNodeBoundingBox.maxY(), point.y()));
+
+    return clippedPoint;
+}
+
 void SelectionHandler::setSelection(const IntPoint& start, const IntPoint& end)
 {
     m_selectionActive = true;
@@ -466,7 +487,7 @@ void SelectionHandler::setSelection(const IntPoint& start, const IntPoint& end)
         relativeStart = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, start);
 
         // Set the selection with validation.
-        newSelection.setBase(visiblePositionForPointIgnoringClipping(*focusedFrame, relativeStart));
+        newSelection.setBase(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToFocusNode(relativeStart)));
 
         // Reset the selection using the existing extent without validation.
         newSelection.setWithoutValidation(newSelection.base(), controller->selection().end());
@@ -476,7 +497,7 @@ void SelectionHandler::setSelection(const IntPoint& start, const IntPoint& end)
         relativeEnd = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, end);
 
         // Set the selection with validation.
-        newSelection.setExtent(visiblePositionForPointIgnoringClipping(*focusedFrame, relativeEnd));
+        newSelection.setExtent(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToFocusNode(relativeEnd)));
 
         // Reset the selection using the existing base without validation.
         newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
