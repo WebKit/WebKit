@@ -50,11 +50,6 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
-#if ENABLE(GESTURE_EVENTS)
-    virtual void zoom(const PlatformGestureEvent&);
-    virtual void handleGestureEvent(const PlatformGestureEvent&);
-#endif
-
     virtual void willEndLiveResize();
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void didAddHorizontalScrollbar(Scrollbar*);
@@ -131,35 +126,12 @@ protected:
         int m_visibleLength;
     };
 
-    // While zooming, scale, posX and posY need to stay tightly coupled, so use a separate
-    // data structure.
-    struct ZoomData {
-        ZoomData(ScrollAnimatorNone* parent);
-        bool animateZoom(double currentTime);
-
-        ScrollAnimatorNone* m_parent;
-        bool m_isAnimating;
-
-        double m_startTime;
-
-        double m_animationTime;
-        double m_lastAnimationTime;
-
-        double m_startScale;
-        double m_desiredScale;
-        double m_desiredTransX;
-        double m_desiredTransY;
-    };
-
-    friend struct ZoomData;
-
     void animationTimerFired(Timer<ScrollAnimatorNone>*);
     void stopAnimationTimerIfNeeded();
     void updateVisibleLengths();
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
-    ZoomData m_zoomData;
 
     double m_startTime;
     Timer<ScrollAnimatorNone> m_animationTimer;

@@ -99,7 +99,6 @@
 #include "RenderWidget.h"
 #include "ResourceHandle.h"
 #include "SchemeRegistry.h"
-#include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"

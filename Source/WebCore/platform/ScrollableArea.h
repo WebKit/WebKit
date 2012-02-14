@@ -42,8 +42,6 @@ class GraphicsLayer;
 
 class ScrollableArea {
 public:
-    enum ZoomAnimationState { ZoomAnimationContinuing, ZoomAnimationFinishing };
-
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void scrollToOffsetWithoutAnimation(const FloatPoint&);
     void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
@@ -56,8 +54,6 @@ public:
     // returns true, the scrollable area won't actually update the scroll position and instead
     // expect it to happen sometime in the future.
     virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
-
-    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)

@@ -2362,6 +2362,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return true;
     }
     case PlatformEvent::GestureDoubleTap:
+        break;
     case PlatformEvent::GestureScrollBegin:
     case PlatformEvent::GestureScrollEnd: {
         FrameView* view = m_frame->view();

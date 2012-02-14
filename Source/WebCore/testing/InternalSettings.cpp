@@ -36,14 +36,6 @@
 #include "Page.h"
 #include "Settings.h"
 
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#endif
-
-#if ENABLE(SMOOTH_SCROLLING)
-#include "ScrollAnimator.h"
-#endif
-
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
 #endif
@@ -172,43 +164,6 @@ void InternalSettings::setAcceleratedDrawingEnabled(bool enabled, ExceptionCode&
     settings()->setAcceleratedDrawingEnabled(enabled);
 }
 
-void InternalSettings::setEnableScrollAnimator(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-#if ENABLE(SMOOTH_SCROLLING)
-    settings()->setEnableScrollAnimator(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
-void InternalSettings::setZoomAnimatorTransform(float scale, float tx, float ty, ExceptionCode& ec)
-{
-    InternalSettingsGuardForFrame();
-
-#if ENABLE(GESTURE_EVENTS)
-    PlatformGestureEvent pge(PlatformEvent::GestureDoubleTap, IntPoint(tx, ty), IntPoint(tx, ty), 0, scale, 0.f, 0, 0, 0, 0);
-    frame()->eventHandler()->handleGestureEvent(pge);
-#else
-    UNUSED_PARAM(scale);
-    UNUSED_PARAM(tx);
-    UNUSED_PARAM(ty);
-#endif
-}
-
-void InternalSettings::setZoomParameters(float scale, float x, float y, ExceptionCode& ec)
-{
-    InternalSettingsGuardForFrameView();
-
-#if ENABLE(SMOOTH_SCROLLING)
-    frame()->view()->scrollAnimator()->setZoomParametersForTest(scale, x, y);
-#else
-    UNUSED_PARAM(scale);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-#endif
-}
-
 void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
@@ -251,12 +206,6 @@ bool InternalSettings::unifiedTextCheckingEnabled(ExceptionCode& ec)
 {
     InternalSettingsGuardForSettingsReturn(false);
     return settings()->unifiedTextCheckerEnabled();
-}
-
-float InternalSettings::pageScaleFactor(ExceptionCode& ec)
-{
-    InternalSettingsGuardForPageReturn(0);
-    return page()->pageScaleFactor();
 }
 
 void InternalSettings::setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode& ec)

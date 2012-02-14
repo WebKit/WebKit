@@ -53,14 +53,6 @@
 #include "SpellChecker.h"
 #include "TextIterator.h"
 
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#endif
-
-#if ENABLE(SMOOTH_SCROLLING)
-#include "ScrollAnimator.h"
-#endif
-
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
 #endif

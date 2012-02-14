@@ -153,11 +153,6 @@ void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
     scrollAnimator()->notifyContentAreaScrolled();
 }
 
-void ScrollableArea::zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState)
-{
-    // Requires FrameView to override this.
-}
-
 bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     return scrollAnimator()->handleWheelEvent(wheelEvent);

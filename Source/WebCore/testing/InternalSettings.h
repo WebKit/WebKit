@@ -52,16 +52,12 @@ public:
     void setEnableCompositingForScrollableFrames(bool enabled, ExceptionCode&);
     void setAcceleratedDrawingEnabled(bool enabled, ExceptionCode&);
     void setAcceleratedFiltersEnabled(bool enabled, ExceptionCode&);
-    void setEnableScrollAnimator(bool enabled, ExceptionCode&);
-    void setZoomAnimatorTransform(float scale, float tx, float ty, ExceptionCode&);
-    void setZoomParameters(float scale, float x, float y, ExceptionCode&);
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setPasswordEchoEnabled(bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode&);
     void setFixedElementsLayoutRelativeToFrame(bool, ExceptionCode&);
     void setUnifiedTextCheckingEnabled(bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(ExceptionCode&);
-    float pageScaleFactor(ExceptionCode&);
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
     void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);

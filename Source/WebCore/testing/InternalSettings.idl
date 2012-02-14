@@ -33,16 +33,12 @@ module window {
         void setEnableCompositingForScrollableFrames(in boolean enabled) raises(DOMException);
         void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
         void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
-        void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
-        void setZoomAnimatorTransform(in float scale, in float tx, in float ty) raises(DOMException);
-        void setZoomParameters(in float scale, in float x, in float y) raises(DOMException);
         void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
         void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
         void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
         void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
         boolean unifiedTextCheckingEnabled() raises (DOMException);
-        float pageScaleFactor() raises(DOMException);
         void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
         void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
     };

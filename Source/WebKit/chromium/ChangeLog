@@ -1,3 +1,14 @@
+2012-02-13  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Remove obsolete zoom animation pathway.
+        https://bugs.webkit.org/show_bug.cgi?id=78359
+
+        Reviewed by James Robinson.
+
+        This patch removes dead code from the previous incarnation of zoom animation for chromium.
+
+        * src/WebViewImpl.cpp:
+
 2012-02-13  Hayato Ito  <hayato@chromium.org>
 
         Make ShadowRoot.nodeType return DOCUMENT_FRAGMENT_NODE.

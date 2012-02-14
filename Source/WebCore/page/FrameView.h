@@ -171,8 +171,6 @@ public:
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
     virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
 
-    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState);
-
     String mediaType() const;
     void setMediaType(const String&);
     void adjustMediaTypeForPrinting(bool printing);
