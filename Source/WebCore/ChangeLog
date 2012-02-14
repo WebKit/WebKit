@@ -1,3 +1,12 @@
+2012-02-14  Matt Lilek  <mrl@apple.com>
+
+        Don't ENABLE_DASHBOARD_SUPPORT unconditionally on all Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=78629
+
+        Reviewed by David Kilzer.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-02-14  Andreas Kling  <awesomekling@apple.com>
 
         Avoid full style recalc when presentation attributes change.
