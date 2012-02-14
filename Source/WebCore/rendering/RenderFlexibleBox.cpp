@@ -820,14 +820,6 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
 
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
-        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
-        if (!style()->isLeftToRightDirection() && isColumnFlow()) {
-            LayoutPoint location = flowAwareLocationForChild(child);
-            location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
-            setFlowAwareLocationForChild(child, location);
-        }
-
-        // FIXME: Make sure this does the right thing with column flows.
         switch (flexAlignForChild(child)) {
         case AlignAuto:
             ASSERT_NOT_REACHED();
@@ -862,6 +854,14 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             break;
         }
         }
+
+        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
+        if (!style()->isLeftToRightDirection() && isColumnFlow()) {
+            LayoutPoint location = flowAwareLocationForChild(child);
+            location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
+            setFlowAwareLocationForChild(child, location);
+        }
+
     }
 }
 

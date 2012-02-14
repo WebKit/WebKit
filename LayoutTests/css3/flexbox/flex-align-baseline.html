@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<style>
+.flexbox {
+    margin: 120px;
+    width: 100px;
+    height: 100px;
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+    outline: 2px solid red;
+}
+.title {
+    margin-bottom: 10px;
+}
+.flexbox > div {
+    height: 110px;
+    width: 110px;
+}
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+.ltr {
+    direction: ltr;
+}
+.rtl {
+    direction: rtl;
+}
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+.row-reverse {
+    -webkit-flex-flow: row-reverse;
+}
+.column {
+    -webkit-flex-flow: column;
+}
+.column-reverse {
+    -webkit-flex-flow: column-reverse;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<body>
+<script>
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
+var directions = ['ltr', 'rtl'];
+
+writingModes.forEach(function(writingMode) {
+    flexFlows.forEach(function(flexFlow) {
+        directions.forEach(function(direction) {
+            var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
+
+            var title = document.createElement('div');
+            title.className = 'title';
+            title.innerHTML = flexboxClassName;
+            document.body.appendChild(title);
+
+            var isColumn = flexFlow.indexOf('column') != -1;
+            var isHorizontal = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
+
+            var container = document.createElement('div');
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-flex-align: baseline;">' +
+                '<div><div style="display:inline-block;"></div></div>' +
+                '<div style="margin-top:20px;"><div style="display:inline-block;"></div></div>' +
+            '</div>';
+
+            container.firstChild.isHorizontal = isHorizontal;
+            document.body.appendChild(container);
+        })
+    })
+})
+
+// Sanity check that the flex-align:baseline flex items align to the same cross-axis position.
+var flexboxen = document.getElementsByClassName('flexbox');
+for (var i = 0, len = flexboxen.length; i < len; i++) {
+    var flexbox = flexboxen[i];
+    firstChild = flexbox.firstChild;
+    lastChild = flexbox.lastChild;
+    if (flexbox.isHorizontal)
+        shouldBe('firstChild.offsetTop', 'lastChild.offsetTop');
+    else
+        shouldBe('firstChild.offsetLeft', 'lastChild.offsetLeft');
+}
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

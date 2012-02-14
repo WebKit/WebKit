@@ -12,14 +12,7 @@ PASS
 horizontal-tb ltr column
 PASS
 horizontal-tb rtl column
-FAIL:
-Expected -5 for offsetLeft, but got -15. 
-Expected -5 for offsetLeft, but got -15. 
-
-<div class="flexbox horizontal-tb rtl column vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-5" data-offset-y="-10"></div>
-<div data-offset-x="-5" data-offset-y="50"></div>
-</div>
+PASS
 horizontal-tb ltr row-reverse
 PASS
 horizontal-tb rtl row-reverse
@@ -27,14 +20,7 @@ PASS
 horizontal-tb ltr column-reverse
 PASS
 horizontal-tb rtl column-reverse
-FAIL:
-Expected -5 for offsetLeft, but got -15. 
-Expected -5 for offsetLeft, but got -15. 
-
-<div class="flexbox horizontal-tb rtl column-reverse vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-5" data-offset-y="50"></div>
-<div data-offset-x="-5" data-offset-y="-10"></div>
-</div>
+PASS
 horizontal-bt ltr row
 PASS
 horizontal-bt rtl row
@@ -42,14 +28,7 @@ PASS
 horizontal-bt ltr column
 PASS
 horizontal-bt rtl column
-FAIL:
-Expected -5 for offsetLeft, but got -15. 
-Expected -5 for offsetLeft, but got -15. 
-
-<div class="flexbox horizontal-bt rtl column vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-5" data-offset-y="50"></div>
-<div data-offset-x="-5" data-offset-y="-10"></div>
-</div>
+PASS
 horizontal-bt ltr row-reverse
 PASS
 horizontal-bt rtl row-reverse
@@ -57,14 +36,7 @@ PASS
 horizontal-bt ltr column-reverse
 PASS
 horizontal-bt rtl column-reverse
-FAIL:
-Expected -5 for offsetLeft, but got -15. 
-Expected -5 for offsetLeft, but got -15. 
-
-<div class="flexbox horizontal-bt rtl column-reverse vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-5" data-offset-y="-10"></div>
-<div data-offset-x="-5" data-offset-y="50"></div>
-</div>
+PASS
 vertical-lr ltr row
 PASS
 vertical-lr rtl row
@@ -72,14 +44,7 @@ PASS
 vertical-lr ltr column
 PASS
 vertical-lr rtl column
-FAIL:
-Expected -5 for offsetTop, but got -15. 
-Expected -5 for offsetTop, but got -15. 
-
-<div class="flexbox vertical-lr rtl column" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-10" data-offset-y="-5"></div>
-<div data-offset-x="50" data-offset-y="-5"></div>
-</div>
+PASS
 vertical-lr ltr row-reverse
 PASS
 vertical-lr rtl row-reverse
@@ -87,14 +52,7 @@ PASS
 vertical-lr ltr column-reverse
 PASS
 vertical-lr rtl column-reverse
-FAIL:
-Expected -5 for offsetTop, but got -15. 
-Expected -5 for offsetTop, but got -15. 
-
-<div class="flexbox vertical-lr rtl column-reverse" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="50" data-offset-y="-5"></div>
-<div data-offset-x="-10" data-offset-y="-5"></div>
-</div>
+PASS
 vertical-rl ltr row
 PASS
 vertical-rl rtl row
@@ -102,14 +60,7 @@ PASS
 vertical-rl ltr column
 PASS
 vertical-rl rtl column
-FAIL:
-Expected -5 for offsetTop, but got -15. 
-Expected -5 for offsetTop, but got -15. 
-
-<div class="flexbox vertical-rl rtl column" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="50" data-offset-y="-5"></div>
-<div data-offset-x="-10" data-offset-y="-5"></div>
-</div>
+PASS
 vertical-rl ltr row-reverse
 PASS
 vertical-rl rtl row-reverse
@@ -117,11 +68,4 @@ PASS
 vertical-rl ltr column-reverse
 PASS
 vertical-rl rtl column-reverse
-FAIL:
-Expected -5 for offsetTop, but got -15. 
-Expected -5 for offsetTop, but got -15. 
-
-<div class="flexbox vertical-rl rtl column-reverse" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
-<div data-offset-x="-10" data-offset-y="-5"></div>
-<div data-offset-x="50" data-offset-y="-5"></div>
-</div>
+PASS
