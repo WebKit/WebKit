@@ -1,3 +1,16 @@
+2012-02-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Assertion failure under JSC::DFG::AbstractState::execute loading economist.com
+        https://bugs.webkit.org/show_bug.cgi?id=78153
+        <rdar://problem/10861712> <rdar://problem/10861947>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+
 2012-02-14  Eric Seidel  <eric@webkit.org>
 
         Upstream Android's additions to Platform.h

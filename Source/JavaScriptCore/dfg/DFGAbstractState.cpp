@@ -279,9 +279,13 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictDouble);
             break;
         }
-        ASSERT(node.op == ValueAdd);
-        clobberStructures(nodeIndex);
-        forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
+        if (node.op == ValueAdd) {
+            clobberStructures(nodeIndex);
+            forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
+            break;
+        }
+        // We don't handle this yet. :-(
+        m_isValid = false;
         break;
     }
             

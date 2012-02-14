@@ -2258,8 +2258,13 @@ void SpeculativeJIT::compileAdd(Node& node)
         return;
     }
 
-    ASSERT(node.op == ValueAdd);
-    compileValueAdd(node);
+    if (node.op == ValueAdd) {
+        compileValueAdd(node);
+        return;
+    }
+    
+    // We don't handle this yet. :-(
+    terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
 }
 
 void SpeculativeJIT::compileArithSub(Node& node)
