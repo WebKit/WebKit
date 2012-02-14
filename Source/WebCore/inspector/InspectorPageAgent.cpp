@@ -763,10 +763,15 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrameTree(Frame* f
     Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
         CachedResource* cachedResource = *it;
+
         RefPtr<InspectorObject> resourceObject = InspectorObject::create();
         resourceObject->setString("url", cachedResource->url());
         resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
         resourceObject->setString("mimeType", cachedResource->response().mimeType());
+        if (cachedResource->status() == CachedResource::LoadError)
+            resourceObject->setBoolean("failed", true);
+        if (cachedResource->status() == CachedResource::Canceled)
+            resourceObject->setBoolean("canceled", true);
         subresources->pushValue(resourceObject);
     }
 

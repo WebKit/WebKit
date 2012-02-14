@@ -1,3 +1,19 @@
+2012-02-12  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: include failed and canceled in FrameResourceTree.
+
+        https://webkit.org/b/78445
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/protocol/page-agent.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added Inspector.json, Inspector-0.1.json and Inspector-1.0.json
+        for quick access and easy editing.
+        * inspector/Inspector.json: Added failed and canceled as optional properties to the object for resources in FrameResourceTree.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree): Set those properties.
+
 2012-02-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix after r107707.

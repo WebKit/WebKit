@@ -1,0 +1,131 @@
+Protocol stability test. It is dumping request/response pairs of PageAgent functions.
+
+    
+-----------------------------------------------------------
+PageAgent.disable()
+
+request:
+{
+    method : "Page.disable"
+    id : <number>
+}
+
+response:
+{
+    result : {
+    }
+    id : <number>
+}
+
+-----------------------------------------------------------
+PageAgent.enable()
+
+request:
+{
+    method : "Page.enable"
+    id : <number>
+}
+
+response:
+{
+    result : {
+    }
+    id : <number>
+}
+
+-----------------------------------------------------------
+PageAgent.getResourceTree()
+
+request:
+{
+    method : "Page.getResourceTree"
+    id : <number>
+}
+
+response:
+{
+    result : {
+        frameTree : {
+            frame : {
+                id : <string>
+                url : <string>
+                loaderId : <string>
+                securityOrigin : "file://"
+                mimeType : "text/html"
+            }
+            resources : [
+                {
+                    url : <string>
+                    type : "Script"
+                    mimeType : "text/javascript"
+                }
+                {
+                    url : <string>
+                    type : "Image"
+                    mimeType : ""
+                    failed : true
+                }
+                {
+                    url : <string>
+                    type : "Font"
+                    mimeType : "application/octet-stream"
+                }
+                {
+                    url : <string>
+                    type : "Image"
+                    mimeType : "image/png"
+                }
+                {
+                    url : <string>
+                    type : "Font"
+                    mimeType : ""
+                }
+                {
+                    url : <string>
+                    type : "Script"
+                    mimeType : "text/javascript"
+                }
+            ]
+            childFrames : [
+                {
+                    frame : {
+                        id : <string>
+                        parentId : <string>
+                        name : "dummy"
+                        url : <string>
+                        loaderId : <string>
+                        securityOrigin : "file://"
+                        mimeType : "text/html"
+                    }
+                    resources : [
+                    ]
+                }
+            ]
+        }
+    }
+    id : <number>
+}
+
+===========================================================
+Coverage for PageAgent
+{
+    enable : "checked"
+    disable : "checked"
+    addScriptToEvaluateOnLoad : "not checked"
+    removeScriptToEvaluateOnLoad : "not checked"
+    reload : "not checked"
+    navigate : "not checked"
+    getCookies : "not checked"
+    deleteCookie : "not checked"
+    getResourceTree : "checked"
+    getResourceContent : "not checked"
+    searchInResource : "not checked"
+    searchInResources : "not checked"
+    setDocumentContent : "not checked"
+    setScreenSizeOverride : "not checked"
+    domContentEventFired : "not checked"
+    loadEventFired : "not checked"
+    frameNavigated : "not checked"
+    frameDetached : "not checked"
+}
+
