@@ -1,3 +1,18 @@
+2012-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::SVGElement::removedFromDocument
+        https://bugs.webkit.org/show_bug.cgi?id=77270
+
+        Reviewed by Adam Barth.
+
+        Add a protector before calling NodeRemovalDispatcher::dispatch since
+        NodeRemovalDispatcher::dispatch may remove the last RefPtr to this node.
+
+        Test: fast/dom/Range/surround-contents-font-face-crash.svg
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::Private::addChildNodesToDeletionQueue):
+
 2012-02-14  Matt Lilek  <mrl@apple.com>
 
         Don't ENABLE_DASHBOARD_SUPPORT unconditionally on all Mac platforms

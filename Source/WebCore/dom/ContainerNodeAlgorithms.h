@@ -135,8 +135,10 @@ namespace Private {
                     head = n;
 
                 tail = n;
-            } else
+            } else {
+                RefPtr<GenericNode> protect(n); // removedFromDocument may remove remove all references to this node.
                 NodeRemovalDispatcher<GenericNode, ShouldDispatchRemovalNotification<GenericNode>::value>::dispatch(n);
+            }
         }
 
         container->setFirstChild(0);
