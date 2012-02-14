@@ -29,10 +29,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-#if USE(OPENVG)
-#include <egl.h>
-#endif
-
 #include <pthread.h>
 
 namespace WebCore {
@@ -332,9 +328,6 @@ public:
     bool m_defersBlit;
     bool m_hasBlitJobs;
 
-#if USE(OPENVG)
-    EGLDisplay m_eglDisplay;
-#endif
     mutable unsigned m_frontState;
     mutable unsigned m_backState;
 

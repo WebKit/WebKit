@@ -1,3 +1,19 @@
+2012-02-14  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Remove OpenVG references
+        https://bugs.webkit.org/show_bug.cgi?id=78623
+
+        Reviewed by Rob Buis.
+
+        Removed references to USE(OPENVG) and the related code.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStore::createSurface):
+        * blackberry/Api/BackingStore_p.h:
+
 2012-02-14  Andy Chen  <andchen@rim.com>
 
         Initial upstreaming for find-in-page for BlackBerry port

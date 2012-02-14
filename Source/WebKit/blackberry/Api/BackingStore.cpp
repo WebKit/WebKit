@@ -54,11 +54,6 @@
 #define DEBUG_TILEMATRIX 0
 #define DEBUG_COMPOSITING_DIRTY_REGION 0
 
-#if USE(OPENVG)
-#include "EGLDisplayOpenVG.h"
-#include "EGLUtils.h"
-#endif
-
 #include <BlackBerryPlatformScreen.h>
 
 using namespace WebCore;
@@ -202,9 +197,6 @@ BackingStorePrivate::BackingStorePrivate()
     , m_renderQueue(adoptPtr(new RenderQueue(this)))
     , m_defersBlit(true)
     , m_hasBlitJobs(false)
-#if USE(OPENVG)
-    , m_eglDisplay(EGL_NO_DISPLAY)
-#endif
     , m_currentWindowBackBuffer(0)
     , m_preferredTileMatrixDimension(Vertical)
     , m_blitGeneration(-1)
@@ -298,10 +290,6 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
 void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
                                   bool contentChanged, bool immediate)
 {
-#if USE(OPENVG)
-    ASSERT(m_eglDisplay != EGL_NO_DISPLAY);
-#endif
-
     if (m_suspendBackingStoreUpdates)
         return;
 
@@ -2215,9 +2203,6 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
     }
 
     // Grab the requested region from the drawing surface into the tile image.
-#if USE(OPENVG)
-    surface->makeCurrent();
-#endif
 
     delete bufferPlatformGraphicsContext;
 
@@ -2525,22 +2510,8 @@ void BackingStore::createSurface()
         initialized = true;
     }
 
-#if USE(OPENVG)
-    d->m_eglDisplay = BlackBerry::Platform::Graphics::eglDisplay();
-
-    // Make sure we are using OpenVG.
-    eglBindAPI(EGL_OPENVG_API);
-    ASSERT_EGL_NO_ERROR();
-
-    EGLDisplayOpenVG::setCurrentDisplay(d->m_eglDisplay);
-#endif
-
     // Triggers creation of surfaces in backingstore.
     d->createSurfaces();
-
-#if USE(OPENVG)
-    EGLDisplayOpenVG::current()->sharedPlatformSurface()->makeCurrent();
-#endif
 
     // Focusing the WebPage triggers a repaint, so while we want it to be
     // focused initially this has to happen after creation of the surface.
