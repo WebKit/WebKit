@@ -422,6 +422,8 @@ void NavigationScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
 {
     ASSERT(m_frame->page());
 
+    RefPtr<Frame> protect(m_frame);
+
     // If a redirect was scheduled during a load, then stop the current load.
     // Otherwise when the current load transitions from a provisional to a 
     // committed state, pending redirects may be cancelled. 
@@ -436,6 +438,9 @@ void NavigationScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
 
     if (!m_frame->loader()->isComplete() && m_redirect->isLocationChange())
         m_frame->loader()->completed();
+
+    if (!m_frame->page())
+        return;
 
     startTimer();
 }

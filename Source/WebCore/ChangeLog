@@ -1,3 +1,20 @@
+2012-02-14  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in NavigationScheduler::schedule.
+        https://bugs.webkit.org/show_bug.cgi?id=78297
+
+        Reviewed by Adam Barth.
+
+        Protect frame pointer and navigation scheduler when we stop the
+        load (when redirect is scheduled during a load). Also, dont fire
+        the navigation scheduler timer when we know that frameloader is
+        going away.
+
+        Test: http/tests/navigation/navigation-redirect-schedule-crash.html
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::schedule):
+
 2012-02-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         font shorthand with inherit keyword incorrectly parsed and rendered
