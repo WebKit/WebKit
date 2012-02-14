@@ -1,3 +1,16 @@
+2012-02-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Invalid dates should not be valid keys
+        https://bugs.webkit.org/show_bug.cgi?id=78622
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/invalid-keys.html
+               storage/indexeddb/factory-cmp.html
+
+        * bindings/v8/IDBBindingUtilities.cpp: Special case for NaN Dates.
+        (WebCore::createIDBKeyFromValue):
+
 2012-02-14  Ken Buchanan  <kenrb@chromium.org>
 
         Crash from line break iterators in counter content

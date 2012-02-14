@@ -34,6 +34,7 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8IDBKey.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vec
         return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
         return IDBKey::createString(v8ValueToWebCoreString(value));
-    if (value->IsDate())
+    if (value->IsDate() && !isnan(value->NumberValue()))
         return IDBKey::createDate(value->NumberValue());
     if (value->IsArray()) {
         v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);

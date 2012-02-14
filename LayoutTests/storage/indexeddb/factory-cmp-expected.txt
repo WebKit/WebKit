@@ -262,16 +262,34 @@ PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp('valid', NaN)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(NaN, null)
+Expecting exception from indexedDB.cmp(NaN, new Date(NaN))
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(null, NaN)
+Expecting exception from indexedDB.cmp(new Date(NaN), NaN)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp(NaN, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp('valid', NaN)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp('valid', new Date(NaN))
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp(new Date(NaN), null)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp(null, new Date(NaN))
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from indexedDB.cmp('valid', new Date(NaN))
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp(null, 'valid')
