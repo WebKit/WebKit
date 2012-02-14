@@ -3962,8 +3962,6 @@ BUGNOEL : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMA
 // Started to fail after r107349.
 BUGWK78331 : editing/spelling/spelling-marker-description.html = TEXT
 
-BUGWK34147 : fast/css/font-face-synthetic-bold-italic.html = MISSING FAIL
-BUGWK34147 : fast/css/font-face-weight-matching.html = MISSING FAIL
 
 // Needs a rebaseline.
 BUGWK75478 : fast/html/details-add-summary-10-and-click.html = IMAGE
