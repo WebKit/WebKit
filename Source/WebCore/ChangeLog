@@ -1,3 +1,26 @@
+2012-02-13  Adrienne Walker  <enne@google.com>
+
+        [chromium] Use HashMap<..., OwnPtr<Tile>> for compositor tilemap
+        https://bugs.webkit.org/show_bug.cgi?id=74154
+
+        Reviewed by James Robinson.
+
+        Covered by the compositing/ layout tests.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::create):
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::TiledLayerChromium::createTile):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::addTile):
+        (WebCore::CCLayerTilingData::takeTile):
+        (WebCore::CCLayerTilingData::tileAt):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::DrawableTile::create):
+        (WebCore::DrawableTile::DrawableTile):
+        (WebCore::CCTiledLayerImpl::createTile):
+
 2012-02-13  Kentaro Hara  <haraken@chromium.org>
 
         Add [CustomToJSObject] to interfaces which have custom toJS() and toV8()

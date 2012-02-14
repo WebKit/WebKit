@@ -53,10 +53,9 @@ namespace WebCore {
 class UpdatableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(UpdatableTile);
 public:
-    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
-        : m_partialUpdate(false)
-        , m_texture(texture)
+    static PassOwnPtr<UpdatableTile> create(PassOwnPtr<LayerTextureUpdater::Texture> texture)
     {
+        return adoptPtr(new UpdatableTile(texture));
     }
 
     LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
@@ -74,6 +73,12 @@ public:
     IntRect m_opaqueRect;
     bool m_partialUpdate;
 private:
+    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
+        : m_partialUpdate(false)
+        , m_texture(texture)
+    {
+    }
+
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
 
@@ -292,11 +297,12 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
-    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(textureUpdater()->createTexture(textureManager())));
-    m_tiler->addTile(tile, i, j);
-    tile->m_dirtyRect = m_tiler->tileRect(tile.get());
+    OwnPtr<UpdatableTile> tile(UpdatableTile::create(textureUpdater()->createTexture(textureManager())));
+    UpdatableTile* addedTile = tile.get();
+    m_tiler->addTile(tile.release(), i, j);
 
-    return tile.get();
+    addedTile->m_dirtyRect = m_tiler->tileRect(addedTile);
+    return addedTile;
 }
 
 void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
