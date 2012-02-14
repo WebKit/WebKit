@@ -1,3 +1,17 @@
+2012-02-14  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from line break iterators in counter content
+        https://bugs.webkit.org/show_bug.cgi?id=72977
+
+        Reviewed by David Hyatt.
+
+        Calculating the width of counter text can sometimes cause the
+        underlying text buffer to change. This patch causes the iterator
+        to reset appropriately when this happens.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2012-02-14  Levi Weintraub  <leviw@chromium.org>
 
         Update usage of LayoutUnits in RenderLayer
