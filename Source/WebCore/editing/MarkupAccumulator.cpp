@@ -444,7 +444,6 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* nod
     case Node::ENTITY_REFERENCE_NODE:
     case Node::NOTATION_NODE:
     case Node::XPATH_NAMESPACE_NODE:
-    case Node::SHADOW_ROOT_NODE:
         ASSERT_NOT_REACHED();
         break;
     }

@@ -1,3 +1,15 @@
+2012-02-13  Hayato Ito  <hayato@chromium.org>
+
+        Make ShadowRoot.nodeType return DOCUMENT_FRAGMENT_NODE.
+        https://bugs.webkit.org/show_bug.cgi?id=77514
+
+        Reviewed by Dimitri Glazkov.
+
+        NodeType.SHADOW_ROOT_NODE type is finally gone.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::buildContentForNode):
+
 2012-02-13  Nico Weber  <thakis@chromium.org>
 
         [chromium] Let WebKit::initialize call InitWebCoreSystemInterface on mac.
