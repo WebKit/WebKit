@@ -1,3 +1,24 @@
+2012-02-13  Anders Carlsson  <andersca@apple.com>
+
+        The tile cache layer should have its background set to the page background
+        https://bugs.webkit.org/show_bug.cgi?id=78560
+        <rdar://problem/10857472>
+
+        Reviewed by Sam Weinig.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle):
+        Inform the RenderLayerCompositor that the background color has changed.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateLayerBackgroundColor):
+        For tile cache layers we don't need a separate contents layer for the background color so
+        just set the background color on the layer directly.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::documentBackgroundColorDidChange):
+        If the root render layer is using a tile cache layer, update its background color.
+
 2012-02-13  Raul Hudea  <rhudea@adobe.com>
 
         Implement Element.webkitRegionOverflow

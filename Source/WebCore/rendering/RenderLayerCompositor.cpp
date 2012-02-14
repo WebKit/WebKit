@@ -1644,6 +1644,23 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     }
 }
 
+void RenderLayerCompositor::documentBackgroundColorDidChange()
+{
+    RenderLayerBacking* backing = rootRenderLayer()->backing();
+    if (!backing)
+        return;
+
+    GraphicsLayer* graphicsLayer = backing->graphicsLayer();
+    if (!graphicsLayer->client()->shouldUseTileCache(graphicsLayer))
+        return;
+
+    Color backgroundColor = m_renderView->frameView()->documentBackgroundColor();
+    if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+        backgroundColor = Color::white;
+
+    graphicsLayer->setBackgroundColor(backgroundColor);
+}
+
 bool RenderLayerCompositor::showDebugBorders(const GraphicsLayer* layer) const
 {
     if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)

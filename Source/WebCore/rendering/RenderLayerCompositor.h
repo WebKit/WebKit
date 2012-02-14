@@ -209,6 +209,8 @@ public:
     GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
 #endif
 
+    void documentBackgroundColorDidChange();
+
 private:
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }

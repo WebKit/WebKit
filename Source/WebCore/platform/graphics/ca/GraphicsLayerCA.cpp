@@ -1438,6 +1438,11 @@ void GraphicsLayerCA::updateAcceleratesDrawing()
     
 void GraphicsLayerCA::updateLayerBackgroundColor()
 {
+    if (m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer) {
+        m_layer->setBackgroundColor(m_backgroundColor);
+        return;
+    }
+
     if (!m_contentsLayer)
         return;
 
