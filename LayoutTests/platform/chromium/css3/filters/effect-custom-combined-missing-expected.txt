@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Invalid name for preference: WebKitAcceleratedCompositingEnabled
+
