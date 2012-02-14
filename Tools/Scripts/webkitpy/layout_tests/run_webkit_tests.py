@@ -269,6 +269,8 @@ def parse_args(args=None):
         optparse.make_option("--per-tile-painting",
             action="store_true",
             help="Use per-tile painting of composited pages"),
+        optparse.make_option("--adb-args", type="string",
+            help="Arguments parsed to Android adb, to select device, etc."),
     ]))
 
     option_group_definitions.append(("WebKit Options", [
