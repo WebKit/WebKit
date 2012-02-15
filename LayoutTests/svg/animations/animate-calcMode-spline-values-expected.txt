@@ -9,8 +9,8 @@ PASS rect.x.animVal.value is 100
 PASS rect.x.baseVal.value is 100
 PASS rect.x.animVal.value is 18.8
 PASS rect.x.baseVal.value is 18.8
-PASS rect.x.animVal.value is 0.01
-PASS rect.x.baseVal.value is 0.01
+PASS rect.x.animVal.value is 0
+PASS rect.x.baseVal.value is 0
 PASS rect.x.animVal.value is 100
 PASS rect.x.baseVal.value is 100
 PASS successfullyParsed is true

@@ -32,8 +32,8 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("rect.x.animVal.value", "200", 0.01);
-    shouldBeCloseEnough("rect.x.baseVal.value", "200", 0.01);
+    shouldBeCloseEnough("rect.x.animVal.value", "200");
+    shouldBeCloseEnough("rect.x.baseVal.value", "200");
 }
 
 function executeTest() {

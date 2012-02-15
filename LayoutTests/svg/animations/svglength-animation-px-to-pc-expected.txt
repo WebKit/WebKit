@@ -9,8 +9,8 @@ PASS rect.width.animVal.value is 100
 PASS rect.width.baseVal.value is 100
 PASS rect.width.animVal.value is 170
 PASS rect.width.baseVal.value is 170
-PASS rect.width.animVal.value is 239.96
-PASS rect.width.baseVal.value is 239.96
+PASS rect.width.animVal.value is 240
+PASS rect.width.baseVal.value is 240
 PASS rect.width.animVal.value is 100
 PASS rect.width.baseVal.value is 100
 PASS successfullyParsed is true

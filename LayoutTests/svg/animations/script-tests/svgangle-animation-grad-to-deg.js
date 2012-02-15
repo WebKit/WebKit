@@ -48,13 +48,13 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("marker.orientAngle.animVal.value", "90", 0.01);
-    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "90", 0.01);
+    shouldBe("marker.orientAngle.animVal.value", "90");
+    shouldBe("marker.orientAngle.baseVal.value", "90");
 }
 
 function sample3() {
-    shouldBeCloseEnough("marker.orientAngle.animVal.value", "179.96", 0.01);
-    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "179.96", 0.01);
+    shouldBeCloseEnough("marker.orientAngle.animVal.value", "180");
+    shouldBeCloseEnough("marker.orientAngle.baseVal.value", "180");
 }
 
 function executeTest() {

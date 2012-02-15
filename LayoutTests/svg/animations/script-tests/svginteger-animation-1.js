@@ -46,7 +46,7 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBe("feConvolveMatrix.targetX.animVal", "2");
+    shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "2");
     // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 

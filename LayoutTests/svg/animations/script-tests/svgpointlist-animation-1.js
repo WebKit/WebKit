@@ -37,10 +37,10 @@ function sample2() {
 
 function sample3() {
     // Check just before-end conditions
-    shouldBeCloseEnough("poly.points.getItem(2).x", "100.02", 0.01);
-    shouldBeCloseEnough("poly.points.getItem(2).y", "100.02", 0.01);
-    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "300", 0.01);
-    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "300", 0.01);
+    shouldBeCloseEnough("poly.points.getItem(2).x", "100");
+    shouldBeCloseEnough("poly.points.getItem(2).y", "100");
+    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "300");
+    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "300");
 }
 
 function executeTest() {

@@ -45,13 +45,13 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "22.5", 0.01);
-    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "7.5", 0.01);
+    shouldBe("feGaussianBlur.stdDeviationX.animVal", "22.5");
+    shouldBe("feGaussianBlur.stdDeviationY.animVal", "7.5");
 }
 
 function sample3() {
-    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "5", 0.01);
-    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "5", 0.01);
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "5");
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "5");
 }
 
 function executeTest() {

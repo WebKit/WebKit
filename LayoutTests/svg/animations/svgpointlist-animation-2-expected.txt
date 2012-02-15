@@ -9,8 +9,8 @@ PASS poly.points.getItem(2).x is 200
 PASS poly.points.getItem(2).y is 200
 PASS poly.points.getItem(2).x is 250
 PASS poly.points.getItem(2).y is 250
-PASS poly.points.getItem(2).x is 299.98
-PASS poly.points.getItem(2).y is 299.98
+PASS poly.points.getItem(2).x is 300
+PASS poly.points.getItem(2).y is 300
 PASS poly.points.getItem(2).x is 200
 PASS poly.points.getItem(2).y is 200
 PASS successfullyParsed is true

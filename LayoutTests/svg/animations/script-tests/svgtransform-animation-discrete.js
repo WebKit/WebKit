@@ -29,23 +29,23 @@ rootSVGElement.appendChild(rect);
 function sample1() {
     // Check initial/end conditions
     shouldBe("rect.transform.animVal.numberOfItems", "0");
-    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('x')", "0", 0.01);
-    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('y')", "0", 0.01);
+    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('x')", "0");
+    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('y')", "0");
 }
 
 function sample2() {
     // Check initial/end conditions
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.e", "100", 0.01);
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.f", "100", 0.01);
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.e", "100");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.f", "100");
 }
 
 function sample3() {
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.e", "0", 0.01);
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.f", "0", 0.01);
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.e", "0");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.f", "0");
 }
 
 function executeTest() {

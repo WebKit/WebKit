@@ -35,19 +35,19 @@ g.appendChild(animateMotion)
 rootSVGElement.appendChild(g)
 
 function startSample() {
-    shouldBeCloseEnough("rootSVGElement.getBBox().x", "100", 5);
-    shouldBeCloseEnough("rootSVGElement.getBBox().y", "250", 5);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "100", 1);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "250", 1);
 }
 
 function endSample() {
-    shouldBeCloseEnough("rootSVGElement.getBBox().x", "400", 5);
-    shouldBeCloseEnough("rootSVGElement.getBBox().y", "250", 5);
+    shouldBeCloseEnough("rootSVGElement.getBBox().x", "400", 1);
+    shouldBeCloseEnough("rootSVGElement.getBBox().y", "250", 1);
 }
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.01, startSample],
-        ["animation", 3.99, endSample]
+        ["animation", 0.001, startSample],
+        ["animation", 3.999, endSample]
     ];
     
     runAnimationTest(expectedValues);

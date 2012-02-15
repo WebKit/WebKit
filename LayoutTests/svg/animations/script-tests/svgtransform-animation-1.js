@@ -29,22 +29,22 @@ function sample1() {
     // Check initial/end conditions
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "0.01", 0.01);
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "0.01", 0.01);
+    shouldBe("rect.transform.animVal.getItem(0).matrix.a", "0");
+    shouldBe("rect.transform.animVal.getItem(0).matrix.d", "0");
 }
 
 function sample2() {
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "1", 0.01);
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "1", 0.01);
+    shouldBe("rect.transform.animVal.getItem(0).matrix.a", "1");
+    shouldBe("rect.transform.animVal.getItem(0).matrix.d", "1");
 }
 
 function sample3() {
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "2", 0.01);
-    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "2", 0.01);
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "2");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "2");
 }
 
 function executeTest() {

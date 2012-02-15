@@ -2346,10 +2346,6 @@ BUGCR61406 SNOWLEOPARD DEBUG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153AND61406 LINUX WIN : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
-// See also https://webkit.org/b/49045
-BUGCR61978 : svg/animations/animate-path-nested-transforms.html = PASS CRASH TEXT
-BUGCR61978 : svg/animations/animate-text-nested-transforms.html = PASS CRASH TEXT
-
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 SKIP WONTFIX WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = CRASH TEXT
 // Added in WebKit r70265
@@ -3194,8 +3190,6 @@ BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
 
 BUGCR88311 LINUX WIN DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
-BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
-
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 BUGWK64003 DEBUG : media/video-delay-load-event.html = PASS TEXT
@@ -3323,8 +3317,6 @@ BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
-
-BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
@@ -3959,6 +3951,9 @@ BUGWK75478 : fast/html/details-remove-summary-3-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-add-summary-4-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-remove-summary-2-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
+
+// Needs investigation.
+BUGWK78422: svg/animations/animate-text-nested-transforms.html = TEXT
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 

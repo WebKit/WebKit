@@ -48,15 +48,15 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.x", "49.98", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.y", "49.98", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "50.01", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "50.01", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.x", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.y", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.width", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.animVal.height", "50");
 
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "49.98", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "49.98", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "50.01", 0.01);
-    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "50.01", 0.01);
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.x", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.y", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.width", "50");
+    shouldBeCloseEnough("rootSVGElement.viewBox.baseVal.height", "50");
 }
 
 function executeTest() {

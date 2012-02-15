@@ -31,14 +31,14 @@ function sample1() {
 
 function sample2() {
     // Check half-time conditions
-    shouldBeCloseEnough("rect.x.animVal.value", "18.8", 0.01);
-    shouldBeCloseEnough("rect.x.baseVal.value", "18.8", 0.01);
+    shouldBeCloseEnough("rect.x.animVal.value", "18.8");
+    shouldBeCloseEnough("rect.x.baseVal.value", "18.8");
 }
 
 function sample3() {
     // Check just before-end conditions
-    shouldBeCloseEnough("rect.x.animVal.value", "0.01", 0.01);
-    shouldBeCloseEnough("rect.x.baseVal.value", "0.01", 0.01);
+    shouldBeCloseEnough("rect.x.animVal.value", "0");
+    shouldBeCloseEnough("rect.x.baseVal.value", "0");
 }
 
 function executeTest() {

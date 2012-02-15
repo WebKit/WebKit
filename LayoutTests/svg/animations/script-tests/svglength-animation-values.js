@@ -27,23 +27,23 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("rect.width.animVal.value", "130", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "130", 0.01);
+    shouldBe("rect.width.animVal.value", "130");
+    shouldBe("rect.width.baseVal.value", "130");
 }
 
 function sample3() {
-    shouldBeCloseEnough("rect.width.animVal.value", "151.18", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "151.18", 0.01);
+    shouldBeCloseEnough("rect.width.animVal.value", "151.2");
+    shouldBeCloseEnough("rect.width.baseVal.value", "151.2");
 }
 
 function sample4() {
-    shouldBeCloseEnough("rect.width.animVal.value", "576", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "576", 0.01);
+    shouldBe("rect.width.animVal.value", "576");
+    shouldBe("rect.width.baseVal.value", "576");
 }
 
 function sample5() {
-    shouldBeCloseEnough("rect.width.animVal.value", "266.98", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "266.98", 0.01);
+    shouldBeCloseEnough("rect.width.animVal.value", "267");
+    shouldBeCloseEnough("rect.width.baseVal.value", "267");
 }
 
 function executeTest() {

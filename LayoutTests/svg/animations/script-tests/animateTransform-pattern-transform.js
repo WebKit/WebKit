@@ -52,8 +52,8 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "2", 0.01);
-    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "2", 0.01);
+    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "2");
+    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "2");
 }
 
 function executeTest() {

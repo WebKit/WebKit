@@ -26,13 +26,13 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "20", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "20", 0.01);
+    shouldBe("path.pathSegList.getItem(0).x", "20");
+    shouldBe("path.pathSegList.getItem(0).y", "20");
 }
 
 function sample3() {
-    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "0.01", 0.01);
-    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "0.01", 0.01);
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "0");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "0");
 }
 
 function executeTest() {

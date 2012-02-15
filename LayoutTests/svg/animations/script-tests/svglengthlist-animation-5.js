@@ -36,10 +36,10 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "70", 0.01);
-    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80", 0.01);
-    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "90", 0.01);
-    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "100", 0.01);
+    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "70");
+    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80");
+    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "90");
+    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "100");
 }
 
 function executeTest() {

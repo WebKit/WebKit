@@ -28,13 +28,13 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("rect.width.animVal.value", "350", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "350", 0.01);
+    shouldBeCloseEnough("rect.width.animVal.value", "350");
+    shouldBeCloseEnough("rect.width.baseVal.value", "350");
 }
 
 function sample3() {
-    shouldBeCloseEnough("rect.width.animVal.value", "599.88", 0.01);
-    shouldBeCloseEnough("rect.width.baseVal.value", "599.88", 0.01);
+    shouldBeCloseEnough("rect.width.animVal.value", "600", 1);
+    shouldBeCloseEnough("rect.width.baseVal.value", "600", 1);
 }
 
 function executeTest() {

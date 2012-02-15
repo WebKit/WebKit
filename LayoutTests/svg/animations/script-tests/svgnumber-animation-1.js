@@ -34,7 +34,7 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBeCloseEnough("computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "1", 0.01);
+    shouldBeCloseEnough("computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "1");
 }
 
 function executeTest() {

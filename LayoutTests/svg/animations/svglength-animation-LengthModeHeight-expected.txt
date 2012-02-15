@@ -9,8 +9,8 @@ PASS rect.height.animVal.value is 100
 PASS rect.height.baseVal.value is 100
 PASS rect.height.animVal.value is 150
 PASS rect.height.baseVal.value is 150
-PASS rect.height.animVal.value is 199.98
-PASS rect.height.baseVal.value is 199.98
+PASS rect.height.animVal.value is 200
+PASS rect.height.baseVal.value is 200
 PASS rect.height.animVal.value is 100
 PASS rect.height.baseVal.value is 100
 PASS successfullyParsed is true

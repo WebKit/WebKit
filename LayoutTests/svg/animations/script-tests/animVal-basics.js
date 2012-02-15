@@ -35,8 +35,8 @@ function sample2() {
 
 function sample3() {
     // Check just before-end conditions
-    shouldBeCloseEnough("rect.width.animVal.value", "100", 1);
-    shouldBeCloseEnough("rect.width.baseVal.value", "100", 1);
+    shouldBeCloseEnough("rect.width.animVal.value", "100");
+    shouldBeCloseEnough("rect.width.baseVal.value", "100");
 }
 
 function executeTest() {

@@ -28,17 +28,17 @@ function sample1() {
 }
 
 function sample2() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "81.7", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "75", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "144.49", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "197.33", 0.01);
+	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "81.7");
+	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "75");
+	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "144.5");
+	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "197.3");
 }
 
 function sample3() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "113.37", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "100.02", 0.01);
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "383.91", 0.01);
+	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "113.4");
+	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80");
+	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "100");
+	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "384");
 }
 
 function executeTest() {

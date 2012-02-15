@@ -7,7 +7,9 @@ function isCloseEnough(actual, desired, tolerance) {
 }
 
 function shouldBeCloseEnough(_a, _b, tolerance) {
-    if (typeof _a != "string" || typeof _b != "string" || typeof tolerance != "number")
+    if (typeof tolerance != "number")
+      tolerance = 0.1 // Default
+    if (typeof _a != "string" || typeof _b != "string")
         debug("WARN: shouldBeCloseEnough() expects two string and one number arguments");
     var exception;
     var _av;

@@ -7,8 +7,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS rect.transform.animVal.numberOfItems is 1
 PASS rect.transform.animVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_SCALE
-PASS rect.transform.animVal.getItem(0).matrix.a is 0.01
-PASS rect.transform.animVal.getItem(0).matrix.d is 0.01
+PASS rect.transform.animVal.getItem(0).matrix.a is 0
+PASS rect.transform.animVal.getItem(0).matrix.d is 0
 PASS rect.transform.animVal.numberOfItems is 1
 PASS rect.transform.animVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_SCALE
 PASS rect.transform.animVal.getItem(0).matrix.a is 1

@@ -30,17 +30,17 @@ function sample1() {
 }
 
 function sample2() {
-    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "22.5", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "67.5", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "112.5", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "157.5", 0.01);
+    shouldBe("text.rotate.animVal.getItem(0).value", "22.5");
+    shouldBe("text.rotate.animVal.getItem(1).value", "67.5");
+    shouldBe("text.rotate.animVal.getItem(2).value", "112.5");
+    shouldBe("text.rotate.animVal.getItem(3).value", "157.5");
 }
 
 function sample3() {
-    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "44.99", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "89.98", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "134.99", 0.01);
-    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "179.99", 0.01);
+    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "45");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "90");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "135");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "180");
 }
 
 function executeTest() {
