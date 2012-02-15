@@ -45,9 +45,11 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_rootNode(ScrollingTreeNode::create(this))
+    , m_hasWheelEventHandlers(false)
     , m_canGoBack(false)
     , m_canGoForward(false)
-    , m_hasWheelEventHandlers(false)
+    , m_mainFramePinnedToTheLeft(false)
+    , m_mainFramePinnedToTheRight(false)
 {
 }
 
@@ -56,30 +58,33 @@ ScrollingTree::~ScrollingTree()
     ASSERT(!m_scrollingCoordinator);
 }
 
-bool ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingTree::EventResult ScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     {
         MutexLocker lock(m_mutex);
 
         if (m_hasWheelEventHandlers)
-            return false;
+            return SendToMainThread;
 
         if (!m_nonFastScrollableRegion.isEmpty()) {
             // FIXME: This is not correct for non-default scroll origins.
             IntPoint position = wheelEvent.position();
             position.moveBy(m_mainFrameScrollPosition);
             if (m_nonFastScrollableRegion.contains(position))
-                return false;
+                return SendToMainThread;
         }
     }
 
+    if (willWheelEventStartSwipeGesture(wheelEvent))
+        return DidNotHandleEvent;
+
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
-    return true;
+    return DidHandleEvent;
 }
 
 void ScrollingTree::updateBackForwardState(bool canGoBack, bool canGoForward)
 {
-    ASSERT(ScrollingThread::isCurrentThread());
+    MutexLocker locker(m_swipeStateMutex);
 
     m_canGoBack = canGoBack;
     m_canGoForward = canGoForward;
@@ -124,6 +129,14 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingT
     m_rootNode->update(scrollingTreeState.get());
 }
 
+void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight)
+{
+    MutexLocker locker(m_swipeStateMutex);
+
+    m_mainFramePinnedToTheLeft = pinnedToTheLeft;
+    m_mainFramePinnedToTheRight = pinnedToTheRight;
+}
+
 void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
 {
     if (!m_scrollingCoordinator)
@@ -148,6 +161,37 @@ void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const In
     }
 
     callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get(), scrollPosition));
+}
+
+bool ScrollingTree::canGoBack()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_canGoBack;
+}
+
+bool ScrollingTree::canGoForward()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_canGoForward;
+}
+
+bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wheelEvent)
+{
+    if (wheelEvent.phase() != PlatformWheelEventPhaseBegan)
+        return false;
+    if (!wheelEvent.deltaX())
+        return false;
+
+    MutexLocker lock(m_swipeStateMutex);
+
+    if (wheelEvent.deltaX() > 0 && m_mainFramePinnedToTheLeft && m_canGoBack)
+        return true;
+    if (wheelEvent.deltaX() < 0 && m_mainFramePinnedToTheRight && m_canGoForward)
+        return true;
+
+    return false;
 }
 
 } // namespace WebCore

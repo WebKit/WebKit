@@ -51,6 +51,9 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 
     if (state->changedProperties() & ScrollingTreeState::ScrollLayer)
         m_scrollLayer = state->platformScrollLayer();
+
+    if (state->changedProperties() & (ScrollingTreeState::ScrollLayer | ScrollingTreeState::ContentsSize | ScrollingTreeState::ViewportRect))
+        updateMainFramePinState(scrollPosition());
 }
 
 void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -60,6 +63,8 @@ void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent
 
 void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
 {
+    updateMainFramePinState(scrollPosition);
+
     if (shouldUpdateScrollLayerPositionOnMainThread()) {
         scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(scrollPosition);
         return;
@@ -242,6 +247,14 @@ void ScrollingTreeNodeMac::scrollBy(const IntSize& offset)
 void ScrollingTreeNodeMac::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
 {
     setScrollPosition(scrollPosition() + offset);
+}
+
+void ScrollingTreeNodeMac::updateMainFramePinState(const IntPoint& scrollPosition)
+{
+    bool pinnedToTheLeft = scrollPosition.x() <= minimumScrollPosition().x();
+    bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
+
+    scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight);
 }
 
 } // namespace WebCore

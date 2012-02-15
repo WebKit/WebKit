@@ -1,3 +1,45 @@
+2012-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Swipe gestures don't work if main frame has a horizontal scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=78650
+        <rdar://problem/10864993>
+
+        Reviewed by Sam Weinig.
+
+        Change ScrollingTree::tryToHandleWheelEvent so we can indicate that an event was
+        processed by the scrolling tree but that we should indicate back to WebKit that it wasn't handled.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        Initialize new member variables.
+
+        (WebCore::ScrollingTree::tryToHandleWheelEvent):
+        If the wheel event will start a swipe gesture, return DidNotHandleEvent.
+
+        (WebCore::ScrollingTree::updateBackForwardState):
+        This can now be called from any thread, so use a mutex.
+
+        (WebCore::ScrollingTree::setMainFramePinState):
+        New function that will set the current main frame pin state.
+
+        (WebCore::ScrollingTree::canGoBack):
+        (WebCore::ScrollingTree::canGoForward):
+        Put locks around these.
+
+        (WebCore::ScrollingTree::willWheelEventStartSwipeGesture):
+        Helper function that returns whether the given wheel event will start a swipe gesture
+        because the main frame is pinned to the left/right and we can go back/forward.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::update):
+        Call updateMainFramePinState if the frame geometry changes.
+
+        (WebCore::ScrollingTreeNodeMac::setScrollPosition):
+        Call updateMainFramePinState.
+
+        (WebCore::ScrollingTreeNodeMac::updateMainFramePinState):
+        Compute the main frame pin state and set it on the scrolling tree.
+
 2012-02-14  Brian Weinstein  <bweinstein@apple.com>
 
         Web Inspector: Add the ability to show the resources panel on launch

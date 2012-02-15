@@ -78,7 +78,7 @@ private:
 #endif
 
 #if ENABLE(THREADED_SCROLLING)
-    void sendDidHandleEvent(uint64_t pageID, const WebEvent&);
+    void sendDidReceiveEvent(uint64_t pageID, const WebEvent&, bool didHandleEvent);
 
     Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ScrollingTree> > m_scrollingTrees;

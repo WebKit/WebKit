@@ -94,8 +94,9 @@ void EventDispatcher::wheelEvent(CoreIPC::Connection*, uint64_t pageID, const We
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
             ScrollingThread::dispatch(bind(&ScrollingTree::updateBackForwardState, scrollingTree, canGoBack, canGoForward));
 
-        if (scrollingTree->tryToHandleWheelEvent(platformWheelEvent)) {
-            sendDidHandleEvent(pageID, wheelEvent);
+        ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
+        if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
+            sendDidReceiveEvent(pageID, wheelEvent, result == ScrollingTree::DidHandleEvent);
             return;
         }
     }
@@ -139,9 +140,9 @@ void EventDispatcher::dispatchGestureEvent(uint64_t pageID, const WebGestureEven
 #endif
 
 #if ENABLE(THREADED_SCROLLING)
-void EventDispatcher::sendDidHandleEvent(uint64_t pageID, const WebEvent& event)
+void EventDispatcher::sendDidReceiveEvent(uint64_t pageID, const WebEvent& event, bool didHandleEvent)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), true), pageID);
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);
 }
 #endif
 

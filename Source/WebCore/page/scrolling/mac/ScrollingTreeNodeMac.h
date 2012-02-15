@@ -69,6 +69,8 @@ private:
     void scrollBy(const IntSize&);
     void scrollByWithoutContentEdgeConstraints(const IntSize&);
 
+    void updateMainFramePinState(const IntPoint& scrollPosition);
+
     ScrollElasticityController m_scrollElasticityController;
     RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 

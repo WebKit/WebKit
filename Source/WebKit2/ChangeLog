@@ -1,3 +1,18 @@
+2012-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Swipe gestures don't work if main frame has a horizontal scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=78650
+        <rdar://problem/10864993>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        ScrollingTree::tryToHandleWheelEvent now returns a tri-state enum so handle the extra case.
+
+        (WebKit::EventDispatcher::sendDidReceiveEvent):
+        Rename this now that it takes a parameter indicating whether the event was handled or not.
+
 2012-02-14  Brian Weinstein  <bweinstein@apple.com>
 
         Web Inspector: Add the ability to show the resources panel on launch
