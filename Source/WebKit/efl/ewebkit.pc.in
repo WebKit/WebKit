@@ -7,7 +7,7 @@ datadir=${prefix}/share/@WebKit_LIBRARY_NAME@-@PROJECT_VERSION_MAJOR@
 Name: WebKit-EFL
 Description: Web content engine for EFL applications
 Version: @PROJECT_VERSION@
-Requires: cairo evas ecore
+Requires: cairo evas ecore libsoup-2.4
 Libs: -L${libdir} -lewebkit @EXTRA_EWEBKIT_LINK@
 Libs.private: @LIBS_PRIVATE@
 Cflags: -I${includedir}/@WebKit_LIBRARY_NAME@-@PROJECT_VERSION_MAJOR@

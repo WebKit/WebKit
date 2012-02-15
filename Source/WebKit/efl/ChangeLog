@@ -1,3 +1,16 @@
+2012-02-15  Gustavo Lima Chaves  <glima@profusion.mobi>
+
+        [EFL] Add missing libsoup to (pkgconfig) dependency requirements
+        https://bugs.webkit.org/show_bug.cgi?id=78702
+
+        Unreviewed build fix.
+
+        * ewebkit.pc.in: Now that bug 77874 had its patch landed, we
+        always require libsoup as a dependency for the EFL port. The
+        'Require' session of this file has to contemplate that, otherwise
+        code linking with ewebkit will fail to lookup to libsoup's header
+        files.
+
 2012-02-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Merge WebKitEfl.cmake into FindEFL.cmake.
