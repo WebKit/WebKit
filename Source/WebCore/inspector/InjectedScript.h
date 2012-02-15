@@ -100,7 +100,7 @@ private:
     InjectedScript(ScriptObject, InspectedStateAccessCheck);
 
     bool canAccessInspectedWindow() const;
-    ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException);
+    ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
     void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, bool* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);
