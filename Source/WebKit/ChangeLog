@@ -99,6 +99,21 @@
 
 2012-02-14  Rob Buis  <rbuis@rim.com>
 
+        [BlackBerry] Upstream remaining classes in Api
+        https://bugs.webkit.org/show_bug.cgi?id=78644
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * blackberry/Api/BlackBerryContext.h: Added.
+        * blackberry/Api/BlackBerryGlobal.cpp: Added.
+        * blackberry/Api/BlackBerryGlobal.h: Added.
+        * blackberry/Api/Version.cpp: Added.
+        * blackberry/Api/Version.h: Added.
+
+2012-02-14  Rob Buis  <rbuis@rim.com>
+
         [BlackBerry] Upstream backing store related classes
         https://bugs.webkit.org/show_bug.cgi?id=78517
 
