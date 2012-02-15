@@ -59,9 +59,11 @@ public:
     bool useHixie76Protocol() const;
     void setUseHixie76Protocol(bool);
 
-    // Subprotocol is cached too. Will be available when didConnect() callback is invoked.
+    // Subprotocol and extensions are cached too. Will be available when didConnect() callback is invoked.
     String subprotocol() const;
     void setSubprotocol(const String&);
+    String extensions() const;
+    void setExtensions(const String&);
 
     bool sendRequestResult() const;
     void setSendRequestResult(bool);
@@ -95,7 +97,9 @@ protected:
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
-    Vector<UChar> m_subprotocol; // ThreadSafeRefCounted must not have a String member variable.
+    // ThreadSafeRefCounted must not have String member variables.
+    Vector<UChar> m_subprotocol;
+    Vector<UChar> m_extensions;
     bool m_sendRequestResult;
     unsigned long m_bufferedAmount;
     bool m_suspended;

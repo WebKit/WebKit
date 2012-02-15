@@ -90,6 +90,7 @@ TEST_F(WebSocketExtensionDispatcherTest, TestSingle)
     EXPECT_TRUE(m_extensions.processHeaderValue("deflate-frame"));
     EXPECT_EQ(1UL, m_parsedExtensionTokens.size());
     EXPECT_EQ("deflate-frame", m_parsedExtensionTokens[0]);
+    EXPECT_EQ("deflate-frame", m_extensions.acceptedExtensions());
     EXPECT_EQ(0, m_parsedParameters[0].size());
 }
 
@@ -122,6 +123,8 @@ TEST_F(WebSocketExtensionDispatcherTest, TestMultiple)
     addMockProcessor("mux");
     addMockProcessor("deflate-frame");
     EXPECT_TRUE(m_extensions.processHeaderValue("mux ;  max-channels =4;flow-control, deflate-frame  "));
+    EXPECT_TRUE(m_extensions.acceptedExtensions().find("mux") != notFound);
+    EXPECT_TRUE(m_extensions.acceptedExtensions().find("deflate-frame") != notFound);
     for (size_t i = 0; i < sizeof(expected) / sizeof(expected[0]); ++i) {
         EXPECT_EQ(expected[i].token, m_parsedExtensionTokens[i]);
         const HashMap<String, String>& expectedParameters = expected[i].parameters;
@@ -169,6 +172,7 @@ TEST_F(WebSocketExtensionDispatcherTest, TestInvalid)
         addMockProcessor("x-foo");
         addMockProcessor("x-bar");
         EXPECT_FALSE(m_extensions.processHeaderValue(inputs[i]));
+        EXPECT_TRUE(m_extensions.acceptedExtensions().isNull());
     }
 }
 

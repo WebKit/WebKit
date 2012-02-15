@@ -136,6 +136,7 @@ private:
     BinaryType m_binaryType;
     bool m_useHixie76Protocol;
     String m_subprotocol;
+    String m_extensions;
 };
 
 } // namespace WebCore

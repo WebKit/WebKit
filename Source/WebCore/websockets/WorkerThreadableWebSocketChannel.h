@@ -64,6 +64,7 @@ public:
     virtual bool useHixie76Protocol() OVERRIDE;
     virtual void connect(const KURL&, const String& protocol) OVERRIDE;
     virtual String subprotocol() OVERRIDE;
+    virtual String extensions() OVERRIDE;
     virtual bool send(const String& message) OVERRIDE;
     virtual bool send(const ArrayBuffer&) OVERRIDE;
     virtual bool send(const Blob&) OVERRIDE;

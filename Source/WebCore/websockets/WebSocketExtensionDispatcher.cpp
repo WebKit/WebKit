@@ -35,8 +35,8 @@
 #include "WebSocketExtensionDispatcher.h"
 
 #include <wtf/ASCIICType.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -173,6 +173,28 @@ const String WebSocketExtensionDispatcher::createHeaderValue() const
     return builder.toString();
 }
 
+void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters)
+{
+    if (!m_acceptedExtensionsBuilder.isEmpty())
+        m_acceptedExtensionsBuilder.append(", ");
+    m_acceptedExtensionsBuilder.append(extensionToken);
+    // FIXME: Should use ListHashSet to keep the order of the parameters.
+    for (HashMap<String, String>::const_iterator iterator = extensionParameters.begin(); iterator != extensionParameters.end(); ++iterator) {
+        m_acceptedExtensionsBuilder.append("; ");
+        m_acceptedExtensionsBuilder.append(iterator->first);
+        if (!iterator->second.isNull()) {
+            m_acceptedExtensionsBuilder.append("=");
+            m_acceptedExtensionsBuilder.append(iterator->second);
+        }
+    }
+}
+
+void WebSocketExtensionDispatcher::fail(const String& reason)
+{
+    m_failureReason = reason;
+    m_acceptedExtensionsBuilder.clear();
+}
+
 bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
 {
     if (!headerValue.length())
@@ -180,17 +202,16 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
 
     // If we don't send Sec-WebSocket-Extensions header, the server should not return the header.
     if (!m_processors.size()) {
-        m_failureReason = "Received unexpected Sec-WebSocket-Extensions header";
+        fail("Received unexpected Sec-WebSocket-Extensions header");
         return false;
     }
 
     const CString headerValueData = headerValue.utf8();
     ExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
-
     while (!parser.finished()) {
         // Parse extension-token.
         if (!parser.consumeToken()) {
-            m_failureReason = "Sec-WebSocket-Extensions header is invalid";
+            fail("Sec-WebSocket-Extensions header is invalid");
             return false;
         }
         String extensionToken = parser.currentToken();
@@ -199,7 +220,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
         HashMap<String, String> extensionParameters;
         while (parser.consumeCharacter(';')) {
             if (!parser.consumeToken()) {
-                m_failureReason = "Sec-WebSocket-Extensions header is invalid";
+                fail("Sec-WebSocket-Extensions header is invalid");
                 return false;
             }
 
@@ -208,14 +229,14 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
                 if (parser.consumeQuotedStringOrToken())
                     extensionParameters.add(parameterToken, parser.currentToken());
                 else {
-                    m_failureReason = "Sec-WebSocket-Extensions header is invalid";
+                    fail("Sec-WebSocket-Extensions header is invalid");
                     return false;
                 }
             } else
                 extensionParameters.add(parameterToken, String());
         }
         if (!parser.finished() && !parser.consumeCharacter(',')) {
-            m_failureReason = "Sec-WebSocket-Extensions header is invalid";
+            fail("Sec-WebSocket-Extensions header is invalid");
             return false;
         }
 
@@ -223,19 +244,28 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
         for (index = 0; index < m_processors.size(); ++index) {
             WebSocketExtensionProcessor* processor = m_processors[index].get();
             if (extensionToken == processor->extensionToken()) {
-                if (processor->processResponse(extensionParameters))
+                if (processor->processResponse(extensionParameters)) {
+                    appendAcceptedExtension(extensionToken, extensionParameters);
                     break;
-                m_failureReason = processor->failureReason();
+                }
+                fail(processor->failureReason());
                 return false;
             }
         }
         // There is no extension which can process the response.
         if (index == m_processors.size()) {
-            m_failureReason = "Received unexpected extension: " + extensionToken;
+            fail("Received unexpected extension: " + extensionToken);
             return false;
         }
     }
     return parser.parsedSuccessfully();
+}
+
+String WebSocketExtensionDispatcher::acceptedExtensions() const
+{
+    if (m_acceptedExtensionsBuilder.isEmpty())
+        return String();
+    return m_acceptedExtensionsBuilder.toStringPreserveCapacity();
 }
 
 String WebSocketExtensionDispatcher::failureReason() const

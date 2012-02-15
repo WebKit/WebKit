@@ -95,6 +95,21 @@ void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subpr
         memcpy(m_subprotocol.data(), subprotocol.characters(), sizeof(UChar) * length);
 }
 
+String ThreadableWebSocketChannelClientWrapper::extensions() const
+{
+    if (m_extensions.isEmpty())
+        return String("");
+    return String(m_extensions);
+}
+
+void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extensions)
+{
+    unsigned length = extensions.length();
+    m_extensions.resize(length);
+    if (length)
+        memcpy(m_extensions.data(), extensions.characters(), sizeof(UChar) * length);
+}
+
 bool ThreadableWebSocketChannelClientWrapper::sendRequestResult() const
 {
     return m_sendRequestResult;

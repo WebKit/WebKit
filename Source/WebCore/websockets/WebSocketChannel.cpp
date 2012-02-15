@@ -153,6 +153,17 @@ String WebSocketChannel::subprotocol()
     return serverProtocol;
 }
 
+String WebSocketChannel::extensions()
+{
+    LOG(Network, "WebSocketChannel %p extensions", this);
+    if (!m_handshake || m_handshake->mode() != WebSocketHandshake::Connected)
+        return "";
+    String extensions = m_handshake->acceptedExtensions();
+    if (extensions.isNull())
+        return "";
+    return extensions;
+}
+
 bool WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());

@@ -1,3 +1,53 @@
+2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Add extension attribute support
+        https://bugs.webkit.org/show_bug.cgi?id=78557
+
+        Implement WebSocket "extensions" attribute that holds a list of
+        extension the server accepted. No change in behavior at this time
+        because we don't send any extension on handshake.
+
+        Reviewed by Kent Tamura.
+
+        No new tests. http/tests/websocket/tests/hybi/extensions.html checks the value of this attribute.
+
+        * websockets/ThreadableWebSocketChannel.h: Add extensions().
+        (ThreadableWebSocketChannel):
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::extensions): Added.
+        (WebCore):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setExtensions): Added.
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        (ThreadableWebSocketChannelClientWrapper):
+        * websockets/WebSocket.cpp: Added m_extensions member variable.
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::extensions): Returns m_extensions.
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::extensions): Added.
+        (WebCore):
+        * websockets/WebSocketChannel.h:
+        (WebSocketChannel):
+        * websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::fail): Added.
+        (WebCore::WebSocketExtensionDispatcher::processHeaderValue): Stores accepted extensions.
+        (WebCore::WebSocketExtensionDispatcher::acceptedExtensions): Added.
+        (WebCore):
+        (WebCore::WebSocketExtensionDispatcher::acceptedExtensions): Added.
+        * websockets/WebSocketExtensionDispatcher.h:
+        (WebSocketExtensionDispatcher):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::acceptedExtensions): Added.
+        (WebCore):
+        * websockets/WebSocketHandshake.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::extensions): Added.
+        (WebCore):
+        (WebCore::workerContextDidConnect): Calls ThreadableWebSocketChannelClientWrapper::setExtensions().
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect): Passes extensions as an argument.
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        (WorkerThreadableWebSocketChannel):
+
 2012-02-14  Kentaro Hara  <haraken@chromium.org>
 
         Rename [JSGenerateToJS] to [JSGenerateToJSObject]

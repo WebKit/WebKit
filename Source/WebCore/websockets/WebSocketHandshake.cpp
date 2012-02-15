@@ -476,6 +476,11 @@ String WebSocketHandshake::serverWebSocketAccept() const
     return m_response.headerFields().get("sec-websocket-accept");
 }
 
+String WebSocketHandshake::acceptedExtensions() const
+{
+    return m_extensionDispatcher.acceptedExtensions();
+}
+
 const WebSocketHandshakeResponse& WebSocketHandshake::serverHandshakeResponse() const
 {
     return m_response;

@@ -1,5 +1,17 @@
 2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
+        [WebSocket] Add extension attribute support
+        https://bugs.webkit.org/show_bug.cgi?id=78557
+
+        Add WebSocketExtensionDispatcher::acceptedExtensions() checks.
+
+        Reviewed by Kent Tamura.
+
+        * tests/WebSocketExtensionDispatcherTest.cpp:
+        (WebCore::TEST_F):
+
+2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
+
         [WebSocket] Add deflater/inflater classes.
         https://bugs.webkit.org/show_bug.cgi?id=78449
 

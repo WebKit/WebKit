@@ -37,6 +37,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,10 +51,15 @@ public:
     const String createHeaderValue() const;
 
     bool processHeaderValue(const String&);
+    String acceptedExtensions() const;
     String failureReason() const;
 
 private:
+    void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);
+    void fail(const String& reason);
+
     Vector<OwnPtr<WebSocketExtensionProcessor> > m_processors;
+    StringBuilder m_acceptedExtensionsBuilder;
     String m_failureReason;
 };
 

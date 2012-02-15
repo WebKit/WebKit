@@ -84,6 +84,7 @@ public:
     String serverUpgrade() const;
     String serverConnection() const;
     String serverWebSocketAccept() const; // Only for hybi-10 handshake.
+    String acceptedExtensions() const;
 
     const WebSocketHandshakeResponse& serverHandshakeResponse() const;
 

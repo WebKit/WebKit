@@ -53,6 +53,7 @@ public:
     virtual bool useHixie76Protocol() = 0;
     virtual void connect(const KURL&, const String& protocol) = 0;
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
+    virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
     virtual bool send(const String& message) = 0;
     virtual bool send(const ArrayBuffer&) = 0;
     virtual bool send(const Blob&) = 0;
