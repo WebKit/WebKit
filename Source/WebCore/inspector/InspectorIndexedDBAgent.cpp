@@ -40,12 +40,17 @@
 #include "Frame.h"
 #include "GroupSettings.h"
 #include "IDBCallbacks.h"
+#include "IDBCursor.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBIndexBackendInterface.h"
+#include "IDBKey.h"
+#include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
+#include "IDBPendingTransactionMonitor.h"
 #include "IDBTransaction.h"
 #include "IDBTransactionBackendInterface.h"
+#include "InjectedScript.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
@@ -57,8 +62,12 @@
 
 #include <wtf/Vector.h>
 
+using WebCore::TypeBuilder::Array;
 using WebCore::TypeBuilder::IndexedDB::SecurityOriginWithDatabaseNames;
 using WebCore::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
+using WebCore::TypeBuilder::IndexedDB::DataEntry;
+using WebCore::TypeBuilder::IndexedDB::Key;
+using WebCore::TypeBuilder::IndexedDB::KeyRange;
 using WebCore::TypeBuilder::IndexedDB::ObjectStore;
 using WebCore::TypeBuilder::IndexedDB::ObjectStoreIndex;
 
@@ -100,6 +109,21 @@ public:
     virtual void onSuccessWithContinuation() { }
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) { }
     virtual void onBlocked() { }
+};
+
+class InspectorIDBTransactionCallback : public IDBTransactionCallbacks {
+public:
+    static PassRefPtr<InspectorIDBTransactionCallback> create()
+    {
+        return adoptRef(new InspectorIDBTransactionCallback());
+    }
+
+    virtual ~InspectorIDBTransactionCallback() { }
+
+    virtual void onAbort() { }
+    virtual void onComplete() { }
+private:
+    InspectorIDBTransactionCallback() { }
 };
 
 class GetDatabaseNamesCallback : public InspectorIDBCallback {
@@ -262,10 +286,282 @@ private:
     int m_requestId;
 };
 
+static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
+{
+    RefPtr<IDBKey> idbKey;
+
+    String type;
+    if (!key->getString("type", &type))
+        return 0;
+
+    DEFINE_STATIC_LOCAL(String, number, ("number"));
+    DEFINE_STATIC_LOCAL(String, string, ("string"));
+    DEFINE_STATIC_LOCAL(String, date, ("date"));
+    DEFINE_STATIC_LOCAL(String, array, ("array"));
+
+    if (type == number) {
+        double number;
+        if (!key->getNumber("number", &number))
+            return 0;
+        idbKey = IDBKey::createNumber(number);
+    } else if (type == string) {
+        String string;
+        if (!key->getString("string", &string))
+            return 0;
+        idbKey = IDBKey::createString(string);
+    } else if (type == date) {
+        double date;
+        if (!key->getNumber("date", &date))
+            return 0;
+        idbKey = IDBKey::createDate(date);
+    } else if (type == array) {
+        IDBKey::KeyArray keyArray;
+        RefPtr<InspectorArray> array = key->getArray("array");
+        for (size_t i = 0; i < array->length(); ++i) {
+            RefPtr<InspectorValue> value = array->get(i);
+            RefPtr<InspectorObject> object;
+            if (!value->asObject(&object))
+                return 0;
+            keyArray.append(idbKeyFromInspectorObject(object.get()));
+        }
+        idbKey = IDBKey::createArray(keyArray);
+    } else
+        return 0;
+
+    return idbKey.release();
+}
+
+static PassRefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(InspectorObject* keyRange)
+{
+    RefPtr<InspectorObject> lower = keyRange->getObject("lower");
+    RefPtr<IDBKey> idbLower = lower ? idbKeyFromInspectorObject(lower.get()) : 0;
+    if (lower && !idbLower)
+        return 0;
+
+    RefPtr<InspectorObject> upper = keyRange->getObject("upper");
+    RefPtr<IDBKey> idbUpper = upper ? idbKeyFromInspectorObject(upper.get()) : 0;
+    if (upper && !idbUpper)
+        return 0;
+
+    bool lowerOpen;
+    if (!keyRange->getBoolean("lowerOpen", &lowerOpen))
+        return 0;
+    IDBKeyRange::LowerBoundType lowerBoundType = lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed;
+
+    bool upperOpen;
+    if (!keyRange->getBoolean("upperOpen", &upperOpen))
+        return 0;
+    IDBKeyRange::UpperBoundType upperBoundType = upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed;
+
+    RefPtr<IDBKeyRange> idbKeyRange = IDBKeyRange::create(idbLower, idbUpper, lowerBoundType, upperBoundType);
+    return idbKeyRange.release();
+}
+
+static PassRefPtr<Key> keyFromIDBKey(IDBKey* idbKey)
+{
+    if (!idbKey || !idbKey->valid())
+        return 0;
+
+    RefPtr<Key> key;
+    switch (idbKey->type()) {
+    case IDBKey::InvalidType:
+    case IDBKey::MinType:
+        return 0;
+    case IDBKey::NumberType: {
+        RefPtr<Key> tmpKey = Key::create().setType(Key::Type::Number);
+        key = tmpKey;
+        key->setNumber(idbKey->number());
+        break;
+    }
+    case IDBKey::StringType: {
+        RefPtr<Key> tmpKey = Key::create().setType(Key::Type::String);
+        key = tmpKey;
+        key->setString(idbKey->string());
+        break;
+    }
+    case IDBKey::DateType: {
+        RefPtr<Key> tmpKey = Key::create().setType(Key::Type::Date);
+        key = tmpKey;
+        key->setDate(idbKey->date());
+        break;
+    }
+    case IDBKey::ArrayType: {
+        RefPtr<Key> tmpKey = Key::create().setType(Key::Type::Array);
+        key = tmpKey;
+        RefPtr<InspectorArray> array = InspectorArray::create();
+        IDBKey::KeyArray keyArray = idbKey->array();
+        for (size_t i = 0; i < keyArray.size(); ++i)
+            array->pushObject(keyFromIDBKey(keyArray[i].get()));
+        key->setArray(array);
+        break;
+    }
+    }
+    return key.release();
+}
+
+class OpenCursorCallback : public InspectorIDBCallback {
+public:
+    enum CursorType {
+        ObjectStoreDataCursor,
+        IndexDataCursor
+    };
+
+    static PassRefPtr<OpenCursorCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
+    {
+        return adoptRef(new OpenCursorCallback(frontendProvider, injectedScript, idbTransaction, cursorType, requestId, skipCount, pageSize));
+    }
+
+    virtual ~OpenCursorCallback() { }
+
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>)
+    {
+        end(false);
+    }
+
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursor)
+    {
+        m_idbCursor = idbCursor;
+        onSuccessWithContinuation();
+    }
+
+    virtual void onSuccessWithContinuation()
+    {
+        if (m_skipCount) {
+            --m_skipCount;
+            next();
+            return;
+        }
+
+        if (m_result->length() == m_pageSize) {
+            end(true);
+            return;
+        }
+
+        RefPtr<IDBKey> key = m_idbCursor->key();
+        RefPtr<IDBKey> primaryKey = m_idbCursor->primaryKey();
+        RefPtr<SerializedScriptValue> value = m_idbCursor->value();
+        RefPtr<InspectorObject> wrappedValue = m_injectedScript.wrapSerializedObject(value.get(), String());
+        RefPtr<DataEntry> dataEntry = DataEntry::create()
+            .setKey(keyFromIDBKey(key.get()))
+            .setPrimaryKey(keyFromIDBKey(primaryKey.get()))
+            .setValue(wrappedValue);
+        m_result->addItem(dataEntry);
+
+        next();
+    }
+
+    void next()
+    {
+        m_idbTransaction->didCompleteTaskEvents();
+
+        ExceptionCode ec = 0;
+        m_idbCursor->continueFunction(0, this, ec);
+    }
+
+    void end(bool hasMore)
+    {
+        if (!m_frontendProvider->frontend())
+            return;
+
+        m_idbTransaction->didCompleteTaskEvents();
+
+        switch (m_cursorType) {
+        case ObjectStoreDataCursor:
+            m_frontendProvider->frontend()->objectStoreDataLoaded(m_requestId, m_result.release(), hasMore);
+            break;
+        case IndexDataCursor:
+            m_frontendProvider->frontend()->indexDataLoaded(m_requestId, m_result.release(), hasMore);
+            break;
+        }
+    }
+
+private:
+    OpenCursorCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
+        : m_frontendProvider(frontendProvider)
+        , m_injectedScript(injectedScript)
+        , m_idbTransaction(idbTransaction)
+        , m_cursorType(cursorType)
+        , m_requestId(requestId)
+        , m_skipCount(skipCount)
+        , m_pageSize(pageSize)
+    {
+        m_result = Array<DataEntry>::create();
+        m_idbTransaction->setCallbacks(InspectorIDBTransactionCallback::create().get());
+    }
+    RefPtr<InspectorIndexedDBAgent::FrontendProvider> m_frontendProvider;
+    InjectedScript m_injectedScript;
+    RefPtr<IDBTransactionBackendInterface> m_idbTransaction;
+    CursorType m_cursorType;
+    int m_requestId;
+    int m_skipCount;
+    unsigned m_pageSize;
+    RefPtr<Array<DataEntry> > m_result;
+    RefPtr<IDBCursorBackendInterface> m_idbCursor;
+};
+
+class DataLoaderCallback : public ExecutableWithDatabase {
+public:
+    static PassRefPtr<DataLoaderCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, int requestId, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, PassRefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
+    {
+        return adoptRef(new DataLoaderCallback(frontendProvider, requestId, injectedScript, objectStoreName, indexName, idbKeyRange, skipCount, pageSize));
+    }
+
+    virtual ~DataLoaderCallback() { }
+
+    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
+    {
+        if (!m_frontendProvider->frontend())
+            return;
+
+        RefPtr<IDBTransactionBackendInterface> idbTransaction = transactionForDatabase(idbDatabase.get(), m_objectStoreName);
+        if (!idbTransaction)
+            return;
+        RefPtr<IDBObjectStoreBackendInterface> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
+        if (!idbObjectStore)
+            return;
+
+        if (!m_indexName.isEmpty()) {
+            RefPtr<IDBIndexBackendInterface> idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
+            if (!idbIndex)
+                return;
+
+            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, idbTransaction.get(), OpenCursorCallback::IndexDataCursor, m_requestId, m_skipCount, m_pageSize);
+
+            ExceptionCode ec = 0;
+            idbIndex->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, idbTransaction.get(), ec);
+        } else {
+            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, idbTransaction.get(), OpenCursorCallback::ObjectStoreDataCursor, m_requestId, m_skipCount, m_pageSize);
+
+            ExceptionCode ec = 0;
+            idbObjectStore->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, idbTransaction.get(), ec);
+        }
+    }
+
+private:
+    DataLoaderCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, int requestId, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, PassRefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
+        : m_frontendProvider(frontendProvider)
+        , m_requestId(requestId)
+        , m_injectedScript(injectedScript)
+        , m_objectStoreName(objectStoreName)
+        , m_indexName(indexName)
+        , m_idbKeyRange(idbKeyRange)
+        , m_skipCount(skipCount)
+        , m_pageSize(pageSize) { }
+    RefPtr<InspectorIndexedDBAgent::FrontendProvider> m_frontendProvider;
+    int m_requestId;
+    InjectedScript m_injectedScript;
+    String m_objectStoreName;
+    String m_indexName;
+    RefPtr<IDBKeyRange> m_idbKeyRange;
+    int m_skipCount;
+    unsigned m_pageSize;
+};
+
 } // namespace
 
-InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorPageAgent* pageAgent)
+InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     : InspectorBaseAgent<InspectorIndexedDBAgent>("IndexedDB", instrumentingAgents, state)
+    , m_injectedScriptManager(injectedScriptManager)
     , m_pageAgent(pageAgent)
 {
 }
@@ -304,34 +600,54 @@ void InspectorIndexedDBAgent::disable(ErrorString*)
     m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, false);
 }
 
-static Document* assertDocument(const String& frameId, InspectorPageAgent* pageAgent, ErrorString* error)
+static Frame* assertFrame(ErrorString* errorString, const String& frameId, InspectorPageAgent* pageAgent)
+{
+    Frame* frame = pageAgent->frameForId(frameId);
+
+    if (!frame)
+        *errorString = "Frame not found";
+
+    return frame;
+}
+
+static Document* assertDocument(ErrorString* errorString, Frame* frame)
+{
+    Document* document = frame ? frame->document() : 0;
+
+    if (!document)
+        *errorString = "No document for given frame found";
+
+    return document;
+}
+
+static Document* assertDocument(ErrorString* errorString, const String& frameId, InspectorPageAgent* pageAgent)
 {
     Frame* frame = pageAgent->frameForId(frameId);
     Document* document = frame ? frame->document() : 0;
 
     if (!document)
-        *error = "No document for given frame found";
+        *errorString = "No document for given frame found";
 
     return document;
 }
 
-static IDBFactoryBackendInterface* assertIDBFactory(Document* document, ErrorString* error)
+static IDBFactoryBackendInterface* assertIDBFactory(ErrorString* errorString, Document* document)
 {
     Page* page = document ? document->page() : 0;
     IDBFactoryBackendInterface* idbFactory = page ? page->group().idbFactory() : 0;
 
     if (!idbFactory)
-        *error = "No IndexedDB factory for given frame found";
+        *errorString = "No IndexedDB factory for given frame found";
 
     return idbFactory;
 }
 
-void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* error, int requestId, const String& frameId)
+void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorString, int requestId, const String& frameId)
 {
-    Document* document = assertDocument(frameId, m_pageAgent, error);
+    Document* document = assertDocument(errorString, frameId, m_pageAgent);
     if (!document)
         return;
-    IDBFactoryBackendInterface* idbFactory = assertIDBFactory(document, error);
+    IDBFactoryBackendInterface* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
 
@@ -340,17 +656,41 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* error, i
     idbFactory->getDatabaseNames(callback.get(), document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
 }
 
-void InspectorIndexedDBAgent::requestDatabase(ErrorString* error, int requestId, const String& frameId, const String& databaseName)
+void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, int requestId, const String& frameId, const String& databaseName)
 {
-    Document* document = assertDocument(frameId, m_pageAgent, error);
+    Document* document = assertDocument(errorString, frameId, m_pageAgent);
     if (!document)
         return;
-    IDBFactoryBackendInterface* idbFactory = assertIDBFactory(document, error);
+    IDBFactoryBackendInterface* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
 
     RefPtr<DatabaseLoaderCallback> databaseLoaderCallback = DatabaseLoaderCallback::create(m_frontendProvider.get(), requestId);
     databaseLoaderCallback->start(idbFactory, document->securityOrigin(), document->frame(), databaseName);
+}
+
+void InspectorIndexedDBAgent::requestData(ErrorString* errorString, int requestId, const String& frameId, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange)
+{
+    Frame* frame = assertFrame(errorString, frameId, m_pageAgent);
+    if (!frame)
+        return;
+    Document* document = assertDocument(errorString, frame);
+    if (!document)
+        return;
+    IDBFactoryBackendInterface* idbFactory = assertIDBFactory(errorString, document);
+    if (!idbFactory)
+        return;
+
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+
+    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange->get()) : 0;
+    if (keyRange && !idbKeyRange) {
+        *errorString = "Can not parse key range.";
+        return;
+    }
+
+    RefPtr<DataLoaderCallback> dataLoaderCallback = DataLoaderCallback::create(m_frontendProvider, requestId, injectedScript, objectStoreName, indexName, idbKeyRange, skipCount, pageSize);
+    dataLoaderCallback->start(idbFactory, document->securityOrigin(), document->frame(), databaseName);
 }
 
 } // namespace WebCore

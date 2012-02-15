@@ -101,7 +101,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    m_agents.append(InspectorIndexedDBAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent));
+    m_agents.append(InspectorIndexedDBAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), pageAgent));
 #endif
 
 #if ENABLE(FILE_SYSTEM)

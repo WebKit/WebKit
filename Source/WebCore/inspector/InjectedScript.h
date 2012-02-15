@@ -87,8 +87,9 @@ public:
     PassRefPtr<InspectorArray> wrapCallFrames(const ScriptValue&);
 #endif
 
-    PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName);
+    PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName) const;
     PassRefPtr<InspectorObject> wrapNode(Node*, const String& groupName);
+    PassRefPtr<InspectorObject> wrapSerializedObject(SerializedScriptValue*, const String& groupName) const;
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
@@ -98,7 +99,7 @@ private:
     typedef bool (*InspectedStateAccessCheck)(ScriptState*);
     InjectedScript(ScriptObject, InspectedStateAccessCheck);
 
-    bool canAccessInspectedWindow();
+    bool canAccessInspectedWindow() const;
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
     void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, bool* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);

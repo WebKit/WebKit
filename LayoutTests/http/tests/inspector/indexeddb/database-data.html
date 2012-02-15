@@ -1,0 +1,202 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="indexeddb-test.js"></script>
+<script>
+function test()
+{
+    var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+    var indexedDBModel = new WebInspector.IndexedDBModel();
+    var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+    var databaseName = "testDatabase";
+    var objectStoreName = "testObjectStore";
+    var indexName = "testIndexName";
+
+    function addIDBValues(count, callback)
+    {
+        var i = 0;
+        addValues();
+
+        function addValues()
+        {
+            if (i == count) {
+                callback();
+                return;
+            }
+            ++i;
+            var id = i < 10 ? "0" + i : i;
+            var key = "key_" + id;
+            var value = "value_" + id;
+            InspectorTest.addIDBValue(mainFrameId, databaseName, objectStoreName, { key: key, value: value }, "", addValues);
+        }
+    }
+
+    function loadValuesAndDump(fromIndex, idbKeyRange, skipCount, pageSize, callback)
+    {
+        var idbKeyRangeString = idbKeyRange ? "{lower:\"" + idbKeyRange.lower + "\",lowerOpen:" + idbKeyRange.lowerOpen + ",upper:\"" + idbKeyRange.upper + "\",upperOpen:" + idbKeyRange.upperOpen + "}" : "null";
+        InspectorTest.addResult("Dumping values, fromIndex = " + fromIndex + ", skipCount = " + skipCount + ", pageSize = " + pageSize + ", idbKeyRange = " + idbKeyRangeString);
+        if (fromIndex)
+            indexedDBModel.loadIndexData(mainFrameId, databaseName, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback);
+        else
+            indexedDBModel.loadObjectStoreData(mainFrameId, databaseName, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
+
+        function innerCallback(entries, hasMore)
+        {
+            var index = 0;
+            var entry;
+            dumpEntries();
+
+            function dumpEntries()
+            {
+                if (index === entries.length) {
+                    InspectorTest.addResult("    hasMore = " + hasMore);
+                    callback();
+                    return;
+                }
+                entry = entries[index];
+                entry.value.callFunctionJSON(dumpMe, dumped.bind(this));
+                ++index;
+            }
+
+            function dumpMe()
+            {
+                return "{\"key\":\"" + this.key + "\",\"value\":\"" + this.value + "\"}";
+            }
+
+            function dumped(value)
+            {
+                InspectorTest.addResult("    Key = " + entry.key + ", primaryKey = " + entry.primaryKey + ", value = " + value);
+                dumpEntries();
+            }
+        }
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", fillDatabase, false);
+
+    function fillDatabase()
+    {
+        InspectorTest.createDatabase(mainFrameId, databaseName, step2);
+
+        function step2()
+        {
+            InspectorTest.createObjectStore(mainFrameId, databaseName, objectStoreName, "key", true, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, "value", false, true, step4);
+        }
+
+        function step4()
+        {
+            addIDBValues(9, refreshDatabase);
+        }
+    }
+
+    function refreshDatabase()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", runObjectStoreTests, false);
+        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+    }
+
+    function runObjectStoreTests()
+    {
+        loadValuesAndDump(false, null, 0, 3, step2)
+
+        function step2()
+        {
+            loadValuesAndDump(false, null, 3, 3, step3)
+        }
+
+        function step3()
+        {
+            loadValuesAndDump(false, null, 6, 3, step4);
+        }
+
+        function step4()
+        {
+            loadValuesAndDump(false, null, 7, 3, step5);
+        }
+
+        function step5()
+        {
+            loadValuesAndDump(false, null, 9, 3, step6);
+        }
+
+        function step6()
+        {
+            loadValuesAndDump(false, null, 10, 3, step7);
+        }
+
+        function step7()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 4, step8);
+        }
+
+        function step8()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 5, step9);
+        }
+
+        function step9()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 6, step10);
+        }
+
+        function step10()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 4, step11);
+        }
+
+        function step11()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 5, step12);
+        }
+
+        function step12()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 6, step13);
+        }
+
+        function step13()
+        {
+            runIndexTests();
+        }
+    }
+
+    function runIndexTests()
+    {
+        loadValuesAndDump(true, null, 0, 3, step2)
+
+        function step2()
+        {
+            clearDatabase();
+        }
+    }
+
+    function clearDatabase()
+    {
+        InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, step2);
+
+        function step2()
+        {
+            InspectorTest.deleteObjectStore(mainFrameId, databaseName, objectStoreName, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.deleteDatabase(mainFrameId, databaseName, step4);
+        }
+
+        function step4()
+        {
+            InspectorTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that data is correctly loaded by IndexedDBModel from IndexedDB object store and index.</p>
+</body>
+</html>

@@ -2258,4 +2258,14 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messa
     return deserializer.deserialize();
 }
 
+#if ENABLE(INSPECTOR)
+ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
+{
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(scriptState->context());
+
+    return ScriptValue(deserialize());
+}
+#endif
+
 } // namespace WebCore

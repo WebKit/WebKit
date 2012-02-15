@@ -154,7 +154,7 @@ PassRefPtr<InspectorArray> InjectedScript::wrapCallFrames(const ScriptValue& cal
 }
 #endif
 
-PassRefPtr<InspectorObject> InjectedScript::wrapObject(ScriptValue value, const String& groupName)
+PassRefPtr<InspectorObject> InjectedScript::wrapObject(ScriptValue value, const String& groupName) const
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObject");
@@ -176,6 +176,12 @@ PassRefPtr<InspectorObject> InjectedScript::wrapNode(Node* node, const String& g
     return wrapObject(nodeAsScriptValue(node), groupName);
 }
 
+PassRefPtr<InspectorObject> InjectedScript::wrapSerializedObject(SerializedScriptValue* serializedScriptValue, const String& groupName) const
+{
+    ScriptValue scriptValue = serializedScriptValue->deserializeForInspector(m_injectedScriptObject.scriptState());
+    return scriptValue.hasNoValue() ? 0 : wrapObject(scriptValue, groupName);
+}
+
 void InjectedScript::inspectNode(Node* node)
 {
     ASSERT(!hasNoValue());
@@ -193,7 +199,7 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
     releaseFunction.call();
 }
 
-bool InjectedScript::canAccessInspectedWindow()
+bool InjectedScript::canAccessInspectedWindow() const
 {
     return m_inspectedStateAccessCheck(m_injectedScriptObject.scriptState());
 }

@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback1
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback2
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback3
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback4
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback5
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback6
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback7
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback8
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback9
-CONSOLE MESSAGE: line 77: InspectorTest.IndexedDB_callback10
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback1
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback2
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback3
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback4
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback5
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback6
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback7
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback8
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback9
+CONSOLE MESSAGE: line 79: InspectorTest.IndexedDB_callback10
 Tests that database names are correctly loaded and saved in IndexedDBModel.
 
 Dumping database:

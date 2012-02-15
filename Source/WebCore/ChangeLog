@@ -1,3 +1,65 @@
+2012-02-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Pass data entries from object stores and indexes to front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=78503
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector/indexeddb/database-data.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserializeForInspector):
+        (WebCore):
+        * bindings/js/SerializedScriptValue.h:
+        (SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserializeForInspector):
+        (WebCore):
+        * bindings/v8/SerializedScriptValue.h:
+        (SerializedScriptValue):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::wrapObject):
+        (WebCore::InjectedScript::wrapSerializedObject):
+        (WebCore):
+        (WebCore::InjectedScript::canAccessInspectedWindow):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorIndexedDBAgent::InspectorIndexedDBAgent):
+        (WebCore::assertFrame):
+        (WebCore::assertDocument):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        * inspector/InspectorIndexedDBAgent.h:
+        (WebCore):
+        (WebCore::InspectorIndexedDBAgent::create):
+        (InspectorIndexedDBAgent):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.idbKeyFromKey):
+        (WebInspector.IndexedDBModel.keyFromIDBKey):
+        (WebInspector.IndexedDBModel.keyRangeFromIDBKeyRange):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.prototype.loadObjectStoreData):
+        (WebInspector.IndexedDBModel.prototype.loadIndexData):
+        (WebInspector.IndexedDBModel.Entry):
+        (WebInspector.IndexedDBRequestManager):
+        (WebInspector.IndexedDBRequestManager.prototype._requestData.innerCallback):
+        (WebInspector.IndexedDBRequestManager.prototype._requestData):
+        (WebInspector.IndexedDBRequestManager.prototype.requestObjectStoreData):
+        (WebInspector.IndexedDBRequestManager.prototype._objectStoreDataLoaded):
+        (WebInspector.IndexedDBRequestManager.prototype.requestIndexData):
+        (WebInspector.IndexedDBRequestManager.prototype._indexDataLoaded):
+        (WebInspector.IndexedDBRequestManager.prototype._frameDetached):
+        (WebInspector.IndexedDBRequestManager.prototype._databaseRemoved):
+        (WebInspector.IndexedDBRequestManager.prototype._reset):
+        (WebInspector.IndexedDBRequestManager.DataRequest):
+        (WebInspector.IndexedDBDispatcher.prototype.databaseLoaded):
+        (WebInspector.IndexedDBDispatcher.prototype.objectStoreDataLoaded):
+        (WebInspector.IndexedDBDispatcher.prototype.indexDataLoaded):
+
 2012-02-15  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r107518): DeviceOrientationController doesn't remove registered DOMWindows

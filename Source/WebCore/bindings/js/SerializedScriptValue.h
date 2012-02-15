@@ -27,6 +27,7 @@
 #ifndef SerializedScriptValue_h
 #define SerializedScriptValue_h
 
+#include "ScriptState.h"
 #include <heap/Strong.h>
 #include <runtime/JSValue.h>
 #include <wtf/Forward.h>
@@ -52,6 +53,7 @@ enum SerializationReturnCode {
     
 enum SerializationErrorMode { NonThrowing, Throwing };
 
+class ScriptValue;
 class SharedBuffer;
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
@@ -76,6 +78,10 @@ public:
     JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception, MessagePortArray*);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
+
+#if ENABLE(INSPECTOR)
+    ScriptValue deserializeForInspector(ScriptState*);
+#endif
 
     const Vector<uint8_t>& data() { return m_data; }
 

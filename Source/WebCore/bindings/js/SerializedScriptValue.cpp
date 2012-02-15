@@ -38,6 +38,7 @@
 #include "JSImageData.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
+#include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include <limits>
 #include <JavaScriptCore/APICast.h>
@@ -1451,6 +1452,14 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
         maybeThrowExceptionIfSerializationFailed(exec, result.second);
     return result.first;
 }
+
+#if ENABLE(INSPECTOR)
+ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
+{
+    JSValue value = deserialize(scriptState, scriptState->lexicalGlobalObject(), 0);
+    return ScriptValue(scriptState->globalData(), value);
+}
+#endif
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception, MessagePortArray* messagePorts)
 {

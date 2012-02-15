@@ -76,6 +76,10 @@ public:
     // case of failure.
     v8::Handle<v8::Value> deserialize(MessagePortArray* = 0);
 
+#if ENABLE(INSPECTOR)
+    ScriptValue deserializeForInspector(ScriptState*);
+#endif
+
 private:
     enum StringDataMode {
         StringValue,
