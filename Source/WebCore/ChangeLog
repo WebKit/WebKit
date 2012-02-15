@@ -1,3 +1,16 @@
+2012-02-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        RootObject::finalize can cause a crash in object->invalidate()
+        https://bugs.webkit.org/show_bug.cgi?id=78645
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::finalize): Added a stack-allocated RefPtr to protect the RootObject
+        during the call to invalidate().
+
 2012-02-15  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10870238> Box shadow drawing takes an unnecessarily slow code path in some single-shadow, opaque-background cases
