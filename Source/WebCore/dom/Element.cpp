@@ -865,6 +865,8 @@ void Element::willRemove()
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
+    if (ShadowRootList* shadowRoots = shadowRootList())
+        shadowRoots->willRemove();
     ContainerNode::willRemove();
 }
 
@@ -1763,30 +1765,6 @@ unsigned Element::childElementCount() const
     }
     return count;
 }
-
-#if ENABLE(STYLE_SCOPED)
-bool Element::hasScopedHTMLStyleChild() const
-{
-    return hasRareData() && rareData()->hasScopedHTMLStyleChild();
-}
-
-size_t Element::numberOfScopedHTMLStyleChildren() const
-{
-    return hasRareData() ? rareData()->numberOfScopedHTMLStyleChildren() : 0;
-}
-
-void Element::registerScopedHTMLStyleChild()
-{
-    ensureRareData()->registerScopedHTMLStyleChild();
-}
-
-void Element::unregisterScopedHTMLStyleChild()
-{
-    ASSERT(hasRareData());
-    if (hasRareData())
-        rareData()->unregisterScopedHTMLStyleChild();
-}
-#endif
 
 bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
 {

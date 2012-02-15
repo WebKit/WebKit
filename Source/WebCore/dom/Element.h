@@ -326,13 +326,6 @@ public:
     Element* nextElementSibling() const;
     unsigned childElementCount() const;
 
-#if ENABLE(STYLE_SCOPED)
-    void registerScopedHTMLStyleChild();
-    void unregisterScopedHTMLStyleChild();
-    bool hasScopedHTMLStyleChild() const;
-    size_t numberOfScopedHTMLStyleChildren() const;
-#endif
-
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
 
     DOMTokenList* classList();

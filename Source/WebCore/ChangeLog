@@ -1,3 +1,53 @@
+2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Allow <style scoped> as a direct child of a ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=77853
+
+        Moved registration code from Element to Node. updated Internals and build files accordingly.
+        Moved registration data members from ElementRareData to NodeRareData.
+        Forward willRemove() from host element into shadow DOM tree.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/css/style-scoped/registering-shadowroot.html
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        (WebCore::Element::willRemove):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore):
+        (WebCore::Node::hasScopedHTMLStyleChild):
+        (WebCore::Node::numberOfScopedHTMLStyleChildren):
+        (WebCore::Node::registerScopedHTMLStyleChild):
+        (WebCore::Node::unregisterScopedHTMLStyleChild):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        (WebCore::NodeRareData::registerScopedHTMLStyleChild):
+        (WebCore::NodeRareData::unregisterScopedHTMLStyleChild):
+        (WebCore::NodeRareData::hasScopedHTMLStyleChild):
+        (WebCore::NodeRareData::numberOfScopedHTMLStyleChildren):
+        * dom/ShadowRootList.cpp:
+        (WebCore::ShadowRootList::willRemove):
+        (WebCore):
+        * dom/ShadowRootList.h:
+        (ShadowRootList):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfScopedHTMLStyleChildren):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: implement redo for DOM actions.

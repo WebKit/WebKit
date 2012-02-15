@@ -52,6 +52,7 @@ public:
     void removedFromDocument();
     void insertedIntoTree(bool deep);
     void removedFromTree(bool deep);
+    void willRemove();
 
     void hostChildrenChanged();
 

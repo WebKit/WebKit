@@ -638,6 +638,13 @@ public:
     void notifyMutationObserversNodeWillDetach();
 #endif // ENABLE(MUTATION_OBSERVERS)
 
+#if ENABLE(STYLE_SCOPED)
+    void registerScopedHTMLStyleChild();
+    void unregisterScopedHTMLStyleChild();
+#endif
+    bool hasScopedHTMLStyleChild() const;
+    size_t numberOfScopedHTMLStyleChildren() const;
+
 private:
     enum NodeFlags {
         IsTextFlag = 1,

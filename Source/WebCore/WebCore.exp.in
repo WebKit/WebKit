@@ -2088,6 +2088,4 @@ __ZN7WebCore4Page20scrollingCoordinatorEv
 __ZNK7WebCore20ScrollingCoordinator13scrollingTreeEv
 #endif
 
-#if ENABLE(STYLE_SCOPED)
-__ZNK7WebCore7Element31numberOfScopedHTMLStyleChildrenEv
-#endif
+__ZNK7WebCore4Node31numberOfScopedHTMLStyleChildrenEv

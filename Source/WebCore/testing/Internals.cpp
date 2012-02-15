@@ -166,11 +166,11 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     return representation;
 }
 
-size_t Internals::numberOfScopedHTMLStyleChildren(const Element* element, ExceptionCode& ec) const
+size_t Internals::numberOfScopedHTMLStyleChildren(const Node* scope, ExceptionCode& ec) const
 {
-    if (element)
+    if (scope && (scope->isElementNode() || scope->isShadowRoot()))
 #if ENABLE(STYLE_SCOPED)
-        return element->numberOfScopedHTMLStyleChildren();
+        return scope->numberOfScopedHTMLStyleChildren();
 #else
         return 0;
 #endif

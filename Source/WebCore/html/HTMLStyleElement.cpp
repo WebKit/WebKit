@@ -88,9 +88,15 @@ void HTMLStyleElement::registerWithScopingNode()
     ASSERT(!m_isRegisteredWithScopingNode);
     ASSERT(inDocument());
     if (!m_isRegisteredWithScopingNode) {
-        Element* scope = parentElement();
+        ContainerNode* scope = parentNode();
         if (!scope)
             return;
+        if (!scope->isElementNode() && !scope->isShadowRoot()) {
+            // DocumentFragment nodes should never be inDocument,
+            // <style> should not be a child of Document, PI or some such.
+            ASSERT_NOT_REACHED();
+            return;
+        }
 
         scope->registerScopedHTMLStyleChild();
         scope->setNeedsStyleRecalc();
@@ -107,7 +113,7 @@ void HTMLStyleElement::unregisterWithScopingNode()
     // Therefore we cannot rely on scoped()!
     ASSERT(m_isRegisteredWithScopingNode);
     if (m_isRegisteredWithScopingNode) {
-        Element* scope = parentElement();
+        ContainerNode* scope = parentNode();
         ASSERT(scope);
         if (scope) {
             ASSERT(scope->hasScopedHTMLStyleChild());

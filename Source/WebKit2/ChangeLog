@@ -1,3 +1,15 @@
+2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Allow <style scoped> as a direct child of a ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=77853
+
+        numberOfScopedHTMLStyleChildren got moved from Element into Node.
+
+        Reviewed by Dimitri Glazkov.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Divide TextureMapperNode.cpp to 3 files.

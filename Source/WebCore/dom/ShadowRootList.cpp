@@ -83,6 +83,12 @@ void ShadowRootList::removedFromTree(bool deep)
         root->removedFromTree(deep);
 }
 
+void ShadowRootList::willRemove()
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->willRemove();
+}
+
 void ShadowRootList::hostChildrenChanged()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
