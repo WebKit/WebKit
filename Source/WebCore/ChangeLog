@@ -1,3 +1,13 @@
+2012-02-15  Ojan Vafai  <ojan@chromium.org>
+
+        getComputedStyle of flex-item-align:auto should resolve to it's parent's flex-align value
+        https://bugs.webkit.org/show_bug.cgi?id=76326
+
+        Reviewed by Tony Chang.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.
