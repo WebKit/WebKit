@@ -1,3 +1,16 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Add TiledCoreAnimationDrawingArea::forceRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=78749
+        <rdar://problem/10866221>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaint):
+        Force a repaint and synchronize the layer tree to the UI process.
+
 2012-02-15  Enrica Casucci  <enrica@apple.com>
 
         Refactor ClipboardMac class to use PlatformStrategies.

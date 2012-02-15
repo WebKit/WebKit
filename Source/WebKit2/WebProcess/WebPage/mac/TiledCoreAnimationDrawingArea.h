@@ -50,6 +50,7 @@ private:
     virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
 
+    virtual void forceRepaint() OVERRIDE;
     virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
     virtual bool layerTreeStateIsFrozen() const OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;

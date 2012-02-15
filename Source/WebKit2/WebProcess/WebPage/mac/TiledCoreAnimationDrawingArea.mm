@@ -114,6 +114,16 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graph
     setRootCompositingLayer(rootCompositingLayer);
 }
 
+void TiledCoreAnimationDrawingArea::forceRepaint()
+{
+    if (m_layerTreeStateIsFrozen)
+        return;
+
+    flushLayers();
+    [CATransaction flush];
+    [CATransaction synchronize];
+}
+
 void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStateIsFrozen)
 {
     if (m_layerTreeStateIsFrozen == layerTreeStateIsFrozen)
