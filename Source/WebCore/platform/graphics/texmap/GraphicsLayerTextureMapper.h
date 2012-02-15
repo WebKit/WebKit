@@ -90,6 +90,10 @@ public:
     bool needsDisplay() const { return m_needsDisplay; }
     IntRect needsDisplayRect() const { return enclosingIntRect(m_needsDisplayRect); }
 
+#if ENABLE(CSS_FILTERS)
+    virtual bool setFilters(const FilterOperations&);
+#endif
+
 private:
     OwnPtr<TextureMapperLayer> m_layer;
     RefPtr<TextureMapperBackingStore> m_compositedImage;

@@ -20,6 +20,7 @@
 #ifndef TextureMapperLayer_h
 #define TextureMapperLayer_h
 
+#include "FilterOperations.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -88,7 +89,8 @@ public:
         BackgroundColorChange =     (1L << 19),
 
         ReplicaLayerChange =        (1L << 20),
-        AnimationChange =           (1L << 21)
+        AnimationChange =           (1L << 21),
+        FilterChange =              (1L << 22)
     };
 
     enum SyncOptions {
@@ -182,6 +184,10 @@ private:
         int descendantsWithContent;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
+#if ENABLE(CSS_FILTERS)
+         FilterOperations filters;
+#endif
+
         bool preserves3D : 1;
         bool masksToBounds : 1;
         bool drawsContent : 1;

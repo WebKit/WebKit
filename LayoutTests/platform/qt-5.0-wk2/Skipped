@@ -383,6 +383,19 @@ fast/loader/submit-form-while-parsing-2.html
 # https://bugs.webkit.org/show_bug.cgi?id=76061
 css3/filters/should-not-have-compositing-layer.html
 
+# Hardware filters don't work with GL yet
+# https://bugs.webkit.org/show_bug.cgi?id=75778
+css3/filters/crash-hw-sw-switch.html
+css3/filters/effect-blur-hw.html
+css3/filters/effect-combined-hw.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-grayscale-hw.html
+css3/filters/effect-hue-rotate-hw.html
+css3/filters/effect-invert-hw.html
+css3/filters/effect-opacity-hw.html
+css3/filters/effect-saturate-hw.html
+css3/filters/effect-sepia-hw.html
+
 # Unskipped on Qt5, but still fail on qt-wk2 platform
 editing/input/emacs-ctrl-o.html
 fast/block/float/float-in-float-hit-testing.html

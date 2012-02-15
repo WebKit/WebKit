@@ -383,4 +383,12 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
     return adoptPtr(new GraphicsLayerTextureMapper(client));
 }
 
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
+{
+    notifyChange(TextureMapperLayer::FilterChange);
+    return GraphicsLayer::setFilters(filters);
+}
+#endif
+
 }

@@ -27,6 +27,7 @@
     #endif
 #endif
 
+#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -70,6 +71,10 @@ public:
     inline IntSize contentSize() const { return m_contentSize; }
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
     inline bool isOpaque() const { return m_isOpaque; }
+
+#if ENABLE(CSS_FILTERS)
+    virtual void applyFilters(const BitmapTexture& contentTexture, const FilterOperations&) { }
+#endif
 
 protected:
     IntSize m_contentSize;

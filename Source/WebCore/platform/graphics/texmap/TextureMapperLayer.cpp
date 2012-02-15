@@ -210,6 +210,10 @@ IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& 
 
 bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
 {
+#if ENABLE(CSS_FILTERS)
+    if (m_state.filters.size())
+        return true;
+#endif
     bool hasOpacity = m_opacity < 0.99;
     bool hasChildren = !m_children.isEmpty();
     bool hasReplica = !!m_state.replicaLayer;
@@ -260,6 +264,28 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
     paintSelfAndChildren(options);
 }
 
+#if ENABLE(CSS_FILTERS)
+static PassRefPtr<BitmapTexture> applyFilters(const FilterOperations& filters, TextureMapper* textureMapper, BitmapTexture* source, IntRect& targetRect)
+{
+    if (!filters.size())
+        return source;
+
+    RefPtr<BitmapTexture> filterSurface(source);
+    int leftOutset, topOutset, bottomOutset, rightOutset;
+    if (filters.hasOutsets()) {
+        filters.getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        IntRect unfilteredTargetRect(targetRect);
+        targetRect.move(std::max(0, -leftOutset), std::max(0, -topOutset));
+        targetRect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+        targetRect.unite(unfilteredTargetRect);
+        filterSurface = textureMapper->acquireTextureFromPool(targetRect.size());
+    }
+
+    filterSurface->applyFilters(*source, filters);
+    return filterSurface;
+}
+#endif
+
 void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
 {
     if (!isVisible())
@@ -296,6 +322,10 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
     // If we painted the replica, the mask is already applied so we don't need to paint it again.
     if (m_state.replicaLayer)
         maskTexture = 0;
+
+#if ENABLE(CSS_FILTERS)
+    surface = applyFilters(m_state.filters, options.textureMapper, surface.get(), surfaceRect);
+#endif
 
     options.textureMapper->bindSurface(options.surface.get());
     TransformationMatrix targetTransform =
@@ -388,6 +418,10 @@ void TextureMapperLayer::syncCompositingStateSelf(GraphicsLayerTextureMapper* gr
     m_state.backfaceVisibility = graphicsLayer->backfaceVisibility();
     m_state.childrenTransform = graphicsLayer->childrenTransform();
     m_state.opacity = graphicsLayer->opacity();
+#if ENABLE(CSS_FILTERS)
+    m_state.filters = graphicsLayer->filters();
+#endif
+
     m_state.needsDisplay = m_state.needsDisplay || graphicsLayer->needsDisplay();
     if (!m_state.needsDisplay)
         m_state.needsDisplayRect.unite(graphicsLayer->needsDisplayRect());

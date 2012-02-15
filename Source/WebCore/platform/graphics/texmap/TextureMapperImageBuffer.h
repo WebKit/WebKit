@@ -43,6 +43,10 @@ public:
     inline GraphicsContext* graphicsContext() { return m_image ? m_image->context() : 0; }
     virtual void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
     void updateContents(const void* data, const IntRect& targetRect);
+#if ENABLE(CSS_FILTERS)
+    void applyFilters(const BitmapTexture&, const FilterOperations&);
+#endif
+
 private:
     BitmapTextureImageBuffer() { }
     OwnPtr<ImageBuffer> m_image;

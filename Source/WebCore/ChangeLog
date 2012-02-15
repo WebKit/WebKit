@@ -1,3 +1,39 @@
+2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Support filters in TextureMapperImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=76026
+
+        Implement GraphicsLayer::setFilters for TextureMapper, and pass the filters all the way
+        to BitmapTextureImageBuffer. This does not introduce a new filters implementation, but
+        rather uses the non-AC implementation. A complete implementation will be needed in
+        TextureMapperGL, which can use some of the glue in this code.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped 10 tests in css3/filters.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore):
+        (WebCore::GraphicsLayerTextureMapper::setFilters):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (BitmapTexture):
+        (WebCore::BitmapTexture::applyFilters):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore):
+        (WebCore::BitmapTextureImageBuffer::applyFilters):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (BitmapTextureImageBuffer):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::shouldPaintToIntermediateSurface):
+        (WebCore):
+        (WebCore::applyFilters):
+        (WebCore::TextureMapperLayer::paintRecursive):
+        (WebCore::TextureMapperLayer::syncCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (State):
+
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Clean up fallback rendering of GraphicsContext3D to Canvas
