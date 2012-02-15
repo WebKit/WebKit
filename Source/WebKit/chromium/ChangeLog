@@ -1,3 +1,18 @@
+2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Add deflater/inflater classes.
+        https://bugs.webkit.org/show_bug.cgi?id=78449
+
+        Add tests which ensure WebSocketDeflater/WebSocketInflater can
+        compress/decompress data correctly.
+
+        Reviewed by Kent Tamura.
+
+        * WebKit.gypi:
+        * tests/WebSocketDeflaterTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2012-02-14  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Compare filters on impl thread when setting them, and test setting in unit tests

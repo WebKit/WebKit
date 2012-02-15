@@ -1,3 +1,45 @@
+2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Add deflater/inflater classes
+        https://bugs.webkit.org/show_bug.cgi?id=78449
+
+        Add WebSocketDeflater/WebSocketInflater classes which wrap zlib
+        functions. These classes are not used yet, but will be used for
+        supporting WebSocket deflate-frame extension.
+
+        Reviewed by Kent Tamura.
+
+        No new tests except for chromium port. Behavior is unchanged.
+
+        * GNUmakefile.list.am: Added.WebSocketDeflater.(cpp|h).
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * websockets/WebSocketDeflater.cpp: Added.
+        (WebCore):
+        (WebCore::WebSocketDeflater::create):
+        (WebCore::WebSocketDeflater::WebSocketDeflater):
+        (WebCore::WebSocketDeflater::initialize):
+        (WebCore::WebSocketDeflater::~WebSocketDeflater):
+        (WebCore::WebSocketDeflater::addBytes):
+        (WebCore::WebSocketDeflater::finish):
+        (WebCore::WebSocketDeflater::reset):
+        (WebCore::WebSocketInflater::create):
+        (WebCore::WebSocketInflater::WebSocketInflater):
+        (WebCore::WebSocketInflater::initialize):
+        (WebCore::WebSocketInflater::~WebSocketInflater):
+        (WebCore::WebSocketInflater::addBytes):
+        (WebCore::WebSocketInflater::finish):
+        (WebCore::WebSocketInflater::reset):
+        * websockets/WebSocketDeflater.h: Added.
+        (WebCore):
+        (WebSocketDeflater):
+        (WebCore::WebSocketDeflater::data):
+        (WebCore::WebSocketDeflater::size):
+        (WebSocketInflater):
+        (WebCore::WebSocketInflater::data):
+        (WebCore::WebSocketInflater::size):
+
 2012-02-14  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Compare filters on impl thread when setting them, and test setting in unit tests
