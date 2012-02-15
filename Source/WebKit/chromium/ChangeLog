@@ -1,3 +1,27 @@
+2012-02-01  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Add setter/getter to expose drag data as a list of items
+        https://bugs.webkit.org/show_bug.cgi?id=77125
+
+        This change supports the unification of the data store backing ChromiumDataObject and
+        DataTransferItemListChromium. ChromiumDataObject will represent dragging and clipboard data
+        as a list of data nodes to make it more straightforward to implement the HTML spec for
+        DataTransferItemList. Thus, we extend the abstraction to the webkit glue layer to
+        simplify the serialization/deserialization between platform-specific data and WebDragData.
+        The other setter/getter methods are deprecated and will be removed once the dependencies in
+        Chromium code are gone.
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebDragData.h:
+        (WebKit):
+        (WebDragData):
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+        (WebKit):
+        (WebKit::WebDragData::setItems):
+        (WebKit::WebDragData::addItem):
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.

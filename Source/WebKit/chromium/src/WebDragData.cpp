@@ -66,6 +66,88 @@ void WebDragData::assign(const WebDragData& other)
     assign(p);
 }
 
+WebVector<WebDragData::Item> WebDragData::items() const
+{
+    Vector<Item> itemList;
+    const HashSet<String>& types = m_private->types();
+    if (types.contains(mimeTypeTextPlain)) {
+        Item item;
+        item.storageType = Item::StorageTypeString;
+        item.stringType = String(mimeTypeTextPlain);
+        bool ignored;
+        item.stringData = m_private->getData(mimeTypeTextPlain, ignored);
+        itemList.append(item);
+    }
+    if (types.contains(mimeTypeTextURIList)) {
+        Item item;
+        item.storageType = Item::StorageTypeString;
+        item.stringType = String(mimeTypeTextURIList);
+        bool ignored;
+        item.stringData = m_private->getData(mimeTypeURL, ignored);
+        item.title = m_private->urlTitle();
+        itemList.append(item);
+    }
+    if (types.contains(mimeTypeTextHTML)) {
+        Item item;
+        item.storageType = Item::StorageTypeString;
+        item.stringType = String(mimeTypeTextHTML);
+        bool ignored;
+        item.stringData = m_private->getData(mimeTypeTextHTML, ignored);
+        item.baseURL = m_private->htmlBaseUrl();
+        itemList.append(item);
+    }
+    if (types.contains(mimeTypeDownloadURL)) {
+        Item item;
+        item.storageType = Item::StorageTypeString;
+        item.stringType = String(mimeTypeDownloadURL);
+        bool ignored;
+        item.stringData = m_private->getData(mimeTypeDownloadURL, ignored);
+        itemList.append(item);
+    }
+    const HashMap<String, String>& customData = m_private->customData();
+    for (HashMap<String, String>::const_iterator it = customData.begin(); it != customData.end(); ++it) {
+        Item item;
+        item.storageType = Item::StorageTypeString;
+        item.stringType = it->first;
+        item.stringData = it->second;
+        itemList.append(item);
+    }
+    if (m_private->fileContent()) {
+        Item item;
+        item.storageType = Item::StorageTypeBinaryData;
+        item.binaryData = m_private->fileContent();
+        item.title = m_private->fileContentFilename();
+    }
+    // We don't handle filenames here, since they are never used for dragging out.
+    return itemList;
+}
+
+void WebDragData::setItems(const WebVector<Item>& itemList)
+{
+    m_private->clearAll();
+    for (size_t i = 0; i < itemList.size(); ++i)
+        addItem(itemList[i]);
+}
+
+void WebDragData::addItem(const Item& item)
+{
+    switch (item.storageType) {
+    case Item::StorageTypeString:
+        m_private->setData(item.stringType, item.stringData);
+        if (String(item.stringType) == mimeTypeTextURIList)
+            m_private->setUrlTitle(item.title);
+        else if (String(item.stringType) == mimeTypeTextHTML)
+            m_private->setHtmlBaseUrl(item.baseURL);
+        return;
+    case Item::StorageTypeFilename:
+        m_private->addFilename(item.filenameData);
+        return;
+    case Item::StorageTypeBinaryData:
+        // This should never happen when dragging in.
+        ASSERT_NOT_REACHED();
+    }
+}
+
 WebString WebDragData::url() const
 {
     ASSERT(!isNull());
