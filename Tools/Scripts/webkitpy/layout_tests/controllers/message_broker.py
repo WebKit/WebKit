@@ -94,13 +94,11 @@ class Broker(object):
     message to any topic using post_message(), and can process messages on one
     topic at a time using run_message_loop()."""
 
-    def __init__(self, options, queue_maker):
+    def __init__(self, queue_maker):
         """Args:
-            options: a runtime option class from optparse
             queue_maker: a factory method that returns objects implementing a
                 Queue interface (put()/get()).
         """
-        self._options = options
         self._queue_maker = queue_maker
         self._topics = {}
 

@@ -1,5 +1,42 @@
 2012-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up options, port handling in manager_worker_broker
+        https://bugs.webkit.org/show_bug.cgi?id=78568
+
+        Reviewed by Tony Chang.
+
+        manager_worker_broker no longer needs options or port objects
+        directly, so we make them only be passed in start_worker().
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (_ManagerConnection.__init__):
+        (_ManagerConnection.start_worker):
+        (_InlineManager.__init__):
+        (_InlineManager.start_worker):
+        (_InlineManager.run_message_loop):
+        (_MultiProcessManager.__init__):
+        (_MultiProcessManager):
+        (_MultiProcessManager.start_worker):
+        (_InlineWorkerConnection.__init__):
+        (_InlineWorkerConnection.run):
+        (_Process.__init__):
+        (_MultiProcessWorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (make_broker):
+        (_TestWorker.run):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        (_TestsMixin.test_unknown_message):
+        (MultiProcessBrokerTests.setUp):
+        (InterfaceTest.test_managerconnection_is_abstract):
+        * Scripts/webkitpy/layout_tests/controllers/message_broker.py:
+        (Broker.__init__):
+
+2012-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: add a unit test for regression introduced in bug 78565
         https://bugs.webkit.org/show_bug.cgi?id=78646
 

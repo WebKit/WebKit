@@ -752,14 +752,14 @@ class Manager(object):
         num_workers = min(int(self._options.child_processes), len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
-        manager_connection = manager_worker_broker.get(self._port, self._options, self, worker.Worker)
+        manager_connection = manager_worker_broker.get(self._options.worker_model, self, worker.Worker)
 
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, thread_timings, self._group_stats, self._all_results)
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
         for worker_number in xrange(num_workers):
-            worker_connection = manager_connection.start_worker(worker_number, self.results_directory())
+            worker_connection = manager_connection.start_worker(worker_number, self._port, self.results_directory(), self._options)
             worker_state = _WorkerState(worker_number, worker_connection)
             self._worker_states[worker_connection.name] = worker_state
 
