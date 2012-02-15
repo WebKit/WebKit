@@ -1,5 +1,26 @@
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
+        TileCache needs to support setting the contents scale
+        https://bugs.webkit.org/show_bug.cgi?id=78741
+        <rdar://problem/10710773>
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setContentsScale):
+        Update the contents scale of all the tiles and then revalidate the tile cache since tiles
+        might have come and gone as a result of setting the contents scale.
+        
+        (WebCore::TileCache::createTileLayer):
+        Set the contents scale of the tile layer.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setContentsScale:]):
+        Call TileCache::setContentsScale.
+
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Chromium build and remove a snarky comment in the process.
 
         * platform/chromium/PopupListBox.cpp:

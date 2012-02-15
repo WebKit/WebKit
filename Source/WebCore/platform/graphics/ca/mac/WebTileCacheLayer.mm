@@ -72,6 +72,16 @@ using namespace WebCore;
     return _tileCache->acceleratesDrawing();
 }
 
+- (void)setContentsScale:(CGFloat)contentsScale
+{
+    CGFloat oldContentsScale = [self contentsScale];
+
+    [super setContentsScale:contentsScale];
+
+    if (contentsScale != oldContentsScale)
+        _tileCache->setContentsScale(contentsScale);
+}
+
 - (CALayer *)tileContainerLayer
 {
     return _tileCache->tileContainerLayer();
