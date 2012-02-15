@@ -44,6 +44,10 @@
 #define PATH_MAX _MAX_PATH
 #endif
 
+#if PLATFORM(MAC)
+#include <unistd.h>
+#endif
+
 using namespace WebKit;
 using namespace std;
 
