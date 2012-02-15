@@ -39,10 +39,12 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0, CREATE_METHOD_TABLE(ExecutableBase) };
 
+#if ENABLE(JIT)
 void ExecutableBase::destroy(JSCell* cell)
 {
     jsCast<ExecutableBase*>(cell)->ExecutableBase::~ExecutableBase();
 }
+#endif
 
 inline void ExecutableBase::clearCode()
 {
@@ -67,10 +69,12 @@ Intrinsic ExecutableBase::intrinsic() const
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
+#if ENABLE(JIT)
 void NativeExecutable::destroy(JSCell* cell)
 {
     jsCast<NativeExecutable*>(cell)->NativeExecutable::~NativeExecutable();
 }
+#endif
 
 #if ENABLE(DFG_JIT)
 Intrinsic NativeExecutable::intrinsic() const
@@ -100,10 +104,12 @@ void NativeExecutable::finalize(JSCell* cell)
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
+#if ENABLE(JIT)
 void ScriptExecutable::destroy(JSCell* cell)
 {
     jsCast<ScriptExecutable*>(cell)->ScriptExecutable::~ScriptExecutable();
 }
+#endif
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 

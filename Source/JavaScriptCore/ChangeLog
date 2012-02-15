@@ -1,3 +1,12 @@
+2012-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Fix Interpreter.
+
+        * runtime/Executable.cpp:
+        (JSC):
+        * runtime/Executable.h:
+        (ExecutableBase):
+
 2012-02-14  Matt Lilek  <mrl@apple.com>
 
         Don't ENABLE_DASHBOARD_SUPPORT unconditionally on all Mac platforms

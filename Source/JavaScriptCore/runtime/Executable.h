@@ -77,7 +77,9 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
+#if ENABLE(JIT)
         static void destroy(JSCell*);
+#endif
 
         bool isHostFunction() const
         {
@@ -208,7 +210,9 @@ namespace JSC {
         }
 #endif
 
+#if ENABLE(JIT)
         static void destroy(JSCell*);
+#endif
 
         NativeFunction function() { return m_function; }
         NativeFunction constructor() { return m_constructor; }
@@ -276,7 +280,9 @@ namespace JSC {
         {
         }
 
+#if ENABLE(JIT)
         static void destroy(JSCell*);
+#endif
 
         const SourceCode& source() { return m_source; }
         intptr_t sourceID() const { return m_source.provider()->asID(); }
