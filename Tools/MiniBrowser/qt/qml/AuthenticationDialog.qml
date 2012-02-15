@@ -27,30 +27,44 @@
 
 import QtQuick 2.0
 
-Rectangle {
-    id: dialogLineInput
+Dialog {
+    id: dialog
 
-    property alias text: input.text
-    property alias echoMode: input.echoMode
-    signal accepted()
+    title: "Authentication required." 
+    message: model.hostname + " requires authentication."
 
-    height: 20
-    color: "#fefefe"
+    height: 250
 
-    border {
-        width: 1
-        color: "#aeaeae"
+    DialogLineInput {
+        id: input
+        width: dialog.width - 30
+        text: model.prefilledUsername
+
+        onAccepted: model.accept(input.text, passwordInput.text)
     }
 
-    smooth: true
-    radius: 3
-    clip: true
+    DialogLineInput {
+        id: passwordInput
+        text: "" 
+        width: dialog.width - 30
+        echoMode: TextInput.PasswordEchoOnEdit
 
-    TextInput {
-        id: input
-        focus: true
-        anchors.fill: parent
+        onAccepted: model.accept(input.text, passwordInput.text)
+    }
 
-        onAccepted: dialogLineInput.accepted()
+    Row {
+        id: buttonRow
+        spacing: 5
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        DialogButton {
+            text: "OK"
+            onClicked: model.accept(input.text, passwordInput.text)
+        }
+
+        DialogButton {
+            text: "Cancel"
+            onClicked: model.reject()
+        }
     }
 }

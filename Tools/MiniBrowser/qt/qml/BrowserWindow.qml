@@ -310,6 +310,7 @@ Rectangle {
         experimental.alertDialog: AlertDialog { }
         experimental.confirmDialog: ConfirmDialog { }
         experimental.promptDialog: PromptDialog { }
+        experimental.authenticationDialog: AuthenticationDialog { }
     }
 
     ViewportInfoItem {

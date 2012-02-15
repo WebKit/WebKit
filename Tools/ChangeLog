@@ -1,3 +1,15 @@
+2012-02-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt] Add UI for HTTP authentication in the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=76347
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/qml/AuthenticationDialog.qml: Added. 
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/DialogLineInput.qml:
+
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix WebGL in QtTestBrowser
