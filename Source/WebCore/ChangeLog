@@ -1,3 +1,70 @@
+2012-02-14  Levi Weintraub  <leviw@chromium.org>
+
+        Prepare RenderLayerBacking and RenderLayerCompositor for subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78630
+
+        Reviewed by Simon Fraser.
+
+        In our transition to subpixel layout in the render tree, we continue to pass RenderLayerBacking
+        and RenderLayerCompositor integer (pixel) sizes and positions. This patch moves nearly all
+        methods and members on these two classes back to integers, and applies pixel snapping logic to
+        LayoutUnits pulled in.
+
+        No new tests. No change in behavior.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::pixelSnappedLayoutOverflowRect): Convenience function for getting pixel
+        snapped overflow bounds.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore):
+        (WebCore::RenderLayerBacking::updateCompositedBounds): Switch to integers and pixel snapping the
+        clipping bounds.
+        (WebCore::clipBox): Returns a pixel snapped rect.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Using pixelSnappedLayerCoords. Removing
+        pixelSnappedIntRect calls to clipBox since this is now an IntRect.
+        (WebCore::RenderLayerBacking::computeTransformOrigin): Switching to operate on a pixel snapped rect.
+        (WebCore::RenderLayerBacking::computePerspectiveOrigin): Ditto.
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer): Returns a size based on m_compositingBounds,
+        which is now an IntSize.
+        (WebCore::RenderLayerBacking::contentsBox): Switching to use pixel snapped values from the render tree.
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect): This now takes in and outputs integers.
+        (WebCore::RenderLayerBacking::paintIntoLayer): Uses a pixel snapped rect for the dirty rect.
+        (WebCore::paintScrollbar): Scrollbars are Widgets & painted natively, so they should use integers.
+        (WebCore::RenderLayerBacking::paintContents): We now properly take in an integer clip rect, as it's
+        used for the scrollbars. 
+        (WebCore::RenderLayerBacking::startAnimation): Using pixel snapped values for animations and transitions.
+        (WebCore::RenderLayerBacking::startTransition): Ditto.
+        (WebCore::RenderLayerBacking::compositedBounds): Composited bounds are now properly stored as integers.
+        (WebCore::RenderLayerBacking::setCompositedBounds): Ditto.
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds): Composited bounds are pixel snapped, but
+        we use LayoutUnits up until we snap and return.
+        (WebCore::RenderLayerCompositor::addToOverlapMap): Overlap mapping uses our integer positions. Switching
+        it back to operating on them.
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive): Ditto.
+        (WebCore::RenderLayerCompositor::overlapsCompositedLayers): Ditto.
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Using integers.
+        (WebCore::RenderLayerCompositor::frameViewDidChangeLocation): FrameViews are on integer bounds. We now
+        properly use these as integers.
+        (WebCore::RenderLayerCompositor::frameViewDidScroll): Ditto.
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayerRect): Switching to use integers and
+        pixelSnappedLayerCoords.
+        (WebCore::RenderLayerCompositor::repaintCompositedLayersAbsoluteRect): Ditto.
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition): Using integer positions, which are what
+        the apis used already returned.
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin): Using pixel snapped values.
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame): Ditto.
+        (WebCore::paintScrollbar): Scrollbars should always use integers.
+        (WebCore::RenderLayerCompositor::paintContents): Switching to use an integer clip rect.
+        (WebCore::RenderLayerCompositor::ensureRootLayer): Using values from new pixelSnappedLayoutOverflowRect
+        method on RenderBox to ensure we're using values that are pixel snapped to the proper location.
+        (WebCore::RenderLayerCompositor::destroyRootLayer): Properly calling scrollbar invalidation methods
+        with integers.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-02-14  Anders Carlsson  <andersca@apple.com>
 
         Swipe gestures don't work if main frame has a horizontal scrollbar
