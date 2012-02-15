@@ -1,3 +1,39 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Scrolling coordinator should handle pages being restored from the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=78753
+        <rdar://problem/10866171>
+
+        Reviewed by Sam Weinig.
+
+        Replace ScrollingCoordinator::frameViewScrollLayerDidChange with a new member function,
+        ScrollingCoordinator::frameViewRootLayerDidChange which is called whenever the root layer
+        of the frame view changes (which happens on back/forward navigation as well).
+
+        In this function, reset the scrolling tree state from the frame view.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::scrollLayerForFrameView):
+        Add a helper function.
+
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        Reset the entire scrolling tree state.
+
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition):
+        Call the newly added helper function.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        Remove frameViewScrollLayerDidChange.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        Remove call to ScrollingCoordinator::frameViewScrollLayerDidChange.
+
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        Call ScrollingCoordinator::frameViewRootLayerDidChange.
+
 2012-02-15  Enrica Casucci  <enrica@apple.com>
 
         Refactor ClipboardMac class to use PlatformStrategies.

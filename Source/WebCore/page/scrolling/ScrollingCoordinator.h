@@ -80,8 +80,8 @@ public:
     // so it can make sure they stay fixed even when we scroll on the scrolling thread.
     void frameViewHasFixedObjectsDidChange(FrameView*);
 
-    // Should be called whenever the scroll layer for the given frame view changes.
-    void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
+    // Should be called whenever the root layer for the given frame view changes.
+    void frameViewRootLayerDidChange(FrameView*);
 
     // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
     void frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer);

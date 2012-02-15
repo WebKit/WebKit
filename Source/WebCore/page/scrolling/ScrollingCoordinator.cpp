@@ -168,6 +168,35 @@ void ScrollingCoordinator::frameViewHasFixedObjectsDidChange(FrameView* frameVie
     updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
+static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
+{
+    Frame* frame = frameView->frame();
+    if (!frame)
+        return 0;
+
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return 0;
+
+    return renderView->compositor()->scrollLayer();
+}
+
+void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (frameView->frame() != m_page->mainFrame())
+        return;
+
+    frameViewLayoutUpdated(frameView);
+    recomputeWheelEventHandlerCount();
+    updateShouldUpdateScrollLayerPositionOnMainThread();
+    m_scrollingTreeState->setScrollLayer(scrollLayerForFrameView(frameView));
+
+    scheduleTreeStateCommit();
+}
+
 bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());
@@ -211,12 +240,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
 {
     FrameView* frameView = m_page->mainFrame()->view();
-
-    RenderView* renderView = m_page->mainFrame()->contentRenderer();
-    if (!renderView)
-        return;
-
-    GraphicsLayer* scrollLayer = renderView->compositor()->scrollLayer();
+    GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView);
     if (!scrollLayer)
         return;
 

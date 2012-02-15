@@ -64,18 +64,6 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* f
     // FIXME: Implement.
 }
 
-void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, const GraphicsLayer* scrollLayer)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (frameView->frame() != m_page->mainFrame())
-        return;
-
-    m_scrollingTreeState->setScrollLayer(scrollLayer);
-    scheduleTreeStateCommit();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

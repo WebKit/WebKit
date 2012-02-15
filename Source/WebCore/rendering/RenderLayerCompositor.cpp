@@ -1936,11 +1936,6 @@ void RenderLayerCompositor::ensureRootLayer()
 
             frameViewDidChangeSize();
             frameViewDidScroll();
-
-#if ENABLE(THREADED_SCROLLING)
-            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->frameViewScrollLayerDidChange(m_renderView->frameView(), m_scrollLayer.get());
-#endif
         }
     } else {
         if (m_overflowControlsHostLayer) {
@@ -2024,7 +2019,12 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             break;
         }
     }
-    
+
+#if ENABLE(THREADED_SCROLLING)
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+#endif
+
     m_rootLayerAttachment = attachment;
     rootLayerAttachmentChanged();
 }
