@@ -1708,7 +1708,6 @@ fast/forms/button-submit.html
 fast/forms/button-table-styles.html
 fast/forms/button-text-transform.html
 fast/forms/caret-rtl.html
-fast/forms/checkbox-radio-onchange.html
 fast/forms/control-clip-overflow.html
 fast/forms/control-clip.html
 fast/forms/control-restrict-line-height.html
@@ -1772,10 +1771,6 @@ fast/forms/placeholder-set-attribute.html
 fast/forms/placeholder-set-value.html
 fast/forms/placeholder-stripped.html
 fast/forms/preserveFormDuringResidualStyle.html
-fast/forms/radio-attr-order.html
-fast/forms/radio-nested-labels.html
-fast/forms/radio_checked.html
-fast/forms/radio_checked_dynamic.html
 fast/forms/search-cancel-button-style-sharing.html
 fast/forms/search-display-none-cancel-button.html
 fast/forms/search-placeholder-value-changed.html

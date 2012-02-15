@@ -1,4 +1,9 @@
 <script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
 function checkButton() {
     if (!window.layoutTestController)
         return;
@@ -14,6 +19,7 @@ function checkButton() {
     var result = document.getElementById("result");
     if (radioFour.checked)
         result.innerHTML = "Test Succeeded!";
+    layoutTestController.notifyDone();
 }
 </script>
 

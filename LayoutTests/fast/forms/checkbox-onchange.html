@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input type="checkbox" id="ch" onchange="handleChange()">
+<script>
+description("This is to test onchange of checkboxes");
+
+function handleChange() {
+    testPassed('onChange event fired for the checkbox.');
+}
+
+document.getElementById('ch').click();
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

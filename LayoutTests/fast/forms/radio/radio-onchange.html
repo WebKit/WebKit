@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input type="radio" name="test" id="rd">
+<input type="radio" name="test" id="rd2" onchange="handleChange()">
+<script>
+description("This is to test onchange of radio buttons");
+
+function handleChange() {
+    testPassed('onChange event fired for a radio button.');
+}
+
+document.getElementById('rd2').click();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1323,17 +1323,12 @@ BUGCR23496 MAC : css1/box_properties/acid_test.html = IMAGE
 BUGCR23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
 BUGCR23496 MAC : fast/block/basic/011.html = IMAGE
 BUGCR23496 MAC : fast/forms/001.html = IMAGE
-BUGCR23496 MAC : fast/forms/checkbox-radio-onchange.html = IMAGE
 BUGCR23496 MAC : fast/forms/form-element-geometry.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
 // Recently became crashy. See http://crbug.com/24721
 BUGCR23496 MAC : fast/forms/formmove2.html = IMAGE
 BUGCR23496 MAC : fast/forms/indeterminate.html = IMAGE
 BUGCR23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
-BUGCR23496 MAC : fast/forms/radio-attr-order.html = IMAGE
-BUGCR23496 MAC : fast/forms/radio-nested-labels.html = IMAGE
-BUGCR23496 MAC : fast/forms/radio_checked.html = IMAGE
-BUGCR23496 MAC : fast/forms/radio_checked_dynamic.html = IMAGE
 BUGCR23496 MAC : fast/inline/positionedLifetime.html = IMAGE
 BUGCR23496 MAC : fast/parser/bad-xml-slash.html = IMAGE
 BUGCR23496 MAC : fast/replaced/replaced-breaking.html = IMAGE
