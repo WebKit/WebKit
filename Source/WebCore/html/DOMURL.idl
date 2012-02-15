@@ -29,7 +29,7 @@ module html {
         Conditional=BLOB,
         Constructor,
         JSGenerateToNativeObject,
-        JSGenerateToJS,
+        JSGenerateToJSObject,
         JSNoStaticTables
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM

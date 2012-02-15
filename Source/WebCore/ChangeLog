@@ -1,3 +1,50 @@
+2012-02-14  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [JSGenerateToJS] to [JSGenerateToJSObject]
+        https://bugs.webkit.org/show_bug.cgi?id=78490
+
+        Reviewed by Adam Barth.
+
+        This patch renames [JSGenerateToJS] to [JSGenerateToJSObject],
+        for naming consistency with [CustomToJSObject], [JSCustomToJSObject] and [V8CustomToJSObject].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryEntrySync.idl:
+        * fileapi/File.idl:
+        * fileapi/FileEntry.idl:
+        * fileapi/FileEntrySync.idl:
+        * html/DOMFormData.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMURL.idl:
+        * html/MediaController.idl:
+        * mediastream/LocalMediaStream.idl:
+        * webaudio/AudioBufferCallback.idl:
+        * webaudio/AudioBufferSourceNode.idl:
+        * webaudio/AudioDestinationNode.idl:
+        * webaudio/AudioGain.idl:
+        * webaudio/AudioGainNode.idl:
+        * webaudio/AudioPannerNode.idl:
+        * webaudio/AudioProcessingEvent.idl:
+        * webaudio/BiquadFilterNode.idl:
+        * webaudio/ConvolverNode.idl:
+        * webaudio/DelayNode.idl:
+        * webaudio/DynamicsCompressorNode.idl:
+        * webaudio/HighPass2FilterNode.idl:
+        * webaudio/JavaScriptAudioNode.idl:
+        * webaudio/LowPass2FilterNode.idl:
+        * webaudio/MediaElementAudioSourceNode.idl:
+        * webaudio/OfflineAudioCompletionEvent.idl:
+        * webaudio/RealtimeAnalyserNode.idl:
+        * webaudio/WaveShaperNode.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+
 2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add deflater/inflater classes

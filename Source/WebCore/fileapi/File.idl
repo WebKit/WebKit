@@ -27,7 +27,7 @@ module html {
 
     interface [
         JSGenerateToNativeObject,
-        JSGenerateToJS,
+        JSGenerateToJSObject,
         JSNoStaticTables
     ] File : Blob {
         readonly attribute DOMString name;

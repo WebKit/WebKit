@@ -41,7 +41,7 @@ module threads {
         ConstructorRaisesException,
         JSCustomMarkFunction,
         JSGenerateToNativeObject,
-        JSGenerateToJS
+        JSGenerateToJSObject
     ] SharedWorker : AbstractWorker {
         readonly attribute MessagePort port;
     };

@@ -28,7 +28,7 @@ module core {
         Conditional=MEDIA_STREAM,
         JSGenerateToNativeObject,
         EventTarget,
-        JSGenerateToJS
+        JSGenerateToJSObject
     ] LocalMediaStream : MediaStream {
         void stop();
     };
