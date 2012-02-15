@@ -612,14 +612,7 @@ bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
 bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
 {
     PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    bool handled = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
-
-    Frame* frame = mainFrameImpl()->frame();
-    WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(frame);
-    if (pluginContainer)
-        handled |= pluginContainer->handleGestureEvent(platformEvent);
-
-    return handled;
+    return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
 }
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)

@@ -519,17 +519,6 @@ bool WebPluginContainerImpl::paintCustomOverhangArea(GraphicsContext* context, c
     return true;
 }
 
-#if ENABLE(GESTURE_EVENTS)
-bool WebPluginContainerImpl::handleGestureEvent(const WebCore::PlatformGestureEvent& gestureEvent)
-{
-    if (m_scrollbarGroup) {
-        m_scrollbarGroup->handleGestureEvent(gestureEvent);
-        return true;
-    }
-    return false;
-}
-#endif
-
 // Private methods -------------------------------------------------------------
 
 WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin)

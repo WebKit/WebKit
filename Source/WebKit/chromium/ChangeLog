@@ -1,3 +1,18 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove ScrollableArea::handleGestureEvent
+        https://bugs.webkit.org/show_bug.cgi?id=78661
+
+        Reviewed by Adam Roben.
+
+        Update for WebCore changes.
+
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+
 2012-02-14  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Provide SocketStreamHandleInternal::toWebSocketStreamHandle(SocketStreamHandle*).
