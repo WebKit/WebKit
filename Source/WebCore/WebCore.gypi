@@ -6194,6 +6194,7 @@
             'inspector/front-end/SourceHTMLTokenizer.js',
             'inspector/front-end/SourceJavaScriptTokenizer.js',
             'inspector/front-end/SourceTokenizer.js',
+            'inspector/front-end/Spectrum.js',
             'inspector/front-end/SplitView.js',
             'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StylesSidebarPane.js',

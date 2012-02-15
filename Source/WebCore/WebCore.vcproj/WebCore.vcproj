@@ -72809,6 +72809,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Spectrum.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\splitView.css"
 					>
 				</File>

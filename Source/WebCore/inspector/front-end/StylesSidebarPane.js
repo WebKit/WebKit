@@ -90,6 +90,9 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this._sectionsContainer = document.createElement("div");
     this.bodyElement.appendChild(this._sectionsContainer);
 
+    if (Preferences.useSpectrum)
+        this._spectrum = new WebInspector.Spectrum();
+
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetOrMediaQueryResultChanged, this);
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged, this._styleSheetOrMediaQueryResultChanged, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesModified, this);
@@ -1666,28 +1669,95 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     return document.createTextNode(text);
                 }
 
+                var format = getFormat();
+                var hasColorpicker = self._parentPane;
+                var spectrum = hasColorpicker ? self._parentPane._spectrum : null;
+
                 var swatchElement = document.createElement("span");
-                swatchElement.title = WebInspector.UIString("Click to change color format");
-                swatchElement.className = "swatch";
-                swatchElement.style.setProperty("background-color", text);
-
-                swatchElement.addEventListener("click", changeColorDisplay, false);
-                swatchElement.addEventListener("dblclick", function(event) { event.stopPropagation() }, false);
-
-                var format;
-                var formatSetting = WebInspector.settings.colorFormat.get();
-                if (formatSetting === cf.Original)
-                    format = cf.Original;
-                else if (color.nickname)
-                    format = cf.Nickname;
-                else if (formatSetting === cf.RGB)
-                    format = (color.simple ? cf.RGB : cf.RGBA);
-                else if (formatSetting === cf.HSL)
-                    format = (color.simple ? cf.HSL : cf.HSLA);
-                else if (color.simple)
-                    format = (color.hasShortHex() ? cf.ShortHEX : cf.HEX);
+                var swatchInnerElement = swatchElement.createChild("span", "swatch-inner");
+                if (hasColorpicker)
+                    swatchElement.title = WebInspector.UIString("Click to open a colorpicker");
                 else
-                    format = cf.RGBA;
+                    swatchElement.title = WebInspector.UIString("Click to change color format");
+
+                swatchElement.className = "swatch";
+
+                swatchElement.addEventListener("mousedown", stopPropagation, false);
+                swatchElement.addEventListener("click", swatchClick, false);
+                swatchElement.addEventListener("dblclick", stopPropagation, false);
+
+                swatchInnerElement.style.backgroundColor = text;
+
+                var scrollerElement = hasColorpicker ? self._parentPane._computedStylePane.element.parentElement : null;
+
+                function spectrumChange(e)
+                {
+                    color = e.data;
+
+                    var colorString = color.toString();
+
+                    colorValueElement.textContent = colorString;
+                    spectrum.displayText = colorString;
+                    swatchInnerElement.style.backgroundColor = colorString;
+
+                    self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, false, false, false);
+                }
+
+                function spectrumHide()
+                {
+                    scrollerElement.removeEventListener("scroll", repositionSpectrum, false);
+                    self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, true, true, false);
+                    spectrum.removeEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChange);
+                    spectrum.removeEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHide);
+
+                    delete self._parentPane._isEditingStyle;
+                }
+
+                function repositionSpectrum()
+                {
+                    spectrum.reposition(swatchElement);
+                }
+
+                function swatchClick(e)
+                {
+                    // Alt + click toggles color formats.
+                    // Click opens colorpicker, only if the element is not in computed styles section.
+
+                    if (!spectrum || e.altKey)
+                        changeColorDisplay(e);
+                    else if (hasColorpicker) {
+                        var isShown = spectrum.toggle(swatchElement, color, format);
+
+                        if (isShown) {
+                            spectrum.displayText = color.toString(format);
+                            self._parentPane._isEditingStyle = true;
+                            spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChange);
+                            spectrum.addEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHide);
+
+                            scrollerElement.addEventListener("scroll", repositionSpectrum, false);
+                        }
+                    }
+                }
+
+                function getFormat()
+                {
+                    var format;
+                    var formatSetting = WebInspector.settings.colorFormat.get();
+                    if (formatSetting === cf.Original)
+                        format = cf.Original;
+                    else if (color.nickname)
+                        format = cf.Nickname;
+                    else if (formatSetting === cf.RGB)
+                        format = (color.simple ? cf.RGB : cf.RGBA);
+                    else if (formatSetting === cf.HSL)
+                        format = (color.simple ? cf.HSL : cf.HSLA);
+                    else if (color.simple)
+                        format = (color.hasShortHex() ? cf.ShortHEX : cf.HEX);
+                    else
+                        format = cf.RGBA;
+
+                    return format;
+                }
 
                 var colorValueElement = document.createElement("span");
                 colorValueElement.textContent = color.toString(format);

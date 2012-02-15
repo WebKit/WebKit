@@ -1,3 +1,61 @@
+2012-02-13  Brian Grinstead  <briangrinstead@gmail.com>
+
+        Web Inspector: Add colorpicker functionality to color swatches in Styles Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=71262
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/Spectrum.js: Added.
+        (WebInspector.Spectrum.hueDrag):
+        (WebInspector.Spectrum.colorDrag):
+        (WebInspector.Spectrum.alphaDrag):
+        (WebInspector.Spectrum):
+        (WebInspector.Spectrum.hsvaToRGBA):
+        (WebInspector.Spectrum.rgbaToHSVA):
+        (WebInspector.Spectrum.draggable.prevent):
+        (WebInspector.Spectrum.draggable.move):
+        (WebInspector.Spectrum.draggable.start):
+        (WebInspector.Spectrum.draggable.stop):
+        (WebInspector.Spectrum.draggable):
+        (WebInspector.Spectrum.prototype.set color):
+        (WebInspector.Spectrum.prototype.get color):
+        (WebInspector.Spectrum.prototype.get outputColorFormat):
+        (WebInspector.Spectrum.prototype.get colorHueOnly):
+        (WebInspector.Spectrum.prototype.set displayText):
+        (WebInspector.Spectrum.prototype._onchange):
+        (WebInspector.Spectrum.prototype._updateHelperLocations):
+        (WebInspector.Spectrum.prototype._updateUI):
+        (WebInspector.Spectrum.prototype.toggle):
+        (WebInspector.Spectrum.prototype.show):
+        (WebInspector.Spectrum.prototype.reposition):
+        (WebInspector.Spectrum.prototype.hide):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.swatch):
+        (.swatch-inner):
+        (.spectrum-container):
+        (.spectrum-top):
+        (.spectrum-color):
+        (.spectrum-hue):
+        (.spectrum-fill):
+        (.spectrum-range-container):
+        (.spectrum-range-container *):
+        (.spectrum-range-container label):
+        (.spectrum-range-container input):
+        (.swatch, .spectrum-dragger, .spectrum-slider):
+        (.spectrum-sat):
+        (.spectrum-val):
+        (.spectrum-dragger):
+        (.spectrum-slider):
+        * inspector/front-end/inspector.html:
+
 2012-02-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Be smarter with tile usages during tiling
