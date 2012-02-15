@@ -2257,9 +2257,6 @@ BUGCR58212 WIN : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT 
 
 BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT
 
-// FileWriter isn't in TestShell yet.
-BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
-
 // Failing somewhere between after Webkit r69367 and r69417.
 BUGCR58970 LINUX : svg/text/text-tselect-02-f.svg = PASS IMAGE
 
