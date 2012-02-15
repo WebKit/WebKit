@@ -27,6 +27,34 @@
 #include <QX11Info>
 #endif
 
+#if ENABLE(WEBGL)
+#include <QGLWidget>
+
+static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformGraphicsContext3D* context,
+                                                      PlatformGraphicsSurface3D* surface)
+{
+    *context = 0;
+    *surface = 0;
+    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(widget);
+    if (!scrollArea)
+        return;
+
+    QGLWidget* glViewport = qobject_cast<QGLWidget*>(scrollArea->viewport());
+    if (!glViewport)
+        return;
+    QGLWidget* glWidget = new QGLWidget(0, glViewport);
+    if (glWidget->isValid()) {
+        // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
+        glWidget->setGeometry(0, 0, 0, 0);
+        *surface = glWidget;
+        *context = const_cast<QGLContext*>(glWidget->context());
+    } else {
+        delete glWidget;
+        glWidget = 0;
+    }
+}
+#endif
+
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
 #include "texmap/TextureMapperLayer.h"
@@ -185,6 +213,14 @@ void PageClientQWidget::setWidgetVisible(Widget* widget, bool visible)
         return;
     qtWidget->setVisible(visible);
 }
+
+#if ENABLE(WEBGL)
+void PageClientQWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context,
+                                                        PlatformGraphicsSurface3D* surface)
+{
+    createPlatformGraphicsContext3DFromWidget(view, context, surface);
+}
+#endif
 
 #if !defined(QT_NO_GRAPHICSVIEW)
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
@@ -427,5 +463,13 @@ QRectF PageClientQGraphicsWidget::windowRect() const
     return view->scene()->sceneRect();
 }
 #endif // QT_NO_GRAPHICSVIEW
+
+#if ENABLE(WEBGL)
+void PageClientQGraphicsWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context,
+                                                                PlatformGraphicsSurface3D* surface)
+{
+    createPlatformGraphicsContext3DFromWidget(ownerWidget(), context, surface);
+}
+#endif
 
 } // namespace WebCore

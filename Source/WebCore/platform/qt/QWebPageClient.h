@@ -34,6 +34,10 @@
 #include <GraphicsLayer.h>
 #endif
 
+#if ENABLE(WEBGL)
+#include <GraphicsContext3D.h>
+#endif
+
 #include <QPalette>
 #include <QRect>
 
@@ -100,6 +104,11 @@ public:
     virtual QRectF windowRect() const = 0;
 
     virtual void setWidgetVisible(WebCore::Widget*, bool visible) = 0;
+
+#if ENABLE(WEBGL)
+    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
+                                                 PlatformGraphicsSurface3D*) = 0;
+#endif
 
 protected:
 #ifndef QT_NO_CURSOR

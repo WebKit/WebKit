@@ -1,3 +1,26 @@
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move Qt platform specific GL Context/Surface creation out of WebCore into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=78692
+
+        Reviewed by Noam Rosenthal.
+
+        Replace the "glWidget" term in the GraphicsContext with "surface" and delegate
+        the context and surface creation to the page client.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext):
+        (WebCore::GraphicsContext3DPrivate::makeCurrentIfNeeded):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient):
+
 2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Support filters in TextureMapperImageBuffer

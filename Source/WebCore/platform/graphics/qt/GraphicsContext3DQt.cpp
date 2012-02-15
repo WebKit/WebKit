@@ -71,7 +71,6 @@ public:
     GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*);
     ~GraphicsContext3DPrivate();
 
-    QGLWidget* getViewportGLWidget();
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
@@ -83,8 +82,8 @@ public:
 
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
-    QGLWidget* m_glWidget;
-    QGLWidget* m_viewportGLWidget;
+    PlatformGraphicsSurface3D m_surface;
+    PlatformGraphicsContext3D m_platformContext;
 };
 
 bool GraphicsContext3D::isGLES2Compliant() const
@@ -99,39 +98,24 @@ bool GraphicsContext3D::isGLES2Compliant() const
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, HostWindow* hostWindow)
     : m_context(context)
     , m_hostWindow(hostWindow)
-    , m_glWidget(0)
-    , m_viewportGLWidget(0)
+    , m_surface(0)
+    , m_platformContext(0)
 {
-    m_viewportGLWidget = getViewportGLWidget();
-
-    if (m_viewportGLWidget)
-        m_glWidget = new QGLWidget(0, m_viewportGLWidget);
-    else
-        m_glWidget = new QGLWidget();
-
-    // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
-    m_glWidget->setGeometry(0, 0, 0, 0);
-
+    QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
+    if (!webPageClient)
+        return;
+    webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface);
+    if (!m_surface)
+        return;
     makeCurrentIfNeeded();
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
-    delete m_glWidget;
-    m_glWidget = 0;
-}
-
-QGLWidget* GraphicsContext3DPrivate::getViewportGLWidget()
-{
-    QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
-    if (!webPageClient)
-        return 0;
-
-    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
-    if (scrollArea)
-        return qobject_cast<QGLWidget*>(scrollArea->viewport());
-
-    return 0;
+    delete m_surface;
+    m_surface = 0;
+    // ### Delete context?
+    m_platformContext = 0;
 }
 
 static inline quint32 swapBgrToRgb(quint32 pixel)
@@ -216,23 +200,23 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
         return;
 
     const QGLContext* currentContext = QGLContext::currentContext();
-    const QGLContext* widgetContext = m_glWidget->context();
+    const QGLContext* widgetContext = m_surface->context();
     if (currentContext != widgetContext)
-        m_glWidget->makeCurrent();
+        m_surface->makeCurrent();
     blitMultisampleFramebuffer();
     if (currentContext) {
         if (currentContext != widgetContext)
             const_cast<QGLContext*>(currentContext)->makeCurrent();
     } else
-        m_glWidget->doneCurrent();
+        m_surface->doneCurrent();
 }
 
 bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
 {
     const QGLContext* currentContext = QGLContext::currentContext();
-    const QGLContext* widgetContext = m_glWidget->context();
+    const QGLContext* widgetContext = m_surface->context();
     if (currentContext != widgetContext)
-        m_glWidget->makeCurrent();
+        m_surface->makeCurrent();
 
     return QGLContext::currentContext() == widgetContext;
 }
@@ -273,7 +257,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     validateAttributes();
 #endif
 
-    if (!m_private->m_glWidget->isValid()) {
+    if (!m_private->m_surface) {
         LOG_ERROR("GraphicsContext3D: QGLWidget initialization failed.");
         m_private = nullptr;
         return;
@@ -351,7 +335,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 GraphicsContext3D::~GraphicsContext3D()
 {
     makeContextCurrent();
-    if (!m_private->m_glWidget->isValid())
+    if (!m_private->m_surface->isValid())
         return;
     glDeleteTextures(1, &m_texture);
     glDeleteFramebuffers(1, &m_fbo);
@@ -374,7 +358,7 @@ GraphicsContext3D::~GraphicsContext3D()
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
-    return m_private->m_glWidget;
+    return m_private->m_platformContext;
 }
 
 Platform3DObject GraphicsContext3D::platformTexture() const

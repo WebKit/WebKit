@@ -99,6 +99,11 @@ public:
 
     virtual void setWidgetVisible(Widget*, bool visible);
 
+#if ENABLE(WEBGL)
+    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
+                                                 PlatformGraphicsSurface3D*);
+#endif
+
     QWidget* view;
     QWebPage* page;
 
@@ -201,6 +206,11 @@ public:
     virtual bool viewResizesToContentsEnabled() const { return viewResizesToContents; }
 
     virtual void setWidgetVisible(Widget*, bool);
+
+#if ENABLE(WEBGL)
+    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
+                                                 PlatformGraphicsSurface3D*);
+#endif
 
     void createOrDeleteOverlay();
 

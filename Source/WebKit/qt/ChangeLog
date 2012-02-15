@@ -1,3 +1,21 @@
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move Qt platform specific GL Context/Surface creation out of WebCore into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=78692
+
+        Reviewed by Noam Rosenthal.
+
+        Implement GLWidget and GLContext creation from the page client interface.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget):
+        (WebCore):
+        (WebCore::PageClientQWidget::createPlatformGraphicsContext3D):
+        (WebCore::PageClientQGraphicsWidget::createPlatformGraphicsContext3D):
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2012-02-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Eliminate first set of QtWidgets dependencies from WebCore

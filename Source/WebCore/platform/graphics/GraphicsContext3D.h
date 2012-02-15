@@ -55,6 +55,8 @@ OBJC_CLASS WebGLLayer;
 QT_BEGIN_NAMESPACE
 class QPainter;
 class QRect;
+class QGLWidget;
+class QGLContext;
 QT_END_NAMESPACE
 #elif PLATFORM(GTK) || PLATFORM(EFL)
 typedef unsigned int GLuint;
@@ -62,6 +64,9 @@ typedef unsigned int GLuint;
 
 #if PLATFORM(MAC)
 typedef CGLContextObj PlatformGraphicsContext3D;
+#elif PLATFORM(QT)
+typedef QGLContext* PlatformGraphicsContext3D;
+typedef QGLWidget* PlatformGraphicsSurface3D;
 #else
 typedef void* PlatformGraphicsContext3D;
 #endif
