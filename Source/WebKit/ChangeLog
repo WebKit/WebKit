@@ -1,5 +1,18 @@
 2012-02-14  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Upstreaming WebSettings code
+        https://bugs.webkit.org/show_bug.cgi?id=78633
+
+        Reviewed by Rob Buis.
+
+        Initial upstreaming, no new tests.
+
+        * blackberry/Api/WebSettings.cpp: Added.
+        * blackberry/Api/WebSettings.h: Added.
+        * blackberry/Api/WebSettings_p.h: Added.
+
+2012-02-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Upstreaming DOMSupport files
         https://bugs.webkit.org/show_bug.cgi?id=78607
 
