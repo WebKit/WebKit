@@ -239,9 +239,19 @@ void FEComposite::platformApplySoftware()
         filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
     case FECOMPOSITE_OPERATOR_IN: {
-        GraphicsContextStateSaver stateSaver(*filterContext);
-        filterContext->clipToImageBuffer(in2->asImageBuffer(), drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        // Applies only to the intersected region.
+        IntRect destinationRect = in->absolutePaintRect();
+        destinationRect.intersect(in2->absolutePaintRect());
+        destinationRect.intersect(absolutePaintRect());
+        if (destinationRect.isEmpty())
+            break;
+        IntPoint destinationPoint(destinationRect.x() - absolutePaintRect().x(), destinationRect.y() - absolutePaintRect().y());
+        IntRect sourceRect(IntPoint(destinationRect.x() - in->absolutePaintRect().x(),
+                                    destinationRect.y() - in->absolutePaintRect().y()), destinationRect.size());
+        IntRect source2Rect(IntPoint(destinationRect.x() - in2->absolutePaintRect().x(),
+                                     destinationRect.y() - in2->absolutePaintRect().y()), destinationRect.size());
+        filterContext->drawImageBuffer(in2->asImageBuffer(), ColorSpaceDeviceRGB, destinationPoint, source2Rect);
+        filterContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, destinationPoint, sourceRect, CompositeSourceIn);
         break;
     }
     case FECOMPOSITE_OPERATOR_OUT:

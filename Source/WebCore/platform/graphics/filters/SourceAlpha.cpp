@@ -63,9 +63,8 @@ void SourceAlpha::platformApplySoftware()
 
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
     GraphicsContext* filterContext = resultImage->context();
-    GraphicsContextStateSaver stateSaver(*filterContext);
-    filterContext->clipToImageBuffer(filter->sourceImage(), imageRect);
     filterContext->fillRect(imageRect, Color::black, ColorSpaceDeviceRGB);
+    filterContext->drawImageBuffer(filter->sourceImage(), ColorSpaceDeviceRGB, IntPoint(), CompositeDestinationIn);
 }
 
 void SourceAlpha::dump()

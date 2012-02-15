@@ -1,3 +1,20 @@
+2012-02-15  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Remove clipToImageBuffer from SourceAlpha and feComposite
+        https://bugs.webkit.org/show_bug.cgi?id=78355
+
+        Reviewed by Nikolas Zimmermann.
+
+        The implementation of clipToImageBuffer is inefficient on
+        non-mac platforms, so we would benefit if remove it.
+
+        Existing tests cover this feature.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::platformApplySoftware):
+
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QGLWidget/QGLContext with QOpenGLContext and QSurface for Qt 5
