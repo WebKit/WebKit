@@ -1,3 +1,23 @@
+2012-02-15  Hajime Morrita  <morrita@chromium.org>
+
+        REGRESSION(r107518): DeviceOrientationController doesn't remove registered DOMWindows
+        https://bugs.webkit.org/show_bug.cgi?id=78683
+
+        Reviewed by Kentaro Hara.
+        
+        A copy-n-paste disaster. This change fixed it by calling correct methods.
+
+        No new tests. Needs browser side mocking for testing this.
+        A Chromium automated test covers this.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/Page.cpp:
+        (WebCore::Page::provideSupplement):
+        (WebCore::Page::requireSupplement):
+        * page/Page.h: Fix typo.
+        (Page):
+
 2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed, quick build fix for 107792

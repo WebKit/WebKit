@@ -352,7 +352,7 @@ namespace WebCore {
         void initGroup();
 
         typedef HashMap<AtomicStringImpl*, OwnPtr<PageSupplement> > PageSupplementMap;
-        PageSupplementMap m_suppliments;
+        PageSupplementMap m_supplements;
 
 #if ASSERT_DISABLED
         void checkFrameCountConsistency() const { }

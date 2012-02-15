@@ -1648,9 +1648,9 @@ void DOMWindow::removeAllEventListeners()
 
 #if ENABLE(DEVICE_ORIENTATION)
     if (DeviceMotionController* controller = DeviceMotionController::from(frame()))
-        controller->addListener(this);
+        controller->removeAllListeners(this);
     if (DeviceOrientationController* controller = DeviceOrientationController::from(frame()))
-        controller->addListener(this);
+        controller->removeAllListeners(this);
 #endif
 
     removeAllUnloadEventListeners(this);
