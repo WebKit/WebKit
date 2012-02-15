@@ -1,3 +1,23 @@
+2012-02-14  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Provide SocketStreamHandleInternal::toWebSocketStreamHandle(SocketStreamHandle*).
+        https://bugs.webkit.org/show_bug.cgi?id=78581
+
+        Reviewed by Kent Tamura.
+
+        Now, there is no way to convert SocketStreamHandle to
+        WebSocketStreamHandle. In subsequent changes, I'll use this function
+        in FrameLoaderClientImpl.
+
+        * src/SocketStreamHandle.cpp: Remove SocketStreamHandleInternal class declaration.
+        * src/SocketStreamHandleInternal.h: Move SocketStreamHandleInternal class declaration from SocketStreamHandle.cpp to expose, and add conversion function to WebSocketStreamHandle from SocketStreamHandle.
+        (WebKit):
+        (WebCore):
+        (SocketStreamHandleInternal):
+        (WebCore::SocketStreamHandleInternal::create):
+        (WebCore::SocketStreamHandleInternal::toWebSocketStreamHandle):
+        * WebKit.gyp: Add SocketStreamHandleInternal.h entry.
+
 2012-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r107766.
