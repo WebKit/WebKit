@@ -29,20 +29,22 @@
  */
 
 #include "config.h"
-#if ENABLE(WEB_SOCKETS)
+#if ENABLE(WEB_SOCKETS) && ENABLE(WORKERS)
 #include "ThreadableWebSocketChannelClientWrapper.h"
 
 #include "CrossThreadCopier.h"
 #include "CrossThreadTask.h"
+#include "ScriptExecutionContext.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient* client)
-    : m_client(client)
-    , m_syncMethodDone(false)
+ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext* context, WebSocketChannelClient* client)
+    : m_context(context)
+    , m_client(client)
+    , m_syncMethodDone(true)
     , m_useHixie76Protocol(true)
     , m_sendRequestResult(false)
     , m_bufferedAmount(0)
@@ -50,9 +52,9 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
 {
 }
 
-PassRefPtr<ThreadableWebSocketChannelClientWrapper> ThreadableWebSocketChannelClientWrapper::create(WebSocketChannelClient* client)
+PassRefPtr<ThreadableWebSocketChannelClientWrapper> ThreadableWebSocketChannelClientWrapper::create(ScriptExecutionContext* context, WebSocketChannelClient* client)
 {
-    return adoptRef(new ThreadableWebSocketChannelClientWrapper(client));
+    return adoptRef(new ThreadableWebSocketChannelClientWrapper(context, client));
 }
 
 void ThreadableWebSocketChannelClientWrapper::clearSyncMethodDone()
@@ -190,9 +192,22 @@ void ThreadableWebSocketChannelClientWrapper::resume()
     processPendingTasks();
 }
 
+void ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+{
+    ASSERT_UNUSED(context, context->isWorkerContext());
+    wrapper->processPendingTasks();
+}
+
 void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
 {
-    ASSERT(!m_suspended);
+    if (m_suspended)
+        return;
+    if (!m_syncMethodDone) {
+        // When a synchronous operation is in progress (i.e. the execution stack contains
+        // WorkerThreadableWebSocketChannel::waitForMethodCompletion()), we cannot invoke callbacks in this run loop.
+        m_context->postTask(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback, this));
+        return;
+    }
     Vector<OwnPtr<ScriptExecutionContext::Task> > tasks;
     tasks.swap(m_pendingTasks);
     for (Vector<OwnPtr<ScriptExecutionContext::Task> >::const_iterator iter = tasks.begin(); iter != tasks.end(); ++iter)

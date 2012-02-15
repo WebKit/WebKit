@@ -1,3 +1,28 @@
+2012-02-15  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: MessageEvent fired during send() on workers
+        https://bugs.webkit.org/show_bug.cgi?id=76521
+
+        Reviewed by David Levin.
+
+        WebSocket's message event should not be invoked while a synchronous operation
+        (send() and bufferedAmount) is in progress.
+
+        Test: http/tests/websocket/tests/hybi/workers/no-onmessage-in-sync-op.html
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        Added #if ENABLE(WORKERS) because ThreadableWebSocketChannelClientWrapper is not used
+        if Web Workers is not available.
+        Changed access label because private members were declared as protected with no good reason.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        Receive ScriptExecutionContext so we can post a task that should be executed later.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::create):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+
 2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Divide TextureMapperNode.cpp to 3 files.

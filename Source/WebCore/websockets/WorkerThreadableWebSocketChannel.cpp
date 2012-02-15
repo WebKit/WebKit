@@ -54,7 +54,7 @@ namespace WebCore {
 
 WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerContext* context, WebSocketChannelClient* client, const String& taskMode)
     : m_workerContext(context)
-    , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(client))
+    , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
     , m_bridge(Bridge::create(m_workerClientWrapper, m_workerContext, taskMode))
 {
 }
