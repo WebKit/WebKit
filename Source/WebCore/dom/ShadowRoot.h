@@ -41,7 +41,6 @@ class HTMLContentSelector;
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
 public:
-    static PassRefPtr<ShadowRoot> create(Document*);
     static PassRefPtr<ShadowRoot> create(Element*, ExceptionCode&);
 
     // FIXME: We will support multiple shadow subtrees, however current implementation does not work well
@@ -94,11 +93,6 @@ private:
     bool m_needsRecalculateContent : 1;
     OwnPtr<HTMLContentSelector> m_selector;
 };
-
-inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
-{
-    return adoptRef(new ShadowRoot(document));
-}
 
 inline void ShadowRoot::clearNeedsReattachHostChildrenAndShadow()
 {

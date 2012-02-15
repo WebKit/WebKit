@@ -110,7 +110,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
     }
 
     ASSERT(purpose != CreatingUserAgentShadowRoot || !element->hasShadowRoot());
-    RefPtr<ShadowRoot> shadowRoot = create(element->document());
+    RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document()));
 
     ec = 0;
     element->setShadowRoot(shadowRoot, ec);

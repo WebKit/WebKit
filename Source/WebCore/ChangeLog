@@ -1,3 +1,17 @@
+2012-02-15  Hayato Ito  <hayato@chromium.org>
+
+        ShadowRoot: Remove a public static factory function which doesn't have any callers.
+        https://bugs.webkit.org/show_bug.cgi?id=78668
+
+        Reviewed by Kent Tamura.
+
+        No tests. No change in behavior.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+
 2012-02-14  Hao Zheng  <zhenghao@chromium.org>
 
         Cleanup pending transaction queue in Database.
