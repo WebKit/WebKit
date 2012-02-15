@@ -252,7 +252,7 @@ typedef HashMap<FontPlatformData, pair<SimpleFontData*, unsigned>, FontDataCache
 
 static FontDataCache* gFontDataCache = 0;
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
 const int cMaxInactiveFontData = 250;
 const int cTargetInactiveFontData = 200;
 #else

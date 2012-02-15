@@ -1,3 +1,20 @@
+2012-02-15  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] Don't use increased FontCache size on Android
+        https://bugs.webkit.org/show_bug.cgi?id=78656
+
+        Reviewed by Adam Barth.
+
+        The chromium port uses a larger font cache size because it increases
+        performance on the intl1 and intl2 page cyclers. However, on Android
+        devices where resources are more constrained, it isn't desireable to
+        allow the FontCache to grow so big.
+
+        No new tests because no testable difference in functionality.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore):
+
 2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Allow <style scoped> as a direct child of a ShadowRoot
