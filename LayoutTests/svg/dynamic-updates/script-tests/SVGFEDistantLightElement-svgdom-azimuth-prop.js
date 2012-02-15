@@ -46,13 +46,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("distantLight.azimuth.baseVal", "10");
 
-function executeTest() {
+function repaintTest() {
     distantLight.azimuth.baseVal = 100;
     shouldBe("distantLight.azimuth.baseVal", "100");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

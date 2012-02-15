@@ -12,13 +12,11 @@ textElement.textContent = "Test passed";
 rootSVGElement.appendChild(textElement);
 shouldBeNull("textElement.getAttribute('transform')", "");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("transform", "translate(0,-200)");
     shouldBeEqualToString("textElement.getAttribute('transform')", "translate(0,-200)");
 
     completeTest();
 }
-
-startTest(textElement, 10, 210);
 
 var successfullyParsed = true;

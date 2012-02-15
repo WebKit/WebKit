@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("pointLight.getAttribute('z')", "100");
 
-function executeTest() {
+function repaintTest() {
     pointLight.setAttribute("z", "30");
     shouldBeEqualToString("pointLight.getAttribute('z')", "30");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

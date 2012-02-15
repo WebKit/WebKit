@@ -168,7 +168,7 @@ shouldBeEqualToString("saturateElement.getAttribute('type')", "hueRotate");
 shouldBeEqualToString("hueRotateElement.getAttribute('type')", "luminanceToAlpha");
 shouldBeEqualToString("luminanceToAlphaElement.getAttribute('type')", "matrix");
 
-function executeTest() {
+function repaintTest() {
     matrixElement.setAttribute("type", "matrix");
     matrixElement.setAttribute("values", ".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0");
 
@@ -188,7 +188,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

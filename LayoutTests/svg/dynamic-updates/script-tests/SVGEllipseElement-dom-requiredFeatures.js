@@ -9,7 +9,7 @@ ellipseElement.setAttribute("ry", "200");
 
 rootSVGElement.appendChild(ellipseElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGEllipseElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(ellipseElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -27,7 +27,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(ellipseElement, 0, 100);
 
 var successfullyParsed = true;

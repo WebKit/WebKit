@@ -39,13 +39,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("filterElement.getAttribute('x')", "100");
 
-function executeTest() {
+function repaintTest() {
     filterElement.setAttribute("x", "0");
     shouldBeEqualToString("filterElement.getAttribute('x')", "0");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

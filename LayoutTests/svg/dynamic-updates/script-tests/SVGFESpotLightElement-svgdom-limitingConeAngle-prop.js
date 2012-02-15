@@ -40,13 +40,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("spotLightElement.limitingConeAngle.baseVal", "45");
 
-function executeTest() {
+function repaintTest() {
     spotLightElement.limitingConeAngle.baseVal = 15;
     shouldBe("spotLightElement.limitingConeAngle.baseVal", "15");
 
     completeTest();
 }
 
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

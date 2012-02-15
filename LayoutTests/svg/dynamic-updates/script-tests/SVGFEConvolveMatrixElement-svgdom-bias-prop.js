@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("convolveMatrixElement.bias.baseVal", "0.5");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.bias.baseVal = 0;
     shouldBe("convolveMatrixElement.bias.baseVal", "0");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -68,7 +68,7 @@ shouldBeEqualToString("SVGNumberListToString(feGFunc.tableValues.baseVal)", "0 1
 shouldBeEqualToString("SVGNumberListToString(feBFunc.tableValues.baseVal)", "0 0 1 0.1 ");
 shouldBeEqualToString("SVGNumberListToString(feAFunc.tableValues.baseVal)", "0.5 10 1 0.5 ");
 
-function executeTest() {
+function repaintTest() {
     var number1 = rootSVGElement.createSVGNumber();
     number1.value = 0.9;
     feRFunc.tableValues.baseVal.replaceItem(number1, 2);
@@ -92,7 +92,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

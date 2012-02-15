@@ -211,7 +211,7 @@ shouldBeEqualToString("screenBlend.getAttribute('in2')", "multiplyImg");
 shouldBeEqualToString("darkenBlend.getAttribute('in2')", "screenImg");
 shouldBeEqualToString("lightenBlend.getAttribute('in2')", "darkenImg");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.setAttribute("in2", "normalImg");
     multiplyBlend.setAttribute("in2", "multiplyImg");
     screenBlend.setAttribute("in2", "screenImg");
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

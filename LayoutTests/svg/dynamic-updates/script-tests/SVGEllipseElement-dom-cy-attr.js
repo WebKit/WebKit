@@ -14,13 +14,11 @@ ellipseElement.setAttribute("fill", "green");
 rootSVGElement.appendChild(ellipseElement);
 shouldBeEqualToString("ellipseElement.getAttribute('cy')", "-50");
 
-function executeTest() {
+function repaintTest() {
     ellipseElement.setAttribute("cy", "150");
     shouldBeEqualToString("ellipseElement.getAttribute('cy')", "150");
 
     completeTest();
 }
-
-startTest(ellipseElement, 150, 50);
 
 var successfullyParsed = true;

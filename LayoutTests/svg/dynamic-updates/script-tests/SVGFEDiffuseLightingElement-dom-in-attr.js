@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("gradientElement.getAttribute('in')", "SourceGraphic");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.setAttribute("in", "blur");
     shouldBeEqualToString("gradientElement.getAttribute('in')", "blur");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

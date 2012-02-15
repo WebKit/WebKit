@@ -13,13 +13,10 @@ rootSVGElement.appendChild(textElement);
 
 shouldBe("textElement.dx.baseVal.getItem(0).value", "0");
 
-function executeTest() {
+function repaintTest() {
     textElement.dx.baseVal.getItem(0).value = -50;
     shouldBe("textElement.dx.baseVal.getItem(0).value", "-50");
     completeTest();
 }
 
-startTest(textElement, 50, 20);
-
 var successfullyParsed = true;
-

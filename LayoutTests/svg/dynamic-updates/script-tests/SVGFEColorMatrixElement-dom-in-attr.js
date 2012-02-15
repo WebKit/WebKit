@@ -168,7 +168,7 @@ shouldBeEqualToString("saturateElement.getAttribute('in')", "SourceAlpha");
 shouldBeEqualToString("hueRotateElement.getAttribute('in')", "SourceAlpha");
 shouldBeEqualToString("luminanceToAlphaElement.getAttribute('in')", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     matrixElement.setAttribute("in", "SourceGraphic");
     saturateElement.setAttribute("in", "SourceGraphic");
     hueRotateElement.setAttribute("in", "SourceGraphic");
@@ -181,7 +181,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

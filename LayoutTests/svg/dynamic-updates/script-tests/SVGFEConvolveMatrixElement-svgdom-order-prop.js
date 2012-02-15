@@ -37,7 +37,7 @@ rootSVGElement.appendChild(imageElement);
 shouldBe("convolveMatrixElement.orderX.baseVal", "2");
 shouldBe("convolveMatrixElement.orderY.baseVal", "2");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("kernelMatrix", "3 0 3 0 0 0 3 0 3");
     convolveMatrixElement.orderX.baseVal = 3;
     convolveMatrixElement.orderY.baseVal = 3;
@@ -46,7 +46,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

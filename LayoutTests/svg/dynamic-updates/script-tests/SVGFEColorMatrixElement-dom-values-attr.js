@@ -167,7 +167,7 @@ shouldBeEqualToString("matrixElement.getAttribute('values')", ".45 .45 .5 0 0 .1
 shouldBeEqualToString("saturateElement.getAttribute('values')", "0.5");
 shouldBeEqualToString("hueRotateElement.getAttribute('values')", "10");
 
-function executeTest() {
+function repaintTest() {
     matrixElement.setAttribute("values", ".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0");
     saturateElement.setAttribute("values", "0.25");
     hueRotateElement.setAttribute("values", "90");
@@ -178,7 +178,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

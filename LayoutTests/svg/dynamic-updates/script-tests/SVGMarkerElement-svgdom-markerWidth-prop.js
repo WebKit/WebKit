@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBe("markerElement.markerWidth.baseVal.value", "0");
 
-function executeTest() {
+function repaintTest() {
     markerElement.markerWidth.baseVal.value = 2;
     shouldBe("markerElement.markerWidth.baseVal.value", "2");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

@@ -34,13 +34,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBeEqualToString("markerElement.getAttribute('orient')", "45");
 
-function executeTest() {
+function repaintTest() {
     markerElement.setAttribute("orient", "0");
     shouldBeEqualToString("markerElement.getAttribute('orient')", "0");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

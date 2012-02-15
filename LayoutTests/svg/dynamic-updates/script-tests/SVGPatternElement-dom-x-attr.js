@@ -40,13 +40,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("patternElement.getAttribute('x')", "50");
 
-function executeTest() {
+function repaintTest() {
     patternElement.setAttribute("x", "0");
     shouldBeEqualToString("patternElement.getAttribute('x')", "0");
  
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

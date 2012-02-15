@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeNull("patternElement.getAttribute('patternUnits')");
 
-function executeTest() {
+function repaintTest() {
     patternElement.setAttribute("patternUnits", "userSpaceOnUse");
     shouldBeEqualToString("patternElement.getAttribute('patternUnits')", "userSpaceOnUse");
  
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

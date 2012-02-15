@@ -47,13 +47,11 @@ rootSVGElement.appendChild(myRect);
 
 shouldBeEqualToString("displacementMap.getAttribute('xChannelSelector')", "B");
 
-function executeTest() {
+function repaintTest() {
     displacementMap.setAttribute("xChannelSelector", "R");
     shouldBeEqualToString("displacementMap.getAttribute('xChannelSelector')", "R");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

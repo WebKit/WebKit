@@ -48,13 +48,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("gradientElement.result.baseVal", "res1");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.result.baseVal = "res2";
     shouldBeEqualToString("gradientElement.result.baseVal", "res2");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

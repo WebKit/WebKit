@@ -15,13 +15,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("imageElement.x.baseVal.value", "-190");
 
-function executeTest() {
+function repaintTest() {
     imageElement.x.baseVal.value = 0;
     shouldBe("imageElement.x.baseVal.value", "0");
 
     completeTest();
 }
-
-startTest(imageElement, 5, 100);
 
 var successfullyParsed = true;

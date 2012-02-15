@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("gradientElement.getAttribute('surfaceScale')", "0");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.setAttribute("surfaceScale", "1");
     shouldBeEqualToString("gradientElement.getAttribute('surfaceScale')", "1");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

@@ -33,13 +33,11 @@ rootSVGElement.appendChild(ellipseElement);
 
 shouldBeEqualToString("linearGradientElement.getAttribute('x1')", "100%");
 
-function executeTest() {
+function repaintTest() {
     linearGradientElement.setAttribute("x1", "200%");
     shouldBeEqualToString("linearGradientElement.getAttribute('x1')", "200%");
 
     completeTest();
 }
-
-startTest(ellipseElement, 150, 150);
 
 var successfullyParsed = true;

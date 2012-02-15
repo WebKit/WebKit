@@ -34,13 +34,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBeEqualToString("dropShadowElement.getAttribute('flood-opacity')", "0");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.setAttribute("flood-opacity", "0.5");
     shouldBeEqualToString("dropShadowElement.getAttribute('flood-opacity')", "0.5");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

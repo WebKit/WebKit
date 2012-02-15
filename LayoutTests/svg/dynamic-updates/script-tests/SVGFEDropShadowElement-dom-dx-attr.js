@@ -32,13 +32,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBeEqualToString("dropShadowElement.getAttribute('dx')", "0");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.setAttribute("dx", "10");
     shouldBeEqualToString("dropShadowElement.getAttribute('dx')", "10");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

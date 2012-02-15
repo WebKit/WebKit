@@ -36,13 +36,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("floodElement.getAttribute('flood-color')", "rgb(145, 32, 103)");
 
-function executeTest() {
+function repaintTest() {
     floodElement.setAttribute("flood-color", "rgb(64, 128, 103)");
     shouldBeEqualToString("floodElement.getAttribute('flood-color')", "rgb(64, 128, 103)");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

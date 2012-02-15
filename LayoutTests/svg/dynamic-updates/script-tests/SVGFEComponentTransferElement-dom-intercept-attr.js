@@ -55,7 +55,7 @@ shouldBeEqualToString("feGFunc.getAttribute('intercept')", "0.2");
 shouldBeEqualToString("feBFunc.getAttribute('intercept')", "0.2");
 shouldBeEqualToString("feAFunc.getAttribute('intercept')", "0.2");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("intercept", "0.1");
 	feGFunc.setAttribute("intercept", "0.1");
 	feBFunc.setAttribute("intercept", "0.1");
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

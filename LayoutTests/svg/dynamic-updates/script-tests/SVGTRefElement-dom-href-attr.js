@@ -31,7 +31,7 @@ if (window.internals) {
     shouldBeEqualToString("shadowRoot.textContent", "Test failed");
 }
 
-function executeTest() {
+function repaintTest() {
     trefElement.setAttributeNS(xlinkNS, "xlink:href", "#testPass");
     shouldBeEqualToString("trefElement.getAttributeNS('" + xlinkNS + "', 'href')", "#testPass");
     if (window.internals) {
@@ -41,7 +41,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(textElement, 10, 10);
 
 var successfullyParsed = true;

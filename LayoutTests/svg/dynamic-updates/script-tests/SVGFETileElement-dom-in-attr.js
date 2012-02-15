@@ -58,13 +58,12 @@ rootSVGElement.appendChild(gElement);
 
 shouldBeEqualToString("tile.getAttribute('in')", "SourceGraphic");
 
-function executeTest() {
+function repaintTest() {
     tile.setAttribute("in", "offset");
     shouldBeEqualToString("tile.getAttribute('in')", "offset");
 
     completeTest();
 }
 
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

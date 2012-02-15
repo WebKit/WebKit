@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("turbulence.stitchTiles.baseVal", "SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH");
 
-function executeTest() {
+function repaintTest() {
     turbulence.stitchTiles.baseVal = SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH;
     shouldBe("turbulence.stitchTiles.baseVal", "SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

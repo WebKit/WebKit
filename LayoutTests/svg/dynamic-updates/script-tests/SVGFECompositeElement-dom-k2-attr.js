@@ -113,13 +113,11 @@ rootSVGElement.appendChild(rect1);
 
 shouldBeEqualToString("overComposite1.getAttribute('k2')", ".9");
 
-function executeTest() {
+function repaintTest() {
     overComposite1.setAttribute("k2", ".1");
     shouldBeEqualToString("overComposite1.getAttribute('k2')", ".1");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

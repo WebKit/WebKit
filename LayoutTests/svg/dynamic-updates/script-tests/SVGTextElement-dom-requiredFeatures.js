@@ -7,7 +7,7 @@ var textElement = createSVGElement("text");
 
 rootSVGElement.appendChild(textElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGTextElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(textElement, null).display", "block");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -25,7 +25,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 0, 100);
 
 var successfullyParsed = true;

@@ -38,7 +38,7 @@ rootSVGElement.appendChild(imageElement);
 shouldBe("convolveMatrixElement.kernelUnitLengthX.baseVal", "1");
 shouldBe("convolveMatrixElement.kernelUnitLengthY.baseVal", "1");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.kernelUnitLengthX.baseVal = 0.05;
     convolveMatrixElement.kernelUnitLengthY.baseVal = 0.05;
     shouldBe("Math.round(convolveMatrixElement.kernelUnitLengthX.baseVal * 1000)", "50");
@@ -46,7 +46,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

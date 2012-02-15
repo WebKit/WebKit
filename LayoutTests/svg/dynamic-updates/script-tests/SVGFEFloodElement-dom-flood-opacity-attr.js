@@ -36,13 +36,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("parseFloat(floodElement.getAttribute('flood-opacity')).toFixed(1)", "0.1");
 
-function executeTest() {
+function repaintTest() {
     floodElement.setAttribute("flood-opacity", ".8");
     shouldBeEqualToString("parseFloat(floodElement.getAttribute('flood-opacity')).toFixed(1)", "0.8");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

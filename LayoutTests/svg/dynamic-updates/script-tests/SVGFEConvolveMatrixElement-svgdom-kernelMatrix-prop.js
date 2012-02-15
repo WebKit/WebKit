@@ -49,7 +49,7 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("SVGNumberListToString(convolveMatrixElement.kernelMatrix.baseVal)", "-2 0 0 0 1 0 0 0 2 ");
 
-function executeTest() {
+function repaintTest() {
     var number = rootSVGElement.createSVGNumber();
     number.value = 3;
     convolveMatrixElement.kernelMatrix.baseVal.replaceItem(number, 0);
@@ -58,7 +58,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

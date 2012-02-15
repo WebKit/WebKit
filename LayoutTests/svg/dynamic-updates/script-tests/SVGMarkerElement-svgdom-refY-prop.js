@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBe("markerElement.refY.baseVal.value", "500");
 
-function executeTest() {
+function repaintTest() {
     markerElement.refY.baseVal.value = 5;
     shouldBe("markerElement.refY.baseVal.value", "5");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

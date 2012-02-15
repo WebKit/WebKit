@@ -9,7 +9,7 @@ rectElement.setAttribute("height", "200");
 
 rootSVGElement.appendChild(rectElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGRectElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -27,7 +27,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rectElement, 0, 100);
 
 var successfullyParsed = true;

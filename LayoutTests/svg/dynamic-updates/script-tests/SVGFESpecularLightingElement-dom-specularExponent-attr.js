@@ -54,13 +54,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("specularElement.getAttribute('specularExponent')", "4");
 
-function executeTest() {
+function repaintTest() {
     specularElement.setAttribute("specularExponent", "1");
     shouldBeEqualToString("specularElement.getAttribute('specularExponent')", "1");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

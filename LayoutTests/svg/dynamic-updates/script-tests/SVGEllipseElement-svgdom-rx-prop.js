@@ -14,13 +14,11 @@ ellipseElement.setAttribute("fill", "green");
 rootSVGElement.appendChild(ellipseElement);
 shouldBe("ellipseElement.rx.baseVal.value", "10");
 
-function executeTest() {
+function repaintTest() {
     ellipseElement.rx.baseVal.value = 150;
     shouldBe("ellipseElement.rx.baseVal.value", "150");
 
     completeTest();
 }
-
-startTest(ellipseElement, 150, 150);
 
 var successfullyParsed = true;

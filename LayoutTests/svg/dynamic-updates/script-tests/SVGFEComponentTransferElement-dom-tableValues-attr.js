@@ -55,7 +55,7 @@ shouldBeEqualToString("feGFunc.getAttribute('tableValues')", "0 1 1 0.5");
 shouldBeEqualToString("feBFunc.getAttribute('tableValues')", "0 0 1 0.1");
 shouldBeEqualToString("feAFunc.getAttribute('tableValues')", "0.5 10 1 0.5");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("tableValues", "0 1 0.9 0");
 	feGFunc.setAttribute("tableValues", "0 1 1 0.6");
 	feBFunc.setAttribute("tableValues", "0 0 1 0.2");
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

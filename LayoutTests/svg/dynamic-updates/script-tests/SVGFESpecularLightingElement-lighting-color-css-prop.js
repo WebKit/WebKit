@@ -54,13 +54,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("document.defaultView.getComputedStyle(specularElement).getPropertyValue('lighting-color')", "rgb(255, 255, 0)");
 
-function executeTest() {
+function repaintTest() {
     specularElement.style.setProperty("lighting-color", "greenyellow", "");
     shouldBeEqualToString("document.defaultView.getComputedStyle(specularElement).getPropertyValue('lighting-color')", "rgb(173, 255, 47)");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -8,7 +8,7 @@ polygonElement.setAttribute("points", "0,0 200,0 200,200 0, 200");
 
 rootSVGElement.appendChild(polygonElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGPolygonElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polygonElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -26,7 +26,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(polygonElement, 0, 100);
 
 var successfullyParsed = true;

@@ -59,7 +59,7 @@ shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
 shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
 shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("amplitude", "1");
 	feGFunc.setAttribute("amplitude", "1");
 	feBFunc.setAttribute("amplitude", "1");
@@ -72,7 +72,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

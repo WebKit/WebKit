@@ -5,7 +5,7 @@ createSVGTestCase();
 
 var svgElement = rootSVGElement;
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGSVGElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(svgElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -24,6 +24,5 @@ function executeTest() {
     completeTest();
 }
 
-startTest(svgElement, 0, 100);
 
 var successfullyParsed = true;

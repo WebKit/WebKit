@@ -114,13 +114,11 @@ rootSVGElement.appendChild(rect1);
 // We should multiply and round the value of k2 otherwise the expected value cannot be precisely represented as a floating point number and the comparison will fail.
 shouldBe("Math.round(overComposite1.k2.baseVal * 1000)", "900");
 
-function executeTest() {
+function repaintTest() {
     overComposite1.k2.baseVal = .1;
     shouldBe("Math.round(overComposite1.k2.baseVal * 1000)", "100");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

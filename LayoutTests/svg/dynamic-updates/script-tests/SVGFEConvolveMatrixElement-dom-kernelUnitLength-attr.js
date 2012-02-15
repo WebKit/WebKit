@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.getAttribute('kernelUnitLength')", "1");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("kernelUnitLength", "0.05");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('kernelUnitLength')", "0.05");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

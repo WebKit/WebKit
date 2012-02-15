@@ -13,12 +13,11 @@ textElement.textContent="Text content";
 rootSVGElement.appendChild(textElement);
 shouldBeEqualToString("textElement.getAttribute('rotate')", "0");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("rotate", "20");
     shouldBeEqualToString("textElement.getAttribute('rotate')", "20");
 
     completeTest();
 }
 
-startTest(textElement, 0, 20);
 var successfullyParsed = true;

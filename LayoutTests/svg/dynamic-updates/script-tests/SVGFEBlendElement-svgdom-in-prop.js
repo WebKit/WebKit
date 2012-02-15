@@ -211,7 +211,7 @@ shouldBeEqualToString("screenBlend.in1.baseVal", "SourceAlpha");
 shouldBeEqualToString("darkenBlend.in1.baseVal", "SourceAlpha");
 shouldBeEqualToString("lightenBlend.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.in1.baseVal = "SourceGraphic";
     multiplyBlend.in1.baseVal = "SourceGraphic";
     screenBlend.in1.baseVal = "SourceGraphic";
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

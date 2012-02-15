@@ -9,7 +9,7 @@ imageElement.setAttribute("height", "200");
 
 rootSVGElement.appendChild(imageElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGImageElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(imageElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -27,7 +27,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 0, 100);
 
 var successfullyParsed = true;

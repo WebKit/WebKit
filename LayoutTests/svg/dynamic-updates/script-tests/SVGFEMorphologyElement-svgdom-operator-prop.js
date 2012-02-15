@@ -39,13 +39,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBe("morphologyElement.operator.baseVal", "SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.operator.baseVal = SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE;
     shouldBe("morphologyElement.operator.baseVal", "SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

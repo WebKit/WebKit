@@ -41,14 +41,12 @@ rootSVGElement.appendChild(rectElement);
 shouldBe("filterElement.filterResX.baseVal", "400");
 shouldBe("filterElement.filterResY.baseVal", "400");
 
-function executeTest() {
+function repaintTest() {
     filterElement.setFilterRes(200, 200);
     shouldBe("filterElement.filterResX.baseVal", "200");
     shouldBe("filterElement.filterResY.baseVal", "200");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

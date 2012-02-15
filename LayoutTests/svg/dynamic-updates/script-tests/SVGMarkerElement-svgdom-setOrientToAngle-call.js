@@ -35,7 +35,7 @@ rootSVGElement.appendChild(pathElement);
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
 shouldBe("markerElement.orientAngle.baseVal.value", "0");
 
-function executeTest() {
+function repaintTest() {
     markerElement.setOrientToAngle(rootSVGElement.createSVGAngle());
 
     shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
@@ -43,7 +43,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

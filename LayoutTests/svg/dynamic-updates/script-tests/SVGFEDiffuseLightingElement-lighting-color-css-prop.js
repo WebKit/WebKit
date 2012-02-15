@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("document.defaultView.getComputedStyle(gradientElement).getPropertyValue('lighting-color')", "rgb(255, 0, 0)");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.style.setProperty("lighting-color", "yellow", "");
     shouldBeEqualToString("document.defaultView.getComputedStyle(gradientElement).getPropertyValue('lighting-color')", "rgb(255, 255, 0)");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

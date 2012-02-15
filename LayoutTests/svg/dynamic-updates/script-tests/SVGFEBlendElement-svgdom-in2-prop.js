@@ -211,7 +211,7 @@ shouldBeEqualToString("screenBlend.in2.baseVal", "multiplyImg");
 shouldBeEqualToString("darkenBlend.in2.baseVal", "screenImg");
 shouldBeEqualToString("lightenBlend.in2.baseVal", "darkenImg");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.in2.baseVal = "normalImg";
     multiplyBlend.in2.baseVal = "multiplyImg";
     screenBlend.in2.baseVal = "screenImg";
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

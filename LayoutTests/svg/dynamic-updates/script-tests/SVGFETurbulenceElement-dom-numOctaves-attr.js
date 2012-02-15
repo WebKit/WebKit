@@ -35,13 +35,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("turbulence.getAttribute('numOctaves')", "1");
 
-function executeTest() {
+function repaintTest() {
     turbulence.setAttribute("numOctaves", "3");
     shouldBeEqualToString("turbulence.getAttribute('numOctaves')", "3");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

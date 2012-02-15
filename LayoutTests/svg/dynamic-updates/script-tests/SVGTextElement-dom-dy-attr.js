@@ -13,13 +13,11 @@ textElement.textContent="Text content";
 rootSVGElement.appendChild(textElement);
 shouldBeEqualToString("textElement.getAttribute('dy')", "0");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("dy", "-30");
     shouldBeEqualToString("textElement.getAttribute('dy')", "-30");
 
     completeTest();
 }
-
-startTest(textElement, 0, 50);
 
 var successfullyParsed = true;

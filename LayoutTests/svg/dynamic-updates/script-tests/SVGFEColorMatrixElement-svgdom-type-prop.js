@@ -168,7 +168,7 @@ shouldBeEqualToString("saturateElement.getAttribute('type')", "hueRotate");
 shouldBeEqualToString("hueRotateElement.getAttribute('type')", "luminanceToAlpha");
 shouldBeEqualToString("luminanceToAlphaElement.getAttribute('type')", "matrix");
 
-function executeTest() {
+function repaintTest() {
     matrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX;
 
     var matrixArray = new Array(0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0);
@@ -195,7 +195,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

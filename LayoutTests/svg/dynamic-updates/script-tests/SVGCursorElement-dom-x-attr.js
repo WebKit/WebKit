@@ -19,13 +19,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("cursorElement.getAttribute('x')", "100");
 
-function executeTest() {
+function repaintTest() {
     cursorElement.setAttribute("x", "0");
     shouldBeEqualToString("cursorElement.getAttribute('x')", "0");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("turbulence.getAttribute('stitchTiles')", "stitch");
 
-function executeTest() {
+function repaintTest() {
     turbulence.setAttribute("stitchTiles", "noStitch");
     shouldBeEqualToString("turbulence.getAttribute('stitchTiles')", "noStitch");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

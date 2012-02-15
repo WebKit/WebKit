@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.getAttribute('divisor')", "20");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("divisor", "12");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('divisor')", "12");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

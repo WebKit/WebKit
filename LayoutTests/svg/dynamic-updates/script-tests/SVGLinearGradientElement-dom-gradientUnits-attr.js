@@ -33,13 +33,11 @@ rootSVGElement.appendChild(ellipseElement);
 
 shouldBeNull("linearGradientElement.getAttribute('gradientUnits')");
 
-function executeTest() {
+function repaintTest() {
     linearGradientElement.setAttribute("gradientUnits", "userSpaceOnUse");
     shouldBeEqualToString("linearGradientElement.getAttribute('gradientUnits')", "userSpaceOnUse");
  
     completeTest();
 }
-
-startTest(ellipseElement, 150, 150);
 
 var successfullyParsed = true;

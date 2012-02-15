@@ -19,13 +19,11 @@ rootSVGElement.appendChild(foreignObjectElement);
 
 shouldBeEqualToString("foreignObjectElement.getAttribute('width')", "2");
 
-function executeTest() {
+function repaintTest() {
     foreignObjectElement.setAttribute("width", "150");
     shouldBeEqualToString("foreignObjectElement.getAttribute('width')", "150");
 
     completeTest();
 }
-
-startTest(foreignObjectElement, 101, 100);
 
 var successfullyParsed = true;

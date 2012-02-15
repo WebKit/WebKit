@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("convolveMatrixElement.divisor.baseVal", "20");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.divisor.baseVal = 12;
     shouldBe("convolveMatrixElement.divisor.baseVal", "12");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

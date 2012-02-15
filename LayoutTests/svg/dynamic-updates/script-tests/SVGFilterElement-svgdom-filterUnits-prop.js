@@ -39,13 +39,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("filterElement.filterUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE");
 
-function executeTest() {
+function repaintTest() {
     filterElement.filterUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     shouldBe("filterElement.filterUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

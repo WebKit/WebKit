@@ -36,13 +36,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("maskElement.height.baseVal.valueAsString", "10%");
 
-function executeTest() {
+function repaintTest() {
     maskElement.height.baseVal.valueAsString = "100%";
     shouldBeEqualToString("maskElement.height.baseVal.valueAsString", "100%");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

@@ -55,7 +55,7 @@ shouldBe("feGFunc.slope.baseVal", "1");
 shouldBe("feBFunc.slope.baseVal", "1");
 shouldBe("feAFunc.slope.baseVal", "1");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.slope.baseVal = 2;
 	feGFunc.slope.baseVal = 2;
 	feBFunc.slope.baseVal = 2;
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

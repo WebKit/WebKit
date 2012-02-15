@@ -13,12 +13,10 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("textElement.getAttribute('dx')", "0");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("dx", "-50");
     shouldBeEqualToString("textElement.getAttribute('dx')", "-50");
     completeTest();
 }
-
-startTest(textElement, 50, 20);
 
 var successfullyParsed = true;

@@ -47,13 +47,11 @@ rootSVGElement.appendChild(myRect);
 
 shouldBeEqualToString("displacementMap.in2.baseVal", "Texture");
 
-function executeTest() {
+function repaintTest() {
     displacementMap.in2.baseVal = "Map";
     shouldBeEqualToString("displacementMap.in2.baseVal", "Map");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

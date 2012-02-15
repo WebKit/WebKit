@@ -35,7 +35,7 @@ rootSVGElement.appendChild(rectElement);
 shouldBe("Math.round(turbulence.baseFrequencyX.baseVal * 1000)", "70");
 shouldBe("Math.round(turbulence.baseFrequencyY.baseVal * 1000)", "70");
 
-function executeTest() {
+function repaintTest() {
     turbulence.baseFrequencyX.baseVal = 0.05;
     turbulence.baseFrequencyY.baseVal = 0.05;
     shouldBe("Math.round(turbulence.baseFrequencyX.baseVal * 1000)", "50");
@@ -43,7 +43,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

@@ -15,13 +15,11 @@ rootSVGElement.appendChild(lineElement);
 
 shouldBeEqualToString("lineElement.getAttribute('y1')", "100");
 
-function executeTest() {
+function repaintTest() {
     lineElement.setAttribute("y1", "10");
     shouldBeEqualToString("lineElement.getAttribute('y1')", "10");
 
     completeTest();
 }
-
-startTest(lineElement, 11, 101);
 
 var successfullyParsed = true;

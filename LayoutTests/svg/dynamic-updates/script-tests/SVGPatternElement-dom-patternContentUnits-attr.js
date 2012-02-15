@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeNull("patternElement.getAttribute('patternContentUnits')");
 
-function executeTest() {
+function repaintTest() {
     patternElement.setAttribute("patternContentUnits", "objectBoundingBox");
     shouldBeEqualToString("patternElement.getAttribute('patternContentUnits')", "objectBoundingBox");
  
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

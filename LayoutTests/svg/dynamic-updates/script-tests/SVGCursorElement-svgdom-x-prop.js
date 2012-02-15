@@ -19,13 +19,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("cursorElement.x.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     cursorElement.x.baseVal.value = 0;
     shouldBe("cursorElement.x.baseVal.value", "0");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

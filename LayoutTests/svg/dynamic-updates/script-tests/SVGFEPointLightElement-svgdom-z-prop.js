@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("pointLight.z.baseVal", "100");
 
-function executeTest() {
+function repaintTest() {
     pointLight.z.baseVal = 30;
     shouldBe("pointLight.z.baseVal", "30");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

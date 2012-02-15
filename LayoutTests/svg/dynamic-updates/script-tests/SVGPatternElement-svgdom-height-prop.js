@@ -38,13 +38,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("patternElement.height.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     patternElement.height.baseVal.value = 50;
     shouldBe("patternElement.height.baseVal.value", "50");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

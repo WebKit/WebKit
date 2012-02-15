@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("maskElement.maskContentUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 
-function executeTest() {
+function repaintTest() {
     maskElement.maskContentUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE;
     shouldBe("maskElement.maskContentUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

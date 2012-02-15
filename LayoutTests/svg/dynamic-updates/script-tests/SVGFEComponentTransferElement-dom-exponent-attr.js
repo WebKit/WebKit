@@ -55,7 +55,7 @@ shouldBeEqualToString("feGFunc.getAttribute('exponent')", "2");
 shouldBeEqualToString("feBFunc.getAttribute('exponent')", "2");
 shouldBeEqualToString("feAFunc.getAttribute('exponent')", "2");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("exponent", "1");
     feGFunc.setAttribute("exponent", "1");
     feBFunc.setAttribute("exponent", "1");
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

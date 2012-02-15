@@ -54,13 +54,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("specularElement.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     specularElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("specularElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
 
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

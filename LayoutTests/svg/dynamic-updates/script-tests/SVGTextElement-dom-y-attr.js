@@ -12,13 +12,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("textElement.getAttribute('y')", "50");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("y", "20");
     shouldBeEqualToString("textElement.getAttribute('y')", "20");
 
     completeTest();
 }
-
-startTest(textElement, 0, 50);
 
 var successfullyParsed = true;

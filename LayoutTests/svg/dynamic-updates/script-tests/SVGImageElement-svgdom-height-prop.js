@@ -15,13 +15,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("imageElement.height.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     imageElement.height.baseVal.value = 200;
     shouldBe("imageElement.height.baseVal.value", "200");
 
     completeTest();
 }
-
-startTest(imageElement, 150, 50);
 
 var successfullyParsed = true;

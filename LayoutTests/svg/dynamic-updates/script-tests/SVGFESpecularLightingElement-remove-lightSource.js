@@ -52,12 +52,11 @@ rectElement.setAttributeNS(xlinkNS, "xlink:href", "../W3C-SVG-1.1/resources/bump
 rectElement.setAttribute("filter", "url(#myFilter)");
 rootSVGElement.appendChild(rectElement);
 
-function executeTest() {
+function repaintTest() {
     specularElement.removeChild(distantElement);
 
     completeTest();
 }
 
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -14,7 +14,7 @@ htmlDivElement.textContent = "Test passed";
 foreignObjectElement.appendChild(htmlDivElement);
 rootSVGElement.appendChild(foreignObjectElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGForeignObjectElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(foreignObjectElement, null).display", "block");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -32,7 +32,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(foreignObjectElement, 0, 100);
 
 var successfullyParsed = true;

@@ -38,13 +38,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.getAttribute('edgeMode')", "wrap");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("edgeMode", "duplicate");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('edgeMode')", "duplicate");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

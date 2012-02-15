@@ -113,13 +113,11 @@ rootSVGElement.appendChild(rect1);
 
 shouldBeEqualToString("overComposite1.getAttribute('operator')", "in");
 
-function executeTest() {
+function repaintTest() {
     overComposite1.setAttribute("operator", "arithmetic");
     shouldBeEqualToString("overComposite1.getAttribute('operator')", "arithmetic");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

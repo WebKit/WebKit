@@ -54,13 +54,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("specularElement.getAttribute('surfaceScale')", "1");
 
-function executeTest() {
+function repaintTest() {
     specularElement.setAttribute("surfaceScale", "10");
     shouldBeEqualToString("specularElement.getAttribute('surfaceScale')", "10");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

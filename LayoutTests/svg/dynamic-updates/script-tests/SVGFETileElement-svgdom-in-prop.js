@@ -58,13 +58,12 @@ rootSVGElement.appendChild(gElement);
 
 shouldBeEqualToString("tile.in1.baseVal", "SourceGraphic");
 
-function executeTest() {
+function repaintTest() {
     tile.in1.baseVal = "offset";
     shouldBeEqualToString("tile.in1.baseVal", "offset");
 
     completeTest();
 }
 
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -33,13 +33,11 @@ rootSVGElement.appendChild(ellipseElement);
 
 shouldBeEqualToString("radialGradientElement.cy.baseVal.valueAsString", "0%");
 
-function executeTest() {
+function repaintTest() {
     radialGradientElement.cy.baseVal.valueAsString = "150%";
     shouldBeEqualToString("radialGradientElement.cy.baseVal.valueAsString", "150%");
 
     completeTest();
 }
-
-startTest(ellipseElement, 150, 150);
 
 var successfullyParsed = true;

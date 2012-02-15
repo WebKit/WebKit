@@ -51,7 +51,7 @@ shouldBe("Math.round(feGFunc.offset.baseVal * 100)", "50");
 shouldBe("Math.round(feBFunc.offset.baseVal * 100)", "50");
 shouldBe("Math.round(feAFunc.offset.baseVal * 100)", "50");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.offset.baseVal = 0.1;
 	feGFunc.offset.baseVal = 0.1;
 	feBFunc.offset.baseVal = 0.1;
@@ -64,7 +64,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

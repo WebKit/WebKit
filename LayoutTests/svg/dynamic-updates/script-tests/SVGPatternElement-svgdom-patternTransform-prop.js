@@ -61,7 +61,7 @@ shouldBe("patternElement.patternTransform.baseVal.getItem(0).matrix.d", "1.0");
 shouldBe("patternElement.patternTransform.baseVal.getItem(0).matrix.e", "0.0");
 shouldBe("patternElement.patternTransform.baseVal.getItem(0).matrix.f", "0.0");
 
-function executeTest() {
+function repaintTest() {
     patternElement.patternTransform.baseVal.getItem(0).matrix.a = 4;
 
     shouldBe("patternElement.patternTransform.baseVal.getItem(0).matrix.a", "4.0");
@@ -73,7 +73,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

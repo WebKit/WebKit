@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("convolveMatrixElement.preserveAlpha.baseVal", "false");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.preserveAlpha.baseVal = true;
     shouldBe("convolveMatrixElement.preserveAlpha.baseVal", "true");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -11,12 +11,12 @@ textElement.textContent = "Text content";
 rootSVGElement.appendChild(textElement);
 
 shouldBe("textElement.x.baseVal.getItem(0).value", "50");
-function executeTest() {
+
+function repaintTest() {
     textElement.x.baseVal.getItem(0).value = 0;
     shouldBe("textElement.x.baseVal.getItem(0).value", "0");
 
     completeTest();
 }
 
-startTest(textElement, 50, 20);
 var successfullyParsed = true;

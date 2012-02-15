@@ -39,13 +39,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("morphologyElement.getAttribute('radius')", "6");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.setAttribute("radius", "4");
     shouldBeEqualToString("morphologyElement.getAttribute('radius')", "4");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

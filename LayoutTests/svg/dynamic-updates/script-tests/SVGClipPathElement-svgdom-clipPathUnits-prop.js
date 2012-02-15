@@ -27,13 +27,11 @@ rootSVGElement.appendChild(rectElementB);
 
 shouldBe("clipPathElement.clipPathUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE");
 
-function executeTest() {
+function repaintTest() {
     clipPathElement.clipPathUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     shouldBe("clipPathElement.clipPathUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
 
     completeTest();
 }
-
-startTest(rectElementB, 5, 5);
 
 var successfullyParsed = true;

@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("turbulence.numOctaves.baseVal", "1");
 
-function executeTest() {
+function repaintTest() {
     turbulence.numOctaves.baseVal = 3;
     shouldBe("turbulence.numOctaves.baseVal", "3");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

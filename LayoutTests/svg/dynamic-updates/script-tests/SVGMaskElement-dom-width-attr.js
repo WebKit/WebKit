@@ -36,13 +36,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("maskElement.getAttribute('width')", "10%");
 
-function executeTest() {
+function repaintTest() {
     maskElement.setAttribute("width", "100%");
     shouldBeEqualToString("maskElement.getAttribute('width')", "100%");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

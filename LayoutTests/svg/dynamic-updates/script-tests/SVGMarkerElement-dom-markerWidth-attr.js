@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBeEqualToString("markerElement.getAttribute('markerWidth')", "0");
 
-function executeTest() {
+function repaintTest() {
     markerElement.setAttribute("markerWidth", "2");
     shouldBeEqualToString("markerElement.getAttribute('markerWidth')", "2");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

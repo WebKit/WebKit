@@ -16,14 +16,12 @@ rootSVGElement.appendChild(imageElement);
 shouldBe("imageElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMAX");
 shouldBe("imageElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
 
-function executeTest() {
+function repaintTest() {
     imageElement.preserveAspectRatio.baseVal.align = SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE;
     shouldBe("imageElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE");
     shouldBe("imageElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
 
     completeTest();
 }
-
-startTest(imageElement, 50, 100);
 
 var successfullyParsed = true;

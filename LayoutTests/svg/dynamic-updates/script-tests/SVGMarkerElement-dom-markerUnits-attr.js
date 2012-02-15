@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBeEqualToString("markerElement.getAttribute('markerUnits')", "userSpaceOnUse");
 
-function executeTest() {
+function repaintTest() {
     markerElement.setAttribute("markerUnits", "strokeWidth");
     shouldBeEqualToString("markerElement.getAttribute('markerUnits')", "strokeWidth");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

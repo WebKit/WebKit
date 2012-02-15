@@ -40,14 +40,12 @@ rootSVGElement.appendChild(textElement);
 shouldBe("morphologyElement.radiusX.baseVal", "6");
 shouldBe("morphologyElement.radiusY.baseVal", "6");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.setRadius(4, 4);
     shouldBe("morphologyElement.radiusX.baseVal", "4");
     shouldBe("morphologyElement.radiusY.baseVal", "4");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

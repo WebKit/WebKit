@@ -112,13 +112,11 @@ rootSVGElement.appendChild(rect1);
 
 shouldBeEqualToString("overComposite1.in2.baseVal", "SourceGraphic");
 
-function executeTest() {
+function repaintTest() {
     overComposite1.in2.baseVal = "off1";
     shouldBeEqualToString("overComposite1.in2.baseVal", "off1");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

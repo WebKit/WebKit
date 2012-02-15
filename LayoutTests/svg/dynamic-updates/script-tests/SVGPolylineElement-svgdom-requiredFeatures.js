@@ -8,7 +8,7 @@ polylineElement.setAttribute("points", "0,0 200,0 200,200 0, 200");
 
 rootSVGElement.appendChild(polylineElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGPolylineElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polylineElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -26,7 +26,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(polylineElement, 0, 100);
 
 var successfullyParsed = true;

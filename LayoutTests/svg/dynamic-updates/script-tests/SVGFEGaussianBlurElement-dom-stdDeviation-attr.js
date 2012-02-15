@@ -35,13 +35,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("blurElement.getAttribute('stdDeviation')", "5");
 
-function executeTest() {
+function repaintTest() {
     blurElement.setAttribute("stdDeviation", "10");
     shouldBeEqualToString("blurElement.getAttribute('stdDeviation')", "10");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

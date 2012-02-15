@@ -13,13 +13,11 @@ circleElement.setAttribute("fill", "green");
 rootSVGElement.appendChild(circleElement);
 shouldBe("circleElement.cx.baseVal.value", "-50");
 
-function executeTest() {
+function repaintTest() {
     circleElement.cx.baseVal.value = 150;
     shouldBe("circleElement.cx.baseVal.value", "150");
 
     completeTest();
 }
-
-startTest(circleElement, 50, 150);
 
 var successfullyParsed = true;

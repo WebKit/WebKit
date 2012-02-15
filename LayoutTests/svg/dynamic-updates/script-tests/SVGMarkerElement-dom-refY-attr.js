@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBeEqualToString("markerElement.getAttribute('refY')", "500");
 
-function executeTest() {
+function repaintTest() {
     markerElement.setAttribute("refY", "5");
     shouldBeEqualToString("markerElement.getAttribute('refY')", "5");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

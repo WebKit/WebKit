@@ -46,13 +46,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("distantLight.elevation.baseVal", "50");
 
-function executeTest() {
+function repaintTest() {
     distantLight.elevation.baseVal = 20;
     shouldBe("distantLight.elevation.baseVal", "20");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

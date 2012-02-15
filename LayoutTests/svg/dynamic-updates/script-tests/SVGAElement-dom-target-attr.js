@@ -19,12 +19,9 @@ anchorElement.appendChild(rectElement);
 
 rootSVGElement.appendChild(anchorElement);
 
-function executeTest() {
+function repaintTest() {
     anchorElement.setAttribute("target", "_self");
-    completeTest();
-    triggerUpdate(150, 200);
+    clickAt(150, 200);
 }
-
-executeTest();
 
 var successfullyParsed = true;

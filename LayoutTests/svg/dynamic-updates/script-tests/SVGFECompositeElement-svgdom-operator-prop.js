@@ -113,13 +113,11 @@ rootSVGElement.appendChild(rect1);
 
 shouldBe("overComposite1.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_IN");
 
-function executeTest() {
+function repaintTest() {
     overComposite1.operator.baseVal = SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC;
     shouldBe("overComposite1.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

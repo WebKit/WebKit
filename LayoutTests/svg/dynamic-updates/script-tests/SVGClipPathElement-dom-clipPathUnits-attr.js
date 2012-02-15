@@ -27,13 +27,11 @@ rootSVGElement.appendChild(rectElementB);
 
 shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "userSpaceOnUse")
 
-function executeTest() {
+function repaintTest() {
     clipPathElement.setAttribute("clipPathUnits", "objectBoundingBox");
     shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "objectBoundingBox");
 
     completeTest();
 }
-
-startTest(rectElementB, 5, 5);
 
 var successfullyParsed = true;

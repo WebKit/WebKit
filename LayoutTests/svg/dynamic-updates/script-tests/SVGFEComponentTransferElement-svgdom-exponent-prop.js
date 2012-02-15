@@ -55,7 +55,7 @@ shouldBe("feGFunc.exponent.baseVal", "2");
 shouldBe("feBFunc.exponent.baseVal", "2");
 shouldBe("feAFunc.exponent.baseVal", "2");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.exponent.baseVal = 1;
     feGFunc.exponent.baseVal = 1
     feBFunc.exponent.baseVal = 1
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

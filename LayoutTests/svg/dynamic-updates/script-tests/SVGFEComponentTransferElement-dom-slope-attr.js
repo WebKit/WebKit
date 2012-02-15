@@ -55,7 +55,7 @@ shouldBeEqualToString("feGFunc.getAttribute('slope')", "1");
 shouldBeEqualToString("feBFunc.getAttribute('slope')", "1");
 shouldBeEqualToString("feAFunc.getAttribute('slope')", "1");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("slope", "2");
 	feGFunc.setAttribute("slope", "2");
 	feBFunc.setAttribute("slope", "2");
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

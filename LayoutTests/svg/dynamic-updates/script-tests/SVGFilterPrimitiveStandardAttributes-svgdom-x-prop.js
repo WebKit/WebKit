@@ -43,13 +43,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("gradientElement.x.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.x.baseVal.value = 0;
     shouldBe("gradientElement.x.baseVal.value", "0");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

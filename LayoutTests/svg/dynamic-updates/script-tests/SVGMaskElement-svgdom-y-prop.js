@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("maskElement.y.baseVal.valueAsString", "-100%");
 
-function executeTest() {
+function repaintTest() {
     maskElement.y.baseVal.valueAsString = "-10%";
     shouldBeEqualToString("maskElement.y.baseVal.valueAsString", "-10%");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

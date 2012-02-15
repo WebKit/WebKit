@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("maskElement.getAttribute('maskContentUnits')", "objectBoundingBox");
 
-function executeTest() {
+function repaintTest() {
     maskElement.setAttribute("maskContentUnits", "userSpaceOnUse");
     shouldBeEqualToString("maskElement.getAttribute('maskContentUnits')", "userSpaceOnUse");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

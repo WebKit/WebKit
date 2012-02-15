@@ -41,13 +41,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("offsetElement.in1.baseVal", "blur");
 
-function executeTest() {
+function repaintTest() {
     offsetElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("offsetElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

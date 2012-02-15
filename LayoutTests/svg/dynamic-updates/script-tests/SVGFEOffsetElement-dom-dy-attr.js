@@ -34,13 +34,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("offsetElement.getAttribute('dy')", "50");
 
-function executeTest() {
+function repaintTest() {
     offsetElement.setAttribute("dy", "0");
     shouldBeEqualToString("offsetElement.getAttribute('dy')", "0");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

@@ -39,13 +39,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("morphologyElement.getAttribute('operator')", "dilate");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.setAttribute("operator", "erode");
     shouldBeEqualToString("morphologyElement.getAttribute('operator')", "erode");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

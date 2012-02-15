@@ -40,13 +40,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("morphologyElement.getAttribute('in')", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.setAttribute("in", "SourceGraphic");
     shouldBeEqualToString("morphologyElement.getAttribute('in')", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

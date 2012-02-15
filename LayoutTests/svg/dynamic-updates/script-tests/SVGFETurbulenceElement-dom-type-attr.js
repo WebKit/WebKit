@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("turbulence.getAttribute('type')", "fractalNoise");
 
-function executeTest() {
+function repaintTest() {
     turbulence.setAttribute("type", "turbulence");
     shouldBeEqualToString("turbulence.getAttribute('type')", "turbulence");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

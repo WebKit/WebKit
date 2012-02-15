@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("gradientElement.getAttribute('lighting-color')", "green");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.setAttribute("lighting-color", "yellow");
     shouldBeEqualToString("gradientElement.getAttribute('lighting-color')", "yellow");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

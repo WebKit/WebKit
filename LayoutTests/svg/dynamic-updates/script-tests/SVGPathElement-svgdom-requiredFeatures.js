@@ -8,7 +8,7 @@ pathElement.setAttribute("d", "M0 0 L 200 0 L 200 200 L 0 200");
 
 rootSVGElement.appendChild(pathElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGPathElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(pathElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -26,7 +26,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(pathElement, 0, 100);
 
 var successfullyParsed = true;

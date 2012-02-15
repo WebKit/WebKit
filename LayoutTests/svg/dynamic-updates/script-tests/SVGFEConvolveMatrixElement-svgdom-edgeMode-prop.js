@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBe("convolveMatrixElement.edgeMode.baseVal", "SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.edgeMode.baseVal = SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE;
     shouldBe("convolveMatrixElement.edgeMode.baseVal", "SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

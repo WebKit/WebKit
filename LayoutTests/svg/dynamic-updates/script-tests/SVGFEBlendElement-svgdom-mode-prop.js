@@ -211,7 +211,7 @@ shouldBe("screenBlend.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_MULTIPL
 shouldBe("darkenBlend.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_SCREEN");
 shouldBe("lightenBlend.mode.baseVal", "SVGFEBlendElement.SVG_FEBLEND_MODE_DARKEN");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.mode.baseVal =  SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL;
     multiplyBlend.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_MULTIPLY;
     screenBlend.mode.baseVal = SVGFEBlendElement.SVG_FEBLEND_MODE_SCREEN;
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

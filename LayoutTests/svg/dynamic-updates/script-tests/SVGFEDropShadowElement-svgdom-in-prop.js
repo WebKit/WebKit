@@ -33,13 +33,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBeEqualToString("dropShadowElement.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("dropShadowElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

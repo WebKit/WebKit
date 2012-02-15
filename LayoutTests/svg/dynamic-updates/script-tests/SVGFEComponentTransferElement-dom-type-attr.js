@@ -55,7 +55,7 @@ shouldBeEqualToString("feGFunc.getAttribute('type')", "gamma");
 shouldBeEqualToString("feBFunc.getAttribute('type')", "gamma");
 shouldBeEqualToString("feAFunc.getAttribute('type')", "gamma");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.setAttribute("type", "linear");
     feGFunc.setAttribute("type", "linear");
     feBFunc.setAttribute("type", "linear");
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

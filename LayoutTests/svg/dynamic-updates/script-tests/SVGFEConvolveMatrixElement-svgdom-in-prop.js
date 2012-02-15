@@ -36,13 +36,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("convolveMatrixElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

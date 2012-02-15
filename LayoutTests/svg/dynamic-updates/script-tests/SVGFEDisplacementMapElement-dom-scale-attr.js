@@ -47,13 +47,11 @@ rootSVGElement.appendChild(myRect);
 
 shouldBeEqualToString("displacementMap.getAttribute('scale')", "34");
 
-function executeTest() {
+function repaintTest() {
     displacementMap.setAttribute("scale", "64");
     shouldBeEqualToString("displacementMap.getAttribute('scale')", "64");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

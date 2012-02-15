@@ -55,7 +55,7 @@ shouldBe("Math.round(feGFunc.intercept.baseVal * 100)", "20");
 shouldBe("Math.round(feBFunc.intercept.baseVal * 100)", "20");
 shouldBe("Math.round(feAFunc.intercept.baseVal * 100)", "20");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.intercept.baseVal = 0.1;
     feGFunc.intercept.baseVal = 0.1;
     feBFunc.intercept.baseVal = 0.1;
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

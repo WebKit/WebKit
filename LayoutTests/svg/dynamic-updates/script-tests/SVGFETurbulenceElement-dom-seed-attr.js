@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("turbulence.getAttribute('seed')", "10");
 
-function executeTest() {
+function repaintTest() {
     turbulence.setAttribute("seed", "5");
     shouldBeEqualToString("turbulence.getAttribute('seed')", "5");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

@@ -23,7 +23,7 @@ function createSVGTestCase() {
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
 }
 
-function triggerUpdate(x, y) {
+function clickAt(x, y) {
     // Translation due to <h1> above us
     x = x + rootSVGElement.offsetLeft;
     y = y + rootSVGElement.offsetTop;
@@ -33,13 +33,6 @@ function triggerUpdate(x, y) {
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
-}
-
-function startTest(obj, x, y) {
-    obj.setAttribute("onclick", "executeTest()");
-
-    // Assure first layout finished
-    window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
 }
 
 function completeTest() {

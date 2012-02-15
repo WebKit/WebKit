@@ -16,13 +16,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("imageElement.getAttribute('preserveAspectRatio')", "xMaxYMax meet");
 
-function executeTest() {
+function repaintTest() {
     imageElement.setAttribute("preserveAspectRatio", "none");
     shouldBeEqualToString("imageElement.getAttribute('preserveAspectRatio')", "none");
 
     completeTest();
 }
-
-startTest(imageElement, 50, 150);
 
 var successfullyParsed = true;

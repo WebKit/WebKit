@@ -39,13 +39,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("filterElement.getAttribute('filterUnits')", "userSpaceOnUse");
 
-function executeTest() {
+function repaintTest() {
     filterElement.setAttribute("filterUnits", "objectBoundingBox");
     shouldBeEqualToString("filterElement.getAttribute('filterUnits')", "objectBoundingBox");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

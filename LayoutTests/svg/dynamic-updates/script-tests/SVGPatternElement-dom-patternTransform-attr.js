@@ -39,13 +39,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("patternElement.getAttribute('patternTransform')", "matrix(1,0,0,1,0,0)");
 
-function executeTest() {
+function repaintTest() {
     patternElement.setAttribute("patternTransform", "matrix(4,0,0,1,0,0)");
     shouldBeEqualToString("patternElement.getAttribute('patternTransform')", "matrix(4,0,0,1,0,0)");
 
     completeTest();
 }
-
-startTest(rectElement, 150, 150);
 
 var successfullyParsed = true;

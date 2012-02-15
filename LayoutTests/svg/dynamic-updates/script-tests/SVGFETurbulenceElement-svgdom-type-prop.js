@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("turbulence.type.baseVal", "SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE");
 
-function executeTest() {
+function repaintTest() {
     turbulence.type.baseVal = SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE;
     shouldBe("turbulence.type.baseVal", "SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

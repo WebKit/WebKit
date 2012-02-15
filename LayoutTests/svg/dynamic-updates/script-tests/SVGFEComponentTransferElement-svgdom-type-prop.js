@@ -55,7 +55,7 @@ shouldBe("feGFunc.type.baseVal", "SVGComponentTransferFunctionElement.SVG_FECOMP
 shouldBe("feBFunc.type.baseVal", "SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA");
 shouldBe("feAFunc.type.baseVal", "SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR;
     feGFunc.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR;
     feBFunc.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR;
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

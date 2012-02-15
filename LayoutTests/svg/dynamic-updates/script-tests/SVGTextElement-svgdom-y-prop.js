@@ -12,13 +12,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBe("textElement.y.baseVal.getItem(0).value", "50");
 
-function executeTest() {
+function repaintTest() {
     textElement.y.baseVal.getItem(0).value = 20;
     shouldBe("textElement.y.baseVal.getItem(0).value", "20");
 
     completeTest();
 }
-
-startTest(textElement, 0, 50);
 
 var successfullyParsed = true;

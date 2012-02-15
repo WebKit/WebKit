@@ -32,13 +32,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBe("dropShadowElement.dy.baseVal", "0");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.dy.baseVal = 10;
     shouldBe("dropShadowElement.dy.baseVal", "10");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

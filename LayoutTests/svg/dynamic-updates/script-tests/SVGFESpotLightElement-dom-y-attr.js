@@ -40,13 +40,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("spotLightElement.getAttribute('y')", "100");
 
-function executeTest() {
+function repaintTest() {
     spotLightElement.setAttribute("y", "0");
     shouldBeEqualToString("spotLightElement.getAttribute('y')", "0");
 
     completeTest();
 }
 
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

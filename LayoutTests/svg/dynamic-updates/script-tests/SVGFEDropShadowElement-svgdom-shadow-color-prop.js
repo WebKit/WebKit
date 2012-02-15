@@ -34,13 +34,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBeEqualToString("document.defaultView.getComputedStyle(dropShadowElement).getPropertyValue('flood-color')", "rgb(0, 0, 0)");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.style.setProperty("flood-color", "rgb(0, 128, 0)", "");
     shouldBeEqualToString("document.defaultView.getComputedStyle(dropShadowElement).getPropertyValue('flood-color')", "rgb(0, 128, 0)");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

@@ -211,7 +211,7 @@ shouldBeEqualToString("screenBlend.getAttribute('mode')", "multiply");
 shouldBeEqualToString("darkenBlend.getAttribute('mode')", "screen");
 shouldBeEqualToString("lightenBlend.getAttribute('mode')", "darken");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.setAttribute("mode", "normal");
     multiplyBlend.setAttribute("mode", "multiply");
     screenBlend.setAttribute("mode", "screen");
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

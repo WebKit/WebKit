@@ -39,13 +39,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("filterElement.height.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     filterElement.height.baseVal.value = 200;
     shouldBe("filterElement.height.baseVal.value", "200");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

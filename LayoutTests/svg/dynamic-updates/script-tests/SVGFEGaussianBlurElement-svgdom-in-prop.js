@@ -36,13 +36,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("blurElement.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     blurElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("blurElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

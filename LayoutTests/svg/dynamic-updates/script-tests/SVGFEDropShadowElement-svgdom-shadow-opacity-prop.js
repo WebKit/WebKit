@@ -34,13 +34,11 @@ rootSVGElement.appendChild(circleElement);
 
 shouldBeEqualToString("parseFloat(document.defaultView.getComputedStyle(dropShadowElement).getPropertyValue('flood-opacity')).toFixed(1)", "0.0");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.style.setProperty("flood-opacity", ".5", "");
     shouldBeEqualToString("parseFloat(document.defaultView.getComputedStyle(dropShadowElement).getPropertyValue('flood-opacity')).toFixed(1)", "0.5");
 
     completeTest();
 }
-
-startTest(circleElement, 100, 100);
 
 var successfullyParsed = true;

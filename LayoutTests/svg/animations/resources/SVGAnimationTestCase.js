@@ -81,7 +81,7 @@ function runSMILTest() {
         useX = window.clickX;
     if (window.clickY)
         useY = window.clickY;
-    setTimeout("triggerUpdate(" + useX + "," + useY + ")", 0);
+    setTimeout("clickAt(" + useX + "," + useY + ")", 0);
 }
 
 function runAnimationTest(expected) {

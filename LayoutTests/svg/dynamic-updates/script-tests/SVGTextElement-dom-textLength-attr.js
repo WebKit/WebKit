@@ -14,7 +14,7 @@ shouldBeNull("textElement.getAttribute('textLength')");
 shouldBeTrue("lastLength = textElement.getComputedTextLength(); lastLength > 0 && lastLength < 200");
 shouldBeTrue("lastLength == textElement.textLength.baseVal.value");
 
-function executeTest() {
+function repaintTest() {
     textElement.setAttribute("textLength", "200");
     shouldBeEqualToString("textElement.getAttribute('textLength')", "200");
     shouldBe("textElement.textLength.baseVal.value", "200");
@@ -22,7 +22,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(textElement, 10, 210);
 
 var successfullyParsed = true;

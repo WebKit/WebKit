@@ -15,13 +15,11 @@ rootSVGElement.appendChild(lineElement);
 
 shouldBe("lineElement.x1.baseVal.value", "100");
 
-function executeTest() {
+function repaintTest() {
     lineElement.x1.baseVal.value = 10;
     shouldBe("lineElement.x1.baseVal.value", "10");
 
     completeTest();
 }
-
-startTest(lineElement, 101, 11);
 
 var successfullyParsed = true;

@@ -37,13 +37,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-color')", "rgb(145, 32, 103)");
 
-function executeTest() {
+function repaintTest() {
     filterElement.setAttribute("style", "flood-color:rgb(64, 128, 103)");
     shouldBeEqualToString("document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-color')", "rgb(64, 128, 103)");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

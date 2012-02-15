@@ -36,14 +36,12 @@ rootSVGElement.appendChild(rectElement);
 shouldBe("blurElement.stdDeviationX.baseVal", "5");
 shouldBe("blurElement.stdDeviationY.baseVal", "5");
 
-function executeTest() {
+function repaintTest() {
     blurElement.setStdDeviation(10, 10);
     shouldBe("blurElement.stdDeviationX.baseVal", "10");
     shouldBe("blurElement.stdDeviationY.baseVal", "10");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

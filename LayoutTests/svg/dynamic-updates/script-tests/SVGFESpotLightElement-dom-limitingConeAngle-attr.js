@@ -40,13 +40,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("spotLightElement.getAttribute('limitingConeAngle')", "45");
 
-function executeTest() {
+function repaintTest() {
     spotLightElement.setAttribute("limitingConeAngle", "15");
     shouldBeEqualToString("spotLightElement.getAttribute('limitingConeAngle')", "15");
 
     completeTest();
 }
 
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

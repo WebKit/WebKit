@@ -54,13 +54,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("specularElement.specularConstant.baseVal", "4");
 
-function executeTest() {
+function repaintTest() {
     specularElement.specularConstant.baseVal = 1;
     shouldBe("specularElement.specularConstant.baseVal", "1");
 
     completeTest();
 }
 
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

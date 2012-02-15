@@ -16,7 +16,7 @@ shouldBe("textElement.lengthAdjust.baseVal", "SVGTextContentElement.LENGTHADJUST
 shouldBe("textElement.textLength.baseVal.value", "200");
 shouldBeTrue("lastLength = textElement.getComputedTextLength(); lastLength > 0 && lastLength < 200");
 
-function executeTest() {
+function repaintTest() {
     textElement.lengthAdjust.baseVal = SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS;
     shouldBeEqualToString("textElement.getAttribute('lengthAdjust')", "spacingAndGlyphs");
     shouldBe("textElement.lengthAdjust.baseVal", "SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS");
@@ -25,7 +25,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(textElement, 10, 210);
 
 var successfullyParsed = true;

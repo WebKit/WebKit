@@ -180,7 +180,7 @@ shouldBeEqualToString("SVGNumberListToString(matrixElement.values.baseVal)", "0.
 shouldBe("Math.round(saturateElement.values.baseVal.getItem(0).value * 1000)", "500");
 shouldBe("Math.round(hueRotateElement.values.baseVal.getItem(0).value * 1000)", "10000");
 
-function executeTest() {
+function repaintTest() {
     var number1 = rootSVGElement.createSVGNumber();
     number1.value = 0.33;
     matrixElement.values.baseVal.replaceItem(number1, 0);
@@ -207,9 +207,5 @@ function executeTest() {
 
     completeTest();
 }
-
-
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

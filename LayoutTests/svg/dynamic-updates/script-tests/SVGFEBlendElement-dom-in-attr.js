@@ -211,7 +211,7 @@ shouldBeEqualToString("screenBlend.getAttribute('in')", "SourceAlpha");
 shouldBeEqualToString("darkenBlend.getAttribute('in')", "SourceAlpha");
 shouldBeEqualToString("lightenBlend.getAttribute('in')", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     normalBlend.setAttribute("in", "SourceGraphic");
     multiplyBlend.setAttribute("in", "SourceGraphic");
     screenBlend.setAttribute("in", "SourceGraphic");
@@ -226,7 +226,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

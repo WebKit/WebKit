@@ -12,13 +12,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBe("textElement.rotate.baseVal.getItem(0).value", "-90");
 
-function executeTest() {
+function repaintTest() {
     textElement.rotate.baseVal.getItem(0).value = 0;
     shouldBe("textElement.rotate.baseVal.getItem(0).value", "0");
 
     completeTest();
 }
-
-startTest(textElement, 10, 210);
 
 var successfullyParsed = true;

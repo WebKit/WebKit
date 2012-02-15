@@ -12,13 +12,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBe("textElement.transform.baseVal.getItem(0).matrix.f", "0.0");
 
-function executeTest() {
+function repaintTest() {
     textElement.transform.baseVal.getItem(0).matrix.f = -200;
     shouldBe("textElement.transform.baseVal.getItem(0).matrix.f", "-200.0");
 
     completeTest();
 }
-
-startTest(textElement, 10, 210);
 
 var successfullyParsed = true;

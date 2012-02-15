@@ -33,13 +33,11 @@ rootSVGElement.appendChild(pathElement);
 
 shouldBe("markerElement.markerUnits.baseVal", "SVGMarkerElement.SVG_MARKERUNITS_USERSPACEONUSE");
 
-function executeTest() {
+function repaintTest() {
     markerElement.markerUnits.baseVal = SVGMarkerElement.SVG_MARKERUNITS_STROKEWIDTH;
     shouldBe("markerElement.markerUnits.baseVal", "SVGMarkerElement.SVG_MARKERUNITS_STROKEWIDTH");
 
     completeTest();
 }
-
-startTest(pathElement, 180, 180);
 
 var successfullyParsed = true;

@@ -47,13 +47,11 @@ rootSVGElement.appendChild(myRect);
 
 shouldBe("displacementMap.xChannelSelector.baseVal", "SVGFEDisplacementMapElement.SVG_CHANNEL_B");
 
-function executeTest() {
+function repaintTest() {
     displacementMap.xChannelSelector.baseVal = SVGFEDisplacementMapElement.SVG_CHANNEL_R;
     shouldBe("displacementMap.xChannelSelector.baseVal", "SVGFEDisplacementMapElement.SVG_CHANNEL_R");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

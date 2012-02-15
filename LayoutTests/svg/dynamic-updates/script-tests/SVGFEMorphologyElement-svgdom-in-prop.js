@@ -40,13 +40,11 @@ rootSVGElement.appendChild(textElement);
 
 shouldBeEqualToString("morphologyElement.in1.baseVal", "SourceAlpha");
 
-function executeTest() {
+function repaintTest() {
     morphologyElement.in1.baseVal = "SourceGraphic";
     shouldBeEqualToString("morphologyElement.in1.baseVal", "SourceGraphic");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

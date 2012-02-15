@@ -30,13 +30,11 @@ rootSVGElement.setAttribute("viewBox", "0 0 400 150");
 
 shouldBeEqualToString("image.getAttribute('preserveAspectRatio')", "xMinYMin slice");
 
-function executeTest() {
+function repaintTest() {
     image.setAttribute("preserveAspectRatio", "xMinYMid slice");
     shouldBeEqualToString("image.getAttribute('preserveAspectRatio')", "xMinYMid slice");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

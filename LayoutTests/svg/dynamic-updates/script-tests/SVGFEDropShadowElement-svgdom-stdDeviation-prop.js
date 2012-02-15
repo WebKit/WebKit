@@ -34,14 +34,12 @@ rootSVGElement.appendChild(circleElement);
 shouldBe("dropShadowElement.stdDeviationX.baseVal", "0");
 shouldBe("dropShadowElement.stdDeviationY.baseVal", "0");
 
-function executeTest() {
+function repaintTest() {
     dropShadowElement.setStdDeviation(10, 10);
     shouldBe("dropShadowElement.stdDeviationX.baseVal", "10");
     shouldBe("dropShadowElement.stdDeviationY.baseVal", "10");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

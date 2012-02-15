@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.getAttribute('targetX')", "2");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("targetX", "0");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('targetX')", "0");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

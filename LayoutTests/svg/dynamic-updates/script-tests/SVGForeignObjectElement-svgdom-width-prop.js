@@ -19,13 +19,11 @@ rootSVGElement.appendChild(foreignObjectElement);
 
 shouldBe("foreignObjectElement.width.baseVal.value", "2");
 
-function executeTest() {
+function repaintTest() {
     foreignObjectElement.width.baseVal.value = 150;
     shouldBe("foreignObjectElement.width.baseVal.value", "150");
 
     completeTest();
 }
-
-startTest(foreignObjectElement, 101, 100);
 
 var successfullyParsed = true;

@@ -8,7 +8,7 @@ circleElement.setAttribute("r", "200");
 
 rootSVGElement.appendChild(circleElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGCircleElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(circleElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -26,7 +26,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(circleElement, 0, 100);
 
 var successfullyParsed = true;

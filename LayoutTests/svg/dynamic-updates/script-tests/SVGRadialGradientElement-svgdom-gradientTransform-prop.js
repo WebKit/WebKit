@@ -54,7 +54,7 @@ shouldBe("radialGradientElement.gradientTransform.baseVal.getItem(0).matrix.d", 
 shouldBe("radialGradientElement.gradientTransform.baseVal.getItem(0).matrix.e", "0.0");
 shouldBe("radialGradientElement.gradientTransform.baseVal.getItem(0).matrix.f", "0.0");
 
-function executeTest() {
+function repaintTest() {
     radialGradientElement.gradientTransform.baseVal.getItem(0).matrix.e = 50;
 
     shouldBe("radialGradientElement.gradientTransform.baseVal.getItem(0).matrix.a", "1.0");
@@ -66,7 +66,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(ellipseElement, 150, 150);
 
 var successfullyParsed = true;

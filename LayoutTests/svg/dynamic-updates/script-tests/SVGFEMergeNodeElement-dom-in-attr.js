@@ -47,13 +47,11 @@ rootSVGElement.appendChild(myCircle);
 
 shouldBeEqualToString("mergeNode1.getAttribute('in')", "SourceGraphic");
 
-function executeTest() {
+function repaintTest() {
     mergeNode1.setAttribute("in", "off");
     shouldBeEqualToString("mergeNode1.getAttribute('in')", "off");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

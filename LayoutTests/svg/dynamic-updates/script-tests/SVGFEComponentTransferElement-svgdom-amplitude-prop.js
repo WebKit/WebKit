@@ -55,7 +55,7 @@ shouldBe("feRFunc.amplitude.baseVal", "3");
 shouldBe("feRFunc.amplitude.baseVal", "3");
 shouldBe("feRFunc.amplitude.baseVal", "3");
 
-function executeTest() {
+function repaintTest() {
     feRFunc.amplitude.baseVal = 1;
     feGFunc.amplitude.baseVal = 1;
     feBFunc.amplitude.baseVal = 1;
@@ -68,7 +68,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(imageElement, 100, 100);
 
 var successfullyParsed = true;

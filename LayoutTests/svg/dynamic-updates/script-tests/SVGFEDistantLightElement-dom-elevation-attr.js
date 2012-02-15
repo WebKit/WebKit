@@ -46,13 +46,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("distantLight.getAttribute('elevation')", "50");
 
-function executeTest() {
+function repaintTest() {
     distantLight.setAttribute("elevation", "20");
     shouldBeEqualToString("distantLight.getAttribute('elevation')", "20");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

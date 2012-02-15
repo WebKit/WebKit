@@ -13,7 +13,7 @@ lineElement.setAttribute("stroke-width", "10px");
 
 rootSVGElement.appendChild(lineElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGLineElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(lineElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -31,7 +31,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(lineElement, 20, 20);
 
 var successfullyParsed = true;

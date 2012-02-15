@@ -15,7 +15,7 @@ defsElement.appendChild(rectElement);
 rootSVGElement.appendChild(defsElement);
 rootSVGElement.appendChild(useElement);
 
-function executeTest() {
+function repaintTest() {
     debug("Check that SVGUseElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(useElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
@@ -33,7 +33,5 @@ function executeTest() {
 
     completeTest();
 }
-
-startTest(useElement, 100, 100);
 
 var successfullyParsed = true;

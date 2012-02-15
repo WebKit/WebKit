@@ -37,13 +37,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("convolveMatrixElement.getAttribute('bias')", "0.5");
 
-function executeTest() {
+function repaintTest() {
     convolveMatrixElement.setAttribute("bias", "0");
     shouldBeEqualToString("convolveMatrixElement.getAttribute('bias')", "0");
 
     completeTest();
 }
-
-startTest(rootSVGElement, 100, 100);
 
 var successfullyParsed = true;

@@ -46,13 +46,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBeEqualToString("distantLight.getAttribute('azimuth')", "10");
 
-function executeTest() {
+function repaintTest() {
     distantLight.setAttribute("azimuth", "100");
     shouldBeEqualToString("distantLight.getAttribute('azimuth')", "100");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

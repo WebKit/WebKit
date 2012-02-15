@@ -33,13 +33,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("turbulence.seed.baseVal", "10");
 
-function executeTest() {
+function repaintTest() {
     turbulence.seed.baseVal = 5;
     shouldBe("turbulence.seed.baseVal", "5");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

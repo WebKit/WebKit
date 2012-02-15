@@ -15,13 +15,11 @@ rootSVGElement.appendChild(imageElement);
 
 shouldBeEqualToString("imageElement.getAttribute('height')", "100");
 
-function executeTest() {
+function repaintTest() {
     imageElement.setAttribute("height", "200");
     shouldBeEqualToString("imageElement.getAttribute('height')", "200");
 
     completeTest();
 }
-
-startTest(imageElement, 150, 50);
 
 var successfullyParsed = true;

@@ -14,13 +14,11 @@ rectElement.setAttribute("fill", "green");
 rootSVGElement.appendChild(rectElement);
 shouldBe("rectElement.width.baseVal.value", "50");
 
-function executeTest() {
+function repaintTest() {
     rectElement.width.baseVal.value = 200;
     shouldBe("rectElement.width.baseVal.value", "200");
 
     completeTest();
 }
-
-startTest(rectElement, 25, 100);
 
 var successfullyParsed = true;

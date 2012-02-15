@@ -47,13 +47,11 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("gradientElement.diffuseConstant.baseVal", "0");
 
-function executeTest() {
+function repaintTest() {
     gradientElement.diffuseConstant.baseVal = 1;
     shouldBe("gradientElement.diffuseConstant.baseVal", "1");
 
     completeTest();
 }
-
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;

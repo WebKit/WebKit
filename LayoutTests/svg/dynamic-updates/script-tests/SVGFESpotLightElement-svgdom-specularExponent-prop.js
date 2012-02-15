@@ -40,13 +40,12 @@ rootSVGElement.appendChild(rectElement);
 
 shouldBe("spotLightElement.specularExponent.baseVal", "20");
 
-function executeTest() {
+function repaintTest() {
     spotLightElement.specularExponent.baseVal = 1;
     shouldBe("spotLightElement.specularExponent.baseVal", "1");
 
     completeTest();
 }
 
-startTest(rectElement, 100, 100);
 
 var successfullyParsed = true;
