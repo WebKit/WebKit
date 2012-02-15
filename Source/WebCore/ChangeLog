@@ -1,5 +1,22 @@
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Scrolling Coordinator must be deleted on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=78756
+        <rdar://problem/10866167>
+
+        Reviewed by Sam Weinig.
+
+        ScrollingTree::invalidate will finish breaking the cycle between the scrolling coordinator and the
+        scrolling tree by dereffing the scrolling coordinator. We need to make sure that this happens on the main
+        thread because the scrolling coordinator expects to be destroyed from there.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::derefScrollingCoordinator):
+        (WebCore):
+        (WebCore::ScrollingTree::invalidate):
+
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
         Scrolling coordinator should handle pages being restored from the page cache
         https://bugs.webkit.org/show_bug.cgi?id=78753
         <rdar://problem/10866171>

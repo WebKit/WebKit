@@ -104,13 +104,24 @@ void ScrollingTree::setMainFrameScrollPosition(const IntPoint& scrollPosition)
     m_rootNode->setScrollPosition(scrollPosition);
 }
 
+static void derefScrollingCoordinator(ScrollingCoordinator* scrollingCoordinator)
+{
+    ASSERT(isMainThread());
+
+    scrollingCoordinator->deref();
+}
+
 void ScrollingTree::invalidate()
 {
     // Invalidate is dispatched by the ScrollingCoordinator class on the ScrollingThread
     // to break the reference cycle between ScrollingTree and ScrollingCoordinator when the
     // ScrollingCoordinator's page is destroyed.
     ASSERT(ScrollingThread::isCurrentThread());
-    m_scrollingCoordinator = nullptr;
+
+    // Since this can potentially be the last reference to the scrolling coordinator,
+    // we need to release it on the main thread since it has member variables (such as timers)
+    // that expect to be destroyed from the main thread.
+    callOnMainThread(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
 }
 
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingTreeState)
