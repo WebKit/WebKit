@@ -239,9 +239,6 @@ public:
     // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
     // (like Windows), we need this function in order to do the scroll ourselves.
     bool wheelEvent(const PlatformWheelEvent&);
-#if ENABLE(GESTURE_EVENTS)
-    void gestureEvent(const PlatformGestureEvent&);
-#endif
 
     IntPoint convertChildToSelf(const Widget* child, const IntPoint& point) const
     {

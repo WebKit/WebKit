@@ -1,3 +1,25 @@
+2012-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Remove ScrollableArea::handleGestureEvent
+        https://bugs.webkit.org/show_bug.cgi?id=78661
+
+        Reviewed by Sam Weinig.
+
+        ScrollableArea::handleGestureEvent ends up being a no-op so remove it and the related code. 
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent):
+        * platform/ScrollAnimator.cpp:
+        * platform/ScrollAnimator.h:
+        (ScrollAnimator):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (ScrollView):
+        * platform/ScrollableArea.cpp:
+        * platform/ScrollableArea.h:
+        (ScrollableArea):
+
 2012-02-14  Kentaro Hara  <haraken@chromium.org>
 
         [JSC] Cache the number of non-custom constructor arguments

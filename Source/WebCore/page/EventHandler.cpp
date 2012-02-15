@@ -2362,16 +2362,9 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return true;
     }
     case PlatformEvent::GestureDoubleTap:
-        break;
     case PlatformEvent::GestureScrollBegin:
-    case PlatformEvent::GestureScrollEnd: {
-        FrameView* view = m_frame->view();
-        if (!view)
-            return false;
-
-        view->handleGestureEvent(gestureEvent);
-        return true;
-    }
+    case PlatformEvent::GestureScrollEnd:
+        break;
     default:
         ASSERT_NOT_REACHED();
     }
