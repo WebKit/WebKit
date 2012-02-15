@@ -180,6 +180,18 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
     return true;
 }
 
+bool ScrollingCoordinator::handleWheelEvent(FrameView*, const PlatformWheelEvent& wheelEvent)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
+        return false;
+
+    ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, m_scrollingTree.get(), wheelEvent));
+    return true;
+}
+
 void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());

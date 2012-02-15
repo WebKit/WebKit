@@ -235,11 +235,6 @@ public:
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarAtPoint(const IntPoint& windowPoint);
 
-    // This function exists for scrollviews that need to handle wheel events manually.
-    // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
-    // (like Windows), we need this function in order to do the scroll ourselves.
-    bool wheelEvent(const PlatformWheelEvent&);
-
     IntPoint convertChildToSelf(const Widget* child, const IntPoint& point) const
     {
         IntPoint newPoint = point;

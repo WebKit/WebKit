@@ -3332,6 +3332,30 @@ void FrameView::removeChild(Widget* widget)
     ScrollView::removeChild(widget);
 }
 
+bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    // We don't allow mouse wheeling to happen in a ScrollView that has had its scrollbars explicitly disabled.
+    if (!canHaveScrollbars())
+        return false;
+
+#if !PLATFORM(WX)
+    if (platformWidget())
+        return false;
+#endif
+
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = m_frame->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            if (scrollingCoordinator->coordinatesScrollingForFrameView(this))
+                return scrollingCoordinator->handleWheelEvent(this, wheelEvent);
+        }
+    }
+#endif
+
+    return ScrollableArea::handleWheelEvent(wheelEvent);
+}
+
+
 bool FrameView::isVerticalDocument() const
 {
     RenderView* root = rootRenderer(this);

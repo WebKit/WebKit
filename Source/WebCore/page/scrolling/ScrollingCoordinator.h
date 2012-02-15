@@ -93,6 +93,9 @@ public:
     // position will be updated asynchronously. If it returns false, the caller should update the scrolling position itself.
     bool requestScrollPositionUpdate(FrameView*, const IntPoint&);
 
+    // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
+    bool handleWheelEvent(FrameView*, const PlatformWheelEvent&);
+
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
     void updateMainFrameScrollPosition(const IntPoint&);
 

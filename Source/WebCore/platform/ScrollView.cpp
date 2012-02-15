@@ -845,20 +845,6 @@ void ScrollView::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
     platformSetScrollbarOverlayStyle(overlayStyle);
 }
 
-bool ScrollView::wheelEvent(const PlatformWheelEvent& e)
-{
-    // We don't allow mouse wheeling to happen in a ScrollView that has had its scrollbars explicitly disabled.
-#if PLATFORM(WX)
-    if (!canHaveScrollbars()) {
-#else
-    if (!canHaveScrollbars() || platformWidget()) {
-#endif
-        return false;
-    }
-
-    return ScrollableArea::handleWheelEvent(e);
-}
-
 void ScrollView::setFrameRect(const IntRect& newRect)
 {
     IntRect oldRect = frameRect();
