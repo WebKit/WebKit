@@ -1,5 +1,20 @@
 2012-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: the real_name() method in the Port class is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=78651
+
+        Reviewed by Eric Seidel.
+
+        The change in bug 78565 / r107718 made it no longer necessary
+        (we can use options.platform instead).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.name):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort.__init__):
+
+2012-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up options, port handling in manager_worker_broker
         https://bugs.webkit.org/show_bug.cgi?id=78568
 

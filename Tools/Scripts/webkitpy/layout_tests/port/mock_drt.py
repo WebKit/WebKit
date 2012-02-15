@@ -65,10 +65,6 @@ class MockDRTPort(object):
 
     def __init__(self, host, port_name, **kwargs):
         self.__delegate = PortFactory(host).get(port_name.replace('mock-', ''), **kwargs)
-        self.__real_name = port_name
-
-    def real_name(self):
-        return self.__real_name
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

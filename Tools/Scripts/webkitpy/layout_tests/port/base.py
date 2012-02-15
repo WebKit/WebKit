@@ -610,11 +610,6 @@ class Port(object):
         to factory.get() to instantiate the port."""
         return self._name
 
-    def real_name(self):
-        # FIXME: Seems this is only used for MockDRT and should be removed.
-        """Returns the name of the port as passed to the --platform command line argument."""
-        return self.name()
-
     def operating_system(self):
         # Subclasses should override this default implementation.
         return 'mac'
