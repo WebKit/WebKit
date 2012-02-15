@@ -43,6 +43,19 @@ function test()
 
     function step6()
     {
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step7);
+    }
+
+    function step7()
+    {
+        InspectorTest.addResult("After redo:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        printStyleSheetAndCall(step8);
+    }
+
+    function step8()
+    {
         InspectorTest.completeTest();
     }
 

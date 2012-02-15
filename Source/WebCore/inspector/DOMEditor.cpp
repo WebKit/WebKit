@@ -62,12 +62,17 @@ public:
     virtual bool perform(ExceptionCode& ec)
     {
         m_anchorNode = m_node->nextSibling();
-        return m_parentNode->removeChild(m_node.get(), ec);
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        return m_parentNode->removeChild(m_node.get(), ec);
     }
 
 private:
@@ -106,6 +111,13 @@ public:
         return true;
     }
 
+    virtual bool redo(ExceptionCode& ec)
+    {
+        if (m_removeChildAction && !m_removeChildAction->redo(ec))
+            return false;
+        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
+    }
+
 private:
     RefPtr<Node> m_parentNode;
     RefPtr<Node> m_node;
@@ -123,16 +135,21 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode&)
+    virtual bool perform(ExceptionCode& ec)
     {
         m_value = m_element->getAttribute(m_name);
-        m_element->removeAttribute(m_name);
-        return true;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         m_element->setAttribute(m_name, m_value, ec);
+        return true;
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        m_element->removeAttribute(m_name);
         return true;
     }
 
@@ -159,8 +176,7 @@ public:
         m_hadAttribute = m_element->hasAttribute(m_name);
         if (m_hadAttribute)
             m_oldValue = m_element->getAttribute(m_name);
-        m_element->setAttribute(m_name, m_value, ec);
-        return !ec;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
@@ -169,6 +185,12 @@ public:
             m_element->setAttribute(m_name, m_oldValue, ec);
         else
             m_element->removeAttribute(m_name);
+        return true;
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        m_element->setAttribute(m_name, m_value, ec);
         return true;
     }
 
@@ -207,6 +229,11 @@ public:
         return m_history->undo(ec);
     }
 
+    virtual bool redo(ExceptionCode& ec)
+    {
+        return m_history->redo(ec);
+    }
+
     Node* newNode()
     {
         return m_newNode;
@@ -235,13 +262,18 @@ public:
     virtual bool perform(ExceptionCode& ec)
     {
         m_oldText = m_textNode->wholeText();
-        m_textNode->replaceWholeText(m_text, ec);
-        return true;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         m_textNode->replaceWholeText(m_oldText, ec);
+        return true;
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        m_textNode->replaceWholeText(m_text, ec);
         return true;
     }
 
@@ -264,12 +296,17 @@ public:
 
     virtual bool perform(ExceptionCode& ec)
     {
-        return m_parentNode->replaceChild(m_newNode, m_oldNode.get(), ec);
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         return m_parentNode->replaceChild(m_oldNode, m_newNode.get(), ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        return m_parentNode->replaceChild(m_newNode, m_oldNode.get(), ec);
     }
 
 private:
@@ -291,13 +328,18 @@ public:
     virtual bool perform(ExceptionCode& ec)
     {
         m_oldValue = m_node->nodeValue();
-        m_node->setNodeValue(m_value, ec);
-        return !ec;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         m_node->setNodeValue(m_oldValue, ec);
+        return !ec;
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        m_node->setNodeValue(m_value, ec);
         return !ec;
     }
 

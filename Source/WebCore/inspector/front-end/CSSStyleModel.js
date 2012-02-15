@@ -35,8 +35,8 @@
 WebInspector.CSSStyleModel = function()
 {
     this._pendingCommandsMajorState = [];
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRequested, this._undoRequested, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoCompleted, this._undoCompleted, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
     new WebInspector.CSSStyleModelResourceBinding(this);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
     CSSAgent.enable();
@@ -293,12 +293,12 @@ WebInspector.CSSStyleModel.prototype = {
             DOMAgent.markUndoableState();
     },
 
-    _undoRequested: function()
+    _undoRedoRequested: function()
     {
         this._pendingCommandsMajorState.push(true);
     },
 
-    _undoCompleted: function()
+    _undoRedoCompleted: function()
     {
         this._pendingCommandsMajorState.pop();
     }

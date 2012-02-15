@@ -404,18 +404,25 @@ InspectorTest.generateUndoTest = function(testBody)
         InspectorTest.addResult("Initial:");
         InspectorTest.dumpElementsTree(testNode);
 
-        testBody(step1);
+        testBody(undo);
 
-        function step1()
+        function undo()
         {
             InspectorTest.addResult("Post-action:");
             InspectorTest.dumpElementsTree(testNode);
-            WebInspector.domAgent.undo(step2);
+            WebInspector.domAgent.undo(redo);
         }
 
-        function step2()
+        function redo()
         {
             InspectorTest.addResult("Post-undo (initial):");
+            InspectorTest.dumpElementsTree(testNode);
+            WebInspector.domAgent.redo(done);
+        }
+
+        function done()
+        {
+            InspectorTest.addResult("Post-redo (action):");
             InspectorTest.dumpElementsTree(testNode);
             next();
         }

@@ -4,7 +4,7 @@
 <script src="../../http/tests/inspector/elements-test.js"></script>
 
 <style>
-#container {
+.container {
   font-weight: bold
 }
 </style>
@@ -29,18 +29,23 @@ function test()
     {
         InspectorTest.addResult("After changing property");
         InspectorTest.dumpSelectedElementStyles(true);
-        WebInspector.domAgent.undo(step3);
+
+        WebInspector.domAgent.undo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step3);
     }
 
     function step3()
     {
-        InspectorTest.waitForStyles("container", step4);
-        WebInspector.panels.elements._updateSidebars();
+        InspectorTest.addResult("After undo");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step4);
     }
 
     function step4()
     {
-        InspectorTest.addResult("After undo");
+        InspectorTest.addResult("After redo");
         InspectorTest.dumpSelectedElementStyles(true);
         InspectorTest.completeTest();
     }
@@ -53,8 +58,8 @@ function test()
 Tests that changing a property is undone properly.
 </p>
 
-<div id="container">
-</div>
+<div id="container" class="container"></div>
+<div id="other" class="container"></div>
 
 </body>
 </html>

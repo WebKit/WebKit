@@ -37,6 +37,15 @@ function test()
     {
         InspectorTest.addResult("=== After undo ===");
         InspectorTest.dumpSelectedElementStyles(true);
+
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("=== After redo ===");
+        InspectorTest.dumpSelectedElementStyles(true);
         InspectorTest.completeTest();
     }
 }

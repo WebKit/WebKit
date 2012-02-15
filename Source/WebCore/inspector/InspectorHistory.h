@@ -33,8 +33,8 @@
 
 #include "ExceptionCode.h"
 
-#include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,13 +54,15 @@ public:
         virtual ~Action();
         virtual String toString();
 
-        virtual bool isUndoableStateMark();
-
         virtual String mergeId();
         virtual void merge(PassOwnPtr<Action>);
 
         virtual bool perform(ExceptionCode&) = 0;
+
         virtual bool undo(ExceptionCode&) = 0;
+        virtual bool redo(ExceptionCode&) = 0;
+
+        virtual bool isUndoableStateMark();
     private:
         String m_name;
     };
@@ -72,11 +74,13 @@ public:
     void markUndoableState();
 
     bool undo(ExceptionCode&);
+    bool redo(ExceptionCode&);
     void reset();
 
 private:
     void dump();
-    Deque<OwnPtr<Action> > m_history;
+    Vector<OwnPtr<Action> > m_history;
+    size_t m_afterLastActionIndex;
 };
 
 #endif // ENABLE(INSPECTOR)

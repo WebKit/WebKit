@@ -240,22 +240,26 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode&)
+    virtual bool perform(ExceptionCode& ec)
     {
         if (!m_styleSheet->getText(&m_oldText))
             return false;
-
-        if (m_styleSheet->setText(m_text)) {
-            m_styleSheet->reparseStyleSheet(m_text);
-            return true;
-        }
-        return false;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode&)
     {
         if (m_styleSheet->setText(m_oldText)) {
             m_styleSheet->reparseStyleSheet(m_oldText);
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool redo(ExceptionCode&)
+    {
+        if (m_styleSheet->setText(m_text)) {
+            m_styleSheet->reparseStyleSheet(m_text);
             return true;
         }
         return false;
@@ -298,6 +302,17 @@ public:
 
     virtual bool perform(ExceptionCode& ec)
     {
+        return redo(ec);
+    }
+
+    virtual bool undo(ExceptionCode& ec)
+    {
+        String placeholder;
+        return m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
         String oldText;
         bool result = m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
         m_oldText = oldText.stripWhiteSpace();
@@ -305,12 +320,6 @@ public:
         if (!m_oldText.endsWith(";"))
             m_oldText += ";";
         return result;
-    }
-
-    virtual bool undo(ExceptionCode& ec)
-    {
-        String placeholder;
-        return m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
     }
 
     virtual String mergeId()
@@ -347,12 +356,17 @@ public:
 
     virtual bool perform(ExceptionCode& ec)
     {
-        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, !m_disable, ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
     }
 
 private:
@@ -376,12 +390,17 @@ public:
         m_oldSelector = m_styleSheet->ruleSelector(m_cssId, ec);
         if (ec)
             return false;
-        return m_styleSheet->setRuleSelector(m_cssId, m_selector, ec);
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         return m_styleSheet->setRuleSelector(m_cssId, m_oldSelector, ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        return m_styleSheet->setRuleSelector(m_cssId, m_selector, ec);
     }
 
 private:
@@ -401,16 +420,21 @@ public:
 
     virtual bool perform(ExceptionCode& ec)
     {
-        CSSStyleRule* cssStyleRule = m_styleSheet->addRule(m_selector, ec);
-        if (ec)
-            return false;
-        m_newId = m_styleSheet->ruleId(cssStyleRule);
-        return true;
+        return redo(ec);
     }
 
     virtual bool undo(ExceptionCode& ec)
     {
         return m_styleSheet->deleteRule(m_newId, ec);
+    }
+
+    virtual bool redo(ExceptionCode& ec)
+    {
+        CSSStyleRule* cssStyleRule = m_styleSheet->addRule(m_selector, ec);
+        if (ec)
+            return false;
+        m_newId = m_styleSheet->ruleId(cssStyleRule);
+        return true;
     }
 
     InspectorCSSId newRuleId() { return m_newId; }

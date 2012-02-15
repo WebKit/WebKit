@@ -147,6 +147,7 @@ public:
     virtual void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId);
     virtual void setTouchEmulationEnabled(ErrorString*, bool);
     virtual void undo(ErrorString*);
+    virtual void redo(ErrorString*);
     virtual void markUndoableState(ErrorString*);
 
     Node* highlightedNode() const;

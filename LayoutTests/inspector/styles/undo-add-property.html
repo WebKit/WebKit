@@ -4,7 +4,7 @@
 <script src="../../http/tests/inspector/elements-test.js"></script>
 
 <style>
-#container {
+.container {
   font-weight: bold
 }
 </style>
@@ -22,30 +22,31 @@ function test()
 
         var treeItem = InspectorTest.getMatchedStylePropertyTreeItem("font-weight");
         var treeElement = treeItem.section.addNewBlankProperty();
-        treeElement.startEditing();
-        treeElement.nameElement.textContent = "margin-left";
-        treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-        treeElement.valueElement.textContent = "1px";
-        treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-        InspectorTest.runAfterPendingDispatches(step2);
+        treeElement.applyStyleText("margin-left: 1px", true, false);
+        InspectorTest.waitForStyles("container", step2);
     }
 
     function step2()
     {
         InspectorTest.addResult("After adding property");
         InspectorTest.dumpSelectedElementStyles(true);
-        WebInspector.domAgent.undo(step3);
+
+        WebInspector.domAgent.undo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step3);
     }
 
     function step3()
     {
-        InspectorTest.waitForStyles("container", step4);
-        WebInspector.panels.elements._updateSidebars();
+        InspectorTest.addResult("After undo");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step4);
     }
 
     function step4()
     {
-        InspectorTest.addResult("After undo");
+        InspectorTest.addResult("After redo");
         InspectorTest.dumpSelectedElementStyles(true);
         InspectorTest.completeTest();
     }
@@ -58,8 +59,8 @@ function test()
 Tests that adding a property is undone properly.
 </p>
 
-<div id="container">
-</div>
+<div id="container" class="container"></div>
+<div id="other" class="container"></div>
 
 </body>
 </html>

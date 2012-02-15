@@ -1,3 +1,77 @@
+2012-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: implement redo for DOM actions.
+        https://bugs.webkit.org/show_bug.cgi?id=78601
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::RemoveChildAction::perform):
+        (WebCore::DOMEditor::RemoveChildAction::redo):
+        (DOMEditor::RemoveChildAction):
+        (WebCore::DOMEditor::InsertBeforeAction::redo):
+        (DOMEditor::InsertBeforeAction):
+        (WebCore::DOMEditor::RemoveAttributeAction::perform):
+        (WebCore::DOMEditor::RemoveAttributeAction::redo):
+        (DOMEditor::RemoveAttributeAction):
+        (WebCore::DOMEditor::SetAttributeAction::perform):
+        (WebCore::DOMEditor::SetAttributeAction::redo):
+        (DOMEditor::SetAttributeAction):
+        (WebCore::DOMEditor::SetOuterHTMLAction::redo):
+        (DOMEditor::SetOuterHTMLAction):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::perform):
+        (WebCore::DOMEditor::ReplaceWholeTextAction::redo):
+        (DOMEditor::ReplaceWholeTextAction):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::perform):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::redo):
+        (DOMEditor::ReplaceChildNodeAction):
+        (WebCore::DOMEditor::SetNodeValueAction::perform):
+        (WebCore::DOMEditor::SetNodeValueAction::redo):
+        (DOMEditor::SetNodeValueAction):
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::perform):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetStyleSheetTextAction::redo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::perform):
+        (InspectorCSSAgent::SetPropertyTextAction):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::undo):
+        (WebCore::InspectorCSSAgent::SetPropertyTextAction::redo):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::perform):
+        (WebCore::InspectorCSSAgent::TogglePropertyAction::redo):
+        (InspectorCSSAgent::TogglePropertyAction):
+        (WebCore::InspectorCSSAgent::SetRuleSelectorAction::perform):
+        (WebCore::InspectorCSSAgent::SetRuleSelectorAction::redo):
+        (InspectorCSSAgent::SetRuleSelectorAction):
+        (WebCore::InspectorCSSAgent::AddRuleAction::perform):
+        (WebCore::InspectorCSSAgent::AddRuleAction::redo):
+        (InspectorCSSAgent::AddRuleAction):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::redo):
+        (WebCore):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorHistory.cpp:
+        (WebCore::InspectorHistory::InspectorHistory):
+        (WebCore::InspectorHistory::perform):
+        (WebCore::InspectorHistory::markUndoableState):
+        (WebCore::InspectorHistory::undo):
+        (WebCore::InspectorHistory::redo):
+        (WebCore):
+        * inspector/InspectorHistory.h:
+        (Action):
+        (InspectorHistory):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype._undoRedoRequested):
+        (WebInspector.CSSStyleModel.prototype._undoRedoCompleted):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.get undo):
+        (WebInspector.DOMAgent.prototype.redo):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+
 2012-02-15  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: MessageEvent fired during send() on workers

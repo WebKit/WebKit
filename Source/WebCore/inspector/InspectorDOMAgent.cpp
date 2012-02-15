@@ -707,6 +707,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
     }
 
     m_domEditor->replaceWholeText(toText(node), value, errorString);
+    m_history->markUndoableState();
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray)
@@ -1088,6 +1089,13 @@ void InspectorDOMAgent::undo(ErrorString* errorString)
 {
     ExceptionCode ec = 0;
     m_history->undo(ec);
+    *errorString = InspectorDOMAgent::toErrorString(ec);
+}
+
+void InspectorDOMAgent::redo(ErrorString* errorString)
+{
+    ExceptionCode ec = 0;
+    m_history->redo(ec);
     *errorString = InspectorDOMAgent::toErrorString(ec);
 }
 

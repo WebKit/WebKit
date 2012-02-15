@@ -34,6 +34,15 @@ function test()
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
+        WebInspector.domAgent.redo();
+        InspectorTest.waitForStyles("container", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("After redo");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
         InspectorTest.completeTest();
     }
 }

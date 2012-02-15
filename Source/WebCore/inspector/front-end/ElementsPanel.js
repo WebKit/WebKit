@@ -1044,6 +1044,11 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
 
+        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+0059") { // Y key
+            DOMAgent.redo(this._updateSidebars.bind(this));
+            return;
+        }
+
         this.treeOutline.handleShortcut(event);
     },
 

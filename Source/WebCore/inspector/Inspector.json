@@ -1525,6 +1525,11 @@
                 "hidden": true
             },
             {
+                "name": "redo",
+                "description": "Re-does the last undone action.",
+                "hidden": true
+            },
+            {
                 "name": "markUndoableState",
                 "description": "Marks last undoable state.",
                 "hidden": true

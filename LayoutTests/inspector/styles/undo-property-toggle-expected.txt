@@ -6,4 +6,6 @@ After disable
 /-- overloaded --/ /-- disabled --/ font-weight: bold;
 After undo
 font-weight: bold;
+After redo
+/-- overloaded --/ /-- disabled --/ font-weight: bold;
 
