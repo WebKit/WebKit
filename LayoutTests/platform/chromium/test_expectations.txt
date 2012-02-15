@@ -107,9 +107,6 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
 BUGNOEL : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
-BUGNOEL : svg/custom/image-rescale-clip.html = IMAGE
-BUGNOEL : svg/custom/image-rescale-scroll.html = IMAGE
-BUGNOEL : svg/custom/image-rescale.svg = IMAGE
 BUGNOEL : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
 BUGNOEL : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug10565.html = IMAGE

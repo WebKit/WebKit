@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 700x400
+  RenderSVGRoot {svg} at (0,0) size 670x210
+    RenderSVGImage {image} at (0,0) size 320x210
+    RenderSVGImage {image} at (350,0) size 320x210 [transform={m=((10.00,0.00)(0.00,10.00)) t=(-3150.00,0.00)}]
