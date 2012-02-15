@@ -41,9 +41,9 @@ class FileList;
 class ClipboardMac : public Clipboard, public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame* frame)
+    static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, const String& pasteboardName, ClipboardAccessPolicy policy, Frame* frame)
     {
-        return adoptRef(new ClipboardMac(clipboardType, pasteboard, policy, frame));
+        return adoptRef(new ClipboardMac(clipboardType, pasteboardName, policy, frame));
     }
 
     virtual ~ClipboardMac();
@@ -72,14 +72,14 @@ public:
     
     // Methods for getting info in Cocoa's type system
     NSImage *dragNSImage(NSPoint&) const; // loc converted from dragLoc, based on whole image size
-    NSPasteboard *pasteboard() { return m_pasteboard.get(); }
+    const String& pasteboardName() { return m_pasteboardName; }
 
 private:
-    ClipboardMac(ClipboardType, NSPasteboard *, ClipboardAccessPolicy, Frame*);
+    ClipboardMac(ClipboardType, const String& pasteboardName, ClipboardAccessPolicy, Frame*);
 
     void setDragImage(CachedImage*, Node*, const IntPoint&);
 
-    RetainPtr<NSPasteboard> m_pasteboard;
+    String m_pasteboardName;
     int m_changeCount;
     Frame* m_frame; // used on the source side to generate dragging images
 };

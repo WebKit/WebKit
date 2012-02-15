@@ -42,6 +42,8 @@ public:
     virtual PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual String stringForType(const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual int changeCount(const String& pasteboardName) = 0;
+    virtual String uniqueName() = 0;
     
     virtual void copy(const String& fromPasteboard, const String& toPasteboard) = 0;
     virtual void setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;

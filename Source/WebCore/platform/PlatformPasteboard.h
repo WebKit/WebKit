@@ -40,11 +40,13 @@ namespace WebCore {
 class PlatformPasteboard {
 public:
     PlatformPasteboard(const String& pasteboardName);
+    static String uniqueName();
     
     void getTypes(Vector<String>& types);
     PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
     String stringForType(const String& pasteboardType);
+    int changeCount() const;
     
     void copy(const String& fromPasteboard);
     void setTypes(const Vector<String>& pasteboardTypes);

@@ -41,6 +41,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "PlatformEventFactoryMac.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
@@ -668,11 +669,11 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag
-    [pasteboard declareTypes:[NSArray array] owner:nil];
-    return ClipboardMac::create(Clipboard::DragAndDrop, pasteboard, ClipboardWritable, m_frame);
+    Pasteboard pasteboard(NSDragPboard);
+    pasteboard.clear();
+    return ClipboardMac::create(Clipboard::DragAndDrop, String(NSDragPboard), ClipboardWritable, m_frame);
 }
 
 #endif

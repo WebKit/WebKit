@@ -1,3 +1,20 @@
+2012-02-15  Enrica Casucci  <enrica@apple.com>
+
+        Refactor ClipboardMac class to use PlatformStrategies.
+        https://bugs.webkit.org/show_bug.cgi?id=78554
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebDragClient.h: Changed method signature to reference
+        the pasteboard by name.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Added new methods.
+        (WebKit::WebPlatformStrategies::changeCount):
+        (WebKit::WebPlatformStrategies::uniqueName):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Ditto.
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage): Changed method signature to reference
+        the pasteboard by name.
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.

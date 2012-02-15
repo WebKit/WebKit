@@ -36,7 +36,7 @@ public:
     virtual void dragControllerDestroyed() OVERRIDE;
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) OVERRIDE;
     virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag) OVERRIDE;
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*) OVERRIDE;
+    virtual void declareAndWriteDragImage(const String& pasteboardName, DOMElement*, NSURL*, NSString*, WebCore::Frame*) OVERRIDE;
 private:
     WebView* m_webView;
 };

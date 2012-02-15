@@ -164,6 +164,17 @@ void WebPlatformStrategies::copy(const String& fromPasteboard, const String& toP
     return pasteboard.copy(fromPasteboard);
 }
 
+int WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
+{
+    PlatformPasteboard pasteboard(pasteboardName);
+    return pasteboard.changeCount();
+}
+
+String WebPlatformStrategies::uniqueName()
+{
+    return PlatformPasteboard::uniqueName();
+}
+
 void WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
     PlatformPasteboard pasteboard(pasteboardName);

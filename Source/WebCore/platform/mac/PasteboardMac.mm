@@ -297,10 +297,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
 
 void Pasteboard::writeClipboard(Clipboard* clipboard)
 {
-    // FIXME: this is the last access to NSPasteboard. It will removed when the ClipboardMac
-    // class is refactored.
-    NSPasteboard* pasteboard = static_cast<ClipboardMac*>(clipboard)->pasteboard();
-    platformStrategies()->pasteboardStrategy()->copy([pasteboard name], m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->copy(static_cast<ClipboardMac*>(clipboard)->pasteboardName(), m_pasteboardName);
 }
 
 bool Pasteboard::canSmartReplace()

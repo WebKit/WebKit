@@ -125,10 +125,10 @@ static NSArray *arrayForURLsWithTitles(NSURL *URL, NSString *title)
         [NSArray arrayWithObject:[title _webkit_stringByTrimmingWhitespace]], nil];
 }
 
-void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElement *element, NSURL *URL, NSString *title, WebCore::Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMElement *element, NSURL *URL, NSString *title, WebCore::Frame*)
 {
     ASSERT(element);
-    ASSERT(pasteboard && pasteboard == [NSPasteboard pasteboardWithName:NSDragPboard]);
+    ASSERT(pasteboardName == String(NSDragPboard));
 
     Element* coreElement = core(element);
 
@@ -155,6 +155,7 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
     m_pasteboardOwner.adoptNS([[WKPasteboardOwner alloc] initWithImage:image]);
     m_filePromiseOwner.adoptNS([(WKPasteboardFilePromiseOwner *)[WKPasteboardFilePromiseOwner alloc] initWithSource:m_pasteboardOwner.get()]);
 
+    NSPasteboard* pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
     [pasteboard declareTypes:types.get() owner:m_pasteboardOwner.leakRef()];    
 
     [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];

@@ -83,7 +83,7 @@ WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntP
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::Clipboard* clipboard)
 {
     ASSERT(clipboard);
-    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:static_cast<WebCore::ClipboardMac*>(clipboard)->pasteboard()];
+    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:static_cast<WebCore::ClipboardMac*>(clipboard)->pasteboardName()]];
 }
 
 void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
@@ -100,7 +100,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
     [topHTMLView _stopAutoscrollTimer];
-    NSPasteboard *pasteboard = static_cast<ClipboardMac*>(clipboard)->pasteboard();
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:static_cast<ClipboardMac*>(clipboard)->pasteboardName()];
 
     NSImage *dragNSImage = dragImage.get();
     WebHTMLView *sourceHTMLView = htmlView.get();
@@ -120,14 +120,14 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
         [topHTMLView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
 }
 
-void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame) 
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame) 
 {
-    ASSERT(pasteboard);
+    ASSERT(pasteboardName);
     ASSERT(element);
     WebHTMLView *source = getTopHTMLView(frame);      
     WebArchive *archive = [element webArchive];
     
-    [pasteboard _web_declareAndWriteDragImageForElement:element URL:URL title:title archive:archive source:source];
+    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:element URL:URL title:title archive:archive source:source];
 }
 
 void WebDragClient::dragControllerDestroyed() 

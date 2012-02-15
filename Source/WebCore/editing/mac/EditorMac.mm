@@ -37,6 +37,8 @@
 #import "FrameView.h"
 #import "HTMLNames.h"
 #import "Pasteboard.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 #import "RenderBlock.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
@@ -49,7 +51,7 @@ using namespace HTMLNames;
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
     return ClipboardMac::create(Clipboard::CopyAndPaste,
-        policy == ClipboardWritable ? [NSPasteboard pasteboardWithUniqueName] : [NSPasteboard generalPasteboard], policy, frame);
+        policy == ClipboardWritable ? platformStrategies()->pasteboardStrategy()->uniqueName() : String(NSGeneralPboard), policy, frame);
 }
 
 void Editor::showFontPanel()

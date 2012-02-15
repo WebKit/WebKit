@@ -50,6 +50,10 @@ PassRefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pastebo
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType)
 {
     NSArray* paths = [m_pasteboard.get() propertyListForType:pasteboardType];
+    if ([paths isKindOfClass:[NSString class]]) {
+        pathnames.append((NSString *)paths);
+        return;        
+    }
     for (NSUInteger i = 0; i < [paths count]; i++)
         pathnames.append([paths objectAtIndex:i]);
 }
@@ -57,6 +61,16 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
 String PlatformPasteboard::stringForType(const String& pasteboardType)
 {
     return [m_pasteboard.get() stringForType:pasteboardType];
+}
+
+int PlatformPasteboard::changeCount() const
+{
+    return [m_pasteboard.get() changeCount];
+}
+
+String PlatformPasteboard::uniqueName()
+{
+    return [[NSPasteboard pasteboardWithUniqueName] name];
 }
 
 void PlatformPasteboard::copy(const String& fromPasteboard)
