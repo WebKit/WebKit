@@ -3649,7 +3649,7 @@ BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = FAIL
 
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 
-BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH TIMEOUT
+BUGWK75111 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
 BUGWK75111 RELEASE : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
 BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH
 BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIMEOUT

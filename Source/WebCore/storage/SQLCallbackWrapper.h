@@ -30,7 +30,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "CrossThreadTask.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/ThreadingPrimitives.h>
 
@@ -74,7 +73,7 @@ public:
             context = m_scriptExecutionContext.release().leakRef();
             callback = m_callback.release().leakRef();
         }
-        context->postTask(createCallbackTask(&safeRelease, AllowAccessLater(callback)));
+        context->postTask(SafeReleaseTask::create(callback));
     }
 
     PassRefPtr<T> unwrap()
@@ -89,12 +88,30 @@ public:
     bool hasCallback() const { return m_callback; }
 
 private:
-    static void safeRelease(ScriptExecutionContext* context, T* callback)
-    {
-        ASSERT(callback && context && context->isContextThread());
-        callback->deref();
-        context->deref();
-    }
+    class SafeReleaseTask : public ScriptExecutionContext::Task {
+    public:
+        static PassOwnPtr<SafeReleaseTask> create(T* callbackToRelease)
+        {
+            return adoptPtr(new SafeReleaseTask(callbackToRelease));
+        }
+
+        virtual void performTask(ScriptExecutionContext* context)
+        {
+            ASSERT(m_callbackToRelease && context && context->isContextThread());
+            m_callbackToRelease->deref();
+            context->deref();
+        }
+
+        virtual bool isCleanupTask() const { return true; }
+
+    private:
+        SafeReleaseTask(T* callbackToRelease)
+            : m_callbackToRelease(callbackToRelease)
+        {
+        }
+
+        T* m_callbackToRelease;
+    };
 
     Mutex m_mutex;
     RefPtr<T> m_callback;

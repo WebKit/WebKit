@@ -1,3 +1,30 @@
+2012-02-14  Hao Zheng  <zhenghao@chromium.org>
+
+        Cleanup pending transaction queue in Database.
+        https://bugs.webkit.org/show_bug.cgi?id=75048
+
+        Reviewed by David Levin.
+
+        Each SQLTransaction has 3 SQLCallbackWrappers, and each of them
+        holds a ref to WorkerContext. As a result, if the worker thread is
+        stopped before all SQLTransactions are finished, the ASSERT of
+        m_workerContext->hasOneRef() in WorkerThread::workerThread() would fail.
+
+        No new tests.
+        REGRESSION(r103429) fast/workers/storage/use-same-database-in-page-and-workers.html asserts
+
+        * storage/Database.cpp:
+        (WebCore::Database::close): Cleanup pending transaction queue in close().
+        * storage/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        (SafeReleaseTask): Make SafeReleaseTask a cleanup task, which is
+        necessary because at the time of SafeReleaseTask is performed,
+        WorkerRunLoop has been terminated and only runs cleanup tasks.
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::create):
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::performTask):
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::isCleanupTask):
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::SafeReleaseTask):
+
 2012-02-14  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78662

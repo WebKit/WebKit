@@ -216,6 +216,7 @@ void Database::close()
         MutexLocker locker(m_transactionInProgressMutex);
         m_isTransactionQueueEnabled = false;
         m_transactionInProgress = false;
+        m_transactionQueue.clear();
     }
 
     closeDatabase();
