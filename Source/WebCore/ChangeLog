@@ -1,3 +1,26 @@
+2012-02-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: crash when inspecting an element on a page with eval disabled by CSP
+        https://bugs.webkit.org/show_bug.cgi?id=78705
+
+        Inspector functions in injected script may use eval so we need to make sure
+        it is allowed for inspector code on pages where it is prohibited by CSP.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/elements/resolve-node-blocked.html
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::nodeForObjectId):
+        (WebCore::InjectedScript::wrapCallFrames):
+        (WebCore::InjectedScript::wrapObject):
+        (WebCore::InjectedScript::releaseObjectGroup):
+        (WebCore::InjectedScript::callFunctionWithEvalEnabled):
+        (WebCore):
+        (WebCore::InjectedScript::makeCall):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+
 2012-02-13  Brian Grinstead  <briangrinstead@gmail.com>
 
         Web Inspector: Add colorpicker functionality to color swatches in Styles Sidebar
