@@ -1,3 +1,15 @@
+2012-02-15  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Move RunLoop to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=78504
+
+        Reviewed by Adam Roben.
+
+        r105475 moved RunLoop.cpp from WebKit2 to WebCore, but missed the CMake based ports.
+
+        * CMakeLists.txt:
+        * PlatformWinCE.cmake:
+
 2012-02-15  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Remove clipToImageBuffer from SourceAlpha and feComposite

@@ -101,7 +101,6 @@ SET(WebKit2_SOURCES
 
     Platform/Logging.cpp
     Platform/Module.cpp
-    Platform/RunLoop.cpp
     Platform/WorkQueue.cpp
 
     PluginProcess/PluginControllerProxy.cpp
