@@ -1,5 +1,19 @@
 2012-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: add a unit test for regression introduced in bug 78565
+        https://bugs.webkit.org/show_bug.cgi?id=78646
+
+        Reviewed by Tony Chang.
+
+        * Scripts/webkitpy/layout_tests/controllers/worker_unittest.py: Added.
+        (FakeConnection):
+        (FakeConnection.run_message_loop):
+        (FakeConnection.post_message):
+        (WorkerTest):
+        (WorkerTest.test_default_platform_in_worker):
+
+2012-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT is broken for the default port
         https://bugs.webkit.org/show_bug.cgi?id=78640
     
