@@ -333,7 +333,7 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
     if (!m_document)
         return;
     if (CSSStyleSelector* styleSelector = m_document->styleSelectorIfExists())
-        styleSelector->invalidateMatchedDeclarationCache();
+        styleSelector->invalidateMatchedPropertiesCache();
     if (m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->scheduleForcedStyleRecalc();

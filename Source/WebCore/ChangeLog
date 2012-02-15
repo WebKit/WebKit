@@ -1,3 +1,58 @@
+2012-02-14  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=78662
+        CSSStyleSelector should not rely on parent rule pointer in StylePropertySet
+
+        Reviewed by Andreas Kling.
+
+        Pass the rule pointer down to the style applying so we don't need to rely on
+        StylePropertySet having one.
+
+        To make this easier the patch also refactors the matched properties vector to
+        be part of MatchResult object instead of a member of CSSStyleSelector.
+        
+        Rename Declaration -> Properties.
+        
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::sweepMatchedPropertiesCache):
+        (WebCore::CSSStyleSelector::addMatchedProperties):
+        (WebCore::CSSStyleSelector::sortAndTransferMatchedRules):
+        (WebCore::CSSStyleSelector::matchScopedAuthorRules):
+        (WebCore::CSSStyleSelector::matchAuthorRules):
+        (WebCore::CSSStyleSelector::matchUserRules):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::matchesRuleSet):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::isInsideRegionRule):
+        (WebCore::CSSStyleSelector::applyProperties):
+        (WebCore::CSSStyleSelector::applyMatchedProperties):
+        (WebCore::CSSStyleSelector::computeMatchedPropertiesHash):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::CSSStyleSelector::findFromMatchedPropertiesCache):
+        (WebCore::CSSStyleSelector::addToMatchedPropertiesCache):
+        (WebCore::CSSStyleSelector::invalidateMatchedPropertiesCache):
+        (WebCore::isCacheableInMatchedPropertiesCache):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addMatchedRule):
+        (WebCore::CSSStyleSelector::MatchedProperties::MatchedProperties):
+        (MatchedProperties):
+        (MatchResult):
+        (MatchedPropertiesCacheItem):
+
 2012-02-14  Takashi Toyoshima  <toyoshim@chromium.org>
 
         WebSocketChannel minor refactoring for code manageability

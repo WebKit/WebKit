@@ -217,7 +217,7 @@ public:
 
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
-    void invalidateMatchedDeclarationCache();
+    void invalidateMatchedPropertiesCache();
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
@@ -259,7 +259,6 @@ private:
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-    void addMatchedDeclaration(StylePropertySet*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     struct MatchRanges {
         MatchRanges() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
@@ -271,34 +270,50 @@ private:
         int lastUserRule;
     };
 
+    struct MatchedProperties {
+        MatchedProperties() : possiblyPaddedMember(0) { }
+        
+        RefPtr<StylePropertySet> properties;
+        union {
+            unsigned linkMatchType;
+            // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
+            void* possiblyPaddedMember;
+        };
+    };
+
     struct MatchResult {
         MatchResult() : isCacheable(true) { }
+        Vector<MatchedProperties, 64> matchedProperties;
+        Vector<CSSStyleRule*, 64> matchedRules;
         MatchRanges ranges;
         bool isCacheable;
     };
+    static void addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, CSSStyleRule* rule = 0, unsigned linkMatchType =  SelectorChecker::MatchAll);
+
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
-    void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-    void matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-    void matchScopedAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void matchUARules(MatchResult&, RuleSet*);
+    void matchAuthorRules(MatchResult&, bool includeEmptyRules);
+    void matchUserRules(MatchResult&, bool includeEmptyRules);
+    void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
     void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
-    void sortAndTransferMatchedRules();
+    void sortAndTransferMatchedRules(MatchResult&);
 
     bool checkSelector(const RuleData&);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
-    void applyMatchedDeclarations(const MatchResult&);
+    void applyMatchedProperties(const MatchResult&);
     template <bool firstPass>
-    void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly);
+    void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
-    void applyDeclaration(StylePropertySet*, bool isImportant, bool inheritedOnly);
+    void applyProperties(const StylePropertySet* properties, CSSStyleRule*, bool isImportant, bool inheritedOnly);
 
     static bool isValidRegionStyleProperty(int id);
 
-    void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
+    void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<CSSPageRule*>& matchedRules, const Vector<CSSPageRule*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
     bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
@@ -372,39 +387,24 @@ private:
     PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*);
     void loadPendingImages();
 
-    struct MatchedStyleDeclaration {
-        MatchedStyleDeclaration() : possiblyPaddedMember(0) { }
-
-        RefPtr<StylePropertySet> styleDeclaration;
-        union {
-            unsigned linkMatchType;
-            // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
-            void* possiblyPaddedMember;
-        };
-    };
-    static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
-    struct MatchedStyleDeclarationCacheItem {
-        Vector<MatchedStyleDeclaration> matchedStyleDeclarations;
+    static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
+    struct MatchedPropertiesCacheItem {
+        Vector<MatchedProperties> matchedProperties;
         MatchRanges ranges;
         RefPtr<RenderStyle> renderStyle;
         RefPtr<RenderStyle> parentRenderStyle;
     };
-    const MatchedStyleDeclarationCacheItem* findFromMatchedDeclarationCache(unsigned hash, const MatchResult&);
-    void addToMatchedDeclarationCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);
+    const MatchedPropertiesCacheItem* findFromMatchedPropertiesCache(unsigned hash, const MatchResult&);
+    void addToMatchedPropertiesCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);
 
     // Every N additions to the matched declaration cache trigger a sweep where entries holding
     // the last reference to a style declaration are garbage collected.
-    void sweepMatchedDeclarationCache();
+    void sweepMatchedPropertiesCache();
 
-    // We collect the set of decls that match in |m_matchedDecls|. We then walk the
-    // set of matched decls four times, once for those properties that others depend on (like font-size),
-    // and then a second time for all the remaining properties. We then do the same two passes
-    // for any !important rules.
-    Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
-    unsigned m_matchedDeclarationCacheAdditionsSinceLastSweep;
+    unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 
-    typedef HashMap<unsigned, MatchedStyleDeclarationCacheItem> MatchedStyleDeclarationCache;
-    MatchedStyleDeclarationCache m_matchedStyleDeclarationCache;
+    typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
+    MatchedPropertiesCache m_matchedPropertiesCache;
 
     // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
     // merge sorting.
@@ -470,8 +470,8 @@ private:
 #endif
 
     friend class CSSStyleApplyProperty;
-    friend bool operator==(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
-    friend bool operator!=(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
+    friend bool operator==(const MatchedProperties&, const MatchedProperties&);
+    friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
     friend bool operator==(const MatchRanges&, const MatchRanges&);
     friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
