@@ -1,3 +1,12 @@
+2012-02-15  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Roll DEPS to r122122
+        https://bugs.webkit.org/show_bug.cgi?id=78754
+
+        Unreviewed DEPS roll.
+
+        * DEPS:
+
 2012-02-01  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Add setter/getter to expose drag data as a list of items
