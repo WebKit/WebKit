@@ -1,3 +1,13 @@
+2012-02-14  Sam Weinig  <sam@webkit.org>
+
+        In DRT, don't #define min or max on non-Windows platforms, it just isn't needed
+        https://bugs.webkit.org/show_bug.cgi?id=78663
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTreePrefix.h:
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+
 2012-02-14  Adam Barth  <abarth@webkit.org>
 
         Implement an adb-based driver for the ChromiumAndroidPort
