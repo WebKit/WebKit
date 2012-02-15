@@ -154,9 +154,7 @@ bool PopupListBox::handleWheelEvent(const PlatformWheelEvent& event)
         return true;
     }
 
-    // Pass it off to the scroll view.
-    // Sadly, WebCore devs don't understand the whole "const" thing.
-    wheelEvent(const_cast<PlatformWheelEvent&>(event));
+    ScrollableArea::handleWheelEvent(event);
     return true;
 }
 
