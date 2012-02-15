@@ -1,5 +1,16 @@
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Replace use of QGLWidget/QGLContext with QOpenGLContext and QSurface for Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=78694
+
+        Reviewed by Noam Rosenthal.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget): Return the QOpenGLContext and QSurface
+        from the QGLWidget when compiling with Qt 5, as that's what WebCore expects.
+
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Move Qt platform specific GL Context/Surface creation out of WebCore into WebKit
         https://bugs.webkit.org/show_bug.cgi?id=78692
 

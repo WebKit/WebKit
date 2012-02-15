@@ -1,5 +1,27 @@
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Replace use of QGLWidget/QGLContext with QOpenGLContext and QSurface for Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=78694
+
+        Reviewed by Noam Rosenthal.
+
+        Typedef PlatformGraphicsContext3D and PlatformGraphicsSurface3D to QOpenGLContext
+        and QSurface for Qt 5. Use these APIs to change the current context and get the
+        procedure addresses. Removed QGraphicsObject inheritance remainder while we're at it,
+        because that code path is obsolete.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cairo/OpenGLShims.cpp:
+        (WebCore::getProcAddress):
+        * platform/graphics/cairo/OpenGLShims.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext):
+        (WebCore::GraphicsContext3DPrivate::makeCurrentIfNeeded):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Move Qt platform specific GL Context/Surface creation out of WebCore into WebKit
         https://bugs.webkit.org/show_bug.cgi?id=78692
 

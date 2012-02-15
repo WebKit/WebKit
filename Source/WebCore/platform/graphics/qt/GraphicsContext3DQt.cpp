@@ -36,9 +36,6 @@
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
-#include <QAbstractScrollArea>
-#include <QGraphicsObject>
-#include <QGLContext>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -59,12 +56,8 @@ typedef char GLchar;
 #endif
 
 class GraphicsContext3DPrivate
-#if USE(ACCELERATED_COMPOSITING)
-#if USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
         : public TextureMapperPlatformLayer
-#else
-        : public QGraphicsObject
-#endif
 #endif
 {
 public:
@@ -114,7 +107,7 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
     delete m_surface;
     m_surface = 0;
-    // ### Delete context?
+    // Platform context is assumed to be owned by surface.
     m_platformContext = 0;
 }
 
@@ -199,6 +192,17 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
     if (!m_context->m_attrs.antialias)
         return;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
+    QSurface* currentSurface = 0;
+    if (currentContext != m_platformContext) {
+        currentSurface = currentContext->surface();
+        m_platformContext->makeCurrent(m_surface);
+    }
+    blitMultisampleFramebuffer();
+    if (currentSurface)
+        const_cast<QOpenGLContext*>(currentContext)->makeCurrent(currentSurface);
+#else
     const QGLContext* currentContext = QGLContext::currentContext();
     const QGLContext* widgetContext = m_surface->context();
     if (currentContext != widgetContext)
@@ -209,16 +213,24 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
             const_cast<QGLContext*>(currentContext)->makeCurrent();
     } else
         m_surface->doneCurrent();
+#endif
 }
 
 bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
+    if (currentContext == m_platformContext)
+        return true;
+    return m_platformContext->makeCurrent(m_surface);
+#else
     const QGLContext* currentContext = QGLContext::currentContext();
     const QGLContext* widgetContext = m_surface->context();
     if (currentContext != widgetContext)
         m_surface->makeCurrent();
 
     return QGLContext::currentContext() == widgetContext;
+#endif
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -335,8 +347,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 GraphicsContext3D::~GraphicsContext3D()
 {
     makeContextCurrent();
-    if (!m_private->m_surface->isValid())
-        return;
     glDeleteTextures(1, &m_texture);
     glDeleteFramebuffers(1, &m_fbo);
     if (m_attrs.antialias) {

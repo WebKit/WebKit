@@ -30,6 +30,10 @@
 #if ENABLE(WEBGL)
 #include <QGLWidget>
 
+#if QT_VERSION_CHECK(5, 0, 0)
+#include <QWindow>
+#endif
+
 static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformGraphicsContext3D* context,
                                                       PlatformGraphicsSurface3D* surface)
 {
@@ -46,8 +50,13 @@ static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformG
     if (glWidget->isValid()) {
         // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
         glWidget->setGeometry(0, 0, 0, 0);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        *surface = glWidget->windowHandle();
+        *context = glWidget->context()->contextHandle();
+#else
         *surface = glWidget;
         *context = const_cast<QGLContext*>(glWidget->context());
+#endif
     } else {
         delete glWidget;
         glWidget = 0;
