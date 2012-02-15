@@ -56,20 +56,13 @@ public:
 
     void invalidate(const IntRect& dirtyRect);
     void paint(GraphicsContext*, const IntRect&);
-    
+
     IntSize tileSize() { return m_tileSize; }
     void setTileSize(const IntSize&);
     
     double tileCreationDelay() const { return m_tileCreationDelay; }
     void setTileCreationDelay(double delay);
     
-    // Tiled are dropped outside the keep area, and created for cover area. The values a relative to the viewport size.
-    void getKeepAndCoverAreaMultipliers(float& keepMultiplier, float& coverMultiplier)
-    {
-        keepMultiplier = m_keepAreaMultiplier;
-        coverMultiplier = m_coverAreaMultiplier;
-    }
-    void setKeepAndCoverAreaMultipliers(float keepMultiplier, float coverMultiplier);
     void setVisibleRectTrajectoryVector(const FloatPoint&);
 
     IntRect mapToContents(const IntRect&) const;
@@ -90,8 +83,7 @@ private:
     void tileCreationTimerFired(TileTimer*);
     
     void createTiles();
-    IntRect computeKeepRect(const IntRect& visibleRect) const;
-    IntRect computeCoverRect(const IntRect& visibleRect) const;
+    void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
     
     void commitScaleChange();
 
@@ -102,6 +94,7 @@ private:
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
+    void adjustForContentsRect(IntRect&) const;
     IntRect contentsRect() const;
     
     void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
@@ -119,7 +112,6 @@ private:
 
     IntSize m_tileSize;
     double m_tileCreationDelay;
-    float m_keepAreaMultiplier;
     float m_coverAreaMultiplier;
     FloatPoint m_visibleRectTrajectoryVector;
     

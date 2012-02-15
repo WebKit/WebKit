@@ -1,3 +1,32 @@
+2012-02-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Be smarter with tile usages during tiling
+        https://bugs.webkit.org/show_bug.cgi?id=78243
+
+        Reviewed by Simon Hausmann.
+
+        The keep rect used to know what existing tiles to keep around, is now a
+        padding (in tile dimensions) around the usual cover rect. With usual,
+        I mean to point out that we take our panning optimization into account.
+
+        We also do a good effort at keeping the amount of tiles steady, by not
+        simply intersecting our areas with the contentRect, but moving it
+        first into legal bounds and then expanding in opposite direction to
+        cover a similar amount of pixels.
+
+        In the future the cover area should be calculated given available
+        system memory.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore):
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::adjustForContentsRect):
+        (WebCore::TiledBackingStore::computeCoverAndKeepRect):
+        (WebCore::TiledBackingStore::tileRectForCoordinate):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+
 2012-02-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Pass data entries from object stores and indexes to front-end.

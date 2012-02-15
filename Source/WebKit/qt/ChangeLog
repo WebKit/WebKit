@@ -1,3 +1,15 @@
+2012-02-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Be smarted with tile usages during tiling
+        https://bugs.webkit.org/show_bug.cgi?id=78243
+
+        Reviewed by Simon Hausmann.
+
+        Remove internal API used by Symbian.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+
 2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Divide TextureMapperNode.cpp to 3 files.

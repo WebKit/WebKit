@@ -1198,43 +1198,6 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
             }
         }
     }
-#if USE(TILED_BACKING_STORE)
-    else if (event->propertyName() == "_q_TiledBackingStoreTileSize") {
-        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
-        if (!frame->tiledBackingStore())
-            return;
-        QSize tileSize = q->property("_q_TiledBackingStoreTileSize").toSize();
-        frame->tiledBackingStore()->setTileSize(tileSize);
-    } else if (event->propertyName() == "_q_TiledBackingStoreTileCreationDelay") {
-        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
-        if (!frame->tiledBackingStore())
-            return;
-        int tileCreationDelay = q->property("_q_TiledBackingStoreTileCreationDelay").toInt();
-        frame->tiledBackingStore()->setTileCreationDelay(static_cast<double>(tileCreationDelay) / 1000.);
-    } else if (event->propertyName() == "_q_TiledBackingStoreKeepAreaMultiplier") {
-        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
-        if (!frame->tiledBackingStore())
-            return;
-        float keepMultiplier;
-        float coverMultiplier;
-        frame->tiledBackingStore()->getKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
-        QSizeF qSize = q->property("_q_TiledBackingStoreKeepAreaMultiplier").toSizeF();
-        // setKeepAndCoverAreaMultipliers do not use FloatSize anymore, keep only the height part.
-        keepMultiplier = qSize.height();
-        frame->tiledBackingStore()->setKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
-    } else if (event->propertyName() == "_q_TiledBackingStoreCoverAreaMultiplier") {
-        WebCore::Frame* frame = QWebFramePrivate::core(q->mainFrame());
-        if (!frame->tiledBackingStore())
-            return;
-        float keepMultiplier;
-        float coverMultiplier;
-        frame->tiledBackingStore()->getKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
-        QSizeF qSize = q->property("_q_TiledBackingStoreCoverAreaMultiplier").toSizeF();
-        // setKeepAndCoverAreaMultipliers do not use FloatSize anymore, keep only the height part.
-        coverMultiplier = qSize.height();
-        frame->tiledBackingStore()->setKeepAndCoverAreaMultipliers(keepMultiplier, coverMultiplier);
-    }
-#endif
     else if (event->propertyName() == "_q_webInspectorServerPort") {
         InspectorServerQt* inspectorServer = InspectorServerQt::server();
         inspectorServer->listen(inspectorServerPort());
