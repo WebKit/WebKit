@@ -158,6 +158,13 @@ bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     return scrollAnimator()->handleWheelEvent(wheelEvent);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+void ScrollableArea::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
+{
+    scrollAnimator()->handleGestureEvent(gestureEvent);
+}
+#endif
+
 // NOTE: Only called from Internals for testing.
 void ScrollableArea::setScrollOffsetFromInternals(const IntPoint& offset)
 {

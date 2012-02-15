@@ -64,6 +64,9 @@ public:
     virtual void setIsActive() { }
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    virtual void handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
     FloatPoint currentPosition() const;
 

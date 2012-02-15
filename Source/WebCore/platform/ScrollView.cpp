@@ -859,6 +859,16 @@ bool ScrollView::wheelEvent(const PlatformWheelEvent& e)
     return ScrollableArea::handleWheelEvent(e);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+void ScrollView::gestureEvent(const PlatformGestureEvent& gestureEvent)
+{
+    if (platformWidget())
+        return;
+
+    ScrollableArea::handleGestureEvent(gestureEvent);
+}
+#endif
+
 void ScrollView::setFrameRect(const IntRect& newRect)
 {
     IntRect oldRect = frameRect();

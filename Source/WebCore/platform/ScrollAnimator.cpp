@@ -122,6 +122,12 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
     return handled;
 }
 
+#if ENABLE(GESTURE_EVENTS)
+void ScrollAnimator::handleGestureEvent(const PlatformGestureEvent&)
+{
+}
+#endif
+
 FloatPoint ScrollAnimator::currentPosition() const
 {
     return FloatPoint(m_currentPosX, m_currentPosY);

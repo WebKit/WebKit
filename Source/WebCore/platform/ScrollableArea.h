@@ -56,6 +56,9 @@ public:
     virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
 
     bool handleWheelEvent(const PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    void handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
     // Functions for controlling if you can scroll past the end of the document.
     bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
