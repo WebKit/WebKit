@@ -1,3 +1,18 @@
+2012-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in deleteInsignificantText
+        https://bugs.webkit.org/show_bug.cgi?id=78567
+
+        Reviewed by Eric Seidel.
+
+        Fix the crash. Also update layout at the beginning of each call to deleteInsignificantText
+        since the previous call may have mutated the DOM.
+
+        Test: editing/inserting/delete-insignificant-text-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+
 2012-02-14  Levi Weintraub  <leviw@chromium.org>
 
         Prepare RenderLayerBacking and RenderLayerCompositor for subpixel layout

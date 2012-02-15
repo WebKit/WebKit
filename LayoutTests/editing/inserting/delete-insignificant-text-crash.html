@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests deleting a node in DOMCharacterDataModified doesn't result in a crash.</p>
+<div id="test" contenteditable></div>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var test = document.getElementById('test');
+test.appendChild(document.createTextNode('a  '));
+test.appendChild(document.createTextNode('  '));
+test.appendChild(document.createTextNode('b'));
+test.appendChild(document.createTextNode('  '));
+getSelection().setPosition(test.firstChild.nextSibling, 0);
+document.body.addEventListener('DOMCharacterDataModified', function () {
+    test.removeChild(test.firstChild.nextSibling);
+    if (window.GCController)
+        GCController.collect();
+}, false);
+document.execCommand("InsertText", false, "c");
+
+test.textContent = '';
+document.writeln('PASS');
+
+</script>
+</body>
+</html>

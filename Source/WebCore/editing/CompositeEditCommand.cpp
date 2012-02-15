@@ -698,6 +698,8 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
     if (!textNode || start >= end)
         return;
 
+    document()->updateLayout();
+
     RenderText* textRenderer = toRenderText(textNode->renderer());
     if (!textRenderer)
         return;
@@ -780,17 +782,19 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
     if (comparePositions(start, end) >= 0)
         return;
 
-    Node* next;
-    for (Node* node = start.deprecatedNode(); node; node = next) {
-        next = node->traverseNextNode();
-        if (node->isTextNode()) {
-            Text* textNode = toText(node);
-            int startOffset = node == start.deprecatedNode() ? start.deprecatedEditingOffset() : 0;
-            int endOffset = node == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
-            deleteInsignificantText(textNode, startOffset, endOffset);
-        }
+    Vector<RefPtr<Text> > nodes;
+    for (Node* node = start.deprecatedNode(); node; node = node->traverseNextNode()) {
+        if (node->isTextNode())
+            nodes.append(toText(node));
         if (node == end.deprecatedNode())
             break;
+    }
+
+    for (size_t i = 0; i < nodes.size(); ++i) {
+        Text* textNode = nodes[i].get();
+        int startOffset = textNode == start.deprecatedNode() ? start.deprecatedEditingOffset() : 0;
+        int endOffset = textNode == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
+        deleteInsignificantText(textNode, startOffset, endOffset);
     }
 }
 
