@@ -3891,6 +3891,11 @@ BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
 
+BUGWK78755 : fast/box-shadow/spread.html = IMAGE
+BUGWK78755 : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
+BUGWK78755 : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
+BUGWK78755 : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
+
 // Needs a rebaseline, as svg/dynamic-updates tests are now using the repaint.js harness.
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-href-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-target-attr.html = IMAGE
