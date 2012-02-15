@@ -88,10 +88,13 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     Color arbitraryColor = Color(10, 20, 30);
     TransformationMatrix arbitraryTransform;
     arbitraryTransform.scale3d(0.1, 0.2, 0.3);
+    FilterOperations arbitraryFilters;
+    arbitraryFilters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::OPACITY));
 
     // Changing these properties affects the entire subtree of layers.
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setAnchorPoint(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setAnchorPointZ(arbitraryNumber));
+    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setFilters(arbitraryFilters));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMaskLayer(dummyMask));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMasksToBounds(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setOpaque(true));

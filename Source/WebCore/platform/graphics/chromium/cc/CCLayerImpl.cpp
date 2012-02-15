@@ -385,6 +385,9 @@ void CCLayerImpl::setBackgroundCoversViewport(bool backgroundCoversViewport)
 
 void CCLayerImpl::setFilters(const FilterOperations& filters)
 {
+    if (m_filters == filters)
+        return;
+
     m_filters = filters;
     noteLayerPropertyChangedForSubtree();
 }

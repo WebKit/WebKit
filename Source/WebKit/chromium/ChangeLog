@@ -1,3 +1,13 @@
+2012-02-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Compare filters on impl thread when setting them, and test setting in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=78643
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+
 2012-02-14  Ramya Chandrasekaran  <cramya@google.com>
 
         Last character display for passwords in Android.
