@@ -270,8 +270,10 @@ WebInspector.WatchExpressionsSection.prototype = {
 
     _mouseOut: function()
     {
-        if (this._hoveredElement)
+        if (this._hoveredElement) {
             this._hoveredElement.removeStyleClass("hovered");
+            delete this._hoveredElement;
+        }
         delete this._lastMouseMovePageY;
     },
 
