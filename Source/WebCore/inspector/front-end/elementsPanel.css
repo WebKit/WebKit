@@ -498,3 +498,102 @@
     -webkit-user-select: text;
     -webkit-user-drag: auto;
 }
+
+/* https://github.com/bgrins/spectrum */
+.spectrum-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    background: rgba(230, 230, 230, 1) !important;
+    border: 1px solid #646464;
+    padding: 10px;
+    width: 200px;
+    z-index: 10;
+    -webkit-user-select: none;
+}
+
+.spectrum-top {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+}
+
+.spectrum-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 20%;
+}
+
+.spectrum-hue {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 83%;
+}
+
+.spectrum-fill {
+    /* Same as spectrum-color width to force aspect ratio. */
+    margin-top: 80%;
+}
+
+.spectrum-range-container {
+    position: relative;
+    padding-top: 10px;
+}
+
+.spectrum-range-container * {
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+.spectrum-range-container label {
+    width: 32px;
+    display: inline-block;
+}
+
+.spectrum-range-container input {
+    width: 130px;
+}
+
+.swatch, .spectrum-dragger, .spectrum-slider {
+    -webkit-user-select: none;
+}
+
+.spectrum-sat {
+    background-image: -webkit-linear-gradient(left, white, rgba(204, 154, 129, 0));
+}
+
+.spectrum-val {
+    background-image: -webkit-linear-gradient(bottom, black, rgba(204, 154, 129, 0));
+}
+
+.spectrum-hue {
+    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+.spectrum-dragger {
+    border-radius: 5px;
+    height: 5px;
+    width: 5px;
+    border: 1px solid white;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: black;
+}
+
+.spectrum-slider {
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+    height: 5px;
+    width: 110%;
+    margin-left: -5%;
+    background: white;
+    opacity: .8;
+}

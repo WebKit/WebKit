@@ -48,6 +48,10 @@ WebInspector.Popover = function(popoverHelper)
 }
 
 WebInspector.Popover.prototype = {
+    /**
+     * @param {number=} preferredWidth
+     * @param {number=} preferredHeight
+     */
     show: function(contentElement, anchor, preferredWidth, preferredHeight)
     {
         if (this._disposed)

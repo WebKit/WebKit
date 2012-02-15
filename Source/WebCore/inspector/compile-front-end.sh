@@ -76,7 +76,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/ResourceUtils.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:35:jsmodule_common \
+    --module jsmodule_ui:36:jsmodule_common \
         --js Source/WebCore/inspector/front-end/AdvancedSearchController.js \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
@@ -102,6 +102,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/SidebarOverlay.js \
         --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
         --js Source/WebCore/inspector/front-end/SourceTokenizer.js \
+        --js Source/WebCore/inspector/front-end/Spectrum.js \
         --js Source/WebCore/inspector/front-end/SplitView.js \
         --js Source/WebCore/inspector/front-end/StatusBarButton.js \
         --js Source/WebCore/inspector/front-end/TabbedPane.js \

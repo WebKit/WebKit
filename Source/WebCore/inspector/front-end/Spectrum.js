@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Spectrum = function(container)
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
+WebInspector.Spectrum = function()
 {
     this._popover = new WebInspector.Popover();
     this._popover.element.addEventListener("mousedown", stopPropagation, false);
@@ -139,7 +143,7 @@ WebInspector.Spectrum.rgbaToHSVA = function(r, g, b, a)
     r = r / 255;
     g = g / 255;
     b = b / 255;
-    
+
     var max = Math.max(r, g, b);
     var min = Math.min(r, g, b);
     var h;
@@ -170,6 +174,11 @@ WebInspector.Spectrum.rgbaToHSVA = function(r, g, b, a)
 };
 
 //FIXME: migrate to WebInspector.elementDragStart
+/**
+ * @param {Function=} onmove
+ * @param {Function=} onstart
+ * @param {Function=} onstop
+ */
 WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
 
     var doc = document;
@@ -247,10 +256,10 @@ WebInspector.Spectrum.prototype = {
     set color(color)
     {
         var rgba = (color.rgba || color.rgb).slice(0);
-        
+
         if (rgba.length === 3)
             rgba[3] = 1;
-        
+
         this.hsv = WebInspector.Spectrum.rgbaToHSVA(rgba[0], rgba[1], rgba[2], rgba[3]);
     },
 
@@ -301,6 +310,11 @@ WebInspector.Spectrum.prototype = {
     set displayText(text)
     {
         this._displayElement.textContent = text;
+    },
+
+    get isVisible()
+    {
+        return this._popover.visible;
     },
 
     _onchange: function()
@@ -355,24 +369,29 @@ WebInspector.Spectrum.prototype = {
 
     toggle: function(element, color, format)
     {
-        if (this._isShown)
+        if (this.isVisible)
             this.hide();
         else
             this.show(element, color, format);
 
-        return this._isShown;
+        return this.isVisible;
     },
 
     show: function(element, color, format)
     {
-        if (this._isShown)
-            return;
+        if (this.isVisible) {
+            if (this.anchorElement === element)
+                return false;
 
-        this._isShown = true;
+            // Reopen the picker for another anchor element.
+            this.hide();
+        }
+
         this.reposition(element);
+        this.anchorElement = element;
 
-        document.addEventListener("mousedown", this._hideProxy);
-        window.addEventListener("blur", this._hideProxy);
+        document.addEventListener("mousedown", this._hideProxy, false);
+        window.addEventListener("blur", this._hideProxy, false);
 
         this.slideHeight = this._sliderElement.offsetHeight;
         this.dragWidth = this._draggerElement.offsetWidth;
@@ -384,6 +403,8 @@ WebInspector.Spectrum.prototype = {
         this._originalFormat = format || color.format;
 
         this._updateUI();
+
+        return true;
     },
 
     reposition: function(element)
@@ -393,17 +414,14 @@ WebInspector.Spectrum.prototype = {
 
     hide: function()
     {
-        delete this._isShown;
         this._popover.hide();
 
-        document.removeEventListener("mousedown", this._hideProxy);
-        window.removeEventListener("blur", this._hideProxy);
+        document.removeEventListener("mousedown", this._hideProxy, false);
+        window.removeEventListener("blur", this._hideProxy, false);
 
         this.dispatchEventToListeners(WebInspector.Spectrum.Events.Hidden);
 
-        // Only want to allow one instance to be open at a time, so clear out any
-        // existing event listeners.
-        this.removeAllListeners();
+        delete this.anchorElement;
     }
 };
 

@@ -1,3 +1,43 @@
+2012-02-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Fix minor design issues in the Spectrum color picker
+        https://bugs.webkit.org/show_bug.cgi?id=78693
+
+        Drive-by: frontend compilability fixes.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/Popover.js:
+        * inspector/front-end/Spectrum.js:
+        (WebInspector.Spectrum.rgbaToHSVA):
+        (WebInspector.Spectrum.prototype.set color):
+        (WebInspector.Spectrum.prototype.get isVisible):
+        (WebInspector.Spectrum.prototype.toggle):
+        (WebInspector.Spectrum.prototype.show):
+        (WebInspector.Spectrum.prototype.hide):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+        * inspector/front-end/elementsPanel.css:
+        (.spectrum-container):
+        (.spectrum-top):
+        (.spectrum-color):
+        (.spectrum-hue):
+        (.spectrum-fill):
+        (.spectrum-range-container):
+        (.spectrum-range-container *):
+        (.spectrum-range-container label):
+        (.spectrum-range-container input):
+        (.swatch, .spectrum-dragger, .spectrum-slider):
+        (.spectrum-sat):
+        (.spectrum-val):
+        (.spectrum-dragger):
+        (.spectrum-slider):
+        * inspector/front-end/inspector.css:
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:increment):
+
 2012-02-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Build fix after r107806

@@ -1676,7 +1676,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var swatchElement = document.createElement("span");
                 var swatchInnerElement = swatchElement.createChild("span", "swatch-inner");
                 if (hasColorpicker)
-                    swatchElement.title = WebInspector.UIString("Click to open a colorpicker");
+                    swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format");
                 else
                     swatchElement.title = WebInspector.UIString("Click to change color format");
 
@@ -1690,7 +1690,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 var scrollerElement = hasColorpicker ? self._parentPane._computedStylePane.element.parentElement : null;
 
-                function spectrumChange(e)
+                function spectrumChanged(e)
                 {
                     color = e.data;
 
@@ -1703,12 +1703,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, false, false, false);
                 }
 
-                function spectrumHide()
+                function spectrumHidden()
                 {
                     scrollerElement.removeEventListener("scroll", repositionSpectrum, false);
                     self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, true, true, false);
-                    spectrum.removeEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChange);
-                    spectrum.removeEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHide);
+                    spectrum.removeEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);
+                    spectrum.removeEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHidden);
 
                     delete self._parentPane._isEditingStyle;
                 }
@@ -1720,19 +1720,18 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 function swatchClick(e)
                 {
-                    // Alt + click toggles color formats.
+                    // Shift + click toggles color formats.
                     // Click opens colorpicker, only if the element is not in computed styles section.
-
-                    if (!spectrum || e.altKey)
+                    if (!spectrum || e.shiftKey)
                         changeColorDisplay(e);
                     else if (hasColorpicker) {
-                        var isShown = spectrum.toggle(swatchElement, color, format);
+                        var isVisible = spectrum.toggle(swatchElement, color, format);
 
-                        if (isShown) {
+                        if (isVisible) {
                             spectrum.displayText = color.toString(format);
                             self._parentPane._isEditingStyle = true;
-                            spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChange);
-                            spectrum.addEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHide);
+                            spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);
+                            spectrum.addEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHidden);
 
                             scrollerElement.addEventListener("scroll", repositionSpectrum, false);
                         }

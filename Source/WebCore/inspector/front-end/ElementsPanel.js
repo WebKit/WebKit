@@ -394,6 +394,9 @@ WebInspector.ElementsPanel.prototype = {
         else
             dimensionsCallback();
 
+        /**
+         * @param {Object=} dimensions
+         */
         function dimensionsCallback(dimensions)
         {
             var imageElement = document.createElement("img");
@@ -405,12 +408,18 @@ WebInspector.ElementsPanel.prototype = {
             resource.populateImageSource(imageElement);
         }
 
+        /**
+         * @param {Object=} dimensions
+         */
         function showPopover(imageElement, dimensions)
         {
             var contents = buildPopoverContents(imageElement, dimensions);
             popover.show(contents, anchor);
         }
 
+        /**
+         * @param {Object=} nodeDimensions
+         */
         function buildPopoverContents(imageElement, nodeDimensions)
         {
             const maxImageWidth = 100;
