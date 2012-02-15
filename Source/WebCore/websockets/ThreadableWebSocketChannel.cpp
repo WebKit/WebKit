@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,7 @@
 
 #include "ThreadableWebSocketChannel.h"
 
+#include "Document.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -66,7 +67,7 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    return WebSocketChannel::create(context, client);
+    return WebSocketChannel::create(static_cast<Document*>(context), client);
 }
 
 } // namespace WebCore

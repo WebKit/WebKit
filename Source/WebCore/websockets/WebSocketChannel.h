@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -46,8 +46,8 @@
 namespace WebCore {
 
 class Blob;
+class Document;
 class FileReaderLoader;
-class ScriptExecutionContext;
 class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
@@ -59,7 +59,7 @@ class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStrea
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(context, client)); }
+    static PassRefPtr<WebSocketChannel> create(Document* document, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(document, client)); }
     virtual ~WebSocketChannel();
 
     bool send(const char* data, int length);
@@ -119,7 +119,7 @@ protected:
     virtual void derefThreadableWebSocketChannel() { deref(); }
 
 private:
-    WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*);
+    WebSocketChannel(Document*, WebSocketChannelClient*);
 
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);
@@ -220,7 +220,7 @@ private:
     };
 #endif
 
-    ScriptExecutionContext* m_context;
+    Document* m_document;
     WebSocketChannelClient* m_client;
     OwnPtr<WebSocketHandshake> m_handshake;
     RefPtr<SocketStreamHandle> m_handle;

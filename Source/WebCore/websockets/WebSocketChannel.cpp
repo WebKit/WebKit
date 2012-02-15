@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -88,8 +88,8 @@ const WebSocketChannel::OpCode WebSocketChannel::OpCodeClose = 0x8;
 const WebSocketChannel::OpCode WebSocketChannel::OpCodePing = 0x9;
 const WebSocketChannel::OpCode WebSocketChannel::OpCodePong = 0xA;
 
-WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketChannelClient* client)
-    : m_context(context)
+WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* client)
+    : m_document(document)
     , m_client(client)
     , m_buffer(0)
     , m_bufferSize(0)
@@ -110,12 +110,10 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_blobLoaderStatus(BlobLoaderNotStarted)
 #endif
 {
-    ASSERT(m_context->isDocument());
-    Document* document = static_cast<Document*>(m_context);
-    if (Settings* settings = document->settings())
+    if (Settings* settings = m_document->settings())
         m_useHixie76Protocol = settings->useHixie76WebSocketProtocol();
 
-    if (Page* page = document->page())
+    if (Page* page = m_document->page())
         m_identifier = page->progress()->createUniqueIdentifier();
 }
 
@@ -134,10 +132,10 @@ void WebSocketChannel::connect(const KURL& url, const String& protocol)
     LOG(Network, "WebSocketChannel %p connect", this);
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_context, m_useHixie76Protocol));
+    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_document, m_useHixie76Protocol));
     m_handshake->reset();
     if (m_identifier)
-        InspectorInstrumentation::didCreateWebSocket(m_context, m_identifier, url, m_context->url());
+        InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url());
     ref();
     m_handle = SocketStreamHandle::create(m_handshake->url(), this);
 }
@@ -228,8 +226,8 @@ void WebSocketChannel::fail(const String& reason)
 {
     LOG(Network, "WebSocketChannel %p fail: %s", this, reason.utf8().data());
     ASSERT(!m_suspended);
-    if (m_context)
-        m_context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, m_handshake->clientOrigin());
+    if (m_document)
+        m_document->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, m_handshake->clientOrigin());
     if (!m_useHixie76Protocol) {
         // Hybi-10 specification explicitly states we must not continue to handle incoming data
         // once the WebSocket connection is failed (section 7.1.7).
@@ -247,12 +245,12 @@ void WebSocketChannel::fail(const String& reason)
 void WebSocketChannel::disconnect()
 {
     LOG(Network, "WebSocketChannel %p disconnect", this);
-    if (m_identifier && m_context)
-        InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
+    if (m_identifier && m_document)
+        InspectorInstrumentation::didCloseWebSocket(m_document, m_identifier);
     if (m_handshake)
         m_handshake->clearScriptExecutionContext();
     m_client = 0;
-    m_context = 0;
+    m_document = 0;
     if (m_handle)
         m_handle->disconnect();
 }
@@ -273,10 +271,10 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didOpenSocketStream", this);
     ASSERT(handle == m_handle);
-    if (!m_context)
+    if (!m_document)
         return;
     if (m_identifier)
-        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_context, m_identifier, m_handshake->clientHandshakeRequest());
+        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document, m_identifier, m_handshake->clientHandshakeRequest());
     CString handshakeMessage = m_handshake->clientHandshakeMessage();
     if (!handle->send(handshakeMessage.data(), handshakeMessage.length()))
         fail("Failed to send WebSocket handshake.");
@@ -285,8 +283,8 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)
 void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didCloseSocketStream", this);
-    if (m_identifier && m_context)
-        InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
+    if (m_identifier && m_document)
+        InspectorInstrumentation::didCloseWebSocket(m_document, m_identifier);
     ASSERT_UNUSED(handle, handle == m_handle || !m_handle);
     m_closed = true;
     if (m_closingTimer.isActive())
@@ -299,7 +297,7 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
             return;
         WebSocketChannelClient* client = m_client;
         m_client = 0;
-        m_context = 0;
+        m_document = 0;
         m_handle = 0;
         if (client)
             client->didClose(m_unhandledBufferedAmount, m_receivedClosingHandshake ? WebSocketChannelClient::ClosingHandshakeComplete : WebSocketChannelClient::ClosingHandshakeIncomplete, m_closeEventCode, m_closeEventReason);
@@ -312,7 +310,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, co
     LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData %d", this, len);
     RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
     ASSERT(handle == m_handle);
-    if (!m_context) {
+    if (!m_document) {
         return;
     }
     if (len <= 0) {
@@ -346,7 +344,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
 {
     LOG(Network, "WebSocketChannel %p didFailSocketStream", this);
     ASSERT(handle == m_handle || !m_handle);
-    if (m_context) {
+    if (m_document) {
         String message;
         if (error.isNull())
             message = "WebSocket network error";
@@ -358,7 +356,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
         ASSERT(failingURL.isNull() || m_handshake->url().string() == failingURL);
         if (failingURL.isNull())
             failingURL = m_handshake->url().string();
-        m_context->addConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, failingURL);
+        m_document->addConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, failingURL);
     }
     m_shouldDiscardReceivedData = true;
     handle->disconnect();
@@ -464,14 +462,11 @@ bool WebSocketChannel::processBuffer()
             return false;
         if (m_handshake->mode() == WebSocketHandshake::Connected) {
             if (m_identifier)
-                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_context, m_identifier, m_handshake->serverHandshakeResponse());
+                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document, m_identifier, m_handshake->serverHandshakeResponse());
             if (!m_handshake->serverSetCookie().isEmpty()) {
-                if (m_context->isDocument()) {
-                    Document* document = static_cast<Document*>(m_context);
-                    if (cookiesEnabled(document)) {
-                        ExceptionCode ec; // Exception (for sandboxed documents) ignored.
-                        document->setCookie(m_handshake->serverSetCookie(), ec);
-                    }
+                if (cookiesEnabled(m_document)) {
+                    ExceptionCode ec; // Exception (for sandboxed documents) ignored.
+                    m_document->setCookie(m_handshake->serverSetCookie(), ec);
                 }
             }
             // FIXME: handle set-cookie2.
@@ -922,7 +917,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 ASSERT(!m_blobLoader);
                 m_blobLoader = adoptPtr(new FileReaderLoader(FileReaderLoader::ReadAsArrayBuffer, this));
                 m_blobLoaderStatus = BlobLoaderStarted;
-                m_blobLoader->start(m_context, frame->blobData.get());
+                m_blobLoader->start(m_document, frame->blobData.get());
                 m_outgoingFrameQueue.prepend(frame.release());
                 return;
 

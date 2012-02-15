@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,7 @@
 
 #include "Blob.h"
 #include "CrossThreadTask.h"
+#include "Document.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -151,7 +152,7 @@ void WorkerThreadableWebSocketChannel::resume()
 WorkerThreadableWebSocketChannel::Peer::Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode)
     : m_workerClientWrapper(clientWrapper)
     , m_loaderProxy(loaderProxy)
-    , m_mainWebSocketChannel(WebSocketChannel::create(context, this))
+    , m_mainWebSocketChannel(WebSocketChannel::create(static_cast<Document*>(context), this))
     , m_taskMode(taskMode)
 {
     ASSERT(isMainThread());
