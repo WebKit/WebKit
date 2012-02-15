@@ -6,7 +6,38 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-<script src="script-tests/input-valueasnumber-unsupported.js"></script>
+<script>
+description('Tests for .valueAsNumber with non-supported input types.');
+
+var input = document.createElement('input');
+input.type = 'range';
+document.body.appendChild(input);
+
+function checkValueAsNumber(type) {
+    debug('Check for type=' + type);
+    input.value = '0';
+    input.type = type;
+    shouldBe('input.valueAsNumber', 'Number.NaN');
+    shouldThrow('input.valueAsNumber = 0', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+}
+
+checkValueAsNumber('button');
+checkValueAsNumber('checkbox');
+checkValueAsNumber('color');
+checkValueAsNumber('email');
+checkValueAsNumber('file');
+checkValueAsNumber('hidden');
+checkValueAsNumber('image');
+checkValueAsNumber('khtml_isindex');
+checkValueAsNumber('password');
+checkValueAsNumber('radio');
+checkValueAsNumber('reset');
+checkValueAsNumber('search');
+checkValueAsNumber('submit');
+checkValueAsNumber('tel');
+checkValueAsNumber('text');
+checkValueAsNumber('url');
+</script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

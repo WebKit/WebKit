@@ -6,7 +6,19 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-<script src="script-tests/input-maxlength-unsupported.js"></script>
+<script>
+description('A test for maxlength attribute of an input element with non-text type');
+
+var input = document.createElement('input');
+input.maxLength = 2;
+input.type = 'number';
+document.body.appendChild(input);
+input.focus();
+document.execCommand('insertText', false, '1234');
+shouldBe('input.value', '"1234"');
+
+input.parentNode.removeChild(input);
+</script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
