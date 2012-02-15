@@ -107,9 +107,6 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
 BUGNOEL : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
-BUGNOEL : tables/mozilla/bugs/bug10565.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug11026.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug1188.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug120107.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1271.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug12908-1.html = IMAGE
@@ -3887,7 +3884,7 @@ BUGWK75478 : fast/html/details-remove-summary-2-and-click.html = IMAGE
 BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
 
 // Needs investigation.
-BUGWK78422: svg/animations/animate-text-nested-transforms.html = TEXT
+BUGWK78422 : svg/animations/animate-text-nested-transforms.html = TEXT
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
