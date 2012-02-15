@@ -105,9 +105,6 @@ BUGWK68610 SKIP : fast/dom/MicroData = PASS
 BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
-BUGNOEL : svg/W3C-SVG-1.1/struct-image-01-t.svg = IMAGE
-BUGNOEL : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
-BUGNOEL : svg/W3C-SVG-1.1/struct-image-04-t.svg = IMAGE
 BUGNOEL : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/custom/image-rescale-clip.html = IMAGE
