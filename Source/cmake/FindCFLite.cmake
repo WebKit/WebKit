@@ -5,10 +5,6 @@
 #  CFLITE_INCLUDE_DIR - The CFLite include directory
 #  CFLITE_LIBRARIES - The libraries needed to use CFLite
 
-# use pkg-config to get the directories and then use these values
-# in the FIND_PATH() and FIND_LIBRARY() calls
-FIND_PACKAGE(PkgConfig)
-
 FIND_PATH(CFLITE_INCLUDE_DIR NAMES CoreFoundation/CoreFoundation.h)
 
 FIND_LIBRARY(CFLITE_LIBRARIES NAMES CFLite.lib)

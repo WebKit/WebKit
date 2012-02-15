@@ -1,3 +1,12 @@
+2012-02-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Remove unused PkgConfig module import from FindCFLite.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=78600
+
+        Reviewed by Adam Roben.
+
+        * Source/cmake/FindCFLite.cmake:
+
 2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Allow <style scoped> as a direct child of a ShadowRoot
