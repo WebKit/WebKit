@@ -147,7 +147,7 @@ public:
         return true;
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode&)
     {
         m_element->removeAttribute(m_name);
         return true;

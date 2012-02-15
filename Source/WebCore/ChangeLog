@@ -1,3 +1,10 @@
+2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed, quick build fix for 107792
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::RemoveAttributeAction::redo):
+
 2012-02-15  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Don't use increased FontCache size on Android
