@@ -44,13 +44,13 @@
 namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-class TextureMapperNodeClientQt {
+class TextureMapperLayerClientQt {
 public:
-    TextureMapperNodeClientQt(QWebFrame*, GraphicsLayer*);
-    virtual ~TextureMapperNodeClientQt();
+    TextureMapperLayerClientQt(QWebFrame*, GraphicsLayer*);
+    virtual ~TextureMapperLayerClientQt();
     void setTextureMapper(const PassOwnPtr<TextureMapper>&);
     void syncRootLayer();
-    TextureMapperNode* rootNode();
+    TextureMapperLayer* rootLayer();
 
 private:
     QWebFrame* m_frame;
@@ -114,7 +114,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     Timer<PageClientQWidget> syncTimer;
-    OwnPtr<TextureMapperNodeClientQt> textureMapperNodeClient;
+    OwnPtr<TextureMapperLayerClientQt> TextureMapperLayerClient;
 #endif
 };
 
@@ -223,7 +223,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(TEXTURE_MAPPER)
-    OwnPtr<TextureMapperNodeClientQt> textureMapperNodeClient;
+    OwnPtr<TextureMapperLayerClientQt> TextureMapperLayerClient;
 #else
     QWeakPointer<QGraphicsObject> rootGraphicsLayer;
 #endif

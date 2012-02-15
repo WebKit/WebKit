@@ -1,3 +1,95 @@
+2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Divide TextureMapperNode.cpp to 3 files.
+        https://bugs.webkit.org/show_bug.cgi?id=76660
+
+        Rename TextureMapperNode to TextureMapperLayer.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::notifyChange):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerTextureMapper::setParent):
+        (WebCore::GraphicsLayerTextureMapper::setChildren):
+        (WebCore::GraphicsLayerTextureMapper::addChild):
+        (WebCore::GraphicsLayerTextureMapper::addChildAtIndex):
+        (WebCore::GraphicsLayerTextureMapper::addChildAbove):
+        (WebCore::GraphicsLayerTextureMapper::addChildBelow):
+        (WebCore::GraphicsLayerTextureMapper::replaceChild):
+        (WebCore::GraphicsLayerTextureMapper::removeFromParent):
+        (WebCore::GraphicsLayerTextureMapper::setMaskLayer):
+        (WebCore::GraphicsLayerTextureMapper::setReplicatedByLayer):
+        (WebCore::GraphicsLayerTextureMapper::setPosition):
+        (WebCore::GraphicsLayerTextureMapper::setAnchorPoint):
+        (WebCore::GraphicsLayerTextureMapper::setSize):
+        (WebCore::GraphicsLayerTextureMapper::setTransform):
+        (WebCore::GraphicsLayerTextureMapper::setChildrenTransform):
+        (WebCore::GraphicsLayerTextureMapper::setPreserves3D):
+        (WebCore::GraphicsLayerTextureMapper::setMasksToBounds):
+        (WebCore::GraphicsLayerTextureMapper::setDrawsContent):
+        (WebCore::GraphicsLayerTextureMapper::setContentsOpaque):
+        (WebCore::GraphicsLayerTextureMapper::setBackfaceVisibility):
+        (WebCore::GraphicsLayerTextureMapper::setOpacity):
+        (WebCore::GraphicsLayerTextureMapper::setContentsRect):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToImage):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia):
+        (WebCore::GraphicsLayerTextureMapper::syncCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerTextureMapper::syncCompositingState):
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore):
+        (GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::layer):
+        * platform/graphics/texmap/TextureMapperLayer.cpp: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp.
+        (WebCore):
+        (WebCore::toTextureMapperLayer):
+        (WebCore::TextureMapperLayer::rootLayer):
+        (WebCore::TextureMapperLayer::setTransform):
+        (WebCore::TextureMapperLayer::clearBackingStoresRecursive):
+        (WebCore::TextureMapperLayer::computeTransformsRecursive):
+        (WebCore::TextureMapperLayer::updateBackingStore):
+        (WebCore::TextureMapperLayer::paint):
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::compareGraphicsLayersZValue):
+        (WebCore::TextureMapperLayer::sortByZOrder):
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+        (WebCore::TextureMapperLayer::intermediateSurfaceRect):
+        (WebCore::TextureMapperLayer::shouldPaintToIntermediateSurface):
+        (WebCore::TextureMapperLayer::isVisible):
+        (WebCore::TextureMapperLayer::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperLayer::paintRecursive):
+        (WebCore::TextureMapperLayer::~TextureMapperLayer):
+        (WebCore::TextureMapperLayer::syncCompositingState):
+        (WebCore::TextureMapperLayer::syncCompositingStateSelf):
+        (WebCore::TextureMapperLayer::descendantsOrSelfHaveRunningAnimations):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        (WebCore::TextureMapperLayer::syncAnimationsRecursively):
+        * platform/graphics/texmap/TextureMapperLayer.h: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperNode.h.
+        (WebCore):
+        (TextureMapperPaintOptions):
+        (WebCore::TextureMapperPaintOptions::TextureMapperPaintOptions):
+        (TextureMapperLayer):
+        (WebCore::TextureMapperLayer::TextureMapperLayer):
+        (WebCore::TextureMapperLayer::size):
+        (WebCore::TextureMapperLayer::setOpacity):
+        (WebCore::TextureMapperLayer::setTextureMapper):
+        (WebCore::TextureMapperLayer::setShouldUpdateBackingStoreFromLayer):
+        (WebCore::TextureMapperLayer::setBackingStore):
+        (WebCore::TextureMapperLayer::backingStore):
+        (WebCore::TextureMapperLayer::texture):
+        (WebCore::TextureMapperLayer::layerRect):
+        (State):
+        (WebCore::TextureMapperLayer::State::State):
+
 2012-02-15  Hayato Ito  <hayato@chromium.org>
 
         ShadowRoot: Remove a public static factory function which doesn't have any callers.

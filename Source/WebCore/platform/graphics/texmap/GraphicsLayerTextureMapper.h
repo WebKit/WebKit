@@ -24,7 +24,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "Image.h"
-#include "TextureMapperNode.h"
+#include "TextureMapperLayer.h"
 
 #if ENABLE(WEBGL)
 #include "GraphicsContext3D.h"
@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-class TextureMapperNode;
+class TextureMapperLayer;
 class BitmapTexture;
 class TextureMapper;
 
 class GraphicsLayerTextureMapper : public GraphicsLayer {
-    friend class TextureMapperNode;
+    friend class TextureMapperLayer;
 
 public:
     GraphicsLayerTextureMapper(GraphicsLayerClient*);
@@ -77,7 +77,7 @@ public:
     virtual void setName(const String& name);
     virtual PlatformLayer* platformLayer() const { return 0; }
 
-    void notifyChange(TextureMapperNode::ChangeMask changeMask);
+    void notifyChange(TextureMapperLayer::ChangeMask);
     inline int changeMask() const { return m_changeMask; }
     void didSynchronize();
 
@@ -85,13 +85,13 @@ public:
     virtual void pauseAnimation(const String&, double);
     virtual void removeAnimation(const String&);
 
-    TextureMapperNode* node() const { return m_node.get(); }
+    TextureMapperLayer* layer() const { return m_layer.get(); }
     TextureMapperPlatformLayer* contentsLayer() const { return m_contentsLayer; }
     bool needsDisplay() const { return m_needsDisplay; }
     IntRect needsDisplayRect() const { return enclosingIntRect(m_needsDisplayRect); }
 
 private:
-    OwnPtr<TextureMapperNode> m_node;
+    OwnPtr<TextureMapperLayer> m_layer;
     RefPtr<TextureMapperBackingStore> m_compositedImage;
     RefPtr<Image> m_image;
     bool m_syncQueued;

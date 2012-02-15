@@ -30,7 +30,7 @@
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
-#include "TextureMapperNode.h"
+#include "TextureMapperLayer.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLayerTreeInfo.h"
@@ -149,8 +149,8 @@ class SetRootLayerMessage
 PassOwnPtr<GraphicsLayer> LayerTreeHostProxy::createLayer(WebLayerID layerID)
 {
     GraphicsLayer* newLayer = new GraphicsLayerTextureMapper(this);
-    TextureMapperNode* node = toTextureMapperNode(newLayer);
-    node->setShouldUpdateBackingStoreFromLayer(false);
+    TextureMapperLayer* layer = toTextureMapperLayer(newLayer);
+    layer->setShouldUpdateBackingStoreFromLayer(false);
     return adoptPtr(newLayer);
 }
 
@@ -178,12 +178,12 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     if (!currentRootLayer)
         return;
 
-    TextureMapperNode* node = toTextureMapperNode(currentRootLayer);
+    TextureMapperLayer* layer = toTextureMapperLayer(currentRootLayer);
 
-    if (!node)
+    if (!layer)
         return;
 
-    node->setTextureMapper(m_textureMapper.get());
+    layer->setTextureMapper(m_textureMapper.get());
     m_textureMapper->beginPainting();
     m_textureMapper->bindSurface(0);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
@@ -194,12 +194,12 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
         currentRootLayer->syncCompositingStateForThisLayerOnly();
     }
 
-    node->paint();
+    layer->paint();
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
-    if (node->descendantsOrSelfHaveRunningAnimations()) {
-        node->syncAnimationsRecursively();
+    if (layer->descendantsOrSelfHaveRunningAnimations()) {
+        layer->syncAnimationsRecursively();
         m_viewportUpdateTimer.startOneShot(0);
     }
 }
@@ -210,16 +210,16 @@ void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
         m_textureMapper = TextureMapper::create();
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::SoftwareMode);
     syncRemoteContent();
-    TextureMapperNode* node = toTextureMapperNode(rootLayer());
+    TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
-    if (!node)
+    if (!layer)
         return;
 
     GraphicsContext graphicsContext(painter);
     m_textureMapper->setGraphicsContext(&graphicsContext);
     m_textureMapper->beginPainting();
     m_textureMapper->bindSurface(0);
-    node->paint();
+    layer->paint();
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);
 }
@@ -343,11 +343,11 @@ void LayerTreeHostProxy::setRootLayerID(WebLayerID layerID)
 PassRefPtr<LayerBackingStore> LayerTreeHostProxy::getBackingStore(WebLayerID id)
 {
     ensureLayer(id);
-    TextureMapperNode* node = toTextureMapperNode(layerByID(id));
-    RefPtr<LayerBackingStore> backingStore = static_cast<LayerBackingStore*>(node->backingStore().get());
+    TextureMapperLayer* layer = toTextureMapperLayer(layerByID(id));
+    RefPtr<LayerBackingStore> backingStore = static_cast<LayerBackingStore*>(layer->backingStore().get());
     if (!backingStore) {
         backingStore = LayerBackingStore::create();
-        node->setBackingStore(backingStore.get());
+        layer->setBackingStore(backingStore.get());
     }
     ASSERT(backingStore);
     return backingStore;
@@ -420,7 +420,7 @@ void LayerTreeHostProxy::ensureRootLayer()
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
-    toTextureMapperNode(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
+    toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 
 void LayerTreeHostProxy::syncRemoteContent()
@@ -577,10 +577,10 @@ void LayerTreeHostProxy::setVisibleContentsRectAndScale(const IntRect& rect, flo
 
 void LayerTreeHostProxy::purgeGLResources()
 {
-    TextureMapperNode* node = toTextureMapperNode(rootLayer());
+    TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
-    if (node)
-        node->clearBackingStoresRecursive();
+    if (layer)
+        layer->clearBackingStoresRecursive();
 
     m_directlyCompositedImages.clear();
     m_textureMapper.clear();

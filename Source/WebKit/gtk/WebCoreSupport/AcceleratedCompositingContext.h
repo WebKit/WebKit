@@ -28,7 +28,7 @@
 #include <wtf/PassOwnPtr.h>
 
 #if USE(TEXTURE_MAPPER_GL)
-#include "TextureMapperNode.h"
+#include "TextureMapperLayer.h"
 #include "WindowGLContext.h"
 #endif
 
@@ -72,7 +72,7 @@ private:
     void initializeIfNecessary();
 
     bool m_initialized;
-    WebCore::TextureMapperNode* m_rootTextureMapperNode;
+    WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
     OwnPtr<WebCore::WindowGLContext> m_context;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif

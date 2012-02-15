@@ -49,7 +49,7 @@ namespace WebCore {
     class FrameView;
     class HTMLFrameOwnerElement;
     class Scrollbar;
-    class TextureMapperNode;
+    class TextureMapperLayer;
 }
 class QWebPage;
 
@@ -85,7 +85,7 @@ public:
         , marginWidth(-1)
         , marginHeight(-1)
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-        , rootTextureMapperNode(0)
+        , rootTextureMapperLayer(0)
 #endif
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
@@ -125,7 +125,7 @@ public:
     int marginWidth;
     int marginHeight;
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    WebCore::TextureMapperNode* rootTextureMapperNode;
+    WebCore::TextureMapperLayer* rootTextureMapperLayer;
     OwnPtr<WebCore::TextureMapper> textureMapper;
 #endif
 

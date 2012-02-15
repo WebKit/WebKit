@@ -1,3 +1,20 @@
+2012-02-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Divide TextureMapperNode.cpp to 3 files.
+        https://bugs.webkit.org/show_bug.cgi?id=76660
+
+        Rename TextureMapperNode to TextureMapperLayer.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::createLayer):
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit::LayerTreeHostProxy::paintToGraphicsContext):
+        (WebKit::LayerTreeHostProxy::getBackingStore):
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+
 2012-02-14  Anders Carlsson  <andersca@apple.com>
 
         Swipe gestures don't work if main frame has a horizontal scrollbar

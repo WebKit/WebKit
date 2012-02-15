@@ -17,8 +17,8 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextureMapperNode_h
-#define TextureMapperNode_h
+#ifndef TextureMapperLayer_h
+#define TextureMapperLayer_h
 
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -38,7 +38,7 @@
 namespace WebCore {
 
 class TextureMapperPlatformLayer;
-class TextureMapperNode;
+class TextureMapperLayer;
 class GraphicsLayerTextureMapper;
 
 class TextureMapperPaintOptions {
@@ -55,7 +55,7 @@ public:
     { }
 };
 
-class TextureMapperNode : public TextureMapperAnimationClient {
+class TextureMapperLayer : public TextureMapperAnimationClient {
 
 public:
     // This set of flags help us defer which properties of the layer have been
@@ -96,7 +96,7 @@ public:
         ComputationsOnly = 2
     };
 
-    TextureMapperNode()
+    TextureMapperLayer()
         : m_parent(0)
         , m_effectTarget(0)
         , m_contentsLayer(0)
@@ -106,7 +106,7 @@ public:
         , m_textureMapper(0)
     { }
 
-    virtual ~TextureMapperNode();
+    virtual ~TextureMapperLayer();
 
     void syncCompositingState(GraphicsLayerTextureMapper*, int syncOptions = 0);
     void syncCompositingState(GraphicsLayerTextureMapper*, TextureMapper*, int syncOptions = 0);
@@ -125,7 +125,7 @@ public:
     void clearBackingStoresRecursive();
 
 private:
-    TextureMapperNode* rootLayer();
+    TextureMapperLayer* rootLayer();
     void computeTransformsRecursive();
     void computeOverlapsIfNeeded();
     void computeTiles();
@@ -135,10 +135,10 @@ private:
     FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
     void invalidateViewport(const FloatRect&);
     void notifyChange(ChangeMask);
-    void syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper);
+    void syncCompositingStateSelf(GraphicsLayerTextureMapper*, TextureMapper*);
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);
-    static void sortByZOrder(Vector<TextureMapperNode* >& array, int first, int last);
+    static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
 
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
 
@@ -159,9 +159,9 @@ private:
         return FloatRect(FloatPoint::zero(), m_size);
     }
 
-    Vector<TextureMapperNode*> m_children;
-    TextureMapperNode* m_parent;
-    TextureMapperNode* m_effectTarget;
+    Vector<TextureMapperLayer*> m_children;
+    TextureMapperLayer* m_parent;
+    TextureMapperLayer* m_effectTarget;
     RefPtr<TextureMapperBackingStore> m_backingStore;
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatSize m_size;
@@ -180,8 +180,8 @@ private:
         FloatRect contentsRect;
         FloatRect needsDisplayRect;
         int descendantsWithContent;
-        TextureMapperNode* maskLayer;
-        TextureMapperNode* replicaLayer;
+        TextureMapperLayer* maskLayer;
+        TextureMapperLayer* replicaLayer;
         bool preserves3D : 1;
         bool masksToBounds : 1;
         bool drawsContent : 1;
@@ -214,7 +214,7 @@ private:
 };
 
 
-TextureMapperNode* toTextureMapperNode(GraphicsLayer*);
+TextureMapperLayer* toTextureMapperLayer(GraphicsLayer*);
 
 }
-#endif // TextureMapperNode_h
+#endif // TextureMapperLayer_h

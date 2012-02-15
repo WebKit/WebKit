@@ -104,7 +104,7 @@
 #endif
 #if USE(TEXTURE_MAPPER)
 #include "texmap/TextureMapper.h"
-#include "texmap/TextureMapperNode.h"
+#include "texmap/TextureMapperLayer.h"
 #endif
 #include "wtf/HashMap.h"
 #include <QMultiMap>
@@ -331,7 +331,7 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const IntRect& clip)
 {
-    if (!rootTextureMapperNode || !textureMapper)
+    if (!rootTextureMapperLayer || !textureMapper)
         return;
 
     textureMapper->setGraphicsContext(context);
@@ -345,11 +345,11 @@ void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const In
                 0, 0, 1, 0,
                 transform.m31(), transform.m32(), 0, transform.m33()
                 );
-    rootTextureMapperNode->setTransform(matrix);
-    rootTextureMapperNode->setOpacity(painter->opacity());
+    rootTextureMapperLayer->setTransform(matrix);
+    rootTextureMapperLayer->setOpacity(painter->opacity());
     textureMapper->beginPainting();
     textureMapper->beginClip(matrix, clip);
-    rootTextureMapperNode->paint();
+    rootTextureMapperLayer->paint();
     textureMapper->endClip();
     textureMapper->endPainting();
 }

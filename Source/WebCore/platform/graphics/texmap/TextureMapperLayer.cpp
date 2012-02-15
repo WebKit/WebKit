@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "TextureMapperNode.h"
+#include "TextureMapperLayer.h"
 
 #include "stdio.h"
 
@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-TextureMapperNode* toTextureMapperNode(GraphicsLayer* layer)
+TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
 {
-    return layer ? toGraphicsLayerTextureMapper(layer)->node() : 0;
+    return layer ? toGraphicsLayerTextureMapper(layer)->layer() : 0;
 }
 
-TextureMapperNode* TextureMapperNode::rootLayer()
+TextureMapperLayer* TextureMapperLayer::rootLayer()
 {
     if (m_effectTarget)
         return m_effectTarget->rootLayer();
@@ -44,12 +44,12 @@ TextureMapperNode* TextureMapperNode::rootLayer()
     return this;
 }
 
-void TextureMapperNode::setTransform(const TransformationMatrix& matrix)
+void TextureMapperLayer::setTransform(const TransformationMatrix& matrix)
 {
     m_transform.setLocalTransform(matrix);
 }
 
-void TextureMapperNode::clearBackingStoresRecursive()
+void TextureMapperLayer::clearBackingStoresRecursive()
 {
     m_backingStore.clear();
     m_contentsLayer = 0;
@@ -59,7 +59,7 @@ void TextureMapperNode::clearBackingStoresRecursive()
         m_state.maskLayer->clearBackingStoresRecursive();
 }
 
-void TextureMapperNode::computeTransformsRecursive()
+void TextureMapperLayer::computeTransformsRecursive()
 {
     if (m_size.isEmpty() && m_state.masksToBounds)
         return;
@@ -89,7 +89,7 @@ void TextureMapperNode::computeTransformsRecursive()
         sortByZOrder(m_children, 0, m_children.size());
 }
 
-void TextureMapperNode::updateBackingStore(TextureMapper* textureMapper, GraphicsLayer* layer)
+void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, GraphicsLayer* layer)
 {
     if (!layer || !textureMapper)
         return;
@@ -131,7 +131,7 @@ void TextureMapperNode::updateBackingStore(TextureMapper* textureMapper, Graphic
     static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
 }
 
-void TextureMapperNode::paint()
+void TextureMapperLayer::paint()
 {
     computeTransformsRecursive();
 
@@ -141,7 +141,7 @@ void TextureMapperNode::paint()
     paintRecursive(options);
 }
 
-void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
     // We apply the following transform to compensate for painting into a surface, and then apply the offset so that the painting fits in the target rect.
     TransformationMatrix transform =
@@ -159,19 +159,19 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
         m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, opacity, mask.get());
 }
 
-int TextureMapperNode::compareGraphicsLayersZValue(const void* a, const void* b)
+int TextureMapperLayer::compareGraphicsLayersZValue(const void* a, const void* b)
 {
-    TextureMapperNode* const* nodeA = static_cast<TextureMapperNode* const*>(a);
-    TextureMapperNode* const* nodeB = static_cast<TextureMapperNode* const*>(b);
-    return int(((*nodeA)->m_centerZ - (*nodeB)->m_centerZ) * 1000);
+    TextureMapperLayer* const* layerA = static_cast<TextureMapperLayer* const*>(a);
+    TextureMapperLayer* const* layerB = static_cast<TextureMapperLayer* const*>(b);
+    return int(((*layerA)->m_centerZ - (*layerB)->m_centerZ) * 1000);
 }
 
-void TextureMapperNode::sortByZOrder(Vector<TextureMapperNode* >& array, int first, int last)
+void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last)
 {
-    qsort(array.data(), array.size(), sizeof(TextureMapperNode*), compareGraphicsLayersZValue);
+    qsort(array.data(), array.size(), sizeof(TextureMapperLayer*), compareGraphicsLayersZValue);
 }
 
-void TextureMapperNode::paintSelfAndChildren(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& options)
 {
     bool hasClip = m_state.masksToBounds && !m_children.isEmpty();
     if (hasClip)
@@ -186,13 +186,13 @@ void TextureMapperNode::paintSelfAndChildren(const TextureMapperPaintOptions& op
         options.textureMapper->endClip();
 }
 
-IntRect TextureMapperNode::intermediateSurfaceRect()
+IntRect TextureMapperLayer::intermediateSurfaceRect()
 {
     // FIXME: Add an inverse transform to LayerTransform.
     return intermediateSurfaceRect(m_transform.combined().inverse());
 }
 
-IntRect TextureMapperNode::intermediateSurfaceRect(const TransformationMatrix& matrix)
+IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& matrix)
 {
     IntRect rect;
     TransformationMatrix localTransform = TransformationMatrix(matrix).multiply(m_transform.combined());
@@ -208,7 +208,7 @@ IntRect TextureMapperNode::intermediateSurfaceRect(const TransformationMatrix& m
     return rect;
 }
 
-bool TextureMapperNode::shouldPaintToIntermediateSurface() const
+bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
 {
     bool hasOpacity = m_opacity < 0.99;
     bool hasChildren = !m_children.isEmpty();
@@ -233,7 +233,7 @@ bool TextureMapperNode::shouldPaintToIntermediateSurface() const
     return false;
 }
 
-bool TextureMapperNode::isVisible() const
+bool TextureMapperLayer::isVisible() const
 {
     if (m_size.isEmpty() && (m_state.masksToBounds || m_state.maskLayer || m_children.isEmpty()))
         return false;
@@ -242,7 +242,7 @@ bool TextureMapperNode::isVisible() const
     return true;
 }
 
-void TextureMapperNode::paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions& options)
 {
     if (m_state.replicaLayer) {
         TextureMapperPaintOptions replicaOptions(options);
@@ -260,7 +260,7 @@ void TextureMapperNode::paintSelfAndChildrenWithReplica(const TextureMapperPaint
     paintSelfAndChildren(options);
 }
 
-void TextureMapperNode::paintRecursive(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
 {
     if (!isVisible())
         return;
@@ -305,7 +305,7 @@ void TextureMapperNode::paintRecursive(const TextureMapperPaintOptions& options)
     options.textureMapper->drawTexture(*surface.get(), surfaceRect, targetTransform, opacity, maskTexture.get());
 }
 
-TextureMapperNode::~TextureMapperNode()
+TextureMapperLayer::~TextureMapperLayer()
 {
     for (int i = m_children.size() - 1; i >= 0; --i)
         m_children[i]->m_parent = 0;
@@ -314,12 +314,12 @@ TextureMapperNode::~TextureMapperNode()
         m_parent->m_children.remove(m_parent->m_children.find(this));
 }
 
-void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, int options)
+void TextureMapperLayer::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, int options)
 {
     syncCompositingState(graphicsLayer, rootLayer()->m_textureMapper, options);
 }
 
-void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper)
+void TextureMapperLayer::syncCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper)
 {
     int changeMask = graphicsLayer->changeMask();
 
@@ -327,15 +327,15 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
         return;
 
     if (changeMask & ParentChange) {
-        TextureMapperNode* newParent = toTextureMapperNode(graphicsLayer->parent());
+        TextureMapperLayer* newParent = toTextureMapperLayer(graphicsLayer->parent());
         if (newParent != m_parent) {
-            // Remove node from current from child list first.
+            // Remove layer from current from child list first.
             if (m_parent) {
                 size_t index = m_parent->m_children.find(this);
                 m_parent->m_children.remove(index);
                 m_parent = 0;
             }
-            // Set new node parent and add node to the parents child list.
+            // Set new layer parent and add layer to the parents child list.
             if (newParent) {
                 m_parent = newParent;
                 m_parent->m_children.append(this);
@@ -344,13 +344,13 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     }
 
     if (changeMask & ChildrenChange) {
-        // Clear children parent pointer to avoid unsync and crash on node delete.
+        // Clear children parent pointer to avoid unsync and crash on layer delete.
         for (size_t i = 0; i < m_children.size(); i++)
             m_children[i]->m_parent = 0;
 
         m_children.clear();
         for (size_t i = 0; i < graphicsLayer->children().size(); ++i) {
-            TextureMapperNode* child = toTextureMapperNode(graphicsLayer->children()[i]);
+            TextureMapperLayer* child = toTextureMapperLayer(graphicsLayer->children()[i]);
             if (!child)
                 continue;
             m_children.append(child);
@@ -361,20 +361,20 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     m_size = graphicsLayer->size();
 
     if (changeMask & MaskLayerChange) {
-       if (TextureMapperNode* layer = toTextureMapperNode(graphicsLayer->maskLayer()))
+       if (TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer->maskLayer()))
            layer->m_effectTarget = this;
     }
 
     if (changeMask & ReplicaLayerChange) {
-       if (TextureMapperNode* layer = toTextureMapperNode(graphicsLayer->replicaLayer()))
+       if (TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer->replicaLayer()))
            layer->m_effectTarget = this;
     }
 
     if (changeMask & AnimationChange)
         m_animations = graphicsLayer->m_animations;
 
-    m_state.maskLayer = toTextureMapperNode(graphicsLayer->maskLayer());
-    m_state.replicaLayer = toTextureMapperNode(graphicsLayer->replicaLayer());
+    m_state.maskLayer = toTextureMapperLayer(graphicsLayer->maskLayer());
+    m_state.replicaLayer = toTextureMapperLayer(graphicsLayer->replicaLayer());
     m_state.pos = graphicsLayer->position();
     m_state.anchorPoint = graphicsLayer->anchorPoint();
     m_state.size = graphicsLayer->size();
@@ -400,7 +400,7 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     m_transform.setChildrenTransform(m_state.childrenTransform);
 }
 
-bool TextureMapperNode::descendantsOrSelfHaveRunningAnimations() const
+bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
 {
     if (m_animations.hasRunningAnimations())
         return true;
@@ -413,7 +413,7 @@ bool TextureMapperNode::descendantsOrSelfHaveRunningAnimations() const
     return false;
 }
 
-void TextureMapperNode::syncAnimations()
+void TextureMapperLayer::syncAnimations()
 {
     m_animations.apply(this);
     if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
@@ -422,7 +422,7 @@ void TextureMapperNode::syncAnimations()
         setOpacity(m_state.opacity);
 }
 
-void TextureMapperNode::syncAnimationsRecursively()
+void TextureMapperLayer::syncAnimationsRecursively()
 {
     syncAnimations();
 
@@ -430,7 +430,7 @@ void TextureMapperNode::syncAnimationsRecursively()
         m_children[i]->syncAnimationsRecursively();
 }
 
-void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
+void TextureMapperLayer::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
 {
     if (!textureMapper)
         return;
@@ -460,10 +460,10 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
     if (graphicsLayer) {
         Vector<GraphicsLayer*> children = graphicsLayer->children();
         for (int i = children.size() - 1; i >= 0; --i) {
-            TextureMapperNode* node = toTextureMapperNode(children[i]);
-            if (!node)
+            TextureMapperLayer* layer = toTextureMapperLayer(children[i]);
+            if (!layer)
                 continue;
-            node->syncCompositingState(toGraphicsLayerTextureMapper(children[i]), textureMapper, options);
+            layer->syncCompositingState(toGraphicsLayerTextureMapper(children[i]), textureMapper, options);
         }
     } else {
         for (int i = m_children.size() - 1; i >= 0; --i)

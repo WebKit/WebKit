@@ -28,7 +28,7 @@
 #include "FrameView.h"
 #include "PlatformContextCairo.h"
 #include "TextureMapperGL.h"
-#include "TextureMapperNode.h"
+#include "TextureMapperLayer.h"
 #include "webkitwebviewprivate.h"
 #include <GL/gl.h>
 #include <cairo.h>
@@ -43,7 +43,7 @@ AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webV
     : m_webView(webView)
     , m_syncTimer(this, &AcceleratedCompositingContext::syncLayersTimeout)
     , m_initialized(false)
-    , m_rootTextureMapperNode(0)
+    , m_rootTextureMapperLayer(0)
 {
 }
 
@@ -69,7 +69,7 @@ void AcceleratedCompositingContext::initializeIfNecessary()
 
 bool AcceleratedCompositingContext::enabled()
 {
-    return m_rootTextureMapperNode && m_textureMapper;
+    return m_rootTextureMapperLayer && m_textureMapper;
 }
 
 
@@ -90,7 +90,7 @@ bool AcceleratedCompositingContext::renderLayersToWindow(const IntRect& clipRect
     glViewport(0, 0, allocation.width, allocation.height);
 
     m_textureMapper->beginPainting();
-    m_rootTextureMapperNode->paint();
+    m_rootTextureMapperLayer->paint();
     m_textureMapper->endPainting();
 
     m_context->finishDrawing();
@@ -101,12 +101,12 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
 {
     if (!graphicsLayer) {
         m_rootGraphicsLayer.clear();
-        m_rootTextureMapperNode = 0;
+        m_rootTextureMapperLayer = 0;
         return;
     }
 
     m_rootGraphicsLayer = GraphicsLayer::create(this);
-    m_rootTextureMapperNode = toTextureMapperNode(m_rootGraphicsLayer.get());
+    m_rootTextureMapperLayer = toTextureMapperLayer(m_rootGraphicsLayer.get());
     m_rootGraphicsLayer->addChild(graphicsLayer);
     m_rootGraphicsLayer->setDrawsContent(true);
     m_rootGraphicsLayer->setMasksToBounds(false);
@@ -127,7 +127,7 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
     glViewport(0, 0, allocation.width, allocation.height);
 
     m_textureMapper = TextureMapperGL::create();
-    m_rootTextureMapperNode->setTextureMapper(m_textureMapper.get());
+    m_rootTextureMapperLayer->setTextureMapper(m_textureMapper.get());
     m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 }
 
@@ -173,7 +173,7 @@ void AcceleratedCompositingContext::syncLayersTimeout(Timer<AcceleratedCompositi
 
     renderLayersToWindow(IntRect());
 
-    if (toTextureMapperNode(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
+    if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
         m_syncTimer.startOneShot(1.0 / 60.0);
 }
 

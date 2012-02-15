@@ -29,54 +29,54 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
-#include "texmap/TextureMapperNode.h"
+#include "texmap/TextureMapperLayer.h"
 #endif
 
 namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-TextureMapperNodeClientQt::TextureMapperNodeClientQt(QWebFrame* frame, GraphicsLayer* layer)
+TextureMapperLayerClientQt::TextureMapperLayerClientQt(QWebFrame* frame, GraphicsLayer* layer)
     : m_frame(frame)
     , m_rootGraphicsLayer(GraphicsLayer::create(0))
 {
-    m_frame->d->rootTextureMapperNode = rootNode();
+    m_frame->d->rootTextureMapperLayer = rootLayer();
     m_rootGraphicsLayer->addChild(layer);
     m_rootGraphicsLayer->setDrawsContent(false);
     m_rootGraphicsLayer->setMasksToBounds(false);
     m_rootGraphicsLayer->setSize(IntSize(1, 1));
 }
 
-void TextureMapperNodeClientQt::setTextureMapper(const PassOwnPtr<TextureMapper>& textureMapper)
+void TextureMapperLayerClientQt::setTextureMapper(const PassOwnPtr<TextureMapper>& textureMapper)
 {
     m_frame->d->textureMapper = textureMapper;
-    m_frame->d->rootTextureMapperNode->setTextureMapper(m_frame->d->textureMapper.get());
+    m_frame->d->rootTextureMapperLayer->setTextureMapper(m_frame->d->textureMapper.get());
 }
 
-TextureMapperNodeClientQt::~TextureMapperNodeClientQt()
+TextureMapperLayerClientQt::~TextureMapperLayerClientQt()
 {
-    m_frame->d->rootTextureMapperNode = 0;
+    m_frame->d->rootTextureMapperLayer = 0;
 }
 
-void TextureMapperNodeClientQt::syncRootLayer()
+void TextureMapperLayerClientQt::syncRootLayer()
 {
     m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 }
 
-TextureMapperNode* TextureMapperNodeClientQt::rootNode()
+TextureMapperLayer* TextureMapperLayerClientQt::rootLayer()
 {
-    return toTextureMapperNode(m_rootGraphicsLayer.get());
+    return toTextureMapperLayer(m_rootGraphicsLayer.get());
 }
 
 
 void PageClientQWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
-        textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
-        textureMapperNodeClient->setTextureMapper(TextureMapper::create());
-        textureMapperNodeClient->syncRootLayer();
+        TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
+        TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
+        TextureMapperLayerClient->syncRootLayer();
         return;
     }
-    textureMapperNodeClient.clear();
+    TextureMapperLayerClient.clear();
 }
 
 void PageClientQWidget::markForSync(bool scheduleSync)
@@ -88,12 +88,12 @@ void PageClientQWidget::markForSync(bool scheduleSync)
 
 void PageClientQWidget::syncLayers(Timer<PageClientQWidget>*)
 {
-    if (textureMapperNodeClient)
-        textureMapperNodeClient->syncRootLayer();
+    if (TextureMapperLayerClient)
+        TextureMapperLayerClient->syncRootLayer();
     QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
-    if (!textureMapperNodeClient)
+    if (!TextureMapperLayerClient)
         return;
-    if (textureMapperNodeClient->rootNode()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
+    if (TextureMapperLayerClient->rootLayer()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
         syncTimer.startOneShot(1.0 / 60.0);
     update(view->rect());
 }
@@ -239,17 +239,17 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
 void PageClientQGraphicsWidget::syncLayers()
 {
 #if USE(TEXTURE_MAPPER)
-    if (textureMapperNodeClient)
-        textureMapperNodeClient->syncRootLayer();
+    if (TextureMapperLayerClient)
+        TextureMapperLayerClient->syncRootLayer();
 #endif
 
     QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
 
 #if USE(TEXTURE_MAPPER)
-    if (!textureMapperNodeClient)
+    if (!TextureMapperLayerClient)
         return;
 
-    if (textureMapperNodeClient->rootNode()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
+    if (TextureMapperLayerClient->rootLayer()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
         syncTimer.startOneShot(1.0 / 60.0);
     update(view->boundingRect().toAlignedRect());
 #endif
@@ -259,18 +259,18 @@ void PageClientQGraphicsWidget::syncLayers()
 void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
-        textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
+        TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
 #if USE(TEXTURE_MAPPER_GL)
         QGraphicsView* graphicsView = view->scene()->views()[0];
         if (graphicsView && graphicsView->viewport() && graphicsView->viewport()->inherits("QGLWidget")) {
-            textureMapperNodeClient->setTextureMapper(TextureMapper::create(TextureMapper::OpenGLMode));
+            TextureMapperLayerClient->setTextureMapper(TextureMapper::create(TextureMapper::OpenGLMode));
             return;
         }
 #endif
-        textureMapperNodeClient->setTextureMapper(TextureMapper::create());
+        TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
         return;
     }
-    textureMapperNodeClient.clear();
+    TextureMapperLayerClient.clear();
 }
 #else
 void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
