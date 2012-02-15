@@ -1,3 +1,32 @@
+2012-02-14  Adam Barth  <abarth@webkit.org>
+
+        Implement an adb-based driver for the ChromiumAndroidPort
+        https://bugs.webkit.org/show_bug.cgi?id=78627
+
+        Reviewed by Eric Seidel.
+
+        This driver mostly just wires up the ChromiumDriver through adb.  In
+        some cases, it translates protocol elements, such as URIs, so that the
+        rest of webkitpy is insulated from the "remoteness" of the target device.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.start_helper):
+        (ChromiumAndroidPort._driver_class):
+        (ChromiumAndroidPort._update_version):
+        (ChromiumAndroidPort._get_stderr):
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort._get_last_stacktrace):
+        (ChromiumAndroidPort._teardown_performance):
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._start):
+        (ChromiumAndroidDriver.run_test):
+        (ChromiumAndroidDriver.stop):
+        (ChromiumAndroidDriver._test_shell_command):
+        (ChromiumAndroidDriver._write_command_and_read_line):
+        (ChromiumAndroidDriver._output_image):
+        (ChromiumAndroidDriver._has_crash_hint):
+
 2012-02-14  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: the real_name() method in the Port class is no longer needed
