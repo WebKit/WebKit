@@ -87,7 +87,7 @@ void PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 
 void PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType)
 {
-    [m_pasteboard.get() setData:[buffer->createNSData() autorelease] forType:pasteboardType];
+    [m_pasteboard.get() setData:buffer ? [buffer->createNSData() autorelease] : nil forType:pasteboardType];
 }
 
 void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
