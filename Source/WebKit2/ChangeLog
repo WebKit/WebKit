@@ -1,3 +1,16 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/10574154> Mouse input events in plug-ins have a vertical offset when the page is zoomed
+
+        Do apply the scale factor to mouse events. This was removed in r102540, but it's needed on the branch since
+        we don't do the same coordinate conversion inside NetscapePluginMac.mm on the branch that we do in ToT.
+
+        * Shared/WebEvent.h:
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+
 2011-02-13  Lucas Forschler  <lforschler@apple.com>
 
     Rollout r105763.

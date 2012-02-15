@@ -641,8 +641,10 @@ void PluginView::handleEvent(Event* event)
         // FIXME: Clicking in a scroll bar should not change focus.
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
-
-        didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        
+        // Adjust mouse coordinates to account for pageScaleFactor
+        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->pageScaleFactor());
+        didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
