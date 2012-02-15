@@ -1,3 +1,25 @@
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Clean up fallback rendering of GraphicsContext3D to Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=78690
+
+        Reviewed by Noam Rosenthal.
+
+        Use the common paintRenderingResultsToCanvas code to retrieve the
+        pixels from the FBO and use a Qt port specific paintToCanvas
+        implementation to wrap the pixels into a QImage and render it
+        into the graphics context, just like it's done for the other ports.
+
+        This removes the QGraphicsObject based paint, which is an now 
+        obsolete method of rendering.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3D::paintToCanvas):
+
 2012-02-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Eliminate first set of QtWidgets dependencies from WebCore

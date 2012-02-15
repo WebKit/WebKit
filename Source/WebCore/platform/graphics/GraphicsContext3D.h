@@ -789,6 +789,9 @@ public:
 #elif PLATFORM(GTK) || PLATFORM(EFL)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, PlatformContextCairo* context);
+#elif PLATFORM(QT)
+    void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
+                       int canvasWidth, int canvasHeight, QPainter* context);
 #endif
 
     void markContextChanged();

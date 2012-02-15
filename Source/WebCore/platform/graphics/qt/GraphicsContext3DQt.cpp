@@ -39,7 +39,6 @@
 #include <QAbstractScrollArea>
 #include <QGraphicsObject>
 #include <QGLContext>
-#include <QStyleOptionGraphicsItem>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -77,7 +76,6 @@ public:
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 
-    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     QRectF boundingRect() const;
     void blitMultisampleFramebuffer() const;
     void blitMultisampleFramebufferAndRestoreContext() const;
@@ -200,58 +198,6 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 QRectF GraphicsContext3DPrivate::boundingRect() const
 {
     return QRectF(QPointF(0, 0), QSizeF(m_context->m_currentWidth, m_context->m_currentHeight));
-}
-
-void GraphicsContext3DPrivate::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
-    Q_UNUSED(widget);
-
-    QRectF rect = option ? option->rect : boundingRect();
-
-    makeCurrentIfNeeded();
-    blitMultisampleFramebuffer();
-
-    // Use direct texture mapping if WebGL canvas has a shared OpenGL context
-    // with browsers OpenGL context.
-    QGLWidget* viewportGLWidget = getViewportGLWidget();
-    if (viewportGLWidget && viewportGLWidget == m_viewportGLWidget && viewportGLWidget == painter->device()) {
-        viewportGLWidget->drawTexture(rect, m_context->m_texture);
-        return;
-    }
-
-    // Alternatively read pixels to a memory buffer.
-    QImage offscreenImage(rect.width(), rect.height(), QImage::Format_ARGB32);
-    quint32* imagePixels = reinterpret_cast<quint32*>(offscreenImage.bits());
-
-    glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_context->m_fbo);
-    glReadPixels(/* x */ 0, /* y */ 0, rect.width(), rect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, imagePixels);
-    glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_context->m_boundFBO);
-
-    // OpenGL gives us ABGR on 32 bits, and with the origin at the bottom left
-    // We need RGB32 or ARGB32_PM, with the origin at the top left.
-    quint32* pixelsSrc = imagePixels;
-    const int height = static_cast<int>(rect.height());
-    const int width = static_cast<int>(rect.width());
-    const int halfHeight = height / 2;
-    for (int row = 0; row < halfHeight; ++row) {
-        const int targetIdx = (height - 1 - row) * width;
-        quint32* pixelsDst = imagePixels + targetIdx;
-        for (int column = 0; column < width; ++column) {
-            quint32 tempPixel = *pixelsSrc;
-            *pixelsSrc = swapBgrToRgb(*pixelsDst);
-            *pixelsDst = swapBgrToRgb(tempPixel);
-            ++pixelsSrc;
-            ++pixelsDst;
-        }
-    }
-    if (static_cast<int>(height) % 2) {
-        for (int column = 0; column < width; ++column) {
-            *pixelsSrc = swapBgrToRgb(*pixelsSrc);
-            ++pixelsSrc;
-        }
-    }
-
-    painter->drawImage(/* x */ 0, /* y */ 0, offscreenImage);
 }
 
 void GraphicsContext3DPrivate::blitMultisampleFramebuffer() const
@@ -448,13 +394,16 @@ bool GraphicsContext3D::makeContextCurrent()
     return m_private->makeCurrentIfNeeded();
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer*)
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
+                                      int canvasWidth, int canvasHeight, QPainter* context)
 {
-    makeContextCurrent();
-    HTMLCanvasElement* canvas = context->canvas();
-    ImageBuffer* imageBuffer = canvas->buffer();
-    QPainter* painter = imageBuffer->context()->platformContext();
-    m_private->paint(painter, 0, 0);
+    QImage image(imagePixels, imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
+    context->save();
+    context->translate(0, imageHeight);
+    context->scale(1, -1);
+    context->setCompositionMode(QPainter::CompositionMode_Source);
+    context->drawImage(QRect(0, 0, canvasWidth, -canvasHeight), image);
+    context->restore();
 }
 
 #if defined(QT_OPENGL_ES_2)
