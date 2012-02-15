@@ -1,3 +1,14 @@
+2012-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r107766.
+        http://trac.webkit.org/changeset/107766
+        https://bugs.webkit.org/show_bug.cgi?id=78665
+
+        Breaks Chromium Win build (Requested by bashi1 on #webkit).
+
+        * WebKit.gypi:
+        * tests/WebSocketDeflaterTest.cpp: Removed.
+
 2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add extension attribute support

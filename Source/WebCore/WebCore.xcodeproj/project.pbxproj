@@ -1382,8 +1382,6 @@
 		4AD0173C127E82860015035F /* JSHTMLOutputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0173A127E82860015035F /* JSHTMLOutputElement.cpp */; };
 		4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0173B127E82860015035F /* JSHTMLOutputElement.h */; };
 		4ADE25FA14E3BB4C004C2213 /* WebSocketExtensionProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ADE25F914E3BB4C004C2213 /* WebSocketExtensionProcessor.h */; };
-		4AE02ABD14E8A9D200BC3BA7 /* WebSocketDeflater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AE02ABB14E8A9D200BC3BA7 /* WebSocketDeflater.cpp */; };
-		4AE02ABE14E8A9D200BC3BA7 /* WebSocketDeflater.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AE02ABC14E8A9D200BC3BA7 /* WebSocketDeflater.h */; };
 		4AF1AD3E13FD23A400AA9590 /* EventDispatchMediator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AF1AD3C13FD23A400AA9590 /* EventDispatchMediator.cpp */; };
 		4AF1AD3F13FD23A400AA9590 /* EventDispatchMediator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
@@ -8240,8 +8238,6 @@
 		4AD0173A127E82860015035F /* JSHTMLOutputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOutputElement.cpp; sourceTree = "<group>"; };
 		4AD0173B127E82860015035F /* JSHTMLOutputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLOutputElement.h; sourceTree = "<group>"; };
 		4ADE25F914E3BB4C004C2213 /* WebSocketExtensionProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketExtensionProcessor.h; sourceTree = "<group>"; };
-		4AE02ABB14E8A9D200BC3BA7 /* WebSocketDeflater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketDeflater.cpp; sourceTree = "<group>"; };
-		4AE02ABC14E8A9D200BC3BA7 /* WebSocketDeflater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketDeflater.h; sourceTree = "<group>"; };
 		4AF1AD3C13FD23A400AA9590 /* EventDispatchMediator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatchMediator.cpp; sourceTree = "<group>"; };
 		4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatchMediator.h; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
@@ -14810,6 +14806,7 @@
 		518A34BD1026C831001B6896 /* websockets */ = {
 			isa = PBXGroup;
 			children = (
+				4ADE25F914E3BB4C004C2213 /* WebSocketExtensionProcessor.h */,
 				51FB54F4113E364200821176 /* CloseEvent.h */,
 				51FB54F6113E365900821176 /* CloseEvent.idl */,
 				5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */,
@@ -14822,11 +14819,8 @@
 				510D4A47103177A20049EA54 /* WebSocketChannel.cpp */,
 				510D4A48103177A20049EA54 /* WebSocketChannel.h */,
 				510D4A49103177A20049EA54 /* WebSocketChannelClient.h */,
-				4AE02ABB14E8A9D200BC3BA7 /* WebSocketDeflater.cpp */,
-				4AE02ABC14E8A9D200BC3BA7 /* WebSocketDeflater.h */,
 				4A957F0314E241100049DBFB /* WebSocketExtensionDispatcher.cpp */,
 				4A957F0414E241100049DBFB /* WebSocketExtensionDispatcher.h */,
-				4ADE25F914E3BB4C004C2213 /* WebSocketExtensionProcessor.h */,
 				51ABAE421043AB4A008C5260 /* WebSocketHandshake.cpp */,
 				51ABAE431043AB4A008C5260 /* WebSocketHandshake.h */,
 				7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */,
@@ -24269,7 +24263,6 @@
 				97CC3AE314E8E4A200894988 /* NavigatorSupplement.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
-				4AE02ABE14E8A9D200BC3BA7 /* WebSocketDeflater.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27213,7 +27206,6 @@
 				572E92FB14E540580087FFBA /* ShadowRootList.cpp in Sources */,
 				97CC3AE214E8E4A200894988 /* NavigatorSupplement.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
-				4AE02ABD14E8A9D200BC3BA7 /* WebSocketDeflater.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
