@@ -1,3 +1,41 @@
+2012-02-15  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10870238> Box shadow drawing takes an unnecessarily slow code path in some single-shadow, opaque-background cases
+        https://bugs.webkit.org/show_bug.cgi?id=78728
+
+        In some cases, when there is only one normal box shadow, and the box has an opaque background,
+        it is possible to draw the box shadow by having the background cast it directly. This appears
+        to be faster than the generic code path that uses a separate drawing pass to cast the shadow,
+        clipping out the border box and the shadow-casting box.
+
+        Reviewed by Dave Hyatt.
+
+        No new tests, because behavior is unchanged.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations): Changed to not paint normal box shadows if
+        they are going to be cast by the background.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Ditto.
+        * rendering/RenderBox.h: Made determineBackgroundBleedAvoidance() protected.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::applyBoxShadowForBackground): Added this helper function, which applies the first
+        normal shadow from the given RenderStyle to the given GraphicsContext.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Added calls to
+        applyBoxShadowForBackground() before drawing the background color when needed.
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground): Added. Returns true
+        in some of the cases where the box shadow can be cast by the background directly.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations): Changed to not paint normal box shadows if
+        they are going to be cast by the background.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations): Ditto.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::boxShadowShouldBeAppliedToBackground): Added this override that
+        always returns false, because table cells sometimes apply a clip before drawing the background.
+        * rendering/RenderTableCell.h:
+
 2012-02-15  Ojan Vafai  <ojan@chromium.org>
 
         getComputedStyle of flex-item-align:auto should resolve to it's parent's flex-align value

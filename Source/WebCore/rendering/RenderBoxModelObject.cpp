@@ -619,6 +619,19 @@ static LayoutRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* conte
     return adjustedRect;
 }
 
+static void applyBoxShadowForBackground(GraphicsContext* context, RenderStyle* style)
+{
+    const ShadowData* boxShadow = style->boxShadow();
+    while (boxShadow->style() != Normal)
+        boxShadow = boxShadow->next();
+
+    FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
+    if (!boxShadow->isWebkitBoxShadow())
+        context->setShadow(shadowOffset, boxShadow->blur(), boxShadow->color(), style->colorSpace());
+    else
+        context->setLegacyShadow(shadowOffset, boxShadow->blur(), boxShadow->color(), style->colorSpace());
+}
+
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderObject* backgroundObject)
 {
@@ -668,6 +681,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer->next()) {
         if (!colorVisible)
             return;
+
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance);
+        GraphicsContextStateSaver shadowStateSaver(*context, boxShadowShouldBeAppliedToBackground);
+        if (boxShadowShouldBeAppliedToBackground)
+            applyBoxShadowForBackground(context, style());
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
             RoundedRect border = getBackgroundRoundedRect(backgroundRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance), box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
@@ -778,7 +796,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
         IntRect backgroundRect(pixelSnappedIntRect(scrolledPaintRect));
-        backgroundRect.intersect(paintInfo.rect);
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance);
+        if (!boxShadowShouldBeAppliedToBackground)
+            backgroundRect.intersect(paintInfo.rect);
+
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
         Color baseColor;
         bool shouldClearBackground = false;
@@ -787,6 +808,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (!baseColor.alpha())
                 shouldClearBackground = true;
         }
+
+        GraphicsContextStateSaver shadowStateSaver(*context, boxShadowShouldBeAppliedToBackground);
+        if (boxShadowShouldBeAppliedToBackground)
+            applyBoxShadowForBackground(context, style());
 
         if (baseColor.alpha()) {
             if (bgColor.alpha())
@@ -2552,6 +2577,44 @@ bool RenderBoxModelObject::borderObscuresBackground() const
         if (!currEdge.obscuresBackground())
             return false;
     }
+
+    return true;
+}
+
+bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance) const
+{
+    if (bleedAvoidance != BackgroundBleedNone)
+        return false;
+
+    if (style()->hasAppearance())
+        return false;
+
+    const ShadowData* boxShadow = style()->boxShadow();
+    bool hasOneNormalBoxShadow = false;
+    for (const ShadowData* currentShadow = boxShadow; currentShadow; currentShadow = currentShadow->next()) {
+        if (currentShadow->style() != Normal)
+            continue;
+        if (hasOneNormalBoxShadow)
+            return false;
+        hasOneNormalBoxShadow = true;
+    }
+
+    if (!hasOneNormalBoxShadow)
+        return false;
+
+    Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (!backgroundColor.isValid() || backgroundColor.alpha() < 255)
+        return false;
+
+    const FillLayer* lastBackgroundLayer = style()->backgroundLayers();
+    for (const FillLayer* next = lastBackgroundLayer->next(); next; )
+        lastBackgroundLayer = next;
+
+    if (lastBackgroundLayer->clip() != BorderFillBox)
+        return false;
+
+    if (hasOverflowClip() && lastBackgroundLayer->attachment() == LocalBackgroundAttachment)
+        return false;
 
     return true;
 }

@@ -917,11 +917,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // balloon layout is an example of this).
     borderFitAdjust(paintRect);
 
+    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
+
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    paintBoxShadow(paintInfo, paintRect, style(), Normal);
-
-    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
+    if (!boxShadowShouldBeAppliedToBackground(bleedAvoidance))
+        paintBoxShadow(paintInfo, paintRect, style(), Normal);
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {

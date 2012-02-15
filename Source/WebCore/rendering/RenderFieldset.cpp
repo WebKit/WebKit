@@ -140,8 +140,9 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
         paintRect.setWidth(paintRect.width() - xOff);
         paintRect.setX(paintRect.x() + xOff);
     }
-    
-    paintBoxShadow(paintInfo, paintRect, style(), Normal);
+
+    if (!boxShadowShouldBeAppliedToBackground(determineBackgroundBleedAvoidance(paintInfo.context)))
+        paintBoxShadow(paintInfo, paintRect, style(), Normal);
     paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect);
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 

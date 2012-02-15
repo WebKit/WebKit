@@ -151,6 +151,8 @@ private:
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
 
+    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance) const OVERRIDE;
+
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;

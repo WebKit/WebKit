@@ -1068,6 +1068,11 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     paintMaskImages(paintInfo, LayoutRect(paintOffset, size()));
 }
 
+bool RenderTableCell::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance) const
+{
+    return false;
+}
+
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)
 {
     LayoutUnit scrollbarHeight = scrollbarLogicalHeight();

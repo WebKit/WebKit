@@ -1203,7 +1203,8 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
         LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
         // Shadow comes first and is behind the background and border.
-        paintBoxShadow(paintInfo, styleToUse, Normal, paintRect);
+        if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone))
+            paintBoxShadow(paintInfo, styleToUse, Normal, paintRect);
 
         Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
         paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), paintRect);

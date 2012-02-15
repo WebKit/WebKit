@@ -460,6 +460,8 @@ protected:
 
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
+    BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext*) const;
+
 #if PLATFORM(MAC)
     void paintCustomHighlight(const LayoutPoint&, const AtomicString& type, bool behindText);
 #endif
@@ -503,8 +505,6 @@ private:
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
-
-    BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext*) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
