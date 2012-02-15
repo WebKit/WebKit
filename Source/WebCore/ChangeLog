@@ -1,3 +1,18 @@
+2012-02-15  Jessie Berlin  <jberlin@apple.com>
+
+        WebCore build exceeds address space on 32-bit Windows builders (again).
+        https://bugs.webkit.org/show_bug.cgi?id=78724
+
+        Reviewed by Jon Honeycutt.
+
+        Add the rest of the inspector .cpp files to the InspectorAllInOne.cpp file in Production and
+        Release builds.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        In the process, let VS have its way with this file.
+
+        * inspector/InspectorAllInOne.cpp:
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         Remove ScrollableArea::handleGestureEvent
