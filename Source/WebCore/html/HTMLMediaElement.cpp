@@ -555,17 +555,17 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 {
+#if ENABLE(VIDEO_TRACK)
+    if (m_pendingLoadFlags & TextTrackResource)
+        configureNewTextTracks();
+#endif
+
     if (m_pendingLoadFlags & MediaResource) {
         if (m_loadState == LoadingFromSourceElement)
             loadNextSourceChild();
         else
             loadInternal();
     }
-
-#if ENABLE(VIDEO_TRACK)
-    if (m_pendingLoadFlags & TextTrackResource)
-        configureNewTextTracks();
-#endif
 
     m_pendingLoadFlags = 0;
 }
@@ -675,6 +675,9 @@ void HTMLMediaElement::prepareForLoad()
         invalidateCachedTime();
         scheduleEvent(eventNames().emptiedEvent);
         updateMediaController();
+#if ENABLE(VIDEO_TRACK)
+        updateActiveTextTrackCues(0);
+#endif
     }
 
     // 5 - Set the playbackRate attribute to the value of the defaultPlaybackRate attribute.
@@ -703,19 +706,6 @@ void HTMLMediaElement::prepareForLoad()
     // event may have already fired by then.
     setShouldDelayLoadEvent(true);
 
-#if ENABLE(VIDEO_TRACK)
-    // HTMLMediaElement::textTracksAreReady will need "... the text tracks whose mode was not in the
-    // disabled state when the element's resource selection algorithm last started".
-    m_textTracksWhenResourceSelectionBegan.clear();
-    if (m_textTracks) {
-        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-            TextTrack* track = m_textTracks->item(i);
-            if (track->mode() != TextTrack::DISABLED)
-                m_textTracksWhenResourceSelectionBegan.append(track);
-        }
-    }
-#endif
-
     configureMediaControls();
 }
 
@@ -735,6 +725,19 @@ void HTMLMediaElement::loadInternal()
     // playlist that starts in a foreground tab to continue automatically if the tab is subsequently 
     // put in the the background.
     removeBehaviorRestriction(RequirePageConsentToLoadMediaRestriction);
+
+#if ENABLE(VIDEO_TRACK)
+    // HTMLMediaElement::textTracksAreReady will need "... the text tracks whose mode was not in the
+    // disabled state when the element's resource selection algorithm last started".
+    m_textTracksWhenResourceSelectionBegan.clear();
+    if (m_textTracks) {
+        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+            TextTrack* track = m_textTracks->item(i);
+            if (track->mode() != TextTrack::DISABLED)
+                m_textTracksWhenResourceSelectionBegan.append(track);
+        }
+    }
+#endif
 
     selectMediaResource();
 }
@@ -942,11 +945,16 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
 {
     if (ignoreTrackDisplayUpdateRequests())
         return;
-    
+
     CueList previouslyActiveCues = m_currentlyActiveCues;
     bool activeSetChanged = false;
 
-    m_currentlyActiveCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
+    // The user agent must synchronously unset [the text track cue active] flag whenever ... the media 
+    // element's readyState is changed back to HAVE_NOTHING. 
+    if (m_readyState == HAVE_NOTHING || !m_player)
+        m_currentlyActiveCues.shrink(0);
+    else
+        m_currentlyActiveCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
     
     // FIXME(72171): Events need to be sorted and filtered before dispatching.
 
@@ -1314,20 +1322,31 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     bool wasPotentiallyPlaying = potentiallyPlaying();
 
     ReadyState oldState = m_readyState;
-    m_readyState = static_cast<ReadyState>(state);
+    ReadyState newState = static_cast<ReadyState>(state);
 
 #if ENABLE(VIDEO_TRACK)
     bool tracksAreReady = textTracksAreReady();
 
-    if (m_readyState == oldState && m_tracksAreReady == tracksAreReady)
+    if (newState == oldState && m_tracksAreReady == tracksAreReady)
         return;
 
     m_tracksAreReady = tracksAreReady;
 #else
-    if (m_readyState == oldState)
+    if (newState == oldState)
         return;
     bool tracksAreReady = true;
 #endif
+    
+    if (tracksAreReady)
+        m_readyState = newState;
+    else {
+        // If a media file has text tracks the readyState may not progress beyond HAVE_FUTURE_DATA until
+        // the text tracks are ready, regardless of the state of the media file.
+        if (newState <= HAVE_METADATA)
+            m_readyState = newState;
+        else
+            m_readyState = HAVE_CURRENT_DATA;
+    }
     
     if (oldState > m_readyStateMaximum)
         m_readyStateMaximum = oldState;
@@ -1351,7 +1370,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         }
     }
 
-    if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA && tracksAreReady) {
+    if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
         prepareMediaFragmentURI();
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
@@ -1363,7 +1382,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     bool shouldUpdateDisplayState = false;
 
-    if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData && tracksAreReady) {
+    if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData) {
         m_haveFiredLoadedData = true;
         shouldUpdateDisplayState = true;
         scheduleEvent(eventNames().loadeddataEvent);
@@ -1406,6 +1425,9 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     updatePlayState();
     updateMediaController();
+#if ENABLE(VIDEO_TRACK)
+    updateActiveTextTrackCues(currentTime());
+#endif
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -3144,6 +3166,9 @@ void HTMLMediaElement::userCancelledLoad()
     // Reset m_readyState since m_player is gone.
     m_readyState = HAVE_NOTHING;
     updateMediaController();
+#if ENABLE(VIDEO_TRACK)
+    updateActiveTextTrackCues(0);
+#endif
 }
 
 bool HTMLMediaElement::canSuspend() const

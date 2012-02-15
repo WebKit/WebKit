@@ -294,3 +294,30 @@ function enableAllTextTracks()
             video.textTracks[i].mode = TextTrack.HIDDEN;
     }
 }
+
+var requiredEvents = [];
+
+function waitForEventsAndCall(eventList, func)
+{
+    function _eventCallback(event)
+    {
+        if (!requiredEvents.length)
+            return;
+
+        var index = requiredEvents.indexOf(event.type);
+        if (index < 0)
+            return;
+
+        requiredEvents.splice(index, 1);
+        if (requiredEvents.length)
+            return;
+
+        func();
+    }
+
+    requiredEvents = [];
+    for (var i = 0; i < eventList.length; i++) {
+        requiredEvents[i] = eventList[i][1];
+        eventList[i][0].addEventListener(requiredEvents[i], _eventCallback, true);
+    }
+}

@@ -1,3 +1,27 @@
+2012-02-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Unset the active flag when TextTrackCues go away
+        https://bugs.webkit.org/show_bug.cgi?id=72552
+
+        Reviewed by Maciej Stachowiak.
+
+        Test: media/track/track-active-cues.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTimerFired): Configure new text tracks before preparing to load
+            so we know about all tracks when resource selection begins.
+        (WebCore::HTMLMediaElement::prepareForLoad): Call updateActiveTextTrackCues after setting
+            to m_readyState is HAVE_NOTHING so all cues get deactivated. Don't build list of 
+            available text tracks because resource selection won't actually start until after the load timer fires.
+        (WebCore::HTMLMediaElement::loadInternal): Build list of non-disabled tracks.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):  Clear the active flag on all cues
+            when m_readyState is HAVE_NOTHING or m_player is 0.
+        (WebCore::HTMLMediaElement::setReadyState): Don't update m_readyState when tracks which haven't
+            loaded yet will prevent events from firing. Call updateActiveTextTrackCues to ensure that the
+            first cue(s) are shown as soon as possible.
+        (WebCore::HTMLMediaElement::userCancelledLoad): Call updateActiveTextTrackCues when when m_readyState 
+            is HAVE_NOTHING so all cues get deactivated.
+
 2012-02-15  Jessie Berlin  <jberlin@apple.com>
 
         WebCore build exceeds address space on 32-bit Windows builders (again).

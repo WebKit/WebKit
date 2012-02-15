@@ -7,11 +7,12 @@
         <script src=../video-test.js></script>
         <script src=../media-controls.js></script>
 
-        <script>            
+        <script>
 
         var testTrack;
         var fragment;
-        function test()
+
+        function testMutability()
         {
             consoleWrite("<br>** Test initial cue info");
 
@@ -67,14 +68,17 @@
         {
             findMediaElement();
             testTrack = document.querySelector('track');
+
+            waitForEventsAndCall([[video, 'canplaythrough'], [testTrack, 'load']], testMutability);
+
             video.src = findMediaFile('video', '../content/counting');
         }
-        
+
         </script>
     </head>
     <body onload="loaded()">
         <video controls >
-            <track src="captions-webvtt/captions-gaps.vtt" kind="captions" default onload="test()">
+            <track src="captions-webvtt/captions-gaps.vtt" kind="captions" default >
         </video>
         <p>Test that cue text is mutable.</p>
     </body>

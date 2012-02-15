@@ -1,0 +1,19 @@
+Test to ensure that a no text track cues are active after the video is unloaded.
+
+
+
+** Video and track loaded, one cue should be active **
+EXPECTED (trackElement.track.activeCues.length == '1') OK
+
+** Clear video 'src' and force reload **
+RUN(video.src = '')
+
+** 'error' event, no cues should be active **)
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (video.error != 'null') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '3') OK
+EXPECTED (trackElement.track.activeCues.length == '0') OK
+
+END OF TEST
+
