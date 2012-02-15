@@ -140,6 +140,13 @@ void WebInspector::showConsole()
         m_frontendClient->showConsole();
 }
 
+void WebInspector::showResources()
+{
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->showResources();
+}
+
 void WebInspector::showMainResourceForFrame(uint64_t frameID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);

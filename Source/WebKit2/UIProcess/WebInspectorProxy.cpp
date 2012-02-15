@@ -124,6 +124,14 @@ void WebInspectorProxy::showConsole()
     m_page->process()->send(Messages::WebInspector::ShowConsole(), m_page->pageID());
 }
 
+void WebInspectorProxy::showResources()
+{
+    if (!m_page)
+        return;
+
+    m_page->process()->send(Messages::WebInspector::ShowResources(), m_page->pageID());
+}
+
 void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
 {
     if (!m_page)

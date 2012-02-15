@@ -92,6 +92,7 @@ public:
 #endif
 
     void showConsole();
+    void showResources();
     void showMainResourceForFrame(WebFrameProxy*);
 
     bool isAttached() const { return m_isAttached; }

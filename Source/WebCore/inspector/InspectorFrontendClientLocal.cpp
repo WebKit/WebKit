@@ -266,6 +266,11 @@ void InspectorFrontendClientLocal::showConsole()
     evaluateOnLoad("[\"showConsole\"]");
 }
 
+void InspectorFrontendClientLocal::showResources()
+{
+    evaluateOnLoad("[\"showResources\"]");
+}
+
 void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
 {
     String frameId = m_inspectorController->pageAgent()->frameId(frame);
