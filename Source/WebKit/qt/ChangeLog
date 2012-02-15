@@ -1,5 +1,11 @@
 2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed Qt 4.x build fix.
+
+        * WebCoreSupport/PageClientQt.cpp: Fix the QT_VERSION_CHECK pre-processor foo.
+
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Replace use of QGLWidget/QGLContext with QOpenGLContext and QSurface for Qt 5
         https://bugs.webkit.org/show_bug.cgi?id=78694
 
