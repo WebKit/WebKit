@@ -326,7 +326,8 @@ void FilterEffectRenderer::prepare()
         m_graphicsBufferAttached = true;
     }
     m_sourceGraphic->clearResult();
-    lastEffect()->clearResult();
+    for (size_t i = 0; i < m_effects.size(); ++i)
+        m_effects[i]->clearResult();
 }
 
 void FilterEffectRenderer::apply()

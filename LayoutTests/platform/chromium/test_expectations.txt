@@ -3890,6 +3890,7 @@ BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
 BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 
+BUGWK78561 : css3/filters/multiple-filters-invalidation.html = MISSING
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
 

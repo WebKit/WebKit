@@ -1,3 +1,17 @@
+2012-02-14  Stephen White  <senorblanco@chromium.org>
+
+        Fix for incorrect/offset image in CSS filters (non-composited path)
+        https://bugs.webkit.org/show_bug.cgi?id=78626
+
+        Reviewed by Darin Adler.
+
+        Test: css3/filters/multiple-filters-invalidation.html
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::prepare):
+        When invalidating results, invalidate all intermediate filter
+        results, not just the last effect's result.
+
 2012-02-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: "Minus" (Delete) button disappears for hovered watch expression in Watches pane
