@@ -1490,6 +1490,7 @@ fast/table/027.html
 fast/table/027-vertical.html
 tables/mozilla/bugs/bug14929.html
 tables/mozilla/bugs/bug2947.html
+fast/js/constructor-length.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=74276
 fast/events/dont-loose-last-event.html

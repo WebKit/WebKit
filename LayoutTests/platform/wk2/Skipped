@@ -71,6 +71,9 @@ fast/frames/flattening/frameset-flattening-subframesets.html
 http/tests/inspector/extensions-headers.html
 http/tests/inspector/extensions-network-redirect.html
 
+# Needs rebaseline
+fast/js/constructor-length.html
+
 # CONSOLE MESSAGE: line 0: SVG animation pause API missing!
 # [WK2] SVG animation pause API missing
 # https://bugs.webkit.org/show_bug.cgi?id=63396

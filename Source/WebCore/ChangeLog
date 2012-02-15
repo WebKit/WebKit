@@ -1,3 +1,23 @@
+2012-02-14  Kentaro Hara  <haraken@chromium.org>
+
+        [JSC] Cache the number of non-custom constructor arguments
+        https://bugs.webkit.org/show_bug.cgi?id=78195
+
+        Reviewed by Darin Adler.
+
+        If [ConstructorParameters=] is specified, JSC caches the number of constructor
+        arguments for performance. However, at present, [ConstructorParameters=] is specified
+        on a small part of constructors (It appears that people have forgotten to
+        add [ConstructorParameters=]). Thus, for non-custom constructors, this patch modifies
+        CodeGeneratorJS.pm so that it caches the number of constructor arguments automatically
+        without [ConstructorParameters=] (CodeGeneratorJS.pm can know the number of arguments
+        by the [Constructor=...] signature).
+
+        Test: fast/js/constructor-length.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+
 2012-02-14  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/78658> platformUserPreferredLanguages is leaking all of the language codes

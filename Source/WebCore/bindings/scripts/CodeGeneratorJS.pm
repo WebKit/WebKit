@@ -3366,7 +3366,14 @@ sub GenerateConstructorDefinition
     my $generatingNamedConstructor = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
-    my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
+    my $numberOfConstructorParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
+    if (!defined $numberOfConstructorParameters) {
+        if (IsConstructorTemplate($dataNode, "Event")) {
+            $numberOfConstructorParameters = 2;
+        } elsif ($dataNode->extendedAttributes->{"Constructor"} and !$dataNode->extendedAttributes->{"CustomConstructor"} and !$dataNode->extendedAttributes->{"JSCustomConstructor"}) {
+            $numberOfConstructorParameters = @{$dataNode->constructor->parameters};
+        }
+    }
 
     if ($generatingNamedConstructor) {
         push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
@@ -3397,7 +3404,7 @@ sub GenerateConstructorDefinition
         push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
         push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
+    push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(${numberOfConstructorParameters}), ReadOnly | DontDelete | DontEnum);\n") if defined $numberOfConstructorParameters;
     push(@$outputArray, "}\n\n");
 
     if (!$generatingNamedConstructor) {
