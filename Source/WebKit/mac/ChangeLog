@@ -1,3 +1,12 @@
+2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Notify ChromeClient when touch-event handlers are installed/removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77440
+
+        Reviewed by Darin Fisher and Ryosuke Niwa.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2012-02-14  Matt Lilek  <mrl@apple.com>
 
         Don't ENABLE_DASHBOARD_SUPPORT unconditionally on all Mac platforms

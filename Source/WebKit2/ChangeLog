@@ -1,3 +1,14 @@
+2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Notify ChromeClient when touch-event handlers are installed/removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77440
+
+        Reviewed by Darin Fisher and Ryosuke Niwa.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::numTouchEventHandlersChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2012-02-15  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Move RunLoop to WebCore/platform

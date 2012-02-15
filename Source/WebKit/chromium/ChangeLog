@@ -1,3 +1,23 @@
+2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Notify ChromeClient when touch-event handlers are installed/removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77440
+
+        Reviewed by Darin Fisher and Ryosuke Niwa.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::numberOfTouchEventHandlersChanged):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::numTouchEventHandlersChanged):
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::numberOfTouchEventHandlersChanged):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         Remove ScrollableArea::handleGestureEvent

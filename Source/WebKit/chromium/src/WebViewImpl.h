@@ -322,6 +322,7 @@ public:
     bool touchEvent(const WebTouchEvent&);
 
     void numberOfWheelEventHandlersChanged(unsigned);
+    void numberOfTouchEventHandlersChanged(unsigned);
 
     // Handles context menu events orignated via the the keyboard. These
     // include the VK_APPS virtual key and the Shift+F10 combine. Code is

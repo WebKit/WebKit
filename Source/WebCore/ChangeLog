@@ -1,3 +1,37 @@
+2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Notify ChromeClient when touch-event handlers are installed/removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77440
+
+        Reviewed by Darin Fisher and Ryosuke Niwa.
+
+        Keep a count of the number of touch-event handlers and notify the
+        embedder when the count changes. Depending on the count, the embedder
+        can decide whether or not to dispatch touch events to webkit.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didAddTouchEventHandler):
+        (WebCore):
+        (WebCore::Document::didRemoveTouchEventHandler):
+        * dom/Document.h:
+        (WebCore::Document::touchEventHandlerCount):
+        (Document):
+        * dom/Node.cpp:
+        (WebCore::isTouchEventType):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::numTouchEventHandlersChanged):
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * page/Frame.cpp:
+        (WebCore::Frame::notifyChromeClientWheelEventHandlerCountChanged):
+        (WebCore::Frame::notifyChromeClientTouchEventHandlerCountChanged):
+        (WebCore):
+        * page/Frame.h:
+        (Frame):
+
 2012-02-15  Eric Carlson  <eric.carlson@apple.com>
 
         Unset the active flag when TextTrackCues go away

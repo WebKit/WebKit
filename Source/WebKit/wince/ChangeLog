@@ -1,3 +1,13 @@
+2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Notify ChromeClient when touch-event handlers are installed/removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77440
+
+        Reviewed by Darin Fisher and Ryosuke Niwa.
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+        (WebKit::ChromeClientWinCE::numTouchEventHandlersChanged):
+
 2011-12-19  Sam Weinig  <sam@webkit.org>
 
         More PlatformEvent cleanup

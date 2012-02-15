@@ -293,8 +293,10 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     if (m_doc)
         m_doc->updateViewportArguments();
 
-    if (m_page && m_page->mainFrame() == this)
+    if (m_page && m_page->mainFrame() == this) {
         notifyChromeClientWheelEventHandlerCountChanged();
+        notifyChromeClientTouchEventHandlerCountChanged();
+    }
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -1020,14 +1022,28 @@ void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
 {
     // Ensure that this method is being called on the main frame of the page.
     ASSERT(m_page && m_page->mainFrame() == this);
-    
+
     unsigned count = 0;
     for (const Frame* frame = this; frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             count += frame->document()->wheelEventHandlerCount();
     }
-    
+
     m_page->chrome()->client()->numWheelEventHandlersChanged(count);
+}
+
+void Frame::notifyChromeClientTouchEventHandlerCountChanged() const
+{
+    // Ensure that this method is being called on the main frame of the page.
+    ASSERT(m_page && m_page->mainFrame() == this);
+
+    unsigned count = 0;
+    for (const Frame* frame = this; frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            count += frame->document()->touchEventHandlerCount();
+    }
+
+    m_page->chrome()->client()->numTouchEventHandlersChanged(count);
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)

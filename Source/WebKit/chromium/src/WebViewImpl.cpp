@@ -805,6 +805,12 @@ void WebViewImpl::numberOfWheelEventHandlersChanged(unsigned numberOfWheelHandle
 #endif
 }
 
+void WebViewImpl::numberOfTouchEventHandlersChanged(unsigned numberOfTouchHandlers)
+{
+    if (m_client)
+        m_client->numberOfTouchEventHandlersChanged(numberOfTouchHandlers);
+}
+
 #if !OS(DARWIN)
 // Mac has no way to open a context menu based on a keyboard event.
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)

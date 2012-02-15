@@ -204,6 +204,7 @@ public:
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     virtual void numWheelEventHandlersChanged(unsigned);
+    virtual void numTouchEventHandlersChanged(unsigned);
 
 #if ENABLE(POINTER_LOCK)
     virtual bool requestPointerLock();

@@ -1113,6 +1113,10 @@ public:
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
 
+    unsigned touchEventHandlerCount() const { return m_touchEventHandlerCount; }
+    void didAddTouchEventHandler();
+    void didRemoveTouchEventHandler();
+
     bool visualUpdatesAllowed() const;
 
 #if ENABLE(MICRODATA)
@@ -1449,6 +1453,7 @@ private:
     unsigned m_writeRecursionDepth;
     
     unsigned m_wheelEventHandlerCount;
+    unsigned m_touchEventHandlerCount;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
