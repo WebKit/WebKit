@@ -52,7 +52,10 @@ haveQt(5): QT += printsupport widgets
 
 contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
-contains(QT_CONFIG, opengl): QT += opengl
+contains(QT_CONFIG, opengl) {
+    QT += opengl
+    DEFINES += QT_CONFIGURED_WITH_OPENGL
+}
 
 RESOURCES += \
     QtTestBrowser.qrc

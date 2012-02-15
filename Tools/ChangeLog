@@ -1,3 +1,12 @@
+2012-02-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix WebGL in QtTestBrowser
+
+        Reviewed by Tor Arne Vestbø.
+
+        * QtTestBrowser/QtTestBrowser.pro: Set the OpenGL define so that when passing
+        the options for enabling GL we also pass them on properly.
+
 2012-02-14  Sam Weinig  <sam@webkit.org>
 
         Add #include of unistd.h on the mac for getcwd. 
