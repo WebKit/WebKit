@@ -319,7 +319,7 @@ String Pasteboard::plainText(Frame* frame)
         return [(NSString *)platformStrategies()->pasteboardStrategy()->stringForType(NSStringPboardType, m_pasteboardName) precomposedStringWithCanonicalMapping];
     
     NSAttributedString *attributedString = nil;
-    NSString *string;
+    NSString *string = nil;
 
     if (types.contains(String(NSRTFDPboardType))) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName);

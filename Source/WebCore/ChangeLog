@@ -1,3 +1,22 @@
+2012-02-14  Kentaro Hara  <haraken@chromium.org>
+
+        [Mac] PasteboardMac.mm build fails
+        https://bugs.webkit.org/show_bug.cgi?id=78655
+
+        Reviewed by Hajime Morita.
+
+        Although the bots have been working fine, PasteboardMac.mm build fails
+        in our local Mac environments due to an uninitialized variable:
+
+            /Users/haraken/WebKit/Source/WebCore/platform/mac/PasteboardMac.mm:322: warning: 'string' may be used uninitialized in this function
+
+        This patch initializes the 'string' to nil to fix the build failure.
+
+        No tests. No change in behavior.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::plainText):
+
 2012-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add extension attribute support
