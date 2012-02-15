@@ -69,7 +69,7 @@
 #endif
 
 #if PLATFORM(QT)
-#include <QWidget>
+#include <QVariant>
 #endif
 
 namespace WebCore {
@@ -475,14 +475,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (o.isRenderPart()) {
         const RenderPart* part = toRenderPart(const_cast<RenderObject*>(&o));
         if (part->widget() && part->widget()->platformWidget()) {
-            QWidget* wid = part->widget()->platformWidget();
+            QObject* wid = part->widget()->platformWidget();
 
             ts << " [QT: ";
-            ts << "geometry: {" << wid->geometry() << "} ";
-            ts << "isHidden: " << wid->isHidden() << " ";
+            ts << "geometry: {" << wid->property("geometry").toRect() << "} ";
+            ts << "isHidden: " << !wid->property("isVisible").toBool() << " ";
             ts << "isSelfVisible: " << part->widget()->isSelfVisible() << " ";
-            ts << "isParentVisible: " << part->widget()->isParentVisible() << " ";
-            ts << "mask: {" << wid->mask().boundingRect() << "} ] ";
+            ts << "isParentVisible: " << part->widget()->isParentVisible() << " ] ";
         }
     }
 #endif

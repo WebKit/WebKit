@@ -189,7 +189,7 @@ void PluginView::setFocus(bool focused)
 {
     if (platformPluginWidget()) {
         if (focused)
-            platformPluginWidget()->setFocus(Qt::OtherFocusReason);
+            static_cast<QWidget*>(platformPluginWidget())->setFocus(Qt::OtherFocusReason);
     } else {
         Widget::setFocus(focused);
     }
@@ -572,7 +572,8 @@ void PluginView::setNPWindowIfNeeded()
     m_hasPendingGeometryChange = false;
 
     if (m_isWindowed) {
-        platformPluginWidget()->setGeometry(m_windowRect);
+        QWidget* widget = static_cast<QWidget*>(platformPluginWidget());
+        widget->setGeometry(m_windowRect);
 
         // Cut out areas of the plugin occluded by iframe shims
         Vector<IntRect> cutOutRects;
@@ -584,8 +585,8 @@ void PluginView::setNPWindowIfNeeded()
         }
         // if setMask is set with an empty QRegion, no clipping will
         // be performed, so in that case we hide the plugin view
-        platformPluginWidget()->setVisible(!clipRegion.isEmpty());
-        platformPluginWidget()->setMask(clipRegion);
+        widget->setVisible(!clipRegion.isEmpty());
+        widget->setMask(clipRegion);
 
         m_npWindow.x = m_windowRect.x();
         m_npWindow.y = m_windowRect.y();
@@ -639,7 +640,7 @@ void PluginView::setParentVisible(bool visible)
     Widget::setParentVisible(visible);
 
     if (isSelfVisible() && platformPluginWidget())
-        platformPluginWidget()->setVisible(visible);
+        static_cast<QWidget*>(platformPluginWidget())->setVisible(visible);
 }
 
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32_t len, const char* buf)
@@ -742,8 +743,9 @@ void PluginView::invalidateRect(const IntRect& rect)
         if (platformWidget()) {
             // update() will schedule a repaint of the widget so ensure
             // its knowledge of its position on the page is up to date.
-            platformWidget()->setGeometry(m_windowRect);
-            platformWidget()->update(rect);
+            QWidget* w = static_cast<QWidget*>(platformWidget());
+            w->setGeometry(m_windowRect);
+            w->update(rect);
         }
         return;
     }
@@ -892,7 +894,7 @@ bool PluginView::platformStart()
     wsi->type = 0;
 
     if (m_isWindowed) {
-        const QX11Info* x11Info = &platformPluginWidget()->x11Info();
+        const QX11Info* x11Info = &static_cast<QWidget*>(platformPluginWidget())->x11Info();
 
         wsi->display = x11Info->display();
         wsi->visual = (Visual*)x11Info->visual();
@@ -900,7 +902,7 @@ bool PluginView::platformStart()
         wsi->colormap = x11Info->colormap();
 
         m_npWindow.type = NPWindowTypeWindow;
-        m_npWindow.window = (void*)platformPluginWidget()->winId();
+        m_npWindow.window = (void*)static_cast<QWidget*>(platformPluginWidget())->winId();
         m_npWindow.width = -1;
         m_npWindow.height = -1;
     } else {

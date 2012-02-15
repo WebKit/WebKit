@@ -27,6 +27,7 @@
 #include "QtViewportInteractionEngine.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
+#include <QCursor>
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>

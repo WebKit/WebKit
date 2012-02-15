@@ -1,3 +1,28 @@
+2012-02-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Eliminate first set of QtWidgets dependencies from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=78611
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qwebpage.cpp: Add missing includes.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp: Ditto.
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Make it compile by casting
+        the QObject based PlatformWidget back to QWidget before doing QWidget
+        specific function calls.
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebCore::initializeWebCoreQt): Moved QStyle specific web-graphic initialization
+        here from WebCore.
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQWidget::setWidgetVisible): Implement show/hiding of widgets
+        through delegation to QWidget.
+        (WebCore):
+        (WebCore::PageClientQGraphicsWidget::setWidgetVisible): Provide empty widget
+        show/hide implementation, as it doesn't seem to make sense for graphicsviews.
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2012-02-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Be smarted with tile usages during tiling

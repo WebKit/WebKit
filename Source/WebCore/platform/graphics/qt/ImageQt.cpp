@@ -41,13 +41,12 @@
 #include "ShadowBlur.h"
 #include "StillImageQt.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QImage>
 #include <QImageReader>
 #include <QPainter>
 #include <QPixmap>
-#include <QStyle>
 #include <QTransform>
 
 #include <math.h>
@@ -81,10 +80,6 @@ static WebGraphicHash* graphics()
         hash->insert("deleteButton", QPixmap(QLatin1String(":webkit/resources/deleteButton.png")));
         // QWebSettings::InputSpeechButtonGraphic
         hash->insert("inputSpeech", QPixmap(QLatin1String(":webkit/resources/inputSpeech.png")));
-        // QWebSettings::SearchCancelButtonGraphic
-        hash->insert("searchCancelButton", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
-        // QWebSettings::SearchCancelButtonPressedGraphic
-        hash->insert("searchCancelButtonPressed", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
     }
 
     return hash;

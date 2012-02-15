@@ -97,6 +97,8 @@ public:
 
     virtual QRectF windowRect() const;
 
+    virtual void setWidgetVisible(Widget*, bool visible);
+
     QWidget* view;
     QWebPage* page;
 
@@ -197,6 +199,8 @@ public:
     virtual QStyle* style() const;
 
     virtual bool viewResizesToContentsEnabled() const { return viewResizesToContents; }
+
+    virtual void setWidgetVisible(Widget*, bool);
 
     void createOrDeleteOverlay();
 

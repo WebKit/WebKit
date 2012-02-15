@@ -41,6 +41,10 @@ QT_BEGIN_NAMESPACE
 class QStyle;
 QT_END_NAMESPACE
 
+namespace WebCore {
+class Widget;
+}
+
 class QWebPageClient {
 public:
     virtual ~QWebPageClient() { }
@@ -94,6 +98,8 @@ public:
     virtual bool viewResizesToContentsEnabled() const = 0;
 
     virtual QRectF windowRect() const = 0;
+
+    virtual void setWidgetVisible(WebCore::Widget*, bool visible) = 0;
 
 protected:
 #ifndef QT_NO_CURSOR

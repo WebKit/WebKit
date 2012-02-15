@@ -98,6 +98,9 @@
 #include "MediaPlayerPrivateQt.h"
 #endif
 
+#include <QAction>
+#include <QMenu>
+
 using namespace WebCore;
 
 QMap<int, QWebScriptWorld*> m_worldMap;

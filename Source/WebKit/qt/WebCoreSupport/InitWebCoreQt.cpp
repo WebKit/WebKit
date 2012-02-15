@@ -30,6 +30,7 @@
 #include "config.h"
 #include "InitWebCoreQt.h"
 
+#include "Image.h"
 #include "NotImplemented.h"
 #include "PlatformStrategiesQt.h"
 #include "ScriptController.h"
@@ -39,6 +40,8 @@
 #endif
 
 #include "qwebelement_p.h"
+#include <QApplication>
+#include <QStyle>
 
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
@@ -62,6 +65,11 @@ void initializeWebCoreQt()
 #if USE(QTKIT)
     InitWebCoreSystemInterface();
 #endif
+
+    // QWebSettings::SearchCancelButtonGraphic
+    Image::setPlatformResource("searchCancelButton", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
+    // QWebSettings::SearchCancelButtonPressedGraphic
+    Image::setPlatformResource("searchCancelButtonPressed", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
 
     initialized = true;
 }

@@ -61,7 +61,6 @@ typedef PlatformWidget PlatformPluginWidget;
 #include "TextureMapperPlatformLayer.h"
 #endif
 
-#include <QGraphicsItem>
 #include <QImage>
 QT_BEGIN_NAMESPACE
 class QPainter;

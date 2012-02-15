@@ -39,8 +39,6 @@ typedef struct tagMENUITEMINFOW MENUITEMINFO;
 #elif PLATFORM(GTK)
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkAction GtkAction;
-#elif PLATFORM(QT)
-#include <QAction>
 #elif PLATFORM(WX)
 class wxMenuItem;
 #endif

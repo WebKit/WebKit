@@ -178,6 +178,14 @@ QRectF PageClientQWidget::windowRect() const
     return QRectF(view->window()->geometry());
 }
 
+void PageClientQWidget::setWidgetVisible(Widget* widget, bool visible)
+{
+    QWidget* qtWidget = qobject_cast<QWidget*>(widget->platformWidget());
+    if (!qtWidget)
+        return;
+    qtWidget->setVisible(visible);
+}
+
 #if !defined(QT_NO_GRAPHICSVIEW)
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
@@ -403,6 +411,11 @@ QObject* PageClientQGraphicsWidget::pluginParent() const
 QStyle* PageClientQGraphicsWidget::style() const
 {
     return view->style();
+}
+
+void PageClientQGraphicsWidget::setWidgetVisible(Widget*, bool)
+{
+    // Doesn't make sense, does it?
 }
 
 QRectF PageClientQGraphicsWidget::windowRect() const

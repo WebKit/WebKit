@@ -1,3 +1,13 @@
+2012-02-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Eliminate first set of QtWidgets dependencies from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=78611
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp: Add missing QCursor include
+        to fix compilation.
+
 2012-02-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Allow <style scoped> as a direct child of a ShadowRoot

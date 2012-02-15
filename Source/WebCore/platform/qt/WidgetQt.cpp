@@ -45,11 +45,10 @@
 #include <QDebug>
 #include <QPaintEngine>
 #include <QPainter>
-#include <QWidget>
 
 namespace WebCore {
 
-Widget::Widget(QWidget* widget)
+Widget::Widget(PlatformWidget widget)
 {
     init(widget);
 }
@@ -89,16 +88,24 @@ void Widget::show()
 {
     setSelfVisible(true);
 
-    if (isParentVisible() && platformWidget())
-        platformWidget()->show();
+    if (!isParentVisible() || !platformWidget())
+        return;
+
+    QWebPageClient* client = root()->hostWindow()->platformPageClient();
+    if (client)
+        client->setWidgetVisible(this, true);
 }
 
 void Widget::hide()
 {
     setSelfVisible(false);
 
-    if (isParentVisible() && platformWidget())
-        platformWidget()->hide();
+    if (!isParentVisible() || !platformWidget())
+        return;
+
+    QWebPageClient* client = root()->hostWindow()->platformPageClient();
+    if (client)
+        client->setWidgetVisible(this, false);
 }
 
 void Widget::paint(GraphicsContext*, const IntRect&)

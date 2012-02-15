@@ -1,3 +1,65 @@
+2012-02-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Eliminate first set of QtWidgets dependencies from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=78611
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * bindings/js/ScriptControllerQt.cpp: Remove unused include.
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls): Replace import
+        of private Qt(Widgets) variable with the default of Qt 5, where
+        it is also not configurable.
+        * platform/ContextMenu.h: Remove unused include.
+        * platform/ContextMenuItem.h: Ditto.
+        * platform/Widget.h: Use QObject as type for PlatformWidget
+        instead of QWidget.
+        * platform/graphics/Icon.h:
+        (Icon): Prefer QImage over QIcon for storage.
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+        (WebCore): Make it compile with QWindow for Qt 5 and QWidget for Qt 4.
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::FullScreenVideoWindow):
+        (FullScreenVideoWindow::keyPressEvent):
+        (FullScreenVideoWindow::event):
+        (FullScreenVideoWindow::showFullScreen):
+        (PlatformVideoWindow::PlatformVideoWindow):
+        * platform/graphics/qt/IconQt.cpp: Revert the implementation of this class
+        back to notImplemented(). It was trying to load the actual file as QIcon
+        instead of trying to find a symbolic icon for the given file. We should
+        probably use the QMimeType API in Qt 5 once it becomes available.
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/qt/ImageQt.cpp:
+        (graphics): Remove use of QStyle for retrieving icons. Code moved to
+        WebCoreSupport instead.
+        * platform/qt/ContextMenuQt.cpp: Removed unused include.
+        * platform/qt/PlatformScreenQt.cpp: Add #ifdefs to use QScreen API
+        with Qt 5.
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/QWebPageClient.h: Add hook for showing/hiding widget.
+        (WebCore):
+        (QWebPageClient):
+        * platform/qt/SoundQt.cpp:
+        (WebCore::systemBeep): Beep is not implemented in Qt 5 and its use is
+        questionable. Move back to notImplemented() until proper QPA API becomes
+        available in Qt 5 (if ever...).
+        * platform/qt/WidgetQt.cpp: Delegate QWidget specific show/hide calls
+        to the PageClient, out of WebCore.
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        * plugins/PluginView.h: Remove unused include.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject): When dumping properties of
+        QWidget, use the QObject property API to retrieve the values instead of
+        QWidget specific API. Removed the mask from the dump as it's not available
+        as property and our layout tests don't seem to use it.
+
 2012-02-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Fix minor design issues in the Spectrum color picker

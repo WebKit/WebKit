@@ -30,7 +30,6 @@
 #include <Document.h>
 #include <Frame.h>
 #include <FrameView.h>
-#include <QAction>
 #include <wtf/Assertions.h>
 
 namespace WebCore {

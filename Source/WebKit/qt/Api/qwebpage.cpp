@@ -115,6 +115,7 @@
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QBasicTimer>
 #include <QBitArray>
@@ -126,6 +127,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QNetworkProxy>
 #include <QUndoStack>

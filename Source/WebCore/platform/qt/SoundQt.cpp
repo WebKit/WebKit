@@ -28,13 +28,16 @@
 #include "config.h"
 #include "Sound.h"
 
-#include <QApplication>
+#include <NotImplemented.h>
 
 namespace WebCore {
 
 void systemBeep()
 {
-    QApplication::beep();
+    // FIXME: Not implemented in Qt 5 right now. The implementation in QApplication:beep()
+    // is empty. If anyone is going to bother implementing this via QPlatformNativeInterface, then
+    // we could use that here.
+    notImplemented();
 }
 
 }
