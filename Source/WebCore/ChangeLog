@@ -1,3 +1,15 @@
+2012-02-14  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/78658> platformUserPreferredLanguages is leaking all of the language codes
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/Language.mm:
+        (WebCore::httpStyleLanguageCode): Switch to using RetainPtr's for temporaries to make the ownership
+        more explicit. Switch to returning a WTF::String so that the caller doesn't have to worry about
+        ownership at all. Change the name to reflect the lack of transfer of ownership.
+        (WebCore::platformUserPreferredLanguages):
+
 2012-02-14  Kentaro Hara  <haraken@chromium.org>
 
         [Mac] PasteboardMac.mm build fails

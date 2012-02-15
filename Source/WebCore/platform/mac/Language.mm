@@ -56,33 +56,27 @@ static BOOL useCachedPreferredLanguages;
 
 namespace WebCore {
 
-static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
+static String httpStyleLanguageCode(NSString *languageCode)
 {
     ASSERT(isMainThread());
 
     // Look up the language code using CFBundle.
-    CFStringRef preferredLanguageCode = wkCopyCFLocalizationPreferredName((CFStringRef)languageCode);
+    RetainPtr<CFStringRef> preferredLanguageCode(AdoptCF, wkCopyCFLocalizationPreferredName((CFStringRef)languageCode));
 
     if (preferredLanguageCode)
-        languageCode = (NSString *)preferredLanguageCode;
-    
+        languageCode = (NSString *)preferredLanguageCode.get();
+
     // Make the string lowercase.
     NSString *lowercaseLanguageCode = [languageCode lowercaseString];
-    
-    NSString *httpStyleLanguageCode;
-    
+
     // Turn a '_' into a '-' if it appears after a 2-letter language code.
     if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
-        NSMutableString *mutableLanguageCode = [lowercaseLanguageCode mutableCopy];
-        [mutableLanguageCode replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
-        httpStyleLanguageCode = mutableLanguageCode;
-    } else
-        httpStyleLanguageCode = [lowercaseLanguageCode retain];
-    
-    if (preferredLanguageCode)
-        CFRelease(preferredLanguageCode);
+        RetainPtr<NSMutableString> mutableLanguageCode(AdoptNS, [lowercaseLanguageCode mutableCopy]);
+        [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
+        return mutableLanguageCode.get();
+    }
 
-    return httpStyleLanguageCode;
+    return lowercaseLanguageCode;
 }
 
 Vector<String> platformUserPreferredLanguages()
@@ -103,7 +97,7 @@ Vector<String> platformUserPreferredLanguages()
             userPreferredLanguages.append("en");
         else {
             for (CFIndex i = 0; i < languageCount; i++)
-                userPreferredLanguages.append(createHTTPStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i)));
+                userPreferredLanguages.append(httpStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i)));
         }
     }
 
