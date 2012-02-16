@@ -1,3 +1,21 @@
+2012-02-15  Mark Rowe  <mrowe@apple.com>
+
+        NPN_GetValueForURL / NPNURLVProxy returns DIRECT when proxy configured via PAC
+        <http://webkit.org/b/78766> / <rdar://problem/10729283>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        (WebCore::proxyAutoConfigurationResultCallback): Stop the runloop, and then process
+        the results that we received.
+        (WebCore::processProxyServers): Processing of array of proxy configuration information
+        moved from addProxyServersForURL. Handling of proxy auto-configuration URLs is now handled
+        by calling CFNetworkExecuteProxyAutoConfigurationURL and waiting synchronously on the result
+        callback. Doing this synchronously is not great, but it's the best we can do without a lot
+        of restructuring of the code that calls this. We arbitrarily time out the execution after five
+        seconds to avoid permanently hanging.
+        (WebCore::addProxyServersForURL): Call in to our helper function.
+
 2012-02-16  Abhishek Arya  <inferno@chromium.org>
 
         Fix clone() function to handle descendant classes of RenderBlock.
