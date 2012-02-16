@@ -11,6 +11,7 @@ Text
 Text
 Text
 Text
+Text
 
 Text
 Text
@@ -28,6 +29,7 @@ E1: rgb(0, 0, 0)
 S2: rgb(255, 0, 0)
 P2: rgb(0, 128, 0)
 R2: rgb(0, 0, 255)
+E2: rgb(255, 0, 0)
 
 S3: rgb(0, 0, 0)
 P3: rgb(0, 0, 0)

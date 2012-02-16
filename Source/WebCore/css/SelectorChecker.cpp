@@ -468,6 +468,10 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
     nextContext.selector = historySelector;
 
     if (relation != CSSSelector::SubSelector) {
+        // Abort if the next selector would exceed the scope.
+        if (context.element == context.scope)
+            return SelectorFailsCompletely;
+
         // Bail-out if this selector is irrelevant for the pseudoStyle
         if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
@@ -487,6 +491,8 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
             SelectorMatch match = checkSelector(nextContext, dynamicPseudo);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
+            if (nextContext.element == nextContext.scope)
+                return SelectorFailsCompletely;
         }
         return SelectorFailsCompletely;
 
@@ -542,6 +548,9 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
 
     case CSSSelector::ShadowDescendant:
         {
+            // If we're in the same tree-scope as the scoping element, then following a shadow descendant combinator would escape that and thus the scope.
+            if (context.scope && context.scope->treeScope() == context.element->treeScope())
+                return SelectorFailsCompletely;
             Node* shadowHostNode = context.element->shadowAncestorNode();
             if (shadowHostNode == context.element || !shadowHostNode->isElementNode())
                 return SelectorFailsCompletely;

@@ -1,3 +1,36 @@
+2012-02-16  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Implement scoped selector matching in the slow path
+        https://bugs.webkit.org/show_bug.cgi?id=77528
+
+        Added scope information to SelectorCheckingContext, SelectorChecker methods and CSSStyleSelector methods.
+        Added matchOptions struct to CSSStyleSelector similar to SelectorCheckingContext in SelectorChecker.
+        Adapted the calling sites.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. (extended existing tests)
+
+        * css/CSSStyleSelector.cpp:
+        (RuleData):
+        (RuleSet):
+        (WebCore::CSSStyleSelector::determineScopingElement):
+        (WebCore::CSSStyleSelector::collectMatchingRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForRegion):
+        (WebCore::CSSStyleSelector::matchScopedAuthorRules):
+        (WebCore::CSSStyleSelector::matchAuthorRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector):
+        (MatchOptions):
+        (WebCore::CSSStyleSelector::MatchOptions::MatchOptions):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        (SelectorCheckingContext):
+        (SelectorChecker):
+
 2012-02-15  Patrick Gansterer  <paroga@webkit.org>
 
         Windows build fix for !ENABLE(CSS_FILTERS) after r106593.

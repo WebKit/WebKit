@@ -54,17 +54,19 @@ public:
 
     struct SelectorCheckingContext {
         // Initial selector constructor
-        SelectorCheckingContext(CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType, RenderStyle* elementStyle = 0, RenderStyle* elementParentStyle = 0)
+        SelectorCheckingContext(CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType)
             : selector(selector)
             , element(element)
+            , scope(0)
             , visitedMatchType(visitedMatchType)
-            , elementStyle(elementStyle)
-            , elementParentStyle(elementParentStyle)
+            , elementStyle(0)
+            , elementParentStyle(0)
             , isSubSelector(false)
         { }
 
         CSSSelector* selector;
         Element* element;
+        const Element* scope;
         VisitedMatchType visitedMatchType;
         RenderStyle* elementStyle;
         RenderStyle* elementParentStyle;
@@ -143,7 +145,7 @@ private:
         Vector<unsigned, 4> identifierHashes;
     };
     Vector<ParentStackFrame> m_parentStack;
-    
+
     // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
     static const unsigned bloomFilterKeyBits = 12;
     OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;

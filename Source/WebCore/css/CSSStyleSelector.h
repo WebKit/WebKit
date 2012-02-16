@@ -106,10 +106,6 @@ public:
                      bool strictParsing, bool matchAuthorAndUserStyles);
     ~CSSStyleSelector();
 
-#if ENABLE(STYLE_SCOPED)
-    static Element* determineScopingElement(const CSSStyleSheet*);
-#endif
-
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
     void pushParent(Element* parent);
     void popParent(Element* parent);
@@ -288,6 +284,13 @@ private:
         MatchRanges ranges;
         bool isCacheable;
     };
+
+    struct MatchOptions {
+        MatchOptions(bool includeEmptyRules, const Element* scope = 0) : scope(scope), includeEmptyRules(includeEmptyRules) { }
+        const Element* scope;
+        bool includeEmptyRules;
+    };
+
     static void addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, CSSStyleRule* rule = 0, unsigned linkMatchType =  SelectorChecker::MatchAll);
 
     void matchAllRules(MatchResult&);
@@ -296,14 +299,14 @@ private:
     void matchAuthorRules(MatchResult&, bool includeEmptyRules);
     void matchUserRules(MatchResult&, bool includeEmptyRules);
     void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
-    void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-    void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-    void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
+    void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
+    void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
     void sortAndTransferMatchedRules(MatchResult&);
 
-    bool checkSelector(const RuleData&);
+    bool checkSelector(const RuleData&, const Element* scope = 0);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&);
     template <bool firstPass>
@@ -446,6 +449,8 @@ private:
 #endif
 
 #if ENABLE(STYLE_SCOPED)
+    static const Element* determineScopingElement(const CSSStyleSheet*);
+
     typedef HashMap<const Element*, OwnPtr<RuleSet> > ScopedRuleSetMap;
 
     RuleSet* scopedRuleSetForElement(const Element*) const;

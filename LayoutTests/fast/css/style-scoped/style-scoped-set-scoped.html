@@ -17,10 +17,13 @@
         {
             test('S1');
             test('P1');
+            test('R1');
             test('S2');
             test('P2');
+            test('R2');
             test('S3');
             test('P3');
+            test('R3');
         }
 
         function runTests()
@@ -52,18 +55,22 @@
     <div>
         <span id="S1">Text</span>
         <p id="P1">Text</p>
+        <pre id="R1">Text</p>
     </div>
     <div>
         <style id="STYLE" type="text/css">
             div { color: red; }
             p { color: green; }
+            p ~ div pre { color: blue; } /* should NOT apply while scoped! */
         </style>
         <span id="S2">Text</span>
         <p id="P2">Text</p>
+        <pre id="R2">Text</p>
     </div>
     <div>
         <span id="S3">Text</span>
         <p id="P3">Text</p>
+        <pre id="R3">Text</p>
     </div>
     <pre id="console"></pre>
 </body>

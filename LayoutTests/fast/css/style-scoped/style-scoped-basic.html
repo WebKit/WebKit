@@ -28,6 +28,7 @@
             test('S2');
             test('P2');
             test('R2');
+            test('E2');
             log('');
             test('S3');
             test('P3');
@@ -51,29 +52,35 @@
     <div class="foo">
         <span id="S1">Text</span>
         <p id="P1">Text</p>
-        <pre id = "R1" class="bar">Text</pre>
+        <pre id="R1" class="bar">Text</pre>
         <pre id="E1" class="baz">Text</pre>
     </div>
-    <div>
+    <div id="foo">
+        <div id="sib"></div>
         <div>
             <style type="text/css" scoped>
                 div { color: red; }
                 p { color: green; }
                 div .bar { color: blue; }
+                #foo .baz { color: rgb(10, 10, 10); } /* should NOT apply! */
+                sib + * { color: rgb(20, 20, 20); } /* should NOT apply! */
+                sib ~ * { color: rgb(30, 30, 30); } /* should NOT apply! */
+                div div { color: rgb(40, 40, 40); } /* should NOT apply! */ 
             </style>
             <span id="S2">Text</span>
             <p id="P2">Text</p>
             <pre id="R2" class="bar">Text</pre>
+            <pre id="E2" class="baz">Text</pre>
         </div>
         <span id="S3">Text</span>
         <p id="P3">Text</p>
-        <pre id = "R3" class="bar">Text</pre>
+        <pre id="R3" class="bar">Text</pre>
         <pre id="E3" class="baz">Text</pre>
     </div>
     <div class="foo">
         <span id="S4">Text</span>
         <p id="P4">Text</p>
-        <pre id = "R4" class="bar">Text</pre>
+        <pre id="R4" class="bar">Text</pre>
         <pre id="E4" class="baz">Text</pre>
     </div>
     <pre id="console"></pre>
