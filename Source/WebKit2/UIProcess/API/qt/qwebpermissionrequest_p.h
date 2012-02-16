@@ -20,6 +20,7 @@
 #ifndef qwebpermissionrequest_p_h
 #define qwebpermissionrequest_p_h
 
+#include "qtwebsecurityorigin_p.h"
 #include "qwebkitglobal.h"
 
 #include <QtCore/QObject>
@@ -32,10 +33,8 @@ class QWebPermissionRequestPrivate;
 class QWEBKIT_EXPORT QWebPermissionRequest : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool allow READ allow WRITE setAllow)
-    Q_PROPERTY(RequestType type READ type)
-    Q_PROPERTY(QString scheme READ scheme)
-    Q_PROPERTY(QString host READ host)
-    Q_PROPERTY(int port READ port)
+    Q_PROPERTY(RequestType type READ type CONSTANT)
+    Q_PROPERTY(QtWebSecurityOrigin* origin READ securityOrigin)
     Q_ENUMS(RequestType)
 
 public:
@@ -48,12 +47,10 @@ public:
 
     RequestType type() const;
     bool allow() const;
-    QString scheme() const;
-    QString host() const;
-    int port() const;
 
 public Q_SLOTS:
     void setAllow(bool);
+    QtWebSecurityOrigin* securityOrigin();
 
 private:
     friend class QWebPermissionRequestPrivate;

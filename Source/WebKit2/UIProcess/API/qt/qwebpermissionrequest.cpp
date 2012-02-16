@@ -34,7 +34,15 @@ public:
         , request(permissionRequest)
         , allow(false)
     {
+        WKRetainPtr<WKStringRef> url = adoptWK(WKSecurityOriginCopyProtocol(origin.get()));
+        securityInfo.setScheme(WKStringCopyQString(url.get()));
+
+        WKRetainPtr<WKStringRef> host = adoptWK(WKSecurityOriginCopyHost(origin.get()));
+        securityInfo.setHost(WKStringCopyQString(host.get()));
+
+        securityInfo.setPort(static_cast<int>(WKSecurityOriginGetPort(origin.get())));
     }
+
     ~QWebPermissionRequestPrivate()
     {
     }
@@ -42,6 +50,7 @@ public:
     WKRetainPtr<WKSecurityOriginRef> origin;
     QWebPermissionRequest::RequestType type;
     WKRetainPtr<WKGeolocationPermissionRequestRef> request;
+    QtWebSecurityOrigin securityInfo;
     bool allow;
 };
 
@@ -88,19 +97,8 @@ bool QWebPermissionRequest::allow() const
     return d->allow;
 }
 
-QString QWebPermissionRequest::scheme() const
+QtWebSecurityOrigin* QWebPermissionRequest::securityOrigin()
 {
-    WKRetainPtr<WKStringRef> url = adoptWK(WKSecurityOriginCopyProtocol(d->origin.get()));
-    return WKStringCopyQString(url.get());
+    return &(d->securityInfo);
 }
 
-QString QWebPermissionRequest::host() const
-{
-    WKRetainPtr<WKStringRef> origin = adoptWK(WKSecurityOriginCopyHost(d->origin.get()));
-    return WKStringCopyQString(origin.get());
-}
-
-int QWebPermissionRequest::port() const
-{
-    return static_cast<int>(WKSecurityOriginGetPort(d->origin.get()));
-}

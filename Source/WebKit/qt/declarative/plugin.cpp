@@ -25,6 +25,7 @@
 #if defined(HAVE_WEBKIT2)
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
+#include "qtwebsecurityorigin_p.h"
 #include "qwebiconimageprovider_p.h"
 #include "qwebnavigationrequest_p.h"
 #include "qwebpermissionrequest_p.h"
@@ -65,6 +66,8 @@ public:
         qmlRegisterUncreatableType<QNetworkReply>(uri, 3, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
         qmlRegisterUncreatableType<QWebPermissionRequest>(uri, 3, 0, "PermissionRequest", QObject::tr("Cannot create separate instance of PermissionRequest"));
         qmlRegisterUncreatableType<QWebNavigationRequest>(uri, 3, 0, "NavigationRequest", QObject::tr("Cannot create separate instance of NavigationRequest"));
+        qmlRegisterUncreatableType<QtWebSecurityOrigin>(uri, 3, 0, "SecurityOrigin", QObject::tr("Cannot create separate instance of SecurityOrigin"));
+
 #endif
     }
 };
