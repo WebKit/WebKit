@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef BlackBerryContext_h
-#define BlackBerryContext_h
+#ifndef ActiveNodeContext_h
+#define ActiveNodeContext_h
 
 #include "WebString.h"
 
@@ -73,4 +73,4 @@ private:
 
 }
 }
-#endif // BlackBerryContext_h
+#endif // ActiveNodeContext_h
