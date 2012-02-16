@@ -246,7 +246,7 @@ my @features = (
       define => "ENABLE_INPUT_TYPE_WEEK", default => 0, value => \$inputTypeWeekSupport },
 
     { option => "inspector", desc => "Toggle Web Inspector support",
-      define => "ENABLE_INSPECTOR", default => 1, value => \$webInspectorSupport },
+      define => "ENABLE_INSPECTOR", default => !isWinCE(), value => \$webInspectorSupport },
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },

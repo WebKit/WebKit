@@ -1,5 +1,13 @@
 2012-02-16  Patrick Gansterer  <paroga@webkit.org>
 
+        Disable inspector on WinCE.
+
+        Avoid compiling InspectorBackendDispatcher.cpp, which causes an internal compiler error.
+
+        * Scripts/build-webkit:
+
+2012-02-16  Patrick Gansterer  <paroga@webkit.org>
+
         WinCE build fix after r107656.
 
         Disable FTPDIR on WinCE, since it does not compile there.
