@@ -54,6 +54,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
     , m_imageRendering(RenderStyle::initialImageRendering())
     , m_lineSnap(RenderStyle::initialLineSnap())
+#if ENABLE(OVERFLOW_SCROLLING)
+    , useTouchOverflowScrolling(RenderStyle::initialUseTouchOverflowScrolling())
+#endif
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -98,6 +101,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_lineBoxContain(o.m_lineBoxContain)
     , m_imageRendering(o.m_imageRendering)
     , m_lineSnap(o.m_lineSnap)
+#if ENABLE(OVERFLOW_SCROLLING)
+    , useTouchOverflowScrolling(o.useTouchOverflowScrolling)
+#endif
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -149,6 +155,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && wordWrap == o.wordWrap
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
+#if ENABLE(OVERFLOW_SCROLLING)
+        && useTouchOverflowScrolling == o.useTouchOverflowScrolling
+#endif
         && textSizeAdjust == o.textSizeAdjust
         && resize == o.resize
         && userSelect == o.userSelect

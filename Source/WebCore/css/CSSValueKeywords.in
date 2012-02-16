@@ -802,6 +802,12 @@ no-limit
 manual
 // auto
 
+#if defined(ENABLE_OVERFLOW_SCROLLING)
+// -webkit-overflow-scrolling
+// auto
+touch
+#endif
+
 // -webkit-writing-mode
 // SVG compatibility
 lr

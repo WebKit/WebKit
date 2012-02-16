@@ -2092,6 +2092,14 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 #endif
+
+#if ENABLE(OVERFLOW_SCROLLING)
+    case CSSPropertyWebkitOverflowScrolling:
+        if (id == CSSValueAuto || id == CSSValueTouch)
+            validPrimitive = true;
+        break;
+#endif
+
         /* shorthand properties */
     case CSSPropertyBackground: {
         // Position must come before color in this array because a plain old "0" is a legal color

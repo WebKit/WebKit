@@ -92,6 +92,9 @@ public:
     // CSS Image Values Level 3
     unsigned m_imageRendering : 2; // EImageRendering
     unsigned m_lineSnap : 2; // LineSnap
+#if ENABLE(OVERFLOW_SCROLLING)
+    unsigned useTouchOverflowScrolling: 1;
+#endif
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

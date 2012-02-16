@@ -1903,7 +1903,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f
-        || style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect() || style->hasFilter()))
+        || style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect() || style->hasFilter()
+#if ENABLE(OVERFLOW_SCROLLING)
+        // Touch overflow scrolling creates a stacking context.
+        || style->useTouchOverflowScrolling()
+#endif
+        ))
         style->setZIndex(0);
 
     // Textarea considers overflow visible as auto.
@@ -3722,6 +3727,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         Color col = colorFromPrimitiveValue(primitiveValue);
         m_style->setTapHighlightColor(col);
+        return;
+    }
+#endif
+#if ENABLE(OVERFLOW_SCROLLING)
+    case CSSPropertyWebkitOverflowScrolling: {
+        HANDLE_INHERIT_AND_INITIAL(useTouchOverflowScrolling, UseTouchOverflowScrolling);
+        if (!primitiveValue)
+            break;
+        m_style->setUseTouchOverflowScrolling(primitiveValue->getIdent() == CSSValueTouch);
         return;
     }
 #endif

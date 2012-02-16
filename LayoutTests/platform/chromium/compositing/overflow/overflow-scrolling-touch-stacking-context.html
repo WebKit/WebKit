@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    .box {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+    }
+
+    .scrollable {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .indicator {
+      background: red;
+      z-index: 1;
+    }
+
+    .test {
+      background: green;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Check that touch overflow scrollable elements get a stacking context. -->
+  <div class="scrollable box">
+    <div class="indicator box"></div>
+  </div>
+  <div class="test box"></div>
+
+</body>
+</html>

@@ -943,6 +943,9 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor() const { return rareInheritedData->tapHighlightColor; }
 #endif
+#if ENABLE(OVERFLOW_SCROLLING)
+    bool useTouchOverflowScrolling() const { return rareInheritedData->useTouchOverflowScrolling; }
+#endif
     bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
@@ -1347,6 +1350,9 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     void setTapHighlightColor(const Color& c) { SET_VAR(rareInheritedData, tapHighlightColor, c); }
 #endif
+#if ENABLE(OVERFLOW_SCROLLING)
+    void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
+#endif
     bool setTextSizeAdjust(bool);
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
@@ -1646,6 +1652,9 @@ public:
     static ETextSecurity initialTextSecurity() { return TSNONE; }
 #if ENABLE(TOUCH_EVENTS)
     static Color initialTapHighlightColor();
+#endif
+#if ENABLE(OVERFLOW_SCROLLING)
+    static bool initialUseTouchOverflowScrolling() { return false; }
 #endif
 #if ENABLE(DASHBOARD_SUPPORT)
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();

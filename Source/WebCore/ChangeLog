@@ -1,3 +1,48 @@
+2012-02-15  Sami Kyostila  <skyostil@google.com>
+
+        Add -webkit-overflow-scrolling CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=78664
+
+        Reviewed by Eric Seidel.
+
+        Add a CSS property indicating that an element with overflow scrolling
+        should follow the platform's behavior for touch scrollable user
+        interface objects. For instance, this property could enable momentum
+        scrolling for the element if that is the platform convention.
+
+        The property has two possible values: auto (default) and touch. The
+        former does not alter overflow scrolling behavior, while the latter
+        activates touch scrolling.
+
+        As a side effect, enabling touch scrolling also causes an element to
+        gain a stacking context. This is to allow the implementation to promote
+        the scrolling contents into a render layer, which can be translated more
+        efficiently.
+
+        This property was introduced with iOS 5 WebKit. Another implementation
+        is in Chrome for Android.
+
+        Test: platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+
 2012-02-15  Levi Weintraub  <leviw@chromium.org>
 
         Add zeroLayoutUnit constant.

@@ -379,3 +379,6 @@ z-index
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region
 #endif
+#if defined(ENABLE_OVERFLOW_SCROLLING)
+-webkit-overflow-scrolling
+#endif

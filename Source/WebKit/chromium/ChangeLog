@@ -1,3 +1,12 @@
+2012-02-15  Sami Kyostila  <skyostil@google.com>
+
+        Enable -webkit-overflow-scrolling CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=78664
+
+        Reviewed by Eric Seidel.
+
+        * features.gypi:
+
 2012-02-15  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Removing SecurityContext from the embedder API
