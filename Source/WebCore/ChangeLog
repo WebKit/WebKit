@@ -1,3 +1,13 @@
+2012-02-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove free flow DOM editing experiment.
+        https://bugs.webkit.org/show_bug.cgi?id=78813
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._markRevision):
+
 2012-02-16  Patrick Gansterer  <paroga@webkit.org>
 
         WinCE build fix after r107453.
