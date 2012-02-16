@@ -1,3 +1,20 @@
+2012-02-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [soup] Move important SoupSession feature initialization to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=68602
+
+        Reviewed by Martin Robinson.
+
+        Moved content sniffer and decoder initialization from WebKit to
+        WebCore because network stuff will not work as expected without
+        them. Added also out-of-the-box proxy support to WebCore.
+
+        No new tests required as we're just moving stuff from WebKit to
+        WebCore.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::defaultSession):
+
 2012-02-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove free flow DOM editing experiment.
