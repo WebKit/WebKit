@@ -1,3 +1,14 @@
+2012-02-15  Erik Arvidsson  <arv@chromium.org>
+
+        Expose Window constructor
+        https://bugs.webkit.org/show_bug.cgi?id=78722
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/Window/window-constructor-presence.html
+
+        * page/DOMWindow.idl:
+
 2012-02-15  Kelly Norton  <knorton@google.com>
 
         fill-opacity does not render properly only on Chromium Mac.

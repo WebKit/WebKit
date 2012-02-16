@@ -401,6 +401,7 @@ module window {
         attribute [Conditional=SHADOW_DOM, V8EnabledAtRuntime=shadowDOM] ShadowRootConstructor WebKitShadowRoot;
 
         attribute HTMLDocumentConstructor HTMLDocument;
+        attribute DOMWindowConstructor Window;
 
         attribute HTMLElementConstructor HTMLElement;
         attribute HTMLAnchorElementConstructor HTMLAnchorElement;
