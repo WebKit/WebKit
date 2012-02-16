@@ -402,11 +402,6 @@ fast/block/float/float-in-float-hit-testing.html
 fast/dynamic/012.html
 platform/qt/plugins/qt-qwidget-plugin.html
 
-# [Qt][WK2] WebKitTestRunner should use 480x360 sized view for W3C SVG tests
-# https://bugs.webkit.org/show_bug.cgi?id=76546
-svg/W3C-SVG-1.1
-svg/W3C-SVG-1.1-SE
-
 # [Qt][WK2]REGRESSION(r105461): It made 8 tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=76699
 fast/block/margin-collapse/056.html
