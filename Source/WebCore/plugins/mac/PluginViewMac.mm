@@ -104,7 +104,7 @@ static inline WindowRef nativeWindowFor(PlatformWidget widget)
 #if PLATFORM(QT)
     if (widget)
 #if QT_MAC_USE_COCOA
-        return static_cast<WindowRef>([qt_mac_window_for(widget) windowRef]);
+        return static_cast<WindowRef>([qt_mac_window_for(static_cast<QWidget*>(widget)) windowRef]);
 #else
         return static_cast<WindowRef>(qt_mac_window_for(widget));
 #endif
@@ -119,7 +119,7 @@ static inline CGContextRef cgHandleFor(PlatformWidget widget)
 {
 #if PLATFORM(QT)
     if (widget)
-        return (CGContextRef)widget->macCGHandle();
+        return (CGContextRef)static_cast<QWidget*>(widget)->macCGHandle();
 #endif
 #if PLATFORM(WX)
     if (widget)
@@ -132,8 +132,8 @@ static inline IntPoint topLevelOffsetFor(PlatformWidget widget)
 {
 #if PLATFORM(QT)
     if (widget) {
-        PlatformWidget topLevel = widget->window();
-        return widget->mapTo(topLevel, QPoint(0, 0)) + topLevel->geometry().topLeft() - topLevel->pos();
+        QWidget* topLevel = static_cast<QWidget*>(widget)->window();
+        return static_cast<QWidget*>(widget)->mapTo(topLevel, QPoint(0, 0)) + topLevel->geometry().topLeft() - topLevel->pos();
     }
 #endif
 #if PLATFORM(WX)
@@ -348,7 +348,7 @@ void PluginView::setFocus(bool focused)
 
     if (platformPluginWidget())
 #if PLATFORM(QT)
-       platformPluginWidget()->setFocus(Qt::OtherFocusReason);
+       static_cast<QWidget*>(platformPluginWidget())->setFocus(Qt::OtherFocusReason);
 #else
         platformPluginWidget()->SetFocus();
 #endif
@@ -535,7 +535,7 @@ void PluginView::invalidateRect(const IntRect& rect)
 {
     if (platformPluginWidget())
 #if PLATFORM(QT)
-        platformPluginWidget()->update(convertToContainingWindow(rect));
+        static_cast<QWidget*>(platformPluginWidget())->update(convertToContainingWindow(rect));
 #else
         platformPluginWidget()->RefreshRect(convertToContainingWindow(rect));
 #endif

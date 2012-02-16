@@ -1,3 +1,17 @@
+2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed prospective Qt 4.8/Mac build fix.
+
+        Cast the PlatformWidget from QObject* to QWidget* to gain access
+        to QWidget methods.
+
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::nativeWindowFor):
+        (WebCore::cgHandleFor):
+        (WebCore::topLevelOffsetFor):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::invalidateRect):
+
 2012-02-16  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Implement scoped selector matching in the slow path
