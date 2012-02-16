@@ -203,14 +203,31 @@ float SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLe
     return 0;
 }
 
+static inline RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
+{
+    if (!context)
+        return 0;
+
+    const ContainerNode* currentContext = context;
+    while (currentContext) {
+        if (currentContext->renderer())
+            return currentContext->renderer()->style();
+        currentContext = currentContext->parentNode();
+    }
+
+    // There must be at least a RenderSVGRoot renderer, carrying a style.
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 float SVGLengthContext::convertValueFromUserUnitsToEMS(float value, ExceptionCode& ec) const
 {
-    if (!m_context || !m_context->renderer() || !m_context->renderer()->style()) {
+    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
 
-    RenderStyle* style = m_context->renderer()->style();
     float fontSize = style->fontSize();
     if (!fontSize) {
         ec = NOT_SUPPORTED_ERR;
@@ -222,23 +239,22 @@ float SVGLengthContext::convertValueFromUserUnitsToEMS(float value, ExceptionCod
 
 float SVGLengthContext::convertValueFromEMSToUserUnits(float value, ExceptionCode& ec) const
 {
-    if (!m_context || !m_context->renderer() || !m_context->renderer()->style()) {
+    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
 
-    RenderStyle* style = m_context->renderer()->style();
     return value * style->fontSize();
 }
 
 float SVGLengthContext::convertValueFromUserUnitsToEXS(float value, ExceptionCode& ec) const
 {
-    if (!m_context || !m_context->renderer() || !m_context->renderer()->style()) {
+    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-
-    RenderStyle* style = m_context->renderer()->style();
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
@@ -253,12 +269,12 @@ float SVGLengthContext::convertValueFromUserUnitsToEXS(float value, ExceptionCod
 
 float SVGLengthContext::convertValueFromEXSToUserUnits(float value, ExceptionCode& ec) const
 {
-    if (!m_context || !m_context->renderer() || !m_context->renderer()->style()) {
+    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
 
-    RenderStyle* style = m_context->renderer()->style();
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
     return value * ceilf(style->fontMetrics().xHeight());
