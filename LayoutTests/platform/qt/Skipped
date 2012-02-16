@@ -234,6 +234,7 @@ fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
+fast/mutation/callback-second-argument.html
 fast/mutation/cross-document.html
 fast/mutation/database-callback-delivery.html
 fast/mutation/inline-event-listener.html
@@ -435,6 +436,7 @@ fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
+fast/events/drag-dataTransfer-live-attributes.html
 fast/events/drag-link.html
 fast/events/drag-text-with-clear.html
 fast/events/ondrop-text-html.html
@@ -2624,3 +2626,7 @@ fast/viewport/viewport-warnings-5.html
 # [Qt] http/tests/navigation/https-in-page-cache.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=78597
 http/tests/navigation/https-in-page-cache.html
+
+# Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
+# https://bugs.webkit.org/show_bug.cgi?id=76564
+fast/workers/worker-crash-with-invalid-location.html
