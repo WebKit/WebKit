@@ -451,19 +451,13 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
 RenderBlock* RenderBlock::clone() const
 {
     RenderBlock* cloneBlock;
-    if (isAnonymousBlock()) {
-        cloneBlock = createAnonymousBlock();
-        cloneBlock->setChildrenInline(childrenInline());
-    }
-    else {
-        cloneBlock = new (renderArena()) RenderBlock(node());
-        cloneBlock->setStyle(style());
+    cloneBlock = toRenderBlock(RenderObject::createObject(isAnonymous() ? document() : node(), style()));
+    cloneBlock->setStyle(style());
 
-        // This takes care of setting the right value of childrenInline in case
-        // generated content is added to cloneBlock and 'this' does not have
-        // generated content added yet.
-        cloneBlock->setChildrenInline(cloneBlock->firstChild() ? cloneBlock->firstChild()->isInline() : childrenInline());
-    }
+    // This takes care of setting the right value of childrenInline in case
+    // generated content is added to cloneBlock and 'this' does not have
+    // generated content added yet.
+    cloneBlock->setChildrenInline(cloneBlock->firstChild() ? cloneBlock->firstChild()->isInline() : childrenInline());
     return cloneBlock;
 }
 
