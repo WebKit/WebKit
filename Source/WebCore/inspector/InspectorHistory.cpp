@@ -134,7 +134,7 @@ bool InspectorHistory::redo(ExceptionCode& ec)
     while (m_afterLastActionIndex < m_history.size()) {
         Action* action = m_history[m_afterLastActionIndex].get();
         if (!action->redo(ec)) {
-            m_history.resize(m_afterLastActionIndex);
+            m_history.clear();
             return false;
         }
         ++m_afterLastActionIndex;

@@ -78,7 +78,6 @@ public:
     void reset();
 
 private:
-    void dump();
     Vector<OwnPtr<Action> > m_history;
     size_t m_afterLastActionIndex;
 };

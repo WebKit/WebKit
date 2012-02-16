@@ -1117,6 +1117,9 @@ WebInspector.DOMAgent.prototype = {
     {
         function wrapperFunction(error)
         {
+            if (!error)
+                this.markUndoableState();
+
             if (callback)
                 callback.apply(this, arguments);
             if (error || !WebInspector.experimentsSettings.freeFlowDOMEditing.isEnabled())
@@ -1161,6 +1164,11 @@ WebInspector.DOMAgent.prototype = {
     _emulateTouchEventsChanged: function()
     {
         DOMAgent.setTouchEmulationEnabled(WebInspector.settings.emulateTouchEvents.get());
+    },
+
+    markUndoableState: function()
+    {
+        DOMAgent.markUndoableState();
     },
 
     /**

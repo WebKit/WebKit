@@ -1,5 +1,44 @@
 2012-02-15  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: explicitly mark undoable state from the front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=78716
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributeValue):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::moveTo):
+        * inspector/InspectorHistory.cpp:
+        (WebCore::InspectorHistory::redo):
+        * inspector/InspectorHistory.h:
+        (InspectorHistory):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype.setStyleSheetText):
+        (WebInspector.CSSProperty.prototype.setText.callback):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setDisabled.callback):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._markRevision):
+        (WebInspector.DOMAgent.prototype.get markUndoableState):
+
+2012-02-15  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: revert 'modification of DOM upon single click for selected nodes'.
         https://bugs.webkit.org/show_bug.cgi?id=78717
 

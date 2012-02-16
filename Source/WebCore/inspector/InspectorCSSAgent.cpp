@@ -711,7 +711,6 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     *errorString = InspectorDOMAgent::toErrorString(ec);
-    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorObject>& result)
@@ -731,7 +730,6 @@ void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<I
 
     if (success)
         result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
-    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeId, const String& selector, RefPtr<InspectorObject>& result)
@@ -758,7 +756,6 @@ void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeI
     InspectorCSSId ruleId = rawAction->newRuleId();
     CSSStyleRule* rule = inspectorStyleSheet->ruleForId(ruleId);
     result = inspectorStyleSheet->buildObjectForRule(rule);
-    m_domAgent->history()->markUndoableState();
 }
 
 void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>& cssProperties)

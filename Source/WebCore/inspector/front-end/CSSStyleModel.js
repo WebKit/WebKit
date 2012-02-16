@@ -191,6 +191,7 @@ WebInspector.CSSStyleModel.prototype = {
             if (error)
                 failureCallback();
             else {
+                WebInspector.domAgent.markUndoableState();
                 var ownerDocumentId = this._ownerDocumentId(nodeId);
                 if (ownerDocumentId)
                     WebInspector.domAgent.querySelectorAll(ownerDocumentId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
@@ -235,6 +236,7 @@ WebInspector.CSSStyleModel.prototype = {
                 // Invalid syntax for a selector
                 failureCallback();
             } else {
+                WebInspector.domAgent.markUndoableState();
                 var ownerDocumentId = this._ownerDocumentId(nodeId);
                 if (ownerDocumentId)
                     WebInspector.domAgent.querySelectorAll(ownerDocumentId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
@@ -284,13 +286,14 @@ WebInspector.CSSStyleModel.prototype = {
         function callback(error)
         {
             this._pendingCommandsMajorState.pop();
+            if (!error && majorChange)
+                WebInspector.domAgent.markUndoableState();
+            
             if (!error && userCallback)
                 userCallback(error);
         }
         this._pendingCommandsMajorState.push(majorChange);
         CSSAgent.setStyleSheetText(styleSheetId, newText, callback.bind(this));
-        if (majorChange)
-            DOMAgent.markUndoableState();
     },
 
     _undoRedoRequested: function()
@@ -629,6 +632,8 @@ WebInspector.CSSProperty.prototype = {
         {
             WebInspector.cssModel._pendingCommandsMajorState.pop();
             if (!error) {
+                if (majorChange)
+                    WebInspector.domAgent.markUndoableState();
                 this.text = propertyText;
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 var newProperty = style.allProperties[this.index];
@@ -652,8 +657,6 @@ WebInspector.CSSProperty.prototype = {
         // An index past all the properties adds a new property to the style.
         WebInspector.cssModel._pendingCommandsMajorState.push(majorChange);
         CSSAgent.setPropertyText(this.ownerStyle.id, this.index, propertyText, this.index < this.ownerStyle.pastLastSourcePropertyIndex(), callback.bind(this));
-        if (majorChange)
-            DOMAgent.markUndoableState();
     },
 
     setValue: function(newValue, majorChange, userCallback)
@@ -677,6 +680,7 @@ WebInspector.CSSProperty.prototype = {
                     userCallback(null);
                 return;
             }
+            WebInspector.domAgent.markUndoableState();
             if (userCallback) {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 userCallback(style);
@@ -760,6 +764,9 @@ WebInspector.CSSStyleSheet.prototype = {
     {
         function callback(error)
         {
+            if (!error)
+                WebInspector.domAgent.markUndoableState();
+
             WebInspector.cssModel._pendingCommandsMajorState.pop();
             if (userCallback)
                 userCallback(error);
