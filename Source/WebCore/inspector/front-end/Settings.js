@@ -135,19 +135,23 @@ WebInspector.Setting.prototype = {
 
     get: function()
     {
-        var value = this._defaultValue;
+        if (typeof this._value !== "undefined")
+            return this._value;
+
+        this._value = this._defaultValue;
         if (window.localStorage != null && this._name in window.localStorage) {
             try {
-                value = JSON.parse(window.localStorage[this._name]);
+                this._value = JSON.parse(window.localStorage[this._name]);
             } catch(e) {
                 window.localStorage.removeItem(this._name);
             }
         }
-        return value;
+        return this._value;
     },
 
     set: function(value)
     {
+        this._value = value;
         if (window.localStorage != null) {
             try {
                 window.localStorage[this._name] = JSON.stringify(value);

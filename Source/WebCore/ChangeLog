@@ -1,3 +1,16 @@
+2012-02-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: cache settings values
+        https://bugs.webkit.org/show_bug.cgi?id=78815
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.Setting.prototype.get if):
+        (WebInspector.Setting.prototype):
+        (WebInspector.Setting.prototype.):
+        (WebInspector.Setting.prototype.set this):
+
 2012-02-16  Terry Anderson  <tdanderson@chromium.org>
 
         WebKit does not support DOM 3 Events FocusEvent
