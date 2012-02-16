@@ -24,6 +24,8 @@
 #include "PixelDumpSupport.h"
 #include "WebPage.h"
 #include "WebPageClient.h"
+
+#include <BlackBerryPlatformWindow.h>
 #include <MD5.h>
 #include <Vector.h>
 #include <skia/SkDevice.h>
