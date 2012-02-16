@@ -1624,8 +1624,5 @@ fast/viewport/viewport-warnings-5.html
 # https://bugs.webkit.org/show_bug.cgi?id=76564
 fast/workers/worker-crash-with-invalid-location.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=78818
-fast/events/drag-dataTransfer-live-attributes.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=78819
 fast/workers/shared-worker-load-error.html
