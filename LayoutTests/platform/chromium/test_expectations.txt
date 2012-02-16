@@ -107,16 +107,11 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
 BUGNOEL : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
-BUGNOEL : tables/mozilla/bugs/bug120107.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1271.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug12908-1.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug12908-2.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1296.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug13169.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1430.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug15544.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug17138.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug196870.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug29314.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug2981-2.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug4093.html = IMAGE
