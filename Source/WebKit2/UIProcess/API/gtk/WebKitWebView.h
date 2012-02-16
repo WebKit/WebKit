@@ -31,9 +31,9 @@
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitHitTestResult.h>
-#include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
+#include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWindowProperties.h>
 #include <webkit2/WebKitPolicyDecision.h>
@@ -139,10 +139,12 @@ struct _WebKitWebViewClass {
                                          gchar                    **text);
     gboolean   (* decide_policy)        (WebKitWebView             *web_view,
                                          WebKitPolicyDecision      *decision,
-                                         WebKitPolicyDecisionType  type);
-    void       (* mouse_target_changed) (WebKitWebView            *web_view,
-                                         WebKitHitTestResult      *hit_test_result,
-                                         guint                     modifiers);
+                                         WebKitPolicyDecisionType   type);
+    void       (* mouse_target_changed) (WebKitWebView             *web_view,
+                                         WebKitHitTestResult       *hit_test_result,
+                                         guint                      modifiers);
+    gboolean   (* print_requested)      (WebKitWebView             *web_view,
+                                         WebKitPrintOperation      *print_operation);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);

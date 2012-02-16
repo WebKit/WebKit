@@ -418,6 +418,30 @@ webkit_hit_test_result_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitPrintOperation</FILE>
+WebKitPrintOperation
+webkit_print_operation_new
+webkit_print_operation_get_print_settings
+webkit_print_operation_set_print_settings
+webkit_print_operation_get_page_setup
+webkit_print_operation_set_page_setup
+webkit_print_operation_run_dialog
+
+<SUBSECTION Standard>
+WebKitPrintOperationClass
+WEBKIT_TYPE_PRINT_OPERATION
+WEBKIT_PRINT_OPERATION
+WEBKIT_IS_PRINT_OPERATION
+WEBKIT_PRINT_OPERATION_CLASS
+WEBKIT_IS_PRINT_OPERATION_CLASS
+WEBKIT_PRINT_OPERATION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitPrintOperationPrivate
+webkit_print_operation_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR

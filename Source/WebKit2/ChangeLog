@@ -1,3 +1,61 @@
+2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitPrintOperation to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=76448
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitDefines.h:
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp: Added.
+        (webViewDestroyed): Delete the print operation when the view
+        widget associated is destroyed.
+        (webkitPrintOperationConstructed): Connect to destroy signal of
+        associated web view.
+        (webkitPrintOperationGetProperty):
+        (webkitPrintOperationSetProperty):
+        (webkit_print_operation_init):
+        (webkit_print_operation_class_init):
+        (webkitPrintOperationRunDialogUnix): Use GtkPrintUnixDialog to
+        show the printing dialog in UNIX platforms.
+        (webkitPrintOperationRunDialogWin32): Empty, not implemented yet.
+        (drawPagesForPrintingCompleted): Callback called when printing
+        operation has finished in the web process.
+        (webkitPrintOperationRunDialogForFrame): Run the printing dialog
+        and start printing the given frame.
+        (webkit_print_operation_new): Create a new print operation for the
+        given web view.
+        (webkit_print_operation_get_print_settings):
+        (webkit_print_operation_set_print_settings):
+        (webkit_print_operation_get_page_setup):
+        (webkit_print_operation_set_page_setup):
+        (webkit_print_operation_run_dialog): Run the print dialog to print
+        the web view main frame.
+        * UIProcess/API/gtk/WebKitPrintOperation.h: Added.
+        * UIProcess/API/gtk/WebKitPrintOperationPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (printFrame): Call webkitWebViewPrintFrame.
+        (attachUIClientToView): Add implementation for
+        printFrame callback.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add WebKitWebView::print-requested
+        signal.
+        (webkitWebViewPrintFrame): Emit print-requested and show the print
+        dialog to print the frame when not signal is not handled by user.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitPrintOperation.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestPrinting.cpp: Added.
+        (testPrintOperationPrintSettings):
+        (webViewPrintRequestedCallback):
+        (testWebViewPrintRequested):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitPrintOperation.h.
+
 2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Gtk][Efl][Qt] Move OpenGLShims out of cairo/ subdirectory

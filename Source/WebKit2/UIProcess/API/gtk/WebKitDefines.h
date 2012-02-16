@@ -32,6 +32,8 @@
 
 #include <glib.h>
 
+typedef struct _WebKitPrintOperation WebKitPrintOperation;
+
 #ifdef G_OS_WIN32
 #    ifdef BUILDING_WEBKIT
 #        define WEBKIT_API __declspec(dllexport)
