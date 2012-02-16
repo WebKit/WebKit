@@ -1,0 +1,33 @@
+2012-02-16  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Upstream touch handling related classes
+        https://bugs.webkit.org/show_bug.cgi?id=78509
+
+        Reviewed by Rob Buis.
+
+        Initial upstream of the Blackberry specific single touch event
+        handler class.
+
+        * blackberry/WebKitSupport/TouchEventHandler.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::hasMouseMoveListener):
+        (BlackBerry::WebKit::hasTouchListener):
+        (BlackBerry::WebKit::elementExpectsMouseEvents):
+        (BlackBerry::WebKit::shouldConvertTouchToMouse):
+        (BlackBerry::WebKit::TouchEventHandler::TouchEventHandler):
+        (BlackBerry::WebKit::TouchEventHandler::~TouchEventHandler):
+        (BlackBerry::WebKit::TouchEventHandler::shouldSuppressMouseDownOnTouchDown):
+        (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
+        (BlackBerry::WebKit::TouchEventHandler::touchHoldEvent):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        (BlackBerry::WebKit::TouchEventHandler::spellCheck):
+        (BlackBerry::WebKit::TouchEventHandler::handleFatFingerPressed):
+        (BlackBerry::WebKit::elementForTapHighlight):
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+        * blackberry/WebKitSupport/TouchEventHandler.h: Added.
+        (WebCore):
+        (WebKit):
+        (TouchEventHandler):
+        (BlackBerry::WebKit::TouchEventHandler::lastFatFingersResult):
+        (BlackBerry::WebKit::TouchEventHandler::resetLastFatFingersResult):
+
