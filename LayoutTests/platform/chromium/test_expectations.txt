@@ -3080,6 +3080,9 @@ BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS FAIL MISSING
 
+BUGWK78761 DEBUG : fast/regions/element-region-overflow-state.html = PASS TEXT
+BUGWK78761 DEBUG : fast/regions/element-region-overflow-state-vertical-rl.html = PASS TEXT
+
 // CSS custom() filters are not currently supported
 BUGWK71392 : css3/filters/missing-custom-filter-shader.html = FAIL
 BUGWK71392 : css3/filters/custom-filter-property-computed-style.html = FAIL
