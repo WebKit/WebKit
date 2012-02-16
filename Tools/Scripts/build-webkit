@@ -204,7 +204,7 @@ my @features = (
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
 
     { option => "ftpdir", desc => "Toggle FTP directory support",
-      define => "ENABLE_FTPDIR", default => 1, value => \$ftpDirSupport },
+      define => "ENABLE_FTPDIR", default => !isWinCE(), value => \$ftpDirSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },

@@ -1,3 +1,11 @@
+2012-02-16  Patrick Gansterer  <paroga@webkit.org>
+
+        WinCE build fix after r107656.
+
+        Disable FTPDIR on WinCE, since it does not compile there.
+
+        * Scripts/build-webkit:
+
 2012-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Build fix after r107863.
