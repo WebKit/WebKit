@@ -1,3 +1,41 @@
+2012-02-16  Oliver Hunt  <oliver@apple.com>
+
+        Implement Error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=66994
+
+        Reviewed by Gavin Barraclough.
+
+        Implement support for stack traces on exception objects.  This is a rewrite
+        of the core portion of the last stack walking logic, but the mechanical work
+        of adding the information to an exception comes from the original work by
+        Juan Carlos Montemayor Elosua.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+        (JSC):
+        (JSC::getSourceURLFromCallFrame):
+        (JSC::getStackFrameCodeType):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (StackFrame):
+        (JSC::StackFrame::toString):
+        (Interpreter):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionJSCStack):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::setInferredName):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+        (JSC):
+
 2012-02-15  Gavin Barraclough  <barraclough@apple.com>
 
         Numerous trivial bugs in Object.defineProperty

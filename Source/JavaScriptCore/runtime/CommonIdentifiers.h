@@ -62,6 +62,7 @@
     macro(prototype) \
     macro(set) \
     macro(source) \
+    macro(stack) \
     macro(test) \
     macro(toExponential) \
     macro(toFixed) \
