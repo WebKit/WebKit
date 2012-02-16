@@ -69,8 +69,8 @@ void WebDragData::assign(const WebDragData& other)
 WebVector<WebDragData::Item> WebDragData::items() const
 {
     Vector<Item> itemList;
-    const HashSet<String>& types = m_private->types();
-    if (types.contains(mimeTypeTextPlain)) {
+    RefPtr<DOMStringList> types = m_private->types();
+    if (types->contains(mimeTypeTextPlain)) {
         Item item;
         item.storageType = Item::StorageTypeString;
         item.stringType = String(mimeTypeTextPlain);
@@ -78,7 +78,7 @@ WebVector<WebDragData::Item> WebDragData::items() const
         item.stringData = m_private->getData(mimeTypeTextPlain, ignored);
         itemList.append(item);
     }
-    if (types.contains(mimeTypeTextURIList)) {
+    if (types->contains(mimeTypeTextURIList)) {
         Item item;
         item.storageType = Item::StorageTypeString;
         item.stringType = String(mimeTypeTextURIList);
@@ -87,7 +87,7 @@ WebVector<WebDragData::Item> WebDragData::items() const
         item.title = m_private->urlTitle();
         itemList.append(item);
     }
-    if (types.contains(mimeTypeTextHTML)) {
+    if (types->contains(mimeTypeTextHTML)) {
         Item item;
         item.storageType = Item::StorageTypeString;
         item.stringType = String(mimeTypeTextHTML);
@@ -96,7 +96,7 @@ WebVector<WebDragData::Item> WebDragData::items() const
         item.baseURL = m_private->htmlBaseUrl();
         itemList.append(item);
     }
-    if (types.contains(mimeTypeDownloadURL)) {
+    if (types->contains(mimeTypeDownloadURL)) {
         Item item;
         item.storageType = Item::StorageTypeString;
         item.stringType = String(mimeTypeDownloadURL);

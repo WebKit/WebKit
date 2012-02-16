@@ -1,3 +1,15 @@
+2012-02-16  Yosifumi Inoue  <yosin@chromium.org>
+
+        Build Fix: R107894 breaks Chromium Linux Build.
+        https://bugs.webkit.org/show_bug.cgi?id=78790
+
+        WebDragDataPrivate::types, inherited from ChromiumDataObject, returns PassRef<DOMStringList> since r107894. However, WebDragData expected to get old return value type HashSet<String>.
+
+        Reviewed by Kent Tamura.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items): Use RefPtr<DOMStringList> rather than HashSet<String> for value of m_private->types().
+
 2012-02-15  Sami Kyostila  <skyostil@google.com>
 
         Enable -webkit-overflow-scrolling CSS property
