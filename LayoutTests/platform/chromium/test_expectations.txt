@@ -107,26 +107,6 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Rebaseline all chromes once ifast jpeg decoder patch lands and bots have cycled
 BUGNOEL : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
 BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
-BUGNOEL : tables/mozilla/marvin/td_valign_baseline.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/td_valign_bottom.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/td_valign_middle.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/td_valign_top.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tfoot_valign_baseline.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tfoot_valign_bottom.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tfoot_valign_middle.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tfoot_valign_top.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/th_valign_baseline.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/th_valign_bottom.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/th_valign_middle.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/th_valign_top.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/thead_valign_baseline.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/thead_valign_bottom.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/thead_valign_middle.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/thead_valign_top.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tr_valign_baseline.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tr_valign_bottom.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tr_valign_middle.html = IMAGE
-BUGNOEL : tables/mozilla/marvin/tr_valign_top.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/bugs/bug6933.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 
