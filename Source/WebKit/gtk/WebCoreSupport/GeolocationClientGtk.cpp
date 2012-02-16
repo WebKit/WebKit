@@ -24,6 +24,7 @@
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Geolocation.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"
@@ -137,12 +138,12 @@ WebCore::GeolocationPosition* GeolocationClient::lastPosition()
 
 void GeolocationClient::requestPermission(WebCore::Geolocation* geolocation)
 {
-    core(m_webView)->chrome()->requestGeolocationPermissionForFrame(geolocation->frame(), geolocation);
+    core(m_webView)->chrome()->client()->requestGeolocationPermissionForFrame(geolocation->frame(), geolocation);
 }
 
 void GeolocationClient::cancelPermissionRequest(WebCore::Geolocation* geolocation)
 {
-    core(m_webView)->chrome()->cancelGeolocationPermissionRequestForFrame(geolocation->frame(), geolocation);
+    core(m_webView)->chrome()->client()->cancelGeolocationPermissionRequestForFrame(geolocation->frame(), geolocation);
 }
 
 void GeolocationClient::positionChanged(GeocluePosition*, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy)

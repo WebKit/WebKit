@@ -1,3 +1,11 @@
+2012-02-16  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the GTK build.
+
+        * WebCoreSupport/GeolocationClientGtk.cpp:
+        (WebKit::GeolocationClient::requestPermission):
+        (WebKit::GeolocationClient::cancelPermissionRequest):
+
 2012-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [soup] Move important SoupSession feature initialization to WebCore
