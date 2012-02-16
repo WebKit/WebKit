@@ -81,9 +81,10 @@ static bool isHTMLQuote(UChar c)
     return (c == '"' || c == '\'');
 }
 
-static bool isHTMLNewline(UChar c)
+static bool isJSNewline(UChar c)
 {
-    return (c == '\n' || c == '\r');
+    // Per ecma-262 section 7.3 Line Terminators.
+    return (c == '\n' || c == '\r' || c == 0x2028 || c == 0x2029);
 }
 
 static bool startsHTMLEndTagAt(const String& string, size_t start)
@@ -603,7 +604,7 @@ String XSSAuditor::snippetForJavaScript(const String& string)
         while (startPosition < endPosition && isHTMLSpace(string[startPosition]))
             startPosition++;
         if (startsHTMLCommentAt(string, startPosition) || startsSingleLineCommentAt(string, startPosition)) {
-            while (startPosition < endPosition && !isHTMLNewline(string[startPosition]))
+            while (startPosition < endPosition && !isJSNewline(string[startPosition]))
                 startPosition++;
         } else if (startsMultiLineCommentAt(string, startPosition)) {
             if ((foundPosition = string.find("*/", startPosition)) != notFound)
