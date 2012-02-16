@@ -3871,6 +3871,9 @@ BUGWK78755 : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
 BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
 BUGWK78830 : svg/repaint/image-with-clip-path.svg = IMAGE
 
+BUGWK78832 MAC : fast/dom/shadow/shadow-boundary-events.html = TEXT
+BUGWK78832 MAC : fast/events/related-target-focusevent.html = TEXT
+
 // Needs a rebaseline, as svg/dynamic-updates tests are now using the repaint.js harness.
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-href-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-target-attr.html = IMAGE
