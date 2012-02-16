@@ -43,12 +43,12 @@ public:
     String selectorText() const;
     void setSelectorText(const String&);
 
-    CSSStyleDeclaration* style() const { return m_style->ensureCSSStyleDeclaration(); }
+    CSSStyleDeclaration* style() const { return m_style->ensureRuleCSSStyleDeclaration(this); }
 
     String cssText() const;
 
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void setDeclaration(PassRefPtr<StylePropertySet> style) { ASSERT(style->parentRuleInternal() == this); m_style = style; }
+    void setDeclaration(PassRefPtr<StylePropertySet> style) { m_style = style; }
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     StylePropertySet* declaration() const { return m_style.get(); }

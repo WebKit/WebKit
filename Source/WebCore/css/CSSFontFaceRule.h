@@ -42,7 +42,7 @@ public:
 
     ~CSSFontFaceRule();
 
-    CSSStyleDeclaration* style() const { return m_style->ensureCSSStyleDeclaration(); }
+    CSSStyleDeclaration* style() const { return m_style->ensureRuleCSSStyleDeclaration(this); }
 
     String cssText() const;
 

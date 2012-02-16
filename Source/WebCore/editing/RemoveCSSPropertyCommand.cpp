@@ -45,13 +45,17 @@ void RemoveCSSPropertyCommand::doApply()
     StylePropertySet* style = m_element->inlineStyleDecl();
     m_oldValue = style->getPropertyValue(m_property);
     m_important = style->propertyIsImportant(m_property);
-    style->removeProperty(m_property);
+
+    // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
+    ExceptionCode ec;
+    // Setting to null string removes the property. We don't have internal version of removeProperty.
+    m_element->style()->setPropertyInternal(m_property, String(), false, ec);
 }
 
 void RemoveCSSPropertyCommand::doUnapply()
 {
-    StylePropertySet* style = m_element->inlineStyleDecl();
-    style->setProperty(m_property, m_oldValue, m_important);
+    ExceptionCode ec;
+    m_element->style()->setPropertyInternal(m_property, m_oldValue, m_important, ec);
 }
 
 #ifndef NDEBUG

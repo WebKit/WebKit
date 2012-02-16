@@ -8768,7 +8768,7 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setDeclaration(StylePropertySet::create(rule.get(), m_parsedProperties, m_numParsedProperties));
+        rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -8807,7 +8807,7 @@ CSSRule* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
-    rule->setDeclaration(StylePropertySet::create(rule.get(), m_parsedProperties, m_numParsedProperties));
+    rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
     clearProperties();
     CSSFontFaceRule* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -8878,7 +8878,7 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->adoptSelectorVector(selectorVector);
-        rule->setDeclaration(StylePropertySet::create(rule.get(), m_parsedProperties, m_numParsedProperties));
+        rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -8962,7 +8962,7 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
 
     RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create(m_styleSheet);
     keyframe->setKeyText(keyString);
-    keyframe->setDeclaration(StylePropertySet::create(keyframe.get(), m_parsedProperties, m_numParsedProperties));
+    keyframe->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
 
     clearProperties();
 

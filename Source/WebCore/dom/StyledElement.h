@@ -41,7 +41,14 @@ public:
 
     StylePropertySet* inlineStyleDecl() const { return attributeData() ? attributeData()->inlineStyleDecl() : 0; }
     StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeData()->ensureInlineStyleDecl(this); }
-    virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureCSSStyleDeclaration(); }
+    
+    // Unlike StylePropertySet setters, these implement invalidation.
+    bool setInlineStyleProperty(int propertyID, int value, bool important = false);
+    bool setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false);
+    bool setInlineStyleProperty(int propertyID, const String& value, bool important = false);
+    bool removeInlineStyleProperty(int propertyID);
+    
+    virtual CSSStyleDeclaration* style() OVERRIDE { return ensureInlineStyleDecl()->ensureInlineCSSStyleDeclaration(this); }
 
     StylePropertySet* attributeStyle();
 
@@ -66,16 +73,20 @@ protected:
     // parseAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
+    
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
 private:
     virtual void updateStyleAttribute() const;
+    void inlineStyleChanged();
 
     void updateAttributeStyle();
 
     void destroyInlineStyleDecl()
     {
         if (attributeData())
-            attributeData()->destroyInlineStyleDecl();
+            attributeData()->destroyInlineStyleDecl(this);
     }
 };
 

@@ -253,7 +253,7 @@ void ImageDocument::resizeImageToFit()
     m_imageElement->setWidth(static_cast<int>(imageSize.width() * scale));
     m_imageElement->setHeight(static_cast<int>(imageSize.height() * scale));
     
-    m_imageElement->ensureInlineStyleDecl()->setProperty(CSSPropertyCursor, "-webkit-zoom-in", false);
+    m_imageElement->setInlineStyleProperty(CSSPropertyCursor, "-webkit-zoom-in", false);
 }
 
 void ImageDocument::imageClicked(int x, int y)
@@ -307,9 +307,9 @@ void ImageDocument::restoreImageSize()
     m_imageElement->setHeight(imageSize.height());
     
     if (imageFitsInWindow())
-        m_imageElement->ensureInlineStyleDecl()->removeProperty(CSSPropertyCursor);
+        m_imageElement->removeInlineStyleProperty(CSSPropertyCursor);
     else
-        m_imageElement->ensureInlineStyleDecl()->setProperty(CSSPropertyCursor, "-webkit-zoom-out", false);
+        m_imageElement->setInlineStyleProperty(CSSPropertyCursor, "-webkit-zoom-out", false);
         
     m_didShrinkImage = false;
 }
@@ -340,9 +340,9 @@ void ImageDocument::windowSizeChanged()
     // and set it to a zoom out cursor if the image doesn't fit
     if (!m_shouldShrinkImage) {
         if (fitsInWindow)
-            m_imageElement->ensureInlineStyleDecl()->removeProperty(CSSPropertyCursor);
+            m_imageElement->removeInlineStyleProperty(CSSPropertyCursor);
         else
-            m_imageElement->ensureInlineStyleDecl()->setProperty(CSSPropertyCursor, "-webkit-zoom-out", false);
+            m_imageElement->setInlineStyleProperty(CSSPropertyCursor, "-webkit-zoom-out", false);
         return;
     }
     

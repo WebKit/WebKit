@@ -48,7 +48,7 @@ public:
 
     StylePropertySet* inlineStyleDecl() { return m_inlineStyleDecl.get(); }
     StylePropertySet* ensureInlineStyleDecl(StyledElement*);
-    void destroyInlineStyleDecl();
+    void destroyInlineStyleDecl(StyledElement* element);
 
     StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
     void setAttributeStyle(PassRefPtr<StylePropertySet> style) { m_attributeStyle = style; }

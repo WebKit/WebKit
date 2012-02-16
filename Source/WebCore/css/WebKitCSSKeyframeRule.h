@@ -53,7 +53,7 @@ public:
 
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
 
-    CSSStyleDeclaration* style() const { return m_style ? m_style->ensureCSSStyleDeclaration() : 0; }
+    CSSStyleDeclaration* style() const { return m_style ? m_style->ensureRuleCSSStyleDeclaration(this) : 0; }
 
     String cssText() const;
 

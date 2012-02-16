@@ -332,7 +332,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->style()->setWidth(Length());
     }
     if (HTMLElement* placeholder = inputElement()->placeholderElement())
-        placeholder->ensureInlineStyleDecl()->setProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
+        placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
     setHasOverflowClip(false);
 }
 

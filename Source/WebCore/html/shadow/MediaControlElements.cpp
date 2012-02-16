@@ -92,12 +92,12 @@ MediaControlElement::MediaControlElement(Document* document)
 
 void MediaControlElement::show()
 {
-    ensureInlineStyleDecl()->removeProperty(CSSPropertyDisplay);
+    removeInlineStyleProperty(CSSPropertyDisplay);
 }
 
 void MediaControlElement::hide()
 {
-    ensureInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueNone);
+    setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 // ----------------------------
@@ -175,17 +175,15 @@ void MediaControlPanelElement::endDrag()
 
 void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 {
-    StylePropertySet* style = ensureInlineStyleDecl();
-
     double left = position.x();
     double top = position.y();
 
     // Set the left and top to control the panel's position; this depends on it being absolute positioned.
     // Set the margin to zero since the position passed in will already include the effect of the margin.
-    style->setProperty(CSSPropertyLeft, left, CSSPrimitiveValue::CSS_PX);
-    style->setProperty(CSSPropertyTop, top, CSSPrimitiveValue::CSS_PX);
-    style->setProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
-    style->setProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyLeft, left, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyTop, top, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
 
     ExceptionCode ignored;
     classList()->add("dragged", ignored);
@@ -193,12 +191,10 @@ void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 
 void MediaControlPanelElement::resetPosition()
 {
-    StylePropertySet* style = ensureInlineStyleDecl();
-
-    style->removeProperty(CSSPropertyLeft);
-    style->removeProperty(CSSPropertyTop);
-    style->removeProperty(CSSPropertyMarginLeft);
-    style->removeProperty(CSSPropertyMarginTop);
+    removeInlineStyleProperty(CSSPropertyLeft);
+    removeInlineStyleProperty(CSSPropertyTop);
+    removeInlineStyleProperty(CSSPropertyMarginLeft);
+    removeInlineStyleProperty(CSSPropertyMarginTop);
 
     ExceptionCode ignored;
     classList()->remove("dragged", ignored);
@@ -211,10 +207,9 @@ void MediaControlPanelElement::makeOpaque()
 
     double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeInDuration() : 0;
 
-    StylePropertySet* style = ensureInlineStyleDecl();
-    style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
-    style->setProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
-    style->setProperty(CSSPropertyOpacity, 1.0, CSSPrimitiveValue::CSS_NUMBER);
+    setInlineStyleProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
+    setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
+    setInlineStyleProperty(CSSPropertyOpacity, 1.0, CSSPrimitiveValue::CSS_NUMBER);
 
     m_opaque = true;
 }
@@ -224,10 +219,9 @@ void MediaControlPanelElement::makeTransparent()
     if (!m_opaque)
         return;
 
-    StylePropertySet* style = ensureInlineStyleDecl();
-    style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
-    style->setProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeOutDuration(), CSSPrimitiveValue::CSS_S);
-    style->setProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
+    setInlineStyleProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
+    setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeOutDuration(), CSSPrimitiveValue::CSS_S);
+    setInlineStyleProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
 
     m_opaque = false;
 }
@@ -434,12 +428,12 @@ MediaControlInputElement::MediaControlInputElement(Document* document, MediaCont
 
 void MediaControlInputElement::show()
 {
-    ensureInlineStyleDecl()->removeProperty(CSSPropertyDisplay);
+    removeInlineStyleProperty(CSSPropertyDisplay);
 }
 
 void MediaControlInputElement::hide()
 {
-    ensureInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueNone);
+    setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 
@@ -1211,13 +1205,13 @@ void MediaControlTextTrackContainerElement::updateSizes()
     float fontSize = m_videoDisplaySize.size().height() * videoHeightFontSizePercentage;
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
-        ensureInlineStyleDecl()->setProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
+        setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
     }
 
     LayoutUnit bottom = static_cast<LayoutUnit>(m_videoDisplaySize.y() + m_videoDisplaySize.height() - (m_videoDisplaySize.height() * trackBottomMultiplier));
     if (bottom != m_bottom) {
         m_bottom = bottom;
-        ensureInlineStyleDecl()->setProperty(CSSPropertyBottom, String::number(bottom) + "px");
+        setInlineStyleProperty(CSSPropertyBottom, String::number(bottom) + "px");
     }
 }
 

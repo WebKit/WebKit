@@ -51,7 +51,7 @@ inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Docu
     , m_fontFaceRule(CSSFontFaceRule::create())
 {
     ASSERT(hasTagName(font_faceTag));
-    RefPtr<StylePropertySet> styleDeclaration = StylePropertySet::create(m_fontFaceRule.get());
+    RefPtr<StylePropertySet> styleDeclaration = StylePropertySet::create();
     styleDeclaration->setStrictParsing(true);
     m_fontFaceRule->setDeclaration(styleDeclaration.release());
 }
@@ -321,6 +321,7 @@ void SVGFontFaceElement::insertedIntoDocument()
     SVGElement::insertedIntoDocument();
     document()->mappedElementSheet()->append(m_fontFaceRule);
     m_fontFaceRule->setParentStyleSheet(document()->mappedElementSheet());
+    m_fontFaceRule->declaration()->setContextStyleSheet(document()->mappedElementSheet());
     rebuildFontFace();
 }
 
@@ -348,6 +349,7 @@ void SVGFontFaceElement::removeFromMappedElementSheet()
             break;
         }
     }
+    m_fontFaceRule->declaration()->setContextStyleSheet(0);
     document()->styleSelectorChanged(DeferRecalcStyle);
 }
 

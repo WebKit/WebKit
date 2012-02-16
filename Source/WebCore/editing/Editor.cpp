@@ -2745,10 +2745,13 @@ void Editor::applyEditingStyleToElement(Element* element) const
     ASSERT(element->isStyledElement());
     if (!element->isStyledElement())
         return;
-    StylePropertySet* style = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
-    style->setProperty(CSSPropertyWordWrap, "break-word", false);
-    style->setProperty(CSSPropertyWebkitNbspMode, "space", false);
-    style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false);
+
+    // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
+    CSSStyleDeclaration* style = static_cast<StyledElement*>(element)->style();
+    ExceptionCode ec;
+    style->setPropertyInternal(CSSPropertyWordWrap, "break-word", false, ec);
+    style->setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false, ec);
+    style->setPropertyInternal(CSSPropertyWebkitLineBreak, "after-white-space", false, ec);
 }
 
 // Searches from the beginning of the document if nothing is selected.

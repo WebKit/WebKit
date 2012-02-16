@@ -120,14 +120,13 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
         hostY -= containerLocation.y() + container->borderTop();
     }
 
-    StylePropertySet* style = bubble->ensureInlineStyleDecl();
-    style->setProperty(CSSPropertyTop, hostY + hostRect.height(), CSSPrimitiveValue::CSS_PX);
+    bubble->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSPrimitiveValue::CSS_PX);
     // The 'left' value of ::-webkit-validation-bubble-arrow.
     const int bubbleArrowTopOffset = 32;
     double bubbleX = hostX;
     if (hostRect.width() / 2 < bubbleArrowTopOffset)
         bubbleX = max(hostX + hostRect.width() / 2 - bubbleArrowTopOffset, 0.0);
-    style->setProperty(CSSPropertyLeft, bubbleX, CSSPrimitiveValue::CSS_PX);
+    bubble->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSPrimitiveValue::CSS_PX);
 }
 
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
@@ -138,7 +137,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     m_bubble->setShadowPseudoId("-webkit-validation-bubble");
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
-    m_bubble->ensureInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueAbsolute);
+    m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     ExceptionCode ec = 0;
     host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
     ASSERT(!ec);

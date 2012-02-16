@@ -34,7 +34,7 @@ CSSFontFaceRule::CSSFontFaceRule(CSSStyleSheet* parent)
 CSSFontFaceRule::~CSSFontFaceRule()
 {
     if (m_style)
-        m_style->clearParentRule();
+        m_style->clearParentRule(this);
 }
 
 String CSSFontFaceRule::cssText() const

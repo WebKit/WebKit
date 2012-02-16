@@ -56,12 +56,16 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
     PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
+    
+    virtual StyledElement* parentElement() const { return 0; }
+    virtual void clearParentRule() { ASSERT_NOT_REACHED(); }
+    virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
 
 private:
     virtual void ref() OVERRIDE { m_propertySet->ref(); }
     virtual void deref() OVERRIDE { m_propertySet->deref(); }
 
-    virtual CSSRule* parentRule() const OVERRIDE;
+    virtual CSSRule* parentRule() const OVERRIDE { return 0; };
     virtual unsigned length() const OVERRIDE;
     virtual String item(unsigned index) const OVERRIDE;
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) OVERRIDE;
@@ -81,8 +85,44 @@ private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
-    
+    virtual void setNeedsStyleRecalc() { };
+
+protected:
     StylePropertySet* m_propertySet;
+};
+
+class RuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
+{
+public:
+    RuleCSSStyleDeclaration(StylePropertySet* propertySet, CSSRule* parentRule)
+        : PropertySetCSSStyleDeclaration(propertySet)
+        , m_parentRule(parentRule) 
+    {
+    }
+
+private:    
+    virtual CSSRule* parentRule() const { return m_parentRule; };
+    virtual void clearParentRule() { m_parentRule = 0; }
+    virtual void setNeedsStyleRecalc();
+    
+    CSSRule* m_parentRule;
+};
+
+class InlineCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
+{
+public:
+    InlineCSSStyleDeclaration(StylePropertySet* propertySet, StyledElement* parentElement)
+        : PropertySetCSSStyleDeclaration(propertySet)
+        , m_parentElement(parentElement) 
+    {
+    }
+
+private:
+    virtual StyledElement* parentElement() const { return m_parentElement; }
+    virtual void clearParentElement() { m_parentElement = 0; }
+    virtual void setNeedsStyleRecalc();
+
+    StyledElement* m_parentElement;
 };
 
 namespace {
@@ -90,7 +130,7 @@ namespace {
 class StyleAttributeMutationScope {
     WTF_MAKE_NONCOPYABLE(StyleAttributeMutationScope);
 public:
-    StyleAttributeMutationScope(StylePropertySet* decl)
+    StyleAttributeMutationScope(PropertySetCSSStyleDeclaration* decl)
     {
         ++s_scopeCount;
 
@@ -103,8 +143,6 @@ public:
         s_currentDecl = decl;
 
 #if ENABLE(MUTATION_OBSERVERS)
-        if (!s_currentDecl->isInlineStyleDeclaration())
-            return;
         if (!s_currentDecl->parentElement())
             return;
         m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->parentElement(), HTMLNames::styleAttr);
@@ -132,10 +170,10 @@ public:
             return;
         }
         // We have to clear internal state before calling Inspector's code.
-        StylePropertySet* localCopyStyleDecl = s_currentDecl;
+        PropertySetCSSStyleDeclaration* localCopyStyleDecl = s_currentDecl;
         s_currentDecl = 0;
         s_shouldNotifyInspector = false;
-        if (localCopyStyleDecl->isInlineStyleDeclaration() && localCopyStyleDecl->parentElement() && localCopyStyleDecl->parentElement()->document())
+        if (localCopyStyleDecl->parentElement() && localCopyStyleDecl->parentElement()->document())
             InspectorInstrumentation::didInvalidateStyleAttr(localCopyStyleDecl->parentElement()->document(), localCopyStyleDecl->parentElement());
     }
 
@@ -148,13 +186,12 @@ public:
 
     void didInvalidateStyleAttr()
     {
-        ASSERT(s_currentDecl->isInlineStyleDeclaration());
         s_shouldNotifyInspector = true;
     }
 
 private:
     static unsigned s_scopeCount;
-    static StylePropertySet* s_currentDecl;
+    static PropertySetCSSStyleDeclaration* s_currentDecl;
     static bool s_shouldNotifyInspector;
 #if ENABLE(MUTATION_OBSERVERS)
     static bool s_shouldDeliver;
@@ -165,7 +202,7 @@ private:
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
-StylePropertySet* StyleAttributeMutationScope::s_currentDecl = 0;
+PropertySetCSSStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
 bool StyleAttributeMutationScope::s_shouldNotifyInspector = false;
 #if ENABLE(MUTATION_OBSERVERS)
 bool StyleAttributeMutationScope::s_shouldDeliver = false;
@@ -175,39 +212,31 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 
 StylePropertySet::StylePropertySet()
     : m_strictParsing(false)
-    , m_parentIsElement(false)
-    , m_isInlineStyleDeclaration(false)
     , m_hasCSSOMWrapper(false)
-    , m_parent(static_cast<CSSRule*>(0))
+    , m_contextStyleSheet(0)
 {
 }
 
-StylePropertySet::StylePropertySet(CSSRule* parentRule)
-    : m_strictParsing(!parentRule || parentRule->useStrictParsing())
-    , m_parentIsElement(false)
-    , m_isInlineStyleDeclaration(false)
-    , m_hasCSSOMWrapper(false)
-    , m_parent(parentRule)
-{
-}
-
-StylePropertySet::StylePropertySet(CSSRule* parentRule, const Vector<CSSProperty>& properties)
+StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
     : m_properties(properties)
-    , m_strictParsing(!parentRule || parentRule->useStrictParsing())
-    , m_parentIsElement(false)
-    , m_isInlineStyleDeclaration(false)
+    , m_strictParsing(true)
     , m_hasCSSOMWrapper(false)
-    , m_parent(parentRule)
+    , m_contextStyleSheet(0)
 {
     m_properties.shrinkToFit();
 }
 
-StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const * properties, int numProperties)
-    : m_strictParsing(!parentRule || parentRule->useStrictParsing())
-    , m_parentIsElement(false)
-    , m_isInlineStyleDeclaration(false)
+StylePropertySet::StylePropertySet(CSSStyleSheet* contextStyleSheet)
+    : m_strictParsing(!contextStyleSheet || contextStyleSheet->useStrictParsing())
     , m_hasCSSOMWrapper(false)
-    , m_parent(parentRule)
+    , m_contextStyleSheet(contextStyleSheet)
+{
+}
+
+StylePropertySet::StylePropertySet(CSSStyleSheet* contextStyleSheet, const CSSProperty* const * properties, int numProperties)
+    : m_strictParsing(!contextStyleSheet || contextStyleSheet->useStrictParsing())
+    , m_hasCSSOMWrapper(false)
+    , m_contextStyleSheet(contextStyleSheet)
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
@@ -220,7 +249,7 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const
         if (it != candidates.end()) {
             if (!important && it->second)
                 continue;
-            removeProperty(property->id(), false, false);
+            removeProperty(property->id());
         }
 
         m_properties.append(*property);
@@ -228,29 +257,11 @@ StylePropertySet::StylePropertySet(CSSRule* parentRule, const CSSProperty* const
     }
 }
 
-StylePropertySet::StylePropertySet(StyledElement* parentElement, bool isInlineStyle)
-    : m_strictParsing(false)
-    , m_parentIsElement(true)
-    , m_isInlineStyleDeclaration(isInlineStyle)
-    , m_hasCSSOMWrapper(false)
-    , m_parent(parentElement)
-{
-}
-
 StylePropertySet::~StylePropertySet()
 {
     ASSERT(!m_hasCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
     if (m_hasCSSOMWrapper)
         propertySetCSSOMWrapperMap().remove(this);
-}
-
-CSSStyleSheet* StylePropertySet::contextStyleSheet() const
-{
-    if (m_parentIsElement) {
-        Document* document = m_parent.element ? m_parent.element->document() : 0;
-        return document ? document->elementSheet() : 0;
-    }
-    return m_parent.rule ? m_parent.rule->parentStyleSheet() : 0;
 }
 
 void StylePropertySet::copyPropertiesFrom(const StylePropertySet& other)
@@ -671,68 +682,38 @@ PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(int propertyID) const
     return property ? property->value() : 0;
 }
 
-bool StylePropertySet::removeShorthandProperty(int propertyID, bool notifyChanged)
+bool StylePropertySet::removeShorthandProperty(int propertyID)
 {
     CSSPropertyLonghand longhand = longhandForProperty(propertyID);
     if (!longhand.length())
         return false;
-    return removePropertiesInSet(longhand.properties(), longhand.length(), notifyChanged);
+    return removePropertiesInSet(longhand.properties(), longhand.length());
 }
 
-String StylePropertySet::removeProperty(int propertyID, bool notifyChanged, bool returnText)
+bool StylePropertySet::removeProperty(int propertyID, String* returnText)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
-    if (removeShorthandProperty(propertyID, notifyChanged)) {
+    if (removeShorthandProperty(propertyID)) {
         // FIXME: Return an equivalent shorthand when possible.
-        return String();
+        if (returnText)
+            *returnText = "";
+        return true;
     }
 
     CSSProperty* foundProperty = findPropertyWithId(propertyID);
-    if (!foundProperty)
-        return String();
+    if (!foundProperty) {
+        if (returnText)
+            *returnText = "";
+        return false;
+    }
 
-    String value = returnText ? foundProperty->value()->cssText() : String();
+    if (returnText)
+        *returnText = foundProperty->value()->cssText();
 
     // A more efficient removal strategy would involve marking entries as empty
     // and sweeping them when the vector grows too big.
     m_properties.remove(foundProperty - m_properties.data());
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
-    if (notifyChanged)
-        setNeedsStyleRecalc();
-
-    return value;
-}
-
-void StylePropertySet::setNeedsStyleRecalc()
-{
-    if (m_parentIsElement) {
-        StyledElement* element = parentElement();
-        if (!element)
-            return;
-
-        if (!m_isInlineStyleDeclaration) {
-            // If this is not an inline style, it's an attribute style, and we shouldn't mark the element for style recalc
-            // as that is handled by StyledElement::attributeChanged().
-            return;
-        }
-
-        element->setNeedsStyleRecalc(InlineStyleChange);
-        element->invalidateStyleAttribute();
-        StyleAttributeMutationScope(this).didInvalidateStyleAttr();
-        return;
-    }
-
-    if (CSSStyleSheet* styleSheet = contextStyleSheet()) {
-        if (Document* document = styleSheet->findDocument())
-            document->styleSelectorChanged(DeferRecalcStyle);
-    }
+    
+    return true;
 }
 
 bool StylePropertySet::propertyIsImportant(int propertyID) const
@@ -764,45 +745,23 @@ bool StylePropertySet::isPropertyImplicit(int propertyID) const
     return property ? property->isImplicit() : false;
 }
 
-bool StylePropertySet::setProperty(int propertyID, const String& value, bool important, bool notifyChanged)
+bool StylePropertySet::setProperty(int propertyID, const String& value, bool important)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty()) {
-        removeProperty(propertyID, notifyChanged, false);
+        removeProperty(propertyID);
         return true;
     }
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    bool success = CSSParser::parseValue(this, propertyID, value, important, useStrictParsing());
-    if (!success) {
-        // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
-        // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-        return false;
-    }
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
-    if (notifyChanged)
-        setNeedsStyleRecalc();
-
-    return true;
+    return CSSParser::parseValue(this, propertyID, value, important, useStrictParsing());
 }
 
 void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
-    if (!removeShorthandProperty(property.id(), false)) {
+    if (!removeShorthandProperty(property.id())) {
         CSSProperty* toReplace = slot ? slot : findPropertyWithId(property.id());
         if (toReplace) {
             *toReplace = property;
@@ -810,85 +769,48 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
         }
     }
     m_properties.append(property);
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
 }
 
-bool StylePropertySet::setProperty(int propertyID, int identifier, bool important, bool notifyChanged)
+bool StylePropertySet::setProperty(int propertyID, int identifier, bool important)
 {
-    RefPtr<CSSPrimitiveValue> value;
-    if (m_parentIsElement && parentElement() && parentElement()->document())
-        value = parentElement()->document()->cssValuePool()->createIdentifierValue(identifier);
+    RefPtr<CSSPrimitiveValue> value;    
+    if (Document* document = m_contextStyleSheet ? m_contextStyleSheet->findDocument() : 0)
+        value = document->cssValuePool()->createIdentifierValue(identifier);
     else
         value = CSSPrimitiveValue::createIdentifier(identifier);
 
     setProperty(CSSProperty(propertyID, value.release(), important));
-    if (notifyChanged)
-        setNeedsStyleRecalc();
     return true;
 }
 
-bool StylePropertySet::setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important, bool notifyChanged)
+bool StylePropertySet::setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
     CSSProperty property(propertyID, CSSPrimitiveValue::create(value, unit), important);
     setProperty(property);
-    if (notifyChanged)
-        setNeedsStyleRecalc();
     return true;
 }
 
 void StylePropertySet::parseDeclaration(const String& styleDeclaration)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     m_properties.clear();
     CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, styleDeclaration);
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
-    setNeedsStyleRecalc();
 }
 
 void StylePropertySet::addParsedProperties(const CSSProperty* const* properties, int numProperties)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     m_properties.reserveCapacity(numProperties);
     for (int i = 0; i < numProperties; ++i)
         addParsedProperty(*properties[i]);
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
-    // FIXME: This probably should have a call to setNeedsStyleRecalc() if something changed. We may also wish to add
-    // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
 void StylePropertySet::addParsedProperty(const CSSProperty& property)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     // Only add properties that have no !important counterpart present
     if (!propertyIsImportant(property.id()) || property.isImportant()) {
-        removeProperty(property.id(), false, false);
+        removeProperty(property.id());
         m_properties.append(property);
     }
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
 }
 
 String StylePropertySet::asText() const
@@ -955,10 +877,6 @@ String StylePropertySet::asText() const
 
 void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnConflict)
 {
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     unsigned size = other->m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& toMerge = other->m_properties[n];
@@ -970,13 +888,6 @@ void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnC
         } else
             m_properties.append(toMerge);
     }
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
-    // FIXME: This probably should have a call to setNeedsStyleRecalc() if something changed. We may also wish to add
-    // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
 void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
@@ -1025,14 +936,10 @@ void StylePropertySet::removeBlockProperties()
     removePropertiesInSet(blockProperties, numBlockProperties);
 }
 
-bool StylePropertySet::removePropertiesInSet(const int* set, unsigned length, bool notifyChanged)
+bool StylePropertySet::removePropertiesInSet(const int* set, unsigned length)
 {
     if (m_properties.isEmpty())
         return false;
-
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
 
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
     HashSet<int> toRemove;
@@ -1055,14 +962,6 @@ bool StylePropertySet::removePropertiesInSet(const int* set, unsigned length, bo
 
     bool changed = newProperties.size() != m_properties.size();
     m_properties = newProperties;
-
-    if (notifyChanged) {
-#if ENABLE(MUTATION_OBSERVERS)
-        mutationScope.enqueueMutationRecord();
-#endif
-        setNeedsStyleRecalc();
-    }
-
     return changed;
 }
 
@@ -1120,7 +1019,7 @@ void StylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* sty
 
 PassRefPtr<StylePropertySet> StylePropertySet::copy() const
 {
-    return adoptRef(new StylePropertySet(0, m_properties));
+    return adoptRef(new StylePropertySet(m_properties));
 }
 
 PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* set, unsigned length) const
@@ -1137,12 +1036,57 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const int* se
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
 {
-    if (m_hasCSSOMWrapper)
+    if (m_hasCSSOMWrapper) {
+        ASSERT(!static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule());
+        ASSERT(!propertySetCSSOMWrapperMap().get(this)->parentElement());
         return propertySetCSSOMWrapperMap().get(this);
+    }
     m_hasCSSOMWrapper = true;
     PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(const_cast<StylePropertySet*>(this));
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
+}
+
+CSSStyleDeclaration* StylePropertySet::ensureRuleCSSStyleDeclaration(const CSSRule* parentRule) const
+{
+    if (m_hasCSSOMWrapper) {
+        ASSERT(static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule() == parentRule);
+        return propertySetCSSOMWrapperMap().get(this);
+    }
+    m_hasCSSOMWrapper = true;
+    PropertySetCSSStyleDeclaration* cssomWrapper = new RuleCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<CSSRule*>(parentRule));
+    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
+    return cssomWrapper;
+}
+
+CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const
+{
+    if (m_hasCSSOMWrapper) {
+        ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
+        return propertySetCSSOMWrapperMap().get(this);
+    }
+    m_hasCSSOMWrapper = true;
+    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<StyledElement*>(parentElement));
+    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
+    return cssomWrapper;
+}
+
+void StylePropertySet::clearParentRule(CSSRule* rule)
+{
+    m_contextStyleSheet = 0;
+    if (!m_hasCSSOMWrapper)
+        return;
+    ASSERT_UNUSED(rule, static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule() == rule);
+    propertySetCSSOMWrapperMap().get(this)->clearParentRule();
+}
+
+void StylePropertySet::clearParentElement(StyledElement* element)
+{
+    m_contextStyleSheet = 0;
+    if (!m_hasCSSOMWrapper)
+        return;
+    ASSERT_UNUSED(element, propertySetCSSOMWrapperMap().get(this)->parentElement() == element);
+    propertySetCSSOMWrapperMap().get(this)->clearParentElement();
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const
@@ -1157,11 +1101,6 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
     return getPropertyName(static_cast<CSSPropertyID>(m_propertySet->propertyAt(i).id()));
 }
 
-CSSRule* PropertySetCSSStyleDeclaration::parentRule() const
-{
-    return m_propertySet->parentRuleInternal();
-}
-
 String PropertySetCSSStyleDeclaration::cssText() const
 {
     return m_propertySet->asText();
@@ -1169,9 +1108,17 @@ String PropertySetCSSStyleDeclaration::cssText() const
     
 void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCode& ec)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
     ec = 0;
     // FIXME: Detect syntax errors and set ec.
     m_propertySet->parseDeclaration(text);
+
+    setNeedsStyleRecalc();
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();    
+#endif
 }
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)
@@ -1219,21 +1166,43 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 
 void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
     int propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return;
     bool important = priority.find("important", 0, false) != notFound;
     ec = 0;
-    m_propertySet->setProperty(propertyID, value, important, true);
+    bool changed = m_propertySet->setProperty(propertyID, value, important);
+    if (changed) {
+        // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
+        // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
+        setNeedsStyleRecalc();
+#if ENABLE(MUTATION_OBSERVERS)
+        mutationScope.enqueueMutationRecord();
+#endif
+    }
 }
 
 String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName, ExceptionCode& ec)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
     int propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
     ec = 0;
-    return m_propertySet->removeProperty(propertyID, true, true);
+    String result;
+    bool changes = m_propertySet->removeProperty(propertyID, &result);
+    if (changes) {
+        setNeedsStyleRecalc();
+#if ENABLE(MUTATION_OBSERVERS)
+        mutationScope.enqueueMutationRecord();
+#endif
+    }
+    return result;
 }
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
@@ -1248,8 +1217,17 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
 
 void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important, ExceptionCode& ec)
 { 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
     ec = 0;
-    m_propertySet->setProperty(propertyID, value, important, true);
+    bool changed = m_propertySet->setProperty(propertyID, value, important);
+    if (changed) {
+        setNeedsStyleRecalc();
+#if ENABLE(MUTATION_OBSERVERS)
+        mutationScope.enqueueMutationRecord();
+#endif
+    }
 }
 
 CSSStyleSheet* PropertySetCSSStyleDeclaration::parentStyleSheet() const
@@ -1270,6 +1248,24 @@ PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::makeMutable()
 bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
 {
     return m_propertySet->propertyMatches(property);
+}
+
+void RuleCSSStyleDeclaration::setNeedsStyleRecalc()
+{
+    if (CSSStyleSheet* styleSheet = m_propertySet->contextStyleSheet()) {
+        if (Document* document = styleSheet->findDocument())
+            document->styleSelectorChanged(DeferRecalcStyle);
+    }
+}
+
+void InlineCSSStyleDeclaration::setNeedsStyleRecalc()
+{
+    if (!m_parentElement)
+        return;
+    m_parentElement->setNeedsStyleRecalc(InlineStyleChange);
+    m_parentElement->invalidateStyleAttribute();
+    StyleAttributeMutationScope(this).didInvalidateStyleAttr();
+    return;
 }
 
 class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {

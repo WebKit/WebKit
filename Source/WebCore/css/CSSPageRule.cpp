@@ -38,6 +38,7 @@ CSSPageRule::CSSPageRule(CSSStyleSheet* parent, int sourceLine)
 
 CSSPageRule::~CSSPageRule()
 {
+    m_style->clearParentRule(this);
 }
 
 String CSSPageRule::selectorText() const

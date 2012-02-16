@@ -45,17 +45,17 @@ StylePropertySet* ElementAttributeData::ensureInlineStyleDecl(StyledElement* ele
 {
     if (!m_inlineStyleDecl) {
         ASSERT(element->isStyledElement());
-        m_inlineStyleDecl = StylePropertySet::createInline(static_cast<StyledElement*>(element));
+        m_inlineStyleDecl = StylePropertySet::create(element->document()->elementSheet());
         m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
     }
     return m_inlineStyleDecl.get();
 }
 
-void ElementAttributeData::destroyInlineStyleDecl()
+void ElementAttributeData::destroyInlineStyleDecl(StyledElement* element)
 {
     if (!m_inlineStyleDecl)
         return;
-    m_inlineStyleDecl->clearParentElement();
+    m_inlineStyleDecl->clearParentElement(element);
     m_inlineStyleDecl = 0;
 }
 

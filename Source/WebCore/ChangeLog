@@ -1,3 +1,154 @@
+2012-02-15  Antti Koivisto  <antti@apple.com>
+
+        Move the context invalidation code out from StylePropertySet
+        https://bugs.webkit.org/show_bug.cgi?id=78589
+
+        Reviewed by Ryosuke Niwa.
+
+        StylePropertySet should be independent of its context so that they can in the future
+        be shared between documents. The context invalidation code should move to the CSSOM wrapper.
+        
+        Parent rule and parent element pointers move to the CSSOM wrapper classes. 
+        
+        The wrapper is responsible of invalidating the element or document style on mutation.
+        In case of internal mutation of style attribute, StyledElement takes care of the 
+        invalidation.
+        
+        The StylePropertySet will still have a pointer to the context stylesheet so the patch
+        doesn't actually reduce memory usage. That pointer will be factored out later.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::~CSSFontFaceRule):
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::style):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::~CSSPageRule):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::style):
+        (WebCore::CSSPageRule::setDeclaration):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::style):
+        (WebCore::CSSStyleRule::setDeclaration):
+        * css/StylePropertySet.cpp:
+        (PropertySetCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::parentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::clearParentRule):
+        (WebCore::PropertySetCSSStyleDeclaration::clearParentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::setNeedsStyleRecalc):
+        (RuleCSSStyleDeclaration):
+        (WebCore::RuleCSSStyleDeclaration::RuleCSSStyleDeclaration):
+        (WebCore::RuleCSSStyleDeclaration::parentRule):
+        (WebCore::RuleCSSStyleDeclaration::clearParentRule):
+        (WebCore):
+        (InlineCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::InlineCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::parentElement):
+        (WebCore::InlineCSSStyleDeclaration::clearParentElement):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::removeShorthandProperty):
+        (WebCore::StylePropertySet::removeProperty):
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::parseDeclaration):
+        (WebCore::StylePropertySet::addParsedProperties):
+        (WebCore::StylePropertySet::addParsedProperty):
+        (WebCore::StylePropertySet::merge):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::copy):
+        (WebCore::StylePropertySet::ensureCSSStyleDeclaration):
+        (WebCore::StylePropertySet::ensureRuleCSSStyleDeclaration):
+        (WebCore::StylePropertySet::ensureInlineCSSStyleDeclaration):
+        (WebCore::StylePropertySet::clearParentRule):
+        (WebCore::StylePropertySet::clearParentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::RuleCSSStyleDeclaration::setNeedsStyleRecalc):
+        (WebCore::InlineCSSStyleDeclaration::setNeedsStyleRecalc):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::create):
+        (StylePropertySet):
+        (WebCore::StylePropertySet::useStrictParsing):
+        (WebCore::StylePropertySet::contextStyleSheet):
+        (WebCore::StylePropertySet::setContextStyleSheet):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::setDeclaration):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::WebKitCSSKeyframeRule::style):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ensureInlineStyleDecl):
+        (WebCore::ElementAttributeData::destroyInlineStyleDecl):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::insertedIntoDocument):
+        (WebCore):
+        (WebCore::StyledElement::removedFromDocument):
+        (WebCore::StyledElement::parseAttribute):
+        (WebCore::StyledElement::inlineStyleChanged):
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::removeInlineStyleProperty):
+        (WebCore::StyledElement::updateAttributeStyle):
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        (WebCore::DeleteButtonController::show):
+        (WebCore::DeleteButtonController::hide):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement):
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::doApply):
+        (WebCore::RemoveCSSPropertyCommand::doUnapply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::updateColorSwatch):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::restoreImageSize):
+        (WebCore::ImageDocument::windowSizeChanged):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::show):
+        (WebCore::MediaControlElement::hide):
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        (WebCore::MediaControlInputElement::show):
+        (WebCore::MediaControlInputElement::hide):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterValueElement::setWidthPercentage):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressValueElement::setWidthPercentage):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::TrackLimiterElement::create):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::insertedIntoDocument):
+        (WebCore::SVGFontFaceElement::removeFromMappedElementSheet):
+
 2012-02-15  Daniel Cheng  <dcheng@chromium.org>
 
         dataTransfer.types (HTML5 drag & drop) should return DOMStringList

@@ -73,7 +73,7 @@ const AtomicString& ProgressValueElement::shadowPseudoId() const
 
 void ProgressValueElement::setWidthPercentage(double width)
 {
-    ensureInlineStyleDecl()->setProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
 }
