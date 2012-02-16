@@ -245,7 +245,7 @@ void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation,
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     if (!parent) {
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(priv->webView));
-        if (widgetIsOnscreenToplevelWindow(toplevel))
+        if (WebCore::widgetIsOnscreenToplevelWindow(toplevel))
             parent = GTK_WINDOW(toplevel);
     }
 #ifdef HAVE_GTK_UNIX_PRINTING
