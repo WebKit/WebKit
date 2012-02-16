@@ -1,3 +1,12 @@
+2012-02-16  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] Fix linking in debug builds on Mac OS X
+        https://bugs.webkit.org/show_bug.cgi?id=78811
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/tests/bytearraytestdata.h:
+
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Page content is incorrectly translated whenh rendering pages for printing in WebKit2

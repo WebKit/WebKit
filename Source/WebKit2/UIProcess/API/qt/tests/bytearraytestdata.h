@@ -33,6 +33,7 @@ class QWEBKIT_EXPORT ByteArrayTestData : public QObject {
 
 public:
     ByteArrayTestData(QObject* parent = 0);
+    virtual ~ByteArrayTestData() { }
     QVariant latin1Data() const;
     QVariant utf8Data() const;
 
