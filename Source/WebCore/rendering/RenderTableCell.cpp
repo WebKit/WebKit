@@ -1068,7 +1068,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     paintMaskImages(paintInfo, LayoutRect(paintOffset, size()));
 }
 
-bool RenderTableCell::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance) const
+bool RenderTableCell::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const
 {
     return false;
 }

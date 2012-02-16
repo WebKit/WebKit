@@ -1079,6 +1079,15 @@ void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, 
     paintFillLayer(paintInfo, c, fillLayer, rect, op);
 }
 
+bool InlineFlowBox::boxShadowCanBeAppliedToBackground(const FillLayer& lastBackgroundLayer) const
+{
+    // The checks here match how paintFillLayer() decides whether to clip (if it does, the shadow
+    // would be clipped out, so it has to be drawn separately).
+    StyleImage* image = lastBackgroundLayer.image();
+    bool hasFillImage = image && image->canRender(renderer(), renderer()->style()->effectiveZoom());
+    return (!hasFillImage && !renderer()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent();
+}
+
 void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     StyleImage* img = fillLayer->image();
@@ -1203,7 +1212,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
         LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
         // Shadow comes first and is behind the background and border.
-        if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone))
+        if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
             paintBoxShadow(paintInfo, styleToUse, Normal, paintRect);
 
         Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);

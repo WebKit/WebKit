@@ -682,7 +682,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!colorVisible)
             return;
 
-        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance);
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
         GraphicsContextStateSaver shadowStateSaver(*context, boxShadowShouldBeAppliedToBackground);
         if (boxShadowShouldBeAppliedToBackground)
             applyBoxShadowForBackground(context, style());
@@ -796,7 +796,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
         IntRect backgroundRect(pixelSnappedIntRect(scrolledPaintRect));
-        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance);
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
         if (!boxShadowShouldBeAppliedToBackground)
             backgroundRect.intersect(paintInfo.rect);
 
@@ -2581,7 +2581,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
-bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance) const
+bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* inlineFlowBox) const
 {
     if (bleedAvoidance != BackgroundBleedNone)
         return false;
@@ -2589,14 +2589,17 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedA
     if (style()->hasAppearance())
         return false;
 
-    const ShadowData* boxShadow = style()->boxShadow();
     bool hasOneNormalBoxShadow = false;
-    for (const ShadowData* currentShadow = boxShadow; currentShadow; currentShadow = currentShadow->next()) {
+    for (const ShadowData* currentShadow = style()->boxShadow(); currentShadow; currentShadow = currentShadow->next()) {
         if (currentShadow->style() != Normal)
             continue;
+
         if (hasOneNormalBoxShadow)
             return false;
         hasOneNormalBoxShadow = true;
+
+        if (currentShadow->spread())
+            return false;
     }
 
     if (!hasOneNormalBoxShadow)
@@ -2607,10 +2610,16 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedA
         return false;
 
     const FillLayer* lastBackgroundLayer = style()->backgroundLayers();
-    for (const FillLayer* next = lastBackgroundLayer->next(); next; )
+    for (const FillLayer* next = lastBackgroundLayer->next(); next; next = lastBackgroundLayer->next())
         lastBackgroundLayer = next;
 
     if (lastBackgroundLayer->clip() != BorderFillBox)
+        return false;
+
+    if (lastBackgroundLayer->image() && style()->hasBorderRadius())
+        return false;
+
+    if (inlineFlowBox && !inlineFlowBox->boxShadowCanBeAppliedToBackground(*lastBackgroundLayer))
         return false;
 
     if (hasOverflowClip() && lastBackgroundLayer->attachment() == LocalBackgroundAttachment)

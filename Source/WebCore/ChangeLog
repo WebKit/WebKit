@@ -1,3 +1,30 @@
+2012-02-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r107836): fast/box-shadow/spread.html and fast/writing-mode/box-shadow-*.html tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=78759
+
+        Reviewed by Simon Fraser.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::boxShadowCanBeAppliedToBackground): Added. Returns false if
+        paintFillLayer() would push a clip before painting the layer, thus preventing it from casting
+        its own shadow.
+        (WebCore::InlineFlowBox::paintBoxDecorations): Pass this as an additional parameter to
+        boxShadowShouldBeAppliedToBackground().
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Pass the InlineFlowBox along to
+        boxShadowShouldBeAppliedToBackground().
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground): Added an InlineFlowBox
+        parameter. If non-0, check boxShadowCanBeAppliedToBackground(). Also check for shadow spread,
+        and for the case of border radius with a background image, in which paintFillLayerExtended uses
+        clipping. Finally, fixed a bug in the for() loop for finding the last background layer which
+        was noticed by Tony Chang.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::boxShadowShouldBeAppliedToBackground):
+        * rendering/RenderTableCell.h:
+
 2012-02-15  Erik Arvidsson  <arv@chromium.org>
 
         Expose Window constructor

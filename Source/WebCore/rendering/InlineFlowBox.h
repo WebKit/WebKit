@@ -114,6 +114,8 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
+    bool boxShadowCanBeAppliedToBackground(const FillLayer&) const;
+
     virtual RenderLineBoxList* rendererLineBoxes() const;
 
     // logicalLeft = left in a horizontal line and top in a vertical line.
