@@ -58,6 +58,11 @@ VisitedLinkStrategy* PlatformStrategiesWinCE::createVisitedLinkStrategy()
     return this;
 }
 
+PasteboardStrategy* PlatformStrategiesWinCE::createPasteboardStrategy()
+{
+    return 0;
+}
+
 void PlatformStrategiesWinCE::notifyCookiesChanged()
 {
 }
