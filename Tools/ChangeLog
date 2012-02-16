@@ -1,3 +1,23 @@
+2012-02-15  Sam Weinig  <sam@webkit.org>
+
+        Add style check for ctype functions that are generally frowned upon in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=78748
+
+        Reviewed by Anders Carlsson.
+
+        Not every platform has DisallowCType.h to check for uses of the ctype.h
+        functions, so add a style check for them as well.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_ctype_functions):
+        (check_style):
+        (CppChecker):
+        Add check.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_ctype_fucntion):
+        Add checker.
+
 2012-02-15  Szilard Ledan  <Ledan-Muntean.Szilard@stud.u-szeged.hu>
 
         [Qt][WK2] WebKitTestRunner should use 480x360 sized view for W3C SVG tests

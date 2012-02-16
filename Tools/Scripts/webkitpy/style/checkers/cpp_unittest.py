@@ -4347,6 +4347,13 @@ class WebKitStyleTest(CppStyleTestBase):
             '  [runtime/max_min_macros] [4]',
             'foo.h')
 
+    def test_ctype_fucntion(self):
+        self.assert_lint(
+            'int i = isascii(8);',
+            'Use equivelent function in <wtf/ASCIICType.h> instead of the '
+            'isascii() function.  [runtime/ctype_function] [4]',
+            'foo.cpp')
+
     def test_names(self):
         name_underscore_error_message = " is incorrectly named. Don't use underscores in your identifier names.  [readability/naming] [4]"
         name_tooshort_error_message = " is incorrectly named. Don't use the single letter 'l' as an identifier name.  [readability/naming] [4]"

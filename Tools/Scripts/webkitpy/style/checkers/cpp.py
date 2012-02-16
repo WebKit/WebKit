@@ -2077,6 +2077,29 @@ def check_max_min_macros(clean_lines, line_number, file_state, error):
           % (max_min_macro_lower, max_min_macro_lower, max_min_macro))
 
 
+def check_ctype_functions(clean_lines, line_number, file_state, error):
+    """Looks for use of the standard functions in ctype.h and suggest they be replaced
+       by use of equivilent ones in <wtf/ASCIICType.h>?.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    ctype_function_search = search(r'\b(?P<ctype_function>(isalnum|isalpha|isascii|isblank|iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|isxdigit|toascii|tolower|toupper))\s*\(', line)
+    if not ctype_function_search:
+        return
+
+    ctype_function = ctype_function_search.group('ctype_function')
+    error(line_number, 'runtime/ctype_function', 4,
+          'Use equivelent function in <wtf/ASCIICType.h> instead of the %s() function.'
+          % (ctype_function))
+
 def check_switch_indentation(clean_lines, line_number, error):
     """Looks for indentation errors inside of switch statements.
 
@@ -2540,6 +2563,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
     check_using_std(clean_lines, line_number, file_state, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
+    check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, error)
     check_exit_statement_simplifications(clean_lines, line_number, error)
@@ -3528,6 +3552,7 @@ class CppChecker(object):
         'runtime/arrays',
         'runtime/bitfields',
         'runtime/casting',
+        'runtime/ctype_function',
         'runtime/explicit',
         'runtime/init',
         'runtime/int',
