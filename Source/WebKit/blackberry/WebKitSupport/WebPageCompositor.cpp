@@ -17,9 +17,10 @@
  */
 
 #include "config.h"
-#include "WebPageCompositor.h"
 
 #if USE(ACCELERATED_COMPOSITING)
+#include "WebPageCompositor.h"
+
 #include "LayerWebKitThread.h"
 #include "WebPage_p.h"
 
@@ -90,8 +91,8 @@ bool WebPageCompositor::drawLayers(const IntRect& dstRect, const FloatRect& cont
     m_compositedGeneration = m_generation;
 
     if (m_lastCompositingResults.needsAnimationFrame) {
-        ++m_generation; // The animation update moves us along one generation
-        // Using a timeout of 0 actually won't start a timer, it will send a message
+        ++m_generation; // The animation update moves us along one generation.
+        // Using a timeout of 0 actually won't start a timer, it will send a message.
         m_blitTimer.start(1.0 / 60.0);
         m_webPage->updateDelegatedOverlays();
     }

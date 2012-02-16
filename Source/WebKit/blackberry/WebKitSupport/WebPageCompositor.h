@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebPagePrivate;
 
-// This class may only be used on the compositing thread
+// This class may only be used on the compositing thread.
 class WebPageCompositor {
 public:
     WebPageCompositor(WebPagePrivate*);

@@ -1,3 +1,17 @@
+2012-02-16  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Style clean-up in WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=78738
+
+        Reviewed by Rob Buis.
+
+        No new functionality, no new tests.
+
+        * blackberry/WebKitSupport/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::drawLayers):
+        * blackberry/WebKitSupport/WebPageCompositor.h:
+        (WebKit):
+
 2012-02-16  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add missing include directories.
