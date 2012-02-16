@@ -1,3 +1,15 @@
+2012-02-15  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Upstream BlackBerry specific Web Inspector resources
+        https://bugs.webkit.org/show_bug.cgi?id=78727
+
+        Reviewed by Rob Buis.
+
+        * blackberry/WebCoreSupport/inspectorBB.html: Added.
+        * blackberry/WebCoreSupport/inspectorBB.js: Added.
+        ():
+        (InspectorFrontendHost.copyText):
+
 2012-02-15  Mike Fenton  <mifenton@rim.com>
 
         Initial upstreaming of EditorClientBlackBerry
