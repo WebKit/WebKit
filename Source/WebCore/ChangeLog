@@ -1,5 +1,17 @@
 2012-02-16  Raul Hudea  <rhudea@adobe.com>
 
+        [CSSRegions]overflowRegion tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=78761
+
+        Reviewed by Tony Chang.
+
+        The overflowRegion tests were updated.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRegionOverflow):
+
+2012-02-16  Raul Hudea  <rhudea@adobe.com>
+
         [CSS Regions] Repaint issues when changing innerHTML of content
         https://bugs.webkit.org/show_bug.cgi?id=78787
 

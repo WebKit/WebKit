@@ -67,16 +67,8 @@ body { font-family: monospace; }
         var c = document.getElementById("content");
         c.style.width = 596;
     }
-    function emptyContent() {
-
-    }
     function test() {
         shouldBeEqualToString("regionOverflow('article')", "undefined");
-        shouldBeEqualToString("regionOverflow('region_1')", "undefined");
-        shouldBeEqualToString("regionOverflow('region_2')", "undefined");
-        shouldBeEqualToString("regionOverflow('region_3')", "undefined");
-
-        document.body.offsetTop; // force layout
 
         shouldBeEqualToString("regionOverflow('region_1')", "empty");
         shouldBeEqualToString("regionOverflow('region_2')", "empty");
@@ -84,7 +76,6 @@ body { font-family: monospace; }
 
         debug("Flow content");
         flowContent("article");
-        document.body.offsetTop; // force layout
 
         shouldBeEqualToString("regionOverflow('region_1')", "overflow");
         shouldBeEqualToString("regionOverflow('region_2')", "fit");
@@ -92,7 +83,6 @@ body { font-family: monospace; }
 
         debug("Add more content");
         addMoreContent();
-        document.body.offsetTop; // force layout
 
         shouldBeEqualToString("regionOverflow('region_1')", "overflow");
         shouldBeEqualToString("regionOverflow('region_2')", "overflow");
@@ -100,7 +90,6 @@ body { font-family: monospace; }
 
         debug("Add visual overflow");
         addVisualOverflow();
-        document.body.offsetTop; // force layout
 
         shouldBeEqualToString("regionOverflow('region_1')", "overflow");
         shouldBeEqualToString("regionOverflow('region_2')", "overflow");
@@ -108,7 +97,6 @@ body { font-family: monospace; }
 
         debug("Empty content");
         flowContent("no_article");
-        document.body.offsetTop; // force layout
 
         shouldBeEqualToString("regionOverflow('region_1')", "empty");
         shouldBeEqualToString("regionOverflow('region_2')", "empty");

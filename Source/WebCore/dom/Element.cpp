@@ -1964,6 +1964,8 @@ PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
 
 const AtomicString& Element::webkitRegionOverflow() const
 {
+    document()->updateLayoutIgnorePendingStylesheets();
+
     if (renderer() && renderer()->isRenderRegion()) {
         RenderRegion* region = toRenderRegion(renderer());
         switch (region->regionState()) {
