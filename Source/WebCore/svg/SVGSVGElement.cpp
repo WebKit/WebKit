@@ -37,6 +37,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "RenderObject.h"
 #include "RenderPart.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGModelObject.h"
@@ -286,25 +287,29 @@ void SVGSVGElement::parseAttribute(Attribute* attr)
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 { 
-    bool updateRelativeLengths = false;
+    bool updateRelativeLengthsOrViewBox = false;
     if (attrName == SVGNames::widthAttr
         || attrName == SVGNames::heightAttr
         || attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || SVGFitToViewBox::isKnownAttribute(attrName)) {
-        updateRelativeLengths = true;
+        || attrName == SVGNames::yAttr) {
+        updateRelativeLengthsOrViewBox = true;
         updateRelativeLengthsInformation();
+    }
+
+    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        updateRelativeLengthsOrViewBox = true; 
+        if (RenderObject* object = renderer())
+            object->setNeedsTransformUpdate();
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    if (updateRelativeLengths
+    if (updateRelativeLengthsOrViewBox
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGZoomAndPan::isKnownAttribute(attrName)
-        || attrName == SVGNames::viewBoxAttr) {
+        || SVGZoomAndPan::isKnownAttribute(attrName)) {
         if (renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
         return;

@@ -38,6 +38,7 @@ public:
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
 
     virtual void determineIfLayoutSizeChanged();
+    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
     virtual bool isSVGContainer() const { return true; }
@@ -45,9 +46,10 @@ private:
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }
 
     AffineTransform viewportTransform() const;
-    virtual const AffineTransform& localToParentTransform() const;
+    virtual const AffineTransform& localToParentTransform() const { return m_localToParentTransform; }
 
     virtual void calcViewport();
+    virtual bool calculateLocalTransform();
 
     virtual void applyViewportClip(PaintInfo&);
     virtual bool pointIsInsideViewportClip(const FloatPoint& pointInParent);
@@ -55,6 +57,7 @@ private:
     FloatRect m_viewport;
     mutable AffineTransform m_localToParentTransform;
     bool m_isLayoutSizeChanged : 1;
+    bool m_needsTransformUpdate : 1;
 };
   
 inline RenderSVGViewportContainer* toRenderSVGViewportContainer(RenderObject* object)

@@ -35,6 +35,7 @@ namespace WebCore {
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
     : RenderSVGContainer(node)
     , m_isLayoutSizeChanged(false)
+    , m_needsTransformUpdate(true)
 {
 }
 
@@ -63,8 +64,20 @@ void RenderSVGViewportContainer::calcViewport()
     SVGLengthContext lengthContext(element);
     m_viewport = FloatRect(svg->x().value(lengthContext), svg->y().value(lengthContext), svg->width().value(lengthContext), svg->height().value(lengthContext));
 
-    if (oldViewport != m_viewport)
+    if (oldViewport != m_viewport) {
         setNeedsBoundariesUpdate();
+        setNeedsTransformUpdate();
+    }
+}
+
+bool RenderSVGViewportContainer::calculateLocalTransform() 
+{
+    if (!m_needsTransformUpdate)
+        return false;
+    
+    m_localToParentTransform = AffineTransform::translation(m_viewport.x(), m_viewport.y()) * viewportTransform();
+    m_needsTransformUpdate = false;
+    return true;
 }
 
 AffineTransform RenderSVGViewportContainer::viewportTransform() const
@@ -75,14 +88,6 @@ AffineTransform RenderSVGViewportContainer::viewportTransform() const
     }
 
     return AffineTransform();
-}
-
-const AffineTransform& RenderSVGViewportContainer::localToParentTransform() const
-{
-    m_localToParentTransform = AffineTransform::translation(m_viewport.x(), m_viewport.y()) * viewportTransform();
-    return m_localToParentTransform;
-    // If this class were ever given a localTransform(), then the above would read:
-    // return viewportTranslation * localTransform() * viewportTransform()
 }
 
 bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& pointInParent)

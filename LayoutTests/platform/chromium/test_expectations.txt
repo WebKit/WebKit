@@ -969,6 +969,9 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
+// New test, needs a rebaseline
+BUGWK77903 : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
+
 // Need rebaselining after bug 64591
 BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAIL
 

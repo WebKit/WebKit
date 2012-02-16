@@ -1,3 +1,28 @@
+2012-02-15  Bear Travis  <betravis@adobe.com>
+
+        Repaint issues on changing 'viewBox' of inner SVG
+        https://bugs.webkit.org/show_bug.cgi?id=77903
+
+        Reviewed by Nikolas Zimmermann.
+
+        Do not update the child viewbox/viewport transform to its parent
+        coordinate system until after layout has stored the old bounds for
+        repainting purposes.
+        
+        Test: svg/repaint/inner-svg-change-viewBox-contract.svg
+
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer):
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        (WebCore):
+        (WebCore::RenderSVGViewportContainer::calculateLocalTransform):
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        * rendering/svg/RenderSVGViewportContainer.h:
+        (WebCore::RenderSVGViewportContainer::setNeedsTransformUpdate):
+        (RenderSVGViewportContainer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         Fix unused parameter warnings.
