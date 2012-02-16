@@ -1,3 +1,97 @@
+2012-02-15  Daniel Cheng  <dcheng@chromium.org>
+
+        dataTransfer.types (HTML5 drag & drop) should return DOMStringList
+        https://bugs.webkit.org/show_bug.cgi?id=30416
+
+        Reviewed by Eric Seidel.
+
+        This change breaks backwards compatibility; however, since Firefox only supported
+        event.dataTransfer.types.contains, sites already needed to check whether to use contains or
+        indexOf. Therefore, the net compatibility effect of this change should be minimal.
+
+        Test: fast/events/drag-dataTransfer-live-attributes.html
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::hasStringOfType):
+        * dom/Clipboard.h:
+        (WebCore):
+        (Clipboard):
+        * dom/Clipboard.idl:
+        * platform/blackberry/ClipboardBlackBerry.cpp:
+        (WebCore::ClipboardBlackBerry::types):
+        * platform/blackberry/ClipboardBlackBerry.h:
+        (ClipboardBlackBerry):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        * platform/chromium/ChromiumDataObject.h:
+        (ChromiumDataObject):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::types):
+        (WebCore::ClipboardChromium::mayUpdateItems):
+        * platform/chromium/ClipboardChromium.h:
+        (ClipboardChromium):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::containsHTML):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::asFragment):
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::ClipboardEfl::types):
+        * platform/efl/ClipboardEfl.h:
+        (ClipboardEfl):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::types):
+        * platform/gtk/ClipboardGtk.h:
+        (ClipboardGtk):
+        * platform/mac/ClipboardMac.h:
+        (ClipboardMac):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::addHTMLClipboardTypesForCocoaType):
+        (WebCore::ClipboardMac::types):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::types):
+        * platform/qt/ClipboardQt.h:
+        (ClipboardQt):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::addMimeTypesForFormat):
+        (WebCore::ClipboardWin::types):
+        * platform/win/ClipboardWin.h:
+        (ClipboardWin):
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::types):
+        * platform/wx/ClipboardWx.h:
+        (ClipboardWx):
+
+2012-02-15  Bear Travis  <betravis@adobe.com>
+
+        Repaint issues on changing 'viewBox' of inner SVG
+        https://bugs.webkit.org/show_bug.cgi?id=77903
+
+        Reviewed by Nikolas Zimmermann.
+
+        Do not update the child viewbox/viewport transform to its parent
+        coordinate system until after layout has stored the old bounds for
+        repainting purposes.
+        
+        Test: svg/repaint/inner-svg-change-viewBox-contract.svg
+
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer):
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        (WebCore):
+        (WebCore::RenderSVGViewportContainer::calculateLocalTransform):
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        * rendering/svg/RenderSVGViewportContainer.h:
+        (WebCore::RenderSVGViewportContainer::setNeedsTransformUpdate):
+        (RenderSVGViewportContainer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2012-02-15  Bear Travis  <betravis@adobe.com>
 
         Repaint issues on changing 'viewBox' of inner SVG
