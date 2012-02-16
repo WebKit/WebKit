@@ -156,6 +156,9 @@ BUGNOEL : tables/mozilla_expected_failures/bugs/bug6933.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/other/test4.html = IMAGE
 
+// New test, needs baselines.
+
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
@@ -2361,6 +2364,9 @@ BUG_YUTAK LINUX WIN : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
+
+// New test added from https://bugs.webkit.org/show_bug.cgi?id=78385, needs baselines.
+BUGWK78385 : svg/text/tspan-dynamic-positioning.svg = IMAGE+TEXT
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.

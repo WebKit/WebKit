@@ -79,12 +79,12 @@ void SVGTextLayoutAttributesBuilder::rebuildMetricsForWholeTree(RenderSVGText* t
 bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesIfNeeded(RenderSVGText* textRoot)
 {
     ASSERT(textRoot);
-    if (!m_textPositions.isEmpty())
-        return m_textLength;
 
-    m_textLength = 0;
-    const UChar* lastCharacter = 0;
-    collectTextPositioningElements(textRoot, lastCharacter);
+    if (m_textPositions.isEmpty()) {
+        m_textLength = 0;
+        const UChar* lastCharacter = 0;
+        collectTextPositioningElements(textRoot, lastCharacter);
+    }
 
     m_characterDataMap.clear();
     if (!m_textLength)
