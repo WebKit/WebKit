@@ -35,6 +35,10 @@ class QUrl;
 QT_END_NAMESPACE
 #endif
 
+#if USE(SOUP)
+typedef struct _SoupSession SoupSession;
+#endif
+
 namespace WebCore {
 
 class ResourceError;
@@ -64,6 +68,10 @@ public:
     virtual String userAgent() const = 0;
     virtual String referrer() const = 0;
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
+#endif
+
+#if USE(SOUP)
+    virtual SoupSession* soupSession() const = 0;
 #endif
 
 protected:

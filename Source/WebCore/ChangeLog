@@ -1,3 +1,51 @@
+2012-01-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [soup] Add support for multiple SoupSessions.
+        https://bugs.webkit.org/show_bug.cgi?id=77341
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Make the libsoup network backend support multiple SoupSessions. This is
+        accomplished by using the NetworkingContext classes, which now have a
+        `soupSession()' method when the libsoup backend is being used.
+
+        libsoup's ResourceHandle implementation now retrieves the SoupSession
+        via the NetworkingContext it receives instead of relying on
+        defaultSession(). defaultSession() is still used when a null
+        NetworkingContext is passed to ResourceHandle::start (for example, via
+        webkit_download_start).
+
+        The CookieJar implementation retrieves the SoupSession from the
+        NetworkingContext as much as possible as well -- the functions used by
+        WebKit2 could not be converted, though, as they seem to assume there is
+        only one shared cookie jar.
+
+        No new tests, covered by the existing ones.
+
+        * platform/network/NetworkingContext.h:
+        (NetworkingContext): Add soupSession() method if USE(SOUP) is set.
+        * platform/network/ResourceHandleInternal.h:
+        (ResourceHandleInternal):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieJarForDocument):
+        (WebCore):
+        (WebCore::defaultCookieJar):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::soupSession): Add method to retrieve
+        a SoupSession from a NetworkingContext and fallback to defaultSession()
+        if there's no valid NetworkingContext.
+        (WebCore):
+        (WebCore::ensureSessionIsInitialized): Only change or use the default
+        cookie jar if the SoupSession being changed is the default one.
+        (WebCore::sendRequestCallback):
+        (WebCore::startHTTPRequest):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::startNonHTTPRequest):
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         The TileCache object should be deallocated on the main thread

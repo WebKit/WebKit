@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2010 Samsung Electronics
+ * Copyright (C) 2012 ProFUSION embedded systems
  *
  * All rights reserved.
  *
@@ -26,28 +27,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameNetworkingContextEfl_h
-#define FrameNetworkingContextEfl_h
+#include "config.h"
+#include "FrameNetworkingContextEfl.h"
 
-#include "FrameNetworkingContext.h"
+#include "ResourceHandle.h"
+#include "ewk_frame.h"
+#include "ewk_view.h"
 
-typedef struct _Evas_Object Evas_Object;
+#include <Evas.h>
 
 namespace WebCore {
 
-class FrameNetworkingContextEfl : public WebCore::FrameNetworkingContext {
-public:
-    static PassRefPtr<FrameNetworkingContextEfl> create(Frame*, Evas_Object*);
-
-    WebCore::Frame* coreFrame() const { return frame(); }
-    virtual SoupSession* soupSession() const;
-
-private:
-    FrameNetworkingContextEfl(Frame*, Evas_Object*);
-
-    Evas_Object* m_ewkFrame;
-};
-
+PassRefPtr<FrameNetworkingContextEfl> FrameNetworkingContextEfl::create(Frame* frame, Evas_Object* ewkFrame)
+{
+    return adoptRef(new FrameNetworkingContextEfl(frame, ewkFrame));
 }
 
-#endif
+FrameNetworkingContextEfl::FrameNetworkingContextEfl(Frame* frame, Evas_Object* ewkFrame)
+    : FrameNetworkingContext(frame)
+    , m_ewkFrame(ewkFrame)
+{
+}
+
+SoupSession* FrameNetworkingContextEfl::soupSession() const
+{
+    return ewk_view_soup_session_get(ewk_frame_view_get(m_ewkFrame));
+}
+
+}

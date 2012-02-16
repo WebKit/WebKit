@@ -141,6 +141,11 @@ ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
 
+SoupSession* ResourceHandleInternal::soupSession()
+{
+    return (m_context && m_context->isValid()) ? m_context->soupSession() : ResourceHandle::defaultSession();
+}
+
 ResourceHandle::~ResourceHandle()
 {
     cleanupSoupRequestOperation(this, true);
@@ -151,11 +156,13 @@ static void ensureSessionIsInitialized(SoupSession* session)
     if (g_object_get_data(G_OBJECT(session), "webkit-init"))
         return;
 
-    SoupCookieJar* jar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
-    if (!jar)
-        soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
-    else
-        setDefaultCookieJar(jar);
+    if (session == ResourceHandle::defaultSession()) {
+        SoupCookieJar* jar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+        if (!jar)
+            soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
+        else
+            setDefaultCookieJar(jar);
+    }
 
     if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER) && LogNetwork.state == WTFLogChannelOn) {
         SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(SOUP_LOGGER_LOG_BODY), -1);
@@ -319,7 +326,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
         d->m_response.updateFromSoupMessage(soupMessage);
 
         if (d->m_defersLoading)
-            soup_session_pause_message(handle->defaultSession(), soupMessage);
+            soup_session_pause_message(d->soupSession(), soupMessage);
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
@@ -442,11 +449,11 @@ static bool startHTTPRequest(ResourceHandle* handle)
 {
     ASSERT(handle);
 
-    SoupSession* session = handle->defaultSession();
+    ResourceHandleInternal* d = handle->getInternal();
+
+    SoupSession* session = d->soupSession();
     ensureSessionIsInitialized(session);
     SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
-
-    ResourceHandleInternal* d = handle->getInternal();
 
     ResourceRequest request(handle->firstRequest());
     KURL url(request.url());
@@ -552,7 +559,7 @@ void ResourceHandle::cancel()
 {
     d->m_cancelled = true;
     if (d->m_soupMessage)
-        soup_session_cancel_message(defaultSession(), d->m_soupMessage.get(), SOUP_STATUS_CANCELLED);
+        soup_session_cancel_message(d->soupSession(), d->m_soupMessage.get(), SOUP_STATUS_CANCELLED);
     else if (d->m_cancellable)
         g_cancellable_cancel(d->m_cancellable.get());
 }
@@ -687,10 +694,11 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
     if (handle->firstRequest().httpMethod() != "GET" && handle->firstRequest().httpMethod() != "POST")
         return false;
 
-    SoupSession* session = handle->defaultSession();
+    ResourceHandleInternal* d = handle->getInternal();
+
+    SoupSession* session = d->soupSession();
     ensureSessionIsInitialized(session);
     SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
-    ResourceHandleInternal* d = handle->getInternal();
 
     CString urlStr = url.string().utf8();
 

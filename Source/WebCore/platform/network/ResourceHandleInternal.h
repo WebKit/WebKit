@@ -189,6 +189,7 @@ namespace WebCore {
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
         RefPtr<NetworkingContext> m_context;
+        SoupSession* soupSession();
 #endif
 #if PLATFORM(QT)
         QNetworkReplyHandler* m_job;

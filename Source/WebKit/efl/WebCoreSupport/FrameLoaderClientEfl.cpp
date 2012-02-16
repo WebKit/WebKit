@@ -947,7 +947,7 @@ void FrameLoaderClientEfl::dispatchDidBecomeFrameset(bool)
 
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientEfl::createNetworkingContext()
 {
-    return FrameNetworkingContextEfl::create(EWKPrivate::coreFrame(m_frame));
+    return FrameNetworkingContextEfl::create(EWKPrivate::coreFrame(m_frame), m_frame);
 }
 
 }

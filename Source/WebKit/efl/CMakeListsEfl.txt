@@ -72,6 +72,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/DumpRenderTreeSupportEfl.cpp
     efl/WebCoreSupport/EditorClientEfl.cpp
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp
+    efl/WebCoreSupport/FrameNetworkingContextEfl.cpp
     efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp

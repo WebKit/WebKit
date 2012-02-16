@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012 ProFUSION embedded systems
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,30 +18,18 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef FrameNetworkingContextGtk_h
-#define FrameNetworkingContextGtk_h
+#include "config.h"
+#include "FrameNetworkingContextGtk.h"
 
-#include "FrameNetworkingContext.h"
+#include "ResourceHandle.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class FrameNetworkingContextGtk : public WebCore::FrameNetworkingContext {
-public:
-    static PassRefPtr<FrameNetworkingContextGtk> create(WebCore::Frame* frame)
-    {
-        return adoptRef(new FrameNetworkingContextGtk(frame));
-    }
-
-    WebCore::Frame* coreFrame() const { return frame(); }
-    virtual SoupSession* soupSession() const;
-
-private:
-    FrameNetworkingContextGtk(WebCore::Frame* frame)
-        : WebCore::FrameNetworkingContext(frame)
-    {
-    }
-};
-
+SoupSession* FrameNetworkingContextGtk::soupSession() const
+{
+    return ResourceHandle::defaultSession();
 }
 
-#endif
+}

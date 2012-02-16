@@ -1,3 +1,42 @@
+2012-01-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [soup] Add support for multiple SoupSessions.
+        https://bugs.webkit.org/show_bug.cgi?id=77341
+
+        Add the necessary infrastructure to support multiple SoupSessions. Each
+        WebView now has a "session" property, which defaults to
+        ResourceHandle::defaultSession() and can be changed to another
+        SoupSession by the user.
+
+        Some API in ewk_network and ewk_view which required SoupSession to be a
+        valid type in the headers has now been moved inside #if USE(SOUP)
+        ifdefs so we can actually the required Soup header and avoid build
+        problems with duplicate typedefs.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::createNetworkingContext):
+        * WebCoreSupport/FrameNetworkingContextEfl.cpp: Copied from Source/WebKit/efl/WebCoreSupport/FrameNetworkingContextEfl.h.
+        (WebCore):
+        (WebCore::FrameNetworkingContextEfl::create):
+        (WebCore::FrameNetworkingContextEfl::FrameNetworkingContextEfl):
+        (WebCore::FrameNetworkingContextEfl::soupSession):
+        * WebCoreSupport/FrameNetworkingContextEfl.h:
+        (FrameNetworkingContextEfl):
+        * ewk/ewk_cookies.h: Mention this API is only valid with the
+        default SoupSession.
+        * ewk/ewk_network.cpp:
+        (ewk_network_default_soup_session_get): Define only if USE(SOUP) is set.
+        * ewk/ewk_network.h: Ditto, and mention this API is only valid with the
+        default SoupSession.
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_soup_session_get):
+        (ewk_view_soup_session_set):
+        * ewk/ewk_view.h:
+        ():
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.

@@ -1,3 +1,19 @@
+2012-01-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [soup] Add support for multiple SoupSessions.
+        https://bugs.webkit.org/show_bug.cgi?id=77341
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Adapt to the changes to FrameNetworkingContext in WebCore.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/FrameNetworkingContextGtk.cpp: Copied from Source/WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h.
+        (WebKit):
+        (WebKit::FrameNetworkingContextGtk::soupSession): Always return ResourceHandle::defaultSession().
+        * WebCoreSupport/FrameNetworkingContextGtk.h:
+        (FrameNetworkingContextGtk):
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.

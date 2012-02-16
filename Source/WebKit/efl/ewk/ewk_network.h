@@ -36,6 +36,11 @@ extern "C" {
  * Sets the given proxy URI to network backend.
  *
  * @param proxy URI to set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI void             ewk_network_proxy_uri_set(const char *proxy);
 
@@ -45,6 +50,11 @@ EAPI void             ewk_network_proxy_uri_set(const char *proxy);
  * The returned string should be freed by eina_stringshare_del() after use.
  *
  * @return current proxy URI or @c 0 if it's not set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI const char      *ewk_network_proxy_uri_get(void);
 
@@ -61,6 +71,11 @@ EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
  * By default, HTTPS connections are performed regardless of the validity of the certificate provided.
  *
  * @sa ewk_network_tls_ca_certificates_path_set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI Eina_Bool        ewk_network_tls_certificate_check_get(void);
 
@@ -72,6 +87,11 @@ EAPI Eina_Bool        ewk_network_tls_certificate_check_get(void);
  * @param enable Whether to check the provided certificates or not.
  *
  * @sa ewk_network_tls_ca_certificates_path_set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI void             ewk_network_tls_certificate_check_set(Eina_Bool enable);
 
@@ -88,6 +108,11 @@ EAPI void             ewk_network_tls_certificate_check_set(Eina_Bool enable);
  * By default, the path is not set, so all certificates are considered as not signed by a trusted root CA.
  *
  * @sa ewk_network_tls_certificate_check_set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI const char      *ewk_network_tls_ca_certificates_path_get(void);
 
@@ -106,6 +131,11 @@ EAPI const char      *ewk_network_tls_ca_certificates_path_get(void);
  * @param path The path to the certificate bundle.
  *
  * @sa ewk_network_tls_certificate_check_set
+ *
+ * @note If the libsoup backend is being used, this function has effect on
+ * the @b default SoupSession, returned by ewk_network_default_soup_session_get().
+ * If a different SoupSession is used and passed to ewk_view_soup_session_set(),
+ * this function will not have any effect on it.
  */
 EAPI void             ewk_network_tls_ca_certificates_path_set(const char *path);
 
