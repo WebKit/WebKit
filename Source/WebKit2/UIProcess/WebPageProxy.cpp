@@ -3306,7 +3306,6 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
 #if PLATFORM(WIN)
     parameters.nativeWindow = m_pageClient->nativeWindow();
 #endif
-
     return parameters;
 }
 

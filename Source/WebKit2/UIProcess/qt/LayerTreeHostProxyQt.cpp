@@ -373,7 +373,7 @@ void LayerTreeHostProxy::updateTile(WebLayerID layerID, int tileID, const IntRec
 void LayerTreeHostProxy::createImage(int64_t imageID, ShareableBitmap* bitmap)
 {
     RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
-    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get());
+    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get(), BitmapTexture::BGRAFormat);
     m_directlyCompositedImages.set(imageID, backingStore);
 }
 

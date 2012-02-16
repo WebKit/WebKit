@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect)
+void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect, BitmapTexture::PixelFormat format)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -44,7 +44,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
         m_texture->reset(targetRect.size(), /* opaque = */ false);
     }
 
-    m_texture->updateContents(image, targetRect, sourceRect, BitmapTexture::RGBAFormat);
+    m_texture->updateContents(image, targetRect, sourceRect, format);
 }
 
 void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
@@ -57,7 +57,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     if (!m_image)
         return;
 
-    updateContents(textureMapper, m_image.get());
+    updateContents(textureMapper, m_image.get(), BitmapTexture::BGRAFormat);
     m_image.clear();
 }
 
@@ -133,11 +133,11 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
         m_tiles.remove(tileIndicesToRemove[i]);
 }
 
-void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect)
+void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::PixelFormat format)
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize());
     for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].updateContents(textureMapper, image, dirtyRect);
+        m_tiles[i].updateContents(textureMapper, image, dirtyRect, format);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const

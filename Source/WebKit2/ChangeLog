@@ -1,3 +1,23 @@
+2012-02-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Improve the way we deal with BGRA extension
+        https://bugs.webkit.org/show_bug.cgi?id=78822
+
+        Get rid of swizzling in the web process. Instead, we moved swizzling back to
+        TextureMapperGL, as we're moving towards a setup where textures are uploaded
+        in the web process.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStoreTile::swapBuffers):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::createImage):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp:
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::adoptImageBackingStore):
+
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK+ build after r107947.

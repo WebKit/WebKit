@@ -616,7 +616,6 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
     m_surfaceNeedsReset = true;
 }
 
-#if PLATFORM(QT) || (USE(CAIRO) && defined(TEXMAP_OPENGL_ES_2))
 static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
 {
     int width = size.width();
@@ -627,12 +626,38 @@ static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
 }
+
+// FIXME: Move this to Extensions3D when we move TextureMapper to use GC3D.
+static bool hasExtension(const char* extension)
+{
+    static Vector<String> availableExtensions;
+    if (!availableExtensions.isEmpty())
+        return availableExtensions.contains(extension);
+    String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+    extensionsString.split(" ", availableExtensions);
+    return availableExtensions.contains(extension);
+}
+static bool hasBGRAExtension()
+{
+#if !defined(TEXMAP_OPENGL_ES_2)
+    return true;
 #endif
+    static bool hasBGRA = hasExtension("GL_EXT_texture_format_BGRA8888");
+    return hasBGRA;
+}
 
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect)
 {
+    GLuint glFormat = GL_RGBA;
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, data))
+    if (hasBGRAExtension())
+        glFormat = GL_BGRA;
+    else {
+        swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size());
+        glFormat = GL_RGBA;
+    }
+
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, data))
 }
 
 void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntRect& sourceRect, BitmapTexture::PixelFormat format)
@@ -658,8 +683,12 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 
     if (IntSize(qtImage.size()) != sourceRect.size())
         qtImage = qtImage.copy(sourceRect);
-    if (format == BGRAFormat || format == BGRFormat)
-        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
+    if (format == BGRAFormat || format == BGRFormat) {
+        if (hasBGRAExtension())
+            glFormat = isOpaque() ? GL_BGR : GL_BGRA;
+        else
+            swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
+    }
     GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, GL_UNSIGNED_BYTE, qtImage.constBits()))
 
 #elif USE(CAIRO)

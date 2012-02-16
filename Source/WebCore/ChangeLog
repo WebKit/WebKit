@@ -1,3 +1,31 @@
+2012-02-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Improve the way we deal with BGRA extension
+        https://bugs.webkit.org/show_bug.cgi?id=78822
+
+        Swizzle the RGBA manually only in OpenGL ES, and only if the extension is not available.
+        Pass the pixel-format of the images when updating TextureMapperTiledBackingStore.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new behavior.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore):
+        (WebCore::hasExtension):
+        (WebCore::hasBgraExtension):
+        (WebCore::BitmapTextureGL::updateContents):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperTile::updateContents):
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperTile):
+        (TextureMapperTiledBackingStore):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore):
+
 2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Gtk][Efl][Qt] Move OpenGLShims out of cairo/ subdirectory

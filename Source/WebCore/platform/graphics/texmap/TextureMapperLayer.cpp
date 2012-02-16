@@ -128,7 +128,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     image = imageBuffer->copyImage(CopyBackingStore);
 #endif
 
-    static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
+    static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::BGRAFormat);
 }
 
 void TextureMapperLayer::paint()
