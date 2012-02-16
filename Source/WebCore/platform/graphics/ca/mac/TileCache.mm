@@ -164,6 +164,7 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
 
 void TileCache::setContentsScale(CGFloat contentsScale)
 {
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         [it->second.get() setContentsScale:contentsScale];
         [it->second.get() setNeedsDisplay];
@@ -172,6 +173,7 @@ void TileCache::setContentsScale(CGFloat contentsScale)
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     platformLayer->owner()->platformCALayerDidCreateTiles();
     revalidateTiles();
+#endif
 }
 
 void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)

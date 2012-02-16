@@ -1,3 +1,10 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Another attempt at fixing the Snow Leopard build.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setContentsScale):
+
 2012-02-15  Pablo Flouret  <pablof@motorola.com>
 
         Add support for the translate attribute in html elements.
