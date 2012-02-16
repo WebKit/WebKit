@@ -35,8 +35,7 @@ config.kBuilders = {
     'Webkit Win (dbg)(2)': {version: 'xp', debug: true},
     'Webkit Linux': {version: 'lucid', is64bit: true},
     'Webkit Linux 32': {version: 'lucid'},
-    'Webkit Linux (dbg)(1)': {version: 'lucid', is64bit: true, debug: true},
-    'Webkit Linux (dbg)(2)': {version: 'lucid', is64bit: true, debug: true},
+    'Webkit Linux (dbg)': {version: 'lucid', is64bit: true, debug: true},
     'Webkit Mac10.5': {version: 'leopard'},
     'Webkit Mac10.5 (dbg)(1)': {version: 'leopard', debug: true},
     'Webkit Mac10.5 (dbg)(2)': {version: 'leopard', debug: true},
@@ -51,7 +50,6 @@ config.kBuildersThatOnlyCompile = [
     'Webkit Mac Builder',
     'Webkit Mac Builder (dbg)',
     'Win Builder',
-    'Mac Clang Builder (dbg)',
 ];
 
 config.kTracURL = 'http://trac.webkit.org';
