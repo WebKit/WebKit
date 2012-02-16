@@ -1,3 +1,22 @@
+2012-02-15  Nate Chapin  <japhet@chromium.org>
+
+        Fix test regressons from r107672.
+        https://bugs.webkit.org/show_bug.cgi?id=76564
+
+        Move setting CachedRawResource::m_identifer from
+        data() to setResponse(). WorkerScriptLoader depends
+        on the identifier being set correctly during setResponse()
+        in order to correctly mark itself as a ScriptResource in
+        the inspector.
+
+        Reviewed by Adam Barth.
+
+        Fixes several worker script loading tests.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data):
+        (WebCore::CachedRawResource::setResponse):
+
 2012-02-15  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: "Copy image" fails...copies image URL instead.

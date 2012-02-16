@@ -44,9 +44,6 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest)
 void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    if (!m_identifier)
-        m_identifier = m_loader->identifier();
-
     if (data) {
         // If we are buffering data, then we are saving the buffer in m_data and need to manually
         // calculate the incremental data. If we are not buffering, then m_data will be null and
@@ -160,6 +157,8 @@ void CachedRawResource::willSendRequest(ResourceRequest& request, const Resource
 
 void CachedRawResource::setResponse(const ResourceResponse& response)
 {
+    if (!m_identifier)
+        m_identifier = m_loader->identifier();
     CachedResource::setResponse(response);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())

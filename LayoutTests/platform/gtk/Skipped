@@ -1618,10 +1618,6 @@ http/tests/security/cross-frame-access-object-getPrototypeOf.html
 fast/mutation/end-of-task-delivery.html
 fast/mutation/inline-event-listener.html
 
-# Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
-# https://bugs.webkit.org/show_bug.cgi?id=76564
-fast/workers/worker-crash-with-invalid-location.html
-
 # Replace old strtod with new strtod (REGRESSION caused by r107625)
 # https://bugs.webkit.org/show_bug.cgi?id=68044
 fast/viewport/viewport-67.html
