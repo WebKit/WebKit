@@ -1491,13 +1491,6 @@ svg/text/text-style-recalc-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=73768
 fast/forms/file/file-input-reset.html
 
-# Needs a rebaseline
-fast/table/027.html
-fast/table/027-vertical.html
-tables/mozilla/bugs/bug14929.html
-tables/mozilla/bugs/bug2947.html
-fast/js/constructor-length.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=74276
 fast/events/dont-loose-last-event.html
 
@@ -1630,3 +1623,9 @@ fast/viewport/viewport-warnings-5.html
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
 fast/workers/worker-crash-with-invalid-location.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=78818
+fast/events/drag-dataTransfer-live-attributes.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=78819
+fast/workers/shared-worker-load-error.html
