@@ -35,6 +35,27 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
 {
     this._presentationModel = presentationModel;
 
+    this.element = document.createElement("div");
+    this.element.id = "timeline-overview-panel";
+
+    this._topPaneSidebarElement = document.createElement("div");
+    this._topPaneSidebarElement.id = "timeline-overview-sidebar";
+
+    var overviewTreeElement = document.createElement("ol");
+    overviewTreeElement.className = "sidebar-tree";
+    this._topPaneSidebarElement.appendChild(overviewTreeElement);
+    this.element.appendChild(this._topPaneSidebarElement);
+
+    var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
+    var timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
+    topPaneSidebarTree.appendChild(timelinesOverviewItem);
+    timelinesOverviewItem.revealAndSelect(false);
+    timelinesOverviewItem.onselect = this.showTimelines.bind(this);
+
+    var memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
+    topPaneSidebarTree.appendChild(memoryOverviewItem);
+    memoryOverviewItem.onselect = this.showMemoryGraph.bind(this);
+
     this._overviewGrid = new WebInspector.TimelineGrid();
     this._overviewGrid.element.id = "timeline-overview-grid";
     this._overviewGrid.itemsGraphsElement.id = "timeline-overview-timelines";
@@ -43,8 +64,14 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
     this._heapGraph.element.id = "timeline-overview-memory";
     this._overviewGrid.element.insertBefore(this._heapGraph.element, this._overviewGrid.itemsGraphsElement);
 
-    this.element = this._overviewGrid.element;
+    this._overviewWindow = new WebInspector.TimelineOverviewWindow(this._overviewGrid.element, presentationModel);
 
+    this.element.appendChild(this._overviewGrid.element);
+
+    var separatorElement = document.createElement("div");
+    separatorElement.id = "timeline-overview-separator";
+    this.element.appendChild(separatorElement);
+ 
     this._categoryGraphs = {};
     var i = 0;
     var categories = this._presentationModel.categories;
@@ -57,7 +84,6 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
 
     this._overviewGrid.setScrollAndDividerTop(0, 0);
 
-    this._overviewWindow = new WebInspector.TimelineOverviewWindow(this._overviewGrid.element, presentationModel);
     this._overviewCalculator = new WebInspector.TimelineOverviewCalculator();
 }
 
@@ -68,14 +94,14 @@ WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor = .3;
 WebInspector.TimelineOverviewPane.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
 
 WebInspector.TimelineOverviewPane.prototype = {
-    showTimelines: function(event) {
+    showTimelines: function() {
         this._heapGraph.hide();
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
     },
 
-    showMemoryGraph: function(records) {
+    showMemoryGraph: function() {
         this._heapGraph.show();
-        this._heapGraph.update(records);
+        this._heapGraph.update(this._records);
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
     },
 
@@ -97,6 +123,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     update: function(records, showShortEvents)
     {
+        this._records = records;
         this._showShortEvents = showShortEvents;
         // Clear summary bars.
         var timelines = {};
@@ -171,6 +198,7 @@ WebInspector.TimelineOverviewPane.prototype = {
     sidebarResized: function(width)
     {
         this._overviewGrid.element.style.left = width + "px";
+        this._topPaneSidebarElement.style.width = width + "px";
     },
 
     reset: function()
