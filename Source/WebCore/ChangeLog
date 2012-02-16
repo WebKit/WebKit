@@ -1,3 +1,78 @@
+2012-02-15  Levi Weintraub  <leviw@chromium.org>
+
+        Add zeroLayoutUnit constant.
+        https://bugs.webkit.org/show_bug.cgi?id=78747
+
+        Reviewed by Eric Seidel.
+
+        Converting call sites where LayoutUnits and raw zeros are in ternary operations
+        and templatized function calls (like std::max and min) to use a new zeroLayoutUnit
+        constant instead of the raw zero.
+
+        No new tests. No change in behavior.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        * rendering/LayoutTypes.h:
+        (WebCore):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::paginationStrut):
+        (WebCore::RenderBlock::pageLogicalOffset):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::minYVisualOverflow):
+        (WebCore::RenderBox::minXVisualOverflow):
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::offsetLeft):
+        (WebCore::RenderBoxModelObject::offsetTop):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::nodeWidth):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::listIndexAtOffset):
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalWidthToComputedWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::bordersPaddingAndSpacingInRowDirection):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+
 2012-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         Crash after trying to use FileReader in a document with null origin string

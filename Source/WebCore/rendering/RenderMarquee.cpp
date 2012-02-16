@@ -125,13 +125,13 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
         }
         if (dir == MRIGHT) {
             if (stopAtContentEdge)
-                return max(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+                return max(zeroLayoutUnit, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
             else
                 return ltr ? contentWidth : clientWidth;
         }
         else {
             if (stopAtContentEdge)
-                return min(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+                return min(zeroLayoutUnit, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
             else
                 return ltr ? -clientWidth : -contentWidth;
         }

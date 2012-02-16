@@ -46,6 +46,8 @@ typedef IntPoint LayoutPoint;
 typedef IntSize LayoutSize;
 typedef IntRect LayoutRect;
 
+const LayoutUnit zeroLayoutUnit = 0;
+
 inline LayoutRect enclosingLayoutRect(const FloatRect& rect)
 {
     return enclosingIntRect(rect);

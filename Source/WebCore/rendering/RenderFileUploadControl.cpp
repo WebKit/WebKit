@@ -86,7 +86,7 @@ void RenderFileUploadControl::updateFromElement()
 
 static int nodeWidth(Node* node)
 {
-    return node ? node->renderBox()->width() : 0;
+    return node ? node->renderBox()->width() : zeroLayoutUnit;
 }
 
 int RenderFileUploadControl::maxFilenameWidth() const

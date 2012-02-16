@@ -172,7 +172,7 @@ public:
     LayoutUnit bordersPaddingAndSpacingInRowDirection() const
     {
         return borderStart() + borderEnd() +
-               (collapseBorders() ? 0 : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));
+               (collapseBorders() ? zeroLayoutUnit : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
     RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const;

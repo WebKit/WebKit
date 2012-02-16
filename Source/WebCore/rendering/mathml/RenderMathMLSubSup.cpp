@@ -162,7 +162,7 @@ void RenderMathMLSubSup::layout()
                     maxHeight = height;
                 current = current->nextSibling();
             }
-            LayoutUnit heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : 0;
+            LayoutUnit heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : zeroLayoutUnit;
             if (heightDiff < 0) 
                 heightDiff = 0;
             base->style()->setPaddingTop(Length(heightDiff, Fixed));
