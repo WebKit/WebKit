@@ -104,6 +104,7 @@ public:
     virtual WebString executeScriptURL(const WebURL&, bool popupsAllowed);
     virtual void loadFrameRequest(const WebURLRequest&, const WebString& target, bool notifyNeeded, void* notifyData);
     virtual void zoomLevelChanged(double zoomLevel);    
+    virtual bool isRectTopmost(const WebRect&);
 
     // This cannot be null.
     WebPlugin* plugin() { return m_webPlugin; }

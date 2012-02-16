@@ -60,6 +60,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "HostWindow.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -432,6 +433,26 @@ void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)
 {
     WebViewImpl* view = WebViewImpl::fromPage(m_element->document()->frame()->page());
     view->fullFramePluginZoomLevelChanged(zoomLevel);
+}
+ 
+bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
+{
+    Page* page = m_element->document()->page();
+    if (!page)
+        return false;
+
+    // hitTestResultAtPoint() takes a padding rectangle.
+    // FIXME: We'll be off by 1 when the width or height is even.
+    IntRect windowRect = convertToContainingWindow(static_cast<IntRect>(rect));
+    LayoutPoint center = windowRect.center();
+    // Make the rect we're checking (the point surrounded by padding rects) contained inside the requested rect. (Note that -1/2 is 0.)
+    LayoutSize padding((windowRect.width() - 1) / 2, (windowRect.height() - 1) / 2);
+    HitTestResult result =
+        page->mainFrame()->eventHandler()->hitTestResultAtPoint(center, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active, padding);
+    const HitTestResult::NodeSet& nodes = result.rectBasedTestResult();
+    if (nodes.size() != 1)
+        return false;
+    return (nodes.first().get() == m_element);
 }
 
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)

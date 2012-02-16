@@ -100,6 +100,10 @@ public:
     // Notifies that the zoom level has changed.
     virtual void zoomLevelChanged(double zoomLevel) = 0;
 
+    // Determines whether the given rectangle in this plugin is above all other
+    // content. The rectangle is in the plugin's coordinate system.
+    virtual bool isRectTopmost(const WebRect&) = 0;
+
     virtual WebPlugin* plugin() = 0;
     virtual void setPlugin(WebPlugin*) = 0;
 
