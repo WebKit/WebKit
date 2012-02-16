@@ -14,6 +14,8 @@ PASS Object.preventExtensions(Math.sin) is Math.sin
 PASS var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp; is undefined.
 PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; threw exception TypeError: Attempted to assign to readonly property..
 PASS Object.preventExtensions(Math); Math.sqrt(4) is 2
+PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
+PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

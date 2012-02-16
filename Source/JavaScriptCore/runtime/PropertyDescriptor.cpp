@@ -217,12 +217,16 @@ unsigned PropertyDescriptor::attributesWithOverride(const PropertyDescriptor& ot
         newAttributes ^= DontDelete;
     if (sharedSeen & EnumerablePresent && mismatch & DontEnum)
         newAttributes ^= DontEnum;
+    if (isAccessorDescriptor() && other.isDataDescriptor())
+        newAttributes |= ReadOnly;
     return newAttributes;
 }
 
 unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescriptor& current) const
 {
     unsigned currentAttributes = current.m_attributes;
+    if (isDataDescriptor() && current.isAccessorDescriptor())
+        currentAttributes |= ReadOnly;
     unsigned overrideMask = 0;
     if (writablePresent())
         overrideMask |= ReadOnly;

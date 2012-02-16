@@ -469,7 +469,7 @@ Structure* Structure::freezeTransition(JSGlobalData& globalData, Structure* stru
     if (transition->m_propertyTable) {
         PropertyTable::iterator end = transition->m_propertyTable->end();
         for (PropertyTable::iterator iter = transition->m_propertyTable->begin(); iter != end; ++iter)
-            iter->attributes |= (DontDelete | ReadOnly);
+            iter->attributes |= iter->attributes & Accessor ? DontDelete : (DontDelete | ReadOnly);
     }
 
     return transition;
@@ -520,7 +520,9 @@ bool Structure::isFrozen(JSGlobalData& globalData)
 
     PropertyTable::iterator end = m_propertyTable->end();
     for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
-        if ((iter->attributes & (DontDelete | ReadOnly)) != (DontDelete | ReadOnly))
+        if (!(iter->attributes & DontDelete))
+            return false;
+        if (!(iter->attributes & (ReadOnly | Accessor)))
             return false;
     }
     return true;

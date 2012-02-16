@@ -19,7 +19,7 @@ shouldBe("o2.b", "11");
 
 debug("Setting a value without having a setter");
 var o3 = { get x() { return 42; } }
-shouldThrow("o3.x = 10;");
+shouldBe("o3.x = 10; o3.x", "42");
 
 debug("Getting a value without having a getter");
 var o4 = { set x(y) { }}

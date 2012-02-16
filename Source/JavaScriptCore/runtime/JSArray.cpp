@@ -223,6 +223,9 @@ inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(J
 
 inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value)
 {
+    // If the array is not extensible, we shouldn't get here!
+    ASSERT(array->isExtensible());
+
     SparseArrayEntry& entry = add(array, i).first->second;
 
     if (!(entry.attributes & Accessor)) {
@@ -241,7 +244,8 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     JSObject* setter = asGetterSetter(accessor)->setter();
     
     if (!setter) {
-        throwTypeError(exec, "setting a property that has only a getter");
+        // FIXME: should throw if being called from strict mode.
+        // throwTypeError(exec, "setting a property that has only a getter");
         return;
     }
 
@@ -384,7 +388,7 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
             accessor->setSetter(exec->globalData(), setter);
 
         entryInMap->set(exec->globalData(), this, accessor);
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~DontDelete;
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~ReadOnly;
         return;
     }
 
@@ -465,7 +469,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
     // 7. If the [[Configurable]] field of current is false then
     if (!current.configurable()) {
         // 7.a. Reject, if the [[Configurable]] field of Desc is true.
-        if (descriptor.configurablePresent() && !descriptor.configurable())
+        if (descriptor.configurablePresent() && descriptor.configurable())
             return reject(exec, throwException, "Attempting to change configurable attribute of unconfigurable property.");
         // 7.b. Reject, if the [[Enumerable]] field of Desc is present and the [[Enumerable]] fields of current and Desc are the Boolean negation of each other.
         if (descriptor.enumerablePresent() && current.enumerable() != descriptor.enumerable())
@@ -785,6 +789,9 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigne
 
     // First, handle cases where we don't currently have a sparse map.
     if (LIKELY(!map)) {
+        // If the array is not extensible, we should have entered dictionary mode, and created the spare map.
+        ASSERT(isExtensible());
+    
         // Update m_length if necessary.
         if (i >= storage->m_length)
             storage->m_length = i + 1;
@@ -808,7 +815,7 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigne
     unsigned length = storage->m_length;
     if (i >= length) {
         // Prohibit growing the array if length is not writable.
-        if (map->lengthIsReadOnly()) {
+        if (map->lengthIsReadOnly() || !isExtensible()) {
             // FIXME: should throw in strict mode.
             return;
         }

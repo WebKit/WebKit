@@ -81,6 +81,34 @@ shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}),
 shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {get: getter1}).foo", "'called getter1'");
 shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {set: setter1}).foo='test'", "'called setter1'");
 
+// Should be able to redefine an non-writable property, if it is configurable.
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true, writable: false}), 'foo', {value: 2, configurable: true, writable: true}).foo", "2");
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true, writable: false}), 'foo', {value: 2, configurable: true, writable: false}).foo", "2");
+
+// Should be able to redefine an non-writable, non-configurable property, with the same value and attributes.
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: false, writable: false}), 'foo', {value: 1, configurable: false, writable: false}).foo", "1");
+
+// Should be able to redefine a configurable accessor, with the same or with different attributes.
+// Check the accessor function changed.
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true, enumerable: true}), 'foo', {get: function() { return 2; }, configurable: true, enumerable: false}).foo", "2");
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true, enumerable: false}), 'foo', {get: function() { return 2; }, configurable: true, enumerable: false}).foo", "2");
+// Check the attributes changed.
+shouldBeFalse("var result = false; var o = Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true, enumerable: true}), 'foo', {get: function() { return 2; }, configurable: true, enumerable: false}); for (x in o) result = true; result");
+shouldBeTrue("var result = false; var o = Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true, enumerable: false}), 'foo', {get: function() { return 2; }, configurable: true, enumerable: true}); for (x in o) result = true; result");
+
+// Should be able to define an non-configurable accessor.
+shouldBeUndefined("var o = Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true}); delete o.foo; o.foo");
+shouldBe("var o = Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: false}); delete o.foo; o.foo", '1');
+shouldBe("Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true}), 'foo', {value:2}).foo", "2");
+shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: false}), 'foo', {value:2}).foo");
+
+// Defining a data descriptor over an accessor should result in a read only property.
+shouldBe("var o = Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true}), 'foo', {value:2}); o.foo = 3; o.foo", "2");
+
+// Trying to redefine a non-configurable property as configurable should throw.
+shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {value:2, configurable: true})");
+shouldThrow("Object.defineProperty(Object.defineProperty([], 'foo', {value: 1}), 'foo', {value:2, configurable: true})");
+
 // Test an object with a getter setter.
 // Either accessor may be omitted or replaced with undefined, or both may be replaced with undefined.
 shouldBe("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo", '42')
@@ -90,11 +118,11 @@ shouldBe("var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(
 shouldBe("var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo", 'undefined')
 shouldBe("var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo = 42; o.result;", '42');
 shouldBe("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo", '42')
-shouldThrow("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result;");
+shouldBe("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result;", 'undefined');
 shouldBe("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo", '42')
-shouldThrow("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result;");
+shouldBe("var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result;", 'undefined');
 shouldBe("var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo", 'undefined')
-shouldThrow("var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result;");
+shouldBe("var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result;", 'undefined');
 // Test replacing or removing either the getter or setter individually.
 shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo", '13')
 shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo = 42; o.result;", '42')
@@ -103,4 +131,28 @@ shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {g
 shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo", '42')
 shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result;", '13')
 shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo", '42')
-shouldThrow("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result;")
+shouldBe("var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result;", 'undefined')
+
+// Repeat of the above, in strict mode.
+// Either accessor may be omitted or replaced with undefined, or both may be replaced with undefined.
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo", '42')
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo = 42; o.result;", '42');
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(x){this.result = x;}}); o.foo", 'undefined')
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(x){this.result = x;}}); o.foo = 42; o.result;", '42');
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo", 'undefined')
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo = 42; o.result;", '42');
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo", '42')
+shouldThrow("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result;");
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo", '42')
+shouldThrow("'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result;");
+shouldBe("'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo", 'undefined')
+shouldThrow("'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result;");
+// Test replacing or removing either the getter or setter individually.
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo", '13')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo = 42; o.result;", '42')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:undefined}); o.foo", 'undefined')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:undefined}); o.foo = 42; o.result;", '42')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo", '42')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result;", '13')
+shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo", '42')
+shouldThrow("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result;")
