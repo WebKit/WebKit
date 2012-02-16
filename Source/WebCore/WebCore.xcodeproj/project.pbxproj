@@ -4986,6 +4986,10 @@
 		B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B656626E120B1227006EA85C /* JSIDBTransaction.h */; };
 		B6566271120B1227006EA85C /* JSIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B656626F120B1227006EA85C /* JSIDBTransaction.cpp */; };
 		B691C1F91206D4A00025D980 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6A311D4FB3D004C3E4B /* IDBDatabase.cpp */; };
+		B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D23314EABD260090D75E /* FocusEvent.h */; };
+		B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D9D23414EABD260090D75E /* FocusEvent.cpp */; };
+		B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D27914EAC0860090D75E /* JSFocusEvent.h */; };
+		B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
 		B734B183119B991D006587BD /* FontTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B734B182119B991D006587BD /* FontTranscoder.h */; };
@@ -11905,6 +11909,11 @@
 		B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendInterface.h; sourceTree = "<group>"; };
 		B656626E120B1227006EA85C /* JSIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBTransaction.h; sourceTree = "<group>"; };
 		B656626F120B1227006EA85C /* JSIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransaction.cpp; sourceTree = "<group>"; };
+		B6D9D23314EABD260090D75E /* FocusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FocusEvent.h; sourceTree = "<group>"; };
+		B6D9D23414EABD260090D75E /* FocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FocusEvent.cpp; sourceTree = "<group>"; };
+		B6D9D27214EABF030090D75E /* FocusEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusEvent.idl; sourceTree = "<group>"; };
+		B6D9D27914EAC0860090D75E /* JSFocusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFocusEvent.h; sourceTree = "<group>"; };
+		B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFocusEvent.cpp; sourceTree = "<group>"; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
@@ -18080,6 +18089,8 @@
 				E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */,
 				E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */,
 				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
+				B6D9D27914EAC0860090D75E /* JSFocusEvent.h */,
+				B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */,
 				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
 				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
@@ -20498,6 +20509,7 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				B6D9D27214EABF030090D75E /* FocusEvent.idl */,
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
@@ -20846,6 +20858,8 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				4123E568127B3041000FEEA7 /* WindowEventContext.cpp */,
 				4123E567127B3041000FEEA7 /* WindowEventContext.h */,
+				B6D9D23314EABD260090D75E /* FocusEvent.h */,
+				B6D9D23414EABD260090D75E /* FocusEvent.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -24275,6 +24289,8 @@
 				4ADE25FA14E3BB4C004C2213 /* WebSocketExtensionProcessor.h in Headers */,
 				572E92FC14E540580087FFBA /* ShadowRootList.h in Headers */,
 				97CC3AE314E8E4A200894988 /* NavigatorSupplement.h in Headers */,
+				B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */,
+				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
 				144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */,
@@ -27223,6 +27239,8 @@
 				4A957F0614E2412A0049DBFB /* WebSocketExtensionDispatcher.cpp in Sources */,
 				572E92FB14E540580087FFBA /* ShadowRootList.cpp in Sources */,
 				97CC3AE214E8E4A200894988 /* NavigatorSupplement.cpp in Sources */,
+				B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */,
+				B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
 				144FCE5A14EC79E7000D17A3 /* FractionalLayoutRect.cpp in Sources */,
 				144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */,

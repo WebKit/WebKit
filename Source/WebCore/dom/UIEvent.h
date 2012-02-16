@@ -3,6 +3,7 @@
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -73,24 +74,6 @@ namespace WebCore {
     private:
         RefPtr<AbstractView> m_view;
         int m_detail;
-    };
-
-    class FocusInEventDispatchMediator : public EventDispatchMediator {
-    public:
-        static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-    private:
-        explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const;
-        RefPtr<Node> m_oldFocusedNode;
-    };
-
-    class FocusOutEventDispatchMediator : public EventDispatchMediator {
-    public:
-        static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-    private:
-        explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const;
-        RefPtr<Node> m_newFocusedNode;
     };
 
 } // namespace WebCore

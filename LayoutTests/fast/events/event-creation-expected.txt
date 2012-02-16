@@ -21,6 +21,10 @@ PASS document.createEvent('CustomEvent').constructor === window.CustomEvent is t
 PASS document.createEvent('ErrorEvent') instanceof window.ErrorEvent is true
 PASS document.createEvent('ErrorEvent') instanceof window.Event is true
 PASS document.createEvent('ErrorEvent').constructor === window.ErrorEvent is true
+PASS document.createEvent('FocusEvent') instanceof window.FocusEvent is true
+PASS document.createEvent('FocusEvent') instanceof window.UIEvent is true
+PASS document.createEvent('FocusEvent') instanceof window.Event is true
+PASS document.createEvent('FocusEvent').constructor === window.FocusEvent is true
 PASS document.createEvent('HashChangeEvent') instanceof window.HashChangeEvent is true
 PASS document.createEvent('HashChangeEvent') instanceof window.Event is true
 PASS document.createEvent('HashChangeEvent').constructor === window.HashChangeEvent is true

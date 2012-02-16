@@ -1,0 +1,21 @@
+Layout test for https://bugs.webkit.org/show_bug.cgi?id=76216. Checks that the relatedTarget attribute for FocusEvent objects is being set correctly when focusin/focusout events are dispatched. Press tab four times to dispatch a focusin and focusout event for each of the buttons below.
+
+Meow  Purr  Fur!  Done
+Expected Result
+
+Meow received focusin, its relatedTarget is null
+Meow received focusout, its relatedTarget is Purr
+Purr received focusin, its relatedTarget is Meow
+Purr received focusout, its relatedTarget is Fur!
+Fur! received focusin, its relatedTarget is Purr
+Fur! received focusout, its relatedTarget is Done
+    
+Actual Result
+
+Meow received focusin, its relatedTarget is null
+Meow received focusout, its relatedTarget is Purr
+Purr received focusin, its relatedTarget is Meow
+Purr received focusout, its relatedTarget is Fur!
+Fur! received focusin, its relatedTarget is Purr
+Fur! received focusout, its relatedTarget is Done
+

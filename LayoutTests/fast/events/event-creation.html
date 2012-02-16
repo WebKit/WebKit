@@ -37,6 +37,12 @@
     shouldBeTrue("document.createEvent('ErrorEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('ErrorEvent').constructor === window.ErrorEvent");
 
+    // FocusEvent
+    shouldBeTrue("document.createEvent('FocusEvent') instanceof window.FocusEvent");
+    shouldBeTrue("document.createEvent('FocusEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('FocusEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('FocusEvent').constructor === window.FocusEvent");    
+
     // HashChangeEvent
     shouldBeTrue("document.createEvent('HashChangeEvent') instanceof window.HashChangeEvent");
     shouldBeTrue("document.createEvent('HashChangeEvent') instanceof window.Event");

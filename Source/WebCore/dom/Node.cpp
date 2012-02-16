@@ -58,6 +58,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FocusEvent.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
@@ -2802,14 +2803,14 @@ void Node::dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> 
 {
     ASSERT(!eventDispatchForbidden());
     ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
-    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(UIEvent::create(eventType, true, false, document()->defaultView(), 0), oldFocusedNode));
+    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, oldFocusedNode), oldFocusedNode));
 }
 
 void Node::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode)
 {
     ASSERT(!eventDispatchForbidden());
     ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
-    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(UIEvent::create(eventType, true, false, document()->defaultView(), 0), newFocusedNode));
+    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, newFocusedNode), newFocusedNode));
 }
 
 void Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)

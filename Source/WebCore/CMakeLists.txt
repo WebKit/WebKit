@@ -158,6 +158,7 @@ SET(WebCore_IDL_FILES
     dom/ErrorEvent.idl
     dom/EventException.idl
     dom/Event.idl
+    dom/FocusEvent.idl
     dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
@@ -558,6 +559,7 @@ SET(WebCore_SOURCES
     dom/EventTarget.cpp
     dom/ExceptionBase.cpp
     dom/ExceptionCodePlaceholder.cpp
+    dom/FocusEvent.cpp
     dom/GenericEventQueue.cpp
     dom/IconURL.cpp
     dom/KeyboardEvent.cpp

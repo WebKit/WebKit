@@ -3,6 +3,7 @@
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,40 +109,6 @@ void UIEvent::warnDeprecatedLayerXYUsage()
     DEFINE_STATIC_LOCAL(String, consoleMessage , ("event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future."));
     if (m_view)
         m_view->console()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-}
-
-PassRefPtr<FocusInEventDispatchMediator> FocusInEventDispatchMediator::create(PassRefPtr<Event> event, PassRefPtr<Node> oldFocusedNode)
-{
-    return adoptRef(new FocusInEventDispatchMediator(event, oldFocusedNode));
-}
-
-FocusInEventDispatchMediator::FocusInEventDispatchMediator(PassRefPtr<Event> event, PassRefPtr<Node> oldFocusedNode)
-    : EventDispatchMediator(event)
-    , m_oldFocusedNode(oldFocusedNode)
-{
-}
-
-bool FocusInEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
-{
-    dispatcher->adjustRelatedTarget(event(), m_oldFocusedNode);
-    return EventDispatchMediator::dispatchEvent(dispatcher);
-}
-
-PassRefPtr<FocusOutEventDispatchMediator> FocusOutEventDispatchMediator::create(PassRefPtr<Event> event, PassRefPtr<Node> newFocusedNode)
-{
-    return adoptRef(new FocusOutEventDispatchMediator(event, newFocusedNode));
-}
-
-FocusOutEventDispatchMediator::FocusOutEventDispatchMediator(PassRefPtr<Event> event, PassRefPtr<Node> newFocusedNode)
-    : EventDispatchMediator(event)
-    , m_newFocusedNode(newFocusedNode)
-{
-}
-
-bool FocusOutEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
-{
-    dispatcher->adjustRelatedTarget(event(), m_newFocusedNode);
-    return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
 } // namespace WebCore

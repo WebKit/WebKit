@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,23 +57,6 @@ private:
     RefPtr<Event> m_event;
 };
 
-class FocusEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Node> oldFocusedNode);
-private:
-    explicit FocusEventDispatchMediator(PassRefPtr<Node> oldFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const;
-    RefPtr<Node> m_oldFocusedNode;
-};
-
-class BlurEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Node> newFocusedNode);
-private:
-    explicit BlurEventDispatchMediator(PassRefPtr<Node> newFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const;
-    RefPtr<Node> m_newFocusedNode;
-};
 
 } // namespace WebCore
 
