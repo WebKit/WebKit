@@ -225,6 +225,9 @@
     <file>Images/goArrow.png</file>
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
+    <file>Images/indexedDB.png</file>
+    <file>Images/indexedDBObjectStore.png</file>
+    <file>Images/indexedDBIndex.png</file>
     <file>Images/localStorage.png</file>
     <file>Images/navigatorShowHideButton.png</file>
     <file>Images/navigatorPinButton.png</file>

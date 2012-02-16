@@ -298,6 +298,18 @@ li.selected .base-storage-tree-element-subtitle {
     content: url(Images/databaseTable.png);
 }
 
+.indexed-db-storage-tree-item .icon {
+    content: url(Images/indexedDB.png);
+}
+
+.indexed-db-object-store-storage-tree-item .icon {
+    content: url(Images/indexedDBObjectStore.png);
+}
+
+.indexed-db-index-storage-tree-item .icon {
+    content: url(Images/indexedDBIndex.png);
+}
+
 .domstorage-storage-tree-item.local-storage .icon {
     content: url(Images/localStorage.png);
 }

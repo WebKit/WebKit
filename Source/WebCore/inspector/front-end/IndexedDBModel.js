@@ -36,10 +36,12 @@ WebInspector.IndexedDBModel = function()
 {
     this._indexedDBRequestManager = new WebInspector.IndexedDBRequestManager();
 
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
 
     this._frames = {};
+    this._databases = new Map();
     this._frameIdsBySecurityOrigin = {};
     this._databaseNamesBySecurityOrigin = {};
 
@@ -124,16 +126,26 @@ WebInspector.IndexedDBModel.keyRangeFromIDBKeyRange = function(idbKeyRange)
     return keyRange;
 }
 
+WebInspector.IndexedDBModel.EventTypes = {
+    DatabaseAdded: "DatabaseAdded",
+    DatabaseRemoved: "DatabaseRemoved",
+    DatabaseLoaded: "DatabaseLoaded"
+}
+
 WebInspector.IndexedDBModel.prototype = {
     refreshDatabaseNames: function()
     {
         this._reset();
-        this._framesNavigatedRecursively(WebInspector.resourceTreeModel.mainFrame);
+        if (WebInspector.resourceTreeModel.mainFrame)
+            this._framesNavigatedRecursively(WebInspector.resourceTreeModel.mainFrame);
     },
 
-    refreshDatabase: function(frameId, databaseName)
+    /**
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+     */
+    refreshDatabase: function(databaseId)
     {
-        this._loadDatabase(frameId, databaseName);
+        this._loadDatabase(databaseId);
     },
 
     /**
@@ -167,11 +179,10 @@ WebInspector.IndexedDBModel.prototype = {
 
     _reset: function()
     {
-        this._frames = {};
-        this._frameIdsBySecurityOrigin = {};
-        this._databaseNamesBySecurityOrigin = {};
+        for (var frameId in this._frames)
+            this._originRemovedFromFrame(frameId);
+
         this._indexedDBRequestManager._reset();
-        // FIXME: dispatch events?
     },
 
     /**
@@ -197,7 +208,6 @@ WebInspector.IndexedDBModel.prototype = {
             this._frameIdsBySecurityOrigin[securityOrigin] = [];
             this._frameIdsBySecurityOrigin[securityOrigin].push(frameId);
             this._databaseNamesBySecurityOrigin[securityOrigin] = [];
-            // FIXME: dispatch origin added event.
         }
         this._frames[frameId] = new WebInspector.IndexedDBModel.Frame(frameId, securityOrigin);
     },
@@ -233,10 +243,9 @@ WebInspector.IndexedDBModel.prototype = {
         for (var i = 0; i < frameIdsForOrigin; ++i)
             delete this._frames[frameIdsForOrigin[i]];
         delete this._frameIdsBySecurityOrigin[securityOrigin];
-        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOrigin]; ++i)
+        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOrigin].length; ++i)
             this._databaseRemoved(securityOrigin, this._databaseNamesBySecurityOrigin[securityOrigin][i]);
         delete this._databaseNamesBySecurityOrigin[securityOrigin];
-        // FIXME: dispatch origin removed event.
     },
 
     /**
@@ -273,7 +282,8 @@ WebInspector.IndexedDBModel.prototype = {
      */
     _databaseAdded: function(securityOrigin, databaseName)
     {
-        // FIXME: dispatch database added event.
+        var databaseId = new WebInspector.IndexedDBModel.DatabaseId(securityOrigin, databaseName);
+        this.dispatchEventToListeners(WebInspector.IndexedDBModel.EventTypes.DatabaseAdded, databaseId);
     },
 
     /**
@@ -283,7 +293,9 @@ WebInspector.IndexedDBModel.prototype = {
     _databaseRemoved: function(securityOrigin, databaseName)
     {
         this._indexedDBRequestManager._databaseRemoved(this._frameIdsBySecurityOrigin[securityOrigin], databaseName);
-        // FIXME: dispatch database removed event.
+
+        var databaseId = new WebInspector.IndexedDBModel.DatabaseId(securityOrigin, databaseName);
+        this.dispatchEventToListeners(WebInspector.IndexedDBModel.EventTypes.DatabaseRemoved, databaseId);
     },
 
     /**
@@ -298,24 +310,27 @@ WebInspector.IndexedDBModel.prototype = {
         {
             var databaseNames = securityOriginWithDatabaseNames.databaseNames;
             var oldSecurityOrigin = this._frames[frameId] ? this._frames[frameId].securityOrigin : null;
-            if (oldSecurityOrigin && oldSecurityOrigin === securityOriginWithDatabaseNames.securityOrigin)
-                this._updateOriginDatabaseNames(securityOriginWithDatabaseNames.securityOrigin, securityOriginWithDatabaseNames.databaseNames);
-            else {
+            if (!oldSecurityOrigin || oldSecurityOrigin !== securityOriginWithDatabaseNames.securityOrigin) {
                 this._originRemovedFromFrame(frameId);
                 this._originAddedToFrame(frameId, securityOriginWithDatabaseNames.securityOrigin);
-                this._updateOriginDatabaseNames(securityOriginWithDatabaseNames.securityOrigin, securityOriginWithDatabaseNames.databaseNames);
             }
+            this._updateOriginDatabaseNames(securityOriginWithDatabaseNames.securityOrigin, securityOriginWithDatabaseNames.databaseNames);
         }
 
         this._indexedDBRequestManager.requestDatabaseNamesForFrame(frameId, callback.bind(this));
     },
 
     /**
-     * @param {string} frameId
-     * @param {string} databaseName
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
      */
-    _loadDatabase: function(frameId, databaseName)
+    _loadDatabase: function(databaseId)
     {
+        var frameIds = this._frameIdsBySecurityOrigin[databaseId.securityOrigin];
+        if (!frameIds || !frameIds.length)
+            return;
+
+        var frameId = frameIds[0];
+
         /**
          * @param {IndexedDBAgent.DatabaseWithObjectStores} databaseWithObjectStores
          */
@@ -324,23 +339,23 @@ WebInspector.IndexedDBModel.prototype = {
             if (!this._frames[frameId])
                 return;
 
-            var databaseModel = new WebInspector.IndexedDBModel.Database(databaseName, databaseWithObjectStores.version);
-            this._frames[frameId].databases[databaseName] = databaseModel;
+            var databaseModel = new WebInspector.IndexedDBModel.Database(databaseId, databaseWithObjectStores.version);
+            this._databases.put(databaseId, databaseModel); 
             for (var i = 0; i < databaseWithObjectStores.objectStores.length; ++i) {
                 var objectStore = databaseWithObjectStores.objectStores[i];
                 var objectStoreModel = new WebInspector.IndexedDBModel.ObjectStore(objectStore.name, objectStore.keyPath);
                 for (var j = 0; j < objectStore.indexes.length; ++j) {
-                     var objectStoreIndex = objectStore.indexes[j];
-                     var objectStoreIndexModel = new WebInspector.IndexedDBModel.ObjectStoreIndex(objectStoreIndex.name, objectStoreIndex.keyPath, objectStoreIndex.unique, objectStoreIndex.multiEntry);
-                     objectStoreModel.indexes[objectStoreIndexModel.name] = objectStoreIndexModel;
+                     var index = objectStore.indexes[j];
+                     var indexModel = new WebInspector.IndexedDBModel.Index(index.name, index.keyPath, index.unique, index.multiEntry);
+                     objectStoreModel.indexes[indexModel.name] = indexModel;
                 }
                 databaseModel.objectStores[objectStoreModel.name] = objectStoreModel;
             }
 
-            // FIXME: dispatch database loaded event.
+            this.dispatchEventToListeners(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseModel);
         }
 
-        this._indexedDBRequestManager.requestDatabase(frameId, databaseName, callback.bind(this));
+        this._indexedDBRequestManager.requestDatabase(frameId, databaseId.name, callback.bind(this));
     },
 
     /**
@@ -429,16 +444,37 @@ WebInspector.IndexedDBModel.Frame = function(frameId, securityOrigin)
 {
     this.frameId = frameId;
     this.securityOrigin = securityOrigin;
-    this.databases = {};
+    this.databaseNames = {};
 }
 
 /**
  * @constructor
+ * @param {string} securityOrigin
  * @param {string} name
  */
-WebInspector.IndexedDBModel.Database = function(name, version)
+WebInspector.IndexedDBModel.DatabaseId = function(securityOrigin, name)
 {
+    this.securityOrigin = securityOrigin;
     this.name = name;
+}
+
+WebInspector.IndexedDBModel.DatabaseId.prototype = {
+    /**
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+     */
+    equals: function(databaseId)
+    {
+        return this.name === databaseId.name && this.securityOrigin === databaseId.securityOrigin;
+    },
+}
+/**
+ * @constructor
+ * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+ * @param {string} version
+ */
+WebInspector.IndexedDBModel.Database = function(databaseId, version)
+{
+    this.databaseId = databaseId;
     this.version = version;
     this.objectStores = {};
 }
@@ -460,7 +496,7 @@ WebInspector.IndexedDBModel.ObjectStore = function(name, keyPath)
  * @param {string} name
  * @param {string} keyPath
  */
-WebInspector.IndexedDBModel.ObjectStoreIndex = function(name, keyPath, unique, multiEntry)
+WebInspector.IndexedDBModel.Index = function(name, keyPath, unique, multiEntry)
 {
     this.name = name;
     this.keyPath = keyPath;

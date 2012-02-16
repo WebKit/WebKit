@@ -1,3 +1,59 @@
+2012-02-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Add IndexedDB TreeElement to resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=78609
+
+        Reviewed by Yury Semikhatsky.
+
+        Added IndexedDB tree element to resources panel (behind experimental setting).
+        Test is currently disabled, since we don't run tests with experiments enabled.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * inspector/front-end/Images/indexedDB.png: Added.
+        * inspector/front-end/Images/indexedDBIndex.png: Added.
+        * inspector/front-end/Images/indexedDBObjectStore.png: Added.
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel):
+        (WebInspector.IndexedDBModel.prototype.refreshDatabaseNames):
+        (WebInspector.IndexedDBModel.prototype.refreshDatabase):
+        (WebInspector.IndexedDBModel.prototype._reset):
+        (WebInspector.IndexedDBModel.prototype._originAddedToFrame):
+        (WebInspector.IndexedDBModel.prototype._originRemoved):
+        (WebInspector.IndexedDBModel.prototype._databaseAdded):
+        (WebInspector.IndexedDBModel.prototype._databaseRemoved):
+        (WebInspector.IndexedDBModel.prototype._loadDatabaseNamesForFrame):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase.callback):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.Frame):
+        (WebInspector.IndexedDBModel.DatabaseId):
+        (WebInspector.IndexedDBModel.DatabaseId.prototype.equals):
+        (WebInspector.IndexedDBModel.Database):
+        (WebInspector.IndexedDBModel.Index):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.IndexedDBTreeElement):
+        (WebInspector.IndexedDBTreeElement.prototype.onexpand):
+        (WebInspector.IndexedDBTreeElement.prototype._createIndexedDBModel):
+        (WebInspector.IndexedDBTreeElement.prototype.refreshIndexedDB):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBAdded):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBRemoved):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBLoaded):
+        (WebInspector.IndexedDBTreeElement.prototype._idbDatabaseTreeElement):
+        (WebInspector.IDBDatabaseTreeElement):
+        (WebInspector.IDBDatabaseTreeElement.prototype.update):
+        (WebInspector.IDBDatabaseTreeElement.prototype.onselect):
+        (WebInspector.IDBObjectStoreTreeElement):
+        (WebInspector.IDBObjectStoreTreeElement.prototype.update):
+        (WebInspector.IDBIndexTreeElement):
+        (WebInspector.IDBIndexTreeElement.prototype.update):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/resourcesPanel.css:
+        (.indexed-db-storage-tree-item .icon):
+        (.indexed-db-object-store-storage-tree-item .icon):
+        (.indexed-db-index-storage-tree-item .icon):
+
 2012-02-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION (Safari 5.0.5 - 5.1): No animation on svg-wow.org/text-effects/text-effects.xhtml

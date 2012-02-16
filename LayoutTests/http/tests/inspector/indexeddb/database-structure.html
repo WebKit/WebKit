@@ -8,17 +8,16 @@ function test()
     var indexedDBModel = new WebInspector.IndexedDBModel();
     var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
     var databaseName = "testDatabase1";
+    var securityOrigin = "http://127.0.0.1:8000";
+    var databaseId = new WebInspector.IndexedDBModel.DatabaseId(securityOrigin, databaseName);
 
     function dumpDatabase()
     {
         InspectorTest.addResult("Dumping database:");
-        var frame = indexedDBModel._frames[mainFrameId];
-        if (!frame)
-            return;
-        var database = frame.databases[databaseName];
+        var database = indexedDBModel._databases.get(databaseId);
         if (!database)
             return;
-        InspectorTest.addResult(database.name);
+        InspectorTest.addResult(database.databaseId.name);
         InspectorTest.addResult("    version: " + database.version);
         InspectorTest.addResult("    objectStores:");
         var objectStoreNames = [];
@@ -63,7 +62,7 @@ function test()
         dumpDatabase();
 
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step5, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step5()
@@ -76,7 +75,7 @@ function test()
     function step6()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step7, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step7()
@@ -89,7 +88,7 @@ function test()
     function step8()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step9, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step9()
@@ -102,7 +101,7 @@ function test()
     function step10()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step11, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step11()
@@ -115,7 +114,7 @@ function test()
     function step12()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step13, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step13()
@@ -128,7 +127,7 @@ function test()
     function step14()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step15, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step15()
@@ -141,7 +140,7 @@ function test()
     function step16()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step17, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step17()
@@ -154,7 +153,7 @@ function test()
     function step18()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step19, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step19()
@@ -167,7 +166,7 @@ function test()
     function step20()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", step21, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function step21()

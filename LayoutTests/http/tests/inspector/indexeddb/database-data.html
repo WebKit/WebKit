@@ -8,9 +8,11 @@ function test()
     var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
     var indexedDBModel = new WebInspector.IndexedDBModel();
     var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+    var securityOrigin = "http://127.0.0.1:8000";
     var databaseName = "testDatabase";
     var objectStoreName = "testObjectStore";
     var indexName = "testIndexName";
+    var databaseId = new WebInspector.IndexedDBModel.DatabaseId(securityOrigin, databaseName);
 
     function addIDBValues(count, callback)
     {
@@ -89,14 +91,20 @@ function test()
 
         function step4()
         {
-            addIDBValues(9, refreshDatabase);
+            addIDBValues(9, refreshDatabaseNames);
         }
+    }
+
+    function refreshDatabaseNames()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", refreshDatabase, false);
+        indexedDBModel.refreshDatabaseNames();
     }
 
     function refreshDatabase()
     {
         InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", runObjectStoreTests, false);
-        indexedDBModel.refreshDatabase(mainFrameId, databaseName);
+        indexedDBModel.refreshDatabase(databaseId);
     }
 
     function runObjectStoreTests()
