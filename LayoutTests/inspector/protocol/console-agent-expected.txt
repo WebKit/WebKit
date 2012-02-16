@@ -167,6 +167,25 @@ response:
     id : <number>
 }
 
+-----------------------------------------------------------
+ConsoleAgent.addInspectedHeapObject(<number>)
+
+request:
+{
+    method : "Console.addInspectedHeapObject"
+    params : {
+        heapObjectId : 1
+    }
+    id : <number>
+}
+
+response:
+{
+    result : {
+    }
+    id : <number>
+}
+
 ===========================================================
 Coverage for ConsoleAgent
 {
@@ -175,6 +194,7 @@ Coverage for ConsoleAgent
     clearMessages : "checked"
     setMonitoringXHREnabled : "checked"
     addInspectedNode : "checked"
+    addInspectedHeapObject : "checked"
     messageAdded : "checked"
     messageRepeatCountUpdated : "checked"
     messagesCleared : "checked"

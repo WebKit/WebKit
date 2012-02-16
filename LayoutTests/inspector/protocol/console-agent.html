@@ -13,7 +13,8 @@ function test()
         ["ConsoleAgent", "clearMessages"],
         ["ConsoleAgent", "setMonitoringXHREnabled", true],
         ["ConsoleAgent", "setMonitoringXHREnabled", false],
-        ["ConsoleAgent", "addInspectedNode", 1]
+        ["ConsoleAgent", "addInspectedNode", 1],
+        ["ConsoleAgent", "addInspectedHeapObject", 1]
     ];
 
     InspectorTest.runProtocolTestSuite("ConsoleAgent", testSuite, ['id', 'requestId', 'injectedScriptId', 'stackTrace']);

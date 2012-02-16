@@ -571,7 +571,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
         if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
-        this.__defineGetter__("$" + i, bind(commandLineAPIImpl, commandLineAPIImpl._inspectedNode, i));
+        this.__defineGetter__("$" + i, bind(commandLineAPIImpl, commandLineAPIImpl._inspectedObject, i));
     }
 }
 
@@ -685,9 +685,9 @@ CommandLineAPIImpl.prototype = {
         InjectedScriptHost.clearConsoleMessages();
     },
 
-    _inspectedNode: function(num)
+    _inspectedObject: function(num)
     {
-        return InjectedScriptHost.inspectedNode(num);
+        return InjectedScriptHost.inspectedObject(num);
     },
 
     _normalizeEventTypes: function(types)

@@ -76,17 +76,17 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
     return ScriptValue(state->globalData(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }
 
-JSValue JSInjectedScriptHost::inspectedNode(ExecState* exec)
+JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    Node* node = impl()->inspectedNode(exec->argument(0).toInt32(exec));
-    if (!node)
+    InjectedScriptHost::InspectableObject* object = impl()->inspectedObject(exec->argument(0).toInt32(exec));
+    if (!object)
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);
-    return toJS(exec, globalObject(), node);
+    return object->get(exec).jsValue();
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)

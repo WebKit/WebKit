@@ -85,6 +85,7 @@ public:
 #endif
     virtual void setMonitoringXHREnabled(ErrorString*, bool enabled);
     virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
+    virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId);
 
 protected:
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);

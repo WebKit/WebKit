@@ -34,6 +34,7 @@
 
 #include "Console.h"
 #include "InjectedScript.h"
+#include "InjectedScriptHost.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
@@ -264,6 +265,7 @@ void InspectorProfilerAgent::resetState()
     m_nextUserInitiatedProfileNumber = 1;
     m_nextUserInitiatedHeapSnapshotNumber = 1;
     resetFrontendProfiles();
+    m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
 }
 
 void InspectorProfilerAgent::resetFrontendProfiles()

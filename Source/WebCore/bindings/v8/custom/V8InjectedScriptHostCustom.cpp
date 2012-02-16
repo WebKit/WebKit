@@ -66,19 +66,20 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
     return ScriptValue(toV8(node));
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::inspectedNodeCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.inspectedNode()");
+    INC_STATS("InjectedScriptHost.inspectedObject()");
     if (args.Length() < 1)
         return v8::Undefined();
 
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-
-    Node* node = host->inspectedNode(args[0]->ToInt32()->Value());
-    if (!node)
+    if (!args[0]->IsInt32()) {
+        throwError("argument has to be an integer");
         return v8::Undefined();
+    }
 
-    return toV8(node);
+    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
+    InjectedScriptHost::InspectableObject* object = host->inspectedObject(args[0]->ToInt32()->Value());
+    return object->get(ScriptState::current()).v8Value();
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(const v8::Arguments& args)

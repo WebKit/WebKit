@@ -75,6 +75,7 @@ InjectedScriptHost::InjectedScriptHost()
     , m_domStorageAgent(0)
     , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
+    m_defaultInspectableObject = adoptPtr(new InspectableObject());
 }
 
 InjectedScriptHost::~InjectedScriptHost()
@@ -89,18 +90,6 @@ void InjectedScriptHost::disconnect()
     m_databaseAgent = 0;
 #endif
     m_domStorageAgent = 0;
-}
-
-void InjectedScriptHost::addInspectedNode(Node* node)
-{
-    m_inspectedNodes.prepend(node);
-    while (m_inspectedNodes.size() > 5)
-        m_inspectedNodes.removeLast();
-}
-
-void InjectedScriptHost::clearInspectedNodes()
-{
-    m_inspectedNodes.clear();
 }
 
 void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
@@ -122,11 +111,28 @@ void InjectedScriptHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
-Node* InjectedScriptHost::inspectedNode(unsigned int num)
+ScriptValue InjectedScriptHost::InspectableObject::get(ScriptState*)
 {
-    if (num < m_inspectedNodes.size())
-        return m_inspectedNodes[num].get();
-    return 0;
+    return ScriptValue();
+};
+
+void InjectedScriptHost::addInspectedObject(PassOwnPtr<InjectedScriptHost::InspectableObject> object)
+{
+    m_inspectedObjects.prepend(object);
+    while (m_inspectedObjects.size() > 5)
+        m_inspectedObjects.removeLast();
+}
+
+void InjectedScriptHost::clearInspectedObjects()
+{
+    m_inspectedObjects.clear();
+}
+
+InjectedScriptHost::InspectableObject* InjectedScriptHost::inspectedObject(unsigned int num)
+{
+    if (num >= m_inspectedObjects.size())
+        return m_defaultInspectableObject.get();
+    return m_inspectedObjects[num].get();
 }
 
 #if ENABLE(SQL_DATABASE)

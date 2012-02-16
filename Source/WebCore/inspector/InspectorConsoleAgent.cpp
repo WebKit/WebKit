@@ -41,6 +41,8 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
+#include "ScriptObject.h"
+#include "ScriptProfiler.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -277,6 +279,22 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
         m_expiredConsoleMessageCount += expireConsoleMessagesStep;
         m_consoleMessages.remove(0, expireConsoleMessagesStep);
     }
+}
+
+class InspectableHeapObject : public InjectedScriptHost::InspectableObject {
+public:
+    explicit InspectableHeapObject(int heapObjectId) : m_heapObjectId(heapObjectId) { }
+    virtual ScriptValue get(ScriptState*)
+    {
+        return ScriptProfiler::objectByHeapObjectId(m_heapObjectId);
+    }
+private:
+    int m_heapObjectId;
+};
+
+void InspectorConsoleAgent::addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId)
+{
+    m_injectedScriptManager->injectedScriptHost()->addInspectedObject(adoptPtr(new InspectableHeapObject(inspectedHeapObjectId)));
 }
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ module core {
 
         void copyText(in DOMString text);
         [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
-        [Custom] DOMObject inspectedNode(in int num);
+        [Custom] DOMObject inspectedObject(in int num);
         [Custom] DOMObject internalConstructorName(in DOMObject object);
         [Custom] boolean isHTMLAllCollection(in DOMObject object);
         [Custom] DOMString type(in DOMObject object);

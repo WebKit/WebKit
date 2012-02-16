@@ -39,6 +39,8 @@
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
+#include "Node.h"
+#include "ScriptObject.h"
 
 namespace WebCore {
 
@@ -61,19 +63,31 @@ void PageConsoleAgent::clearMessages(ErrorString* errorString)
     InspectorConsoleAgent::clearMessages(errorString);
 }
 
-void PageConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
+class InspectableNode : public InjectedScriptHost::InspectableObject {
+public:
+    explicit InspectableNode(Node* node) : m_node(node) { }
+    virtual ScriptValue get(ScriptState* state)
+    {
+        return InjectedScriptHost::nodeAsScriptValue(state, m_node);
+    }
+private:
+    Node* m_node;
+};
+
+void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)
 {
     Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
-    if (!node)
+    if (!node) {
+        *errorString = "nodeId is not valid";
         return;
-    m_injectedScriptManager->injectedScriptHost()->addInspectedNode(node);
+    }
+    m_injectedScriptManager->injectedScriptHost()->addInspectedObject(adoptPtr(new InspectableNode(node)));
 }
 
 bool PageConsoleAgent::developerExtrasEnabled()
 {
     return m_inspectorAgent->developerExtrasEnabled();
 }
-
 
 } // namespace WebCore
 

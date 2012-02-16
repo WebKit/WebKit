@@ -78,13 +78,18 @@ public:
 
     void disconnect();
 
-    void addInspectedNode(Node*);
-    void clearInspectedNodes();
+    class InspectableObject {
+    public:
+        virtual ScriptValue get(ScriptState*);
+        virtual ~InspectableObject() { }
+    };
+    void addInspectedObject(PassOwnPtr<InspectableObject>);
+    void clearInspectedObjects();
+    InspectableObject* inspectedObject(unsigned int num);
 
     void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
     void clearConsoleMessages();
     void copyText(const String& text);
-    Node* inspectedNode(unsigned int num);
 #if ENABLE(SQL_DATABASE)
     int databaseIdImpl(Database*);
 #endif
@@ -105,7 +110,8 @@ private:
 #endif
     InspectorDOMStorageAgent* m_domStorageAgent;
     long m_lastWorkerId;
-    Vector<RefPtr<Node> > m_inspectedNodes;
+    Vector<OwnPtr<InspectableObject> > m_inspectedObjects;
+    OwnPtr<InspectableObject> m_defaultInspectableObject;
 };
 
 } // namespace WebCore

@@ -1,3 +1,51 @@
+2012-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: [heap snapshot] It could be useful to have access to the selected heap object from the console.
+        https://bugs.webkit.org/show_bug.cgi?id=78496
+
+        Reviewed by Yury Semikhatsky.
+
+       * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::inspectedObject):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectedObjectCallback):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::InspectableObject::get):
+        (WebCore):
+        (WebCore::InjectedScriptHost::addInspectedObject):
+        (WebCore::InjectedScriptHost::clearInspectedObjects):
+        (WebCore::InjectedScriptHost::inspectedObject):
+        * inspector/InjectedScriptHost.h:
+        (InspectableObject):
+        (WebCore::InjectedScriptHost::InspectableObject::~InspectableObject):
+        (InjectedScriptHost):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        * inspector/InspectorConsoleAgent.cpp:
+        (InspectableHeapObject):
+        (WebCore::InspectableHeapObject::InspectableHeapObject):
+        (WebCore::InspectableHeapObject::get):
+        (WebCore):
+        (WebCore::InspectorConsoleAgent::addInspectedHeapObject):
+        * inspector/InspectorConsoleAgent.h:
+        (InspectorConsoleAgent):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+        * inspector/PageConsoleAgent.cpp:
+        (InspectableNode):
+        (WebCore::InspectableNode::InspectableNode):
+        (WebCore::InspectableNode::get):
+        (WebCore):
+        (WebCore::PageConsoleAgent::addInspectedNode):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._selectionChanged):
+        (WebInspector.DetailedHeapshotView.prototype._inspectedObjectChanged):
+
 2012-02-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add support for unsigned long[] to idl bindings to JSC.

@@ -150,7 +150,7 @@ void InspectorAgent::disable(ErrorString*)
 
 void InspectorAgent::domContentLoadedEventFired()
 {
-    m_injectedScriptManager->injectedScriptHost()->clearInspectedNodes();
+    m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
 }
 
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)

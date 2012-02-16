@@ -501,6 +501,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainmentDataGrid();
     this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
     this.retainmentDataGrid.show(this.retainmentView.element);
+    this.retainmentDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._inspectedObjectChanged, this);
     this.retainmentView.show(this.element);
     this.retainmentDataGrid.reset();
 
@@ -841,6 +842,13 @@ WebInspector.DetailedHeapshotView.prototype = {
     {
         var selectedNode = event.target.selectedNode;
         this._setRetainmentDataGridSource(selectedNode);
+        this._inspectedObjectChanged(event);
+    },
+
+    _inspectedObjectChanged: function(event)
+    {
+        var selectedNode = event.target.selectedNode;
+        ConsoleAgent.addInspectedObject(selectedNode.snapshotNodeId);
     },
 
     _setRetainmentDataGridSource: function(nodeItem)
