@@ -1,3 +1,18 @@
+2012-02-16  Raul Hudea  <rhudea@adobe.com>
+
+        [CSS Regions] Repaint issues when changing innerHTML of content
+        https://bugs.webkit.org/show_bug.cgi?id=78787
+
+        Reviewed by David Hyatt.
+
+        The calculation of the clipping rectangle is based on the repaint rectangle,
+        so it needs to be clipped to the current region, because it might spread over multiple ones.
+
+        Test: fast/repaint/region-painting-invalidation.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+
 2012-02-16  Adam Roben  <aroben@apple.com>
 
         Roll out r107887

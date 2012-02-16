@@ -540,14 +540,14 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         flipForWritingMode(flippedRegionRect); // Put the region rects into physical coordinates.
         flipForWritingMode(flippedRegionOverflowRect);
 
-        LayoutRect clippedRect(flippedRegionOverflowRect);
-        clippedRect.intersect(repaintRect);
+        LayoutRect clippedRect(repaintRect);
+        clippedRect.intersect(flippedRegionOverflowRect);
         if (clippedRect.isEmpty())
             continue;
-        
+
         // Put the region rect into the region's physical coordinate space.
-        clippedRect.setLocation(region->contentBoxRect().location() + (repaintRect.location() - flippedRegionRect.location()));
-        
+        clippedRect.setLocation(region->contentBoxRect().location() + (clippedRect.location() - flippedRegionRect.location()));
+
         // Now switch to the region's writing mode coordinate space and let it repaint itself.
         region->flipForWritingMode(clippedRect);
         LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the region is somewhere else.
