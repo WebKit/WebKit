@@ -4295,12 +4295,43 @@ bool CSSParser::parseFont(bool important)
     return true;
 }
 
+class FontFamilyValueBuilder {
+public:
+    FontFamilyValueBuilder(CSSValueList* list, CSSValuePool* pool)
+        : m_list(list)
+        , m_cssValuePool(pool)
+    {
+    }
+
+    void add(const CSSParserString& string)
+    {
+        if (!m_builder.isEmpty())
+            m_builder.append(' ');
+        m_builder.append(string.characters, string.length);
+    }
+
+    void commit()
+    {
+        if (m_builder.isEmpty())
+            return;
+        m_list->append(m_cssValuePool->createFontFamilyValue(m_builder.toString()));
+        m_builder.clear();
+    }
+
+private:
+    StringBuilder m_builder;
+    CSSValueList* m_list;
+    CSSValuePool* m_cssValuePool;
+};
+
 PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     CSSParserValue* value = m_valueList->current();
 
-    FontFamilyValue* currFamily = 0;
+    FontFamilyValueBuilder familyBuilder(list.get(), cssValuePool());
+    bool inFamily = false;
+
     while (value) {
         if (value->id == CSSValueInitial || value->id == CSSValueInherit)
             return 0;
@@ -4312,28 +4343,29 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
         if (value->id >= CSSValueSerif && value->id <= CSSValueWebkitBody) {
-            if (currFamily)
-                currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
+            if (inFamily)
+                familyBuilder.add(value->string);
             else if (nextValBreaksFont || !nextValIsFontName)
                 list->append(cssValuePool()->createIdentifierValue(value->id));
             else {
-                RefPtr<FontFamilyValue> newFamily = FontFamilyValue::create(value->string);
-                currFamily = newFamily.get();
-                list->append(newFamily.release());
+                familyBuilder.commit();
+                familyBuilder.add(value->string);
+                inFamily = true;
             }
         } else if (value->unit == CSSPrimitiveValue::CSS_STRING) {
             // Strings never share in a family name.
-            currFamily = 0;
-            list->append(FontFamilyValue::create(value->string));
+            inFamily = false;
+            familyBuilder.commit();
+            list->append(cssValuePool()->createFontFamilyValue(value->string));
         } else if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
-            if (currFamily)
-                currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
+            if (inFamily)
+                familyBuilder.add(value->string);
             else if (nextValBreaksFont || !nextValIsFontName)
-                list->append(FontFamilyValue::create(value->string));
+                list->append(cssValuePool()->createFontFamilyValue(value->string));
             else {
-                RefPtr<FontFamilyValue> newFamily = FontFamilyValue::create(value->string);
-                currFamily = newFamily.get();
-                list->append(newFamily.release());
+                familyBuilder.commit();
+                familyBuilder.add(value->string);
+                inFamily = true;
             }
         } else {
             break;
@@ -4344,13 +4376,16 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
 
         if (nextValBreaksFont) {
             value = m_valueList->next();
-            currFamily = 0;
+            familyBuilder.commit();
+            inFamily = false;
         }
         else if (nextValIsFontName)
             value = nextValue;
         else
             break;
     }
+    familyBuilder.commit();
+
     if (!list->length())
         list = 0;
     return list.release();

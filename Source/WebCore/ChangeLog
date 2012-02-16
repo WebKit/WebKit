@@ -1,3 +1,44 @@
+2012-02-15  Andreas Kling  <awesomekling@apple.com>
+
+        Share font-family CSS values through CSSValuePool.
+        <http://webkit.org/b/78604>
+
+        Reviewed by Darin Adler.
+
+        Cache and share FontFamilyValue instances in the per-document CSSValuePool.
+        This reduces memory consumption by 248 kB on the Moz page cycler (64-bit)
+        and avoids a bunch of extra work.
+
+        This is a regression from the recent attribute style refactoring; previously
+        the mapped attribute declaration table would ensure that multiple 'font'
+        elements with the same 'face' value would share the same FontFamilyValue.
+
+        We're not yet sharing the entire CSSValueList returned by parseFontFamily()
+        but this is a step on the way there.
+
+        * css/FontFamilyValue.cpp:
+        * css/FontFamilyValue.h:
+
+            Removed appendSpaceSeparated(), making FontFamilyValue immutable.
+
+        * css/CSSParser.cpp:
+        (FontFamilyValueBuilder):
+        (WebCore::FontFamilyValueBuilder::FontFamilyValueBuilder):
+        (WebCore::FontFamilyValueBuilder::add):
+        (WebCore::FontFamilyValueBuilder::commit):
+        (WebCore::CSSParser::parseFontFamily):
+
+            Refactor parseFontFamily() to defer creation of FontFamilyValue until
+            the whole family name is known. Added a little helper class to avoid
+            code duplication.
+
+        * css/CSSValuePool.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+
+            Added a FontFamilyValue cache to CSSValuePool. All values are tied to
+            the lifetime of the pool.
+
 2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Move event conversion functions from WebCore to WebKit

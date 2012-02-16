@@ -29,6 +29,7 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
+#include "FontFamilyValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
@@ -39,6 +40,7 @@ public:
     static PassRefPtr<CSSValuePool> create() { return adoptRef(new CSSValuePool); }
     ~CSSValuePool();
 
+    PassRefPtr<FontFamilyValue> createFontFamilyValue(const String&);
     PassRefPtr<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
     PassRefPtr<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
     PassRefPtr<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue; }
@@ -71,6 +73,9 @@ private:
     IntegerValueCache m_pixelValueCache;
     IntegerValueCache m_percentValueCache;
     IntegerValueCache m_numberValueCache;
+
+    typedef HashMap<String, RefPtr<FontFamilyValue> > FontFamilyValueCache;
+    FontFamilyValueCache m_fontFamilyValueCache;
 };
 
 }

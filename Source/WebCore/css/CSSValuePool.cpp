@@ -120,4 +120,12 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimiti
     return entry.first->second;
 }
 
+PassRefPtr<FontFamilyValue> CSSValuePool::createFontFamilyValue(const String& familyName)
+{
+    RefPtr<FontFamilyValue>& value = m_fontFamilyValueCache.add(familyName, 0).first->second;
+    if (!value)
+        value = FontFamilyValue::create(familyName);
+    return value;
+}
+
 }

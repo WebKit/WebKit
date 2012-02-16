@@ -33,8 +33,6 @@ public:
         return adoptRef(new FontFamilyValue(familyName));
     }
 
-    void appendSpaceSeparated(const UChar* characters, unsigned length);
-
     const String& familyName() const { return m_familyName; }
 
     String customCssText() const;

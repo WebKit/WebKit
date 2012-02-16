@@ -58,12 +58,6 @@ FontFamilyValue::FontFamilyValue(const String& familyName)
     m_familyName.truncate(length);
 }
 
-void FontFamilyValue::appendSpaceSeparated(const UChar* characters, unsigned length)
-{
-    m_familyName.append(' ');
-    m_familyName.append(characters, length);
-}
-
 String FontFamilyValue::customCssText() const
 {
     return quoteCSSStringIfNeeded(m_familyName);
