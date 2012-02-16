@@ -31,6 +31,7 @@
 #import "WebLayer.h"
 #import "WebTileCacheLayer.h"
 #import "WebTileLayer.h"
+#import <wtf/MainThread.h>
 #import <utility>
 
 using namespace std;
@@ -60,6 +61,11 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     [CATransaction setDisableActions:YES];
     [m_tileCacheLayer addSublayer:m_tileContainerLayer.get()];
     [CATransaction commit];
+}
+
+TileCache::~TileCache()
+{
+    ASSERT(isMainThread());
 }
 
 void TileCache::tileCacheLayerBoundsChanged()

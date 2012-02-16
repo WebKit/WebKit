@@ -49,6 +49,7 @@ class TileCache {
 
 public:
     static PassOwnPtr<TileCache> create(WebTileCacheLayer*, const IntSize& tileSize);
+    ~TileCache();
 
     void tileCacheLayerBoundsChanged();
 

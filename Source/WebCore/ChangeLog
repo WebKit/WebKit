@@ -1,5 +1,25 @@
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
+        The TileCache object should be deallocated on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=78757
+        <rdar://problem/10866161>
+
+        Reviewed by Sam Weinig.
+
+        Since the WebTileCacheLayer can be deleted on the scrolling thread, we need to make sure that the underlying
+        TileCache object is actually destroyed on the main thread.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::~TileCache):
+        Assert that this object is being destroyed on the main thread.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer dealloc]):
+        If dealloc is being called from a non-main thread, make sure to delete the tile cache object on the main thread.
+
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
         Scrolling Coordinator must be deleted on the main thread
         https://bugs.webkit.org/show_bug.cgi?id=78756
         <rdar://problem/10866167>
