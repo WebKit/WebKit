@@ -1,3 +1,24 @@
+2012-02-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show memory counter graphics when switching to memory view
+        https://bugs.webkit.org/show_bug.cgi?id=78808
+
+        Switching to memory view in timeline will display memory counters. Counter
+        graphics know show fair data without approximations between sampling points.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype._calculateVisibleIndexes):
+        (WebInspector.MemoryStatistics.prototype._calculateXValues):
+        (WebInspector.MemoryStatistics.prototype._drawPolyline):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._timelinesOverviewItemSelected):
+        (WebInspector.TimelinePanel.prototype._memoryOverviewItemSelected):
+
 2012-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: [heap snapshot] It could be useful to have access to the selected heap object from the console.

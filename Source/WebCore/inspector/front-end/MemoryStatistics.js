@@ -184,18 +184,27 @@ WebInspector.MemoryStatistics.prototype = {
         var calculator = this._timelinePanel.calculator;
         var start = calculator.minimumBoundary * 1000;
         var end = calculator.maximumBoundary * 1000;
-        var firstIndex;
-        var lastIndex;
+        var firstIndex = 0;
+        var lastIndex = this._counters.length - 1;
         for (var i = 0; i < this._counters.length; i++) {
             var time = this._counters[i].time;
-            if (start <= time && time <= end) {
-                if (firstIndex === undefined)
-                    firstIndex = i;
+            if (time <= start) {
+                firstIndex = i;
+            } else {
+                if (end < time)
+                    break;
                 lastIndex = i;
             }
         }
+        // Maximum index of element whose time <= start.
         this._minimumIndex = firstIndex;
+
+        // Maximum index of element whose time <= end.
         this._maximumIndex = lastIndex;
+
+        // Current window bounds.
+        this._minTime = start;
+        this._maxTime = end;
     },
 
     _onMouseOver: function(event)
@@ -257,15 +266,12 @@ WebInspector.MemoryStatistics.prototype = {
         if (!this._counters.length)
             return;
 
-        var minTime = this._counters[this._minimumIndex].time;
-        var maxTime = this._counters[this._maximumIndex].time;
-
         var width = this._canvas.width;
-        var xFactor = width / (maxTime - minTime);
+        var xFactor = width / (this._maxTime - this._minTime);
 
         this._counters[this._minimumIndex].x = 0;
         for (var i = this._minimumIndex + 1; i < this._maximumIndex; i++)
-             this._counters[i].x = xFactor * (this._counters[i].time - minTime);
+             this._counters[i].x = xFactor * (this._counters[i].time - this._minTime);
         this._counters[this._maximumIndex].x = width;
     },
 
@@ -301,16 +307,19 @@ WebInspector.MemoryStatistics.prototype = {
 
         var originalValue = valueGetter(this._counters[this._minimumIndex]);
 
-        var yFactor = height / (2 * Math.max(maxValue - originalValue, originalValue - minValue));
+        var maxYRange = Math.max(maxValue - originalValue, originalValue - minValue);
+        var yFactor = maxYRange ? height / (2 * maxYRange) : 0.5;
 
         ctx.beginPath();
-        ctx.moveTo(0, originY + height / 2);
+        var currentY = originY + height / 2;
+        ctx.moveTo(0, currentY);
         for (var i = this._minimumIndex; i <= this._maximumIndex; i++) {
              var x = this._counters[i].x;
-             var y = originY + (height / 2 - (valueGetter(this._counters[i])- originalValue) * yFactor);
-             ctx.lineTo(x, y);
+             ctx.lineTo(x, currentY);
+             currentY = originY + (height / 2 - (valueGetter(this._counters[i])- originalValue) * yFactor);
+             ctx.lineTo(x, currentY);
         }
-        ctx.lineTo(width, originY + (height / 2 - (valueGetter(this._counters[this._maximumIndex]) - originalValue) * yFactor));
+        ctx.lineTo(width, currentY);
         ctx.lineWidth = 1;
         ctx.strokeStyle = color;
         ctx.stroke();

@@ -50,11 +50,11 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
     var timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
     topPaneSidebarTree.appendChild(timelinesOverviewItem);
     timelinesOverviewItem.revealAndSelect(false);
-    timelinesOverviewItem.onselect = this.showTimelines.bind(this);
+    timelinesOverviewItem.onselect = this._showTimelines.bind(this);
 
     var memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
     topPaneSidebarTree.appendChild(memoryOverviewItem);
-    memoryOverviewItem.onselect = this.showMemoryGraph.bind(this);
+    memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
 
     this._overviewGrid = new WebInspector.TimelineGrid();
     this._overviewGrid.element.id = "timeline-overview-grid";
@@ -93,16 +93,27 @@ WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor = .3;
 
 WebInspector.TimelineOverviewPane.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
 
+WebInspector.TimelineOverviewPane.Mode = {
+  Events: "Timeline",
+  Memory: "Memory"
+};
+
+WebInspector.TimelineOverviewPane.Events = {
+  ModeChanged: "ModeChanged"
+};
+
 WebInspector.TimelineOverviewPane.prototype = {
-    showTimelines: function() {
+    _showTimelines: function() {
         this._heapGraph.hide();
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+        this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, WebInspector.TimelineOverviewPane.Mode.Events);
     },
 
-    showMemoryGraph: function() {
+    _showMemoryGraph: function() {
         this._heapGraph.show();
         this._heapGraph.update(this._records);
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
+        this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, WebInspector.TimelineOverviewPane.Mode.Memory);
     },
 
     _onCategoryVisibilityChanged: function(event)
@@ -213,6 +224,8 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewWindow.scrollWindow(event);
     }
 }
+
+WebInspector.TimelineOverviewPane.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor

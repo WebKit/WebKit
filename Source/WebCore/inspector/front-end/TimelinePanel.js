@@ -65,6 +65,7 @@ WebInspector.TimelinePanel = function()
         this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
         this._timelineMemorySplitter.addStyleClass("hidden");
         this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
+        this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
     }
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
@@ -202,11 +203,7 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        var result = [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.garbageCollectButton.element, this.clearButton.element];
-        if (this._memoryStatisticsButton)
-            result.push(this._memoryStatisticsButton.element);
-        result.push(this.statusBarFilters);
-        return result;
+        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.garbageCollectButton.element, this.clearButton.element, this.statusBarFilters];
     },
 
     get defaultFocusedElement()
@@ -263,11 +260,6 @@ WebInspector.TimelinePanel.prototype = {
 
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
         this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
-
-        if (WebInspector.experimentsSettings.showMemoryCounters.isEnabled()) {
-            this._memoryStatisticsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Toggle DOM counters graphs"), "dom-counters-status-bar-item");
-            this._memoryStatisticsButton.addEventListener("click", this._toggleMemoryStatistics, this);
-        }
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";
@@ -412,6 +404,24 @@ WebInspector.TimelinePanel.prototype = {
         return eventDividerPadding;
     },
 
+    _timelinesOverviewModeChanged: function(event)
+    {
+        if (!this._memoryStatistics)
+            return;
+        if (event.data === WebInspector.TimelineOverviewPane.Mode.Events && this._memoryStatistics.visible()) {
+            this._timelineMemorySplitter.addStyleClass("hidden");
+            this._memoryStatistics.hide();
+            this.splitView.element.style.height = "auto";
+            this.splitView.element.style.bottom = "0";
+            this.onResize();
+        } else {
+            this._timelineMemorySplitter.removeStyleClass("hidden");
+            this._memoryStatistics.show();
+            this.splitView.element.style.bottom = "auto";
+            this._setSplitterPosition(600);
+        }
+    },
+
     _toggleTimelineButtonClicked: function()
     {
         if (this.toggleTimelineButton.toggled)
@@ -434,22 +444,6 @@ WebInspector.TimelinePanel.prototype = {
     _garbageCollectButtonClicked: function()
     {
         ProfilerAgent.collectGarbage();
-    },
-
-    _toggleMemoryStatistics: function()
-    {
-        if (this._memoryStatistics.visible()) {
-            this._timelineMemorySplitter.addStyleClass("hidden");
-            this._memoryStatistics.hide();
-            this.splitView.element.style.height = "auto";
-            this.splitView.element.style.bottom = "0";
-            this.onResize();
-        } else {
-            this._timelineMemorySplitter.removeStyleClass("hidden");
-            this._memoryStatistics.show();
-            this.splitView.element.style.bottom = "auto";
-            this._setSplitterPosition(600);
-        }
     },
 
     _onTimelineEventRecorded: function(event)
