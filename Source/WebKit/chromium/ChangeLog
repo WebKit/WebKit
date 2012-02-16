@@ -1,3 +1,13 @@
+2012-02-16  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Add WEBKIT_EXPORT to new WebDragData methods.
+        https://bugs.webkit.org/show_bug.cgi?id=78843
+
+        Reviewed by Tony Chang.
+
+        * public/platform/WebDragData.h:
+        (WebDragData):
+
 2012-02-16  Viet-Trung Luu  <viettrungluu@chromium.org>
 
         [chromium] Add method to WebPluginContainer to check if a rectangle is topmost

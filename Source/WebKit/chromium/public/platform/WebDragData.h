@@ -98,8 +98,8 @@ public:
 
     bool isNull() const { return !m_private; }
 
-    WebVector<Item> items() const;
-    void setItems(const WebVector<Item>&);
+    WEBKIT_EXPORT WebVector<Item> items() const;
+    WEBKIT_EXPORT void setItems(const WebVector<Item>&);
 
     WEBKIT_EXPORT WebString url() const;
     WEBKIT_EXPORT void setURL(const WebURL&);
@@ -139,7 +139,7 @@ public:
     };
     WEBKIT_EXPORT WebVector<CustomData> customData() const;
     WEBKIT_EXPORT void setCustomData(const WebVector<CustomData>&);
-    void addItem(const Item&);
+    WEBKIT_EXPORT void addItem(const Item&);
 
 #if WEBKIT_IMPLEMENTATION
     WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);
