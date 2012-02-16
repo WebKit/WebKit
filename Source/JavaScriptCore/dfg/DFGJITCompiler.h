@@ -92,11 +92,7 @@ public:
         ASSERT_UNUSED(codeOriginIndex, codeOriginIndex < UINT_MAX);
         ASSERT_UNUSED(codeOriginIndex, codeOriginIndex == m_codeOriginIndex);
     }
-    
-    void assertNoCodeOriginIndex() const
-    {
-        ASSERT(m_codeOriginIndex == UINT_MAX);
-    }
+
 private:
 #if !ASSERT_DISABLED
     unsigned m_codeOriginIndex;
@@ -205,22 +201,16 @@ public:
     Graph& graph() { return m_graph; }
     
     // Just get a token for beginning a call.
-    CallBeginToken nextCallBeginToken(CodeOrigin codeOrigin)
+    CallBeginToken beginJSCall()
     {
-        if (!codeOrigin.inlineCallFrame)
-            return CallBeginToken();
         return CallBeginToken(m_currentCodeOriginIndex++);
     }
     
     // Get a token for beginning a call, and set the current code origin index in
     // the call frame.
-    CallBeginToken beginCall(CodeOrigin codeOrigin)
+    CallBeginToken beginCall()
     {
-        unsigned codeOriginIndex;
-        if (!codeOrigin.inlineCallFrame)
-            codeOriginIndex = UINT_MAX;
-        else
-            codeOriginIndex = m_currentCodeOriginIndex++;
+        unsigned codeOriginIndex = m_currentCodeOriginIndex++;
         store32(TrustedImm32(codeOriginIndex), tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
         return CallBeginToken(codeOriginIndex);
     }

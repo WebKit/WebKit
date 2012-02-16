@@ -134,27 +134,16 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
         }
     }
-    
-    unsigned numCallsFromInlineCode = 0;
-    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
-        if (m_exceptionChecks[i].m_codeOrigin.inlineCallFrame)
-            numCallsFromInlineCode++;
-    }
 
-    if (numCallsFromInlineCode) {
-        Vector<CodeOriginAtCallReturnOffset>& codeOrigins = m_codeBlock->codeOrigins();
-        codeOrigins.resize(numCallsFromInlineCode);
-        
-        for (unsigned i = 0, j = 0; i < m_exceptionChecks.size(); ++i) {
-            CallExceptionRecord& record = m_exceptionChecks[i];
-            if (record.m_codeOrigin.inlineCallFrame) {
-                unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
-                codeOrigins[j].codeOrigin = record.m_codeOrigin;
-                codeOrigins[j].callReturnOffset = returnAddressOffset;
-                record.m_token.assertCodeOriginIndex(j);
-                j++;
-            }
-        }
+    Vector<CodeOriginAtCallReturnOffset>& codeOrigins = m_codeBlock->codeOrigins();
+    codeOrigins.resize(m_exceptionChecks.size());
+    
+    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
+        CallExceptionRecord& record = m_exceptionChecks[i];
+        unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
+        codeOrigins[i].codeOrigin = record.m_codeOrigin;
+        codeOrigins[i].callReturnOffset = returnAddressOffset;
+        record.m_token.assertCodeOriginIndex(i);
     }
     
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
@@ -254,7 +243,10 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     registerFileCheck.link(this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+
+    CallBeginToken token = beginCall();
     Call callRegisterFileCheck = call();
+    notifyCall(callRegisterFileCheck, CodeOrigin(0), token);
     jump(fromRegisterFileCheck);
     
     // The fast entry point into a function does not check the correct number of arguments
@@ -269,7 +261,9 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    token = beginCall();
     Call callArityCheck = call();
+    notifyCall(callArityCheck, CodeOrigin(0), token);
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jump(fromArityCheck);
     

@@ -362,7 +362,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             // place that we made it from. It just so happens to be the place that we are at
             // right now!
             stubJit.store32(
-                MacroAssembler::TrustedImm32(exec->codeOriginIndexForDFGWithInlining()),
+                MacroAssembler::TrustedImm32(exec->codeOriginIndexForDFG()),
                 CCallHelpers::tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
             
             operationCall = stubJit.call();

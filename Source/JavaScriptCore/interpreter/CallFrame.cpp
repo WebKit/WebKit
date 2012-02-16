@@ -96,15 +96,15 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
     if (pc.isSet()) {
         ReturnAddressPtr currentReturnPC = pc.jitReturnAddress();
         
-        if (!machineCodeBlock->codeOriginForReturn(currentReturnPC, codeOrigin))
-            return this; // Not currently in inlined code.
+        bool hasCodeOrigin = machineCodeBlock->codeOriginForReturn(currentReturnPC, codeOrigin);
+        ASSERT_UNUSED(hasCodeOrigin, hasCodeOrigin);
     } else {
-        unsigned index = codeOriginIndexForDFGWithInlining();
-        if (index == UINT_MAX)
-            return this; // Not currently in inlined code.
-        
+        unsigned index = codeOriginIndexForDFG();
         codeOrigin = machineCodeBlock->codeOrigin(index);
     }
+
+    if (!codeOrigin.inlineCallFrame)
+        return this; // Not currently in inlined code.
     
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
         InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;

@@ -1,3 +1,39 @@
+2012-02-15  Oliver Hunt  <oliver@apple.com>
+
+        Ensure that the DFG JIT always plants a CodeOrigin when making calls
+        https://bugs.webkit.org/show_bug.cgi?id=78763
+
+        Reviewed by Gavin Barraclough.
+
+        Make all calls plant a CodeOrigin prior to the actual
+        call.  Also clobbers the Interpreter with logic to ensure
+        that the interpreter always plants a bytecode offset.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (CallBeginToken):
+        (JSC::DFG::JITCompiler::beginJSCall):
+        (JSC::DFG::JITCompiler::beginCall):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::bytecodeOffsetForNonDFGCode):
+        (ExecState):
+        (JSC::ExecState::setBytecodeOffsetForNonDFGCode):
+        (JSC::ExecState::codeOriginIndexForDFG):
+
 2012-02-14  Oliver Hunt  <oliver@apple.com>
 
         Fix Interpreter.

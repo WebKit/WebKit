@@ -1408,7 +1408,7 @@ private:
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
         CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
-        CallBeginToken token = m_jit.beginCall(codeOrigin);
+        CallBeginToken token = m_jit.beginCall();
         JITCompiler::Call call = m_jit.appendCall(function);
         m_jit.addExceptionCheck(call, codeOrigin, token);
         return call;
