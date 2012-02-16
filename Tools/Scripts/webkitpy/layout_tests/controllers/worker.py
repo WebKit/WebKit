@@ -44,9 +44,20 @@ from webkitpy.layout_tests.views import printing
 _log = logging.getLogger(__name__)
 
 
+class WorkerArguments(object):
+    def __init__(self, worker_number, results_directory, options):
+        self.worker_number = worker_number
+        self.results_directory = results_directory
+        self.options = options
+
+
 class Worker(manager_worker_broker.AbstractWorker):
-    def __init__(self, worker_connection, worker_number, results_directory, options):
-        manager_worker_broker.AbstractWorker.__init__(self, worker_connection, worker_number, results_directory, options)
+    def __init__(self, worker_connection, worker_arguments):
+        super(Worker, self).__init__(worker_connection, worker_arguments)
+        self._worker_number = worker_arguments.worker_number
+        self._name = 'worker/%d' % self._worker_number
+        self._results_directory = worker_arguments.results_directory
+        self._options = worker_arguments.options
         self._done = False
         self._canceled = False
         self._port = None
@@ -83,10 +94,11 @@ class Worker(manager_worker_broker.AbstractWorker):
     def name(self):
         return self._name
 
-    def run(self, port):
-        if port:
-            self._port = port
-        else:
+    def set_inline_arguments(self, port):
+        self._port = port
+
+    def run(self):
+        if not self._port:
             # We are running in a child process and need to create a new Host.
             if self._options.platform and 'test' in self._options.platform:
                 # It is lame to import mocks into real code, but this allows us to use the test port in multi-process tests as well.

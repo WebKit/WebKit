@@ -759,7 +759,18 @@ class Manager(object):
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
         for worker_number in xrange(num_workers):
-            worker_connection = manager_connection.start_worker(worker_number, self._port, self.results_directory(), self._options)
+            worker_arguments = worker.WorkerArguments(worker_number, self.results_directory(), self._options)
+            worker_connection = manager_connection.start_worker(worker_arguments)
+            if self._options.worker_model == 'inline':
+                # FIXME: We need to be able to share a port with the work so
+                # that some of the tests can query state on the port; ideally
+                # we'd rewrite the tests so that this wasn't necessary.
+                #
+                # Note that this only works because in the inline case
+                # the worker hasn't really started yet and won't start
+                # running until we call run_message_loop(), below.
+                worker_connection.set_inline_arguments(self._port)
+
             worker_state = _WorkerState(worker_number, worker_connection)
             self._worker_states[worker_connection.name] = worker_state
 

@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.layout_tests.controllers.worker import Worker
+from webkitpy.layout_tests.controllers.worker import Worker, WorkerArguments
 from webkitpy.tool.mocktool import MockOptions
 
 
@@ -45,9 +45,9 @@ class WorkerTest(unittest.TestCase):
         # This checks that we got a port and didn't raise an exception
         # if we didn't specify a port with the --platform flag.
         worker_connection = FakeConnection()
-        worker = Worker(worker_connection, 1, "/tmp", MockOptions(platform=None, print_options=None, verbose=False, batch_size=0))
+        worker = Worker(worker_connection, WorkerArguments(1, '/tmp', MockOptions(platform=None, print_options=None, verbose=False, batch_size=0)))
         worker._done = True
-        worker.run(None)
+        worker.run()
         self.assertNotEquals(worker._port, None)
 
 

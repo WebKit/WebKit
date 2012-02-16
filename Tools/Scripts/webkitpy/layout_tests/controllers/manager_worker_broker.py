@@ -86,7 +86,7 @@ def get(worker_model, client, worker_class):
 
 
 class AbstractWorker(message_broker.BrokerClient):
-    def __init__(self, worker_connection, worker_number, results_directory, options):
+    def __init__(self, worker_connection, worker_arguments=None):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
         that cannot be Pickled or sent across processes (like opening
@@ -96,16 +96,11 @@ class AbstractWorker(message_broker.BrokerClient):
         Args:
             worker_connection - handle to the BrokerConnection object creating
                 the worker and that can be used for messaging.
-            worker_number - identifier for this particular worker
-            options - command-line argument object from optparse"""
+            worker_arguments - (optional, Picklable) object passed to the worker from the manager"""
         message_broker.BrokerClient.__init__(self)
         self._worker_connection = worker_connection
-        self._options = options
-        self._worker_number = worker_number
-        self._name = 'worker/%d' % worker_number
-        self._results_directory = results_directory
 
-    def run(self, port):
+    def run(self):
         """Callback for the worker to start executing. Typically does any
         remaining initialization and then calls broker_connection.run_message_loop()."""
         raise NotImplementedError
@@ -130,7 +125,12 @@ class _ManagerConnection(message_broker.BrokerConnection):
             MANAGER_TOPIC, ANY_WORKER_TOPIC)
         self._worker_class = worker_class
 
-    def start_worker(self, worker_number, port, results_directory, options):
+    def start_worker(self, worker_arguments=None):
+        """Starts a new worker.
+
+        Args:
+            worker_arguments - an optional Picklable object that is passed to the worker constructor
+        """
         raise NotImplementedError
 
 
@@ -139,31 +139,35 @@ class _InlineManager(_ManagerConnection):
         _ManagerConnection.__init__(self, broker, client, worker_class)
         self._inline_worker = None
 
-    def start_worker(self, worker_number, port, results_directory, options):
+    def start_worker(self, worker_arguments=None):
         self._inline_worker = _InlineWorkerConnection(self._broker,
-            self._client, self._worker_class, worker_number, results_directory, options)
-        self._port = port
+            self._client, self._worker_class, worker_arguments)
         return self._inline_worker
+
+    def set_inline_arguments(self, arguments=None):
+        # Note that this method only exists here, and not on all
+        # ManagerConnections; calling this method on a MultiProcessManager
+        # will deliberately result in a runtime error.
+        self._inline_worker.set_inline_arguments(arguments)
 
     def run_message_loop(self, delay_secs=None):
         # Note that delay_secs is ignored in this case since we can't easily
         # implement it.
-        self._inline_worker.run(self._port)
+        self._inline_worker.run()
         self._broker.run_all_pending(MANAGER_TOPIC, self._client)
 
 
 class _MultiProcessManager(_ManagerConnection):
-    def start_worker(self, worker_number, port, results_directory, options):
-        # Note that we ignore the port since we can't pass it to the child (it isn't Picklable).
+    def start_worker(self, worker_arguments=None):
         worker_connection = _MultiProcessWorkerConnection(self._broker,
-            self._worker_class, worker_number, results_directory, options)
+            self._worker_class, worker_arguments)
         worker_connection.start()
         return worker_connection
 
 
 class _WorkerConnection(message_broker.BrokerConnection):
-    def __init__(self, broker, worker_class, worker_number, results_directory, options):
-        self._client = worker_class(self, worker_number, results_directory, options)
+    def __init__(self, broker, worker_class, worker_arguments=None):
+        self._client = worker_class(self, worker_arguments)
         self.name = self._client.name()
         message_broker.BrokerConnection.__init__(self, broker, self._client,
                                                  ANY_WORKER_TOPIC, MANAGER_TOPIC)
@@ -182,8 +186,8 @@ class _WorkerConnection(message_broker.BrokerConnection):
 
 
 class _InlineWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, manager_client, worker_class, worker_number, results_directory, options):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, options)
+    def __init__(self, broker, manager_client, worker_class, worker_arguments):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_arguments)
         self._alive = False
         self._manager_client = manager_client
 
@@ -196,9 +200,12 @@ class _InlineWorkerConnection(_WorkerConnection):
     def join(self, timeout):
         assert not self._alive
 
-    def run(self, port):
+    def set_inline_arguments(self, arguments):
+        self._client.set_inline_arguments(arguments)
+
+    def run(self):
         self._alive = True
-        self._client.run(port)
+        self._client.run()
         self._alive = False
 
     def yield_to_broker(self):
@@ -218,11 +225,12 @@ class _Process(multiprocessing.Process):
         self._client = client
 
     def run(self):
-        self._client.run(port=None)
+        self._client.run()
+
 
 class _MultiProcessWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, worker_class, worker_number, results_directory, options):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, options)
+    def __init__(self, broker, worker_class, worker_arguments):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_arguments)
         self._proc = _Process(self, self._client)
 
     def cancel(self):

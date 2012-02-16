@@ -1,3 +1,62 @@
+2012-02-15  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: add a worker_args concept to start_worker()
+        https://bugs.webkit.org/show_bug.cgi?id=78572
+
+        Reviewed by Tony Chang.
+
+        This change replaces the three NRWT-specific arguments passed
+        through the broker to the worker with a generic WorkerArguments
+        wrapper class and a separate set_inline_arguments() call that can
+        be used to pass additional data to the worker when it is running
+        in the same process as the manager (this is needed for testing).
+        With the addition of set_inline_arguments() we also no longer
+        need to pass an optional argument to the worker.run() call.
+
+        Note that this method is *only* implemented on inline workers,
+        so calling this on a regular (child process) worker will result
+        in a runtime error.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (AbstractWorker.__init__):
+        (AbstractWorker.run):
+        (_ManagerConnection.start_worker):
+        (_InlineManager.start_worker):
+        (_InlineManager.set_inline_arguments):
+        (_InlineManager.run_message_loop):
+        (_MultiProcessManager.start_worker): Reworked signature.
+        (_WorkerConnection.__init__):
+        (_InlineWorkerConnection.__init__):
+        (_InlineWorkerConnection.set_inline_arguments): New method.
+        (_InlineWorkerConnection):
+        (_InlineWorkerConnection.run):
+        (_Process.run):
+        (_MultiProcessWorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker.__init__):
+        (_TestWorker.set_inline_arguments):
+        (_TestWorker.handle_test):
+        (_TestWorker.run):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        (_TestsMixin.test_unknown_message):
+        (InlineBrokerTests): New class for more testing.
+        (InlineBrokerTests.setUp):
+        (InlineBrokerTests.test_inline_arguments): New test.
+        (InterfaceTest.test_managerconnection_is_abstract):
+        (InterfaceTest.test_workerconnection_is_abstract):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (WorkerArguments):
+        (WorkerArguments.__init__):
+        (Worker.__init__):
+        (Worker.set_inline_arguments):
+        (Worker):
+        (Worker.run):
+        * Scripts/webkitpy/layout_tests/controllers/worker_unittest.py:
+        (WorkerTest.test_default_platform_in_worker):
+
 2012-02-15  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, rolling out r107704.
