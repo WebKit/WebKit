@@ -1,3 +1,13 @@
+2012-02-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Clipping/Transforms applied in wrong order in opaque paint tracking
+        https://bugs.webkit.org/show_bug.cgi?id=78775
+
+        Reviewed by Stephen White.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+
 2012-02-16  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Add WEBKIT_EXPORT to new WebDragData methods.

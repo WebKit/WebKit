@@ -163,6 +163,30 @@ TEST(PlatformContextSkiaTest, trackOpaqueClipTest)
     context.clearRect(FloatRect(10, 10, 90, 90));
     EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
 
+    // The transform and the clip need to interact correctly (transform first)
+    context.save();
+    context.translate(10, 10);
+    context.clip(FloatRect(20, 20, 10, 10));
+    context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    EXPECT_EQ_RECT(IntRect(30, 30, 10, 10), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+    context.restore();
+
+    context.clearRect(FloatRect(10, 10, 90, 90));
+    EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+
+    // The transform and the clip need to interact correctly (clip first)
+    context.save();
+    context.clip(FloatRect(20, 20, 10, 10));
+    context.translate(10, 10);
+    context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    EXPECT_EQ_RECT(IntRect(20, 20, 10, 10), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+    context.restore();
+
+    context.clearRect(FloatRect(10, 10, 90, 90));
+    EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+
     Path path;
     path.moveTo(FloatPoint(0, 0));
     path.addLineTo(FloatPoint(100, 0));

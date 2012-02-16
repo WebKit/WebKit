@@ -235,7 +235,12 @@ void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const AffineT
 {
     SkRect targetRect = rect;
 
-    // Apply the current clip.
+    // Apply the transform to device coordinate space.
+    SkMatrix canvasTransform = context->canvas()->getTotalMatrix();
+    if (!canvasTransform.mapRect(&targetRect))
+        fillsBounds = false;
+
+    // Apply the current clip in device coordinate space.
     if (context->canvas()->getClipType() != SkCanvas::kRect_ClipType)
         fillsBounds = false;
     else {
@@ -247,10 +252,7 @@ void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const AffineT
     if (!context->clippedToImage().isOpaque())
         fillsBounds = false;
 
-    // Apply the transforms.
-    SkMatrix canvasTransform = context->canvas()->getTotalMatrix();
-    if (!canvasTransform.mapRect(&targetRect))
-        fillsBounds = false;
+    // Apply the transform to the tracking space.
     SkMatrix canvasToTargetTransform = transform;
     if (!canvasToTargetTransform.mapRect(&targetRect))
         fillsBounds = false;
