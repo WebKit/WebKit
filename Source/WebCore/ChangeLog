@@ -1,3 +1,23 @@
+2012-02-07  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: fixed-table-layout-013 and fixed-table-layout-015 fail
+        https://bugs.webkit.org/show_bug.cgi?id=78027
+
+        Reviewed by Julien Chaffraix.
+
+        Both of these test the (slightly implicit) rule that width set on column-groups cannot
+        affect the width of columns in a fixed layout table: http://www.w3.org/TR/CSS21/tables.html#fixed-table-layout
+        FF, Opera and IE all pass these two tests.
+
+        Tests: css2.1/20110323/fixed-table-layout-013.htm
+               css2.1/20110323/fixed-table-layout-015.htm
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::nextCol): A helper function for finding the next column along.
+        (WebCore::FixedTableLayout::calcWidthArray): Ignore width specified by column groups.
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::isTableColGroup): Convenience function for identifying column groups.
+
 2012-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r107941.
