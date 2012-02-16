@@ -87,12 +87,14 @@ using namespace WebCore;
 
 - (void)setContentsScale:(CGFloat)contentsScale
 {
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     CGFloat oldContentsScale = [self contentsScale];
 
     [super setContentsScale:contentsScale];
 
     if (contentsScale != oldContentsScale)
         _tileCache->setContentsScale(contentsScale);
+#endif
 }
 
 - (CALayer *)tileContainerLayer

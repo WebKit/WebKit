@@ -1,3 +1,12 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix the Snow Leopard build.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::createTileLayer):
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setContentsScale:]):
+
 2012-02-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r107836): fast/box-shadow/spread.html and fast/writing-mode/box-shadow-*.html tests failing
