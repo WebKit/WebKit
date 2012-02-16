@@ -194,6 +194,10 @@ module test {
         attribute double[]                  doubleArray;
 #endif
 
+#if defined(TESTING_JS)
+        void methodWithUnsignedLongArray(in unsigned long[] unsignedLongArray);
+#endif
+
         readonly attribute [CheckAccessToNode] Document contentDocument;
         [CheckAccessToNode] SVGDocument getSVGDocument()
             raises(DOMException);

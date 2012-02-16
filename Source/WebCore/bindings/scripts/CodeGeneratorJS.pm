@@ -274,6 +274,8 @@ sub AddIncludesForType
     } elsif ($type eq "DOMString[]") {
         # FIXME: Add proper support for T[], T[]?, sequence<T>
         $includesRef->{"JSDOMStringList.h"} = 1;
+    } elsif ($type eq "unsigned long[]") {
+        $includesRef->{"<wtf/Vector.h>"} = 1;
     } elsif ($isCallback) {
         $includesRef->{"JS${type}.h"} = 1;
     } elsif (IsTypedArrayType($type)) {
@@ -2762,7 +2764,8 @@ my %nativeType = (
     "long long" => "long long",
     "unsigned long long" => "unsigned long long",
     "MediaQueryListListener" => "RefPtr<MediaQueryListListener>",
-    "DOMTimeStamp" => "DOMTimeStamp"
+    "DOMTimeStamp" => "DOMTimeStamp",
+    "unsigned long[]" => "Vector<unsigned long>"
 );
 
 sub GetNativeType
@@ -2891,6 +2894,11 @@ sub JSValueToNative
         return "toDOMStringList($value)";
     }
 
+    if ($type eq "unsigned long[]") {
+        AddToImplIncludes("JSDOMBinding.h", $conditional);
+        return "jsUnsignedLongArrayToVector(exec, $value)";
+    }
+
     AddToImplIncludes("HTMLOptionElement.h", $conditional) if $type eq "HTMLOptionElement";
     AddToImplIncludes("JSCustomVoidCallback.h", $conditional) if $type eq "VoidCallback";
     AddToImplIncludes("Event.h", $conditional) if $type eq "Event";
@@ -2967,6 +2975,8 @@ sub NativeToJSValue
     } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "$value ? $value->deserialize(exec, castedThis->globalObject(), 0) : jsNull()";
+    } elsif ($type eq "unsigned long[]") {
+        AddToImplIncludes("<wrt/Vector.h>", $conditional);
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);

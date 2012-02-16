@@ -1,3 +1,29 @@
+2012-02-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add support for unsigned long[] to idl bindings to JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=78210
+
+        Reviewed by Kentaro Hara.
+
+        Add support for unsigned long[] parameter type in idl.
+        This patch adds support just for unsigned long[] parameter type.
+        (support for other types of array should be done in another patch.)
+
+        tests added to TestObj.idl.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsUnsignedLongArrayToVector):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (JSValueToNative):
+        (NativeToJSValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUnsignedLongArray):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/TestObj.idl:
+
 2012-02-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Add IndexedDB TreeElement to resources panel.

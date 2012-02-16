@@ -38,6 +38,7 @@
 #include <runtime/ObjectPrototype.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -342,6 +343,23 @@ enum ParameterDefaultPolicy {
         return AtomicString(identifier.impl());
     }
 
+    inline Vector<unsigned long> jsUnsignedLongArrayToVector(JSC::ExecState* exec, JSC::JSValue value)
+    {
+        unsigned length;
+        JSC::JSObject* object = toJSSequence(exec, value, length);
+        if (exec->hadException())
+            return Vector<unsigned long>();
+
+        Vector<unsigned long> result;
+        for (unsigned i = 0; i < length; i++) {
+            JSC::JSValue indexedValue;
+            indexedValue = object->get(exec, i);
+            if (exec->hadException() || indexedValue.isUndefinedOrNull() || !indexedValue.isNumber())
+                return Vector<unsigned long>();
+            result.append(indexedValue.toUInt32(exec));
+        }
+        return result;
+    }
 } // namespace WebCore
 
 #endif // JSDOMBinding_h
