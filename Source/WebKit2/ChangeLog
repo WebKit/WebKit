@@ -1,5 +1,19 @@
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Page content is incorrectly translated whenh rendering pages for printing in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=78712
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::enumeratePrintersFunction):
+        Simplify the code to select the printer.
+        (WebKit::WebPrintOperationGtk::renderPage): Call cairo_save()
+        before rendering the page and cairo_restore() when page has been
+        rendered.
+
+2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitPrintOperation to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=76448
 

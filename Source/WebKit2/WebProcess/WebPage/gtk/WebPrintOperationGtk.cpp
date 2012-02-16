@@ -55,21 +55,15 @@ public:
 
     static gboolean enumeratePrintersFunction(GtkPrinter* printer, WebPrintOperationGtkUnix* printOperation)
     {
-        GtkPrinter* selectedPrinter = 0;
         const char* printerName = gtk_print_settings_get_printer(printOperation->printSettings());
-        if (printerName) {
-            if (!strcmp(printerName, gtk_printer_get_name(printer)))
-                selectedPrinter = printer;
-        } else if (gtk_printer_is_default(printer))
-            selectedPrinter = printer;
-
-        if (!selectedPrinter)
+        if ((printerName && strcmp(printerName, gtk_printer_get_name(printer)))
+            || (!printerName && !gtk_printer_is_default(printer)))
             return FALSE;
 
         static int jobNumber = 0;
         const char* applicationName = g_get_application_name();
         GOwnPtr<char>jobName(g_strdup_printf("%s job #%d", applicationName ? applicationName : "WebKit", ++jobNumber));
-        printOperation->m_printJob = adoptGRef(gtk_print_job_new(jobName.get(), selectedPrinter,
+        printOperation->m_printJob = adoptGRef(gtk_print_job_new(jobName.get(), printer,
                                                                  printOperation->printSettings(),
                                                                  printOperation->pageSetup()));
         return TRUE;
@@ -327,6 +321,7 @@ void WebPrintOperationGtk::rotatePage()
 void WebPrintOperationGtk::renderPage(int pageNumber)
 {
     startPage(m_cairoContext.get());
+    cairo_save(m_cairoContext.get());
 
     if (m_needsRotation)
         rotatePage();
@@ -340,6 +335,7 @@ void WebPrintOperationGtk::renderPage(int pageNumber)
     WebCore::GraphicsContext graphicsContext(&platformContext);
     m_printContext->spoolPage(graphicsContext, pageNumber, pageWidth);
 
+    cairo_restore(m_cairoContext.get());
     endPage(m_cairoContext.get());
 }
 
