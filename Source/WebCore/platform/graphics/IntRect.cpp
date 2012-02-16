@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IntRect.h"
 
+#include "FractionalLayoutRect.h"
 #include "FloatRect.h"
 #include <algorithm>
 
@@ -37,6 +38,12 @@ namespace WebCore {
 IntRect::IntRect(const FloatRect& r)
     : m_location(IntPoint(static_cast<int>(r.x()), static_cast<int>(r.y())))
     , m_size(IntSize(static_cast<int>(r.width()), static_cast<int>(r.height())))
+{
+}
+
+IntRect::IntRect(const FractionalLayoutRect& r)
+    : m_location(flooredIntPoint(r.location()))
+    , m_size(flooredIntSize(r.size()))
 {
 }
 

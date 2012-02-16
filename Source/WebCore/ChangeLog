@@ -1,3 +1,61 @@
+2012-02-15  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
+
+        Add FractionalLayoutPoint/Size/Rect for sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=76571
+
+        Reviewed by Eric Seidel.
+
+        Add fixed point versions of the Point, Size and Rect classes using
+        the new FractionalLayoutPoint type and.
+
+        FractionalLayoutPoint, FractionalLayoutSize and FractionalLayoutRect are
+        Point, Size and Rect implementations respectively using this new type.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FractionalLayoutUnit.h:
+        Fixed a couple of typos and signed/unsigned bugs.
+
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::FloatPoint):
+        Add explicit FloatPoint(FractionalLayoutPoint) constructor.
+        
+        (WebCore::FloatPoint::move):
+        Add move(FractionalLayoutSize) implementation.
+        
+        (WebCore::FloatPoint::moveBy):
+        Add moveBy(FractionalLayoutPoint) implementation.
+
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::FloatRect):
+        Add explicit FloatRectFractionalLayoutRect) constructor.
+        
+        * platform/graphics/FloatRect.h:
+        (WebCore):
+        (FloatRect):
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::FloatSize):
+        Add explicit FloatSize(FractionalLayoutSize) constructor.
+
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FractionalLayoutPoint.h: Added.
+        * platform/graphics/FractionalLayoutRect.cpp: Added.
+        * platform/graphics/FractionalLayoutRect.h: Added.
+        * platform/graphics/FractionalLayoutSize.cpp: Added.
+        * platform/graphics/FractionalLayoutSize.h: Added.
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::IntRect):
+        Add explicit IntRect(FractionalLayoutRect) constructor.
+
+        * platform/graphics/IntRect.h:
+
 2012-02-15  Kentaro Hara  <haraken@chromium.org>
 
         [Mac] PasteboardMac.mm build fails
