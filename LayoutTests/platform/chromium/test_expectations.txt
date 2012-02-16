@@ -3791,11 +3791,6 @@ BUGJAMESR : compositing/masks/masked-ancestor.html = IMAGE PASS
 
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
-// Hitting ASSERT_NOT_REACHED in EventHandler::handleTouchEvent() as of r106554.
-BUGWK77620 DEBUG : fast/events/touch/touch-target.html = CRASH
-BUGWK77620 DEBUG : fast/events/touch/touch-coords-in-zoom-and-scroll.html = CRASH
-BUGWK77620 DEBUG : fast/events/touch/basic-multi-touch-events.html = CRASH
-
 BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 
@@ -3829,28 +3824,6 @@ BUGWK78159 DEBUG WIN SNOWLEOPARD : compositing/iframes/scrolling-iframe.html = P
 // Some of the new baselines don't make any sense.
 // BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 BUGNOEL : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
-
-// Started to fail after r107349.
-BUGWK78331 : editing/spelling/spelling-marker-description.html = TEXT
-
-
-// Needs a rebaseline.
-BUGWK75478 : fast/html/details-add-summary-10-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-8-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-1-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-2-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-6-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-7-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-5-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-5-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-1-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-6-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-4-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-3-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-3-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-4-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-remove-summary-2-and-click.html = IMAGE
-BUGWK75478 : fast/html/details-add-summary-9-and-click.html = IMAGE
 
 // Needs investigation.
 BUGWK78422 : svg/animations/animate-text-nested-transforms.html = TEXT
