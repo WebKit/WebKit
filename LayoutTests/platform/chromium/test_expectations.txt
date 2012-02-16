@@ -4266,3 +4266,7 @@ BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html = IMAGE
+
+// Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
+BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
+
