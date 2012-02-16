@@ -2328,9 +2328,6 @@ BUG_YUTAK LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
-// New test added from https://bugs.webkit.org/show_bug.cgi?id=78385, needs baselines.
-BUGWK78385 : svg/text/tspan-dynamic-positioning.svg = IMAGE+TEXT
-
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
@@ -3866,6 +3863,10 @@ BUGWK78755 : fast/box-shadow/spread.html = IMAGE
 BUGWK78755 : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
 BUGWK78755 : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
 BUGWK78755 : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
+
+// Still flaky:
+BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
+BUGWK78830 : svg/repaint/image-with-clip-path.svg = IMAGE
 
 // Needs a rebaseline, as svg/dynamic-updates tests are now using the repaint.js harness.
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-href-attr.html = IMAGE
