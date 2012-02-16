@@ -566,6 +566,8 @@ void PlatformCALayer::setOpacity(float value)
     setNeedsCommit();
 }
 
+#if ENABLE(CSS_FILTERS)
+
 void PlatformCALayer::setFilters(const FilterOperations&)
 {
 }
@@ -574,6 +576,8 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations&)
 {
     return false;
 }
+
+#endif // ENABLE(CSS_FILTERS)
 
 String PlatformCALayer::name() const
 {
