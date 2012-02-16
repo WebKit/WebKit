@@ -187,6 +187,11 @@
                       "slavenames": ["szeged-linux-2"]
                     },
                     {
+                      "name": "Qt Linux 64-bit Release (Perf)", "type": "BuildAndPerfTest", "builddir": "qt-linux-64-release-perf-tests",
+                      "platform": "qt", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["szeged-linux-3"]
+                    },
+                    {
                       "name": "Qt Linux ARMv7 Release", "type": "Build", "builddir": "qt-linux-armv7-release",
                       "platform": "qt", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["szeged-linux-4"]
@@ -280,7 +285,7 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug",
-                                       "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
+                                       "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
