@@ -38,6 +38,7 @@
 #include "JSDOMBinding.h"
 #include "JSEntryCallback.h"
 #include "JSErrorCallback.h"
+#include <runtime/Error.h>
 #include <wtf/Assertions.h>
 
 using namespace JSC;

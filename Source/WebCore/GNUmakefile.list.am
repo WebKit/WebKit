@@ -1871,6 +1871,7 @@ webcore_sources += \
 	Source/WebCore/fileapi/EntryArray.h \
 	Source/WebCore/fileapi/EntryArraySync.cpp \
 	Source/WebCore/fileapi/EntryArraySync.h \
+	Source/WebCore/fileapi/EntryBase.cpp \
 	Source/WebCore/fileapi/EntryBase.h \
 	Source/WebCore/fileapi/EntryCallback.h \
 	Source/WebCore/fileapi/EntrySync.cpp \
@@ -4835,8 +4836,11 @@ dom_binding_idls += \
 	$(WebCore)/fileapi/FileWriterCallback.idl \
 	$(WebCore)/fileapi/FileWriterSync.idl \
 	$(WebCore)/fileapi/Metadata.idl \
-	$(WebCore)/fileapi/MetadataCallback.idl \
-	$(WebCore)/fileapi/WebKitFlags.idl
+	$(WebCore)/fileapi/MetadataCallback.idl
+
+webcoregtk_sources += \
+	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
+	Source/WebCore/platform/gtk/AsyncFileSystemGtk.h
 endif # END ENABLE_FILE_SYSTEM
 
 # ----

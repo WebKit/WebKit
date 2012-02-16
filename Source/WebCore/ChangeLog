@@ -1,3 +1,47 @@
+2012-02-16  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] File system api build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=78479
+
+        Reviewed by Philippe Normand.
+
+        This patch is a small step to support FileSystem API for GTK port.
+        As I know, bug58443 also dealt with it, but it looks like the submitted patch
+        needs to be updated. To do that, I think I need to discuss with the original author.
+        So, I hope to just fix build break issue in this bug.
+
+        No new tests. Implementing the feature is not done yet.
+
+        * GNUmakefile.list.am: Added some missing files.
+        * bindings/js/JSDirectoryEntryCustom.cpp: Added Error.h to use its API.
+        * platform/AsyncFileSystem.cpp:
+        (WebCore):
+        (WebCore::AsyncFileSystem::create): The arguments don't match the declaration in AsyncFileSystem.h.
+        * platform/gtk/AsyncFileSystemGtk.cpp: Added.
+        (WebCore):
+        (WebCore::AsyncFileSystem::isAvailable):
+        (WebCore::AsyncFileSystem::isValidType):
+        (WebCore::AsyncFileSystem::create):
+        (WebCore::AsyncFileSystem::openFileSystem):
+        (WebCore::AsyncFileSystem::crackFileSystemURL):
+        (WebCore::AsyncFileSystemGtk::AsyncFileSystemGtk):
+        (WebCore::AsyncFileSystemGtk::~AsyncFileSystemGtk):
+        (WebCore::AsyncFileSystemGtk::toURL):
+        (WebCore::AsyncFileSystemGtk::move):
+        (WebCore::AsyncFileSystemGtk::copy):
+        (WebCore::AsyncFileSystemGtk::remove):
+        (WebCore::AsyncFileSystemGtk::removeRecursively):
+        (WebCore::AsyncFileSystemGtk::readMetadata):
+        (WebCore::AsyncFileSystemGtk::createFile):
+        (WebCore::AsyncFileSystemGtk::createDirectory):
+        (WebCore::AsyncFileSystemGtk::fileExists):
+        (WebCore::AsyncFileSystemGtk::directoryExists):
+        (WebCore::AsyncFileSystemGtk::readDirectory):
+        (WebCore::AsyncFileSystemGtk::createWriter):
+        * platform/gtk/AsyncFileSystemGtk.h: Added.
+        (WebCore):
+        (AsyncFileSystemGtk):
+
 2012-02-16  Adrienne Walker  <enne@google.com>
 
         Handle dirty descendant visibility status in RenderLayer::updateLayerPositionsAfterScroll

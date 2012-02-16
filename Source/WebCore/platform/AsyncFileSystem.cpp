@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystemCallbacks.h"
+#include "ExceptionCode.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
 
@@ -44,7 +45,7 @@ const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSyste
 const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
 const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
 
-#if !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK)
 bool AsyncFileSystem::isAvailable()
 {
     notImplemented();
@@ -56,10 +57,10 @@ bool AsyncFileSystem::isValidType(Type type)
     return type == Temporary || type == Persistent;
 }
 
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type, const String&)
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
