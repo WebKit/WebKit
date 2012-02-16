@@ -204,7 +204,7 @@ void WebKitPlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation
 WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 {
     m_timestamp = WTF::currentTime();
-    mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), &m_modifiers);
+    mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), m_modifiers);
     m_position = e->pos().toPoint();
     m_globalPosition = e->screenPos();
     m_granularity = ScrollByPixelWheelEvent;
@@ -215,7 +215,7 @@ WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e)
 {
     m_timestamp = WTF::currentTime();
-    mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), &m_modifiers);
+    mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), m_modifiers);
     m_position = e->pos();
     m_globalPosition = e->globalPos();
     m_granularity = ScrollByPixelWheelEvent;
