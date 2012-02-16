@@ -116,7 +116,6 @@ TestShell::TestShell(bool testShellMode)
     , m_stressOpt(false)
     , m_stressDeopt(false)
     , m_dumpWhenFinished(true)
-    , m_isDisplayingModalDialog(false)
 {
     WebRuntimeFeatures::enableDataTransferItems(true);
     WebRuntimeFeatures::enableGeolocation(true);

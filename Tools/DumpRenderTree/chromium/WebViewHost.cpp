@@ -893,18 +893,11 @@ WebRect WebViewHost::windowResizerRect()
 
 void WebViewHost::runModal()
 {
-    if (m_shell->isDisplayingModalDialog()) {
-        // DumpRenderTree doesn't support modal dialogs, so a test shouldn't try to start two modal dialogs at the same time.
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_shell->setIsDisplayingModalDialog(true);
     bool oldState = webkit_support::MessageLoopNestableTasksAllowed();
     webkit_support::MessageLoopSetNestableTasksAllowed(true);
     m_inModalLoop = true;
     webkit_support::RunMessageLoop();
     webkit_support::MessageLoopSetNestableTasksAllowed(oldState);
-    m_shell->setIsDisplayingModalDialog(false);
 }
 
 bool WebViewHost::enterFullScreen()

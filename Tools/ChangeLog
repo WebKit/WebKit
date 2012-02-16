@@ -1,3 +1,24 @@
+2012-02-15  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed, rolling out r107704.
+        http://trac.webkit.org/changeset/107704
+        https://bugs.webkit.org/show_bug.cgi?id=78486
+
+        Caused layout test crashes in debug builds.
+
+        Specific crashing tests:
+
+        fast/events/show-modal-dialog-onblur-onfocus.html
+        fast/harness/show-modal-dialog.html
+        inspector/console/console-long-eval-crash.html
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::runModal):
+
 2012-02-15  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt] Add UI for HTTP authentication in the Qt MiniBrowser
