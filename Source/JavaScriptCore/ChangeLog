@@ -1,4 +1,3 @@
-<<<<<<< .mine
 2012-02-15  Gavin Barraclough  <barraclough@apple.com>
 
         Numerous trivial bugs in Object.defineProperty
@@ -53,7 +52,6 @@
         (JSC::Structure::isFrozen):
             - 'isFrozen' shouldn't be checking the ReadOnly bit for accessor descriptors (we presently always keep this bit as 'false').
 
-=======
 2012-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not check the types of arguments that are dead
@@ -70,7 +68,6 @@
         * dfg/DFGSpeculativeJIT.cpp:
         (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
 
->>>>>>> .r107954
 2012-02-15  Oliver Hunt  <oliver@apple.com>
 
         Ensure that the DFG JIT always plants a CodeOrigin when making calls
