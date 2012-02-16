@@ -1,3 +1,32 @@
+2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Gtk][Efl][Qt] Move OpenGLShims out of cairo/ subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=78800
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The file is not specific to Cairo and used in other ports. Move it into
+        common space.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * Target.pri:
+        * platform/graphics/OpenGLShims.cpp: Renamed from Source/WebCore/platform/graphics/cairo/OpenGLShims.cpp.
+        (WebCore):
+        (WebCore::openGLFunctionTable):
+        (WebCore::getProcAddress):
+        (WebCore::lookupOpenGLFunctionAddress):
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/OpenGLShims.h: Renamed from Source/WebCore/platform/graphics/cairo/OpenGLShims.h.
+        (WebCore):
+        (_OpenGLFunctionTable):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        * platform/graphics/qt/Extensions3DQt.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
 2012-02-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Allow opaque tiles

@@ -36,11 +36,8 @@
 
 #if PLATFORM(MAC)
 #include <OpenGL/gl.h>
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(QT)
 #include "OpenGLShims.h"
-#elif PLATFORM(QT)
-#include <QtGlobal>
-#include <cairo/OpenGLShims.h>
 #endif
 
 namespace WebCore {

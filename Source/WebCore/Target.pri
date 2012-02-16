@@ -3979,8 +3979,8 @@ contains(CONFIG, texmap) {
 }
 
 contains(CONFIG, opengl-shims) {
-    HEADERS += platform/graphics/cairo/OpenGLShims.h
-    SOURCES += platform/graphics/cairo/OpenGLShims.cpp
+    HEADERS += platform/graphics/OpenGLShims.h
+    SOURCES += platform/graphics/OpenGLShims.cpp
     DEFINES += QT_OPENGL_SHIMS=1
 }
 

@@ -35,10 +35,8 @@
 #if PLATFORM(MAC)
 #include "ANGLE/ShaderLang.h"
 #include <OpenGL/gl.h>
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(QT)
 #include "OpenGLShims.h"
-#elif PLATFORM(QT)
-#include <cairo/OpenGLShims.h>
 #endif
 
 namespace WebCore {

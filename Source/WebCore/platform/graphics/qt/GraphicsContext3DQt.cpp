@@ -21,7 +21,6 @@
 #include "GraphicsContext3D.h"
 
 #include "WebGLObject.h"
-#include <cairo/OpenGLShims.h>
 #include "CanvasRenderingContext.h"
 #if defined(QT_OPENGL_ES_2)
 #include "Extensions3DQt.h"
@@ -34,6 +33,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "NotImplemented.h"
+#include "OpenGLShims.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
 #include <wtf/UnusedParam.h>

@@ -5687,8 +5687,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/OpenGLShims.cpp \
-	Source/WebCore/platform/graphics/cairo/OpenGLShims.h \
 	Source/WebCore/platform/graphics/glx/GraphicsContext3DPrivate.cpp \
 	Source/WebCore/platform/graphics/glx/GraphicsContext3DPrivate.h \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
@@ -5697,6 +5695,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GraphicsContext3D.h \
 	Source/WebCore/platform/graphics/gtk/DrawingBufferGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/GraphicsContext3DGtk.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.h \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \

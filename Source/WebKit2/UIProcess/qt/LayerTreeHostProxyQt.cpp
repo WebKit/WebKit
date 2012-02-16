@@ -36,8 +36,8 @@
 #include "WebLayerTreeInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <OpenGLShims.h>
 #include <QDateTime>
-#include <cairo/OpenGLShims.h>
 
 namespace WebKit {
 

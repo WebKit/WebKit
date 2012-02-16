@@ -36,7 +36,7 @@
 #endif
 
 #if PLATFORM(QT) || USE(CAIRO)
-#include <cairo/OpenGLShims.h>
+#include "OpenGLShims.h"
 #elif defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
