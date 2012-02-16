@@ -287,7 +287,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
     
-    platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)image->getNSImage()), NSTIFFPboardType, m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)[image->getNSImage() TIFFRepresentation]), NSTIFFPboardType, m_pasteboardName);
 
     String MIMEType = cachedImage->response().mimeType();
     ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));

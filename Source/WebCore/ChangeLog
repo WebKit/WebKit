@@ -1,3 +1,18 @@
+2012-02-15  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION: "Copy image" fails...copies image URL instead.
+        https://bugs.webkit.org/show_bug.cgi?id=78723
+        <rdar://problem/10869104>
+
+        During the refactoring of the Pasteboard class some code was lost.
+        When placing an NSImage in the NSPasteboard as NSTIFFPboardType, we need
+        to use the its TIFF representation.
+        
+        Reviewed by Andy Estes.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage):
+
 2012-01-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [soup] Add support for multiple SoupSessions.
