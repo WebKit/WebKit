@@ -3046,9 +3046,6 @@ BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS FAIL MISSING
 
-BUGWK78761 DEBUG : fast/regions/element-region-overflow-state.html = PASS TEXT
-BUGWK78761 DEBUG : fast/regions/element-region-overflow-state-vertical-rl.html = PASS TEXT
-
 // New test added from https://bugs.webkit.org/show_bug.cgi?id=78787, needs baselines.
 BUGWK78787 : fast/repaint/region-painting-invalidation.html = IMAGE+TEXT
 
