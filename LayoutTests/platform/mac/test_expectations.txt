@@ -203,3 +203,7 @@ BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 // Rebaseline required after bug 74874
 BUGWK74874 : fast/table/027.html = TEXT
 BUGWK74874 : fast/table/027-vertical.html = TEXT
+
+// Need rebaselining.
+BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
+BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT

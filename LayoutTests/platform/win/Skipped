@@ -1637,3 +1637,7 @@ fast/css/bidi-override-in-anonymous-block.html
 fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
 fast/repaint/table-section-repaint.html
+
+// Need rebaselining after bug 37244.
+tables/mozilla/bugs/bug27038-1.html
+tables/mozilla/bugs/bug27038-2.html

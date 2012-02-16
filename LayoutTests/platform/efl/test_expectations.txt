@@ -5,3 +5,7 @@
 // Needs ENABLE_SHADOW_DOM
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
+
+// Need rebaselining.
+BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
+BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT

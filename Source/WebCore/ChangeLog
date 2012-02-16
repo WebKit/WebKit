@@ -1,3 +1,25 @@
+2012-02-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        thead in table without tbody causes table height doubling
+        https://bugs.webkit.org/show_bug.cgi?id=37244
+
+        Reviewed by Ojan Vafai.
+
+        Tests: fast/table/double-height-table-no-tbody-expected.html
+               fast/table/double-height-table-no-tbody.html
+
+        The bug is caused by the layout code would wrongly assuming that a
+        table without a <tbody> is an empty table. We would set the logical
+        height to the style's logical height wrongly before inflating the
+        logical height to account for the section(s). This would cause us
+        to increase past our needed size thus the bug.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        A table is empty if it does not have any top section, not just a <tbody>.
+        The test uncovered an issue with height distribution in layoutRows where we
+        would distribute the extra height to the first <tbody> not section.
+
 2012-02-07  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: fixed-table-layout-013 and fixed-table-layout-015 fail
