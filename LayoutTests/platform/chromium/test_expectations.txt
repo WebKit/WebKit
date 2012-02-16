@@ -825,6 +825,9 @@ BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
+// PasteBoard::plainText() does not support file names.
+BUGWK78655 : editing/pasteboard/drag-files-to-editable-element.html = FAIL
+
 // New test in r93068
 BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 

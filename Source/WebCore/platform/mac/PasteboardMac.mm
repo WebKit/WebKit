@@ -56,6 +56,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
+#import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 
 #if USE(PLATFORM_STRATEGIES)
@@ -316,7 +317,7 @@ String Pasteboard::plainText(Frame* frame)
         return [(NSString *)platformStrategies()->pasteboardStrategy()->stringForType(NSStringPboardType, m_pasteboardName) precomposedStringWithCanonicalMapping];
     
     NSAttributedString *attributedString = nil;
-    NSString *string = nil;
+    NSString *string;
 
     if (types.contains(String(NSRTFDPboardType))) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName);
@@ -335,11 +336,11 @@ String Pasteboard::plainText(Frame* frame)
     if (types.contains(String(NSFilenamesPboardType))) {
         Vector<String> pathnames;
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(pathnames, NSFilenamesPboardType, m_pasteboardName);
+        StringBuilder builder;
         for (size_t i = 0; i < pathnames.size(); i++)
-            string = [string length] ? @"\n" + pathnames[i] : pathnames[i];
-        string = [string precomposedStringWithCanonicalMapping];
-        if (string != nil)
-            return string;
+            builder.append(i ? "\n" + pathnames[i] : pathnames[i]);
+        string = builder.toString();
+        return [string precomposedStringWithCanonicalMapping];
     }
     
     string = platformStrategies()->pasteboardStrategy()->stringForType(NSURLPboardType, m_pasteboardName);

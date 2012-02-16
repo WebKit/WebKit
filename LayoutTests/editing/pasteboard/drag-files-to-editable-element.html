@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="editable" contentEditable=true style="width:200px; height:200px"></div>
+<script>
+description('If we drag files onto an editable area, then the filenames should be inserted into the editable area.');
+
+var editable = document.getElementById("editable");
+if (window.eventSender) {
+    dragFilesOntoEditable(['foo', 'bar', 'baz']);
+    var result = editable.innerHTML.replace(/file.*?LayoutTests/g, "LayoutTests");
+    shouldBeEqualToString('result', '<div>LayoutTests/editing/pasteboard/foo</div><div>LayoutTests/editing/pasteboard/bar</div><div>LayoutTests/editing/pasteboard/baz</div>');
+    editable.innerHTML = '';
+}
+
+function moveMouseToCenterOfElement(element)
+{
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoEditable(files)
+{
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(editable);
+    eventSender.mouseUp();
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

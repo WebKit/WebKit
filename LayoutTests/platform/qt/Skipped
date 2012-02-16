@@ -411,6 +411,9 @@ editing/pasteboard/data-transfer-items.html
 editing/pasteboard/data-transfer-items-drag-drop-file.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
 
+# PasteBoard::plainText() does not support file names.
+editing/pasteboard/drag-files-to-editable-element.html
+
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html
 fast/css/user-drag-none.html

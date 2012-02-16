@@ -299,6 +299,9 @@ editing/pasteboard/data-transfer-items-drag-drop-string.html
 editing/pasteboard/clipboard-customData.html
 fast/events/drag-customData.html
 
+# PasteBoard::plainText() does not support file names.
+editing/pasteboard/drag-files-to-editable-element.html
+
 # Needs grammar checking.
 editing/spelling/markers.html
 
