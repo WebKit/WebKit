@@ -1,3 +1,20 @@
+2012-02-16  Adrienne Walker  <enne@google.com>
+
+        Handle dirty descendant visibility status in RenderLayer::updateLayerPositionsAfterScroll
+        https://bugs.webkit.org/show_bug.cgi?id=78286
+
+        Reviewed by Julien Chaffraix.
+
+        This is an unfortunate bandaid over a corner case where sometimes the
+        visible descendant status dirty flag is true when this function is
+        called from FrameView::repaintFixedElementsAfterScrolling. As it
+        should be cheap to refresh this flag when dirty in most cases (as it
+        early outs after finding any visible descendant), just lazily update
+        the dirty flag here to ensure correctness.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+
 2012-02-16  Adam Barth  <abarth@webkit.org>
 
         Chrome::*Geolocation* are just useless pass-throughs to ChromeClient and should be removed
