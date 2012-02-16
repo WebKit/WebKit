@@ -1,3 +1,80 @@
+2012-02-15  Mike Fenton  <mifenton@rim.com>
+
+        Initial upstreaming of EditorClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=78730
+
+        Reviewed by Rob Buis.
+
+        Initial upstreaming, no new tests.
+
+        * blackberry/WebCoreSupport/EditorClientBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::EditorClientBlackBerry::EditorClientBlackBerry):
+        (WebCore::EditorClientBlackBerry::pageDestroyed):
+        (WebCore::EditorClientBlackBerry::shouldDeleteRange):
+        (WebCore::EditorClientBlackBerry::shouldShowDeleteInterface):
+        (WebCore::EditorClientBlackBerry::smartInsertDeleteEnabled):
+        (WebCore::EditorClientBlackBerry::isSelectTrailingWhitespaceEnabled):
+        (WebCore::EditorClientBlackBerry::enableSpellChecking):
+        (WebCore::EditorClientBlackBerry::shouldSpellCheckFocusedField):
+        (WebCore::EditorClientBlackBerry::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientBlackBerry::toggleContinuousSpellChecking):
+        (WebCore::EditorClientBlackBerry::isGrammarCheckingEnabled):
+        (WebCore::EditorClientBlackBerry::toggleGrammarChecking):
+        (WebCore::EditorClientBlackBerry::spellCheckerDocumentTag):
+        (WebCore::EditorClientBlackBerry::shouldBeginEditing):
+        (WebCore::EditorClientBlackBerry::shouldEndEditing):
+        (WebCore::EditorClientBlackBerry::shouldInsertNode):
+        (WebCore::EditorClientBlackBerry::shouldInsertText):
+        (WebCore::EditorClientBlackBerry::shouldChangeSelectedRange):
+        (WebCore::EditorClientBlackBerry::shouldApplyStyle):
+        (WebCore::EditorClientBlackBerry::shouldMoveRangeAfterDelete):
+        (WebCore::EditorClientBlackBerry::didBeginEditing):
+        (WebCore::EditorClientBlackBerry::respondToChangedContents):
+        (WebCore::EditorClientBlackBerry::respondToChangedSelection):
+        (WebCore::EditorClientBlackBerry::didEndEditing):
+        (WebCore::EditorClientBlackBerry::respondToSelectionAppearanceChange):
+        (WebCore::EditorClientBlackBerry::didWriteSelectionToPasteboard):
+        (WebCore::EditorClientBlackBerry::didSetSelectionTypesForPasteboard):
+        (WebCore::EditorClientBlackBerry::registerCommandForUndo):
+        (WebCore::EditorClientBlackBerry::registerCommandForRedo):
+        (WebCore::EditorClientBlackBerry::clearUndoRedoOperations):
+        (WebCore::EditorClientBlackBerry::canUndo):
+        (WebCore::EditorClientBlackBerry::canRedo):
+        (WebCore::EditorClientBlackBerry::canCopyCut):
+        (WebCore::EditorClientBlackBerry::canPaste):
+        (WebCore::EditorClientBlackBerry::undo):
+        (WebCore::EditorClientBlackBerry::redo):
+        (KeyDownEntry):
+        (KeyPressEntry):
+        (WebCore::EditorClientBlackBerry::interpretKeyEvent):
+        (WebCore::EditorClientBlackBerry::handleKeyboardEvent):
+        (WebCore::EditorClientBlackBerry::handleInputMethodKeydown):
+        (WebCore::EditorClientBlackBerry::textFieldDidBeginEditing):
+        (WebCore::EditorClientBlackBerry::textFieldDidEndEditing):
+        (WebCore::EditorClientBlackBerry::textDidChangeInTextField):
+        (WebCore::EditorClientBlackBerry::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientBlackBerry::textWillBeDeletedInTextField):
+        (WebCore::EditorClientBlackBerry::textDidChangeInTextArea):
+        (WebCore::EditorClientBlackBerry::ignoreWordInSpellDocument):
+        (WebCore::EditorClientBlackBerry::learnWord):
+        (WebCore::EditorClientBlackBerry::checkSpellingOfString):
+        (WebCore::EditorClientBlackBerry::getAutoCorrectSuggestionForMisspelledWord):
+        (WebCore::EditorClientBlackBerry::checkGrammarOfString):
+        (WebCore::EditorClientBlackBerry::requestCheckingOfString):
+        (WebCore::EditorClientBlackBerry::textChecker):
+        (WebCore::EditorClientBlackBerry::updateSpellingUIWithGrammarString):
+        (WebCore::EditorClientBlackBerry::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientBlackBerry::showSpellingUI):
+        (WebCore::EditorClientBlackBerry::spellingUIIsShowing):
+        (WebCore::EditorClientBlackBerry::getGuessesForWord):
+        (WebCore::EditorClientBlackBerry::willSetInputMethodState):
+        (WebCore::EditorClientBlackBerry::setInputMethodState):
+        * blackberry/WebCoreSupport/EditorClientBlackBerry.h: Added.
+        (WebKit):
+        (WebCore):
+        (EditorClientBlackBerry):
+
 2012-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream WebPageClient.h
