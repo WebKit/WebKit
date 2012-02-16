@@ -61,7 +61,8 @@ SOURCES += \
     $$PWD/WebKit/qt/WebCoreSupport/QtPlatformPlugin.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/TextCheckerClientQt.cpp \
-    $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.cpp
+    $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.cpp \
+    $$PWD/WebKit/qt/WebCoreSupport/WebEventConversion.cpp
 
 HEADERS += \
     $$PWD/WebKit/qt/WebCoreSupport/InitWebCoreQt.h \
@@ -77,7 +78,8 @@ HEADERS += \
     $$PWD/WebKit/qt/WebCoreSupport/PopupMenuQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/TextCheckerClientQt.h \
-    $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.h
+    $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.h \
+    $$PWD/WebKit/qt/WebCoreSupport/WebEventConversion.h
 
 INCLUDEPATH += \
     $$PWD/WebKit/qt/Api \

@@ -1,5 +1,21 @@
 2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Move event conversion functions from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=78788
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move QtWidgets dependent mouse event constructors out of WebCore
+        into WebKit, similar to the web event conversions of WebKit2.
+
+        * Target.pri:
+        * platform/PlatformMouseEvent.h:
+        (PlatformMouseEvent):
+        * platform/PlatformWheelEvent.h:
+        (PlatformWheelEvent):
+
+2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed prospective Qt 4.8/Mac build fix.
 
         Cast the PlatformWidget from QObject* to QWidget* to gain access

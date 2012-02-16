@@ -40,13 +40,6 @@ typedef struct _Evas_Event_Mouse_Up Evas_Event_Mouse_Up;
 typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
 #endif
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QInputEvent;
-class QGraphicsSceneMouseEvent;
-QT_END_NAMESPACE
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HWND__* HWND;
 typedef unsigned UINT;
@@ -120,11 +113,6 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         int eventNumber() const { return m_eventNumber; }
-#endif
-
-#if PLATFORM(QT)
-        PlatformMouseEvent(QInputEvent*, int clickCount);
-        PlatformMouseEvent(QGraphicsSceneMouseEvent*, int clickCount);
 #endif
 
 #if PLATFORM(WIN)

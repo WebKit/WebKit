@@ -112,6 +112,7 @@
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
 #include "UtilsQt.h"
+#include "WebEventConversion.h"
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
 
@@ -678,7 +679,7 @@ void QWebPagePrivate::mouseMoveEvent(T* ev)
     if (!frame->view())
         return;
 
-    bool accepted = frame->eventHandler()->mouseMoved(PlatformMouseEvent(ev, 0));
+    bool accepted = frame->eventHandler()->mouseMoved(convertMouseEvent(ev, 0));
     ev->setAccepted(accepted);
 }
 
@@ -703,7 +704,7 @@ void QWebPagePrivate::mousePressEvent(T* ev)
 
     bool accepted = false;
     adjustPointForClicking(ev);
-    PlatformMouseEvent mev(ev, 1);
+    PlatformMouseEvent mev = convertMouseEvent(ev, 1);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
         accepted = frame->eventHandler()->handleMousePressEvent(mev);
@@ -726,7 +727,7 @@ void QWebPagePrivate::mouseDoubleClickEvent(T *ev)
         return;
 
     bool accepted = false;
-    PlatformMouseEvent mev(ev, 2);
+    PlatformMouseEvent mev = convertMouseEvent(ev, 2);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
         accepted = frame->eventHandler()->handleMousePressEvent(mev);
@@ -744,7 +745,7 @@ void QWebPagePrivate::mouseTripleClickEvent(T *ev)
         return;
 
     bool accepted = false;
-    PlatformMouseEvent mev(ev, 3);
+    PlatformMouseEvent mev = convertMouseEvent(ev, 3);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
         accepted = frame->eventHandler()->handleMousePressEvent(mev);
@@ -783,7 +784,7 @@ void QWebPagePrivate::mouseReleaseEvent(T *ev)
 
     bool accepted = false;
     adjustPointForClicking(ev);
-    PlatformMouseEvent mev(ev, 0);
+    PlatformMouseEvent mev = convertMouseEvent(ev, 0);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
         accepted = frame->eventHandler()->handleMouseReleaseEvent(mev);
@@ -853,7 +854,7 @@ void QWebPagePrivate::wheelEvent(T *ev)
     if (!frame->view())
         return;
 
-    WebCore::PlatformWheelEvent pev(ev);
+    PlatformWheelEvent pev = convertWheelEvent(ev);
     bool accepted = frame->eventHandler()->handleWheelEvent(pev);
     ev->setAccepted(accepted);
 }
@@ -3240,14 +3241,14 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
     if (!RenderThemeQt::useMobileTheme()) {
         if (QWebFrame* webFrame = frameAt(event->pos())) {
             Frame* frame = QWebFramePrivate::core(webFrame);
-            if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).position()))
-                return scrollbar->contextMenu(PlatformMouseEvent(event, 1));
+            if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(convertMouseEvent(event, 1).position()))
+                return scrollbar->contextMenu(convertMouseEvent(event, 1));
         }
     }
 #endif
 
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
-    focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, 1));
+    focusedFrame->eventHandler()->sendContextMenuEvent(convertMouseEvent(event, 1));
     ContextMenu *menu = d->page->contextMenuController()->contextMenu();
     // If the website defines its own handler then sendContextMenuEvent takes care of
     // calling/showing it and the context menu pointer will be zero. This is the case

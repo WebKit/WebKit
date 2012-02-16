@@ -2828,7 +2828,6 @@ SOURCES += \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
-    platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
     platform/qt/PlatformTouchEventQt.cpp \
     platform/qt/PlatformTouchPointQt.cpp \
@@ -2844,7 +2843,6 @@ SOURCES += \
     platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorInternalICUQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
-    platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp
 
 !contains(DEFINES, WTF_USE_LIBXML2=1) {

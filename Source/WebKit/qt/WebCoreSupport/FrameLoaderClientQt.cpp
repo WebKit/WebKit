@@ -73,6 +73,7 @@
 #include "V8DOMWindow.h"
 #endif
 #include "ViewportArguments.h"
+#include "WebEventConversion.h"
 
 #include "qwebframe.h"
 #include "qwebframe_p.h"
@@ -606,7 +607,7 @@ void FrameLoaderClientQt::postProgressFinishedNotification()
             QPoint localPos = view->mapFromGlobal(QCursor::pos());
             if (view->rect().contains(localPos)) {
                 QMouseEvent event(QEvent::MouseMove, localPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-                m_frame->eventHandler()->mouseMoved(PlatformMouseEvent(&event, 0));
+                m_frame->eventHandler()->mouseMoved(convertMouseEvent(&event, 0));
             }
         }
     }

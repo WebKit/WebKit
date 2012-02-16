@@ -1,3 +1,37 @@
+2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move event conversion functions from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=78788
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move QtWidgets dependent mouse event constructors out of WebCore
+        into WebKit, similar to the web event conversions of WebKit2.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPage::swallowContextMenuEvent):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        * WebCoreSupport/WebEventConversion.cpp: Added.
+        (WebCore):
+        (WebCore::mouseEventModifiersFromQtKeyboardModifiers):
+        (WebCore::mouseEventTypeAndMouseButtonFromQEvent):
+        (WebKitPlatformMouseEvent):
+        (WebCore::WebKitPlatformMouseEvent::WebKitPlatformMouseEvent):
+        (WebCore::convertMouseEvent):
+        (WebKitPlatformWheelEvent):
+        (WebCore::WebKitPlatformWheelEvent::applyDelta):
+        (WebCore::WebKitPlatformWheelEvent::WebKitPlatformWheelEvent):
+        (WebCore::convertWheelEvent):
+        * WebCoreSupport/WebEventConversion.h: Added.
+        (WebCore):
+
 2012-02-16  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [Qt][WK2] Split QWebPermissionRequest into QWebSecurityOrigin
