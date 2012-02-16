@@ -1,3 +1,15 @@
+2012-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream WebPageGroupLoadDeferrer.{h, cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=78770
+
+        Reviewed by Rob Buis.
+
+        Initial upstreaming, no new tests.
+
+        * blackberry/Api/WebPageGroupLoadDeferrer.cpp: Added.
+        * blackberry/Api/WebPageGroupLoadDeferrer.h: Added.
+
 2012-02-15  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Upstream BlackBerry specific Web Inspector resources
