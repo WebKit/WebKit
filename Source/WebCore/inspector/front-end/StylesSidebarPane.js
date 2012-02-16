@@ -894,7 +894,7 @@ WebInspector.ComputedStyleSidebarPane.prototype.__proto__ = WebInspector.Sidebar
 WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, isInherited, isFirstSection)
 {
     WebInspector.PropertiesSection.call(this, "");
-    this.element.className = "styles-section monospace" + (isFirstSection ? " first-styles-section" : "");
+    this.element.className = "styles-section matched-styles monospace" + (isFirstSection ? " first-styles-section" : "");
 
     if (styleRule.media) {
         for (var i = styleRule.media.length - 1; i >= 0; --i) {
@@ -1190,6 +1190,7 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         this._startEditingOnMouseEvent();
         event.stopPropagation();
+        event.preventDefault();
     },
 
     _startEditingOnMouseEvent: function()
@@ -1612,6 +1613,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
         nameElement.title = this.property.propertyText;
         this.nameElement = nameElement;
 
+        this._expandElement = document.createElement("span");
+        this._expandElement.className = "expand-element";
+
         var valueElement = document.createElement("span");
         valueElement.className = "value";
         this.valueElement = valueElement;
@@ -1836,10 +1840,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return;
 
         // Append the checkbox for root elements of an editable section.
-        if (enabledCheckboxElement && this.treeOutline.section && this.treeOutline.section.editable && this.parent.root)
+        if (enabledCheckboxElement && this.treeOutline.section && this.parent.root && !this.section.computedStyle)
             this.listItemElement.appendChild(enabledCheckboxElement);
         this.listItemElement.appendChild(nameElement);
         this.listItemElement.appendChild(document.createTextNode(": "));
+        this.listItemElement.appendChild(this._expandElement);
         this.listItemElement.appendChild(valueElement);
         this.listItemElement.appendChild(document.createTextNode(";"));
 
@@ -1957,6 +1962,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         this.startEditing(event.target);
         event.stopPropagation();
+        event.preventDefault();
     },
 
     _isNameElement: function(element)
@@ -1973,6 +1979,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         // FIXME: we don't allow editing of longhand properties under a shorthand right now.
         if (this.parent.shorthand)
+            return;
+
+        if (selectElement === this._expandElement)
             return;
 
         if (this.treeOutline.section && !this.treeOutline.section.editable)
@@ -2378,6 +2387,18 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (styleText.length && !/;\s*$/.test(styleText))
             styleText += ";";
         this.property.setText(styleText, majorChange, callback.bind(this, userOperationFinishedCallback.bind(null, this._parentPane, updateInterface), this.originalPropertyText));
+    },
+
+    ondblclick: function()
+    {
+        return true; // handled
+    },
+
+    isEventWithinDisclosureTriangle: function(event)
+    {
+        if (!this.section.computedStyle)
+            return event.target === this._expandElement;
+        return TreeElement.prototype.isEventWithinDisclosureTriangle.call(this, event);
     }
 }
 

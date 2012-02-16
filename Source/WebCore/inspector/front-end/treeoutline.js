@@ -859,9 +859,11 @@ TreeElement.treeElementDoubleClicked = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (element.treeElement.ondblclick)
-        element.treeElement.ondblclick.call(element.treeElement, event);
-    else if (element.treeElement.hasChildren && !element.treeElement.expanded)
+    if (element.treeElement.ondblclick) {
+        var handled = element.treeElement.ondblclick.call(element.treeElement, event);
+        if (handled)
+            return;
+    } else if (element.treeElement.hasChildren && !element.treeElement.expanded)
         element.treeElement.expand();
 }
 

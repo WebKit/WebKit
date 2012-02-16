@@ -297,9 +297,13 @@
 .styles-section .properties {
     display: none;
     margin: 0;
-    padding: 2px 4px 0 8px;
+    padding: 2px 4px 0 6px;
     list-style: none;
     clear: both;
+}
+
+.styles-section.matched-styles .properties {
+    padding-left: 0;
 }
 
 .styles-section.no-affect .properties li {
@@ -321,9 +325,8 @@
     overflow: hidden;
     cursor: auto;
 }
-
-.styles-section .properties li.parent {
-    margin-left: 1px;
+.styles-section.matched-styles .properties li {
+    margin-left: 0 !important;
 }
 
 .styles-section .properties li.child-editing {
@@ -343,6 +346,25 @@
 }
 
 .styles-section .properties li.parent::before {
+    content: none;
+}
+
+.styles-section .properties li.parent.expanded::before {
+    content: none;
+}
+
+.styles-section.matched-styles .properties li.parent .expand-element {
+    content: url(Images/treeRightTriangleBlack.png);
+    margin-right: 1px;
+    margin-left: -5px;
+    opacity: 0.6;
+}
+
+.styles-section.matched-styles .properties li.parent.expanded .expand-element {
+    content: url(Images/treeDownTriangleBlack.png);
+}
+
+.styles-section.computed-style .properties li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     opacity: 0.75;
     float: left;
@@ -354,7 +376,7 @@
     cursor: default;
 }
 
-.styles-section .properties li.parent.expanded::before {
+.styles-section.computed-style .properties li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
     margin-top: 1px;
 }
@@ -364,22 +386,26 @@
     padding-bottom: 3px;
 }
 
-.styles-section:hover .properties .enabled-button {
-    display: block;
+.styles-section.matched-styles:not(.read-only):hover .properties .enabled-button {
+    visibility: visible;
 }
 
-.styles-section .properties li.disabled .enabled-button {
-    display: block;
+.styles-section.matched-styles:not(.read-only) .properties li.disabled .enabled-button {
+    visibility: visible;
 }
 
 .styles-section .properties .enabled-button {
-    display: none;
-    float: right;
+    visibility: hidden;
+    float: left;
     font-size: 10px;
-    margin: 0 0 0 4px;
+    margin: 0 5px 0 0;
     vertical-align: top;
     position: relative;
     z-index: 1;
+}
+
+.styles-section.matched-styles .properties ol.expanded {
+    margin-left: 16px;
 }
 
 .styles-section .properties .overloaded, .styles-section .properties .inactive, .styles-section .properties .disabled {

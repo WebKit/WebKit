@@ -1,3 +1,30 @@
+2012-02-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move style disable checkboxes to the left
+        https://bugs.webkit.org/show_bug.cgi?id=78780
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorDoubleClick):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/elementsPanel.css:
+        (.styles-section.matched-styles .properties):
+        (.styles-section.matched-styles .properties li):
+        (.styles-section .properties li.parent::before):
+        (.styles-section .properties li.parent.expanded::before):
+        (.styles-section.matched-styles .properties li.parent .expand-element):
+        (.styles-section.matched-styles .properties li.parent.expanded .expand-element):
+        (.styles-section.computed-style .properties li.parent::before):
+        (.styles-section.computed-style .properties li.parent.expanded::before):
+        (.styles-section.matched-styles:not(.read-only):hover .properties .enabled-button):
+        (.styles-section.matched-styles:not(.read-only) .properties li.disabled .enabled-button):
+        (.styles-section .properties .enabled-button):
+        (.styles-section.matched-styles .properties ol.expanded):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.treeElementDoubleClicked):
+
 2012-02-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: show memory counter graphics when switching to memory view
