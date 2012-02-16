@@ -1,3 +1,9 @@
+2012-02-16  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add missing include directories.
+
+        * CMakeLists.txt:
+
 2012-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Remove ResourceHolderImpl.cpp from build system

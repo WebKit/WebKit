@@ -1,3 +1,9 @@
+2012-02-16  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add missing include directories.
+
+        * CMakeLists.txt:
+
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Document that local paths in html loaded with loadHTML might cause the web process to terminate
