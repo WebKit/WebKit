@@ -3862,11 +3862,6 @@ BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
 
-BUGWK78755 : fast/box-shadow/spread.html = IMAGE
-BUGWK78755 : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
-BUGWK78755 : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
-BUGWK78755 : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
-
 // Still flaky:
 BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
 BUGWK78830 : svg/repaint/image-with-clip-path.svg = IMAGE
