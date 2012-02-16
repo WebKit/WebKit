@@ -5,6 +5,51 @@
 
         Reviewed by Rob Buis.
 
+        FatFingers is the class responsible to the whole touch
+        accuracy of the BlackBerry port. Initial upstream.
+
+        * WebKitSupport/FatFingers.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::FatFingers::fingerRectForPoint):
+        (BlackBerry::WebKit::hasMousePressListener):
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+        (BlackBerry::WebKit::isFieldWithText):
+        (BlackBerry::WebKit::distanceBetweenPoints):
+        (BlackBerry::WebKit::compareDistanceBetweenPoints):
+        (BlackBerry::WebKit::isValidFrameOwner):
+        (BlackBerry::WebKit::FatFingers::FatFingers):
+        (BlackBerry::WebKit::FatFingers::~FatFingers):
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        (BlackBerry::WebKit::FatFingers::checkFingerIntersection):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::checkForClickableElement):
+        (BlackBerry::WebKit::FatFingers::checkForText):
+        (BlackBerry::WebKit::FatFingers::getPaddings):
+        (BlackBerry::WebKit::FatFingers::nodesFromRect):
+        (BlackBerry::WebKit::FatFingers::getRelevantInfoFromPoint):
+        (BlackBerry::WebKit::FatFingers::setSuccessfulFatFingersResult):
+        * WebKitSupport/FatFingers.h: Added.
+        (WebCore):
+        (WebKit):
+        (FatFingersResult):
+        (BlackBerry::WebKit::FatFingersResult::FatFingersResult):
+        (BlackBerry::WebKit::FatFingersResult::reset):
+        (BlackBerry::WebKit::FatFingersResult::originPosition):
+        (BlackBerry::WebKit::FatFingersResult::adjustedPosition):
+        (BlackBerry::WebKit::FatFingersResult::positionWasAdjusted):
+        (BlackBerry::WebKit::FatFingersResult::isTextInput):
+        (BlackBerry::WebKit::FatFingersResult::isValid):
+        (BlackBerry::WebKit::FatFingersResult::validNode):
+        (BlackBerry::WebKit::FatFingersResult::nodeAsElementIfApplicable):
+        (FatFingers):
+
+2012-02-16  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Upstream touch handling related classes
+        https://bugs.webkit.org/show_bug.cgi?id=78509
+
+        Reviewed by Rob Buis.
+
         Initial upstream of the Blackberry specific single touch event
         handler class.
 
