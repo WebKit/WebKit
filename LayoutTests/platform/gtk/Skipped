@@ -1626,3 +1626,7 @@ fast/mutation/inline-event-listener.html
 fast/viewport/viewport-67.html
 fast/viewport/viewport-68.html
 fast/viewport/viewport-warnings-5.html
+
+# Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
+# https://bugs.webkit.org/show_bug.cgi?id=76564
+fast/workers/worker-crash-with-invalid-location.html
