@@ -1,3 +1,13 @@
+2012-02-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: revert 'modification of DOM upon single click for selected nodes'.
+        https://bugs.webkit.org/show_bug.cgi?id=78717
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.onattach):
+
 2012-02-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move style disable checkboxes to the left
