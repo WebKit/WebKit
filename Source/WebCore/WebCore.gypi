@@ -3013,8 +3013,6 @@
             'platform/graphics/CrossfadeGeneratedImage.cpp',
             'platform/graphics/CrossfadeGeneratedImage.h',
             'platform/graphics/Extensions3D.h',
-            'platform/graphics/FractionalLayoutRect.cpp',
-            'platform/graphics/FractionalLayoutSize.cpp',
             'platform/graphics/FloatPoint.cpp',
             'platform/graphics/FloatPoint3D.cpp',
             'platform/graphics/FloatQuad.cpp',

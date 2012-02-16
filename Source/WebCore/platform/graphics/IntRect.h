@@ -71,7 +71,6 @@ struct SkIRect;
 namespace WebCore {
 
 class FloatRect;
-class FractionalLayoutRect;
 
 class IntRect {
 public:
@@ -81,8 +80,7 @@ public:
     IntRect(int x, int y, int width, int height)
         : m_location(IntPoint(x, y)), m_size(IntSize(width, height)) { }
 
-    explicit IntRect(const FloatRect&); // don't do this implicitly since it's lossy
-    explicit IntRect(const FractionalLayoutRect&); // don't do this implicitly since it's lossy
+    explicit IntRect(const FloatRect& rect); // don't do this implicitly since it's lossy
         
     IntPoint location() const { return m_location; }
     IntSize size() const { return m_size; }

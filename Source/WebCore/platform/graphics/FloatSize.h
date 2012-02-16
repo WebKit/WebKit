@@ -46,14 +46,12 @@ typedef struct _NSSize NSSize;
 namespace WebCore {
 
 class IntSize;
-class FractionalLayoutSize;
 
 class FloatSize {
 public:
     FloatSize() : m_width(0), m_height(0) { }
     FloatSize(float width, float height) : m_width(width), m_height(height) { }
     FloatSize(const IntSize&);
-    FloatSize(const FractionalLayoutSize&);
 
     static FloatSize narrowPrecision(double width, double height);
 

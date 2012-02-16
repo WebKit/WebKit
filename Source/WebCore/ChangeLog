@@ -1,3 +1,44 @@
+2012-02-16  Adam Roben  <aroben@apple.com>
+
+        Roll out r107887
+
+        It broke 32-bit builds due to truncation from "long long" to "int".
+
+        Original bug is <http://webkit.org/b/76571> Add FractionalLayoutPoint/Size/Rect for
+        sub-pixel layout
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::isInBounds):
+        (WebCore::operator==):
+        (WebCore::operator*):
+        * platform/graphics/FloatPoint.cpp:
+        * platform/graphics/FloatPoint.h:
+        (WebCore):
+        (FloatPoint):
+        (WebCore::FloatPoint::move):
+        (WebCore::FloatPoint::moveBy):
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        (WebCore):
+        * platform/graphics/FloatSize.cpp:
+        * platform/graphics/FloatSize.h:
+        (WebCore):
+        * platform/graphics/FractionalLayoutPoint.h: Removed.
+        * platform/graphics/FractionalLayoutRect.cpp: Removed.
+        * platform/graphics/FractionalLayoutRect.h: Removed.
+        * platform/graphics/FractionalLayoutSize.cpp: Removed.
+        * platform/graphics/FractionalLayoutSize.h: Removed.
+        * platform/graphics/IntRect.cpp:
+        * platform/graphics/IntRect.h:
+        (WebCore):
+        (IntRect):
+
 2012-02-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: cache settings values

@@ -27,7 +27,6 @@
 #include "config.h"
 #include "FloatSize.h"
 
-#include "FractionalLayoutSize.h"
 #include "FloatConversion.h"
 #include "IntSize.h"
 #include <limits>
@@ -38,10 +37,6 @@ using namespace std;
 namespace WebCore {
 
 FloatSize::FloatSize(const IntSize& size) : m_width(size.width()), m_height(size.height())
-{
-}
-
-FloatSize::FloatSize(const FractionalLayoutSize& size) : m_width(size.width()), m_height(size.height())
 {
 }
 
