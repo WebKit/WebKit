@@ -336,12 +336,6 @@ void webkitInit()
     soup_session_add_feature(session, authDialog);
     g_object_unref(authDialog);
 
-    SoupSessionFeature* sniffer = static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL));
-    soup_session_add_feature(session, sniffer);
-    g_object_unref(sniffer);
-
-    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
-
 #if USE(CLUTTER)
     gtk_clutter_init(0, 0);
 #endif
