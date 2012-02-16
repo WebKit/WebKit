@@ -1,3 +1,16 @@
+2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Build fix for Qt 5 without QtWidgets.
+
+        Reviewed by Tor Arne Vestbø.
+
+        The reason why QGLContext is included in Extensions3DQt.cpp is to
+        achieve an implicit gl.h inclusion (needed for GL_FALSE). This patch
+        replaces the inclusion with the OpenGLShims.h inclusions, which has
+        the necessary #ifdefs in place to pull in gl.h with Qt 5 without QtWidgets.
+
+        * platform/graphics/qt/Extensions3DQt.cpp:
+
 2012-02-16  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor CCLayerTreeHostCommon: create helper function for complex boolean condition

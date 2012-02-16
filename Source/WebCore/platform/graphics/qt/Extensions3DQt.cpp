@@ -30,7 +30,7 @@
 #include "Extensions3DQt.h"
 
 #include "GraphicsContext3D.h"
-#include <QGLContext>
+#include "cairo/OpenGLShims.h"
 
 namespace WebCore {
 
