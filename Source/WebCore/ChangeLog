@@ -1,3 +1,14 @@
+2012-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r107941.
+        http://trac.webkit.org/changeset/107941
+        https://bugs.webkit.org/show_bug.cgi?id=68602
+
+        Broke 23 http tests on GTK
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::defaultSession):
+
 2012-02-16  Tom Sepez  <tsepez@chromium.org>
 
         XSS Auditor bypass with U+2028/2029
