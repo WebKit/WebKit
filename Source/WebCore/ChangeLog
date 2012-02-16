@@ -1,3 +1,22 @@
+2012-02-16  Abhishek Arya  <inferno@chromium.org>
+
+        Crash with tables in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=78415
+
+        Reviewed by Julien Chaffraix.
+
+        Multi-column code creates anonymous column blocks directly
+        under RenderTable, thereby violating table layout assumption.
+        E.g. Captions in this testcase gets reparented to these anonymous
+        column blocks and when they go away, they are not able to clear
+        themselves from table's m_captions list (since RenderTable::removeChild
+        is not called).
+
+        Test: fast/multicol/span/table-multi-column-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::containingColumnsBlock):
+
 2012-02-16  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] File system api build is broken

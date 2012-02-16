@@ -434,6 +434,12 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
         if (!curr->isRenderBlock() || curr->isFloatingOrPositioned() || curr->isTableCell() || curr->isRoot() || curr->isRenderView() || curr->hasOverflowClip()
             || curr->isInlineBlockOrInlineTable())
             return 0;
+
+        // FIXME: Table manages its own table parts, most of which are RenderBoxes.
+        // Multi-column code cannot handle splitting the flow in table. Disabling it
+        // to prevent crashes.
+        if (curr->isTable())
+            return 0;
         
         RenderBlock* currBlock = toRenderBlock(curr);
         if (!currBlock->createsAnonymousWrapper())
