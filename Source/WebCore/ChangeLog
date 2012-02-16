@@ -1,3 +1,20 @@
+2012-02-16  Adam Barth  <abarth@webkit.org>
+
+        Chrome::*Geolocation* are just useless pass-throughs to ChromeClient and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=78844
+
+        Reviewed by Eric Seidel.
+
+        These function serve no useful purpose and should be removed.
+
+        * page/Chrome.cpp:
+        (WebCore):
+        * page/Chrome.h:
+        (Chrome):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::reset):
+        (WebCore::Geolocation::requestPermission):
+
 2012-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [soup] Move important SoupSession feature initialization to WebCore

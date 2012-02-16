@@ -445,16 +445,6 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
-void Chrome::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
-{
-    m_client->requestGeolocationPermissionForFrame(frame, geolocation);
-}
-
-void Chrome::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
-{
-    m_client->cancelGeolocationPermissionRequestForFrame(frame, geolocation);
-}
-
 #if ENABLE(DIRECTORY_UPLOAD)
 void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 {

@@ -255,7 +255,7 @@ void Geolocation::reset()
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         page->geolocationController()->cancelPermissionRequest(this);
 #else
-        page->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
+        page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
 #endif
     }
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
@@ -619,7 +619,7 @@ void Geolocation::requestPermission()
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     page->geolocationController()->requestPermission(this);
 #else
-    page->chrome()->requestGeolocationPermissionForFrame(m_frame, this);
+    page->chrome()->client()->requestGeolocationPermissionForFrame(m_frame, this);
 #endif
 }
 
