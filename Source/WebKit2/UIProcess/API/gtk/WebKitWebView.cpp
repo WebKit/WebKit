@@ -841,10 +841,14 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
  * @base_uri: (allow-none): The base URI for relative locations or %NULL
  *
  * Load the given @content string with the specified @base_uri.
- * Relative URLs in the @content will be resolved against @base_uri.
- * When @base_uri is %NULL, it defaults to "about:blank". The mime type
- * of the document will be "text/html". You can monitor the load operation
- * by connecting to #WebKitWebView::load-changed signal.
+ * If @base_uri is not %NULL, relative URLs in the @content will be
+ * resolved against @base_uri and absolute local paths must be children of the @base_uri.
+ * For security reasons absolute local paths that are not children of @base_uri
+ * will cause the web process to terminate.
+ * If you need to include URLs in @content that are local paths in a different
+ * directory than @base_uri you can build a data URI for them. When @base_uri is %NULL,
+ * it defaults to "about:blank". The mime type of the document will be "text/html".
+ * You can monitor the load operation by connecting to #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI)
 {

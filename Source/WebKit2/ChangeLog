@@ -1,3 +1,12 @@
+2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Document that local paths in html loaded with loadHTML might cause the web process to terminate
+        https://bugs.webkit.org/show_bug.cgi?id=78719
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         Add TiledCoreAnimationDrawingArea::forceRepaint
