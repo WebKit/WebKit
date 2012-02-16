@@ -54,7 +54,10 @@ class WebPeerConnectionHandler {
 public:
     virtual ~WebPeerConnectionHandler() { }
 
-    virtual void initialize(const WebString& serverConfiguration, const WebSecurityOrigin&) = 0;
+    // DEPRECATED
+    virtual void initialize(const WebString& serverConfiguration, const WebSecurityOrigin&) { };
+
+    virtual void initialize(const WebString& serverConfiguration, const WebString& username) { };
 
     virtual void produceInitialOffer(const WebVector<WebMediaStreamDescriptor>& pendingAddStreams) = 0;
     virtual void handleInitialOffer(const WebString& sdp) = 0;

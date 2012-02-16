@@ -48,11 +48,10 @@ class WebMediaStreamDescriptor;
 namespace WebCore {
 
 class PeerConnectionHandlerClient;
-class SecurityOrigin;
 
 class PeerConnectionHandlerInternal : public WebKit::WebPeerConnectionHandlerClient {
 public:
-    PeerConnectionHandlerInternal(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
+    PeerConnectionHandlerInternal(PeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
     ~PeerConnectionHandlerInternal();
 
     virtual void produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams);

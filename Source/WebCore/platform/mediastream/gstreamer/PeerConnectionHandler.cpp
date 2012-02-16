@@ -35,18 +35,16 @@
 #include "PeerConnectionHandler.h"
 
 #include "PeerConnectionHandlerClient.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 
-PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, PassRefPtr<SecurityOrigin> securityOrigin)
+PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
 {
-    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, securityOrigin));
+    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, username));
 }
 
-// FIXME: remove when real implementations are available
 // Empty implementations for ports that build with MEDIA_STREAM enabled by default.
-PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient*, const String&, PassRefPtr<SecurityOrigin>)
+PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient*, const String&, const String&)
 {
 }
 

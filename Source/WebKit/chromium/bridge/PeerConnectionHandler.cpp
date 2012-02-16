@@ -36,17 +36,16 @@
 
 #include "PeerConnectionHandlerClient.h"
 #include "PeerConnectionHandlerInternal.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 
-PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, PassRefPtr<SecurityOrigin> securityOrigin)
+PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
 {
-    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, securityOrigin));
+    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, username));
 }
 
-PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient* client, const String& serverConfiguration, PassRefPtr<SecurityOrigin> securityOrigin)
-    : m_private(adoptPtr(new PeerConnectionHandlerInternal(client, serverConfiguration, securityOrigin)))
+PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
+    : m_private(adoptPtr(new PeerConnectionHandlerInternal(client, serverConfiguration, username)))
 {
 }
 

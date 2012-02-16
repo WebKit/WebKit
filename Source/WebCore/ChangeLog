@@ -1,3 +1,21 @@
+2012-02-15  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Removing SecurityContext from the embedder API
+        https://bugs.webkit.org/show_bug.cgi?id=73816
+
+        Reviewed by Darin Fisher.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
+        * mediastream/PeerConnection.cpp:
+        (WebCore::PeerConnection::PeerConnection):
+        * platform/mediastream/PeerConnectionHandler.h:
+        (WebCore):
+        (PeerConnectionHandler):
+        * platform/mediastream/gstreamer/PeerConnectionHandler.cpp:
+        (WebCore::PeerConnectionHandler::create):
+        (WebCore::PeerConnectionHandler::PeerConnectionHandler):
+
 2012-02-15  Nate Chapin  <japhet@chromium.org>
 
         Fix test regressons from r107672.

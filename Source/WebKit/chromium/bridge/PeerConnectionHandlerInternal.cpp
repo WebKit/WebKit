@@ -45,15 +45,21 @@
 
 namespace WebCore {
 
-PeerConnectionHandlerInternal::PeerConnectionHandlerInternal(PeerConnectionHandlerClient* client, const String& serverConfiguration, PassRefPtr<SecurityOrigin> securityOrigin)
+PeerConnectionHandlerInternal::PeerConnectionHandlerInternal(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
     : m_client(client)
 {
     ASSERT(m_client);
     m_webHandler = adoptPtr(WebKit::webKitPlatformSupport()->createPeerConnectionHandler(this));
     // FIXME: When there is some error reporting avaliable in the PeerConnection object report
     // if we didn't get a WebPeerConnectionHandler instance.
-    if (m_webHandler)
-        m_webHandler->initialize(serverConfiguration, securityOrigin);
+
+    if (m_webHandler) {
+        // Dual calls due to API change
+        m_webHandler->initialize(serverConfiguration, username);
+
+        // DEPRECATED
+        m_webHandler->initialize(serverConfiguration, SecurityOrigin::createFromString(username));
+    }
 }
 
 PeerConnectionHandlerInternal::~PeerConnectionHandlerInternal()

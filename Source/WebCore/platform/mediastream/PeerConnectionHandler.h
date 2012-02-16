@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class PeerConnectionHandlerClient;
-class SecurityOrigin;
 
 #if PLATFORM(CHROMIUM)
 class PeerConnectionHandlerInternal;
@@ -51,7 +50,7 @@ class PeerConnectionHandler {
     WTF_MAKE_NONCOPYABLE(PeerConnectionHandler);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PeerConnectionHandler> create(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
+    static PassOwnPtr<PeerConnectionHandler> create(PeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
     ~PeerConnectionHandler();
 
     void produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams);
@@ -63,7 +62,7 @@ public:
     void stop();
 
 private:
-    PeerConnectionHandler(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
+    PeerConnectionHandler(PeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
 
 #if PLATFORM(CHROMIUM)
     OwnPtr<PeerConnectionHandlerInternal> m_private;
