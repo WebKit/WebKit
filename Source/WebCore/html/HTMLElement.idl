@@ -30,6 +30,7 @@ module html {
                  attribute [Reflect] DOMString id;
                  attribute [Reflect] DOMString title;
                  attribute [Reflect] DOMString lang;
+                 attribute boolean             translate;
                  attribute [Reflect] DOMString dir;
                  attribute [Reflect=class] DOMString className;
                  readonly attribute DOMTokenList classList;

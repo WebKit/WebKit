@@ -35,6 +35,12 @@ class HTMLFormElement;
 class MicroDataItemValue;
 #endif
 
+enum TranslateAttributeMode {
+    TranslateAttributeYes,
+    TranslateAttributeNo,
+    TranslateAttributeInherit
+};
+
 class HTMLElement : public StyledElement {
 public:
     static PassRefPtr<HTMLElement> create(const QualifiedName& tagName, Document*);
@@ -67,6 +73,9 @@ public:
 
     bool spellcheck() const;
     void setSpellcheck(bool);
+
+    bool translate() const;
+    void setTranslate(bool);
 
     void click();
 
@@ -120,6 +129,8 @@ private:
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
+
+    TranslateAttributeMode translateAttributeMode() const;
 
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const;

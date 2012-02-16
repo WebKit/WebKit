@@ -800,6 +800,42 @@ void HTMLElement::setTabIndex(int value)
     setAttribute(tabindexAttr, String::number(value));
 }
 
+TranslateAttributeMode HTMLElement::translateAttributeMode() const
+{
+    const AtomicString& value = getAttribute(translateAttr);
+
+    if (value == nullAtom)
+        return TranslateAttributeInherit;
+    if (equalIgnoringCase(value, "yes") || equalIgnoringCase(value, ""))
+        return TranslateAttributeYes;
+    if (equalIgnoringCase(value, "no"))
+        return TranslateAttributeNo;
+
+    return TranslateAttributeInherit;
+}
+
+bool HTMLElement::translate() const
+{
+    for (const Node* n = this; n; n = n->parentNode()) {
+        if (n->isHTMLElement()) {
+            TranslateAttributeMode mode = static_cast<const HTMLElement*>(n)->translateAttributeMode();
+            if (mode != TranslateAttributeInherit) {
+                ASSERT(mode == TranslateAttributeYes || mode == TranslateAttributeNo);
+                return mode == TranslateAttributeYes;
+            }
+        }
+    }
+
+    // Default on the root element is translate=yes.
+    return true;
+}
+
+void HTMLElement::setTranslate(bool enable)
+{
+    setAttribute(translateAttr, enable ? "yes" : "no");
+}
+
+
 HTMLCollection* HTMLElement::children()
 {
     return ensureCachedHTMLCollection(NodeChildren);
