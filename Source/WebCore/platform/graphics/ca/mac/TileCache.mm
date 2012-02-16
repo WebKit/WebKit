@@ -173,6 +173,8 @@ void TileCache::setContentsScale(CGFloat contentsScale)
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     platformLayer->owner()->platformCALayerDidCreateTiles();
     revalidateTiles();
+#else
+    UNUSED_PARAM(contentsScale);
 #endif
 }
 

@@ -1,3 +1,10 @@
+2012-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix unused parameter warnings.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setContentsScale:]):
+
 2012-02-15  Emil A Eklund  <eae@chromium.org>
 
         Convert RenderFrameSet to LayoutUnits in preparation for turning on subpixel layout

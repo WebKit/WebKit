@@ -94,6 +94,8 @@ using namespace WebCore;
 
     if (contentsScale != oldContentsScale)
         _tileCache->setContentsScale(contentsScale);
+#else
+    UNUSED_PARAM(contentsScale);
 #endif
 }
 
