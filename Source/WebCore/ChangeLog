@@ -1,3 +1,10 @@
+2012-02-16  Patrick Gansterer  <paroga@webkit.org>
+
+        WinCE build fix after r107453.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::isInBounds): Use fabs() instead of abs().
+
 2012-02-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: explicitly mark undoable state from the front-end.
