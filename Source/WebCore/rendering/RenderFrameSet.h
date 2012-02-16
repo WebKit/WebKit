@@ -68,8 +68,8 @@ public:
     bool isResizingRow() const;
     bool isResizingColumn() const;
 
-    bool canResizeRow(const LayoutPoint&) const;
-    bool canResizeColumn(const LayoutPoint&) const;
+    bool canResizeRow(const IntPoint&) const;
+    bool canResizeColumn(const IntPoint&) const;
 
     void notifyFrameEdgeInfoChanged();
 
@@ -119,8 +119,8 @@ private:
     void startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
 
-    void paintRowBorder(const PaintInfo&, const LayoutRect&);
-    void paintColumnBorder(const PaintInfo&, const LayoutRect&);
+    void paintRowBorder(const PaintInfo&, const IntRect&);
+    void paintColumnBorder(const PaintInfo&, const IntRect&);
 
     RenderObjectChildList m_children;
 

@@ -1,3 +1,24 @@
+2012-02-15  Emil A Eklund  <eae@chromium.org>
+
+        Convert RenderFrameSet to LayoutUnits in preparation for turning on subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78526
+
+        Reviewed by Eric Seidel.
+
+        Revert paintColumnBorder and paintRowBorder to IntRect and pixel snap in
+        paint before calling them. This way the rounding logic is contained in a
+        single place (in paint).
+
+        No new tests, no new functionality.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        (WebCore::RenderFrameSet::paint):
+        (WebCore::RenderFrameSet::getCursor):
+        * rendering/RenderFrameSet.h:
+        (RenderFrameSet):
+
 2012-02-15  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
 
         Add FractionalLayoutPoint/Size/Rect for sub-pixel layout
