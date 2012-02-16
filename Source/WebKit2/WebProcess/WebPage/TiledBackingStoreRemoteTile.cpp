@@ -84,7 +84,7 @@ Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
     // for us to be able to draw this buffer on the ShareableBitmap right after.
     m_tiledBackingStore->client()->tiledBackingStorePaint(m_localBuffer->context(), m_tiledBackingStore->mapToContents(m_dirtyRect));
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_rect.size(), ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_rect.size(), m_tiledBackingStore->supportsAlpha() ? ShareableBitmap::SupportsAlpha : 0);
     OwnPtr<GraphicsContext> graphicsContext(bitmap->createGraphicsContext());
     graphicsContext->drawImageBuffer(m_localBuffer.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
 

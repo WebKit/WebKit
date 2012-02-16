@@ -251,6 +251,8 @@ void WebGraphicsLayer::setContentsOpaque(bool b)
 {
     if (contentsOpaque() == b)
         return;
+    if (m_mainBackingStore)
+        m_mainBackingStore->setSupportsAlpha(!b);
     GraphicsLayer::setContentsOpaque(b);
     notifyChange();
 }
@@ -488,9 +490,15 @@ void WebGraphicsLayer::setContentsScale(float scale)
     m_contentsScale = scale;
     if (m_mainBackingStore && m_mainBackingStore->contentsScale() != scale) {
         m_previousBackingStore = m_mainBackingStore.release();
-        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
-        m_mainBackingStore->setContentsScale(scale);
+        createBackingStore();
     }
+}
+
+void WebGraphicsLayer::createBackingStore()
+{
+    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+    m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
+    m_mainBackingStore->setContentsScale(m_contentsScale);
 }
 
 void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
@@ -576,10 +584,8 @@ void WebGraphicsLayer::updateContentBuffers()
     m_inUpdateMode = true;
     // This is the only place we (re)create the main tiled backing store,
     // once we have a remote client and we are ready to send our data to the UI process.
-    if (!m_mainBackingStore) {
-        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
-        m_mainBackingStore->setContentsScale(m_contentsScale);
-    }
+    if (!m_mainBackingStore)
+        createBackingStore();
     m_mainBackingStore->updateTileBuffers();
     m_inUpdateMode = false;
 }

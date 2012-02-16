@@ -73,6 +73,9 @@ public:
     double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
     float coverageRatio(const WebCore::IntRect& contentsRect);
 
+    void setSupportsAlpha(bool);
+    bool supportsAlpha() const { return m_supportsAlpha; }
+
 private:
     void startTileBufferUpdateTimer();
     void startTileCreationTimer();
@@ -120,6 +123,7 @@ private:
     float m_pendingScale;
 
     bool m_contentsFrozen;
+    bool m_supportsAlpha;
 
     friend class Tile;
 };

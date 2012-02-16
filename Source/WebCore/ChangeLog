@@ -1,3 +1,24 @@
+2012-02-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Allow opaque tiles
+        https://bugs.webkit.org/show_bug.cgi?id=78809
+
+        Add a supportsAlpha property to TiledBackingStore.
+        We invalidate all the tiles if that property changes, because the buffers need to be
+        recreated in a different format.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No behavior changes.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setSupportsAlpha):
+        (WebCore):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+        (WebCore::TiledBackingStore::supportsAlpha):
+
 2012-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [soup] Move important SoupSession feature initialization to WebCore

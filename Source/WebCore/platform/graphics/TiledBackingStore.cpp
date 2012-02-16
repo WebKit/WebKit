@@ -46,6 +46,7 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr
     , m_contentsScale(1.f)
     , m_pendingScale(0)
     , m_contentsFrozen(false)
+    , m_supportsAlpha(false)
 {
 }
 
@@ -505,6 +506,14 @@ void TiledBackingStore::setContentsFrozen(bool freeze)
         startTileCreationTimer();
         startTileBufferUpdateTimer();
     }
+}
+
+void TiledBackingStore::setSupportsAlpha(bool a)
+{
+    if (a == supportsAlpha())
+        return;
+    m_supportsAlpha = a;
+    invalidate(contentsRect());
 }
 
 }

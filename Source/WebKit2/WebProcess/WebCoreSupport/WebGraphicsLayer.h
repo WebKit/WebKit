@@ -158,6 +158,7 @@ private:
 
     void notifyChange();
     void notifyChangeRecursively();
+    void createBackingStore();
     HashSet<String> m_transformAnimations;
 
     bool selfOrAncestorHasActiveTransformAnimations() const;
