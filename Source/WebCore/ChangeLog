@@ -1,3 +1,17 @@
+2012-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream WebPageClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=78660
+
+        Reviewed by Antonio Gomes.
+
+        Header inclusion fix, no new test.
+
+        * plugins/blackberry/PluginViewPrivateBlackBerry.h:
+        Add #include <BlackBerryPlatformIntRectRegion.h>
+        and #include <BlackBerryPlatformGraphics.h> because they
+        are being removed from WebKit/blackberry/Api/WebPageClient.h.
+
 2012-02-15  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(r105057): Dynamically changing <tspan> offsets is broken

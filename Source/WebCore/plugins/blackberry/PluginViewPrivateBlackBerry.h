@@ -20,6 +20,9 @@
 #define PluginViewPrivateBlackBerry_h
 
 #include "PluginView.h"
+
+#include <BlackBerryPlatformGraphics.h>
+#include <BlackBerryPlatformIntRectRegion.h>
 #include <pthread.h>
 
 #define PLUGIN_BUFFERS 2

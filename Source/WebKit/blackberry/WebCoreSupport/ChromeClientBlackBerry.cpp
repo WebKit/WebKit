@@ -61,8 +61,10 @@
 #include "WebSettings.h"
 #include "WebString.h"
 #include "WindowFeatures.h"
+
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformSettings.h>
+#include <BlackBerryPlatformWindow.h>
 
 #define DEBUG_OVERFLOW_DETECTION 0
 

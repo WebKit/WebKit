@@ -39,6 +39,7 @@
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformWindow.h>
 
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
