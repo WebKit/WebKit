@@ -1,3 +1,24 @@
+2012-02-16  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Refactor CCLayerTreeHostCommon: create helper function for complex boolean condition
+        https://bugs.webkit.org/show_bug.cgi?id=78539
+
+        Reviewed by James Robinson.
+
+        This change should introduce no change in behavior, and its
+        expected behavior is already covered by existing tests.
+
+        In calculateDrawTransformsAndVisibility, there is a complex
+        boolean condition that indicates whether we should create a
+        RenderSurface or not. This patch pulls out that boolean logic,
+        and wraps it in a helper function for much better readability.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::layerShouldBeSkipped):
+        (WebCore):
+        (WebCore::subtreeShouldRenderToSeparateSurface):
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+
 2012-02-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] move timeline overview sidebar creation to TimelineOverviewPane
