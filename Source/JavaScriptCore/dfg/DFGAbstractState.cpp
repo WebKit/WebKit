@@ -104,7 +104,16 @@ void AbstractState::initialize(Graph& graph)
     BasicBlock* root = graph.m_blocks[0].get();
     root->cfaShouldRevisit = true;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
-        PredictedType prediction = graph[root->variablesAtHead.argument(i)].variableAccessData()->prediction();
+        Node& node = graph[root->variablesAtHead.argument(i)];
+        ASSERT(node.op == SetArgument);
+        if (!node.shouldGenerate()) {
+            // The argument is dead. We don't do any checks for such arguments, and so
+            // for the purpose of the analysis, they contain no value.
+            root->valuesAtHead.argument(i).clear();
+            continue;
+        }
+        
+        PredictedType prediction = node.variableAccessData()->prediction();
         if (isInt32Prediction(prediction))
             root->valuesAtHead.argument(i).set(PredictInt32);
         else if (isArrayPrediction(prediction))

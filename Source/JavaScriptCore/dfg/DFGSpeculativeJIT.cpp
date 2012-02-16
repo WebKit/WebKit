@@ -1073,7 +1073,14 @@ void SpeculativeJIT::checkArgumentTypes()
         m_variables[i] = ValueSource(ValueInRegisterFile);
     
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
-        VariableAccessData* variableAccessData = at(m_jit.graph().m_arguments[i]).variableAccessData();
+        Node& node = at(m_jit.graph().m_arguments[i]);
+        ASSERT(node.op == SetArgument);
+        if (!node.shouldGenerate()) {
+            // The argument is dead. We don't do any checks for such arguments.
+            continue;
+        }
+        
+        VariableAccessData* variableAccessData = node.variableAccessData();
         VirtualRegister virtualRegister = variableAccessData->local();
         PredictedType predictedType = variableAccessData->prediction();
 #if USE(JSVALUE64)
