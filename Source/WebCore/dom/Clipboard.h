@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    class DOMStringList;
     class DataTransferItemList;
     class DragData;
     class FileList;
@@ -66,7 +67,7 @@ namespace WebCore {
         virtual bool setData(const String& type, const String& data) = 0;
     
         // extensions beyond IE's API
-        virtual HashSet<String> types() const = 0;
+        virtual PassRefPtr<DOMStringList> types() const = 0;
         virtual PassRefPtr<FileList> files() const = 0;
 
         IntPoint dragLocation() const { return m_dragLoc; }

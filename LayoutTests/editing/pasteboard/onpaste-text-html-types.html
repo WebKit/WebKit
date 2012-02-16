@@ -8,8 +8,7 @@ during an onpaste event.  This test requires DRT.</div>
 function paste(ev)
 {
     var types = ev.clipboardData.types;
-    if (types.indexOf('text/plain') >= 0 &&
-        types.indexOf('text/html') >= 0)
+    if (types.contains('text/plain') && types.contains('text/html'))
         document.getElementById("results").innerHTML = "PASS";
 }
 

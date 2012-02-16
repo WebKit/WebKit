@@ -48,21 +48,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-JSValue JSClipboard::types(ExecState* exec) const
-{
-    Clipboard* clipboard = impl();
-
-    HashSet<String> types = clipboard->types();
-    if (types.isEmpty())
-        return jsNull();
-
-    MarkedArgumentBuffer list;
-    HashSet<String>::const_iterator end = types.end();
-    for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
-        list.append(jsString(exec, stringToUString(*it)));
-    return constructArray(exec, globalObject(), list);
-}
-
 JSValue JSClipboard::clearData(ExecState* exec)
 {
     Clipboard* clipboard = impl();

@@ -44,24 +44,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Clipboard::typesAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.Clipboard.types()");
-    Clipboard* clipboard = V8Clipboard::toNative(info.Holder());
-
-    HashSet<String> types = clipboard->types();
-    if (types.isEmpty())
-        return v8::Null();
-
-    v8::Local<v8::Array> result = v8::Array::New(types.size());
-    HashSet<String>::const_iterator end = types.end();
-    int index = 0;
-    for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it, ++index)
-        result->Set(v8::Integer::New(index), v8String(*it));
-
-    return result;
-}
-
 v8::Handle<v8::Value> V8Clipboard::clearDataCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Clipboard.clearData()");

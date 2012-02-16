@@ -16,7 +16,7 @@ fileInput.addEventListener("dragover", function() {
 
 var fileInputDropCallback = null;
 fileInput.addEventListener("drop", function() {
-    if (event.dataTransfer.types.indexOf("Files") != -1 && event.dataTransfer.files.length == 1)
+    if (event.dataTransfer.types.contains("Files") && event.dataTransfer.files.length == 1)
         testPassed("event.dataTransfer contains a File object on drop.");
     else {
         testFailed("event.dataTransfer does not contain a File object on drop.");

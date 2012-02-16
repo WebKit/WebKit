@@ -31,11 +31,11 @@
 #ifndef ChromiumDataObject_h
 #define ChromiumDataObject_h
 
+#include "DOMStringList.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -75,7 +75,7 @@ public:
 
     bool hasData() const;
 
-    HashSet<String> types() const;
+    PassRefPtr<DOMStringList> types() const;
     String getData(const String& type, bool& success) const;
     bool setData(const String& type, const String& data);
 

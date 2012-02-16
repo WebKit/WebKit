@@ -18,6 +18,7 @@
 #include "ClipboardGtk.h"
 
 #include "CachedImage.h"
+#include "DOMStringList.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "Element.h"
@@ -189,33 +190,33 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
     return success;
 }
 
-HashSet<String> ClipboardGtk::types() const
+PassRefPtr<DOMStringList> ClipboardGtk::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return HashSet<String>();
+        return DOMStringList::create();
 
     if (m_clipboard)
         PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
-    HashSet<String> types;
+    RefPtr<DOMStringList> types = DOMStringList::create();
     if (m_dataObject->hasText()) {
-        types.add("text/plain");
-        types.add("Text");
-        types.add("text");
+        types->append("text/plain");
+        types->append("Text");
+        types->append("text");
     }
 
     if (m_dataObject->hasMarkup())
-        types.add("text/html");
+        types->append("text/html");
 
     if (m_dataObject->hasURIList()) {
-        types.add("text/uri-list");
-        types.add("URL");
+        types->append("text/uri-list");
+        types->append("URL");
     }
 
     if (m_dataObject->hasFilenames())
-        types.add("Files");
+        types->append("Files");
 
-    return types;
+    return types.release();
 }
 
 PassRefPtr<FileList> ClipboardGtk::files() const

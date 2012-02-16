@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ClipboardWx.h"
 
+#include "DOMStringList.h"
 #include "FileList.h"
 #include "HashTable.h"
 #include "IntPoint.h"
@@ -70,11 +71,10 @@ bool ClipboardWx::setData(const String& type, const String& data)
 }
 
 // extensions beyond IE's API
-HashSet<String> ClipboardWx::types() const 
+PassRefPtr<DOMStringList> ClipboardWx::types() const 
 {
     notImplemented();
-    HashSet<String> result;
-    return result;
+    return DOMStringList::create();
 }
 
 PassRefPtr<FileList> ClipboardWx::files() const

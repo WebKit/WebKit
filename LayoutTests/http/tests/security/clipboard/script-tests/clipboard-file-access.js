@@ -75,7 +75,7 @@ function checkForEventTransferType(event, typeString, shouldContainType)
 {
     var passedCheck;
     var message;
-    if (event.dataTransfer.types && event.dataTransfer.types.indexOf(typeString) != -1) {
+    if (event.dataTransfer.types && event.dataTransfer.types.contains(typeString)) {
         passedCheck = shouldContainType;
         message = "event.dataTransfer.types contains " + typeString + ".";
     } else {

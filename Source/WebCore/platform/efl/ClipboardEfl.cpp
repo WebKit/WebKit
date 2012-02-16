@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ClipboardEfl.h"
 
+#include "DOMStringList.h"
 #include "DataTransferItemList.h"
 #include "Editor.h"
 #include "FileList.h"
@@ -77,10 +78,10 @@ bool ClipboardEfl::setData(const String&, const String&)
     return false;
 }
 
-HashSet<String> ClipboardEfl::types() const
+PassRefPtr<DOMStringList> ClipboardEfl::types() const
 {
     notImplemented();
-    return HashSet<String>();
+    return DOMStringList::create();
 }
 
 PassRefPtr<FileList> ClipboardEfl::files() const

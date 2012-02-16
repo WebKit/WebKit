@@ -27,6 +27,7 @@
 #include "Clipboard.h"
 
 #include "CachedImage.h"
+#include "DOMStringList.h"
 #include "FileList.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -147,7 +148,7 @@ bool Clipboard::hasStringOfType(const String& type) const
     if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
         return false;
     
-    return types().contains(type); 
+    return types()->contains(type);
 }
     
 void Clipboard::setDropEffect(const String &effect)

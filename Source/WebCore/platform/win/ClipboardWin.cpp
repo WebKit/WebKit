@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
+#include "DOMStringList.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Editor.h"
@@ -485,24 +486,24 @@ bool ClipboardWin::setData(const String& type, const String& data)
     return false;
 }
 
-static void addMimeTypesForFormat(HashSet<String>& results, const FORMATETC& format)
+static void addMimeTypesForFormat(DOMStringList* results, const FORMATETC& format)
 {
     // URL and Text are provided for compatibility with IE's model
     if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat) {
-        results.add("URL");
-        results.add("text/uri-list");
+        results->append("URL");
+        results->append("text/uri-list");
     }
 
     if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat) {
-        results.add("Text");
-        results.add("text/plain");
+        results->append("Text");
+        results->append("text/plain");
     }
 }
 
 // extensions beyond IE's API
-HashSet<String> ClipboardWin::types() const
+PassRefPtr<DOMStringList> ClipboardWin::types() const
 { 
-    HashSet<String> results; 
+    RefPtr<DOMStringList> results = DOMStringList::create();
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return results;
 
@@ -522,16 +523,16 @@ HashSet<String> ClipboardWin::types() const
 
         // IEnumFORMATETC::Next returns S_FALSE if there are no more items.
         while (itr->Next(1, &data, 0) == S_OK)
-            addMimeTypesForFormat(results, data);
+            addMimeTypesForFormat(results.get(), data);
     } else {
         for (DragDataMap::const_iterator it = m_dragDataMap.begin(); it != m_dragDataMap.end(); ++it) {
             FORMATETC data;
             data.cfFormat = (*it).first;
-            addMimeTypesForFormat(results, data);
+            addMimeTypesForFormat(results.get(), data);
         }
     }
 
-    return results;
+    return results.release();
 }
 
 PassRefPtr<FileList> ClipboardWin::files() const
