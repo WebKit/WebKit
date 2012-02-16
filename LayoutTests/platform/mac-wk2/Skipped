@@ -60,7 +60,6 @@ editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/file-input-files-access.html
 editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/smart-drag-drop.html
@@ -111,7 +110,6 @@ editing/spelling/spellcheck-paste.html
 editing/undo/undo-smart-delete-reversed-selection.html
 fast/block/positioning/hittest-on-relative-positioned-children.html
 fast/css/user-drag-none.html
-fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/layer-hit-test-crash.html
@@ -133,14 +131,11 @@ fast/events/dblclick-addEventListener.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
-fast/events/drag-file-crash.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
-fast/events/drag-to-navigate.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
-fast/events/dropzone-004.html
 fast/events/dropzone-005.html
 fast/events/keydown-numpad-keys.html
 fast/events/mouse-click-events.html
@@ -150,7 +145,6 @@ fast/events/ondragenter.html
 fast/events/open-window-from-another-frame.html
 fast/events/popup-blocking-click-in-iframe.html
 fast/events/popup-when-select-change.html
-fast/events/prevent-drag-to-navigate.html
 fast/events/right-click-focus.html
 fast/events/scroll-after-click-on-tab-index.html
 fast/events/selectstart-by-drag.html
@@ -159,10 +153,6 @@ fast/events/standalone-image-drag-to-editable.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/events/wheelevent-direction-inverted-from-device.html
-fast/files/apply-blob-url-to-xhr.html
-fast/files/file-reader-abort.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/get-file-upload.html
@@ -182,16 +172,8 @@ fast/repaint/repaint-across-writing-mode-boundary.html
 fast/repaint/selection-rl.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
-http/tests/local/fileapi/file-last-modified.html
-http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
-http/tests/local/formdata/form-data-with-unknown-file-extension.html
-http/tests/local/formdata/send-form-data-constructed-from-form.html
-http/tests/local/formdata/send-form-data-with-sliced-file.html
-http/tests/local/formdata/send-form-data.html
-http/tests/local/formdata/upload-events.html
 http/tests/misc/bubble-drag-events.html
-http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html

@@ -1,3 +1,15 @@
+2012-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash after trying to use FileReader in a document with null origin string
+        https://bugs.webkit.org/show_bug.cgi?id=78649
+
+        Reviewed by Enrica Casucci.
+
+        Test: fast/files/null-origin-string.html
+
+        * fileapi/FileReaderLoader.cpp: (WebCore::FileReaderLoader::~FileReaderLoader):
+        HashMaps don't like empty keys, and they don't like removing keys that have never been added.
+
 2012-02-15  Anders Carlsson  <andersca@apple.com>
 
         Attempt to fix the Snow Leopard build.
