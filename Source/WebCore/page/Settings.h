@@ -526,6 +526,10 @@ namespace WebCore {
         void setNotificationsEnabled(bool enabled) { m_notificationsEnabled = enabled; }
         bool notificationsEnabled() const { return m_notificationsEnabled; }
 
+        // Some apps needs isLoadingInAPISense to account for active subresource loaders.
+        void setNeedsIsLoadingInAPISenseQuirk(bool enabled) { m_needsIsLoadingInAPISenseQuirk = enabled; }
+        bool needsIsLoadingInAPISenseQuirk() const { return m_needsIsLoadingInAPISenseQuirk; }
+
 #if ENABLE(TOUCH_EVENTS)
         void setTouchEventEmulationEnabled(bool enabled) { m_touchEventEmulationEnabled = enabled; }
         bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
@@ -677,6 +681,7 @@ namespace WebCore {
 #endif
 
         bool m_notificationsEnabled : 1;
+        bool m_needsIsLoadingInAPISenseQuirk : 1;
 
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled : 1;

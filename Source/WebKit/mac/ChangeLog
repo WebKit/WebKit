@@ -1,3 +1,14 @@
+2012-02-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10616280> and https://bugs.webkit.org/show_bug.cgi?id=78767
+        REGRESSION (r90471) - iAd Producer 2.0.1 produces blank pages
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _needsIsLoadingInAPISenseQuirk]):
+        (-[WebView _preferencesChanged:]):
+
 2012-02-15  Enrica Casucci  <enrica@apple.com>
 
         Refactor ClipboardMac class to use PlatformStrategies.

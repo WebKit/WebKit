@@ -1,3 +1,23 @@
+2012-02-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10616280> and https://bugs.webkit.org/show_bug.cgi?id=78767
+        REGRESSION (r90471) - iAd Producer 2.0.1 produces blank pages
+
+        Reviewed by Sam Weinig.
+
+        No new tests. (Subtle API change attached to a specific application)
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense): Return true if the app needs the quirk
+        and there are outstanding subresource loads.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setNeedsIsLoadingInAPISenseQuirk):
+        (WebCore::Settings::needsIsLoadingInAPISenseQuirk):
+        (Settings):
+
 2012-02-16  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ConvertScriptString] from FileReaderSync.idl

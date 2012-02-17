@@ -241,6 +241,7 @@ Settings::Settings(Page* page)
     , m_scrollingCoordinatorEnabled(false)
 #endif
     , m_notificationsEnabled(true)
+    , m_needsIsLoadingInAPISenseQuirk(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventEmulationEnabled(false)
 #endif

@@ -1322,6 +1322,13 @@ static bool fastDocumentTeardownEnabled()
     return needsQuirk;
 }
 
+- (BOOL)_needsIsLoadingInAPISenseQuirk
+{
+    static BOOL needsQuirk = WKAppVersionCheckLessThan(@"com.apple.iAdProducer", -1, 2.1);
+    
+    return needsQuirk;
+}
+
 - (BOOL)_needsKeyboardEventDisambiguationQuirks
 {
     static BOOL needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !applicationIsSafari();
@@ -1508,6 +1515,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
     settings->setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
 #endif
+
+    settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
