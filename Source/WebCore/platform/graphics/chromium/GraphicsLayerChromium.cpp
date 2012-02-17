@@ -177,8 +177,9 @@ void GraphicsLayerChromium::setSize(const FloatSize& size)
 {
     // We are receiving negative sizes here that cause assertions to fail in the compositor. Clamp them to 0 to
     // avoid those assertions.
+    // FIXME: This should be an ASSERT instead, as negative sizes should not exist in WebCore.
     FloatSize clampedSize = size;
-    if (clampedSize.isEmpty())
+    if (clampedSize.width() < 0 || clampedSize.height() < 0)
         clampedSize = FloatSize();
 
     if (clampedSize == m_size)

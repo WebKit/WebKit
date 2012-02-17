@@ -1,3 +1,15 @@
+2012-02-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Empty divs not transforming overflow correctly
+        https://bugs.webkit.org/show_bug.cgi?id=78850
+
+        Reviewed by James Robinson.
+
+        Test: compositing/overflow/transform-in-empty-container.html
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setSize):
+
 2012-02-16  Emil A Eklund  <eae@chromium.org>
 
         Fix use of long long in FractionalLayoutUnit::setRawValue
