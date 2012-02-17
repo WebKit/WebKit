@@ -1,3 +1,22 @@
+2012-02-16  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] LayerChromium::setNeedsDisplay does not apply contents scale correctly
+        https://bugs.webkit.org/show_bug.cgi?id=77464
+
+        Added a new unit test for TiledLayerChromium to verify its invalidation behavior when
+        the contents scale changes. Also enhance and existing unit test for LayerChromium to
+        verify the paint rectangle dimensions instead just checking that it is not empty.
+
+        Reviewed by James Robinson.
+
+        * tests/LayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::setNeedsDisplayRect):
+        (FakeTiledLayerChromium):
+        (WTF::FakeTiledLayerChromium::lastNeedsDisplayRect):
+        (WTF::TEST):
+        (WTF):
+
 2012-02-16  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78065

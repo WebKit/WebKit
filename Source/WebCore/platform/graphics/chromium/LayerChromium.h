@@ -103,7 +103,7 @@ public:
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
     virtual void setNeedsDisplayRect(const FloatRect& dirtyRect);
-    void setNeedsDisplay() { setNeedsDisplayRect(FloatRect(FloatPoint(), contentBounds())); }
+    void setNeedsDisplay() { setNeedsDisplayRect(FloatRect(FloatPoint(), bounds())); }
     virtual bool needsDisplay() const { return m_needsDisplay; }
 
     void setOpacity(float);

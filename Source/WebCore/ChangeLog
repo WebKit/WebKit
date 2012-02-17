@@ -1,3 +1,25 @@
+2012-02-16  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] LayerChromium::setNeedsDisplay does not apply contents scale correctly
+        https://bugs.webkit.org/show_bug.cgi?id=77464
+
+        Use bounds() instead of contentBounds() to calculate the region to mark
+        as needing painting in LayerChromium::setNeedsDisplay(). contentBounds()
+        includes contents scale, while bounds() does not.
+
+        Since this change also means that TiledLayerChromium::setNeedsDisplayRect() is
+        given an unscaled rectangle, modify that function to scale the rectangle before
+        using it to invalidate the underlying tiles.
+
+        Reviewed by James Robinson.
+
+        Tests: New tests added to LayerChromium and TiledLayerChromium unit tests.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setNeedsDisplay):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setNeedsDisplayRect):
+
 2012-02-16  Raymond Liu  <raymond.liu@intel.com>
 
         Lazy init for DefaultAudioDestinationNode and OfflineAudioDestinationNode

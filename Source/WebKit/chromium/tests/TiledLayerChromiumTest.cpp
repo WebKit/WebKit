@@ -162,6 +162,14 @@ public:
         return TiledLayerChromium::skipsDraw();
     }
 
+    virtual void setNeedsDisplayRect(const FloatRect& rect)
+    {
+        m_lastNeedsDisplayRect = rect;
+        TiledLayerChromium::setNeedsDisplayRect(rect);
+    }
+
+    const FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
+
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
 
     virtual TextureManager* textureManager() const { return m_textureManager; }
@@ -181,6 +189,7 @@ private:
 
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     TextureManager* m_textureManager;
+    FloatRect m_lastNeedsDisplayRect;
 };
 
 class FakeTiledLayerWithScaledBounds : public FakeTiledLayerChromium {
@@ -432,6 +441,57 @@ TEST(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
     layer->prepareToUpdate(contentBounds);
     layer->updateCompositorResources(0, updater);
     EXPECT_FLOAT_RECT_EQ(FloatRect(45, 80, 15, 8), layer->updateRect());
+}
+
+TEST(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    RefPtr<FakeCCTiledLayerImpl> layerImpl = adoptRef(new FakeCCTiledLayerImpl(0));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // Create a layer with one tile.
+    layer->setBounds(IntSize(100, 100));
+
+    // Invalidate the entire layer.
+    layer->setNeedsDisplay();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 100, 100), layer->lastNeedsDisplayRect());
+
+    // Push the tiles to the impl side and check that there is exactly one.
+    layer->prepareToUpdate(IntRect(0, 0, 100, 100));
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 1));
+    EXPECT_FALSE(layerImpl->hasTileAt(1, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(1, 1));
+
+    // Change the contents scale and verify that the content rectangle requiring painting
+    // is not scaled.
+    layer->setContentsScale(2);
+    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 100, 100), layer->lastNeedsDisplayRect());
+
+    // The impl side should get 2x2 tiles now.
+    layer->prepareToUpdate(IntRect(0, 0, 200, 200));
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
+    EXPECT_TRUE(layerImpl->hasTileAt(1, 0));
+    EXPECT_TRUE(layerImpl->hasTileAt(1, 1));
+
+    // Invalidate the entire layer again, but do not paint. All tiles should be gone now from the
+    // impl side.
+    layer->setNeedsDisplay();
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 1));
+    EXPECT_FALSE(layerImpl->hasTileAt(1, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(1, 1));
 }
 
 TEST(TiledLayerChromiumTest, skipsDrawGetsReset)

@@ -307,7 +307,9 @@ UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 
 void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
-    IntRect dirty = enclosingIntRect(dirtyRect);
+    FloatRect scaledDirtyRect(dirtyRect);
+    scaledDirtyRect.scale(contentsScale());
+    IntRect dirty = enclosingIntRect(scaledDirtyRect);
     invalidateRect(dirty);
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 }
