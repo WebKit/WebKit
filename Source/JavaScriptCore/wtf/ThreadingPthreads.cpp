@@ -40,9 +40,12 @@
 #include "HashMap.h"
 #include "RandomNumberSeed.h"
 #include "StdLibExtras.h"
+#include "ThreadFunctionInvocation.h"
 #include "ThreadIdentifierDataPthreads.h"
 #include "ThreadSpecific.h"
 #include "UnusedParam.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/WTFThreadData.h>
 #include <errno.h>
 
@@ -152,6 +155,15 @@ void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
+static void* wtfThreadEntryPoint(void* param)
+{
+    // Balanced by .leakPtr() in createThreadInternal.
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
+    invocation->function(invocation->data);
+
+    return 0;
+}
+
 #if PLATFORM(BLACKBERRY)
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
 {
@@ -171,8 +183,9 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
             LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
     }
 
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
     pthread_t threadHandle;
-    if (pthread_create(&threadHandle, &attr, entryPoint, data)) {
+    if (pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get())) {
         LOG_ERROR("pthread_create() failed: %d", errno);
         threadHandle = 0;
     }
@@ -183,16 +196,25 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     if (!threadHandle)
         return 0;
 
+    // Balanced by adoptPtr() in wtfThreadEntryPoint.
+    ThreadFunctionInvocation* leakedInvocation = invocation.leakPtr();
+    UNUSED_PARAM(leakedInvocation);
+
     return establishIdentifierForPthreadHandle(threadHandle);
 }
 #else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
     pthread_t threadHandle;
-    if (pthread_create(&threadHandle, 0, entryPoint, data)) {
-        LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
+    if (pthread_create(&threadHandle, 0, wtfThreadEntryPoint, invocation.get())) {
+        LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, invocation.get());
         return 0;
     }
+
+    // Balanced by adoptPtr() in wtfThreadEntryPoint.
+    ThreadFunctionInvocation* leakedInvocation = invocation.leakPtr();
+    UNUSED_PARAM(leakedInvocation);
 
     return establishIdentifierForPthreadHandle(threadHandle);
 }
@@ -217,7 +239,7 @@ void initializeCurrentThreadInternal(const char* threadName)
     ThreadIdentifierData::initialize(id);
 }
 
-int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
+int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     ASSERT(threadID);
 
@@ -225,7 +247,7 @@ int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
     if (!pthreadHandle)
         return 0;
 
-    int joinResult = pthread_join(pthreadHandle, result);
+    int joinResult = pthread_join(pthreadHandle, 0);
     if (joinResult == EDEADLK)
         LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
 

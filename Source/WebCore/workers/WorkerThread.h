@@ -80,8 +80,8 @@ namespace WebCore {
 
     private:
         // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.
-        static void* workerThreadStart(void*);
-        void* workerThread();
+        static void workerThreadStart(void*);
+        void workerThread();
 
         ThreadIdentifier m_threadID;
         WorkerRunLoop m_runLoop;

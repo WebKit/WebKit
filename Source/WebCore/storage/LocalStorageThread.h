@@ -55,8 +55,8 @@ namespace WebCore {
         LocalStorageThread();
 
         // Called on background thread.
-        static void* threadEntryPointCallback(void*);
-        void* threadEntryPoint();
+        static void threadEntryPointCallback(void*);
+        void threadEntryPoint();
 
         ThreadIdentifier m_threadID;
         MessageQueue<LocalStorageTask> m_queue;

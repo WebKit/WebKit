@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static void* webThreadBody(void* /* context */)
+static void webThreadBody(void* /* context */)
 {
     // Initialization
     JSC::initializeThreading();
@@ -57,8 +57,6 @@ static void* webThreadBody(void* /* context */)
 
     WebProcess::shared().initialize(-1, RunLoop::current());
     RunLoop::run();
-
-    return 0;
 }
 
 CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()

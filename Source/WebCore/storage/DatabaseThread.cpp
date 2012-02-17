@@ -88,13 +88,13 @@ bool DatabaseThread::terminationRequested(DatabaseTaskSynchronizer* taskSynchron
     return m_queue.killed();
 }
 
-void* DatabaseThread::databaseThreadStart(void* vDatabaseThread)
+void DatabaseThread::databaseThreadStart(void* vDatabaseThread)
 {
     DatabaseThread* dbThread = static_cast<DatabaseThread*>(vDatabaseThread);
-    return dbThread->databaseThread();
+    dbThread->databaseThread();
 }
 
-void* DatabaseThread::databaseThread()
+void DatabaseThread::databaseThread()
 {
     {
         // Wait for DatabaseThread::start() to complete.
@@ -134,8 +134,6 @@ void* DatabaseThread::databaseThread()
 
     if (cleanupSync) // Someone wanted to know when we were done cleaning up.
         cleanupSync->taskCompleted();
-
-    return 0;
 }
 
 void DatabaseThread::recordDatabaseOpen(Database* database)

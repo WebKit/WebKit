@@ -64,7 +64,7 @@ private:
     // Rendering thread.
     volatile ThreadIdentifier m_renderThread;
     bool m_startedRendering;
-    static void* renderEntry(void* threadData);
+    static void renderEntry(void* threadData);
     void render();
     
     // For completion callback on main thread.

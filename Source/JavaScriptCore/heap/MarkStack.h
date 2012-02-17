@@ -178,7 +178,7 @@ namespace JSC {
 
 #if ENABLE(PARALLEL_GC)
         void markingThreadMain();
-        static void* markingThreadStartFunc(void* heap);
+        static void markingThreadStartFunc(void* heap);
 #endif
 
         JSGlobalData* m_globalData;

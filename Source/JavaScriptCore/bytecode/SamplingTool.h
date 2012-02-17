@@ -223,7 +223,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void start(unsigned hertz=10000);
         JS_EXPORT_PRIVATE static void stop();
 
-        static void* threadStartFunc(void*);
+        static void threadStartFunc(void*);
     };
 
     class SamplingTool {

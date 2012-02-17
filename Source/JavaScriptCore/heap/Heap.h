@@ -187,7 +187,7 @@ namespace JSC {
         void waitForRelativeTimeWhileHoldingLock(double relative);
         void waitForRelativeTime(double relative);
         void blockFreeingThreadMain();
-        static void* blockFreeingThreadStartFunc(void* heap);
+        static void blockFreeingThreadStartFunc(void* heap);
         
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;

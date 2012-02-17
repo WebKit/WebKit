@@ -210,7 +210,7 @@ bool SamplingThread::s_running = false;
 unsigned SamplingThread::s_hertz = 10000;
 ThreadIdentifier SamplingThread::s_samplingThread;
 
-void* SamplingThread::threadStartFunc(void*)
+void SamplingThread::threadStartFunc(void*)
 {
     while (s_running) {
         sleepForMicroseconds(hertz2us(s_hertz));
@@ -225,8 +225,6 @@ void* SamplingThread::threadStartFunc(void*)
         SamplingTool::sample();
 #endif
     }
-
-    return 0;
 }
 
 
@@ -243,7 +241,7 @@ void SamplingThread::stop()
 {
     ASSERT(s_running);
     s_running = false;
-    waitForThreadCompletion(s_samplingThread, 0);
+    waitForThreadCompletion(s_samplingThread);
 }
 
 

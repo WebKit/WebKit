@@ -76,7 +76,7 @@ private:
         RefPtr<AudioBuffer> m_audioBuffer;
     };
     
-    static void* threadEntry(void* threadData);
+    static void threadEntry(void* threadData);
     void runLoop();
 
     WTF::ThreadIdentifier m_threadID;

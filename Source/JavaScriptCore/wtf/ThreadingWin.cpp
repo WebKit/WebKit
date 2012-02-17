@@ -210,14 +210,14 @@ static void clearThreadHandleForIdentifier(ThreadIdentifier id)
 static unsigned __stdcall wtfThreadEntryPoint(void* param)
 {
     OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
-    void* result = invocation->function(invocation->data);
+    invocation->function(invocation->data);
 
 #if !USE(PTHREADS) && OS(WINDOWS)
     // Do the TLS cleanup.
     ThreadSpecificThreadExit();
 #endif
 
-    return reinterpret_cast<unsigned>(result);
+    return 0;
 }
 
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
@@ -252,7 +252,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     return threadID;
 }
 
-int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
+int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     ASSERT(threadID);
     

@@ -1,3 +1,81 @@
+2012-02-17  Kalev Lember  <kalevlember@gmail.com>
+
+        Remove unused parameters from WTF threading API
+        https://bugs.webkit.org/show_bug.cgi?id=78389
+
+        Reviewed by Adam Roben.
+
+        waitForThreadCompletion() had an out param 'void **result' to get the
+        'void *' returned by ThreadFunction. However, the implementation in
+        ThreadingWin.cpp ignored the out param, not filling it in. This had
+        led to a situation where none of the client code made use of the param
+        and just ignored it.
+
+        To clean this up, the patch changes the signature of ThreadFunction to
+        return void instead of void* and drops the the unused 'void **result'
+        parameter from waitForThreadCompletion. Also, all client code is
+        updated for the API change.
+
+        As mentioned in https://bugs.webkit.org/show_bug.cgi?id=78389 , even
+        though the change only affects internal API, Safari is using it
+        directly and we'll need to keep the old versions around for ABI
+        compatibility. For this, the patch adds compatibility wrappers with
+        the old ABI.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::garbageCollectOnAlternateThreadForDebugging):
+        * fileapi/FileThread.cpp:
+        (WebCore::FileThread::fileThreadStart):
+        (WebCore::FileThread::runLoop):
+        * fileapi/FileThread.h:
+        (FileThread):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::close):
+        (WebCore::IconDatabase::iconDatabaseSyncThreadStart):
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+        (WebCore::IconDatabase::syncThreadMainLoop):
+        * loader/icon/IconDatabase.h:
+        (IconDatabase):
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::threadCallback):
+        * page/scrolling/ScrollingThread.h:
+        (ScrollingThread):
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::databaseLoaderEntry):
+        (WebCore::HRTFDatabaseLoader::waitForLoaderThreadCompletion):
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::backgroundThreadEntry):
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::runLoaderThread):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThreadStart):
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/DatabaseThread.h:
+        (DatabaseThread):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::threadEntryPointCallback):
+        (WebCore::LocalStorageThread::threadEntryPoint):
+        (WebCore::LocalStorageThread::terminate):
+        * storage/LocalStorageThread.h:
+        (LocalStorageThread):
+        * webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::~AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::threadEntry):
+        * webaudio/AsyncAudioDecoder.h:
+        (AsyncAudioDecoder):
+        * webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::uninitialize):
+        (WebCore::OfflineAudioDestinationNode::renderEntry):
+        * webaudio/OfflineAudioDestinationNode.h:
+        (OfflineAudioDestinationNode):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThreadStart):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        (WorkerThread):
+
 2012-02-17  Robert Hogan  <robert@webkit.org>
 
         AppleMac Build fix for r108111

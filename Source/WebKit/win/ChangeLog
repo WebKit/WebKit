@@ -1,3 +1,30 @@
+2012-02-17  Kalev Lember  <kalevlember@gmail.com>
+
+        Remove unused parameters from WTF threading API
+        https://bugs.webkit.org/show_bug.cgi?id=78389
+
+        Reviewed by Adam Roben.
+
+        waitForThreadCompletion() had an out param 'void **result' to get the
+        'void *' returned by ThreadFunction. However, the implementation in
+        ThreadingWin.cpp ignored the out param, not filling it in. This had
+        led to a situation where none of the client code made use of the param
+        and just ignored it.
+
+        To clean this up, the patch changes the signature of ThreadFunction to
+        return void instead of void* and drops the the unused 'void **result'
+        parameter from waitForThreadCompletion. Also, all client code is
+        updated for the API change.
+
+        As mentioned in https://bugs.webkit.org/show_bug.cgi?id=78389 , even
+        though the change only affects internal API, Safari is using it
+        directly and we'll need to keep the old versions around for ABI
+        compatibility. For this, the patch adds compatibility wrappers with
+        the old ABI.
+
+        * WebKit.vcproj/WebKit_Cairo.def: Add the new functions.
+        * WebKit.vcproj/WebKit_Cairo_debug.def: Ditto.
+
 2012-02-15  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Notify ChromeClient when touch-event handlers are installed/removed.

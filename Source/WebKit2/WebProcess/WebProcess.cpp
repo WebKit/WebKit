@@ -100,7 +100,7 @@ static void sleep(unsigned seconds)
 }
 #endif
 
-static void* randomCrashThread(void*)
+static void randomCrashThread(void*)
 {
     // This delay was chosen semi-arbitrarily. We want the crash to happen somewhat quickly to
     // enable useful stress testing, but not so quickly that the web process will always crash soon
@@ -109,7 +109,6 @@ static void* randomCrashThread(void*)
 
     sleep(randomNumber() * maximumRandomCrashDelay);
     CRASH();
-    return 0;
 }
 
 static void startRandomCrashThreadIfRequested()

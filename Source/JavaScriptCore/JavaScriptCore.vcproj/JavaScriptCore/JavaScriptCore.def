@@ -124,6 +124,7 @@ EXPORTS
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
+    ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
     ?createTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?cryptographicallyRandomNumber@WTF@@YAIXZ
     ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
@@ -364,6 +365,7 @@ EXPORTS
     ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
+    ?waitForThreadCompletion@WTF@@YAHI@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     ?writeBarrier@HandleHeap@JSC@@QAEXPAVJSValue@2@ABV32@@Z

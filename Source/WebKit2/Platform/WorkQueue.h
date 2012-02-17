@@ -166,7 +166,7 @@ private:
     QThread* m_workThread;
     friend class WorkItemQt;
 #elif PLATFORM(GTK)
-    static void* startWorkQueueThread(WorkQueue*);
+    static void startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
     void dispatchOnSource(GSource*, const Function<void()>&, GSourceFunc);
 

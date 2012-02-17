@@ -72,8 +72,8 @@ public:
 private:
     FileThread();
 
-    static void* fileThreadStart(void*);
-    void* runLoop();
+    static void fileThreadStart(void*);
+    void runLoop();
 
     ThreadIdentifier m_threadID;
     RefPtr<FileThread> m_selfRef;

@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-typedef void* (*ThreadFunction)(void* argument);
+typedef void (*ThreadFunction)(void* argument);
 
 struct ThreadFunctionInvocation {
     ThreadFunctionInvocation(ThreadFunction function, void* data)

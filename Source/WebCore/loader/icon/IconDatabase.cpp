@@ -156,7 +156,7 @@ void IconDatabase::close()
         wakeSyncThread();
         
         // Wait for the sync thread to terminate
-        waitForThreadCompletion(m_syncThread, 0);
+        waitForThreadCompletion(m_syncThread);
     }
 
     m_syncThreadRunning = false;    
@@ -949,14 +949,14 @@ bool IconDatabase::shouldStopThreadActivity() const
     return m_threadTerminationRequested || m_removeIconsRequested;
 }
 
-void* IconDatabase::iconDatabaseSyncThreadStart(void* vIconDatabase)
+void IconDatabase::iconDatabaseSyncThreadStart(void* vIconDatabase)
 {    
     IconDatabase* iconDB = static_cast<IconDatabase*>(vIconDatabase);
     
-    return iconDB->iconDatabaseSyncThread();
+    iconDB->iconDatabaseSyncThread();
 }
 
-void* IconDatabase::iconDatabaseSyncThread()
+void IconDatabase::iconDatabaseSyncThread()
 {
     // The call to create this thread might not complete before the thread actually starts, so we might fail this ASSERT_ICON_SYNC_THREAD() because the pointer 
     // to our thread structure hasn't been filled in yet.
@@ -988,12 +988,14 @@ void* IconDatabase::iconDatabaseSyncThread()
         MutexLocker locker(m_syncLock);
         if (!m_syncDB.open(m_completeDatabasePath)) {
             LOG_ERROR("Unable to open icon database at path %s - %s", m_completeDatabasePath.ascii().data(), m_syncDB.lastErrorMsg());
-            return 0;
+            return;
         }
     }
     
-    if (shouldStopThreadActivity())
-        return syncThreadMainLoop();
+    if (shouldStopThreadActivity()) {
+        syncThreadMainLoop();
+        return;
+    }
         
 #if !LOG_DISABLED
     double timeStamp = currentTime();
@@ -1001,8 +1003,10 @@ void* IconDatabase::iconDatabaseSyncThread()
 #endif    
 
     performOpenInitialization();
-    if (shouldStopThreadActivity())
-        return syncThreadMainLoop();
+    if (shouldStopThreadActivity()) {
+        syncThreadMainLoop();
+        return;
+    }
         
 #if !LOG_DISABLED
     double newStamp = currentTime();
@@ -1024,8 +1028,10 @@ void* IconDatabase::iconDatabaseSyncThread()
             importTransaction.rollback();
         }
         
-        if (shouldStopThreadActivity())
-            return syncThreadMainLoop();
+        if (shouldStopThreadActivity()) {
+            syncThreadMainLoop();
+            return;
+        }
             
 #if !LOG_DISABLED
         newStamp = currentTime();
@@ -1041,8 +1047,10 @@ void* IconDatabase::iconDatabaseSyncThread()
     LOG(IconDatabase, "(THREAD) Starting iconURL import");
     performURLImport();
     
-    if (shouldStopThreadActivity())
-        return syncThreadMainLoop();
+    if (shouldStopThreadActivity()) {
+        syncThreadMainLoop();
+        return;
+    }
 
 #if !LOG_DISABLED
     newStamp = currentTime();
@@ -1050,7 +1058,7 @@ void* IconDatabase::iconDatabaseSyncThread()
 #endif 
 
     LOG(IconDatabase, "(THREAD) Beginning sync");
-    return syncThreadMainLoop();
+    syncThreadMainLoop();
 }
 
 static int databaseVersionNumber(SQLiteDatabase& db)
@@ -1348,7 +1356,7 @@ void IconDatabase::performURLImport()
     callOnMainThread(notifyPendingLoadDecisionsOnMainThread, this);
 }
 
-void* IconDatabase::syncThreadMainLoop()
+void IconDatabase::syncThreadMainLoop()
 {
     ASSERT_ICON_SYNC_THREAD();
 
@@ -1461,8 +1469,6 @@ void* IconDatabase::syncThreadMainLoop()
         MutexLocker locker(m_syncLock);
         m_disabledSuddenTerminationForSyncThread = false;
     }
-
-    return 0;
 }
 
 bool IconDatabase::readFromDatabase()

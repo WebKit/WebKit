@@ -49,8 +49,7 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
     m_queue.kill();
     
     // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
+    waitForThreadCompletion(m_threadID);
     m_threadID = 0;
 }
 
@@ -66,12 +65,11 @@ void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, float sampleRate, Pa
 }
 
 // Asynchronously decode in this thread.
-void* AsyncAudioDecoder::threadEntry(void* threadData)
+void AsyncAudioDecoder::threadEntry(void* threadData)
 {
     ASSERT(threadData);
     AsyncAudioDecoder* decoder = reinterpret_cast<AsyncAudioDecoder*>(threadData);
     decoder->runLoop();
-    return 0;
 }
 
 void AsyncAudioDecoder::runLoop()

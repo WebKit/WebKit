@@ -56,18 +56,16 @@ bool LocalStorageThread::start()
     return m_threadID;
 }
 
-void* LocalStorageThread::threadEntryPointCallback(void* thread)
+void LocalStorageThread::threadEntryPointCallback(void* thread)
 {
-    return static_cast<LocalStorageThread*>(thread)->threadEntryPoint();
+    static_cast<LocalStorageThread*>(thread)->threadEntryPoint();
 }
 
-void* LocalStorageThread::threadEntryPoint()
+void LocalStorageThread::threadEntryPoint()
 {
     ASSERT(!isMainThread());
     while (OwnPtr<LocalStorageTask> task = m_queue.waitForMessage())
         task->performTask();
-
-    return 0;
 }
 
 void LocalStorageThread::scheduleTask(PassOwnPtr<LocalStorageTask> task)
@@ -85,9 +83,8 @@ void LocalStorageThread::terminate()
     if (!m_threadID)
         return;
 
-    void* returnValue;
     m_queue.append(LocalStorageTask::createTerminate(this));
-    waitForThreadCompletion(m_threadID, &returnValue);
+    waitForThreadCompletion(m_threadID);
     ASSERT(m_queue.killed());
     m_threadID = 0;
 }

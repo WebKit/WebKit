@@ -52,7 +52,7 @@ private:
     static ScrollingThread& shared();
 
     void createThreadIfNeeded();
-    static void* threadCallback(void* scrollingThread);
+    static void threadCallback(void* scrollingThread);
     void threadBody();
     void dispatchFunctionsFromScrollingThread();
 

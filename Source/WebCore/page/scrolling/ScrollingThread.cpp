@@ -77,11 +77,9 @@ void ScrollingThread::createThreadIfNeeded()
     }
 }
 
-void* ScrollingThread::threadCallback(void* scrollingThread)
+void ScrollingThread::threadCallback(void* scrollingThread)
 {
     static_cast<ScrollingThread*>(scrollingThread)->threadBody();
-
-    return 0;
 }
 
 void ScrollingThread::threadBody()

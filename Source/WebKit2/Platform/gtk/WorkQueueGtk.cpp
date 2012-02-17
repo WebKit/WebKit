@@ -142,10 +142,9 @@ void WorkQueue::platformInvalidate()
     }
 }
 
-void* WorkQueue::startWorkQueueThread(WorkQueue* workQueue)
+void WorkQueue::startWorkQueueThread(WorkQueue* workQueue)
 {
     workQueue->workQueueThreadBody();
-    return 0;
 }
 
 void WorkQueue::workQueueThreadBody()

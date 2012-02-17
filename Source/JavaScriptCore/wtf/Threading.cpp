@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "Threading.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 #include <string.h>
 
@@ -47,7 +49,7 @@ public:
     Mutex creationMutex;
 };
 
-static void* threadEntryPoint(void* contextData)
+static void threadEntryPoint(void* contextData)
 {
     NewThreadContext* context = reinterpret_cast<NewThreadContext*>(contextData);
 
@@ -64,7 +66,7 @@ static void* threadEntryPoint(void* contextData)
     void* data = context->data;
     delete context;
 
-    return entryPoint(data);
+    entryPoint(data);
 }
 
 ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* name)
@@ -86,14 +88,58 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
 
+// For ABI compatibility with Safari on Mac / Windows: Safari uses the private
+// createThread() and waitForThreadCompletion() functions directly and we need
+// to keep the old ABI compatibility until it's been rebuilt.
+
+typedef void* (*ThreadFunctionWithReturnValue)(void* argument);
+
+WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data, const char* name);
+
+struct ThreadFunctionWithReturnValueInvocation {
+    ThreadFunctionWithReturnValueInvocation(ThreadFunctionWithReturnValue function, void* data)
+        : function(function)
+        , data(data)
+    {
+    }
+
+    ThreadFunctionWithReturnValue function;
+    void* data;
+};
+
+static void compatEntryPoint(void* param)
+{
+    // Balanced by .leakPtr() in createThread.
+    OwnPtr<ThreadFunctionWithReturnValueInvocation> invocation = adoptPtr(static_cast<ThreadFunctionWithReturnValueInvocation*>(param));
+    invocation->function(invocation->data);
+}
+
+ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data, const char* name)
+{
+    OwnPtr<ThreadFunctionWithReturnValueInvocation> invocation = adoptPtr(new ThreadFunctionWithReturnValueInvocation(entryPoint, data));
+
+    // Balanced by adoptPtr() in compatEntryPoint.
+    return createThread(compatEntryPoint, invocation.leakPtr(), name);
+}
+
+WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier, void**);
+
+int waitForThreadCompletion(ThreadIdentifier threadID, void**)
+{
+    return waitForThreadCompletion(threadID);
+}
+
 // This function is deprecated but needs to be kept around for backward
 // compatibility. Use the 3-argument version of createThread above.
 
-WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction entryPoint, void* data);
+WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data);
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data)
 {
-    return createThread(entryPoint, data, 0);
+    OwnPtr<ThreadFunctionWithReturnValueInvocation> invocation = adoptPtr(new ThreadFunctionWithReturnValueInvocation(entryPoint, data));
+
+    // Balanced by adoptPtr() in compatEntryPoint.
+    return createThread(compatEntryPoint, invocation.leakPtr(), 0);
 }
 #endif
 

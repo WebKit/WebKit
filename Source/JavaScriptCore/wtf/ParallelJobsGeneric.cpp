@@ -121,7 +121,7 @@ void ParallelEnvironment::ThreadPrivate::waitForFinish()
         m_threadCondition.wait(m_mutex);
 }
 
-void* ParallelEnvironment::ThreadPrivate::workerThread(void* threadData)
+void ParallelEnvironment::ThreadPrivate::workerThread(void* threadData)
 {
     ThreadPrivate* sharedThread = reinterpret_cast<ThreadPrivate*>(threadData);
     MutexLocker lock(sharedThread->m_mutex);
@@ -136,7 +136,6 @@ void* ParallelEnvironment::ThreadPrivate::workerThread(void* threadData)
 
         sharedThread->m_threadCondition.wait(sharedThread->m_mutex);
     }
-    return 0;
 }
 
 } // namespace WTF

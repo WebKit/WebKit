@@ -122,6 +122,7 @@ EXPORTS
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
+        ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ
         ?detachThread@WTF@@YAXI@Z
         ?initializeMainThread@WTF@@YAXXZ
@@ -139,5 +140,6 @@ EXPORTS
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
+        ?waitForThreadCompletion@WTF@@YAHI@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

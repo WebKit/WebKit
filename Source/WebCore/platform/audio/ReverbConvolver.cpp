@@ -53,11 +53,10 @@ const size_t RealtimeFrameLimit = 8192  + 4096; // ~278msec @ 44.1KHz
 const size_t MinFFTSize = 256;
 const size_t MaxRealtimeFFTSize = 2048;
 
-static void* backgroundThreadEntry(void* threadData)
+static void backgroundThreadEntry(void* threadData)
 {
     ReverbConvolver* reverbConvolver = static_cast<ReverbConvolver*>(threadData);
     reverbConvolver->backgroundThreadEntry();
-    return 0;
 }
 
 ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t convolverRenderPhase, bool useBackgroundThreads)
@@ -142,7 +141,7 @@ ReverbConvolver::~ReverbConvolver()
             m_backgroundThreadCondition.signal();
         }
 
-        waitForThreadCompletion(m_backgroundThread, 0);
+        waitForThreadCompletion(m_backgroundThread);
     }
 }
 

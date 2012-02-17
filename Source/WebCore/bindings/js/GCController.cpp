@@ -36,11 +36,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-static void* collect(void*)
+static void collect(void*)
 {
     JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
-    return 0;
 }
 
 GCController& gcController()
@@ -77,7 +76,7 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     ThreadIdentifier threadID = createThread(collect, 0, "WebCore: GCController");
 
     if (waitUntilDone) {
-        waitForThreadCompletion(threadID, 0);
+        waitForThreadCompletion(threadID);
         return;
     }
 

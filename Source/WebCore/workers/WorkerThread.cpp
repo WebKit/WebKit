@@ -123,12 +123,12 @@ bool WorkerThread::start()
     return m_threadID;
 }
 
-void* WorkerThread::workerThreadStart(void* thread)
+void WorkerThread::workerThreadStart(void* thread)
 {
-    return static_cast<WorkerThread*>(thread)->workerThread();
+    static_cast<WorkerThread*>(thread)->workerThread();
 }
 
-void* WorkerThread::workerThread()
+void WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
@@ -173,8 +173,6 @@ void* WorkerThread::workerThread()
 
     // The thread object may be already destroyed from notification now, don't try to access "this".
     detachThread(threadID);
-
-    return 0;
 }
 
 void WorkerThread::runEventLoop()

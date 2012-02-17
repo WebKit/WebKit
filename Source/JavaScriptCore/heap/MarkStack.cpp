@@ -226,10 +226,9 @@ void MarkStackThreadSharedData::markingThreadMain()
     slotVisitor.drainFromShared(SlotVisitor::SlaveDrain);
 }
 
-void* MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
+void MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
 {
     static_cast<MarkStackThreadSharedData*>(shared)->markingThreadMain();
-    return 0;
 }
 #endif
 
@@ -258,7 +257,7 @@ MarkStackThreadSharedData::~MarkStackThreadSharedData()
         m_markingCondition.broadcast();
     }
     for (unsigned i = 0; i < m_markingThreads.size(); ++i)
-        waitForThreadCompletion(m_markingThreads[i], 0);
+        waitForThreadCompletion(m_markingThreads[i]);
 #endif
 }
     

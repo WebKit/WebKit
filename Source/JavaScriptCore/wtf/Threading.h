@@ -78,7 +78,7 @@
 namespace WTF {
 
 typedef uint32_t ThreadIdentifier;
-typedef void* (*ThreadFunction)(void* argument);
+typedef void (*ThreadFunction)(void* argument);
 
 // This function must be called from the main thread. It is safe to call it repeatedly.
 // Darwin is an exception to this rule: it is OK to call it from any thread, the only 
@@ -97,7 +97,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 void initializeCurrentThreadInternal(const char* threadName);
 
 WTF_EXPORT_PRIVATE ThreadIdentifier currentThread();
-WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier, void**);
+WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 WTF_EXPORT_PRIVATE void detachThread(ThreadIdentifier);
 
 WTF_EXPORT_PRIVATE void yield();

@@ -69,7 +69,7 @@ public:
             return adoptRef(new ThreadPrivate());
         }
 
-        static void* workerThread(void*);
+        static void workerThread(void*);
 
     private:
         ThreadIdentifier m_threadID;
