@@ -36,13 +36,15 @@ namespace WebKit {
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
     , m_rootGraphicsLayer(0)
-    , m_syncTimer(this, &AcceleratedCompositingContext::syncLayersTimeout)
+    , m_syncTimerCallbackId(0)
     , m_rootLayerEmbedder(0)
 {
 }
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
+    if (m_syncTimerCallbackId)
+        g_source_remove(m_syncTimerCallbackId);
 }
 
 bool AcceleratedCompositingContext::enabled()
@@ -109,14 +111,23 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     gtk_widget_size_allocate(GTK_WIDGET(m_webView->priv->rootLayerEmbedder), &allocation);
 }
 
-void AcceleratedCompositingContext::markForSync()
+static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)
 {
-    if (m_syncTimer.isActive())
-        return;
-    m_syncTimer.startOneShot(0);
+    context->syncLayersTimeout();
+    return FALSE;
 }
 
-void AcceleratedCompositingContext::syncLayersTimeout(Timer<AcceleratedCompositingContext>*)
+void AcceleratedCompositingContext::markForSync()
+{
+    if (m_syncTimerCallbackId)
+        return;
+
+    // We use a GLib timer because otherwise GTK+ event handling during
+    // dragging can starve WebCore timers, which have a lower priority.
+    m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
+}
+
+void AcceleratedCompositingContext::syncLayersTimeout()
 {
     core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }

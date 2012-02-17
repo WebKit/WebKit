@@ -41,7 +41,7 @@ namespace WebKit {
 
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
-    , m_syncTimer(this, &AcceleratedCompositingContext::syncLayersTimeout)
+    , m_syncTimerCallbackId(0)
     , m_initialized(false)
     , m_rootTextureMapperLayer(0)
 {
@@ -49,7 +49,8 @@ AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webV
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
-
+    if (m_syncTimerCallbackId)
+        g_source_remove(m_syncTimerCallbackId);
 }
 
 void AcceleratedCompositingContext::initializeIfNecessary()
@@ -150,11 +151,20 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     m_rootGraphicsLayer->setNeedsDisplay();
 }
 
+static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)
+{
+    context->syncLayersTimeout();
+    return FALSE;
+}
+
 void AcceleratedCompositingContext::markForSync()
 {
-    if (m_syncTimer.isActive())
+    if (m_syncTimerCallbackId)
         return;
-    m_syncTimer.startOneShot(0);
+
+    // We use a GLib timer because otherwise GTK+ event handling during
+    // dragging can starve WebCore timers, which have a lower priority.
+    m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
 }
 
 void AcceleratedCompositingContext::syncLayersNow()
@@ -165,8 +175,9 @@ void AcceleratedCompositingContext::syncLayersNow()
     core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
-void AcceleratedCompositingContext::syncLayersTimeout(Timer<AcceleratedCompositingContext>*)
+void AcceleratedCompositingContext::syncLayersTimeout()
 {
+    m_syncTimerCallbackId = 0;
     syncLayersNow();
     if (!m_rootGraphicsLayer)
         return;
@@ -174,7 +185,7 @@ void AcceleratedCompositingContext::syncLayersTimeout(Timer<AcceleratedCompositi
     renderLayersToWindow(IntRect());
 
     if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
-        m_syncTimer.startOneShot(1.0 / 60.0);
+        m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000.0 / 60.0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)

@@ -1,3 +1,31 @@
+2012-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [AC] Events can starve accelerated compositing updates
+        https://bugs.webkit.org/show_bug.cgi?id=78826
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of using a WebCore timer, which can be starved by GdkEvents,
+        use a raw GLib timer with GDK_PRIORITY_EVENTS to drive AC updates.
+        This prevents dragging from blocking rendering.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext): Store a GLib source tag instead of a WebCore timer.
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        Remove the timer upon destruction.
+        (WebKit::syncLayersTimeoutCallback): Added this callback for the GLib timer.
+        (WebKit::AcceleratedCompositingContext::markForSync): Use a GLib timer.
+        (WebKit::AcceleratedCompositingContext::syncLayersTimeout): Ditto.
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::~AcceleratedCompositingContext):
+        Remove the timer upon destruction.
+        (WebKit::syncLayersTimeoutCallback): Added this callback for the GLib timer.
+        (WebKit::AcceleratedCompositingContext::markForSync): Use a GLib timer.
+        (WebKit::AcceleratedCompositingContext::syncLayersTimeout): Ditto.
+
 2012-02-16  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the GTK build.

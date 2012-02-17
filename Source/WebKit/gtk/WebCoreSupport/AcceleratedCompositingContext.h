@@ -48,7 +48,7 @@ public:
     void attachRootGraphicsLayer(WebCore::GraphicsLayer*);
     void scheduleRootLayerRepaint(const WebCore::IntRect&);
     void markForSync();
-    void syncLayersTimeout(WebCore::Timer<AcceleratedCompositingContext>*);
+    void syncLayersTimeout();
     void syncLayersNow();
     void resizeRootLayer(const WebCore::IntSize&);
     bool renderLayersToWindow(const WebCore::IntRect& clipRect);
@@ -64,7 +64,7 @@ public:
 private:
     WebKitWebView* m_webView;
     OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
-    WebCore::Timer<AcceleratedCompositingContext> m_syncTimer;
+    unsigned int m_syncTimerCallbackId;
 
 #if USE(CLUTTER)
     GtkWidget* m_rootLayerEmbedder;
