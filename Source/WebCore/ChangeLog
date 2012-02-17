@@ -1,3 +1,23 @@
+2012-02-17  Raymond Toy  <rtoy@google.com>
+
+        RealtimeAnalyserNode does not consistently respect .minDecibels
+        https://bugs.webkit.org/show_bug.cgi?id=78729
+
+        Make use of m_minDecibel consistent.  Clean up some style issues
+        with names of local variables and style issues with float
+        constants.
+        
+        Reviewed by Chris Rogers.
+
+        No new tests because the changes are cosmetic for style issues.
+
+        * webaudio/RealtimeAnalyser.cpp:
+        (WebCore):
+        (WebCore::RealtimeAnalyser::doFFTAnalysis):
+        (WebCore::RealtimeAnalyser::getFloatFrequencyData):
+        (WebCore::RealtimeAnalyser::getByteFrequencyData):
+        (WebCore::RealtimeAnalyser::getByteTimeDomainData):
+
 2012-02-17  Abhishek Arya  <inferno@chromium.org>
 
         :before content incorrectly placed in continuation
