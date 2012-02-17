@@ -20,10 +20,8 @@
 #include "PlatformString.h"
 
 #include "WebString.h"
-#include "WebStringImpl.h"
 
 using BlackBerry::WebKit::WebString;
-using BlackBerry::WebKit::WebStringImpl;
 
 namespace WTF {
 
@@ -34,7 +32,7 @@ String::String(const WebString& webString)
 
 String::operator WebString() const
 {
-    WebString webString(static_cast<WebStringImpl*>(m_impl.get()));
+    WebString webString(m_impl.get());
     return webString;
 }
 

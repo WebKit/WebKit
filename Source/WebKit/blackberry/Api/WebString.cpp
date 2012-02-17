@@ -19,7 +19,6 @@
 #include "config.h"
 #include "WebString.h"
 
-#include "WebStringImpl.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -27,21 +26,21 @@ namespace BlackBerry {
 namespace WebKit {
 
 WebString::WebString(const char* latin1)
-    : m_impl(static_cast<WebStringImpl*>(WTF::StringImpl::create(latin1).releaseRef()))
+    : m_impl(StringImpl::create(latin1).leakRef())
 {
 }
 
 WebString::WebString(const char* latin1, unsigned length)
-    : m_impl(static_cast<WebStringImpl*>(WTF::StringImpl::create(latin1, length).releaseRef()))
+    : m_impl(StringImpl::create(latin1, length).leakRef())
 {
 }
 
 WebString::WebString(const unsigned short* utf16, unsigned length)
-    : m_impl(static_cast<WebStringImpl*>(WTF::StringImpl::create(utf16, length).releaseRef()))
+    : m_impl(StringImpl::create(utf16, length).leakRef())
 {
 }
 
-WebString::WebString(WebStringImpl* impl)
+WebString::WebString(StringImpl* impl)
     : m_impl(impl)
 {
     if (m_impl)
@@ -109,7 +108,7 @@ bool WebString::equal(const char* utf8) const
 
 bool WebString::equalIgnoringCase(const char* utf8) const
 {
-    return WTF::equalIgnoringCase(m_impl, utf8);
+    return WTF::equalIgnoringCase(utf8, WTF::String(m_impl));
 }
 
 } // namespace WebKit

@@ -22,10 +22,13 @@
 #include "BlackBerryGlobal.h"
 #include <string>
 
+// Not for public API purpose.
+namespace WTF {
+class StringImpl;
+}
+
 namespace BlackBerry {
 namespace WebKit {
-
-class WebStringImpl;
 
 class BLACKBERRY_EXPORT WebString {
 public:
@@ -34,7 +37,6 @@ public:
     WebString(const char* latin1);
     WebString(const char* latin1, unsigned length);
     WebString(const unsigned short* utf16, unsigned length);
-    WebString(WebStringImpl*);
     WebString(const WebString&);
     WebString& operator=(const WebString&);
     std::string utf8() const;
@@ -44,9 +46,13 @@ public:
     bool isEmpty() const;
     bool equal(const char* utf8) const;
     bool equalIgnoringCase(const char* utf8) const;
-    WebStringImpl* impl() const { return m_impl; }
+
+    // Not for public API purpose.
+    WebString(WTF::StringImpl*);
+    WTF::StringImpl* impl() const { return m_impl; }
+
 private:
-    WebStringImpl* m_impl;
+    WTF::StringImpl* m_impl;
 };
 } // namespace WebKit
 } // namespace BlackBerry

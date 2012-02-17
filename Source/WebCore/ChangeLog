@@ -1,3 +1,20 @@
+2012-02-16  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Adapt to the removal of WebStringIml.h
+        https://bugs.webkit.org/show_bug.cgi?id=78784
+
+        Reviewed by Antonio Gomes.
+
+        WebKit/blackberry/WebCoreSupport/WebStringImpl.h which hasn't been upstreamed
+        has been removed internally. We should adapt to this removal for the
+        upstreamed part of the BlackBerry port. Actually WebStringImpl is not necessary
+        because it just inherits from WTF::StringImpl but adding nothing.
+
+        No functionalities changed, no new tests.
+
+        * platform/text/blackberry/StringBlackBerry.cpp:
+        (WTF::String::operator WebString):
+
 2012-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Made Weak<T> single-owner, adding PassWeak<T>
