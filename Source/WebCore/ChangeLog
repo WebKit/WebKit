@@ -1,3 +1,17 @@
+2012-02-17  Rob Buis  <rbuis@rim.com>
+
+        ASSERT (and crash) with dynamically moved <font-face>
+        https://bugs.webkit.org/show_bug.cgi?id=64839
+
+        Reviewed by Antti Koivisto.
+
+        Reset the style declaration when rmeoving the font-face element from the document.
+
+        Test: svg/custom/font-face-move.svg
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::removedFromDocument):
+
 2012-02-17  Martin Robinson  <mrobinson@igalia.com>
 
         Fix some warnings encountered during the GTK+ build

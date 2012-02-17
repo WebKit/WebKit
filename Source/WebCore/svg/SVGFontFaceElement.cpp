@@ -329,6 +329,7 @@ void SVGFontFaceElement::removedFromDocument()
 {
     removeFromMappedElementSheet();
     SVGElement::removedFromDocument();
+    m_fontFaceRule->declaration()->parseDeclaration(emptyString());
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
