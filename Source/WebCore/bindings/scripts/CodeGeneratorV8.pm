@@ -1682,7 +1682,13 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "ActiveDOMObject" : "DOMObject";
+    my $DOMObject = "DOMObject";
+    if (IsNodeSubType($dataNode)) {
+        $DOMObject = "DOMNode";
+    } elsif ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        $DOMObject = "ActiveDOMObject";
+    }
+
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());

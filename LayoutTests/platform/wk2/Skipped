@@ -1077,6 +1077,11 @@ editing/selection/5354455-2.html
 # missing window.internals.createShadowContentElement
 fast/dom/shadow/create-content-element.html
 
+# ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow/shadow-root-js-api.html
+fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-root-new.html
+
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
 fast/events/wheelevent-direction-inverted-from-device.html

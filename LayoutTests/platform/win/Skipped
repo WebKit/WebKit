@@ -1450,6 +1450,7 @@ fast/css/style-scoped
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-root-new.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
