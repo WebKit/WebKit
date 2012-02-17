@@ -5883,7 +5883,7 @@
 		F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F316396A1329481A00A649CB /* InjectedScriptManager.h */; };
 		F316396E1329487600A649CB /* JSInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */; };
 		F325A40A14EE36FA007324E2 /* InspectorCounters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F325A40814EE36FA007324E2 /* InspectorCounters.cpp */; };
-		F325A40B14EE36FA007324E2 /* InspectorCounters.h in Headers */ = {isa = PBXBuildFile; fileRef = F325A40914EE36FA007324E2 /* InspectorCounters.h */; };
+		F325A40B14EE36FA007324E2 /* InspectorCounters.h in Headers */ = {isa = PBXBuildFile; fileRef = F325A40914EE36FA007324E2 /* InspectorCounters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */; };
 		F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3335BF712E07DC300D33011 /* InspectorConsoleAgent.h */; };
 		F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F0281120947F200E5743A /* ScriptProfile.cpp */; };

@@ -1,3 +1,9 @@
+2012-02-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Mac build fix after r108047.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-02-16  Andreas Kling  <awesomekling@apple.com>
 
         Removing the last presentation attribute should result in a null attributeStyle().
