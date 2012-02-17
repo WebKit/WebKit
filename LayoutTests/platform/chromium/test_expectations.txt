@@ -3807,8 +3807,7 @@ BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS 
 BUGWK78159 DEBUG WIN SNOWLEOPARD : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
 // Some of the new baselines don't make any sense.
-// BUGWK78175 DEBUG SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
-BUGNOEL : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
+BUGWK78175 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
 // Needs investigation.
 BUGWK78422 : svg/animations/animate-text-nested-transforms.html = TEXT
