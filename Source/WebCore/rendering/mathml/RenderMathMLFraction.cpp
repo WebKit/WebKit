@@ -119,6 +119,17 @@ void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChi
     updateFromElement();
 }
 
+RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
+{
+    RenderObject* numeratorWrapper = firstChild();
+    if (!numeratorWrapper)
+        return 0;
+    RenderObject* numerator = numeratorWrapper->firstChild();
+    if (!numerator || !numerator->isRenderMathMLBlock())
+        return 0;
+    return toRenderMathMLBlock(numerator)->unembellishedOperator();
+}
+
 void RenderMathMLFraction::layout()
 {
     updateFromElement();

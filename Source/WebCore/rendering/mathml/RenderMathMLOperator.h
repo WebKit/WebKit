@@ -38,6 +38,7 @@ public:
     RenderMathMLOperator(Element*);
     RenderMathMLOperator(Node*, UChar operatorChar);
     virtual bool isRenderMathMLOperator() const { return true; }
+    virtual RenderMathMLOperator* unembellishedOperator() { return this; }
     virtual void stretchToHeight(int pixelHeight);
     virtual void updateFromElement(); 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;

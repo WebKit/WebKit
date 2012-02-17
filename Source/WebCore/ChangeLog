@@ -1,3 +1,45 @@
+2012-02-17  David Barton  <dbarton@mathscribe.com>
+
+        MathML internals - embellished operators, getBase() accessor functions
+        https://bugs.webkit.org/show_bug.cgi?id=78617
+
+        Reviewed by Eric Seidel.
+
+        Define functions that return an unembellished "base", by omitting
+        subscripts/superscripts, underscripts/overscripts, or denominators. This is needed in
+        subsequent patches both for correct operator stretching and simple code factoring.
+
+        No new tests.
+
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore):
+        (RenderMathMLBlock):
+        (WebCore::RenderMathMLBlock::unembellishedOperator):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::unembellishedOperator):
+        (WebCore):
+        * rendering/mathml/RenderMathMLFraction.h:
+        (RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::unembellishedOperator):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::base):
+        (WebCore):
+        (WebCore::RenderMathMLSubSup::unembellishedOperator):
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+            - renamed a variable for clarity, especially in later patches
+        (WebCore::RenderMathMLSubSup::layout):
+            - renamed a variable for clarity, especially in later patches
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::base):
+        (WebCore):
+        (WebCore::RenderMathMLUnderOver::unembellishedOperator):
+        (WebCore::RenderMathMLUnderOver::stretchToHeight):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (RenderMathMLUnderOver):
+
 2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Allow opaque tiles
