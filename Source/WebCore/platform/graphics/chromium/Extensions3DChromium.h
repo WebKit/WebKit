@@ -87,14 +87,6 @@ public:
     // GL_CHROMIUM_set_visibility
     void setVisibilityCHROMIUM(bool);
 
-    // GL_CHROMIUM_gpu_memory_manager
-    class GpuMemoryAllocationChangedCallbackCHROMIUM {
-    public:
-        virtual void onGpuMemoryAllocationChanged(size_t gpuResourceSizeInBytes) = 0;
-        virtual ~GpuMemoryAllocationChangedCallbackCHROMIUM() { }
-    };
-    void setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM>);
-
     // GL_CHROMIUM_swapbuffers_complete_callback
     class SwapBuffersCompleteCallbackCHROMIUM {
     public:

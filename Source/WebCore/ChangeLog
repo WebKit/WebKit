@@ -1,3 +1,13 @@
+2012-02-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed, rolling out r108071.
+        http://trac.webkit.org/changeset/108071
+        https://bugs.webkit.org/show_bug.cgi?id=77155
+
+        chromium-mac compilation failed
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+
 2012-02-17  Michal Mocny  <mmocny@google.com>
 
         [chromium] GL_CHROMIUM_gpu_memory_manager extension
