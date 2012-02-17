@@ -520,7 +520,15 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                     renderer->destroy();
                     return;
                 }
-                owner->addChild(generatedContentContainer, insertBefore);
+
+                // When we don't have a first child and are part of a continuation chain,
+                // insertBefore is incorrectly set to zero above, which causes the :before
+                // child to end up at the end of continuation chain.
+                // See https://bugs.webkit.org/show_bug.cgi?id=78380.
+                if (!insertBefore && type == BEFORE && owner->virtualContinuation())
+                    owner->addChildIgnoringContinuation(generatedContentContainer, 0);
+                else
+                    owner->addChild(generatedContentContainer, insertBefore);
             }
             if (generatedContentContainer->isChildAllowed(renderer, pseudoElementStyle))
                 generatedContentContainer->addChild(renderer);
