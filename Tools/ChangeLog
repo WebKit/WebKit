@@ -1,3 +1,20 @@
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement zoom in/out in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=75253
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowCanZoomIn):
+        (browserWindowCanZoomOut):
+        (browserWindowUpdateZoomActions):
+        (webViewZoomLevelChanged):
+        (zoomInCallback):
+        (zoomOutCallback):
+        (browser_window_init):
+        (browserWindowConstructed):
+
 2012-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         layoutTestController.display() is flaky for SVG tests
