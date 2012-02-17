@@ -90,7 +90,7 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
     EXPECT_FALSE(state->didStartProvisionalLoadForFrame);
     EXPECT_FALSE(state->didCommitLoadForFrame);
-    EXPECT_TRUE(mouseButton = kWKEventMouseButtonNoButton);
+    EXPECT_TRUE(mouseButton == kWKEventMouseButtonNoButton);
 
     state->didDecidePolicyForNavigationAction = true;
 
@@ -99,7 +99,7 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
 
 static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
-    EXPECT_TRUE(mouseButton = kWKEventMouseButtonNoButton);
+    EXPECT_TRUE(mouseButton == kWKEventMouseButtonNoButton);
     WKFramePolicyListenerUse(listener);
 }
 

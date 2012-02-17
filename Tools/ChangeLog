@@ -1,3 +1,14 @@
+2012-02-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Some API tests erroneously use = instead of == (causing build failures)
+        https://bugs.webkit.org/show_bug.cgi?id=78915
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationAction): Replace an = with an ==
+        (TestWebKitAPI::decidePolicyForNewWindowAction): ditto
+
 2012-02-17  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Include TestShellLinux.cpp in the build for Android
