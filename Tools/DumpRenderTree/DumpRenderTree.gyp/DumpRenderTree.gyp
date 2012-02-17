@@ -231,6 +231,9 @@
                     'dependencies': [
                         'ImageDiff#host',
                     ],
+                    'sources/': [
+                        ['include', 'chromium/TestShellLinux\\.cpp$'],
+                    ],
                 },{ # OS!="android"
                     'sources/': [
                         ['exclude', '(Android)\\.cpp$']
