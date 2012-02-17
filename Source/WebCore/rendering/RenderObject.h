@@ -58,6 +58,7 @@ class RenderInline;
 class RenderBlock;
 class RenderFlowThread;
 class RenderLayer;
+class RenderTable;
 class RenderTheme;
 class TransformState;
 class VisiblePosition;
@@ -219,6 +220,8 @@ public:
     // normal flow object.
     void handleDynamicFloatPositionChange();
     
+    RenderTable* createAnonymousTable() const;
+    
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual bool canHaveChildren() const { return virtualChildren(); }
@@ -351,6 +354,8 @@ public:
     bool isLegend() const;
 
     bool isHTMLMarquee() const;
+
+    bool isTablePart() const { return isTableCell() || isTableCol() || isTableCaption() || isTableRow() || isTableSection(); }
 
     inline bool isBeforeContent() const;
     inline bool isAfterContent() const;

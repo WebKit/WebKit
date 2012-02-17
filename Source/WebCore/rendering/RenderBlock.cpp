@@ -593,6 +593,9 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
 
 RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeChild)
 {
+    if (beforeChild->isTablePart())
+        beforeChild = splitTablePartsAroundChild(beforeChild);
+
     while (beforeChild->parent() != this) {
         RenderBlock* blockToSplit = toRenderBlock(beforeChild->parent());
         if (blockToSplit->firstChild() != beforeChild) {
@@ -607,6 +610,69 @@ RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeC
             beforeChild = post;
         } else
             beforeChild = blockToSplit;
+    }
+    return beforeChild;
+}
+
+static void markTableForSectionAndCellRecalculation(RenderObject* child)
+{
+    RenderObject* curr = child;
+    while (!curr->isTable()) {
+        if (curr->isTableSection())
+            toRenderTableSection(curr)->setNeedsCellRecalc();
+        curr = curr->parent();
+    }
+
+    RenderTable* table = toRenderTable(curr);
+    table->setNeedsSectionRecalc();
+    table->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+static void moveAllTableChildrenTo(RenderObject* fromTablePart, RenderTable* toTable, RenderObject* startChild)
+{
+    for (RenderObject* curr = startChild; curr;) {
+        // Need to store next sibling as we won't have access to it
+        // after we are removed from table.
+        RenderObject* next = curr->nextSibling();
+        fromTablePart->removeChild(curr);
+        toTable->addChild(curr);
+        if (curr->isTableSection())
+            toRenderTableSection(curr)->setNeedsCellRecalc();
+        curr->setNeedsLayoutAndPrefWidthsRecalc();
+        curr = next; 
+    }
+
+    // This marks fromTable for section and cell recalculation.
+    markTableForSectionAndCellRecalculation(fromTablePart);
+
+    // startChild is now part of toTable. This marks toTable for section and cell recalculation.
+    markTableForSectionAndCellRecalculation(startChild);
+}
+
+RenderObject* RenderBlock::splitTablePartsAroundChild(RenderObject* beforeChild)
+{
+    ASSERT(beforeChild->isTablePart());
+
+    while (beforeChild->parent() != this && !beforeChild->isTable()) {
+        RenderObject* tablePartToSplit = beforeChild->parent();
+        if (tablePartToSplit->firstChild() != beforeChild) {
+            // Get our table container.
+            RenderObject* curr = tablePartToSplit;
+            while (!curr->isTable())
+                curr = curr->parent();
+            RenderTable* table = toRenderTable(curr);
+
+            // Create an anonymous table container next to our table container. 
+            RenderBlock* parentBlock = toRenderBlock(table->parent());
+            RenderTable* postTable = parentBlock->createAnonymousTable();
+            parentBlock->children()->insertChildNode(parentBlock, postTable, table->nextSibling());
+            
+            // Move all the children from beforeChild to the newly created anonymous table container.
+            moveAllTableChildrenTo(tablePartToSplit, postTable, beforeChild);
+
+            beforeChild = postTable;
+        } else
+            beforeChild = tablePartToSplit;
     }
     return beforeChild;
 }
@@ -727,8 +793,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             return;
         }
 
-        // Go on to insert before the anonymous table.
-        beforeChild = beforeChildAnonymousContainer;
+        beforeChild = splitTablePartsAroundChild(beforeChild);
     }
 
     // Check for a spanning element in columns.

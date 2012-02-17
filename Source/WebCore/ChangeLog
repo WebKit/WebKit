@@ -1,3 +1,44 @@
+2012-02-17  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect placement of a new child when beforeChild and its
+        previous sibling are in the same table.
+        https://bugs.webkit.org/show_bug.cgi?id=78269
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/table/table-cell-split.html
+               fast/table/table-row-split.html
+               fast/table/table-section-split-with-after-content.html
+               fast/table/table-section-split.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild): add
+        call to splitTablePartsAroundChild to take care of splitting the
+        table first if the child is part of table.
+        (WebCore::markTableForSectionAndCellRecalculation): add helper to
+        mark table for complete relayout by invalidating sections and cells.
+        (WebCore):
+        (WebCore::moveAllTableChildrenTo): moves children to another table.
+        (WebCore::RenderBlock::splitTablePartsAroundChild): split table child
+        and its next siblings into a new table. This allows adding a new
+        non-table child between the tables.
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): calls
+        splitTablePartsAroundChild to see if we need to split the table
+        for adding this new child.
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createAnonymousTable): add helper for
+        creating anonymous table.
+        (WebCore):
+        (WebCore::RenderObject::addChild): use the new helper for creating
+        anonymous table.
+        * rendering/RenderObject.h:
+        (WebCore):
+        (RenderObject):
+        (WebCore::RenderObject::isTablePart): add helper to tell if the object
+        is a table part.
+
 2012-02-17  Andreas Kling  <awesomekling@apple.com>
 
         Element: Inline style selector and AX invalidation in attributeChanged().

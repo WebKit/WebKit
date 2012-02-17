@@ -381,7 +381,7 @@ protected:
         return moveChildrenTo(toBlock, startChild, endChild, 0, fullRemoveInsert);
     }
     void moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
-    
+
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockRareData::positiveMarginBeforeDefault(this); }
     LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockRareData::negativeMarginBeforeDefault(this); }
     LayoutUnit maxPositiveMarginAfter() const { return m_rareData ? m_rareData->m_margins.positiveMarginAfter() : RenderBlockRareData::positiveMarginAfterDefault(this); }
@@ -822,6 +822,7 @@ private:
     void updateScrollInfoAfterLayout();
 
     RenderObject* splitAnonymousBlocksAroundChild(RenderObject* beforeChild);
+    RenderObject* splitTablePartsAroundChild(RenderObject* beforeChild);
     void splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
                      RenderObject* beforeChild, RenderBoxModelObject* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
