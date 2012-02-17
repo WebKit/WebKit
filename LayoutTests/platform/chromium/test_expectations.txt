@@ -4206,7 +4206,3 @@ BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
 // Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
 BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
-
-// Need rebaselining.
-BUGWK37244 WIN MAC : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244 WIN MAC : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
