@@ -1,3 +1,16 @@
+2012-02-17  Robert Hogan  <robert@webkit.org>
+
+        AppleMac Build fix for r108111
+
+        Remove variable that is now unused.
+
+        Unreviewed, build fix.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::alwaysRequiresLineBox): Remove lineInfo
+        (WebCore::requiresLineBox): 
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2012-02-17  Michal Mocny  <mmocny@google.com>
 
         [chromium] GL_CHROMIUM_gpu_memory_manager extension
