@@ -607,15 +607,15 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageClients.editorClient = new WebCore::EditorClientEfl(smartData->self);
     pageClients.dragClient = new WebCore::DragClientEfl;
     pageClients.inspectorClient = new WebCore::InspectorClientEfl;
-#if ENABLE(DEVICE_ORIENTATION)
-    pageClients.deviceMotionClient = new WebCore::DeviceMotionClientEfl;
-    pageClients.deviceOrientationClient = new WebCore::DeviceOrientationClientEfl;
-#endif
     priv->page = new WebCore::Page(pageClients);
     if (!priv->page) {
         CRITICAL("Could not create WebKit Page");
         goto error_page;
     }
+#if ENABLE(DEVICE_ORIENTATION)
+    WebCore::provideDeviceMotionTo(priv->page, new WebCore::DeviceMotionClientEfl);
+    WebCore::provideDeviceOrientationTo(priv->page, new WebCore::DeviceOrientationClientEfl);
+#endif
 
     priv->pageSettings = priv->page->settings();
     if (!priv->pageSettings) {

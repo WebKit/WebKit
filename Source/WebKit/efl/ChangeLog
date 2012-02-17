@@ -1,3 +1,13 @@
+2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed, fix the build with ENABLE(DEVICE_ORIENTATION) after
+        r107518. The EFL EWS bot doesn't enable that flag, so the breakage
+        was not spotted earlier.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+
 2012-01-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [soup] Add support for multiple SoupSessions.
