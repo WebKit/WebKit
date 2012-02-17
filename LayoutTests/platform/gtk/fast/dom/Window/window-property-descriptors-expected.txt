@@ -57,7 +57,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'EventException') is 'object
 PASS typeof Object.getOwnPropertyDescriptor(window, 'EventSource') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'File') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'FileList') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'FocusEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'FormData') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Function') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAllCollection') is 'object'
