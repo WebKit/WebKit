@@ -664,12 +664,12 @@ void Element::attributeChanged(Attribute* attr)
     else if (attr->name() == HTMLNames::nameAttr)
         setHasName(!attr->isNull());
 
-    recalcStyleIfNeededAfterAttributeChanged(attr);
-    updateAfterAttributeChanged(attr);
-}
+    if (!needsStyleRecalc() && document()->attached()) {
+        CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
+        if (!styleSelector || styleSelector->hasSelectorForAttribute(attr->name().localName()))
+            setNeedsStyleRecalc();
+    }
 
-void Element::updateAfterAttributeChanged(Attribute* attr)
-{
     invalidateNodeListsCacheAfterAttributeChanged(attr->name());
 
     if (!AXObjectCache::accessibilityEnabled())
@@ -698,18 +698,6 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
         document()->axObjectCache()->childrenChanged(renderer());
     else if (attrName == aria_invalidAttr)
         document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXInvalidStatusChanged, true);
-}
-    
-void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
-{
-    if (needsStyleRecalc())
-        return;
-    if (!document()->attached())
-        return;
-    CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
-    if (styleSelector && !styleSelector->hasSelectorForAttribute(attr->name().localName()))
-        return;
-    setNeedsStyleRecalc();
 }
 
 void Element::idAttributeChanged(Attribute* attr)

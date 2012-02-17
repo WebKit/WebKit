@@ -1,3 +1,18 @@
+2012-02-17  Andreas Kling  <awesomekling@apple.com>
+
+        Element: Inline style selector and AX invalidation in attributeChanged().
+        <http://webkit.org/b/78888>
+
+        Reviewed by Antti Koivisto.
+
+        Inline the updateAfterAttributeChanged() and recalcStyleIfNeededAfterAttributeChanged()
+        methods into Element::attributeChanged(). They were separated when we needed them in
+        StyledElement::attributeChanged(), but that's no longer the case.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Element.h:
+
 2012-02-17  David Reveman  <reveman@chromium.org>
 
         [Chromium] Texture eviction doesn't show up in traces.

@@ -416,11 +416,6 @@ protected:
     virtual bool shouldRegisterAsNamedItem() const { return false; }
     virtual bool shouldRegisterAsExtraNamedItem() const { return false; }
 
-    // The implementation of Element::attributeChanged() calls the following two functions.
-    // They are separated to allow a different flow of control in StyledElement::attributeChanged().
-    void recalcStyleIfNeededAfterAttributeChanged(Attribute*);
-    void updateAfterAttributeChanged(Attribute*);
-    
     void idAttributeChanged(Attribute*);
 
     HTMLCollection* ensureCachedHTMLCollection(CollectionType);
