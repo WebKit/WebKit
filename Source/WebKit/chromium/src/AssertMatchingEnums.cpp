@@ -454,9 +454,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorPathExists, FileError::PATH_EXISTS_ERR)
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, GeolocationError::PermissionDenied);
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorSpelling, DocumentMarker::Spelling);
-COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorGrammar, DocumentMarker::Grammar);
-
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingTypeSpelling, TextCheckingTypeSpelling);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingTypeGrammar, TextCheckingTypeGrammar);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingTypeLink, TextCheckingTypeLink);

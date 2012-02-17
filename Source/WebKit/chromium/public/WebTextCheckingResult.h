@@ -34,7 +34,6 @@
 #include "WebTextCheckingType.h"
 #include "platform/WebCommon.h"
 #include "platform/WebString.h"
-#include "platform/WebVector.h"
 
 namespace WebCore {
 struct TextCheckingResult;
@@ -44,50 +43,19 @@ namespace WebKit {
 
 // A checked entry of text checking.
 struct WebTextCheckingResult {
-    // FIXME: Should be removed after we confirm Chromium does not use it.
-    enum Error {
-        ErrorSpelling = 1 << 0,
-        ErrorGrammar = 1 << 1
-    };
-
     WebTextCheckingResult()
         : type(WebTextCheckingTypeSpelling)
-        , error(ErrorSpelling)
-        , position(0)
         , location(0)
         , length(0)
     {
     }
 
-    explicit WebTextCheckingResult(Error e, int p = 0, int l = 0)
-        : type(WebTextCheckingTypeSpelling)
-        , error(e)
-        , position(p)
-        , location(p)
-        , length(l)
-    {
-        if (e & ErrorSpelling)
-            type = WebTextCheckingTypeSpelling;
-        else if (e & ErrorGrammar)
-            type = WebTextCheckingTypeGrammar;
-        else
-            WEBKIT_ASSERT_NOT_REACHED();
-    }
-
     WebTextCheckingResult(WebTextCheckingType type, int location, int length, const WebString& replacement = WebString())
         : type(type)
-        , error(ErrorSpelling)
-        , position(location)
         , location(location)
         , length(length)
         , replacement(replacement)
     {
-        if (type & WebTextCheckingTypeSpelling)
-            error = ErrorSpelling;
-        else if (type & WebTextCheckingTypeGrammar)
-            error = ErrorGrammar;
-        else
-            WEBKIT_ASSERT_NOT_REACHED();
     }
 
 #if WEBKIT_IMPLEMENTATION
@@ -95,8 +63,6 @@ struct WebTextCheckingResult {
 #endif
 
     WebTextCheckingType type;
-    Error error; // FIXME: Should be removed after we confirm Chromium does not use it.
-    int position; // FIXME: Should be removed after we confirm Chromium does not use it.
     int location;
     int length;
     WebString replacement;
