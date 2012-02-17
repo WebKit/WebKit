@@ -1,3 +1,22 @@
+2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Allow partial updates
+        https://bugs.webkit.org/show_bug.cgi?id=78824
+
+        BitmapTextureGL should not zero-fill the textures when resetting.
+        This was needed in the previous buffer management system, where texture were not completely
+        filled by the backing store.
+
+        Reviewed by Simon Hausmann.
+
+        No new behavior.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (BitmapTextureGL):
+        (WebCore::texSubImage2DResourceSafe):
+        (WebCore):
+        (WebCore::BitmapTextureGL::reset):
+
 2012-02-17  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Integrate InputType::dispatchChangeEventInResponseToSetValue into InputType::setValue

@@ -37,17 +37,12 @@ public:
 
     inline float scale() const { return m_scale; }
     void swapBuffers(WebCore::TextureMapper*);
-    void setBackBuffer(const WebCore::FloatRect& target, const WebCore::FloatRect& source, ShareableBitmap* buffer)
-    {
-        m_targetRect = target;
-        m_sourceRect = source;
-        m_backBuffer = buffer;
-    }
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, ShareableBitmap* buffer);
 
 private:
     RefPtr<ShareableBitmap> m_backBuffer;
-    WebCore::FloatRect m_sourceRect;
-    WebCore::FloatRect m_targetRect;
+    WebCore::IntRect m_sourceRect;
+    WebCore::IntRect m_targetRect;
     float m_scale;
 };
 

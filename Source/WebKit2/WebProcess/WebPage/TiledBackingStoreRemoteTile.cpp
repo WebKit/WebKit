@@ -72,24 +72,17 @@ Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
     if (!isDirty())
         return Vector<IntRect>();
 
-    // FIXME: Only use a local buffer when we know the tile is animated (after the first invalidate)
-    // and destroy it after a few seconds of inactivity. We can render directly to shared
-    // memory in other cases.
-    if (!m_localBuffer || m_localBuffer->size() != m_rect.size()) {
-        m_localBuffer = ImageBuffer::create(m_rect.size());
-        m_localBuffer->context()->translate(-m_rect.x(), -m_rect.y());
-        m_localBuffer->context()->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
-    }
-    // This assumes that the GraphicsContext on the ImageBuffer acts synchronously
-    // for us to be able to draw this buffer on the ShareableBitmap right after.
-    m_tiledBackingStore->client()->tiledBackingStorePaint(m_localBuffer->context(), m_tiledBackingStore->mapToContents(m_dirtyRect));
-
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_rect.size(), m_tiledBackingStore->supportsAlpha() ? ShareableBitmap::SupportsAlpha : 0);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_dirtyRect.size(), m_tiledBackingStore->supportsAlpha() ? ShareableBitmap::SupportsAlpha : 0);
     OwnPtr<GraphicsContext> graphicsContext(bitmap->createGraphicsContext());
-    graphicsContext->drawImageBuffer(m_localBuffer.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
+    graphicsContext->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
+    graphicsContext->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
+    m_tiledBackingStore->client()->tiledBackingStorePaint(graphicsContext.get(), m_tiledBackingStore->mapToContents(m_dirtyRect));
 
     UpdateInfo updateInfo;
     updateInfo.updateRectBounds = m_rect;
+    IntRect updateRect = m_dirtyRect;
+    updateRect.move(-m_rect.x(), -m_rect.y());
+    updateInfo.updateRects.append(updateRect);
     updateInfo.updateScaleFactor = m_tiledBackingStore->contentsScale();
     bitmap->createHandle(updateInfo.bitmapHandle);
 

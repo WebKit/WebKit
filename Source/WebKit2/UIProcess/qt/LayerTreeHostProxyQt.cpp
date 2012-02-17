@@ -507,7 +507,8 @@ void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const WebKi
     data.layerID = layerID;
     data.remoteTileID = tileID;
     data.bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
-    data.sourceRect = IntRect(IntPoint::zero(), updateInfo.updateRectBounds.size());
+    ASSERT(updateInfo.updateRects.size() == 1);
+    data.sourceRect = updateInfo.updateRects.first();
     data.targetRect = updateInfo.updateRectBounds;
     pushUpdateToQueue(UpdateTileMessage::create(data));
 }

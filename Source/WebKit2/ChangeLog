@@ -1,3 +1,27 @@
+2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Allow partial updates
+        https://bugs.webkit.org/show_bug.cgi?id=78824
+
+        Instead of using UpdateInfo to fill the entire tile's texture, we use it as a patch that
+        contains only the dirty rectangle of the current paint. This requires a lot less memory
+        for small updates, for example when typing a text in an input field.
+        This shows a significant reduction in overhead when testing on Mac with Instruments.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStoreTile::swapBuffers):
+        (WebKit::LayerBackingStoreTile::setBackBuffer):
+        (WebKit):
+        (WebKit::LayerBackingStore::updateTile):
+        * UIProcess/qt/LayerBackingStore.h:
+        (LayerBackingStoreTile):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp:
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make sure print operation object is alive until printing finishes in WebKit2
