@@ -1,3 +1,11 @@
+2012-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the TextureMapper build for GTK+.
+
+        No new tests. This is just a build fix.
+
+        * GNUmakefile.list.am: Add missing files to the build and change spaces to tabs.
+
 2012-02-16  Daniel Bates  <dbates@webkit.org>
 
         Add ENABLE(STYLE_SCOPED) around HTMLStyleElement::m_isRegisteredWithScopingNode 
