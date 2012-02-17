@@ -1,5 +1,32 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow printing multiple copies in WebKit2 for printers that don't support it
+        https://bugs.webkit.org/show_bug.cgi?id=78805
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialogUnix): Enable multiple copies and
+        collate options in print dialog.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Initialize number of
+        collated and uncolated copies done and total.
+        (WebKit::PrintPagesData::collatedCopiesLeft): Helper function that
+        returns the number of collated copies left to do.
+        (WebKit::PrintPagesData::uncollatedCopiesLeft): Helper function
+        that returns the number of uncollated copies left to do.
+        (WebKit::PrintPagesData::copiesLeft): Helper function
+        that returns the number of collated or uncollated copies left to
+        do.
+        (WebKit::PrintPagesData::incrementPageSequence): Do not finish the
+        print if there are uncollated copies left, and do not increment
+        sheet number if there are collated copies left.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk): Initialize
+        m_manualCopies to 1 and m_manualCollateCopies to false.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Allow printing pages in reverse order in WebKit2 for printers that don't support it
         https://bugs.webkit.org/show_bug.cgi?id=78799
 

@@ -93,6 +93,8 @@ public:
         printOperation->m_numberUpLayout = gtk_print_job_get_n_up_layout(printOperation->m_printJob.get());
         printOperation->m_pageSet = gtk_print_job_get_page_set(printOperation->m_printJob.get());
         printOperation->m_reverse = gtk_print_job_get_reverse(printOperation->m_printJob.get());
+        printOperation->m_copies = gtk_print_job_get_num_copies(printOperation->m_printJob.get());
+        printOperation->m_collateCopies = gtk_print_job_get_collate(printOperation->m_printJob.get());
 
         printOperation->print(surface, 72, 72);
     }
@@ -201,9 +203,21 @@ struct PrintPagesData {
         , totalPrinted(-1)
         , pageNumber(0)
         , sheetNumber(0)
+        , firstSheetNumber(0)
         , numberOfSheets(0)
+        , firstPagePosition(0)
+        , collated(0)
+        , uncollated(0)
         , isDone(false)
     {
+        if (printOperation->collateCopies()) {
+            collatedCopies = printOperation->copies();
+            uncollatedCopies = 1;
+        } else {
+            collatedCopies = 1;
+            uncollatedCopies = printOperation->copies();
+        }
+
         if (printOperation->pagesToPrint() == GTK_PRINT_PAGES_RANGES) {
             Vector<GtkPageRange> pageRanges;
             GtkPageRange* ranges = printOperation->pageRanges();
@@ -272,6 +286,23 @@ struct PrintPagesData {
         // is implemented.
         printOperation->setPagePosition(sheetNumber * numberUp);
         pageNumber = pages[printOperation->pagePosition()];
+        firstPagePosition = printOperation->pagePosition();
+        firstSheetNumber = sheetNumber;
+    }
+
+    size_t collatedCopiesLeft()
+    {
+        return collatedCopies > 1 ? collatedCopies - collated - 1 : 0;
+    }
+
+    size_t uncollatedCopiesLeft()
+    {
+        return uncollatedCopies > 1 ? uncollatedCopies - uncollated - 1 : 0;
+    }
+
+    size_t copiesLeft()
+    {
+        return collatedCopiesLeft() + uncollatedCopiesLeft();
     }
 
     void incrementPageSequence()
@@ -282,15 +313,23 @@ struct PrintPagesData {
         }
 
         size_t pagePosition = printOperation->pagePosition();
-        if (pagePosition == lastPagePosition) {
+        if (pagePosition == lastPagePosition && !copiesLeft()) {
             isDone = true;
             return;
         }
 
-        if (printOperation->currentPageIsLastPageOfSheet()) {
-            int step = printOperation->pageSet() == GTK_PAGE_SET_ALL ? 1 : 2;
-            step *= printOperation->reverse() ? -1 : 1;
-            sheetNumber += step;
+        if (pagePosition == lastPagePosition && uncollatedCopiesLeft()) {
+            pagePosition = firstPagePosition;
+            sheetNumber = firstSheetNumber;
+            uncollated++;
+        } else if (printOperation->currentPageIsLastPageOfSheet()) {
+            if (!collatedCopiesLeft()) {
+                int step = printOperation->pageSet() == GTK_PAGE_SET_ALL ? 1 : 2;
+                step *= printOperation->reverse() ? -1 : 1;
+                sheetNumber += step;
+                collated = 0;
+            } else
+                collated++;
             pagePosition = sheetNumber * printOperation->numberUp();
         } else
             pagePosition++;
@@ -311,8 +350,14 @@ struct PrintPagesData {
     int pageNumber;
     Vector<size_t> pages;
     size_t sheetNumber;
+    size_t firstSheetNumber;
     size_t numberOfSheets;
+    size_t firstPagePosition;
     size_t lastPagePosition;
+    size_t collated;
+    size_t uncollated;
+    size_t collatedCopies;
+    size_t uncollatedCopies;
 
     bool isDone : 1;
 };
@@ -346,6 +391,8 @@ WebPrintOperationGtk::WebPrintOperationGtk(WebPage* page, const PrintInfo& print
     , m_numberUpLayout(0)
     , m_pageSet(GTK_PAGE_SET_ALL)
     , m_reverse(false)
+    , m_copies(1)
+    , m_collateCopies(false)
 {
 }
 
