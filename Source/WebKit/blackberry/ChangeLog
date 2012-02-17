@@ -1,5 +1,22 @@
 2012-02-16  Antonio Gomes  <agomes@rim.com>
 
+        Crash @WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling MKS_2986818
+        https://bugs.webkit.org/show_bug.cgi?id=78845
+
+        Reviewed by Rob Buis.
+
+        We were trying to operate on a cached Node when its page/frame/document
+        were gone to PageCache already. To avoid such problems, lets clean up
+        any document data we have cached when the Frame goes into the cache.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::didSaveToPageCache):
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
+2012-02-16  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Upstream touch handling related classes
         https://bugs.webkit.org/show_bug.cgi?id=78509
 

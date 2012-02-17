@@ -143,7 +143,7 @@ public:
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { notImplemented(); }
     virtual void transitionToCommittedForNewPage();
     virtual bool canCachePage() const;
-    virtual void didSaveToPageCache() { }
+    virtual void didSaveToPageCache();
     virtual void didRestoreFromPageCache();
     virtual void dispatchDidBecomeFrameset(bool) { }
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);

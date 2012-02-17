@@ -1209,6 +1209,13 @@ bool FrameLoaderClientBlackBerry::canCachePage() const
     return true;
 }
 
+void FrameLoaderClientBlackBerry::didSaveToPageCache()
+{
+    // When page goes into PageCache, clean up any possible
+    // document data cache we might have.
+    m_webPagePrivate->clearDocumentData(m_frame->document());
+}
+
 void FrameLoaderClientBlackBerry::provisionalLoadStarted()
 {
     // We would like to hide the virtual keyboard before it navigates to another page
