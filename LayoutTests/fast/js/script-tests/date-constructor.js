@@ -6,7 +6,7 @@ description(
 
 var object = new Object;
 object.valueOf = function() { return 1111; }
-object.toSTring = function() { return "2222"; }
+object.toString = function() { return "2222"; }
 
 shouldBe('isNaN(new Date(""))', 'true');
 
