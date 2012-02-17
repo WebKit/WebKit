@@ -521,7 +521,7 @@ class RawTypes(object):
 
         @staticmethod
         def generate_validate_method(writer):
-            writer.newline("static void assertAny(InspectorValue* value)\n")
+            writer.newline("static void assertAny(InspectorValue*)\n")
             writer.newline("{\n")
             writer.newline("    // No-op.\n")
             writer.newline("}\n\n\n")
