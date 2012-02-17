@@ -1,3 +1,18 @@
+2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake, EFL] Unreviewed, fix the build when building with
+        SHARED_CORE=ON after r107820.
+
+        RunLoopEfl.cpp has not been upstreamed yet, and building only
+        RunLoop.cpp created an .so with some missing, unimplemented
+        symbols. The BlackBerry port seems to be in the same situation.
+
+        The best solution for now is to build RunLoop.cpp only on the
+        WinCE port.
+
+        * CMakeLists.txt: Remove RunLoop.cpp from the list of files to build.
+        * PlatformWinCE.cmake: Add RunLoop.cpp to the list of files to build.
+
 2012-02-17  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: a bit of color picker polish
