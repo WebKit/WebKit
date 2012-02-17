@@ -188,6 +188,14 @@ GraphicsContext3D::Attributes getCompositorContextAttributes()
     return attributes;
 }
 
+// The following constants control parameters for automated scaling of webpages
+// (such as due to a double tap gesture or find in page etc.). These are
+// experimentally determined.
+static const int touchPointPadding = 32;
+static const float minScaleDifference = 0.01;
+static const float doubleTapZoomContentDefaultMargin = 5;
+static const float doubleTapZoomContentMinimumMargin = 2;
+
 } // anonymous namespace
 
 namespace WebKit {
@@ -791,6 +799,149 @@ bool WebViewImpl::touchEvent(const WebTouchEvent& event)
     PlatformTouchEventBuilder touchEventBuilder(mainFrameImpl()->frameView(), event);
     bool defaultPrevented = mainFrameImpl()->frame()->eventHandler()->handleTouchEvent(touchEventBuilder);
     return defaultPrevented;
+}
+#endif
+
+#if ENABLE(GESTURE_EVENTS)
+WebRect WebViewImpl::computeBlockBounds(const WebRect& rect, AutoZoomType zoomType)
+{
+    if (!mainFrameImpl())
+        return WebRect();
+
+    // Use the rect-based hit test to find the node.
+    IntPoint point = mainFrameImpl()->frameView()->windowToContents(IntPoint(rect.x, rect.y));
+    HitTestResult result = mainFrameImpl()->frame()->eventHandler()->hitTestResultAtPoint(point,
+            false, zoomType == FindInPage, DontHitTestScrollbars, HitTestRequest::Active | HitTestRequest::ReadOnly,
+            IntSize(rect.width, rect.height));
+
+    Node* node = result.innerNonSharedNode();
+    if (!node)
+        return WebRect();
+
+    // Find the block type node based on the hit node.
+    while (node && (!node->renderer() || node->renderer()->isInline()))
+        node = node->parentNode();
+
+    // Return the bounding box in the window coordinate system.
+    if (node) {
+        IntRect rect = node->Node::getRect();
+        Frame* frame = node->document()->frame();
+        return frame->view()->contentsToWindow(rect);
+    }
+    return WebRect();
+}
+
+WebRect WebViewImpl::widenRectWithinPageBounds(const WebRect& source, int targetMargin, int minimumMargin)
+{
+    WebSize maxSize;
+    if (mainFrame())
+        maxSize = mainFrame()->contentsSize();
+    IntSize scrollOffset;
+    if (mainFrame())
+        scrollOffset = mainFrame()->scrollOffset();
+    int leftMargin = targetMargin;
+    int rightMargin = targetMargin;
+
+    const int absoluteSourceX = source.x + scrollOffset.width();
+    if (leftMargin > absoluteSourceX) {
+        leftMargin = absoluteSourceX;
+        rightMargin = max(leftMargin, minimumMargin);
+    }
+
+    const int maximumRightMargin = maxSize.width - (source.width + absoluteSourceX);
+    if (rightMargin > maximumRightMargin) {
+        rightMargin = maximumRightMargin;
+        leftMargin = min(leftMargin, max(rightMargin, minimumMargin));
+    }
+
+    const int newWidth = source.width + leftMargin + rightMargin;
+    const int newX = source.x - leftMargin;
+
+    ASSERT(newWidth >= 0);
+    ASSERT(scrollOffset.width() + newX + newWidth <= maxSize.width);
+
+    return WebRect(newX, source.y, newWidth, source.height);
+}
+
+void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType zoomType, float& scale, WebPoint& scroll)
+{
+    scale = pageScaleFactor();
+    scroll.x = scroll.y = 0;
+    WebRect targetRect = hitRect;
+    if (targetRect.isEmpty())
+        targetRect.width = targetRect.height = touchPointPadding;
+
+    WebRect rect = computeBlockBounds(targetRect, zoomType);
+
+    const float overviewScale = m_minimumPageScaleFactor;
+    bool scaleUnchanged = true;
+    if (!rect.isEmpty()) {
+        // Pages should be as legible as on desktop when at dpi scale, so no
+        // need to zoom in further when automatically determining zoom level
+        // (after double tap, find in page, etc), though the user should still
+        // be allowed to manually pinch zoom in further if they desire.
+        const float maxScale = deviceScaleFactor();
+
+        const float defaultMargin = doubleTapZoomContentDefaultMargin * deviceScaleFactor();
+        const float minimumMargin = doubleTapZoomContentMinimumMargin * deviceScaleFactor();
+        // We want the margins to have the same physical size, which means we
+        // need to express them in post-scale size. To do that we'd need to know
+        // the scale we're scaling to, but that depends on the margins. Instead
+        // we express them as a fraction of the target rectangle: this will be
+        // correct if we end up fully zooming to it, and won't matter if we
+        // don't.
+        rect = widenRectWithinPageBounds(rect,
+                static_cast<int>(defaultMargin * rect.width / m_size.width),
+                static_cast<int>(minimumMargin * rect.width / m_size.width));
+
+        // Fit block to screen, respecting limits.
+        scale *= static_cast<float>(m_size.width) / rect.width;
+        scale = min(scale, maxScale);
+        scale = clampPageScaleFactorToLimits(scale);
+
+        scaleUnchanged = fabs(pageScaleFactor() - scale) < minScaleDifference;
+    }
+
+    if (zoomType == DoubleTap) {
+        if (rect.isEmpty() || scaleUnchanged) {
+            // Zoom out to overview mode.
+            if (overviewScale)
+                scale = overviewScale;
+            return;
+        }
+    } else if (rect.isEmpty()) {
+        // Keep current scale (no need to scroll as x,y will normally already
+        // be visible). FIXME: Revisit this if it isn't always true.
+        return;
+    }
+
+    // FIXME: If this is being called for auto zoom during find in page,
+    // then if the user manually zooms in it'd be nice to preserve the relative
+    // increase in zoom they caused (if they zoom out then it's ok to zoom
+    // them back in again). This isn't compatible with our current double-tap
+    // zoom strategy (fitting the containing block to the screen) though.
+
+    float screenHeight = m_size.height / scale * pageScaleFactor();
+    float screenWidth = m_size.width / scale * pageScaleFactor();
+
+    // Scroll to vertically align the block.
+    if (rect.height < screenHeight) {
+        // Vertically center short blocks.
+        rect.y -= 0.5 * (screenHeight - rect.height);
+    } else {
+        // Ensure position we're zooming to (+ padding) isn't off the bottom of
+        // the screen.
+        rect.y = max<float>(rect.y, hitRect.y + touchPointPadding - screenHeight);
+    } // Otherwise top align the block.
+
+    // Do the same thing for horizontal alignment.
+    if (rect.width < screenWidth)
+        rect.x -= 0.5 * (screenWidth - rect.width);
+    else
+        rect.x = max<float>(rect.x, hitRect.x + touchPointPadding - screenWidth);
+
+    scroll.x = rect.x;
+    scroll.y = rect.y;
 }
 #endif
 

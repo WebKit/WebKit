@@ -96,6 +96,11 @@ class WebTouchEvent;
 
 class WebViewImpl : public WebView, public WebCore::CCLayerTreeHostClient, public RefCounted<WebViewImpl> {
 public:
+    enum AutoZoomType {
+        DoubleTap,
+        FindInPage,
+    };
+
     // WebWidget methods:
     virtual void close();
     virtual WebSize size() { return m_size; }
@@ -459,6 +464,10 @@ public:
     // a plugin can update its own zoom, say because of its own UI.
     void fullFramePluginZoomLevelChanged(double zoomLevel);
 
+#if ENABLE(GESTURE_EVENTS)
+    void computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType, float& scale, WebPoint& scroll);
+#endif
+
     void loseCompositorContext(int numTimes);
 
     void enterFullScreenForElement(WebCore::Element*);
@@ -527,6 +536,15 @@ private:
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
     void updateLayerTreeViewport();
+#endif
+
+#if ENABLE(GESTURE_EVENTS)
+    // Returns the bounding box of the block type node touched by the WebRect.
+    WebRect computeBlockBounds(const WebRect&, AutoZoomType);
+
+    // Helper function: Widens the width of |source| by the specified margins
+    // while keeping it smaller than page width.
+    WebRect widenRectWithinPageBounds(const WebRect& source, int targetMargin, int minimumMargin);
 #endif
 
 #if ENABLE(POINTER_LOCK)

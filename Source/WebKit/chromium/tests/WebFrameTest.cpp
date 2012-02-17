@@ -151,6 +151,78 @@ TEST_F(WebFrameTest, ChromePageNoJavascript)
     EXPECT_EQ(std::string::npos, content.find("Clobbered"));
 }
 
+#if ENABLE(GESTURE_EVENTS)
+TEST_F(WebFrameTest, DivAutoZoomParamsTest)
+{
+    registerMockedHttpURLLoad("get_scale_for_auto_zoom_into_div_test.html");
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_auto_zoom_into_div_test.html", true));
+    int pageWidth = 640;
+    int pageHeight = 480;
+    int divPosX = 200;
+    int divPosY = 200;
+    int divWidth = 200;
+    int divHeight = 150;
+    WebRect doubleTapPoint(250, 250, 0, 0);
+    webViewImpl->resize(WebSize(pageWidth, pageHeight));
+    float scale;
+    WebPoint scroll;
+
+    // Test for Doubletap scaling
+
+    // Tests for zooming in and out without clamping.
+    // Set device scale and scale limits so we dont get clamped.
+    webViewImpl->setDeviceScaleFactor(4);
+    webViewImpl->setPageScaleFactorLimits(0, 4 / webViewImpl->deviceScaleFactor());
+
+    // Test zooming into div.
+    webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
+    float scaledDivWidth = divWidth * scale;
+    float scaledDivHeight = divHeight * scale;
+    int hScroll = ((divPosX * scale) - ((pageWidth - scaledDivWidth) / 2)) / scale;
+    int vScroll = ((divPosY * scale) - ((pageHeight - scaledDivHeight) / 2)) / scale;
+    EXPECT_NEAR(pageWidth / divWidth, scale, 0.1);
+    EXPECT_EQ(hScroll, scroll.x);
+    EXPECT_EQ(vScroll, scroll.y);
+
+    // Test zoom out to overview scale.
+    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
+    EXPECT_FLOAT_EQ(1, scale);
+    EXPECT_EQ(WebPoint(0, 0), scroll);
+
+    // Tests for clamped scaling.
+    // Test clamp to device scale:
+    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->setDeviceScaleFactor(2.5);
+    webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
+    EXPECT_FLOAT_EQ(2.5, scale);
+
+    // Test clamp to minimum scale:
+    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->setPageScaleFactorLimits(1.5 / webViewImpl->deviceScaleFactor(), 4 / webViewImpl->deviceScaleFactor());
+    webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
+    EXPECT_FLOAT_EQ(1.5, scale);
+    EXPECT_EQ(WebPoint(0, 0), scroll);
+
+    // Test clamp to maximum scale:
+    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->setDeviceScaleFactor(4);
+    webViewImpl->setPageScaleFactorLimits(0, 3 / webViewImpl->deviceScaleFactor());
+    webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
+    EXPECT_FLOAT_EQ(3, scale);
+
+
+    // Test for Non-doubletap scaling
+    webViewImpl->setPageScaleFactor(1, WebPoint(0, 0));
+    webViewImpl->setDeviceScaleFactor(4);
+    webViewImpl->setPageScaleFactorLimits(0, 4 / webViewImpl->deviceScaleFactor());
+    // Test zooming into div.
+    webViewImpl->computeScaleAndScrollForHitRect(WebRect(250, 250, 10, 10), WebViewImpl::FindInPage, scale, scroll);
+    EXPECT_NEAR(pageWidth / divWidth, scale, 0.1);
+}
+#endif
+
 class TestReloadDoesntRedirectWebFrameClient : public WebFrameClient {
 public:
     virtual WebNavigationPolicy decidePolicyForNavigation(

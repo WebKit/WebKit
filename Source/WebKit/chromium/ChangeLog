@@ -1,3 +1,23 @@
+2012-02-16  Varun Jain  <varunjain@google.com>
+
+        [Chromium] Add method to WebViewImpl to extract zoom/scroll params for gesture events on touch devices
+        https://bugs.webkit.org/show_bug.cgi?id=72909
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (std):
+        (WebKit):
+        (WebKit::WebViewImpl::computeBlockBounds):
+        (WebKit::WebViewImpl::widenRectWithinPageBounds):
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+        (WebKit):
+        (WebKit::TEST_F):
+        * tests/data/get_scale_for_auto_zoom_into_div_test.html: Added.
+
 2012-02-16  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] LayerChromium::setNeedsDisplay does not apply contents scale correctly
