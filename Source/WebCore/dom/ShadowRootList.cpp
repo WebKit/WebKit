@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -44,9 +45,12 @@ ShadowRootList::~ShadowRootList()
 
 void ShadowRootList::pushShadowRoot(ShadowRoot* shadowRoot)
 {
-    // FIXME: We don't support multiple shadow root subtrees yet.
-    // https://bugs.webkit.org/show_bug.chi?id=77503
+#if ENABLE(SHADOW_DOM)
+    if (!RuntimeEnabledFeatures::multipleShadowSubtreesEnabled())
+        ASSERT(!hasShadowRoot());
+#else
     ASSERT(!hasShadowRoot());
+#endif
 
     m_shadowRoots.push(shadowRoot);
 }

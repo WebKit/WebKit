@@ -1,3 +1,34 @@
+2012-02-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Add an internal flag to accept multiple shadow roots for the purpose of tests.
+        https://bugs.webkit.org/show_bug.cgi?id=78453
+
+        Reviewed by Hajime Morita.
+
+        This patch introduces a flag to enable multiple shadow subtrees.
+        This flag is intended to be used for testing purpose for a while.
+        We will remove it later.
+
+        No new tests, no change in behavior.
+
+        * WebCore.exp.in:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::multipleShadowSubtreesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowRootList.cpp:
+        (WebCore::ShadowRootList::pushShadowRoot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMultipleShadowSubtreesEnabled):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the broken viewport tests
