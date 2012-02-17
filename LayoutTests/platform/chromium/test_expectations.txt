@@ -3793,12 +3793,6 @@ BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-e.html = IMAGE
 BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-se.html = IMAGE
 BUGWK78008 : platform/chromium/compositing/rubberbanding/transform-overhang-s.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-nw.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-n.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-ne.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-size-change.html = IMAGE
-BUGWK78370 : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = IMAGE
 
 // SVGLoad event timing changes require some rebaselines.
 BUGWK78084 : svg/custom/polyline-setattribute-points-null.svg = IMAGE+TEXT

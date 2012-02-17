@@ -10,6 +10,7 @@
     if (window.internals && window.layoutTestController) {
         layoutTestController.dumpAsText(true);
         document.getElementById('info').style.visibility = "hidden";
+        internals.settings.setMockScrollbarsEnabled(false);
         internals.setScrollViewPosition(document, -20, -20);
         layoutTestController.display();
         internals.setScrollViewPosition(document, -60, -60);

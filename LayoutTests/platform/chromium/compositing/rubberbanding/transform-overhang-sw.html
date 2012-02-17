@@ -7,9 +7,10 @@
 
 <div id="info">This test requires DRT.</div>
 <script>
-    if (window.internals) {
+    if (window.internals && window.layoutTestController) {
         layoutTestController.dumpAsText(true);
         document.getElementById('info').style.visibility = "hidden";
+        internals.settings.setMockScrollbarsEnabled(false);
         internals.setScrollViewPosition(document, -50, 50);
     }
 </script>
