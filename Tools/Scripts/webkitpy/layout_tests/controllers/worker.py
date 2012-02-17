@@ -58,8 +58,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._name = 'worker/%d' % self._worker_number
         self._results_directory = worker_arguments.results_directory
         self._options = worker_arguments.options
-        self._done = False
-        self._canceled = False
         self._port = None
         self._batch_size = None
         self._batch_count = None
@@ -83,16 +81,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._batch_size = self._options.batch_size or 0
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
-
-    def cancel(self):
-        """Attempt to abort processing (best effort)."""
-        self._canceled = True
-
-    def is_done(self):
-        return self._done or self._canceled
-
-    def name(self):
-        return self._name
 
     def set_inline_arguments(self, port):
         self._port = port
@@ -122,22 +110,10 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         self.safe_init()
 
-        exception_msg = ""
-        _log.debug("%s starting" % self._name)
-
         try:
-            self._worker_connection.run_message_loop()
-            if not self.is_done():
-                raise AssertionError("%s: ran out of messages in worker queue."
-                                     % self._name)
-        except KeyboardInterrupt:
-            exception_msg = ", interrupted"
-            self._worker_connection.raise_exception(sys.exc_info())
-        except:
-            exception_msg = ", exception raised"
-            self._worker_connection.raise_exception(sys.exc_info())
+            _log.debug("%s starting" % self._name)
+            super(Worker, self).run()
         finally:
-            _log.debug("%s done with message loop%s" % (self._name, exception_msg))
             self._worker_connection.post_message('done')
             self.cleanup()
             _log.debug("%s exiting" % self._name)
@@ -157,7 +133,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
 
     def handle_stop(self, src):
-        self._done = True
+        self.stop_handling_messages()
 
     def _run_test(self, test_input):
         test_timeout_sec = self.timeout(test_input)

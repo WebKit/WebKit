@@ -1,3 +1,28 @@
+2012-02-16  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: simplify worker interface
+        https://bugs.webkit.org/show_bug.cgi?id=78181
+
+        Reviewed by Tony Chang.
+
+        This change moves code in name(), is_done(), run(), and cancel()
+        from Worker to AbstractWorker, since the logic is pretty much
+        boilerplate code that any implementation would want to use.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get.should):
+        (AbstractWorker.__init__):
+        (AbstractWorker):
+        (AbstractWorker.name):
+        (AbstractWorker.stop_handling_messages):
+        (AbstractWorker.run):
+        (AbstractWorker.is_done):
+        (AbstractWorker.cancel):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.run):
+        (Worker.handle_stop):
+
 2012-02-16  Michael Saboff  <msaboff@apple.com>
 
         ENH: Add ability to run subset of JavaScript layout tests with JSC

@@ -66,12 +66,11 @@ def get(worker_model, client, worker_class):
         worker_model - concurrency model to use (inline/processes)
         client - message_broker.BrokerClient implementation to dispatch
             replies to.
-        worker_class - type of workers to create. This class must implement
+        worker_class - type of workers to create. This class should override
             the methods in AbstractWorker.
     Returns:
         A handle to an object that will talk to a message broker configured
-        for the normal manager/worker communication.
-    """
+        for the normal manager/worker communication."""
     if worker_model == 'inline':
         queue_class = Queue.Queue
         manager_class = _InlineManager
@@ -99,17 +98,44 @@ class AbstractWorker(message_broker.BrokerClient):
             worker_arguments - (optional, Picklable) object passed to the worker from the manager"""
         message_broker.BrokerClient.__init__(self)
         self._worker_connection = worker_connection
+        self._name = 'worker'
+        self._done = False
+        self._canceled = False
+
+    def name(self):
+        return self._name
+
+    def is_done(self):
+        return self._done or self._canceled
+
+    def stop_handling_messages(self):
+        self._done = True
 
     def run(self):
         """Callback for the worker to start executing. Typically does any
         remaining initialization and then calls broker_connection.run_message_loop()."""
-        raise NotImplementedError
+        exception_msg = ""
+        _log.debug("%s starting" % self._name)
+
+        try:
+            self._worker_connection.run_message_loop()
+            if not self.is_done():
+                raise AssertionError("%s: ran out of messages in worker queue."
+                                     % self._name)
+        except KeyboardInterrupt:
+            exception_msg = ", interrupted"
+            self._worker_connection.raise_exception(sys.exc_info())
+        except:
+            exception_msg = ", exception raised"
+            self._worker_connection.raise_exception(sys.exc_info())
+        finally:
+            _log.debug("%s done with message loop%s" % (self._name, exception_msg))
 
     def cancel(self):
         """Called when possible to indicate to the worker to stop processing
         messages and shut down. Note that workers may be stopped without this
         method being called, so clients should not rely solely on this."""
-        raise NotImplementedError
+        self._canceled = True
 
 
 class _ManagerConnection(message_broker.BrokerConnection):
