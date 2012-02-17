@@ -1,2 +1,3 @@
-shouldBeTrue("successfullyParsed");
-debug("\nTEST COMPLETE\n");
+wasPostTestScriptParsed = true;
+
+finishJSTest();

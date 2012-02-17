@@ -1,3 +1,16 @@
+2012-02-16  Michael Saboff  <msaboff@apple.com>
+
+        ENH: Add ability to run subset of JavaScript layout tests with JSC
+        https://bugs.webkit.org/show_bug.cgi?id=78764
+
+        Reviewed by Gavin Barraclough.
+
+        New simple test drive shell script that runs a defined
+        list of javascript tests using jsc and the standalone-{pre,post}.js
+        wrappers.
+
+        * Scripts/run-fast-jsc: Added.
+
 2012-02-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add new Qt performance tester bot to build.webkit.org
