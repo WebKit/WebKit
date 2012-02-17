@@ -1,3 +1,14 @@
+2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Another build fix for viewport tests
+
+        No new tests.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix): We now return NaN instead of 0 when we fail to 
+        parse a number using charactersToFloatIgnoringJunk, so we need to assert that 
+        we have NaN rather than 0.
+
 2012-02-15  Michael Nordman  <michaeln@google.com>
 
         [chromium] Fix bugs in the implementation of WebDatabase::closeDatabaseImmediately.
