@@ -122,10 +122,7 @@ void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
 #if ENABLE(SQL_DATABASE)
-    HashSet<RefPtr<AbstractDatabase> > databaseHandles;
-    DatabaseTracker::tracker().getOpenDatabases(originIdentifier, databaseName, &databaseHandles);
-    for (HashSet<RefPtr<AbstractDatabase> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it)
-        it->get()->closeImmediately();
+    DatabaseTracker::tracker().closeDatabasesImmediately(originIdentifier, databaseName);
 #endif
 }
 

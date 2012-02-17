@@ -104,7 +104,7 @@ public:
     const char* lastErrorMsg();
     
     sqlite3* sqlite3Handle() const {
-        ASSERT(m_sharable || currentThread() == m_openingThread);
+        ASSERT(m_sharable || currentThread() == m_openingThread || !m_db);
         return m_db;
     }
     

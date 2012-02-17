@@ -1,3 +1,62 @@
+2012-02-15  Michael Nordman  <michaeln@google.com>
+
+        [chromium] Fix bugs in the implementation of WebDatabase::closeDatabaseImmediately.
+        https://bugs.webkit.org/show_bug.cgi?id=78841
+
+        WebDatabase now delegates this function entirely to DatabaseTracker,
+        a new closeDatabasesImmediately() has been added for that purpose. That
+        method posts tasks to the appropiate context thread for each database
+        instance that should be closed immediately.
+
+        The DatabaseTracker getAllOpenDatabases() method has been removed from
+        the chromium impl because it's unsafe, refs cannot be safely taken on
+        AbstractDatabase instances in the tracker's collection of open databases.
+
+        Add a message to the console log when a database is forcibly closed.
+
+        Transactions initiated on a database instance that has been forcibly
+        closed complete with a transaction error callback.
+        
+        This is part of resolving http://crbug.com/98939
+
+        Reviewed by David Levin.
+
+        No new layout tests, there is no common code way to closeImmediately.
+        We have coverage for this in py automation tests.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        The closeImmediately code path can result in the underlying sqlite3 handle being
+        closed earlier than usual and trip some assertions. Updated the assertions to no
+        longer trigger in this early close case.
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::setMaximumSize):
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::sqlite3Handle):
+
+        * storage/Database.cpp:
+        (WebCore::Database::closeImmediately): Modified to only be called on the context thread and to log a console message.
+        (WebCore::Database::changeVersion): Use the private runTransaction helper method.
+        (WebCore::Database::transaction): Pass a new param required by the runTransaction helper.
+        (WebCore::Database::readTransaction): Ditto.
+        (WebCore::callTransactionErrorCallback): Used to defer invocation of the error callback.
+        (WebCore::Database::runTransaction): Modified to detect when the database has been closed, and
+        to invoke the error callback in that case. This also avoids creating a reference cycle between
+        a newly created transaction and the database that previously existed due to a transction being
+        added and never removed from the Q while in this state.
+        * storage/Database.h:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::closeImmediately): Modified to only be called on the context thread and to log a console message.
+        * storage/DatabaseTracker.h:
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        Posts tasks to the appropiate context thread for execution without bumping AbstractDatabase refcounts.
+        (DatabaseTracker::CloseOneDatabaseImmediatelyTask):
+        (WebCore::DatabaseTracker::CloseOneDatabaseImmediatelyTask::create):
+        (WebCore::DatabaseTracker::CloseOneDatabaseImmediatelyTask::performTask):
+        (WebCore::DatabaseTracker::CloseOneDatabaseImmediatelyTask::CloseOneDatabaseImmediatelyTask):
+        (WebCore::DatabaseTracker::closeDatabasesImmediately): 
+        (WebCore::DatabaseTracker::closeOneDatabaseImmediately):
+
 2012-02-16  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Occlusion tracking with CSS filters

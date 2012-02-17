@@ -205,16 +205,13 @@ private:
 
 void DatabaseSync::closeImmediately()
 {
-    if (!m_scriptExecutionContext->isContextThread()) {
-        m_scriptExecutionContext->postTask(CloseSyncDatabaseOnContextThreadTask::create(this));
-        return;
-    }
+    ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (!opened())
         return;
 
+    logErrorMessage("forcibly closing database");
     DatabaseTracker::tracker().removeOpenDatabase(this);
-
     closeDatabase();
 }
 

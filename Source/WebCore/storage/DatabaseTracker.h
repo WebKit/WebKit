@@ -173,12 +173,15 @@ private:
     static void notifyDatabasesChanged(void*);
 #else
 public:
-    void getOpenDatabases(const String& originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases);
+    void closeDatabasesImmediately(const String& originIdentifier, const String& name);
 
 private:
     typedef HashSet<AbstractDatabase*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<String, DatabaseNameMap*> DatabaseOriginMap;
+    class CloseOneDatabaseImmediatelyTask;
+
+    void closeOneDatabaseImmediately(const String& originIdentifier, const String& name, AbstractDatabase* database);
 
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;

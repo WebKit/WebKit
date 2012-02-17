@@ -32,6 +32,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ChangeVersionWrapper.h"
+#include "CrossThreadTask.h"
 #include "DatabaseCallback.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
@@ -41,6 +42,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "SQLError.h"
 #include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
@@ -230,9 +232,12 @@ void Database::close()
 
 void Database::closeImmediately()
 {
+    ASSERT(m_scriptExecutionContext->isContextThread());
     DatabaseThread* databaseThread = scriptExecutionContext()->databaseThread();
-    if (databaseThread && !databaseThread->terminationRequested() && opened())
+    if (databaseThread && !databaseThread->terminationRequested() && opened()) {
+        logErrorMessage("forcibly closing database");
         databaseThread->scheduleImmediateTask(DatabaseCloseTask::create(this, 0));
+    }
 }
 
 unsigned long long Database::maximumSize() const
@@ -256,30 +261,36 @@ void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)
 {
-    RefPtr<SQLTransaction> transaction =
-        SQLTransaction::create(this, callback, errorCallback, successCallback, ChangeVersionWrapper::create(oldVersion, newVersion));
-    MutexLocker locker(m_transactionInProgressMutex);
-    m_transactionQueue.append(transaction.release());
-    if (!m_transactionInProgress)
-        scheduleTransaction();
+    runTransaction(callback, errorCallback, successCallback, ChangeVersionWrapper::create(oldVersion, newVersion), false);
 }
 
 void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, false);
+    runTransaction(callback, errorCallback, successCallback, 0, false);
 }
 
 void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, true);
+    runTransaction(callback, errorCallback, successCallback, 0, true);
+}
+
+static void callTransactionErrorCallback(ScriptExecutionContext*, PassRefPtr<SQLTransactionErrorCallback> callback, PassRefPtr<SQLError> error)
+{
+    callback->handleEvent(error.get());
 }
 
 void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                              PassRefPtr<VoidCallback> successCallback, bool readOnly)
+                              PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
 {
-    RefPtr<SQLTransaction> transaction =
-        SQLTransaction::create(this, callback, errorCallback, successCallback, 0, readOnly);
     MutexLocker locker(m_transactionInProgressMutex);
+    if (!m_isTransactionQueueEnabled) {
+        if (errorCallback) {
+            RefPtr<SQLError> error = SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed");
+            scriptExecutionContext()->postTask(createCallbackTask(&callTransactionErrorCallback, errorCallback, error.release()));
+        }
+        return;
+    }
+    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, errorCallback, successCallback, wrapper, readOnly);
     m_transactionQueue.append(transaction.release());
     if (!m_transactionInProgress)
         scheduleTransaction();
@@ -297,9 +308,8 @@ void Database::scheduleTransaction()
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
     RefPtr<SQLTransaction> transaction;
 
-    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty()) {
+    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
         transaction = m_transactionQueue.takeFirst();
-    }
 
     if (transaction && m_scriptExecutionContext->databaseThread()) {
         OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);

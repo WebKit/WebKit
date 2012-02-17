@@ -102,7 +102,7 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 void SQLiteDatabase::close()
 {
     if (m_db) {
-        // FIXME: This is being called on themain thread during JS GC. <rdar://problem/5739818>
+        // FIXME: This is being called on the main thread during JS GC. <rdar://problem/5739818>
         // ASSERT(currentThread() == m_openingThread);
         sqlite3* db = m_db;
         {
@@ -167,7 +167,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     
     int currentPageSize = pageSize();
 
-    ASSERT(currentPageSize);
+    ASSERT(currentPageSize || !m_db);
     int64_t newMaxPageCount = currentPageSize ? size / currentPageSize : 0;
     
     MutexLocker locker(m_authorizerLock);

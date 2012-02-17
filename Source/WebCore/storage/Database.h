@@ -47,6 +47,7 @@ class SQLTransactionCallback;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
+class SQLTransactionWrapper;
 class VoidCallback;
 
 typedef int ExceptionCode;
@@ -93,7 +94,7 @@ private:
     Database(ScriptExecutionContext*, const String& name, const String& expectedVersion,
              const String& displayName, unsigned long estimatedSize);
     void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                        PassRefPtr<VoidCallback> successCallback, bool readOnly);
+                        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     bool openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&, String& errorMessage);
     virtual bool performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode&, String& errorMessage);

@@ -157,29 +157,6 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
         DatabaseObserver::databaseClosed(database);
 }
 
-void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
-{
-    getOpenDatabases(origin->databaseIdentifier(), name, databases);
-}
-
-void DatabaseTracker::getOpenDatabases(const String& originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
-{
-    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
-    if (!m_openDatabaseMap)
-        return;
-
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
-    if (!nameMap)
-        return;
-
-    DatabaseSet* databaseSet = nameMap->get(name);
-    if (!databaseSet)
-        return;
-
-    for (DatabaseSet::iterator it = databaseSet->begin(); it != databaseSet->end(); ++it)
-        databases->add(*it);
-}
-
 unsigned long long DatabaseTracker::getMaxSizeForDatabase(const AbstractDatabase* database)
 {
     unsigned long long spaceAvailable = 0;
@@ -210,6 +187,76 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
                 (*it)->interrupt();
         }
     }
+}
+
+class DatabaseTracker::CloseOneDatabaseImmediatelyTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<CloseOneDatabaseImmediatelyTask> create(const String& originIdentifier, const String& name, AbstractDatabase* database)
+    {
+        return adoptPtr(new CloseOneDatabaseImmediatelyTask(originIdentifier, name, database));
+    }
+
+    virtual void performTask(ScriptExecutionContext* context)
+    {
+        DatabaseTracker::tracker().closeOneDatabaseImmediately(m_originIdentifier, m_name, m_database);
+    }
+
+private:
+    CloseOneDatabaseImmediatelyTask(const String& originIdentifier, const String& name, AbstractDatabase* database)
+        : m_originIdentifier(originIdentifier.isolatedCopy())
+        , m_name(name.isolatedCopy())
+        , m_database(database)
+    {
+    }
+
+    String m_originIdentifier;
+    String m_name;
+    AbstractDatabase* m_database;  // Intentionally a raw pointer.
+};
+
+void DatabaseTracker::closeDatabasesImmediately(const String& originIdentifier, const String& name) {
+    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+    if (!m_openDatabaseMap)
+        return;
+
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
+    if (!nameMap)
+        return;
+
+    DatabaseSet* databaseSet = nameMap->get(name);
+    if (!databaseSet)
+        return;
+
+    // We have to call closeImmediately() on the context thread and we cannot safely add a reference to
+    // the database in our collection when not on the context thread (which is always the case given
+    // current usage).
+    for (DatabaseSet::iterator it = databaseSet->begin(); it != databaseSet->end(); ++it)
+        (*it)->scriptExecutionContext()->postTask(CloseOneDatabaseImmediatelyTask::create(originIdentifier, name, *it));
+}
+
+void DatabaseTracker::closeOneDatabaseImmediately(const String& originIdentifier, const String& name, AbstractDatabase* database)
+{
+    // First we have to confirm the 'database' is still in our collection.
+    {
+        MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+        if (!m_openDatabaseMap)
+            return;
+
+        DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
+        if (!nameMap)
+            return;
+
+        DatabaseSet* databaseSet = nameMap->get(name);
+        if (!databaseSet)
+            return;
+
+        DatabaseSet::iterator found = databaseSet->find(database);
+        if (found == databaseSet->end())
+            return;
+    }
+
+    // And we have to call closeImmediately() without our collection lock being held.
+    database->closeImmediately();
 }
 
 }
