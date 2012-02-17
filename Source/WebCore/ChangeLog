@@ -1,3 +1,18 @@
+2012-02-16  Andreas Kling  <awesomekling@apple.com>
+
+        Removing the last presentation attribute should result in a null attributeStyle().
+        <http://webkit.org/b/78812>
+
+        Reviewed by Antti Koivisto.
+
+        If the collectStyleForAttribute() pass in updateAttributeStyle() doesn't encounter any
+        respected presentation attributes, set a null attributeStyle() instead of an empty one.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateAttributeStyle):
+
 2012-02-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: use static counters for estimation of allocated Documents, Nodes and JS EventListeners
