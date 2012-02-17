@@ -1493,7 +1493,7 @@ namespace JSC {
         void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&);
         
         const Identifier& ident() { return m_ident; }
-        void setInferredName(const Identifier& inferredName) { m_inferredName = inferredName; }
+        void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }
 
         static const bool scopeIsFunction = true;

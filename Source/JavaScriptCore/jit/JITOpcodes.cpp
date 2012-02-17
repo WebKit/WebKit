@@ -80,7 +80,8 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     // Also initialize ReturnPC for use by lazy linking and exceptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
-
+    
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callLazyLinkCall = call();
     restoreReturnAddressBeforeReturn(regT3);
@@ -99,7 +100,8 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     // Also initialize ReturnPC for use by lazy linking and exeptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
-
+    
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callLazyLinkConstruct = call();
     restoreReturnAddressBeforeReturn(regT3);
@@ -118,6 +120,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     Jump hasCodeBlock1 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callCompileCall = call();
     restoreReturnAddressBeforeReturn(regT3);
@@ -140,6 +143,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     Jump hasCodeBlock2 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callCompileConstruct = call();
     restoreReturnAddressBeforeReturn(regT3);
