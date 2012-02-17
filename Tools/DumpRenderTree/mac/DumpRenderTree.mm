@@ -681,13 +681,18 @@ static void setDefaultsToConsistentValuesForTesting()
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 }
 
-static void* runThread(void* arg)
+static void runThread(void* arg)
 {
     static ThreadIdentifier previousId = 0;
     ThreadIdentifier currentId = currentThread();
     // Verify 2 successive threads do not get the same Id.
     ASSERT(previousId != currentId);
     previousId = currentId;
+}
+
+static void* runPthread(void* arg)
+{
+    runThread(arg);
     return 0;
 }
 
@@ -695,10 +700,10 @@ static void testThreadIdentifierMap()
 {
     // Imitate 'foreign' threads that are not created by WTF.
     pthread_t pthread;
-    pthread_create(&pthread, 0, &runThread, 0);
+    pthread_create(&pthread, 0, &runPthread, 0);
     pthread_join(pthread, 0);
 
-    pthread_create(&pthread, 0, &runThread, 0);
+    pthread_create(&pthread, 0, &runPthread, 0);
     pthread_join(pthread, 0);
 
     // Now create another thread using WTF. On OSX, it will have the same pthread handle

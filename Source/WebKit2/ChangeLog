@@ -1,3 +1,10 @@
+2012-02-17  Adam Roben  <aroben@apple.com>
+
+        Clang build fix after r108119
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::randomCrashThread): Annotate this function with NO_RETURN_DUE_TO_CRASH.
+
 2012-02-17  Kalev Lember  <kalevlember@gmail.com>
 
         Remove unused parameters from WTF threading API

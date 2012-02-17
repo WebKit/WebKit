@@ -1,3 +1,13 @@
+2012-02-17  Adam Roben  <aroben@apple.com>
+
+        Mac build fix after r108119
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runThread):
+        (runPthread):
+        (testThreadIdentifierMap):
+        Updated to match current WTF threading APIs.
+
 2012-02-17  Dirk Pranke  <dpranke@chromium.org>
 
         revert r107147 - breaks webkit-patch on Mac SL
