@@ -4204,8 +4204,5 @@ BUGWK77498 : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
-// Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
-BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
-
 // Needs baselines for MAC and WIN.
 BUGWK76465 MAC WIN : fast/css/non-empty-span.html = IMAGE+TEXT
