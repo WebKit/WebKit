@@ -1,3 +1,15 @@
+2012-02-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Chromium WebKit API support for IDBObjectStore.delete(IDBKeyRange)
+        https://bugs.webkit.org/show_bug.cgi?id=78619
+
+        Add an overload to WebIDBObjectStore::deleteFunction(). First part of a two-sided patch.
+
+        Reviewed by Darin Fisher.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::deleteFunction):
+
 2012-02-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Clipping/Transforms applied in wrong order in opaque paint tracking
