@@ -122,7 +122,7 @@ void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, co
 {
     RetainPtr<NSMutableArray> paths(AdoptNS, [[NSMutableArray alloc] init]);    
     for (size_t i = 0; i < pathnames.size(); ++i)
-        [paths.get() addObject:pathnames[i]];
+        [paths.get() addObject: [NSArray arrayWithObject:pathnames[i]]];
     [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];
 }
 

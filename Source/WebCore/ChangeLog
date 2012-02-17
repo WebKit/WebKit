@@ -1,3 +1,19 @@
+2012-02-17  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (r107606): Copy Link writes malformed WebURLsWithTitlesPboardType
+        data to the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=78933
+        <rdar://problem/10874553>
+        
+        For this format, the data needs to be placed in the pasteboard as array of arrays
+        of strings. Currently is it stored as array of strings, which causes the code
+        that uses this format to break.
+        
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::setPathnamesForType):
+
 2012-02-17  Abhishek Arya  <inferno@chromium.org>
 
         Incorrect placement of a new child when beforeChild and its
