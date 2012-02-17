@@ -1035,6 +1035,7 @@ GraphicsContext3D::~GraphicsContext3D()
     m_private->setContextLostCallback(nullptr);
     m_private->setErrorMessageCallback(nullptr);
     m_private->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
+    m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(nullptr);
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -1357,6 +1358,31 @@ void GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr
 {
     m_swapBuffersCompleteCallbackAdapter = GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create(cb);
     m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
+}
+
+class GraphicsContext3DMemoryAllocationChangedCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
+public:
+    GraphicsContext3DMemoryAllocationChangedCallbackAdapter(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> cb)
+        : m_memoryAllocationChangedCallback(cb)
+    {
+    }
+
+    virtual ~GraphicsContext3DMemoryAllocationChangedCallbackAdapter() { }
+
+    virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
+    {
+        if (m_memoryAllocationChangedCallback)
+            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(gpuResourceSizeInBytes);
+    }
+
+private:
+    OwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> m_memoryAllocationChangedCallback;
+};
+
+void GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> cb)
+{
+    m_memoryAllocationChangedCallbackAdapter = adoptPtr(new GraphicsContext3DMemoryAllocationChangedCallbackAdapter(cb));
+    m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_memoryAllocationChangedCallbackAdapter.get());
 }
 
 } // namespace WebCore
