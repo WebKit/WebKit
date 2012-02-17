@@ -1,3 +1,13 @@
+2012-02-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix some warnings encountered during the GTK+ build
+        https://bugs.webkit.org/show_bug.cgi?id=78911
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView): Initialize a new member of the loader client struct.
+
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow printing scaled pages in WebKit2 for printers that don't support it

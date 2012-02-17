@@ -146,7 +146,7 @@ Path pathForRenderer(RenderObject* o)
 
     // Merge all center boxes (all but the first and the last).
     LayoutRect mid;
-    for (int i = 1; i < rects.size() - 1; ++i)
+    for (size_t i = 1; i < rects.size() - 1; ++i)
         mid.uniteIfNonZero(rects.at(i));
 
     Vector<LayoutRect> drawableRects;
@@ -177,9 +177,9 @@ Path pathForRenderer(RenderObject* o)
         shiftXEdgesToContainIfStrikes(middle, drawableRects.at(2));
     }
 
-    for (int i = 0; i < drawableRects.size(); ++i) {
-        LayoutRect prev = (i - 1) >= 0 ? drawableRects.at(i - 1) : LayoutRect();
-        LayoutRect next = (i + 1) < drawableRects.size() ? drawableRects.at(i + 1) : LayoutRect();
+    for (size_t i = 0; i < drawableRects.size(); ++i) {
+        LayoutRect prev = i ? drawableRects.at(i - 1) : LayoutRect();
+        LayoutRect next = i < (drawableRects.size() - 1) ? drawableRects.at(i + 1) : LayoutRect();
         addHighlightRect(path, drawableRects.at(i), prev, next);
     }
 

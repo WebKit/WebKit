@@ -81,7 +81,7 @@ void TextureMapperLayer::computeTransformsRecursive()
         m_state.maskLayer->computeTransformsRecursive();
     if (m_state.replicaLayer)
         m_state.replicaLayer->computeTransformsRecursive();
-    for (int i = 0; i < m_children.size(); ++i)
+    for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->computeTransformsRecursive();
 
     // Reorder children if needed on the way back up.
@@ -179,7 +179,7 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
 
     paintSelf(options);
 
-    for (int i = 0; i < m_children.size(); ++i)
+    for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->paintRecursive(options);
 
     if (hasClip)
@@ -198,7 +198,7 @@ IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& 
     TransformationMatrix localTransform = TransformationMatrix(matrix).multiply(m_transform.combined());
     rect = enclosingIntRect(localTransform.mapRect(layerRect()));
     if (!m_state.masksToBounds && !m_state.maskLayer) {
-        for (int i = 0; i < m_children.size(); ++i)
+        for (size_t i = 0; i < m_children.size(); ++i)
             rect.unite(m_children[i]->intermediateSurfaceRect(matrix));
     }
 

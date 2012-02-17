@@ -79,7 +79,7 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
 
     Vector<FloatRect> tileRectsToAdd;
     Vector<int> tileIndicesToRemove;
-    static const int TileEraseThreshold = 6;
+    static const size_t TileEraseThreshold = 6;
 
     // This method recycles tiles. We check which tiles we need to add, which to remove, and use as many
     // removable tiles as replacement for new tiles when possible.

@@ -1,3 +1,21 @@
+2012-02-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix some warnings encountered during the GTK+ build
+        https://bugs.webkit.org/show_bug.cgi?id=78911
+
+        Reviewed by Xan Lopez.
+
+        No new tests. These are just fixes for warnings.
+
+        * page/GestureTapHighlighter.cpp: Avoid using potentially signed operations on
+        a size_t type. Use size_t for iterating over members of a vector.
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp: Use size_t where necessary.
+        (WebCore::TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded): Ditto.
+        * platform/graphics/texmap/TextureMapperLayer.cpp: Ditto.
+        (WebCore::TextureMapperLayer::computeTransformsRecursive): Ditto.
+        (WebCore::TextureMapperLayer::paintSelfAndChildren): Ditto.
+        (WebCore::TextureMapperLayer::intermediateSurfaceRect): Ditto.
+
 2012-02-17  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Refactor video drawing to be more data driven
