@@ -1,3 +1,25 @@
+2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Another fix for viewport tests
+
+        No new tests.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix): When we don't parse a number, we could either be 
+        trying to parse junk, which returns NaN, or we could get an empty string, 
+        which returns 0, so we need to account for that in the assert.
+
+2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Another build fix for viewport tests
+
+        No new tests.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix): We now return NaN instead of 0 when we fail to 
+        parse a number using charactersToFloatIgnoringJunk, so we need to assert that 
+        we have NaN rather than 0.
+
 2012-02-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Bundle page scale factor and limits in CCLayerTreeHost

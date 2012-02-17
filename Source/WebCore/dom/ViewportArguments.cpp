@@ -219,7 +219,7 @@ static float numericPrefix(const String& keyString, const String& valueString, D
         value = WTF::charactersToFloatIgnoringJunk(valueString.characters16(), valueString.length(), ok, &didReadNumber);
     if (!*ok) {
         if (!didReadNumber) {
-            ASSERT(isnan(value));
+            ASSERT(isnan(value) || !value);
             reportViewportWarning(document, UnrecognizedViewportArgumentValueError, valueString, keyString);
             return value;
         }
