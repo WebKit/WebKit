@@ -1,3 +1,30 @@
+2012-01-23  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION: empty span creates renders with non-zero height
+        https://bugs.webkit.org/show_bug.cgi?id=76465
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/css/empty-span.html
+               fast/css/non-empty-span.html
+
+        Empty inlines with line-height, vertical-alignment or font metrics should only get a linebox if there is some
+        other content in the line. So only create line boxes for such elements on lines that are not empty.
+
+        This patch fixes a regression where an empty inline with line-height was propagating its height to an empty line.
+        It also fixes cases where lines with content that had a leading empty inline element weren't respecting the 
+        vertical alignment or font-height of the empty inline.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::constructLine): only create line boxes for lines that are not empty.
+        (WebCore::requiresLineBoxForContent): an inline flow with line-height, vertical-alignment, or font-size
+         will need a linebox if the rest of the line is not empty.
+        (WebCore):
+        (WebCore::alwaysRequiresLineBox): rename from inlineFlowRequiresLineBox.
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): if the inline flow definitely requires a line, mark
+         the line non-empty - otherwise hold off.
+
 2012-02-17  Raymond Toy  <rtoy@google.com>
 
         RealtimeAnalyserNode does not consistently respect .minDecibels
