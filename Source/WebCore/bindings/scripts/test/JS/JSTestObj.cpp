@@ -110,7 +110,6 @@ static const HashTableValue JSTestObjTableValues[] =
     { "withScriptExecutionContextAndScriptStateAttributeRaises", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises), (intptr_t)setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises, NoIntrinsic },
     { "withScriptExecutionContextAndScriptStateWithSpacesAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute), (intptr_t)setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute, NoIntrinsic },
     { "withScriptArgumentsAndCallStackAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptArgumentsAndCallStackAttribute), (intptr_t)setJSTestObjWithScriptArgumentsAndCallStackAttribute, NoIntrinsic },
-    { "scriptStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjScriptStringAttr), (intptr_t)0, NoIntrinsic },
 #if ENABLE(Condition1)
     { "conditionalAttr1", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr1), (intptr_t)setJSTestObjConditionalAttr1, NoIntrinsic },
 #endif
@@ -714,16 +713,6 @@ JSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSVal
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptArgumentsAndCallStackAttribute(callStack)));
-    return result;
-}
-
-
-JSValue jsTestObjScriptStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
-{
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
-    UNUSED_PARAM(exec);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsOwnedStringOrNull(exec, impl->scriptStringAttr());
     return result;
 }
 

@@ -2945,12 +2945,10 @@ sub NativeToJSValue
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        $conv = $signature->extendedAttributes->{"ConvertScriptString"};
-        return "jsOwnedStringOrNull(exec, $value)" if $conv;
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
         return "jsString(exec, $value)";
     }
-    
+
     my $globalObject = "$thisValue->globalObject()";
 
     if ($type eq "CSSStyleDeclaration") {

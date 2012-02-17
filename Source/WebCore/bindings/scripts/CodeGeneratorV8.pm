@@ -3676,8 +3676,6 @@ sub NativeToJSValue
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        $conv = $signature->extendedAttributes->{"ConvertScriptString"};
-        return "v8StringOrNull($value)" if $conv;
         return "v8String($value)";
     }
 

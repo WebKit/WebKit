@@ -1314,16 +1314,6 @@ webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spac
     item->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(converted_value);
 }
 
-gchar*
-webkit_dom_test_obj_get_script_string_attr(WebKitDOMTestObj* self)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(item->scriptStringAttr());
-    return res;
-}
-
 glong
 webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self)
 {
@@ -1571,7 +1561,6 @@ enum {
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_ATTRIBUTE_RAISES,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_AND_SCRIPT_STATE_WITH_SPACES_ATTRIBUTE,
     PROP_WITH_SCRIPT_ARGUMENTS_AND_CALL_STACK_ATTRIBUTE,
-    PROP_SCRIPT_STRING_ATTR,
 #if ENABLE(Condition1)
     PROP_CONDITIONAL_ATTR1,
 #endif /* ENABLE(Condition1) */
@@ -1936,11 +1925,6 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
-    case PROP_SCRIPT_STRING_ATTR:
-    {
-        g_value_take_string(value, convertToUTF8String(coreSelf->scriptStringAttr()));
-        break;
-    }
 #if ENABLE(Condition1)
     case PROP_CONDITIONAL_ATTR1:
     {
@@ -2277,13 +2261,6 @@ G_MAXLONG, /* max */
                                                            "read-write  WebKitDOMTestObj* TestObj.with-script-arguments-and-call-stack-attribute", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(gobjectClass,
-                                    PROP_SCRIPT_STRING_ATTR,
-                                    g_param_spec_string("script-string-attr", /* name */
-                                                           "test_obj_script-string-attr", /* short description */
-                                                           "read-only  gchar* TestObj.script-string-attr", /* longer - could do with some extra doc stuff here */
-                                                           "", /* default */
-                                                           WEBKIT_PARAM_READABLE));
 #if ENABLE(Condition1)
     g_object_class_install_property(gobjectClass,
                                     PROP_CONDITIONAL_ATTR1,

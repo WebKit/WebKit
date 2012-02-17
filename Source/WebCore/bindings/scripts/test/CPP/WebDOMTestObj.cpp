@@ -630,14 +630,6 @@ void WebDOMTestObj::setWithScriptArgumentsAndCallStackAttribute(const WebDOMTest
     impl()->setWithScriptArgumentsAndCallStackAttribute(toWebCore(newWithScriptArgumentsAndCallStackAttribute));
 }
 
-WebDOMString WebDOMTestObj::scriptStringAttr() const
-{
-    if (!impl())
-        return WebDOMString();
-
-    return static_cast<const WTF::String&>(impl()->scriptStringAttr());
-}
-
 #if ENABLE(Condition1)
 int WebDOMTestObj::conditionalAttr1() const
 {

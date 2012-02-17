@@ -136,7 +136,6 @@ public:
     void setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(const WebDOMTestObj&);
     WebDOMTestObj withScriptArgumentsAndCallStackAttribute() const;
     void setWithScriptArgumentsAndCallStackAttribute(const WebDOMTestObj&);
-    WebDOMString scriptStringAttr() const;
 #if ENABLE(Condition1)
     int conditionalAttr1() const;
     void setConditionalAttr1(int);

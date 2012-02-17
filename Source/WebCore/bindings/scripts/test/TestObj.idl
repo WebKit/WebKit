@@ -136,9 +136,6 @@ module test {
         void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
 #endif
 
-        // 'ConvertScriptString' extended attribute
-        readonly attribute [ConvertScriptString] DOMString scriptStringAttr;
-
         // 'Conditional' extended attribute
         attribute [Conditional=Condition1] long conditionalAttr1;
         attribute [Conditional=Condition1&Condition2] long conditionalAttr2;

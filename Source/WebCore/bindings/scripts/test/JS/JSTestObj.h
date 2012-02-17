@@ -269,7 +269,6 @@ JSC::JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribut
 void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestObjScriptStringAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjConditionalAttr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr1(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjConditionalAttr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

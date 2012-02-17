@@ -130,7 +130,6 @@ enum {
 - (void)setWithScriptExecutionContextAndScriptStateWithSpacesAttribute:(DOMTestObj *)newWithScriptExecutionContextAndScriptStateWithSpacesAttribute;
 - (DOMTestObj *)withScriptArgumentsAndCallStackAttribute;
 - (void)setWithScriptArgumentsAndCallStackAttribute:(DOMTestObj *)newWithScriptArgumentsAndCallStackAttribute;
-- (NSString *)scriptStringAttr;
 #if ENABLE(Condition1)
 - (int)conditionalAttr1;
 - (void)setConditionalAttr1:(int)newConditionalAttr1;

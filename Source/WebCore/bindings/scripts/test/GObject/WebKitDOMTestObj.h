@@ -1149,16 +1149,6 @@ WEBKIT_API void
 webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
- * webkit_dom_test_obj_get_script_string_attr:
- * @self: A #WebKitDOMTestObj
- *
- * Returns:
- *
-**/
-WEBKIT_API gchar*
-webkit_dom_test_obj_get_script_string_attr(WebKitDOMTestObj* self);
-
-/**
  * webkit_dom_test_obj_get_conditional_attr1:
  * @self: A #WebKitDOMTestObj
  *

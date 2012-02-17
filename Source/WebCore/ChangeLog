@@ -1,3 +1,49 @@
+2012-02-16  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [ConvertScriptString] from FileReaderSync.idl
+        https://bugs.webkit.org/show_bug.cgi?id=78335
+
+        Reviewed by Eric Seidel.
+
+        The spec says that FileReadSync should throw NOT_FOUND_ERR
+        if a given blob is invalid: http://www.w3.org/TR/FileAPI/#FileReaderSync
+
+        By this fix, we can completely remove [ConvertScriptString] from WebKit.
+
+        Tests: fast/files/workers/worker-read-blob-sync.html
+               fast/files/workers/worker-read-file-sync.html
+
+        * fileapi/FileReaderSync.cpp: Modified to throw NOT_FOUND_ERR if a blob is invalid.
+        (WebCore::FileReaderSync::readAsArrayBuffer):
+        (WebCore::FileReaderSync::readAsBinaryString):
+        (WebCore::FileReaderSync::readAsText):
+        (WebCore::FileReaderSync::readAsDataURL):
+        * fileapi/FileReaderSync.idl:
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed [ConvertScriptString]
+        since no one is using it.
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (NativeToJSValue):
+
+        * bindings/scripts/test/TestObj.idl: Removed a test case for [ConvertScriptString].
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Updated run-bindings-tests results.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+
+
 2012-02-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Clipping/Transforms applied in wrong order in opaque paint tracking

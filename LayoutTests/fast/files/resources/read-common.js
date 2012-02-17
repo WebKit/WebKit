@@ -79,6 +79,13 @@ function _readBlobAsArrayBufferSync(testFiles, blob)
         log("Received exception " + error.code + ": " + error.name);
     }
 
+    try {
+        var result = reader.readAsArrayBuffer(12345);
+        logResult(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
     runNextTest(testFiles);
 }
 
@@ -87,6 +94,13 @@ function _readBlobAsBinaryStringSync(testFiles, blob)
     var reader = createReaderSync();
     try {
         var result = reader.readAsBinaryString(blob);
+        logResult(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    try {
+        var result = reader.readAsBinaryString(12345);
         logResult(result);
     } catch (error) {
         log("Received exception " + error.code + ": " + error.name);
@@ -105,6 +119,13 @@ function _readBlobAsTextSync(testFiles, blob, encoding)
         log("Received exception " + error.code + ": " + error.name);
     }
 
+    try {
+        var result = reader.readAsText(12345, encoding);
+        logResult(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
     runNextTest(testFiles);
 }
 
@@ -113,6 +134,13 @@ function _readBlobAsDataURLSync(testFiles, blob)
     var reader = createReaderSync();
     try {
         var result = reader.readAsDataURL(blob);
+        logResult(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    try {
+        var result = reader.readAsDataURL(12345);
         logResult(result);
     } catch (error) {
         log("Received exception " + error.code + ": " + error.name);

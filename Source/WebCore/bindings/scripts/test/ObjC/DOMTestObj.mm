@@ -535,12 +535,6 @@
     IMPL->setWithScriptArgumentsAndCallStackAttribute(core(newWithScriptArgumentsAndCallStackAttribute));
 }
 
-- (NSString *)scriptStringAttr
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->scriptStringAttr();
-}
-
 #if ENABLE(Condition1)
 - (int)conditionalAttr1
 {

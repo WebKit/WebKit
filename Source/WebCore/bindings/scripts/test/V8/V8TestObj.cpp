@@ -716,13 +716,6 @@ static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::Str
     return;
 }
 
-static v8::Handle<v8::Value> scriptStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.TestObj.scriptStringAttr._get");
-    TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8StringOrNull(imp->scriptStringAttr());
-}
-
 #if ENABLE(Condition1)
 
 static v8::Handle<v8::Value> conditionalAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1816,8 +1809,6 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"withScriptExecutionContextAndScriptStateWithSpacesAttribute", TestObjInternal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetter, TestObjInternal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptArgumentsAndCallStackAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
     {"withScriptArgumentsAndCallStackAttribute", TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrGetter, TestObjInternal::withScriptArgumentsAndCallStackAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'scriptStringAttr' (Type: 'readonly attribute' ExtAttr: 'ConvertScriptString')
-    {"scriptStringAttr", TestObjInternal::scriptStringAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #if ENABLE(Condition1)
     // Attribute 'conditionalAttr1' (Type: 'attribute' ExtAttr: 'Conditional')
     {"conditionalAttr1", TestObjInternal::conditionalAttr1AttrGetter, TestObjInternal::conditionalAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
