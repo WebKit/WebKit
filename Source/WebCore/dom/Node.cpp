@@ -1340,7 +1340,7 @@ void Node::detach()
     setFlag(InDetachFlag);
 
     if (renderer())
-        renderer()->destroy();
+        renderer()->destroyAndCleanupAnonymousWrappers();
     setRenderer(0);
 
     Document* doc = document();

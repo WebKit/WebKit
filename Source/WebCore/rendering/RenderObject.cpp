@@ -2259,6 +2259,33 @@ void RenderObject::willBeDestroyed()
     }
 }
 
+void RenderObject::destroyAndCleanupAnonymousWrappers()
+{
+    RenderObject* parent = this->parent();
+
+    // If the tree is destroyed or our parent is not anonymous, there is no need for a clean-up phase.
+    if (documentBeingDestroyed() || !parent || !parent->isAnonymous()) {
+        destroy();
+        return;
+    }
+
+    bool parentIsLeftOverAnonymousWrapper = false;
+
+    // Currently we only remove anonymous cells' wrapper but we should remove all unneeded
+    // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
+    if (parent->isTableCell())
+        parentIsLeftOverAnonymousWrapper = parent->firstChild() == this && parent->lastChild() == this;
+
+    destroy();
+
+    // WARNING: |this| is deleted here.
+
+    if (parentIsLeftOverAnonymousWrapper) {
+        ASSERT(!parent->firstChild());
+        parent->destroyAndCleanupAnonymousWrappers();
+    }
+}
+
 void RenderObject::destroy()
 {
     willBeDestroyed();
