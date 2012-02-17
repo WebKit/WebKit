@@ -1,3 +1,50 @@
+2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Allow opaque tiles
+        https://bugs.webkit.org/show_bug.cgi?id=78809
+
+        Replace the isOpaque boolean in BitmapTexture to a SupportsAlpha flag.
+        Use reset/didReset instead of a virtual function that has to call the superclass.
+
+        Make sure that all calls to BitmapTexture::reset() pass the correct SupportsAlpha flag,
+        based on the source image.
+        Since we now disable blending for opaque textures, we also have to make sure that we treat
+        the depth buffer correctly and bring it back to its previous state.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No behavior changes.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (TextureMapperGLData):
+        (WebCore::TextureMapperGLData::initStencil):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (BitmapTextureGL):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::TextureMapperGL::endPainting):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::BitmapTextureGL::didReset):
+        (WebCore::BitmapTextureGL::bind):
+        (WebCore::TextureMapperGL::beginClip):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::BitmapTexture):
+        (WebCore::BitmapTexture::flags):
+        (WebCore::BitmapTexture::didReset):
+        (WebCore::BitmapTexture::reset):
+        (BitmapTexture):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperTile::updateContents):
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperTiledBackingStore):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::didReset):
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (BitmapTextureImageBuffer):
+
 2012-02-17  Stephen Chenney  <schenney@chromium.org>
 
         Crash in SVGAnimateElement due to changed target

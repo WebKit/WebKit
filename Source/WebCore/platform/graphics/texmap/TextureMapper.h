@@ -48,8 +48,14 @@ class TextureMapper;
 class BitmapTexture  : public RefCounted<BitmapTexture> {
 public:
     enum PixelFormat { BGRAFormat, RGBAFormat, BGRFormat, RGBFormat };
+    enum Flag {
+        SupportsAlpha = 0x01
+    };
+
+    typedef unsigned Flags;
+
     BitmapTexture()
-        : m_isOpaque(true)
+        : m_flags(0)
     {
     }
 
@@ -60,12 +66,15 @@ public:
     virtual void updateContents(Image*, const IntRect&, const IntRect&, BitmapTexture::PixelFormat) = 0;
     virtual void updateContents(const void*, const IntRect&) = 0;
     virtual bool isValid() const = 0;
+    inline Flags flags() const { return m_flags; }
 
     virtual int bpp() const { return 32; }
-    virtual void reset(const IntSize& size, bool opaque = false)
+    virtual void didReset() { }
+    void reset(const IntSize& size, Flags flags = 0)
     {
-        m_isOpaque = opaque;
+        m_flags = flags;
         m_contentSize = size;
+        didReset();
     }
 
     inline IntSize contentSize() const { return m_contentSize; }
@@ -79,6 +88,9 @@ public:
 protected:
     IntSize m_contentSize;
     bool m_isOpaque;
+
+private:
+    Flags m_flags;
 };
 
 // A "context" class used to encapsulate accelerated texture mapping functions: i.e. drawing a texture

@@ -136,7 +136,6 @@ public:
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     QImage createQImage();
     static void releaseSharedMemoryData(void* typelessBitmap);
-    void swizzleRGB();
 #endif
 
 private:

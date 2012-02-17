@@ -41,7 +41,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
         m_texture = textureMapper->createTexture();
-        m_texture->reset(targetRect.size(), /* opaque = */ false);
+        m_texture->reset(targetRect.size(), image->currentFrameHasAlpha() ? BitmapTexture::SupportsAlpha : 0);
     }
 
     m_texture->updateContents(image, targetRect, sourceRect, format);
@@ -57,7 +57,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     if (!m_image)
         return;
 
-    updateContents(textureMapper, m_image.get(), BitmapTexture::BGRAFormat);
+    updateContents(textureMapper, m_image.get(), m_image->currentFrameHasAlpha() ? BitmapTexture::BGRAFormat : BitmapTexture::BGRFormat);
     m_image.clear();
 }
 
@@ -70,7 +70,7 @@ void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* texture
         m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask);
 }
 
-void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize)
+void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)
 {
     if (size == m_size)
         return;
@@ -119,8 +119,9 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
             TextureMapperTile& tile = m_tiles[tileIndicesToRemove.last()];
             tileIndicesToRemove.removeLast();
             tile.setRect(tileRectsToAdd[i]);
+
             if (tile.texture())
-                tile.texture()->reset(enclosingIntRect(tile.rect()).size(), false);
+                tile.texture()->reset(enclosingIntRect(tile.rect()).size(), hasAlpha ? BitmapTexture::SupportsAlpha : 0);
             continue;
         }
 
@@ -135,7 +136,7 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
 
 void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::PixelFormat format)
 {
-    createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize());
+    createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), image->currentFrameHasAlpha());
     for (size_t i = 0; i < m_tiles.size(); ++i)
         m_tiles[i].updateContents(textureMapper, image, dirtyRect, format);
 }

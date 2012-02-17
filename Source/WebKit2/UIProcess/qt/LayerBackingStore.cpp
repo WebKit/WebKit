@@ -48,11 +48,12 @@ void LayerBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
         shouldReset = true;
     }
 
-    // FIXME: create an opaque texture when the bitmap is opaque.
-    if (shouldReset)
-        texture->reset(m_sourceRect.size(), false /* opaque */);
+    QImage qImage = m_backBuffer->createQImage();
 
-    texture->updateContents(m_backBuffer->createQImage().constBits(), m_sourceRect);
+    if (shouldReset)
+        texture->reset(m_sourceRect.size(), qImage.hasAlphaChannel() ? BitmapTexture::SupportsAlpha : 0);
+
+    texture->updateContents(qImage.constBits(), m_sourceRect);
     m_backBuffer.clear();
 }
 

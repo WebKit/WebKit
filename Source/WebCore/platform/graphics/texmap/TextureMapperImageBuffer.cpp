@@ -37,6 +37,11 @@ void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& t
 #endif
 }
 
+void BitmapTextureImageBuffer::didReset()
+{
+    m_image = ImageBuffer::create(contentSize());
+}
+
 void BitmapTextureImageBuffer::updateContents(Image* image, const IntRect& targetRect, const IntRect& sourceRect, PixelFormat)
 {
     m_image->context()->drawImage(image, ColorSpaceDeviceRGB, targetRect, sourceRect, CompositeCopy);

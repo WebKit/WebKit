@@ -73,7 +73,7 @@ public:
 
 private:
     TextureMapperTiledBackingStore() { }
-    void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize);
+    void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
 
     Vector<TextureMapperTile> m_tiles;
     FloatSize m_size;

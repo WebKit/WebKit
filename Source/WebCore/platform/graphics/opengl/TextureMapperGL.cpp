@@ -282,17 +282,30 @@ struct TextureMapperGLData {
         return *(m_sharedGLData.get());
     }
 
+    void initStencil()
+    {
+        if (didModifyStencil)
+            return;
+        glClearStencil(0);
+        glClear(GL_STENCIL_BUFFER_BIT);
+        didModifyStencil = true;
+    }
+
     TextureMapperGLData()
         : currentProgram(SharedGLData::NoProgram)
         , previousProgram(0)
+        , didModifyStencil(false)
         , previousScissorState(0)
+        , previousDepthState(0)
         , m_sharedGLData(TextureMapperGLData::SharedGLData::currentSharedGLData())
     { }
 
     TransformationMatrix projectionMatrix;
     int currentProgram;
     GLint previousProgram;
+    bool didModifyStencil;
     GLint previousScissorState;
+    GLint previousDepthState;
     GLint viewport[4];
     RefPtr<SharedGLData> m_sharedGLData;
 };
@@ -302,7 +315,7 @@ public:
     virtual void destroy();
     virtual IntSize size() const;
     virtual bool isValid() const;
-    virtual void reset(const IntSize&, bool opaque);
+    virtual void didReset();
     void bind();
     ~BitmapTextureGL() { destroy(); }
     virtual uint32_t id() const { return m_id; }
@@ -318,7 +331,6 @@ private:
     IntRect m_dirtyRect;
     GLuint m_fbo;
     GLuint m_rbo;
-    IntSize m_actualSize;
     bool m_surfaceNeedsReset;
     TextureMapperGL* m_textureMapper;
     BitmapTextureGL()
@@ -464,7 +476,8 @@ void TextureMapperGL::beginPainting()
 
     glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram);
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
-
+    data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_SCISSOR_TEST);
 #if PLATFORM(QT)
     if (m_context) {
@@ -473,22 +486,29 @@ void TextureMapperGL::beginPainting()
         painter->beginNativePainting();
     }
 #endif
-    glClearStencil(0);
-    glClear(GL_STENCIL_BUFFER_BIT);
+    data().didModifyStencil = false;
+    glDepthMask(0);
     glGetIntegerv(GL_VIEWPORT, data().viewport);
     bindSurface(0);
 }
 
 void TextureMapperGL::endPainting()
 {
-    glClearStencil(1);
-    glClear(GL_STENCIL_BUFFER_BIT);
-    glUseProgram(data().previousProgram);
+    if (data().didModifyStencil) {
+        glClearStencil(1);
+        glClear(GL_STENCIL_BUFFER_BIT);
+    }
 
+    glUseProgram(data().previousProgram);
     if (data().previousScissorState)
         glEnable(GL_SCISSOR_TEST);
     else
         glDisable(GL_SCISSOR_TEST);
+
+    if (data().previousDepthState)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
 
 #if PLATFORM(QT)
     if (!m_context)
@@ -561,14 +581,14 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
         GL_CMD(glActiveTexture(GL_TEXTURE0))
     }
 
-    if (opaque && opacity > 0.99 && !maskTexture)
-        GL_CMD(glDisable(GL_BLEND))
-    else {
+    bool needsBlending = !opaque || opacity < 0.99 || maskTexture;
+
+    if (needsBlending) {
         GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
         GL_CMD(glEnable(GL_BLEND))
-    }
+    } else
+        GL_CMD(glDisable(GL_BLEND))
 
-    GL_CMD(glDisable(GL_DEPTH_TEST))
 
     GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
     GL_CMD(glDisableVertexAttribArray(programInfo.vertexAttrib))
@@ -579,10 +599,9 @@ const char* TextureMapperGL::type() const
     return "OpenGL";
 }
 
-void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
+void BitmapTextureGL::didReset()
 {
-    BitmapTexture::reset(newSize, opaque);
-    IntSize newTextureSize = nextPowerOfTwo(newSize);
+    IntSize newTextureSize = nextPowerOfTwo(contentSize());
     bool justCreated = false;
     if (!m_id) {
         GL_CMD(glGenTextures(1, &m_id))
@@ -598,8 +617,7 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE))
         GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0))
     }
-    m_actualSize = newSize;
-    m_relativeSize = FloatSize(float(newSize.width()) / m_textureSize.width(), float(newSize.height()) / m_textureSize.height());
+    m_relativeSize = FloatSize(float(contentSize().width()) / m_textureSize.width(), float(contentSize().height()) / m_textureSize.height());
     m_surfaceNeedsReset = true;
 }
 
@@ -733,12 +751,9 @@ void BitmapTextureGL::bind()
         GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0))
         GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0))
         GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo))
-#ifndef TEXMAP_OPENGL_ES_2
-        GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
-#endif
         GL_CMD(glClearColor(0, 0, 0, 0))
         GL_CMD(glClearStencil(stencilIndex - 1))
-        GL_CMD(glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
+        GL_CMD(glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT))
         m_surfaceNeedsReset = false;
     } else
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo))
@@ -844,6 +859,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 {
     if (beginScissorClip(modelViewMatrix, targetRect))
         return;
+    data().initStencil();
     TextureMapperGLData::SharedGLData::ShaderProgramIndex program = TextureMapperGLData::SharedGLData::ClipProgram;
     const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
     GL_CMD(glUseProgram(programInfo.id))
