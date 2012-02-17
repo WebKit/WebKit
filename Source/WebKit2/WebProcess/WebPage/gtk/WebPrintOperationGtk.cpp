@@ -91,6 +91,7 @@ public:
         // Manual capabilities.
         printOperation->m_numberUp = gtk_print_job_get_n_up(printOperation->m_printJob.get());
         printOperation->m_numberUpLayout = gtk_print_job_get_n_up_layout(printOperation->m_printJob.get());
+        printOperation->m_pageSet = gtk_print_job_get_page_set(printOperation->m_printJob.get());
 
         printOperation->print(surface, 72, 72);
     }
@@ -238,6 +239,23 @@ struct PrintPagesData {
         else
             numberOfSheets = pages.size();
 
+        switch (printOperation->pageSet()) {
+        case GTK_PAGE_SET_ODD:
+            lastPagePosition = std::min(((numberOfSheets - 1) - ((numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
+            break;
+        case GTK_PAGE_SET_EVEN:
+            lastPagePosition = std::min(((numberOfSheets - 1) - (1 - (numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
+            sheetNumber = numberOfSheets > 1 ? 1 : -1;
+            break;
+        case GTK_PAGE_SET_ALL:
+            lastPagePosition = pages.size() - 1;
+            break;
+        }
+
+        // FIXME: check pagePostion is between [0..pages.size() - 1]
+        // and cancel the operation otherwise when error reporting
+        // is implemented.
+        printOperation->setPagePosition(sheetNumber * numberUp);
         pageNumber = pages[printOperation->pagePosition()];
     }
 
@@ -249,6 +267,11 @@ struct PrintPagesData {
         }
 
         size_t pagePosition = printOperation->pagePosition();
+        if (pagePosition == lastPagePosition) {
+            isDone = true;
+            return;
+        }
+
         if (printOperation->currentPageIsLastPageOfSheet()) {
             sheetNumber++;
             pagePosition = sheetNumber * printOperation->numberUp();
@@ -272,6 +295,7 @@ struct PrintPagesData {
     Vector<size_t> pages;
     size_t sheetNumber;
     size_t numberOfSheets;
+    size_t lastPagePosition;
 
     bool isDone : 1;
 };
@@ -303,6 +327,7 @@ WebPrintOperationGtk::WebPrintOperationGtk(WebPage* page, const PrintInfo& print
     , m_needsRotation(false)
     , m_numberUp(1)
     , m_numberUpLayout(0)
+    , m_pageSet(GTK_PAGE_SET_ALL)
 {
 }
 

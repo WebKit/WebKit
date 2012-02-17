@@ -1,5 +1,24 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow printing only odd/even pages in WebKit2 for printers that don't support it
+        https://bugs.webkit.org/show_bug.cgi?id=78793
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialogUnix): Enable print odd/even pages
+        option in print dialog.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Add lastPagePosition and
+        initialize it depending on the page set.
+        (WebKit::PrintPagesData::incrementPageSequence): Use 2 step
+        increment when printing only odd/even pages.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk): Initialize
+        m_manualPageSet to GTK_PAGE_SET_ALL.
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Allow printing multiple pages per sheet in WebKit2 for printers that don't support it
         https://bugs.webkit.org/show_bug.cgi?id=78715
 
