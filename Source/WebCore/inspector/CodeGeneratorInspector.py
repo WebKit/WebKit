@@ -56,8 +56,7 @@ TYPE_NAME_FIX_MAP = {
 }
 
 
-TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
-                                         "Debugger.FunctionDetails", "Debugger.CallFrame"])
+TYPES_WITH_RUNTIME_CAST_SET = frozenset([])
 
 
 cmdline_parser = optparse.OptionParser()

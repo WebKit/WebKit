@@ -32,7 +32,6 @@
 #define InjectedScript_h
 
 #include "InjectedScriptManager.h"
-#include "InspectorTypeBuilder.h"
 #include "ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -79,15 +78,15 @@ public:
                              const String& objectGroup,
                              bool includeCommandLineAPI,
                              bool returnByValue,
-                             RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
+                             RefPtr<InspectorObject>* result,
                              bool* wasThrown);
-    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
+    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<InspectorObject>* result);
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
     void releaseObject(const String& objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame> > wrapCallFrames(const ScriptValue&);
+    PassRefPtr<InspectorArray> wrapCallFrames(const ScriptValue&);
 #endif
 
     PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName) const;
