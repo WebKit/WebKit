@@ -9232,6 +9232,11 @@ static bool isCSSTokenizerURL(const String& string)
 // We use single quotes for now because markup.cpp uses double quotes.
 String quoteCSSString(const String& string)
 {
+    // This function expands each character to at most 3 characters ('\u0010' -> '\' '1' '0') as well as adds
+    // 2 quote characters (before and after). Make sure the resulting size (3 * length + 2) will not overflow unsigned.
+    if (string.length() >= (std::numeric_limits<unsigned>::max() / 3) - 2)
+        return "";
+
     // For efficiency, we first pre-calculate the length of the quoted string, then we build the actual one.
     // Please see below for the actual logic.
     unsigned quotedStringSize = 2; // Two quotes surrounding the entire string.
