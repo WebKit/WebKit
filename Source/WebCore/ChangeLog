@@ -1,3 +1,29 @@
+2012-02-16  Emil A Eklund  <eae@chromium.org>
+
+        Fix use of long long in FractionalLayoutUnit::setRawValue
+        https://bugs.webkit.org/show_bug.cgi?id=78835
+
+        Reviewed by Eric Seidel.
+
+        Change setRawValue(long long) to compare against int min and max instead
+        of using abs as not all platforms we support implement a long long
+        version of abs or llabs.
+
+        No new tests.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::setRawValue):
+        Compare against int min/max instead of just max with abs.
+        
+        (WebCore::FractionalLayoutUnit::isInBounds):
+        Fix type mismatch warning.
+        
+        (WebCore::operator==):
+        Fix typo.
+        
+        (WebCore::operator*):
+        Use long long version of setRawValue.
+
 2012-02-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Add an internal flag to accept multiple shadow roots for the purpose of tests.

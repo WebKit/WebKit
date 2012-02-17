@@ -64,7 +64,11 @@ public:
 
     inline int rawValue() const { return m_value; }
     inline void setRawValue(int value) { m_value = value; }
-    inline void setRawValue(long long value) { ASSERT(::abs(value) < std::numeric_limits<int>::max()); m_value = value; }
+    inline void setRawValue(long long value)
+    {
+        ASSERT(value > std::numeric_limits<int>::min() && value < std::numeric_limits<int>::max());
+        m_value = value;
+    }
 
     inline FractionalLayoutUnit abs()
     {
@@ -115,7 +119,7 @@ private:
     }
     inline bool isInBounds(unsigned value)
     {
-        return value < std::numeric_limits<int>::max() / kFixedPointDenominator;
+        return value < static_cast<unsigned>(std::numeric_limits<int>::max()) / kFixedPointDenominator;
     }
     inline bool isInBounds(double value)
     {
@@ -262,12 +266,12 @@ inline bool operator==(const FractionalLayoutUnit& a, const FractionalLayoutUnit
 
 inline bool operator==(const FractionalLayoutUnit& a, int b)
 {
-    return a == FractionLayoutUnit(b);
+    return a == FractionalLayoutUnit(b);
 }
 
 inline bool operator==(const int a, const FractionalLayoutUnit& b)
 {
-    return FractionLayoutUnit(a) == b;
+    return FractionalLayoutUnit(a) == b;
 }
 
 inline bool operator==(const FractionalLayoutUnit& a, float b)
@@ -297,7 +301,7 @@ inline FractionalLayoutUnit operator*(const FractionalLayoutUnit& a, const Fract
 {
     FractionalLayoutUnit returnVal;
     long long rawVal = static_cast<long long>(a.rawValue()) * b.rawValue() / kFixedPointDenominator;
-    returnVal.setRawValue((a.rawValue() / kFixedPointDenominator) * b.rawValue());
+    returnVal.setRawValue(rawVal);
     return returnVal;
 }    
 
