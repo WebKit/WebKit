@@ -1,0 +1,5 @@
+This test verifies that SVG animation targets can change during the animation.
+
+TEST PASSED
+
+

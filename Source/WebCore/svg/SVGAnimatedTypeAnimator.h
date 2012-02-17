@@ -41,7 +41,9 @@ public:
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
-    
+
+    AnimatedPropertyType type() const { return m_type; }
+
 protected:
     SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
         : m_type(type)

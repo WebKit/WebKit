@@ -1,3 +1,50 @@
+2012-02-17  Stephen Chenney  <schenney@chromium.org>
+
+        Crash in SVGAnimateElement due to changed target
+        https://bugs.webkit.org/show_bug.cgi?id=75096
+
+        Reviewed by Nikolas Zimmermann.
+
+        The SVGAnimateElement object creates various internal objects
+        depending on the type of property being animated, which depends on the
+        target. These objects were not being recreated when the target
+        changed, and crashes ensued. Now the SVGSMILElement provides a virtual
+        method that is called when the target changes, and SVGAnimateElement
+        updates its objects as necessary. We also deactivate the animation
+        when the target changes, forcing recomputation of other derived
+        objects.
+
+        This change also removes various unnecessary calls to semi-expensive
+        methods.
+
+        Not only does this change fix the new test, it also fixes potential
+        crashes in other tests that apparently never manifested before (but
+        manifest when this new test is included in DRT).
+
+        Test: svg/animations/svglength-animation-retarget-crash.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::hasValidAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        (WebCore):
+        (WebCore::SVGAnimateElement::targetElementDidChange):
+        * svg/SVGAnimateElement.h:
+        (SVGAnimateElement):
+        * svg/SVGAnimatedTypeAnimator.h:
+        (SVGAnimatedTypeAnimator):
+        (WebCore::SVGAnimatedTypeAnimator::type):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::targetElement):
+        (WebCore::SVGSMILElement::resetTargetElement):
+        (WebCore):
+        * svg/animation/SVGSMILElement.h:
+        (SVGSMILElement):
+        (WebCore::SVGSMILElement::targetElementDidChange):
+
 2012-02-17  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=78934
@@ -3530,7 +3577,6 @@
         * platform/ScrollView.h:
         Move wheelEvent to FrameView.
 
->>>>>>> .r108008
 2012-02-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         RootObject::finalize can cause a crash in object->invalidate()

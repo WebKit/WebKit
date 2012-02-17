@@ -109,7 +109,7 @@ bool SVGAnimateElement::hasValidAttributeType()
     if (!targetElement)
         return false;
     
-    return determineAnimatedPropertyType(targetElement) != AnimatedUnknown;
+    return m_animatedPropertyType != AnimatedUnknown;
 }
 
 AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement* targetElement) const
@@ -159,12 +159,20 @@ void SVGAnimateElement::determinePropertyValueTypes(const String& from, const St
 void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
 {
     ASSERT(resultElement);
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return;
+
+    ASSERT(m_animatedPropertyType == determineAnimatedPropertyType(targetElement));
+
     ASSERT(percentage >= 0 && percentage <= 1);
     ASSERT(m_animatedPropertyType != AnimatedEnumeration);
     ASSERT(m_animatedPropertyType != AnimatedTransformList);
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animator);
+    ASSERT(m_animator->type() == m_animatedPropertyType);
     ASSERT(m_fromType);
+    ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
 
     SVGAnimateElement* resultAnimationElement = static_cast<SVGAnimateElement*>(resultElement);
@@ -177,10 +185,6 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (hasTagName(SVGNames::setTag))
         percentage = 1;
 
-    SVGElement* targetElement = this->targetElement();
-    if (!targetElement)
-        return;
-
     // Target element might have changed.
     m_animator->setContextElement(targetElement);
     m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
@@ -192,9 +196,8 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (!targetElement)
         return false;
 
-    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
-
     ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
+    ASSERT(m_animatedPropertyType == m_animator->type());
     return true;
 }
 
@@ -205,22 +208,19 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
         return false;
 
     ASSERT(!hasTagName(SVGNames::setTag));
-    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
 
     ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
+    ASSERT(m_animatedPropertyType == m_animator->type());
     return true;
 }
 
 void SVGAnimateElement::resetToBaseValue(const String& baseString)
 {
-    SVGElement* targetElement = this->targetElement();
-    ASSERT(targetElement);
-    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
-
     if (!m_animatedType)
         m_animatedType = ensureAnimator()->constructFromString(baseString);
     else
         m_animatedType->setValueAsString(attributeName(), baseString);
+    ASSERT(m_animatedPropertyType == m_animator->type());
 }
     
 void SVGAnimateElement::applyResultsToTarget()
@@ -239,15 +239,24 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return -1;
-    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
-    
+
     return ensureAnimator()->calculateDistance(fromString, toString);
+}
+
+void SVGAnimateElement::targetElementDidChange(SVGElement* targetElement)
+{
+    m_animatedType.clear();
+    m_fromType.clear();
+    m_toType.clear();
+    m_animator.clear();
+    m_animatedPropertyType = targetElement ? determineAnimatedPropertyType(targetElement) : AnimatedString;
 }
 
 SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
 {
     if (!m_animator)
         m_animator = SVGAnimatorFactory::create(this, targetElement(), m_animatedPropertyType);
+    ASSERT(m_animatedPropertyType == m_animator->type());
     return m_animator.get();
 }
 

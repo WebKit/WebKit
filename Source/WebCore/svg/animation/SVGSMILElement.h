@@ -54,7 +54,7 @@ public:
     SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
     SVGElement* targetElement();
-    void resetTargetElement() { m_targetElement = 0; }
+    void resetTargetElement();
     const QualifiedName& attributeName() const { return m_attributeName; }
 
     void beginByLinkActivation();
@@ -113,6 +113,9 @@ protected:
     void addEndTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin = SMILTimeWithOrigin::ParserOrigin);
 
     void setInactive() { m_activeState = Inactive; }
+
+    // Sub-classes may need to take action when the target is changed.
+    virtual void targetElementDidChange(SVGElement*) { }
 
 private:
     virtual void startedActiveInterval() = 0;
@@ -230,4 +233,3 @@ private:
 
 #endif // ENABLE(SVG)
 #endif // SVGSMILElement_h
-

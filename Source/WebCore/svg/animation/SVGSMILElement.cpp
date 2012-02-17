@@ -520,17 +520,32 @@ SVGElement* SVGSMILElement::targetElement()
     ContainerNode* target = href.isEmpty() ? parentNode() : SVGURIReference::targetElementFromIRIString(href, document());
     if (!target || !target->isSVGElement())
         return 0;
-    
+
     m_targetElement = static_cast<SVGElement*>(target);
     document()->accessSVGExtensions()->addAnimationElementToTarget(this, m_targetElement);
+
+    targetElementDidChange(m_targetElement);
+
     return m_targetElement;
 }
 
-SMILTime SVGSMILElement::elapsed() const 
+void SVGSMILElement::resetTargetElement()
+{
+    m_targetElement = 0;
+
+    // Force the animation to recompute values that are only calculated when an animation becomes active.
+    // Failing to do this means that a target reset and change during active animation may result in
+    // invalid state.
+    m_activeState = Inactive;
+
+    targetElementDidChange(0);
+}
+
+SMILTime SVGSMILElement::elapsed() const
 {
     return m_timeContainer ? m_timeContainer->elapsed() : 0;
-} 
-    
+}
+
 bool SVGSMILElement::isInactive() const
 {
      return m_activeState == Inactive;
