@@ -70,17 +70,14 @@ class CreateHandler(webapp2.RequestHandler):
         if not name or not password:
             return 'Invalid name or password'
 
-        password = Builder.hashed_password(password)
-
         def execute():
             message = None
             bot = Builder.get_by_key_name(name)
             if bot:
                 message = 'Updating the password since bot "%s" already exists' % name
-                bot.password = password
+                bot.update_password(password)
             else:
-                bot = Builder(name=name, password=password, key_name=name)
-            bot.put()
+                Builder.create(name, password)
             return message
 
         return db.run_in_transaction(execute)

@@ -41,7 +41,7 @@ from models import NumericIdHolder
 from models import Platform
 from models import Test
 from models import TestResult
-from models import modelFromNumericId
+from models import model_from_numeric_id
 
 
 class RunsHandler(webapp2.RequestHandler):
@@ -62,10 +62,10 @@ class RunsHandler(webapp2.RequestHandler):
         # days = self.request.get('days', 365)
 
         builds = Build.all()
-        builds.filter('branch =', modelFromNumericId(branch_id, Branch))
-        builds.filter('platform =', modelFromNumericId(platform_id, Platform))
+        builds.filter('branch =', model_from_numeric_id(branch_id, Branch))
+        builds.filter('platform =', model_from_numeric_id(platform_id, Platform))
 
-        test = modelFromNumericId(test_id, Test)
+        test = model_from_numeric_id(test_id, Test)
         test_name = test.name if test else None
         test_runs = []
         averages = {}

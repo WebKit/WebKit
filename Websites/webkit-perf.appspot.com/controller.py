@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webapp2
-from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 from google.appengine.ext import db
 
@@ -36,31 +35,8 @@ from models import Test
 from models import PersistentCache
 
 
-def set_persistent_cache(name, value):
-    memcache.set(name, value)
-
-    def execute():
-        cache = PersistentCache.get_by_key_name(name)
-        if cache:
-            cache.value = value
-            cache.put()
-        else:
-            PersistentCache(key_name=name, value=value).put()
-
-    db.run_in_transaction(execute)
-
-
-def get_persistent_cache(name):
-    value = memcache.get(name)
-    if value:
-        return value
-    cache = PersistentCache.get_by_key_name(name)
-    memcache.set(name, cache.value)
-    return cache.value
-
-
 def cache_manifest(cache):
-    set_persistent_cache('manifest', cache)
+    PersistentCache.set_cache('manifest', cache)
 
 
 def schedule_manifest_update():
@@ -70,7 +46,7 @@ def schedule_manifest_update():
 class CachedManifestHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json'
-        manifest = get_persistent_cache('manifest')
+        manifest = PersistentCache.get_cache('manifest')
         if manifest:
             self.response.out.write(manifest)
         else:
@@ -78,7 +54,7 @@ class CachedManifestHandler(webapp2.RequestHandler):
 
 
 def cache_dashboard(cache):
-    set_persistent_cache('dashboard', cache)
+    PersistentCache.set_cache('dashboard', cache)
 
 
 def schedule_dashboard_update():
@@ -88,7 +64,7 @@ def schedule_dashboard_update():
 class CachedDashboardHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json'
-        dashboard = get_persistent_cache('dashboard')
+        dashboard = PersistentCache.get_cache('dashboard')
         if dashboard:
             self.response.out.write(dashboard)
         else:
@@ -96,7 +72,7 @@ class CachedDashboardHandler(webapp2.RequestHandler):
 
 
 def cache_runs(test_id, branch_id, platform_id, cache):
-    set_persistent_cache(Test.cache_key(test_id, branch_id, platform_id), cache)
+    PersistentCache.set_cache(Test.cache_key(test_id, branch_id, platform_id), cache)
 
 
 def schedule_runs_update(test_id, branch_id, platform_id):
@@ -117,7 +93,7 @@ class CachedRunsHandler(webapp2.RequestHandler):
             branch_id = 0
             platform_id = 0
 
-        runs = get_persistent_cache(Test.cache_key(test_id, branch_id, platform_id))
+        runs = PersistentCache.get_cache(Test.cache_key(test_id, branch_id, platform_id))
         if runs:
             self.response.out.write(runs)
         else:
