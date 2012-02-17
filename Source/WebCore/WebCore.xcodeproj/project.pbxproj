@@ -297,6 +297,9 @@
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
+		144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */; };
+		144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4990,7 +4993,6 @@
 		B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */; };
 		B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */; };
 		B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */; };
-		BAB22AD414B7A02D00D8ABA6 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = BAB771501444CBB400EC4C4C /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BACF290113B2A0D500781F90 /* LayoutTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BACF290013B2A0D500781F90 /* LayoutTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00EFFE0E0A185500FD04E3 /* DOMFile.h */; };
 		BC00F0050E0A185500FD04E3 /* DOMFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */; };
@@ -7018,6 +7020,9 @@
 		1432E8480C51493F00B1500F /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
+		144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
+		144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractionalLayoutSize.cpp; sourceTree = "<group>"; };
+		144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutSize.h; sourceTree = "<group>"; };
 		1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaListCustom.cpp; sourceTree = "<group>"; };
 		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
 		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
@@ -11906,7 +11911,6 @@
 		B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSelectionCommand.h; sourceTree = "<group>"; };
 		B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionCommand.cpp; sourceTree = "<group>"; };
 		B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellingCorrectionCommand.h; sourceTree = "<group>"; };
-		BAB771501444CBB400EC4C4C /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
 		BACF290013B2A0D500781F90 /* LayoutTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTypes.h; sourceTree = "<group>"; };
 		BC00EFFE0E0A185500FD04E3 /* DOMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFile.h; sourceTree = "<group>"; };
 		BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMFile.mm; sourceTree = "<group>"; };
@@ -18919,6 +18923,8 @@
 				37202198106213C600F25C4B /* FontSmoothingMode.h */,
 				3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */,
 				BCE4413512F7490B009B84B8 /* FontWidthVariant.h */,
+				144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */,
+				144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
 				BCE04C890DAFF7A0007A0F41 /* Generator.h */,
 				2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */,
@@ -19794,7 +19800,7 @@
 				C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
-				BAB771501444CBB400EC4C4C /* FractionalLayoutUnit.h */,
+				144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */,
 				A8748BDF12CBF2DC001FBA41 /* HashTools.h */,
 				D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */,
 				D630E2AB149BF344005B2F93 /* HistogramSupport.h */,
@@ -24270,6 +24276,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */,
+				144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27214,6 +27222,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

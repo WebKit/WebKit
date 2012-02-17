@@ -28,9 +28,10 @@
 #include "FloatPoint.h"
 
 #include "AffineTransform.h"
-#include "TransformationMatrix.h"
 #include "FloatConversion.h"
+#include "FractionalLayoutSize.h"
 #include "IntPoint.h"
+#include "TransformationMatrix.h"
 #include <limits>
 #include <math.h>
 
@@ -53,6 +54,12 @@ void FloatPoint::normalize()
 float FloatPoint::length() const
 {
     return sqrtf(lengthSquared());
+}
+
+void FloatPoint::move(const FractionalLayoutSize& size)
+{
+    m_x += size.width();
+    m_y += size.height();
 }
 
 FloatPoint FloatPoint::matrixTransform(const AffineTransform& transform) const

@@ -60,6 +60,7 @@ class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
 class IntSize;
+class FractionalLayoutSize;
 
 class FloatPoint {
 public:
@@ -92,6 +93,7 @@ public:
         m_x += a.width();
         m_y += a.height();
     }
+    void move(const FractionalLayoutSize&);
     void move(const FloatSize& a)
     {
         m_x += a.width();

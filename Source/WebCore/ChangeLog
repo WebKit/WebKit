@@ -1,3 +1,33 @@
+2012-02-17  Emil A Eklund  <eae@chromium.org>
+
+        Add FractionalLayoutSize for sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78852
+
+        Reviewed by Eric Seidel.
+
+        Add FractionalLayoutUnit version of Size class and a couple of
+        conversion methods to the Int and Float versions of same.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::move):
+        Add FractionalLayoutSize version of move.
+
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::FloatSize):
+        Add FloatSize(FractionalLayoutSize) constructor.
+
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FractionalLayoutSize.cpp: Added.
+        * platform/graphics/FractionalLayoutSize.h: Added.
+
 2012-02-17  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (r107606): Copy Link writes malformed WebURLsWithTitlesPboardType

@@ -2960,6 +2960,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/arm/FEGaussianBlurNEON.h \
 	Source/WebCore/platform/graphics/filters/arm/FELightingNEON.cpp \
 	Source/WebCore/platform/graphics/filters/arm/FELightingNEON.h \
+	Source/WebCore/platform/graphics/FractionalLayoutSize.cpp \
+	Source/WebCore/platform/graphics/FractionalLayoutSize.h \
 	Source/WebCore/platform/graphics/FloatPoint3D.cpp \
 	Source/WebCore/platform/graphics/FloatPoint3D.h \
 	Source/WebCore/platform/graphics/FloatPoint.cpp \
