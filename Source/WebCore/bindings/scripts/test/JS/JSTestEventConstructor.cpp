@@ -64,6 +64,7 @@ void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlo
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestEventConstructorPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
