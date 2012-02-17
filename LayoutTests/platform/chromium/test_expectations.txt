@@ -3318,6 +3318,8 @@ BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 BUGWK72530 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
+
+// ICC color profiles are not supported on WIN, LINUX so enforce a FAIL here.
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
 
 // V8 handles stack overflow exceptions differently than JSC
