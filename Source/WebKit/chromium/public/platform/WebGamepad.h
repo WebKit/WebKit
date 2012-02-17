@@ -26,7 +26,13 @@
 
 #include "WebCommon.h"
 
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/Assertions.h>
+#endif
+
 namespace WebKit {
+
+#pragma pack(push, 1)
 
 // This structure is intentionally POD and fixed size so that it can be shared
 // memory between hardware polling threads and the rest of the browser. See
@@ -68,6 +74,12 @@ public:
     // Normalized values representing buttons, in the range [0..1].
     float buttons[buttonsLengthCap];
 };
+
+#if WEBKIT_IMPLEMENTATION
+COMPILE_ASSERT(sizeof(WebGamepad) == 465, WebGamepad_has_wrong_size);
+#endif
+
+#pragma pack(pop)
 
 }
 

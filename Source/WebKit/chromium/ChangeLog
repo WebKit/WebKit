@@ -1,3 +1,19 @@
+2012-02-17  Scott Graham  <scottmg@chromium.org>
+
+        [Chromium] pack Gamepad shared memory structure
+        https://bugs.webkit.org/show_bug.cgi?id=78022
+
+        Reviewed by Darin Fisher.
+
+        Add #pragma pack around definition of shared memory structures to
+        avoid differences across compilers and platforms. Add COMPILE_ASSERT
+        to verify expected size.
+
+        * public/platform/WebGamepad.h:
+        (WebKit):
+        * public/platform/WebGamepads.h:
+        (WebKit):
+
 2012-02-17  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Refactor video drawing to be more data driven
