@@ -100,7 +100,3 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
-
-// Need rebaselining.
-BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
