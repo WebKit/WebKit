@@ -1719,7 +1719,7 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse;
         break;
     case CSSPropertyWebkitFlexWrap:
-        validPrimitive = id == CSSValueNowrap || id == CSSValueWrap || id == CSSValueWrapReverse;
+        validPrimitive = id == CSSValueNone || id == CSSValueWrap || id == CSSValueWrapReverse;
         break;
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,

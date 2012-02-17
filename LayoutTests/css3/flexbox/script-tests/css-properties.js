@@ -185,15 +185,15 @@ shouldBeEqualToString('flexbox.style.webkitFlexDirection', 'column-reverse');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'column-reverse');
 
 shouldBeEqualToString('flexbox.style.webkitFlexWrap', '');
-// The initial value is 'stretch'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'nowrap');
+// The initial value is 'none'.
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'none');
 
 flexbox.style.webkitFlexWrap = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexWrap', '');
 
-flexbox.style.webkitFlexWrap = 'nowrap';
-shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'nowrap');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'nowrap');
+flexbox.style.webkitFlexWrap = 'none';
+shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'none');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', 'none');
 
 flexbox.style.webkitFlexWrap = 'wrap';
 shouldBeEqualToString('flexbox.style.webkitFlexWrap', 'wrap');
@@ -205,7 +205,7 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexWrap', '
 
 flexbox.style.webkitFlexFlow = '';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row none');
 
 flexbox.style.webkitFlexFlow = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
@@ -218,10 +218,10 @@ function testFlexFlowValue(value, expected, expectedComputed)
 }
 
 var directions = ['', 'row', 'row-reverse', 'column', 'column-reverse'];
-var wraps = ['', 'nowrap', 'wrap', 'wrap-reverse'];
+var wraps = ['', 'none', 'wrap', 'wrap-reverse'];
 directions.forEach(function(direction) {
     wraps.forEach(function(wrap) {
-        var expectedComputed = (direction || 'row') + ' ' + (wrap || 'nowrap');
+        var expectedComputed = (direction || 'row') + ' ' + (wrap || 'none');
         var expected = direction + ' ' + wrap;
         testFlexFlowValue(direction + ' ' + wrap, expected, expectedComputed);
         testFlexFlowValue(wrap + ' ' + direction, expected, expectedComputed);
@@ -237,10 +237,10 @@ shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
 
 flexbox.style.webkitFlexFlow = '';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row none');
 flexbox.style.webkitFlexDirection = 'column';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column nowrap');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column none');
 flexbox.style.webkitFlexWrap = 'wrap';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column wrap');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column wrap');

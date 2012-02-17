@@ -1565,7 +1565,7 @@ public:
     static EFlexAlign initialFlexAlign() { return AlignStretch; }
     static EFlexAlign initialFlexItemAlign() { return AlignAuto; }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
-    static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
+    static EFlexWrap initialFlexWrap() { return FlexWrapNone; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }

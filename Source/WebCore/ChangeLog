@@ -1,3 +1,21 @@
+2012-02-17  Joe Thomas  <joethomas@motorola.com>
+
+        flex-wrap:nowrap should be flex-wrap:none
+        https://bugs.webkit.org/show_bug.cgi?id=78772
+
+        As per the spec http://dev.w3.org/csswg/css3-flexbox/#flex-wrap0, flex-wrap:nowrap should be changed to flex-wrap:none.
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexWrap):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2012-02-17  Enrica Casucci  <enrica@apple.com>
 
         Refactor DragData class to use PlatformStrategies in the Mac implementation.

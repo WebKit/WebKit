@@ -501,7 +501,7 @@ row
 row-reverse
 column
 column-reverse
-// nowrap
+// none
 // wrap
 wrap-reverse
 
