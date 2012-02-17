@@ -1,3 +1,26 @@
+2012-02-16  Matthew Delaney  <mdelaney@apple.com>
+
+        ShadowBlur.cpp's cached content matching needs to consider m_layerSize changes
+        https://bugs.webkit.org/show_bug.cgi?id=78765
+
+        Reviewed by Simon Fraser.
+
+        No new tests due to the flaky nature of reproducing the issue.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::getScratchBuffer): Make sure to call clearScratchBuffer()
+        when we create a new ImageBuffer in order to invalidate cached values.
+        (WebCore::ScratchBuffer::setCachedShadowValues): Roll together matching and setting
+        of cached values into one method to enforce them being the same.
+        (WebCore::ScratchBuffer::setCachedInsetShadowValues): Ditto.
+
+        Restructure to use new method described above.
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling): 
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::beginShadowLayer):
+
 2012-02-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Empty divs not transforming overflow correctly
