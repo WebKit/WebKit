@@ -90,8 +90,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this._sectionsContainer = document.createElement("div");
     this.bodyElement.appendChild(this._sectionsContainer);
 
-    if (Preferences.useSpectrum)
-        this._spectrum = new WebInspector.Spectrum();
+    this._spectrum = new WebInspector.Spectrum();
 
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetOrMediaQueryResultChanged, this);
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged, this._styleSheetOrMediaQueryResultChanged, this);
@@ -1691,15 +1690,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 }
 
                 var format = getFormat();
-                var hasColorpicker = self._parentPane;
-                var spectrum = hasColorpicker ? self._parentPane._spectrum : null;
+                var spectrum = self._parentPane._spectrum;
 
                 var swatchElement = document.createElement("span");
                 var swatchInnerElement = swatchElement.createChild("span", "swatch-inner");
-                if (hasColorpicker)
-                    swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format");
-                else
-                    swatchElement.title = WebInspector.UIString("Click to change color format");
+                swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format");
 
                 swatchElement.className = "swatch";
 
@@ -1709,7 +1704,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 swatchInnerElement.style.backgroundColor = text;
 
-                var scrollerElement = hasColorpicker ? self._parentPane._computedStylePane.element.parentElement : null;
+                var scrollerElement = self._parentPane._computedStylePane.element.parentElement;
 
                 function spectrumChanged(e)
                 {
@@ -1743,9 +1738,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 {
                     // Shift + click toggles color formats.
                     // Click opens colorpicker, only if the element is not in computed styles section.
-                    if (!spectrum || e.shiftKey)
+                    if (e.shiftKey)
                         changeColorDisplay(e);
-                    else if (hasColorpicker) {
+                    else {
                         var isVisible = spectrum.toggle(swatchElement, color, format);
 
                         if (isVisible) {
@@ -1757,6 +1752,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                             scrollerElement.addEventListener("scroll", repositionSpectrum, false);
                         }
                     }
+                    e.stopPropagation();
+                    e.preventDefault();
                 }
 
                 function getFormat()

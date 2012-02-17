@@ -44,8 +44,7 @@ var Preferences = {
     exposeWorkersInspection: false,
     applicationTitle: "Web Inspector - %s",
     showHeapSnapshotObjectsHiddenProperties: false,
-    showDockToRight: false,
-    useSpectrum: true
+    showDockToRight: false
 }
 
 var Capabilities = {

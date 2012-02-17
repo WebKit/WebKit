@@ -33,6 +33,7 @@
 WebInspector.Spectrum = function()
 {
     this._popover = new WebInspector.Popover();
+    this._popover.setCanShrink(false);
     this._popover.element.addEventListener("mousedown", stopPropagation, false);
 
     this._containerElement = document.createElement('div');

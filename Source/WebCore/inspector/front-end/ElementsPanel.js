@@ -414,6 +414,7 @@ WebInspector.ElementsPanel.prototype = {
         function showPopover(imageElement, dimensions)
         {
             var contents = buildPopoverContents(imageElement, dimensions);
+            popover.setCanShrink(false);
             popover.show(contents, anchor);
         }
 

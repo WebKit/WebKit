@@ -1,5 +1,23 @@
 2012-02-17  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: color picker does not allow changing the color.
+        https://bugs.webkit.org/show_bug.cgi?id=78886
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._showPopover.showPopover):
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype.setCanShrink):
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/Spectrum.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+
+2012-02-17  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: new image preview has poorly positioned popover arrow.
         https://bugs.webkit.org/show_bug.cgi?id=78884
 
