@@ -206,6 +206,9 @@ WebInspector.StylesSidebarPane.prototype = {
 
     update: function(node, forceUpdate)
     {
+        if (this._spectrum.visible)
+            this._spectrum.hide();
+
         var refresh = false;
 
         if (forceUpdate)
@@ -1744,9 +1747,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     if (!spectrum || e.shiftKey)
                         changeColorDisplay(e);
                     else {
-                        var isVisible = spectrum.toggle(swatchElement, color, format);
+                        var visible = spectrum.toggle(swatchElement, color, format);
 
-                        if (isVisible) {
+                        if (visible) {
                             spectrum.displayText = color.toString(format);
                             self._parentPane._isEditingStyle = true;
                             spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);

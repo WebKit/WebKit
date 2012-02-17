@@ -308,7 +308,7 @@ WebInspector.Spectrum.prototype = {
         this._displayElement.textContent = text;
     },
 
-    get isVisible()
+    get visible()
     {
         return this._popover.visible;
     },
@@ -365,17 +365,17 @@ WebInspector.Spectrum.prototype = {
 
     toggle: function(element, color, format)
     {
-        if (this.isVisible)
+        if (this.visible)
             this.hide();
         else
             this.show(element, color, format);
 
-        return this.isVisible;
+        return this.visible;
     },
 
     show: function(element, color, format)
     {
-        if (this.isVisible) {
+        if (this.visible) {
             if (this.anchorElement === element)
                 return false;
 
