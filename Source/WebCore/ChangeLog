@@ -1,3 +1,9 @@
+2012-02-16  Kent Tamura  <tkent@chromium.org>
+
+        Run sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj: Sorted.
+
 2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Another build fix for viewport tests
