@@ -540,15 +540,12 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void InputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior eventBehavior)
+void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
     element()->setValueInternal(sanitizedValue, eventBehavior);
     element()->setNeedsStyleRecalc();
-}
-
-void InputType::dispatchChangeEventInResponseToSetValue()
-{
-    element()->dispatchFormControlChangeEvent();
+    if (valueChanged && eventBehavior != DispatchNoEvent)
+        element()->dispatchFormControlChangeEvent();
 }
 
 bool InputType::canSetValue(const String&)

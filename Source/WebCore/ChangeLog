@@ -1,3 +1,25 @@
+2012-02-17  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Integrate InputType::dispatchChangeEventInResponseToSetValue into InputType::setValue
+        https://bugs.webkit.org/show_bug.cgi?id=78873
+
+        Reviewed by Kent Tamura.
+
+        This patch moves event dispatch logic to InputType and TextFieldInputType from HTMLInputElement
+        and merge dispatchChangeEventInResponseToSetValue to setValue.
+
+        No new tests. No change in behavior.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Move dispatch logic to InputType and TextFieldInput.
+        * html/InputType.cpp: Remove dispatchChangeEventInResponseToSetValue implementation.
+        * html/InputType.h: Remove dispatchChangeEventInResponseToSetValue declaration.
+        (WebCore::InputType::setValue): Move code from dispatchChangeEventInResponseToSetValue.
+        * html/TextFieldInputType.cpp: Remove dispatchChangeEventInResponseToSetValue implementation.
+        * html/TextFieldInputType.h: Remove dispatchChangeEventInResponseToSetValue declaration.
+        (WebCore::TextFieldInputType::setValue): Move code from dispatchChangeEventInResponseToSetValue. Stop dispatching event in InputType::setValue.
+        * html/HTMLTextFormControlElement.h: Make setTextAsOfLastFormControlChangeEvent to public from protected for accessing from InputType class.
+
 2012-02-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mac build fix after r108047.

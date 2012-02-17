@@ -80,7 +80,9 @@ bool TextFieldInputType::canSetSuggestedValue()
 
 void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    InputType::setValue(sanitizedValue, valueChanged, eventBehavior);
+    // We don't ask InputType::setValue to dispatch events because
+    // TextFieldInputType dispatches events different way from InputType.
+    InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent);
 
     if (valueChanged)
         element()->updateInnerTextValue();
@@ -90,17 +92,22 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
         element()->setSelectionRange(max, max);
     else
         element()->cacheSelectionInResponseToSetValue(max);
-}
 
-void TextFieldInputType::dispatchChangeEventInResponseToSetValue()
-{
-    // If the user is still editing this field, dispatch an input event rather than a change event.
-    // The change event will be dispatched when editing finishes.
-    if (element()->focused()) {
-        element()->dispatchFormControlInputEvent();
+    if (!valueChanged)
         return;
+
+    if (eventBehavior != DispatchNoEvent) {
+        // If the user is still editing this field, dispatch an input event rather than a change event.
+        // The change event will be dispatched when editing finishes.
+        if (element()->focused())
+            element()->dispatchFormControlInputEvent();
+        else
+            element()->dispatchFormControlChangeEvent();
     }
-    InputType::dispatchChangeEventInResponseToSetValue();
+
+    // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
+    if (!element()->focused() || eventBehavior == DispatchNoEvent)
+        element()->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
 }
 
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)

@@ -82,14 +82,14 @@ public:
 
     String directionForFormData() const;
 
+    void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
+
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual void updatePlaceholderText() = 0;
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
-    
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)
     {
         m_cachedSelectionStart = start;

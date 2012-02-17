@@ -1043,13 +1043,6 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
     if (!valueChanged)
         return;
 
-    if (eventBehavior != DispatchNoEvent)
-        m_inputType->dispatchChangeEventInResponseToSetValue();
-
-    // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
-    if (isTextField() && (!focused() || eventBehavior == DispatchNoEvent))
-        setTextAsOfLastFormControlChangeEvent(value);
-
     notifyFormStateChanged();
 }
 
