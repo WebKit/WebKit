@@ -2373,8 +2373,6 @@ BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE+TEXT
 
 BUGCR65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = PASS CRASH
 
-BUG_VITALYR : tables/mozilla/bugs/bug82946-2.html = IMAGE
-
 BUGWK70878 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGWK73538 WIN : http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html = TEXT
 
