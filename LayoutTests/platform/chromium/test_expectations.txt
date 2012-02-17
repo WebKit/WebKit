@@ -943,6 +943,9 @@ BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMAGE
 
+// Crashes due to debug assert until we fix issues with style elements in SVG
+BUGWK77764 DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
+
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 

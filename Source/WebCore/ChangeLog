@@ -1,3 +1,23 @@
+2012-02-17  Stephen Chenney  <schenney@chromium.org>
+
+        Crash at WebCore::SVGUseElement::expandSymbolElementsInShadowTree
+        https://bugs.webkit.org/show_bug.cgi?id=77639
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fix a SVG crash in Release builds, although it still crashes in Debug builds.
+        The crash occurred when an SVG use element attempted to reference a style element while the file
+        contained an error causing the error banner to display. The fix is to prevent SVGUseElement
+        from recalculating style during tree building and return immediately when style is recalculated and
+        the tree is building.
+
+        Test: svg/custom/use-referencing-style-crash.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::willRecalcStyle): Return false if the tree is being built.
+        (WebCore::SVGUseElement::didRecalcStyle): Check and return if the tree
+        is being built and we are not yet ready for style update.
+
 2012-02-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r108077.

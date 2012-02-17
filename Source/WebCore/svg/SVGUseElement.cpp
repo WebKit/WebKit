@@ -345,14 +345,21 @@ bool SVGUseElement::willRecalcStyle(StyleChange change)
         if (SVGElement* shadowRoot = m_targetElementInstance->shadowTreeElement())
             shadowRoot->setNeedsStyleRecalc();
     }
+    // Do not do style calculation during shadow tree construction because it may cause nodes to
+    // be attached before they should be. Style recalc will happen when the tree is constructed
+    // and explicitly attached.
+    if (m_updatesBlocked)
+        return false;
     return true;
 }
 
 void SVGUseElement::didRecalcStyle(StyleChange change)
 {
     // Assure that the shadow tree has not been marked for recreation, while we're building it.
-    if (m_updatesBlocked)
-        ASSERT(!m_needsShadowTreeRecreation);
+    if (m_updatesBlocked && m_needsShadowTreeRecreation) {
+        // We are about to recreate the tree while in the middle of recreating the tree.
+        return;
+    }
 
     RenderSVGShadowTreeRootContainer* shadowRoot = static_cast<RenderSVGShadowTreeRootContainer*>(renderer());
     if (!shadowRoot)

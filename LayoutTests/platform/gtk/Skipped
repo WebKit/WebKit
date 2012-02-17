@@ -852,6 +852,9 @@ svg/batik/paints/gradientLimit.svg
 svg/custom/circular-marker-reference-2.svg
 svg/custom/non-circular-marker-reference.svg
 
+# Crashes due to debug assert until we fix issues with style elements in SVG
+svg/custom/use-referencing-style-crash.svg
+
 # Canvas tests
 
 # Tests that fail across all platforms.
