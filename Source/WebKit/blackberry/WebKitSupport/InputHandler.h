@@ -77,6 +77,11 @@ public:
 
     void setInputValue(const WTF::String&);
 
+    void setDelayClientNotificationOfNavigationModeChange(bool value);
+    void processPendingClientNavigationModeChangeNotification();
+
+    void notifyClientOfNavigationModeChange(bool active);
+
     bool isInputMode() const { return isActiveTextEdit(); }
     bool isMultilineInputMode() const { return isActiveTextEdit() && elementType(m_currentFocusElement.get()) == BlackBerry::Platform::InputTypeTextArea; }
 
@@ -117,6 +122,8 @@ public:
     bool shouldAcceptInputFocus();
 
 private:
+    enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
+
     void setElementFocused(WebCore::Element*);
     void setPluginFocused(WebCore::Element*);
     void setElementUnfocused(bool refocusOccuring = false);
@@ -183,6 +190,9 @@ private:
 
     int m_composingTextStart;
     int m_composingTextEnd;
+
+    PendingKeyboardStateChange m_pendingKeyboardStateChange;
+    bool m_delayClientNotificationOfNavigationModeChange;
 };
 
 }

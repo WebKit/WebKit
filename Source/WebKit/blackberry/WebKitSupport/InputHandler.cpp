@@ -116,6 +116,8 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_currentFocusElementTextEditMask(DEFAULT_STYLE)
     , m_composingTextStart(0)
     , m_composingTextEnd(0)
+    , m_pendingKeyboardStateChange(NoChange)
+    , m_delayClientNotificationOfNavigationModeChange(false)
 {
 }
 
@@ -474,7 +476,9 @@ void InputHandler::setElementFocused(Element* element)
 
     FocusLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::setElementFocused, Type=%d, Style=%d", type, m_currentFocusElementTextEditMask);
 
-    m_webPage->m_client->inputFocusGained(type, m_currentFocusElementTextEditMask);
+    m_webPage->m_client->inputFocusGained(type,
+                                          m_currentFocusElementTextEditMask,
+                                          m_delayClientNotificationOfNavigationModeChange /* wait an explicit keyboard show call */);
     m_navigationMode = true;
 
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
@@ -748,7 +752,39 @@ void InputHandler::setNavigationMode(bool active, bool sendMessage)
     InputLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::setNavigationMode %s, %s", active ? "true" : "false", sendMessage ? "message sent" : "message not sent");
 
     if (sendMessage)
+        notifyClientOfNavigationModeChange(active);
+}
+
+void InputHandler::setDelayClientNotificationOfNavigationModeChange(bool value)
+{
+    m_delayClientNotificationOfNavigationModeChange = value;
+    m_pendingKeyboardStateChange = NoChange;
+}
+
+void InputHandler::processPendingClientNavigationModeChangeNotification()
+{
+    if (!m_delayClientNotificationOfNavigationModeChange) {
+        ASSERT(m_pendingKeyboardStateChange == NoChange);
+        return;
+    }
+
+    m_delayClientNotificationOfNavigationModeChange = false;
+
+    if (m_pendingKeyboardStateChange == NoChange)
+        return;
+
+    notifyClientOfNavigationModeChange(m_pendingKeyboardStateChange == Visible);
+    m_pendingKeyboardStateChange = NoChange;
+}
+
+void InputHandler::notifyClientOfNavigationModeChange(bool active)
+{
+    if (!m_delayClientNotificationOfNavigationModeChange) {
         m_webPage->m_client->inputSetNavigationMode(active);
+        return;
+    }
+
+    m_pendingKeyboardStateChange = active ? Visible : NotVisible;
 }
 
 bool InputHandler::selectionAtStartOfElement()

@@ -1,5 +1,50 @@
 2012-02-16  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Implemented a way to defer client navigation change client notifications
+        https://bugs.webkit.org/show_bug.cgi?id=78848
+
+        Reviewed by Rob Buis.
+
+        Currently we postpone touch_down till touch_up if user touches
+        the screen and an input field has the WebKit focus. This is done
+        so we can scroll the page without hidding the vkb needlessly.
+
+        However, it breaks the conversion of touch to mouse events
+        if an input field has the focus in the following scenario:
+        an <input type=text> is focused and an user grab and-drag
+        a <input type=range> knob/slide. It does not work until the
+        user unfocuses the currently focused edit field.
+
+        Patch introduces a way to unfocus a currently focused input field,
+        without requesting the client to show or hide the virtual keyboard
+        right way. Instead it gets a delayed notification of the vkb mode requested
+        at either touch_released/mouse_up or touch_cancel time.
+
+        For now, due to content side issues with major web sites,
+        only delay navigation mode notification changes if we are not dealing with
+        input modes.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::nodeFocused):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::setNavigationMode):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::setDelayClientNotificationOfNavigationModeChange):
+        (BlackBerry::WebKit::InputHandler::processPendingClientNavigationModeChangeNotification):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfNavigationModeChange):
+        (BlackBerry::WebKit::InputHandler::willOpenPopupForNode):
+        (BlackBerry::WebKit::InputHandler::setPopupListIndexes):
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        (BlackBerry::WebKit::InputHandler::removeComposedText):
+        (BlackBerry::WebKit::InputHandler::firstSpanInString):
+        (BlackBerry::WebKit::InputHandler::setText):
+        (BlackBerry::WebKit::InputHandler::setRelativeCursorPosition):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
+2012-02-16  Antonio Gomes  <agomes@rim.com>
+
         Crash @WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling MKS_2986818
         https://bugs.webkit.org/show_bug.cgi?id=78845
 
