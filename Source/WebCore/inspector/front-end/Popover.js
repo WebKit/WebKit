@@ -152,6 +152,7 @@ WebInspector.Popover.prototype = {
             // Position arrow accurately.
             var arrowRightPosition = Math.max(0, totalWidth - anchorBox.x - anchorBox.width - borderRadius - arrowOffset);
             arrowRightPosition += anchorBox.width / 2;
+            arrowRightPosition = Math.min(arrowRightPosition, newElementPosition.width - borderRadius - arrowOffset);
             this._popupArrowElement.style.right = arrowRightPosition + "px";
         } else {
             newElementPosition.x = borderRadius;

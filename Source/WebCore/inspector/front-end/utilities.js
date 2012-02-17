@@ -342,8 +342,8 @@ Element.prototype.boxInWindow = function(targetWindow)
     targetWindow = targetWindow || this.ownerDocument.defaultView;
 
     var anchorBox = this.offsetRelativeToWindow(window);
-    anchorBox.width = this.offsetWidth;
-    anchorBox.height = this.offsetHeight;
+    anchorBox.width = Math.min(this.offsetWidth, window.innerWidth - anchorBox.x);
+    anchorBox.height = Math.min(this.offsetHeight, window.innerHeight - anchorBox.y);
 
     return anchorBox;
 }
