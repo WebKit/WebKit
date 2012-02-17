@@ -1,3 +1,24 @@
+2012-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid using a transparency layer for rgba() border drawing when possible
+        https://bugs.webkit.org/show_bug.cgi?id=63176
+
+        Reviewed by Dan Bernstein.
+        
+        The non-radiused border drawing code would use a transparency layer
+        when drawing any one or more borders with alpha colors. However,
+        we only need to use a transparency layer when there is a corner
+        join between the borders being rendered with any one color,
+        so add a utility function includesAdjacentEdges() that can tell us
+        that, and use it to avoid making extraneous transparency layers.
+
+        Optimization only, no new tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::includesAdjacentEdges):
+        (WebCore):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+
 2012-02-17  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: Qt minimal build fix.

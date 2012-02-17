@@ -1429,6 +1429,14 @@ static inline bool includesEdge(BorderEdgeFlags flags, BoxSide side)
     return flags & edgeFlagForSide(side);
 }
 
+static inline bool includesAdjacentEdges(BorderEdgeFlags flags)
+{
+    return (flags & (TopBorderEdge | RightBorderEdge)) == (TopBorderEdge | RightBorderEdge)
+        || (flags & (RightBorderEdge | BottomBorderEdge)) == (RightBorderEdge | BottomBorderEdge)
+        || (flags & (BottomBorderEdge | LeftBorderEdge)) == (BottomBorderEdge | LeftBorderEdge)
+        || (flags & (LeftBorderEdge | TopBorderEdge)) == (LeftBorderEdge | TopBorderEdge);
+}
+
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge)
 {
     return firstEdge.color == secondEdge.color;
@@ -1682,7 +1690,7 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
                 commonColorEdgeSet |= edgeFlagForSide(currSide);
         }
 
-        bool useTransparencyLayer = commonColor.hasAlpha();
+        bool useTransparencyLayer = includesAdjacentEdges(commonColorEdgeSet) && commonColor.hasAlpha();
         if (useTransparencyLayer) {
             graphicsContext->beginTransparencyLayer(static_cast<float>(commonColor.alpha()) / 255);
             commonColor = Color(commonColor.red(), commonColor.green(), commonColor.blue());
