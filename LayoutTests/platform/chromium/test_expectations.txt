@@ -1533,7 +1533,6 @@ BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
-BUGCR99500 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
 BUGCR99500 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
