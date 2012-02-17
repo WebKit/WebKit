@@ -24,10 +24,21 @@
 #include "config.h"
 #include "StyleCachedImage.h"
 
-#include "CachedImage.h"
 #include "RenderObject.h"
 
 namespace WebCore {
+
+StyleCachedImage::StyleCachedImage(CachedImage* image)
+    : m_image(image)
+{
+    m_isCachedImage = true;
+    m_image->addClient(this);
+}
+
+StyleCachedImage::~StyleCachedImage()
+{
+    m_image->removeClient(this);
+}
 
 PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
 {

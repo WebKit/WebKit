@@ -24,16 +24,18 @@
 #ifndef StyleCachedImage_h
 #define StyleCachedImage_h
 
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 
 namespace WebCore {
 
-class CachedImage;
-
-class StyleCachedImage : public StyleImage {
+class StyleCachedImage : public StyleImage, private CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
+    virtual ~StyleCachedImage();
+
     virtual WrappedImagePtr data() const { return m_image.get(); }
 
     virtual PassRefPtr<CSSValue> cssValue() const;
@@ -54,11 +56,7 @@ public:
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
     
 private:
-    StyleCachedImage(CachedImage* image)
-        : m_image(image)
-    {
-         m_isCachedImage = true;
-    }
+    explicit StyleCachedImage(CachedImage*);
     
     CachedResourceHandle<CachedImage> m_image;
 };

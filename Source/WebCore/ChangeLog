@@ -1,3 +1,27 @@
+2012-02-17  Nate Chapin  <japhet@chromium.org>
+
+        [Chromium mac] Cursors and background images disappear.
+        https://bugs.webkit.org/show_bug.cgi?id=78834
+
+        The issue occurs because a CachedImage sees that it has no clients
+        and decide it is safe to purge its m_data buffer. However,
+        StyleCachedImage is holding a CachedResourceHandle to the
+        CachedImage, and it can still add a client later. If it does so,
+        the CachedImage says everything is loaded but has no data.
+
+        Reviewed by Adam Barth.
+
+        No new tests, since the known repros have resisted reduction.
+        Tested manually with chrome.angrybirds.com, redfin.com and a
+        couple of other sites.
+
+        * rendering/style/StyleCachedImage.cpp:
+        * rendering/style/StyleCachedImage.h: Ensure the underlying
+            CachedImage has a client for the lifetime of the
+            StyleCachedImage and doesn't purge its buffer. Call
+            addClient(this) in the constructor and removeClient(this) in
+            the destructor, then ignore all cache callbacks.
+
 2012-02-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Table cell's anonymous wrappers are left in the tree, impacting our layout
