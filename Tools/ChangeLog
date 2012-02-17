@@ -1,3 +1,10 @@
+2012-02-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, disable video build on EFL until it can be
+        supported by EFL build bot.
+
+        * Scripts/build-webkit:
+
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement zoom in/out in MiniBrowser
