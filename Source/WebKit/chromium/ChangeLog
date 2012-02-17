@@ -1,3 +1,9 @@
+2012-02-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Chromium DEPS roll
+
+        * DEPS: from 122122 to 122498
+
 2012-02-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Bundle page scale factor and limits in CCLayerTreeHost
