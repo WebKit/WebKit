@@ -1,5 +1,26 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow printing scaled pages in WebKit2 for printers that don't support it
+        https://bugs.webkit.org/show_bug.cgi?id=78823
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialogUnix): Enable scale option in print
+        dialog.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk): Initialize
+        manual scale to 1.
+        (WebKit::WebPrintOperationGtk::rotatePageIfNeeded): Renamed and
+        moved the needs rotate check here as an early return.
+        (WebKit::WebPrintOperationGtk::prepareContextToDraw): Scale the
+        page according to the manual scale factor.
+        (WebKit::WebPrintOperationGtk::renderPage): Move rotatePage to
+        prepareContextToDraw.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Allow printing multiple copies in WebKit2 for printers that don't support it
         https://bugs.webkit.org/show_bug.cgi?id=78805
 

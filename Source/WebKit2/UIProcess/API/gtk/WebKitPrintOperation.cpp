@@ -205,7 +205,8 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialogUnix(WebKitPrin
                                                                                                  | GTK_PRINT_CAPABILITY_PAGE_SET
                                                                                                  | GTK_PRINT_CAPABILITY_REVERSE
                                                                                                  | GTK_PRINT_CAPABILITY_COPIES
-                                                                                                 | GTK_PRINT_CAPABILITY_COLLATE));
+                                                                                                 | GTK_PRINT_CAPABILITY_COLLATE
+                                                                                                 | GTK_PRINT_CAPABILITY_SCALE));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     if (priv->printSettings)

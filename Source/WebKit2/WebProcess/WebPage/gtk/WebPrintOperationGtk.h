@@ -67,6 +67,7 @@ public:
     bool reverse() const { return m_reverse; }
     unsigned int copies() const { return m_copies; }
     bool collateCopies() const { return m_collateCopies; }
+    double scale() const { return m_scale; }
 
     virtual void startPrint(WebCore::PrintContext*, uint64_t callbackID) = 0;
 
@@ -82,7 +83,7 @@ protected:
 
     void print(cairo_surface_t*, double xDPI, double yDPI);
     void renderPage(int pageNumber);
-    void rotatePage();
+    void rotatePageIfNeeded();
     void getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns);
     void getPositionOfPageInSheet(size_t rows, size_t columns, int& x, int&y);
     void prepareContextToDraw();
@@ -112,6 +113,7 @@ protected:
     bool m_reverse;
     unsigned int m_copies;
     bool m_collateCopies;
+    double m_scale;
 };
 
 }
