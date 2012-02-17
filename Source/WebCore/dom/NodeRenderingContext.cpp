@@ -44,8 +44,7 @@
 namespace WebCore {
 
 NodeRenderingContext::NodeRenderingContext(Node* node)
-    : m_location(LocationNotInTree)
-    , m_phase(AttachStraight)
+    : m_phase(AttachingNotInTree)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
@@ -58,12 +57,10 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         return;
 
     if (parent->isShadowRoot()) {
-        m_location = LocationShadowChild;
+        m_phase = AttachingShadowChild;
         m_parentNodeForRenderingAndStyle = parent->shadowHost();
         return;
     }
-
-    m_location = LocationLightChild;
 
     if (parent->isElementNode()) {
         if (toElement(parent)->hasShadowRoot())
@@ -72,12 +69,12 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         if (m_visualParentShadowRoot) {
             if ((m_insertionPoint = m_visualParentShadowRoot->insertionPointFor(m_node))
                 && m_visualParentShadowRoot->isSelectorActive()) {
-                m_phase = AttachContentForwarded;
+                m_phase = AttachingDistributed;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                 return;
             }
 
-            m_phase = AttachContentLight;
+            m_phase = AttachingNotDistributed;
             m_parentNodeForRenderingAndStyle = parent;
             return;
         }
@@ -85,19 +82,19 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         if (parent->isContentElement()) {
             HTMLContentElement* shadowContentElement = toHTMLContentElement(parent);
             if (!shadowContentElement->hasSelection()) {
-                m_phase = AttachContentFallback;
+                m_phase = AttachingFallback;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
                 return;
             }
         }
     }
 
+    m_phase = AttachingStraight;
     m_parentNodeForRenderingAndStyle = parent;
 }
 
 NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
-    : m_location(LocationUndetermined)
-    , m_phase(AttachStraight)
+    : m_phase(Calculating)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
@@ -172,14 +169,14 @@ static RenderObject* lastRendererOf(HTMLContentElement* parent)
 
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
-    ASSERT(m_node->renderer() || m_location != LocationUndetermined);
+    ASSERT(m_node->renderer() || m_phase != Calculating);
     if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
 
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->nextRendererForNode(m_node);
 
-    if (m_phase == AttachContentForwarded) {
+    if (m_phase == AttachingDistributed) {
         if (RenderObject* found = nextRendererOf(m_insertionPoint, m_node))
             return found;
         return NodeRenderingContext(m_insertionPoint).nextRenderer();
@@ -187,7 +184,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
 
     // Avoid an O(n^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
-    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached() && m_phase != AttachContentFallback)
+    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached() && m_phase != AttachingFallback)
         return 0;
 
     for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
@@ -203,7 +200,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         }
     }
 
-    if (m_phase == AttachContentFallback)
+    if (m_phase == AttachingFallback)
         return NodeRenderingContext(m_node->parentNode()).nextRenderer();
 
     return 0;
@@ -211,14 +208,15 @@ RenderObject* NodeRenderingContext::nextRenderer() const
 
 RenderObject* NodeRenderingContext::previousRenderer() const
 {
-    ASSERT(m_node->renderer() || m_location != LocationUndetermined);
+    ASSERT(m_node->renderer() || m_phase != Calculating);
+
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
 
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
-    if (m_phase == AttachContentForwarded) {
+    if (m_phase == AttachingDistributed) {
         if (RenderObject* found = previousRendererOf(m_insertionPoint, m_node))
             return found;
         return NodeRenderingContext(m_insertionPoint).previousRenderer();
@@ -239,7 +237,7 @@ RenderObject* NodeRenderingContext::previousRenderer() const
         }
     }
 
-    if (m_phase == AttachContentFallback)
+    if (m_phase == AttachingFallback)
         return NodeRenderingContext(m_node->parentNode()).previousRenderer();
 
     return 0;
@@ -248,36 +246,36 @@ RenderObject* NodeRenderingContext::previousRenderer() const
 RenderObject* NodeRenderingContext::parentRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer()) {
-        ASSERT(m_location == LocationUndetermined);
+        ASSERT(m_phase == Calculating);
         return renderer->parent();
     }
 
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
-    ASSERT(m_location != LocationUndetermined);
+    ASSERT(m_phase != Calculating);
     return m_parentNodeForRenderingAndStyle ? m_parentNodeForRenderingAndStyle->renderer() : 0;
 }
 
 void NodeRenderingContext::hostChildrenChanged()
 {
-    if (m_phase == AttachContentLight)
+    if (m_phase == AttachingNotDistributed)
         m_visualParentShadowRoot->hostChildrenChanged();
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
-    ASSERT(m_location != LocationUndetermined);
+    ASSERT(m_phase != Calculating);
     ASSERT(parentNodeForRenderingAndStyle());
 
-    if (m_location == LocationNotInTree || m_phase == AttachContentLight)
+    if (m_phase == AttachingNotInTree || m_phase == AttachingNotDistributed)
         return false;
 
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
 
-    if (m_location == LocationLightChild && m_phase == AttachStraight) {
+    if (m_phase == AttachingStraight) {
         // FIXME: Ignoring canHaveChildren() in a case of shadow children might be wrong.
         // See https://bugs.webkit.org/show_bug.cgi?id=52423
         if (!parentRenderer->canHaveChildren())

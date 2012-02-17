@@ -1,3 +1,33 @@
+2012-02-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Remove location from NodeRenderingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=78796
+
+        Reviewed by Hajime Morita.
+
+        This is a simple refactoring to remove m_location from NodeRenderingContext.
+        TreeLocation is merged into AttachPhase like the following.
+            LocationUndertermined -> Calculating
+            LocationNotInTree -> AttachingNotInTree
+            LocationLightChild -> AttachingStraight / AttachingNotDistributed / AttachingDistributed
+            LocationShadowChild -> AttachingStraight / AttachingShadowChild / AttachingFallback
+
+        We have renamed the enum items of AttachPhase, because not only <content> but also
+        <shadow> will use the phases. Basically these words are taken from Shadow DOM spec.
+        'Calculating' means NodeRenderingContext is used not for attaching but for calculating RenderObject.
+
+        No new tests, no change in behavior.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle):
+
 2012-02-16  Kent Tamura  <tkent@chromium.org>
 
         Run sort-Xcode-project-file.

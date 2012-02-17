@@ -67,23 +67,17 @@ public:
     void moveToFlowThreadIfNeeded();
 
 private:
-
-    enum TreeLocation {
-        LocationUndetermined,
-        LocationNotInTree,
-        LocationLightChild,
-        LocationShadowChild,
+    enum AttachingPhase {
+        Calculating,
+        AttachingStraight,
+        AttachingNotInTree,
+        AttachingNotDistributed,
+        AttachingDistributed,
+        AttachingShadowChild,
+        AttachingFallback,
     };
 
-    enum AttachPhase {
-        AttachStraight,
-        AttachContentLight,
-        AttachContentForwarded,
-        AttachContentFallback,
-    };
-
-    TreeLocation m_location;
-    AttachPhase m_phase;
+    AttachingPhase m_phase;
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
@@ -100,7 +94,7 @@ inline Node* NodeRenderingContext::node() const
 
 inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() const
 {
-    ASSERT(m_location != LocationUndetermined);
+    ASSERT(m_phase != Calculating);
     return m_parentNodeForRenderingAndStyle;
 }
 
