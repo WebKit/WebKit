@@ -33,6 +33,7 @@
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/Color.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformPasteboard.h>
 
@@ -136,38 +137,32 @@ void WebPlatformStrategies::addVisitedLink(Page*, LinkHash linkHash)
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    pasteboard.getTypes(types);
+    PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
 PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.bufferForType(pasteboardType);
+    return PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
 }
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    pasteboard.getPathnamesForType(pathnames, pasteboardType);
+    PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
 String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.stringForType(pasteboardType);
+    return PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
 void WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
 {
-    PlatformPasteboard pasteboard(toPasteboard);
-    return pasteboard.copy(fromPasteboard);
+    PlatformPasteboard(toPasteboard).copy(fromPasteboard);
 }
 
 int WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.changeCount();
+    return PlatformPasteboard(pasteboardName).changeCount();
 }
 
 String WebPlatformStrategies::uniqueName()
@@ -175,28 +170,29 @@ String WebPlatformStrategies::uniqueName()
     return PlatformPasteboard::uniqueName();
 }
 
+Color WebPlatformStrategies::color(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).color();    
+}
+
 void WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.setTypes(pasteboardTypes);
+    PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
 void WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.setBufferForType(buffer, pasteboardType);
+    PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
 void WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    pasteboard.setPathnamesForType(pathnames, pasteboardType);
+    PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
 }
 
 void WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard pasteboard(pasteboardName);
-    return pasteboard.setStringForType(string, pasteboardType);    
+    PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);    
 }
 #endif
 

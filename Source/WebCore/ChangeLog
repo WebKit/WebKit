@@ -1,3 +1,36 @@
+2012-02-17  Enrica Casucci  <enrica@apple.com>
+
+        Refactor DragData class to use PlatformStrategies in the Mac implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=78768
+
+        Reviewed by Darin Adler.
+
+        No new tests. No behavior change.
+
+        * WebCore.exp.in: Added new exported method of the PlatformPasteboard class.
+        * platform/DragData.h:
+        (WebCore::DragData::pasteboardName): Added pasteboardName and removed pasteboard.
+        * platform/PasteboardStrategy.h: Added color() method.
+        * platform/PlatformPasteboard.h: Ditto.
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::create): Changed to use pasteboardName() method.
+        * platform/mac/DragDataMac.mm: All the methods below have been changed to use pasteboardName
+        and the pasteboardStrategy() methods.
+        (WebCore::DragData::DragData):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::numberOfFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::color): Added implementation of the color() method.
+
 2012-02-17  Nate Chapin  <japhet@chromium.org>
 
         [Chromium mac] Cursors and background images disappear.

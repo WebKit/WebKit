@@ -1,3 +1,14 @@
+2012-02-17  Enrica Casucci  <enrica@apple.com>
+
+        Refactor DragData class to use PlatformStrategies in the Mac implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=78768
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebPlatformStrategies.h: Added color() method.
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::color):
+
 2012-02-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10616280> and https://bugs.webkit.org/show_bug.cgi?id=78767

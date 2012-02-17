@@ -37,6 +37,8 @@ OBJC_CLASS NSPasteboard;
 
 namespace WebCore {
 
+class Color;
+
 class PlatformPasteboard {
 public:
     PlatformPasteboard(const String& pasteboardName);
@@ -47,6 +49,7 @@ public:
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
     String stringForType(const String& pasteboardType);
     int changeCount() const;
+    Color color();
     
     void copy(const String& fromPasteboard);
     void setTypes(const Vector<String>& pasteboardTypes);

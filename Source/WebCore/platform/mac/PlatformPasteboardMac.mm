@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "Color.h"
 #import "PlatformPasteboard.h"
 
 namespace WebCore {
@@ -71,6 +72,19 @@ int PlatformPasteboard::changeCount() const
 String PlatformPasteboard::uniqueName()
 {
     return [[NSPasteboard pasteboardWithUniqueName] name];
+}
+
+Color PlatformPasteboard::color()
+{
+    NSColor *color = [NSColor colorFromPasteboard:m_pasteboard.get()];
+    
+    // The color may not be in an RGB colorspace. This commonly occurs when a color is 
+    // dragged from the NSColorPanel grayscale picker.
+    if ([[color colorSpace] colorSpaceModel] != NSRGBColorSpaceModel)
+        color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    
+    return makeRGBA((int)([color redComponent] * 255.0 + 0.5), (int)([color greenComponent] * 255.0 + 0.5), 
+                    (int)([color blueComponent] * 255.0 + 0.5), (int)([color alphaComponent] * 255.0 + 0.5));    
 }
 
 void PlatformPasteboard::copy(const String& fromPasteboard)
