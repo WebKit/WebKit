@@ -3,7 +3,7 @@
         [BlackBerry] Upstream touch handling related classes
         https://bugs.webkit.org/show_bug.cgi?id=78509
 
-        Reviewed by Rob Buis.
+        Reviewed by Adam Treat and Rob Buis.
 
         FatFingers is the class responsible to the whole touch
         accuracy of the BlackBerry port. Initial upstream.
@@ -48,7 +48,7 @@
         [BlackBerry] Upstream touch handling related classes
         https://bugs.webkit.org/show_bug.cgi?id=78509
 
-        Reviewed by Rob Buis.
+        Reviewed by Adam Treat.
 
         Initial upstream of the Blackberry specific single touch event
         handler class.
@@ -62,6 +62,32 @@
         (BlackBerry::WebKit::TouchEventHandler::TouchEventHandler):
         (BlackBerry::WebKit::TouchEventHandler::~TouchEventHandler):
         (BlackBerry::WebKit::TouchEventHandler::shouldSuppressMouseDownOnTouchDown):
+        [BlackBerry] Upstream touch handling related classes
+        https://bugs.webkit.org/show_bug.cgi?id=78509
+
+        Reviewed by Rob Buis.
+
+        InRegionScrollableArea specializes the BlackBerry specific ScrollViewBase,
+        working as a read-only wrapper object for a scrollable areas in the page.
+        It is used in our client side to control in-region scrolling (scrollable boxes,
+        inner frames, etc).
+
+        Initial upstream.
+
+        * WebKitSupport/InRegionScrollableArea.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        (BlackBerry::WebKit::InRegionScrollableArea::calculateMinimumScrollPosition):
+        (BlackBerry::WebKit::InRegionScrollableArea::calculateMaximumScrollPosition):
+        (BlackBerry::WebKit::InRegionScrollableArea::layer):
+        (BlackBerry):
+        * WebKitSupport/InRegionScrollableArea.h: Added.
+        (WebCore):
+        (WebKit):
+        (InRegionScrollableArea):
+
+2012-02-16  Antonio Gomes  <agomes@rim.com>
+
         (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
         (BlackBerry::WebKit::TouchEventHandler::touchHoldEvent):
         (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
