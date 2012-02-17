@@ -1,3 +1,14 @@
+2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make install is broken when building without --enable-gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=78828
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc:
+        (rebase_installed_docs): Check documentation has been generated
+        before trying to rebase it.
+
 2012-02-16  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: simplify worker interface

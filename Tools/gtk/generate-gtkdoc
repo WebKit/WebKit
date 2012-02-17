@@ -139,6 +139,9 @@ def generate_doc(pkg_config_path, options):
     return generator.saw_warnings
 
 def rebase_installed_docs(pkg_config_path, options):
+    if not os.path.isdir(options['output_dir']):
+        print "Documentation was not generated"
+        return
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
     generator.rebase_installed_docs()
 
