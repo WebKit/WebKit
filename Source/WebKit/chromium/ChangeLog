@@ -1,3 +1,22 @@
+2012-02-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Bundle page scale factor and limits in CCLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=78762
+
+        Setting page scale factor and its limits in separate methods
+        may cause clamping bugs if one of them makes it to the
+        impl thread before the other.  Change the API to bundle them together,
+        which matches the existing impl-side interface.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::applyScrollAndScale):
+
 2012-02-16  Varun Jain  <varunjain@google.com>
 
         [Chromium] Add method to WebViewImpl to extract zoom/scroll params for gesture events on touch devices

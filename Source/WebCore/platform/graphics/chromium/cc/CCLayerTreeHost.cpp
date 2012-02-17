@@ -69,9 +69,9 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_settings(settings)
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
-    , m_pageScale(1)
-    , m_minPageScale(1)
-    , m_maxPageScale(1)
+    , m_pageScaleFactor(1)
+    , m_minPageScaleFactor(1)
+    , m_maxPageScaleFactor(1)
     , m_triggerIdlePaints(true)
     , m_partialTextureUpdateRequests(0)
 {
@@ -179,7 +179,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setViewportSize(viewportSize());
-    hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
+    hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
 
     m_frameNumber++;
 }
@@ -285,22 +285,14 @@ void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
     setNeedsCommit();
 }
 
-void CCLayerTreeHost::setPageScale(float pageScale)
+void CCLayerTreeHost::setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor)
 {
-    if (pageScale == m_pageScale)
+    if (pageScaleFactor == m_pageScaleFactor && minPageScaleFactor == m_minPageScaleFactor && maxPageScaleFactor == m_maxPageScaleFactor)
         return;
 
-    m_pageScale = pageScale;
-    setNeedsCommit();
-}
-
-void CCLayerTreeHost::setPageScaleFactorLimits(float minScale, float maxScale)
-{
-    if (minScale == m_minPageScale && maxScale == m_maxPageScale)
-        return;
-
-    m_minPageScale = minScale;
-    m_maxPageScale = maxScale;
+    m_pageScaleFactor = pageScaleFactor;
+    m_minPageScaleFactor = minPageScaleFactor;
+    m_maxPageScaleFactor = maxPageScaleFactor;
     setNeedsCommit();
 }
 

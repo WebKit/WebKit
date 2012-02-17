@@ -980,7 +980,7 @@ public:
     {
         IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
         m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
-        m_layerTreeHost->setPageScale(scale);
+        m_layerTreeHost->setPageScaleFactorAndLimits(scale, 0.5, 2);
     }
 
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)

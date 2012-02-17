@@ -2302,12 +2302,12 @@ bool WebViewImpl::computePageScaleFactorLimits()
         m_maximumPageScaleFactor = max(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
     }
     ASSERT(m_minimumPageScaleFactor <= m_maximumPageScaleFactor);
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost)
-        m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
-#endif
 
     float clampedScale = clampPageScaleFactorToLimits(pageScaleFactor());
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost)
+        m_layerTreeHost->setPageScaleFactorAndLimits(clampedScale, m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+#endif
     if (clampedScale != pageScaleFactor()) {
         setPageScaleFactorPreservingScrollOffset(clampedScale);
         return true;
@@ -3177,7 +3177,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
             m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
-            m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+            m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
@@ -3287,7 +3287,7 @@ void WebViewImpl::updateLayerTreeViewport()
     }
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
     m_layerTreeHost->setViewportSize(visibleRect.size());
-    m_layerTreeHost->setPageScale(pageScaleFactor());
+    m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()

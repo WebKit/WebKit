@@ -173,10 +173,7 @@ public:
 
     const IntSize& viewportSize() const { return m_viewportSize; }
 
-    void setPageScale(float);
-    float pageScale() const { return m_pageScale; }
-
-    void setPageScaleFactorLimits(float minScale, float maxScale);
+    void setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor);
 
     TextureManager* contentsTextureManager() const;
 
@@ -242,8 +239,8 @@ private:
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
 
-    float m_pageScale;
-    float m_minPageScale, m_maxPageScale;
+    float m_pageScaleFactor;
+    float m_minPageScaleFactor, m_maxPageScaleFactor;
     bool m_triggerIdlePaints;
 
     TextureList m_deleteTextureAfterCommitList;
