@@ -536,7 +536,7 @@
     background: rgba(230, 230, 230, 1) !important;
     border: 1px solid #646464;
     padding: 10px;
-    width: 200px;
+    width: 210px;
     z-index: 10;
     -webkit-user-select: none;
 }
@@ -555,6 +555,10 @@
     right: 20%;
 }
 
+.spectrum-display-value {
+    -webkit-user-select: text;
+}
+
 .spectrum-hue {
     position: absolute;
     top: 0;
@@ -570,7 +574,7 @@
 
 .spectrum-range-container {
     position: relative;
-    padding-top: 10px;
+    padding-bottom: 5px;
 }
 
 .spectrum-range-container * {

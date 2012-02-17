@@ -1,5 +1,32 @@
 2012-02-17  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: a bit of color picker polish
+        https://bugs.webkit.org/show_bug.cgi?id=78892
+
+        - Fixed computed style swatch
+        - Removed color: caption
+        - Rendered value as source code, user-selectable
+        - Removed scroller gap
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype.setCanShrink):
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/Spectrum.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype._resetMouseDownElement):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+        * inspector/front-end/elementsPanel.css:
+        (.spectrum-container):
+        (.spectrum-display-value):
+        (.spectrum-range-container):
+        * inspector/front-end/popover.css:
+        (.popover .content.fixed-height):
+
+2012-02-17  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: color picker does not allow changing the color.
         https://bugs.webkit.org/show_bug.cgi?id=78886
 

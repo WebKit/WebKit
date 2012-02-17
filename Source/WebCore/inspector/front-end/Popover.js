@@ -107,12 +107,13 @@ WebInspector.Popover.prototype = {
     setCanShrink: function(canShrink)
     {
         this._hasFixedHeight = !canShrink;
+        this._contentDiv.addStyleClass("fixed-height");
     },
 
     _positionElement: function(anchorElement, preferredWidth, preferredHeight)
     {
         const borderWidth = 25;
-        const scrollerWidth = 11;
+        const scrollerWidth = this._hasFixedHeight ? 0 : 11;
         const arrowHeight = 15;
         const arrowOffset = 10;
         const borderRadius = 10;

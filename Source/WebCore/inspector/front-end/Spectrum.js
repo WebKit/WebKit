@@ -63,14 +63,9 @@ WebInspector.Spectrum = function()
     swatchElement.className = "swatch";
     this._swatchInnerElement = swatchElement.createChild("span", "swatch-inner");
 
-    var displayContainer = rangeContainer.createChild("div");
-
-    var colorLabel = displayContainer.createChild("label");
-    colorLabel.textContent = WebInspector.UIString("color: ");
-
+    var displayContainer = this._containerElement.createChild("div");
     displayContainer.appendChild(swatchElement);
-
-    this._displayElement = displayContainer.createChild("span");
+    this._displayElement = displayContainer.createChild("span", "source-code spectrum-display-value");
 
     WebInspector.Spectrum.draggable(this._sliderElement, hueDrag.bind(this));
     WebInspector.Spectrum.draggable(this._draggerElement, colorDrag.bind(this));

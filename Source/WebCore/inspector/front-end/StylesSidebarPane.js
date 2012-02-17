@@ -1603,9 +1603,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _resetMouseDownElement: function()
     {
-        delete this._parentPane._mouseDownTreeElement;
-        delete this._parentPane._mouseDownTreeElementIsName;
-        delete this._parentPane._mouseDownTreeElementIsValue;
+        if (this._parentPane) {
+            delete this._parentPane._mouseDownTreeElement;
+            delete this._parentPane._mouseDownTreeElementIsName;
+            delete this._parentPane._mouseDownTreeElementIsValue;
+        }
     },
 
     updateTitle: function()
@@ -1690,7 +1692,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 }
 
                 var format = getFormat();
-                var spectrum = self._parentPane._spectrum;
+                var hasSpectrum = self._parentPane;
+                var spectrum = hasSpectrum ? self._parentPane._spectrum : null;
 
                 var swatchElement = document.createElement("span");
                 var swatchInnerElement = swatchElement.createChild("span", "swatch-inner");
@@ -1704,7 +1707,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 swatchInnerElement.style.backgroundColor = text;
 
-                var scrollerElement = self._parentPane._computedStylePane.element.parentElement;
+                var scrollerElement = hasSpectrum ? self._parentPane._computedStylePane.element.parentElement : null;
 
                 function spectrumChanged(e)
                 {
@@ -1738,7 +1741,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 {
                     // Shift + click toggles color formats.
                     // Click opens colorpicker, only if the element is not in computed styles section.
-                    if (e.shiftKey)
+                    if (!spectrum || e.shiftKey)
                         changeColorDisplay(e);
                     else {
                         var isVisible = spectrum.toggle(swatchElement, color, format);

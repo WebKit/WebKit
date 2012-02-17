@@ -17,6 +17,10 @@
     -webkit-user-select: text;
 }
 
+.popover .content.fixed-height {
+    overflow: hidden;
+} 
+
 .popover .arrow {
     position: absolute;
     background-image: url(Images/popoverArrows.png);
