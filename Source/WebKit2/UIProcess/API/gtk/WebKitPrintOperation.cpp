@@ -240,6 +240,13 @@ static void drawPagesForPrintingCompleted(WKErrorRef, void* context)
     g_signal_emit(printOperation.get(), signals[DONE], 0, NULL);
 }
 
+static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
+{
+    PrintInfo printInfo(printSettings, pageSetup);
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
+    page->drawPagesForPrinting(webFrame, printInfo, VoidCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
+}
+
 void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)
 {
     WebKitPrintOperationPrivate* priv = printOperation->priv;
@@ -260,9 +267,7 @@ void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation,
         return;
     }
 
-    PrintInfo printInfo(priv->printSettings.get(), priv->pageSetup.get());
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(priv->webView));
-    page->drawPagesForPrinting(webFrame, printInfo, VoidCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
+    webkitPrintOperationPrintPagesForFrame(printOperation, webFrame, priv->printSettings.get(), priv->pageSetup.get());
 }
 
 /**
@@ -377,3 +382,24 @@ void webkit_print_operation_run_dialog(WebKitPrintOperation* printOperation, Gtk
     webkitPrintOperationRunDialogForFrame(printOperation, parent, page->mainFrame());
 }
 
+/**
+ * webkit_print_operation_print:
+ * @print_operation: a #WebKitPrintOperation
+ *
+ * Start a print operation using current print settings and page setup
+ * without showing the print dialog. If either print settings or page setup
+ * are not set with webkit_print_operation_set_print_settings() and
+ * webkit_print_operation_set_page_setup(), the default options will be used
+ * and the print job will be sent to the default printer.
+ */
+void webkit_print_operation_print(WebKitPrintOperation* printOperation)
+{
+    g_return_if_fail(WEBKIT_IS_PRINT_OPERATION(printOperation));
+
+    WebKitPrintOperationPrivate* priv = printOperation->priv;
+    GRefPtr<GtkPrintSettings> printSettings = priv->printSettings ? priv->printSettings : adoptGRef(gtk_print_settings_new());
+    GRefPtr<GtkPageSetup> pageSetup = priv->pageSetup ? priv->pageSetup : adoptGRef(gtk_page_setup_new());
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
+    webkitPrintOperationPrintPagesForFrame(printOperation, page->mainFrame(), printSettings.get(), pageSetup.get());
+}

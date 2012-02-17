@@ -426,6 +426,7 @@ webkit_print_operation_set_print_settings
 webkit_print_operation_get_page_setup
 webkit_print_operation_set_page_setup
 webkit_print_operation_run_dialog
+webkit_print_operation_print
 
 <SUBSECTION Standard>
 WebKitPrintOperationClass

@@ -74,6 +74,9 @@ WEBKIT_API void
 webkit_print_operation_run_dialog         (WebKitPrintOperation *print_operation,
                                            GtkWindow            *parent);
 
+WEBKIT_API void
+webkit_print_operation_print              (WebKitPrintOperation *print_operation);
+
 G_END_DECLS
 
 #endif

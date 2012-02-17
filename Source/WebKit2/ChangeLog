@@ -1,3 +1,30 @@
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_print_operation_print() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=76536
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationPrintPagesForFrame): Helper function to call
+        WebPageProxy::drawPagesForPrinting using the given
+        GtkPrintSettings and GtkPageSetup.
+        (webkitPrintOperationRunDialogForFrame): Use
+        webkitPrintOperationPrintPagesForFrame().
+        (webkit_print_operation_print): Print directly using current
+        GtkPrintSettings and GtkPageSetup without showing the print
+        dialog.
+        * UIProcess/API/gtk/WebKitPrintOperation.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestPrinting.cpp:
+        (testPrintOperationPrintLoadChanged):
+        (testPrintOperationPrintDone):
+        (testPrintOperationPrintPrinter):
+        (testPrintOperationPrint):
+        (beforeAll):
+        (afterAll):
+
 2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Allow partial updates
