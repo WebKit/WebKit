@@ -1,3 +1,15 @@
+2012-02-17  Michal Mocny  <mmocny@google.com>
+
+        [chromium] GL_CHROMIUM_gpu_memory_manager extension
+        https://bugs.webkit.org/show_bug.cgi?id=77155
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        (GpuMemoryAllocationChangedCallbackCHROMIUM):
+        (WebCore::Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM::~GpuMemoryAllocationChangedCallbackCHROMIUM):
+        (Extensions3DChromium):
+
 2012-01-23  Robert Hogan  <robert@webkit.org>
 
         REGRESSION: empty span creates renders with non-zero height

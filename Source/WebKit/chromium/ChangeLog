@@ -1,3 +1,32 @@
+2012-02-17  Michal Mocny  <mmocny@google.com>
+
+        [chromium] GL_CHROMIUM_gpu_memory_manager extension
+        https://bugs.webkit.org/show_bug.cgi?id=77155
+
+        Reviewed by James Robinson.
+
+        * public/platform/WebGraphicsContext3D.h:
+        (WebGraphicsMemoryAllocationChangedCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM::~WebGraphicsMemoryAllocationChangedCallbackCHROMIUM):
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::setMemoryAllocationChangedCallbackCHROMIUM):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM):
+        (WebCore):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::~GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::onMemoryAllocationChanged):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM):
+        * src/GraphicsContext3DPrivate.h:
+        (WebCore):
+        * tests/FakeWebGraphicsContext3D.h:
+        (WebKit::FakeWebGraphicsContext3D::setMemoryAllocationChangedCallbackCHROMIUM):
+        (FakeWebGraphicsContext3D):
+
 2012-02-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS regions enabled by default

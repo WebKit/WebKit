@@ -51,6 +51,7 @@ class Extensions3DChromium;
 class GraphicsContextLostCallbackAdapter;
 class GraphicsContext3DSwapBuffersCompleteCallbackAdapter;
 class GraphicsErrorMessageCallbackAdapter;
+class GraphicsContext3DMemoryAllocationChangedCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
@@ -295,6 +296,9 @@ public:
     // GL_CHROMIUM_set_visibility
     void setVisibilityCHROMIUM(bool);
 
+    // GL_CHROMIUM_gpu_memory_manager
+    void setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM>);
+
     // GL_CHROMIUM_framebuffer_multisample
     void blitFramebufferCHROMIUM(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void renderbufferStorageMultisampleCHROMIUM(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
@@ -325,6 +329,7 @@ private:
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
     OwnPtr<GraphicsErrorMessageCallbackAdapter> m_errorMessageCallbackAdapter;
     OwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
+    OwnPtr<GraphicsContext3DMemoryAllocationChangedCallbackAdapter> m_memoryAllocationChangedCallbackAdapter;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;

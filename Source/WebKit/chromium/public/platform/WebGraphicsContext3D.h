@@ -130,6 +130,14 @@ public:
         virtual ~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM() { }
     };
 
+    class WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
+    public:
+        virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes) = 0;
+
+    protected:
+        virtual ~WebGraphicsMemoryAllocationChangedCallbackCHROMIUM() { }
+    };
+
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
 
@@ -150,6 +158,9 @@ public:
 
     // GL_CHROMIUM_setVisibility - Changes the visibility of the backbuffer
     virtual void setVisibilityCHROMIUM(bool visible) = 0;
+
+    // GL_CHROMIUM_gpu_memory_manager - sets callback to observe changes to memory allocation limits.
+    virtual void setMemoryAllocationChangedCallbackCHROMIUM(WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* callback) { }
 
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;

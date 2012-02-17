@@ -65,6 +65,8 @@ public:
 
     virtual void setVisibilityCHROMIUM(bool visible) { }
 
+    virtual void setMemoryAllocationChangedCallbackCHROMIUM(WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* callback) { }
+
     virtual WebString getRequestableExtensionsCHROMIUM() { return WebString(); }
     virtual void requestExtensionCHROMIUM(const char*) { }
 

@@ -107,6 +107,11 @@ void Extensions3DChromium::setVisibilityCHROMIUM(bool visibility)
     m_private->setVisibilityCHROMIUM(visibility);
 }
 
+void Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
+{
+    m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(callback);
+}
+
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
 {
     return 0;
