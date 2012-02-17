@@ -80,10 +80,10 @@ void ApplyBlockElementCommand::doApply()
     VisiblePosition endOfSelection = selection.visibleEnd();
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
-    Element* startScope = 0;
-    int startIndex = indexForVisiblePosition(startOfSelection, &startScope);
-    Element* endScope = 0;
-    int endIndex = indexForVisiblePosition(endOfSelection, &endScope);
+    RefPtr<Element> startScope;
+    int startIndex = indexForVisiblePosition(startOfSelection, startScope);
+    RefPtr<Element> endScope;
+    int endIndex = indexForVisiblePosition(endOfSelection, endScope);
 
     formatSelection(startOfSelection, endOfSelection);
 
@@ -93,8 +93,8 @@ void ApplyBlockElementCommand::doApply()
     ASSERT(startIndex >= 0);
     ASSERT(startIndex <= endIndex);
     if (startScope == endScope && startIndex >= 0 && startIndex <= endIndex) {
-        VisiblePosition start(visiblePositionForIndex(startIndex, startScope));
-        VisiblePosition end(visiblePositionForIndex(endIndex, endScope));
+        VisiblePosition start(visiblePositionForIndex(startIndex, startScope.get()));
+        VisiblePosition end(visiblePositionForIndex(endIndex, endScope.get()));
         if (start.isNotNull() && end.isNotNull())
             setEndingSelection(VisibleSelection(start, end, endingSelection().isDirectional()));
     }

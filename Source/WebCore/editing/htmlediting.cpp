@@ -1072,31 +1072,24 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
 // opertion is unreliable. TextIterator's TextIteratorEmitsCharactersBetweenAllVisiblePositions mode needs to be fixed, 
 // or these functions need to be changed to iterate using actual VisiblePositions.
 // FIXME: Deploy these functions everywhere that TextIterators are used to convert between VisiblePositions and indices.
-int indexForVisiblePosition(const VisiblePosition& visiblePosition, Element **scope)
+int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Element>& scope)
 {
     if (visiblePosition.isNull())
         return 0;
-        
+
     Position p(visiblePosition.deepEquivalent());
     Document* document = p.anchorNode()->document();
-    
-    Element* root;
     Node* shadowRoot = p.anchorNode()->shadowTreeRootNode();
-    
+
     if (shadowRoot) {
         // Use the shadow root for form elements, since TextIterators will not enter shadow content.
         ASSERT(shadowRoot->isElementNode());
-        root = static_cast<Element*>(shadowRoot);
+        scope = static_cast<Element*>(shadowRoot);
     } else
-        root = document->documentElement();
-    
-    if (scope) {
-        ASSERT(!*scope);
-        *scope = root;
-    }
-    
-    RefPtr<Range> range = Range::create(document, firstPositionInNode(root), p.parentAnchoredEquivalent());
-    
+        scope = document->documentElement();
+
+    RefPtr<Range> range = Range::create(document, firstPositionInNode(scope.get()), p.parentAnchoredEquivalent());
+
     return TextIterator::rangeLength(range.get(), true);
 }
 

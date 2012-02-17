@@ -180,7 +180,7 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
     
 int comparePositions(const VisiblePosition&, const VisiblePosition&);
 
-int indexForVisiblePosition(const VisiblePosition&, Element **scope);
+int indexForVisiblePosition(const VisiblePosition&, RefPtr<Element>& scope);
 VisiblePosition visiblePositionForIndex(int index, Element *scope);
 
 // -------------------------------------------------------------------------

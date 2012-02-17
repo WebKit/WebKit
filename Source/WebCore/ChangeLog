@@ -1,3 +1,23 @@
+2012-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in visiblePositionForIndex
+        https://bugs.webkit.org/show_bug.cgi?id=77683
+
+        Reviewed by Eric Seidel.
+
+        Fixed the crash.
+
+        Test: editing/execCommand/applyblockelement-visiblepositionforindex-crash.html
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+        * editing/htmlediting.h:
+        (WebCore):
+
 2012-02-16  Matthew Delaney  <mdelaney@apple.com>
 
         ShadowBlur.cpp's cached content matching needs to consider m_layerSize changes
