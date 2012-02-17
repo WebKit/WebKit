@@ -813,6 +813,7 @@
               '../css/quirks.css',
               '../css/view-source.css',
               '../css/themeChromium.css', # Chromium only.
+              '../css/themeChromiumAndroid.css', # Chromium only.
               '../css/themeChromiumLinux.css', # Chromium only.
               '../css/themeChromiumSkia.css',  # Chromium only.
               '../css/themeWin.css',

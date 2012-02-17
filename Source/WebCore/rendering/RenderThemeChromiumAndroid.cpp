@@ -63,6 +63,12 @@ Color RenderThemeChromiumAndroid::systemColor(int cssValueId) const
     return RenderTheme::systemColor(cssValueId);
 }
 
+String RenderThemeChromiumAndroid::extraDefaultStyleSheet()
+{
+    return RenderThemeChromiumLinux::extraDefaultStyleSheet() +
+        String(themeChromiumAndroidUserAgentStyleSheet, sizeof(themeChromiumAndroidUserAgentStyleSheet));
+}
+
 void RenderThemeChromiumAndroid::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     if (PlatformSupport::layoutTestMode()) {

@@ -33,14 +33,25 @@ namespace WebCore {
 class RenderThemeChromiumAndroid : public RenderThemeChromiumLinux {
 public:
     static PassRefPtr<RenderTheme> create();
+    virtual String extraDefaultStyleSheet() OVERRIDE;
 
-    virtual Color systemColor(int cssValidId) const;
+    virtual Color systemColor(int cssValidId) const OVERRIDE;
 
-    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const OVERRIDE;
+
+    virtual bool delegatesMenuListRendering() const OVERRIDE { return true; }
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual Color platformTapHighlightColor() const OVERRIDE
+    {
+        return RenderThemeChromiumAndroid::defaultTapHighlightColor;
+    }
+#endif
 
 private:
     virtual ~RenderThemeChromiumAndroid();
 
+    static const RGBA32 defaultTapHighlightColor = 0x6633b5e5;
 };
 
 } // namespace WebCore

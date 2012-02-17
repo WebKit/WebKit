@@ -1,3 +1,26 @@
+2012-02-16  Eric Seidel  <eric@webkit.org>
+
+        Add a themeChromiumAndroid.css file for android-specific default styles
+        https://bugs.webkit.org/show_bug.cgi?id=78547
+
+        Reviewed by Adam Barth.
+
+        This includes the themeChromiumAndroid.css file from the Chromium-Android port
+        as well as some addidtional changes they had to html.css.  I believe those
+        changes were made before themeChromiumAndroid was created, but it's now the better place for this CSS.
+
+        * WebCore.gyp/WebCore.gyp:
+        * css/themeChromiumAndroid.css: Added.
+        (select[size][multiple]):
+        (input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"]):
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        (WebCore::RenderThemeChromiumAndroid::extraDefaultStyleSheet):
+        (WebCore):
+        * rendering/RenderThemeChromiumAndroid.h:
+        (RenderThemeChromiumAndroid):
+        (WebCore::RenderThemeChromiumAndroid::delegatesMenuListRendering):
+        (WebCore::RenderThemeChromiumAndroid::platformTapHighlightColor):
+
 2012-02-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10616280> and https://bugs.webkit.org/show_bug.cgi?id=78767
