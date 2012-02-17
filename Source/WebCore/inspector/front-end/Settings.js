@@ -175,7 +175,6 @@ WebInspector.ExperimentsSettings = function()
     // Add currently running experiments here.
     this.sourceFrameAlwaysEditable = this._createExperiment("sourceFrameAlwaysEditable", "Make resources always editable");
     this.showMemoryCounters = this._createExperiment("showMemoryCounters", "Show memory counters in Timeline panel");
-    this.singleClickEditing = this._createExperiment("singleClickEditing", "Single click CSS editing");
     // FIXME: Enable http/tests/inspector/indexeddb/resources-panel.html when removed from experiments.
     this.showIndexedDB = this._createExperiment("showIndexedDB", "Show IndexedDB in Resources panel");
 

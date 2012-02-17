@@ -963,9 +963,8 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     closeBrace.textContent = "}";
     this.element.appendChild(closeBrace);
 
-    var eventName = WebInspector.experimentsSettings.singleClickEditing.isEnabled() ? "click" : "dblclick";
-    this._selectorElement.addEventListener(eventName, this._handleSelectorDoubleClick.bind(this), false);
-    this.element.addEventListener(eventName, this._handleEmptySpaceDoubleClick.bind(this), false);
+    this._selectorElement.addEventListener("click", this._handleSelectorClick.bind(this), false);
+    this.element.addEventListener("click", this._handleEmptySpaceClick.bind(this), false);
 
     this._parentPane = parentPane;
     this.styleRule = styleRule;
@@ -1194,7 +1193,7 @@ WebInspector.StylePropertiesSection.prototype = {
         return document.createTextNode(origin);
     },
 
-    _handleEmptySpaceDoubleClick: function(event)
+    _handleEmptySpaceClick: function(event)
     {
         if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
             event.stopPropagation();
@@ -1209,7 +1208,7 @@ WebInspector.StylePropertiesSection.prototype = {
         event.stopPropagation();
     },
 
-    _handleSelectorDoubleClick: function(event)
+    _handleSelectorClick: function(event)
     {
         this._startEditingOnMouseEvent();
         event.stopPropagation();
@@ -1591,14 +1590,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
     onattach: function()
     {
         this.updateTitle();
-        var eventName;
-        if (WebInspector.experimentsSettings.singleClickEditing.isEnabled()) {
-            this.listItemElement.addEventListener("mousedown", this._mouseDown.bind(this));
-            this.listItemElement.addEventListener("mouseup", this._resetMouseDownElement.bind(this));
-            eventName = "click";
-        } else
-            eventName = "dblclick";
-        this.listItemElement.addEventListener(eventName, this._startEditing.bind(this));
+        this.listItemElement.addEventListener("mousedown", this._mouseDown.bind(this));
+        this.listItemElement.addEventListener("mouseup", this._resetMouseDownElement.bind(this));
+        this.listItemElement.addEventListener("click", this._startEditing.bind(this));
     },
 
     _mouseDown: function(event)

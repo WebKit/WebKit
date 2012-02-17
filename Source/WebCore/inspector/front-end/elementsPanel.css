@@ -398,10 +398,12 @@
     visibility: hidden;
     float: left;
     font-size: 10px;
-    margin: 0 5px 0 0;
+    margin: 0;
     vertical-align: top;
     position: relative;
     z-index: 1;
+    width: 18px;
+    left: -2px;
 }
 
 .styles-section.matched-styles .properties ol.expanded {
