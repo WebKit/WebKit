@@ -1,3 +1,14 @@
+2012-02-16  Evan Martin  <evan@chromium.org>
+
+        [chromium] pull third_party/gold to fix linux build
+        https://bugs.webkit.org/show_bug.cgi?id=78842
+
+        Reviewed by Tony Chang.
+
+        The Chrome build now depends on third_party/gold also being checked out.
+
+        * DEPS:
+
 2012-02-15  Michael Nordman  <michaeln@google.com>
 
         Fix bugs in the implementation of WebDatabase::closeDatabaseImmediately.
