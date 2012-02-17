@@ -1,5 +1,43 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow printing multiple pages per sheet in WebKit2 for printers that don't support it
+        https://bugs.webkit.org/show_bug.cgi?id=78715
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialogUnix): Enable multiple pages per
+        sheet options in print dialog.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Initialize sheetNumber
+        and numberOfSheets. Move pagePosition to WebPrintOperationGtk.
+        (WebKit::PrintPagesData::incrementPageSequence): Increment current
+        sheet and page position.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk):
+        (WebKit::WebPrintOperationGtk::currentPageIsFirstPageOfSheet):
+        Helper function to check whether current pages is the first one of
+        the current sheet.
+        (WebKit::WebPrintOperationGtk::currentPageIsLastPageOfSheet):
+        Helper function to check whether current pages is the last one of
+        the current sheet.
+        (WebKit::WebPrintOperationGtk::getRowsAndColumnsOfPagesPerSheet):
+        Returns the number of rows and columns of pages per sheet.
+        (WebKit::WebPrintOperationGtk::getPositionOfPageInSheet): Returns
+        the row and column number of the current page in the current sheet.
+        (WebKit::WebPrintOperationGtk::prepareContextToDraw): Translate,
+        scale and rotate accordingly to render every page in the right
+        place of the sheet.
+        (WebKit::WebPrintOperationGtk::renderPage): Call
+        prepareContextToDraw() before drawing the page.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        (WebKit::WebPrintOperationGtk::setNumberOfPagesToPrint):
+        (WebKit::WebPrintOperationGtk::pagePosition):
+        (WebKit::WebPrintOperationGtk::setPagePosition):
+        (WebKit::WebPrintOperationGtk::numberUp):
+        (WebKit::WebPrintOperationGtk::numberUpLayout):
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Rename WebKitPrintOperation::done signal to ::finished in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=78893
 

@@ -51,10 +51,18 @@ public:
 
     GtkPrintSettings* printSettings() const { return m_printSettings.get(); }
     GtkPageSetup* pageSetup() const { return m_pageSetup.get(); }
+    void setNumberOfPagesToPrint(size_t numberOfPages) { m_numberOfPagesToPrint = numberOfPages; }
     unsigned int pagesToPrint() const { return m_pagesToPrint; }
     int pageCount() const;
+    bool currentPageIsFirstPageOfSheet() const;
+    bool currentPageIsLastPageOfSheet() const;
+    size_t pagePosition() const { return m_pagePosition; }
+    void setPagePosition(size_t position) { m_pagePosition = position; }
     GtkPageRange* pageRanges() const { return m_pageRanges; }
     size_t pageRangesCount() const { return m_pageRangesCount; }
+
+    unsigned int numberUp() const { return m_numberUp; }
+    unsigned int numberUpLayout() const { return m_numberUpLayout; }
 
     virtual void startPrint(WebCore::PrintContext*, uint64_t callbackID) = 0;
 
@@ -71,6 +79,9 @@ protected:
     void print(cairo_surface_t*, double xDPI, double yDPI);
     void renderPage(int pageNumber);
     void rotatePage();
+    void getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns);
+    void getPositionOfPageInSheet(size_t rows, size_t columns, int& x, int&y);
+    void prepareContextToDraw();
     void printDone();
 
     WebPage* m_webPage;
@@ -83,10 +94,16 @@ protected:
     double m_yDPI;
 
     unsigned int m_printPagesIdleId;
+    size_t m_numberOfPagesToPrint;
     unsigned int m_pagesToPrint;
+    size_t m_pagePosition;
     GtkPageRange* m_pageRanges;
     size_t m_pageRangesCount;
     bool m_needsRotation;
+
+    // Manual capabilities.
+    unsigned int m_numberUp;
+    unsigned int m_numberUpLayout;
 };
 
 }
