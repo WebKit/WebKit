@@ -1,5 +1,27 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow printing pages in reverse order in WebKit2 for printers that don't support it
+        https://bugs.webkit.org/show_bug.cgi?id=78799
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialogUnix): Enable printing in reverse
+        order option in print dialog.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Initialize sheetNumber
+        and lastPagePosition depending on whether printing is in reverse
+        order or not.
+        (WebKit::PrintPagesData::incrementPageSequence): Use a negative
+        increment step when printing in reverse order. Fix page
+        incrementing when printing only odd/even pages broken in previous
+        commit due to merge conflicts.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk): Initialize
+        reverse printing to false.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Allow printing only odd/even pages in WebKit2 for printers that don't support it
         https://bugs.webkit.org/show_bug.cgi?id=78793
 

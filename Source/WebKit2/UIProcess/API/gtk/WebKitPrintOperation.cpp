@@ -202,7 +202,8 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialogUnix(WebKitPrin
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
                                                                                                  | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT
-                                                                                                 | GTK_PRINT_CAPABILITY_PAGE_SET));
+                                                                                                 | GTK_PRINT_CAPABILITY_PAGE_SET
+                                                                                                 | GTK_PRINT_CAPABILITY_REVERSE));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     if (priv->printSettings)

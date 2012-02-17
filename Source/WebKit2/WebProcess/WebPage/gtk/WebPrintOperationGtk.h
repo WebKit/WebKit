@@ -64,6 +64,7 @@ public:
     unsigned int numberUp() const { return m_numberUp; }
     unsigned int numberUpLayout() const { return m_numberUpLayout; }
     unsigned int pageSet() const { return m_pageSet; }
+    bool reverse() const { return m_reverse; }
 
     virtual void startPrint(WebCore::PrintContext*, uint64_t callbackID) = 0;
 
@@ -106,6 +107,7 @@ protected:
     unsigned int m_numberUp;
     unsigned int m_numberUpLayout;
     unsigned int m_pageSet;
+    bool m_reverse;
 };
 
 }

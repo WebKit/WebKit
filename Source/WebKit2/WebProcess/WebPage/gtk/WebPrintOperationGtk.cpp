@@ -92,6 +92,7 @@ public:
         printOperation->m_numberUp = gtk_print_job_get_n_up(printOperation->m_printJob.get());
         printOperation->m_numberUpLayout = gtk_print_job_get_n_up_layout(printOperation->m_printJob.get());
         printOperation->m_pageSet = gtk_print_job_get_page_set(printOperation->m_printJob.get());
+        printOperation->m_reverse = gtk_print_job_get_reverse(printOperation->m_printJob.get());
 
         printOperation->print(surface, 72, 72);
     }
@@ -239,16 +240,30 @@ struct PrintPagesData {
         else
             numberOfSheets = pages.size();
 
+        bool reverse = printOperation->reverse();
         switch (printOperation->pageSet()) {
         case GTK_PAGE_SET_ODD:
-            lastPagePosition = std::min(((numberOfSheets - 1) - ((numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
+            if (reverse) {
+                lastPagePosition = std::min(numberUp - 1, pages.size() - 1);
+                sheetNumber = (numberOfSheets - 1) - (numberOfSheets - 1) % 2;
+            } else
+                lastPagePosition = std::min(((numberOfSheets - 1) - ((numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
             break;
         case GTK_PAGE_SET_EVEN:
-            lastPagePosition = std::min(((numberOfSheets - 1) - (1 - (numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
-            sheetNumber = numberOfSheets > 1 ? 1 : -1;
+            if (reverse) {
+                lastPagePosition = std::min(2 * numberUp - 1, pages.size() - 1);
+                sheetNumber = (numberOfSheets - 1) - (1 - (numberOfSheets - 1) % 2);
+            } else {
+                lastPagePosition = std::min(((numberOfSheets - 1) - (1 - (numberOfSheets - 1) % 2)) * numberUp - 1, pages.size() - 1);
+                sheetNumber = numberOfSheets > 1 ? 1 : -1;
+            }
             break;
         case GTK_PAGE_SET_ALL:
-            lastPagePosition = pages.size() - 1;
+            if (reverse) {
+                lastPagePosition = std::min(numberUp - 1, pages.size() - 1);
+                sheetNumber = pages.size() - 1;
+            } else
+                lastPagePosition = pages.size() - 1;
             break;
         }
 
@@ -273,7 +288,9 @@ struct PrintPagesData {
         }
 
         if (printOperation->currentPageIsLastPageOfSheet()) {
-            sheetNumber++;
+            int step = printOperation->pageSet() == GTK_PAGE_SET_ALL ? 1 : 2;
+            step *= printOperation->reverse() ? -1 : 1;
+            sheetNumber += step;
             pagePosition = sheetNumber * printOperation->numberUp();
         } else
             pagePosition++;
@@ -328,6 +345,7 @@ WebPrintOperationGtk::WebPrintOperationGtk(WebPage* page, const PrintInfo& print
     , m_numberUp(1)
     , m_numberUpLayout(0)
     , m_pageSet(GTK_PAGE_SET_ALL)
+    , m_reverse(false)
 {
 }
 
