@@ -1,3 +1,13 @@
+2012-02-16  Cris Neckar  <cdn@chromium.org>
+
+        Correct a misleading comment regarding string delimiters in CSS parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=78521
+
+        Reviewed by Zoltan Herczeg.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex):
+
 2012-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the TextureMapper build for GTK+.
