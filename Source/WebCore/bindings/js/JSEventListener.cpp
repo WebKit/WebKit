@@ -22,6 +22,7 @@
 
 #include "Event.h"
 #include "Frame.h"
+#include "InspectorCounters.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
@@ -44,11 +45,12 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         m_jsFunction.setMayBeNull(*m_isolatedWorld->globalData(), wrapper, function);
     else
         ASSERT(!function);
-
+    InspectorCounters::incrementCounter(InspectorCounters::JSEventListenerCounter);
 }
 
 JSEventListener::~JSEventListener()
 {
+    InspectorCounters::decrementCounter(InspectorCounters::JSEventListenerCounter);
 }
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const

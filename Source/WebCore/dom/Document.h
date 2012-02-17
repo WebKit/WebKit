@@ -36,6 +36,7 @@
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
 #include "IconURL.h"
+#include "InspectorCounters.h"
 #include "IntRect.h"
 #include "LayoutTypes.h"
 #include "PageVisibilityState.h"
@@ -1486,6 +1487,7 @@ inline Node::Node(Document* document, ConstructionType type)
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();
 #endif
+    InspectorCounters::incrementCounter(InspectorCounters::NodeCounter);
 }
 
 } // namespace WebCore

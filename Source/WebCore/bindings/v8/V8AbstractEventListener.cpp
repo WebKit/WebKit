@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "Frame.h"
+#include "InspectorCounters.h"
 #include "V8Binding.h"
 #include "V8Event.h"
 #include "V8EventListenerList.h"
@@ -57,6 +58,7 @@ V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldCo
     , m_isAttribute(isAttribute)
     , m_worldContext(worldContext)
 {
+    InspectorCounters::incrementCounter(InspectorCounters::JSEventListenerCounter);
 }
 
 V8AbstractEventListener::~V8AbstractEventListener()
@@ -67,6 +69,7 @@ V8AbstractEventListener::~V8AbstractEventListener()
         V8EventListenerList::clearWrapper(listener, m_isAttribute);
     }
     disposeListenerObject();
+    InspectorCounters::decrementCounter(InspectorCounters::JSEventListenerCounter);
 }
 
 void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)

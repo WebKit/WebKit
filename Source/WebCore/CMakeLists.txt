@@ -892,6 +892,7 @@ SET(WebCore_SOURCES
     inspector/InspectorClient.cpp
     inspector/InspectorConsoleAgent.cpp
     inspector/InspectorController.cpp
+    inspector/InspectorCounters.cpp
     inspector/InspectorDOMAgent.cpp
     inspector/InspectorDOMDebuggerAgent.cpp
     inspector/InspectorDOMStorageAgent.cpp

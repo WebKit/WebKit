@@ -63,7 +63,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
-#include "InspectorInstrumentation.h"
+#include "InspectorCounters.h"
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
 #include "Logging.h"
@@ -405,6 +405,8 @@ Node::~Node()
 
     if (doc)
         doc->guardDeref();
+
+    InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
 
 void Node::setDocument(Document* document)

@@ -100,6 +100,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "ImageLoader.h"
+#include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MediaQueryList.h"
@@ -510,6 +511,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #ifndef NDEBUG
     m_updatingStyleSelector = false;
 #endif
+    InspectorCounters::incrementCounter(InspectorCounters::DocumentCounter);
 }
 
 static void histogramMutationEventUsage(const unsigned short& listenerTypes)
@@ -586,6 +588,8 @@ Document::~Document()
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
         clearRareData();
+
+    InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
 
 void Document::removedLastRef()

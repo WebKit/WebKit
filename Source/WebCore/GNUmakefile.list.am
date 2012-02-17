@@ -2377,6 +2377,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorConsoleAgent.cpp \
 	Source/WebCore/inspector/InspectorConsoleAgent.h \
 	Source/WebCore/inspector/InspectorConsoleInstrumentation.h \
+	Source/WebCore/inspector/InspectorCounters.cpp \
+	Source/WebCore/inspector/InspectorCounters.h \
 	Source/WebCore/inspector/InspectorCSSAgent.cpp \
 	Source/WebCore/inspector/InspectorCSSAgent.h \
 	Source/WebCore/inspector/InspectorDatabaseAgent.cpp \

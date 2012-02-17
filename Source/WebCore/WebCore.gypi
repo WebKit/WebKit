@@ -2366,6 +2366,8 @@
             'inspector/InspectorConsoleAgent.h',
             'inspector/InspectorConsoleInstrumentation.h',
             'inspector/InspectorController.cpp',
+            'inspector/InspectorCounters.cpp',
+            'inspector/InspectorCounters.h',
             'inspector/InspectorDOMAgent.cpp',
             'inspector/InspectorDOMDebuggerAgent.cpp',
             'inspector/InspectorDOMDebuggerAgent.h',

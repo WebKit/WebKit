@@ -71598,6 +71598,30 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorCounters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorCounters.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorController.h"
 				>
 			</File>

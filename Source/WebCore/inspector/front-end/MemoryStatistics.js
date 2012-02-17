@@ -55,7 +55,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
 
     // Populate sidebar
     this._counterSidebarElements = [];
-    this._domGroups = this._createCounterSidebarElement(WebInspector.UIString("DOM group count:"), true);
+    this._documents = this._createCounterSidebarElement(WebInspector.UIString("Document count:"), true);
     this._domNodes = this._createCounterSidebarElement(WebInspector.UIString("DOM node count:"), true);
     this._listeners = this._createCounterSidebarElement(WebInspector.UIString("Event listener count:"), false);
 
@@ -122,28 +122,12 @@ WebInspector.MemoryStatistics.prototype = {
 
     addTimlineEvent: function(event)
     {
-        var time = event.data.endTime;
-        var domGroups = event.data["domGroups"];
-
-        var nodeCount = 0;
-        for (var i = 0; i < domGroups.length; i++) {
-            var counters = domGroups[i].nodeCount;
-            for (var j = 0; j < counters.length; j++)
-                nodeCount += counters[j].count;
-        }
-
-        var listenerCount = 0;
-        for (var i = 0; i < domGroups.length; i++) {
-            var counters = domGroups[i].listenerCount;
-            for (var j = 0; j < counters.length; j++)
-                listenerCount += counters[j].count;
-        }
-
+        var counters = event.data["counters"];
         this._counters.push({
-            time: time,
-            domGroupCount: domGroups.length,
-            nodeCount: nodeCount,
-            listenerCount: listenerCount
+            time: event.data.endTime,
+            documentCount: counters.documents,
+            nodeCount: counters.nodes,
+            listenerCount: counters.jsEventListeners
         });
     },
 
@@ -154,12 +138,12 @@ WebInspector.MemoryStatistics.prototype = {
         this._clear();
         var graphHeight = Math.round(this._canvas.height / 3);
 
-        function getGroupCount(entry)
+        function getDocumentCount(entry)
         {
-            return entry.domGroupCount;
+            return entry.documentCount;
         }
         this._setVerticalClip(0 * graphHeight + 2, graphHeight - 4);
-        this._drawPolyline(getGroupCount, "rgba(100,0,0,0.8)");
+        this._drawPolyline(getDocumentCount, "rgba(100,0,0,0.8)");
         this._drawBottomBound("rgba(20,20,20,0.8)");
 
 
@@ -225,7 +209,7 @@ WebInspector.MemoryStatistics.prototype = {
                 break;
         }
         i--;
-        this._domGroups._value.textContent = this._counters[i].domGroupCount;
+        this._documents._value.textContent = this._counters[i].documentCount;
         this._domNodes._value.textContent = this._counters[i].nodeCount;
         this._listeners._value.textContent = this._counters[i].listenerCount;
     },

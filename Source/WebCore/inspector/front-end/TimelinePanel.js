@@ -451,7 +451,7 @@ WebInspector.TimelinePanel.prototype = {
         this._innerAddRecordToTimeline(event.data, this._rootRecord);
         this._scheduleRefresh(false);
 
-        if (this._memoryStatistics && event.data["domGroups"])
+        if (this._memoryStatistics && event.data["counters"])
             this._memoryStatistics.addTimlineEvent(event);
     },
 

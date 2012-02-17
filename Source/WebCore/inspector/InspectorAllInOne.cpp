@@ -41,6 +41,7 @@
 #include "InspectorClient.cpp"
 #include "InspectorConsoleAgent.cpp"
 #include "InspectorController.cpp"
+#include "InspectorCounters.cpp"
 #include "InspectorDOMAgent.cpp"
 #include "InspectorDOMDebuggerAgent.cpp"
 #include "InspectorDOMStorageAgent.cpp"

@@ -5882,6 +5882,8 @@
 		F316396B1329481A00A649CB /* InjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F31639691329481A00A649CB /* InjectedScriptManager.cpp */; };
 		F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F316396A1329481A00A649CB /* InjectedScriptManager.h */; };
 		F316396E1329487600A649CB /* JSInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */; };
+		F325A40A14EE36FA007324E2 /* InspectorCounters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F325A40814EE36FA007324E2 /* InspectorCounters.cpp */; };
+		F325A40B14EE36FA007324E2 /* InspectorCounters.h in Headers */ = {isa = PBXBuildFile; fileRef = F325A40914EE36FA007324E2 /* InspectorCounters.h */; };
 		F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */; };
 		F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3335BF712E07DC300D33011 /* InspectorConsoleAgent.h */; };
 		F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F0281120947F200E5743A /* ScriptProfile.cpp */; };
@@ -12902,6 +12904,8 @@
 		F31639691329481A00A649CB /* InjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptManager.cpp; sourceTree = "<group>"; };
 		F316396A1329481A00A649CB /* InjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptManager.h; sourceTree = "<group>"; };
 		F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInjectedScriptManager.cpp; sourceTree = "<group>"; };
+		F325A40814EE36FA007324E2 /* InspectorCounters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCounters.cpp; sourceTree = "<group>"; };
+		F325A40914EE36FA007324E2 /* InspectorCounters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCounters.h; sourceTree = "<group>"; };
 		F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorConsoleAgent.cpp; sourceTree = "<group>"; };
 		F3335BF712E07DC300D33011 /* InspectorConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleAgent.h; sourceTree = "<group>"; };
 		F33F0281120947F200E5743A /* ScriptProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProfile.cpp; sourceTree = "<group>"; };
@@ -14098,6 +14102,8 @@
 				F3F5CF1012ED81A80084C569 /* InspectorConsoleInstrumentation.h */,
 				1C81B9570E97330800266E07 /* InspectorController.cpp */,
 				1C81B9560E97330800266E07 /* InspectorController.h */,
+				F325A40814EE36FA007324E2 /* InspectorCounters.cpp */,
+				F325A40914EE36FA007324E2 /* InspectorCounters.h */,
 				82AB1741124B99EC00C5069D /* InspectorCSSAgent.cpp */,
 				82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */,
 				7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */,
@@ -22562,6 +22568,7 @@
 				F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */,
 				F3F5CF1112ED81A80084C569 /* InspectorConsoleInstrumentation.h in Headers */,
 				1C81B95A0E97330800266E07 /* InspectorController.h in Headers */,
+				F325A40B14EE36FA007324E2 /* InspectorCounters.h in Headers */,
 				82AB1744124B99EC00C5069D /* InspectorCSSAgent.h in Headers */,
 				7AB0B1C11211A62200A76940 /* InspectorDatabaseAgent.h in Headers */,
 				F3F5CF1312ED81B30084C569 /* InspectorDatabaseInstrumentation.h in Headers */,
@@ -25602,6 +25609,7 @@
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
 				F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */,
 				1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */,
+				F325A40A14EE36FA007324E2 /* InspectorCounters.cpp in Sources */,
 				82AB1743124B99EC00C5069D /* InspectorCSSAgent.cpp in Sources */,
 				7AB0B1C01211A62200A76940 /* InspectorDatabaseAgent.cpp in Sources */,
 				41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */,

@@ -1,3 +1,64 @@
+2012-02-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: use static counters for estimation of allocated Documents, Nodes and JS EventListeners
+        https://bugs.webkit.org/show_bug.cgi?id=78825
+
+        Introduced static counters of allocated Documents, Nodes and JS EventListeners.
+        Their values are displayed on the Timeline panel.
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * English.lproj/localizedStrings.js:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::~V8AbstractEventListener):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorCounters.cpp: Added.
+        (WebCore):
+        (WebCore::InspectorCounters::counterValue):
+        * inspector/InspectorCounters.h: Added.
+        (WebCore):
+        (InspectorCounters):
+        (WebCore::InspectorCounters::incrementCounter):
+        (WebCore::InspectorCounters::decrementCounter):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::create):
+        (InspectorTimelineAgent):
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics):
+        (WebInspector.MemoryStatistics.prototype.addTimlineEvent):
+        (WebInspector.MemoryStatistics.prototype._draw.getDocumentCount):
+        (WebInspector.MemoryStatistics.prototype._refreshCurrentValues):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+
 2012-02-16  Cris Neckar  <cdn@chromium.org>
 
         Correct a misleading comment regarding string delimiters in CSS parsing.

@@ -869,6 +869,7 @@ SOURCES += \
     inspector/InspectorClient.cpp \
     inspector/InspectorConsoleAgent.cpp \
     inspector/InspectorController.cpp \
+    inspector/InspectorCounters.cpp \
     inspector/InspectorDatabaseAgent.cpp \
     inspector/InspectorDatabaseResource.cpp \
     inspector/InspectorDebuggerAgent.cpp \
@@ -1938,6 +1939,7 @@ HEADERS += \
     inspector/InspectorConsoleAgent.h \
     inspector/InspectorConsoleInstrumentation.h \
     inspector/InspectorController.h \
+    inspector/InspectorCounters.h \
     inspector/InspectorCSSAgent.h \
     inspector/InspectorDatabaseAgent.h \
     inspector/InspectorDatabaseInstrumentation.h \
