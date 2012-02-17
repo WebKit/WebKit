@@ -1,3 +1,23 @@
+2012-02-17  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Refactor video drawing to be more data driven
+        https://bugs.webkit.org/show_bug.cgi?id=76720
+
+        Reviewed by James Robinson.
+
+        CCLayerTreeHostImplTest.didDrawCalledOnAllLayers ensures that
+        CCLayerImpl::didDraw() is called on all layers, including layers
+        on different render surfaces.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (DidDrawCheckLayer):
+        (WebKit::DidDrawCheckLayer::create):
+        (WebKit::DidDrawCheckLayer::didDraw):
+        (WebKit::DidDrawCheckLayer::didDrawCalled):
+        (WebKit::DidDrawCheckLayer::DidDrawCheckLayer):
+        (WebKit):
+        (WebKit::TEST_F):
+
 2012-02-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r108071.

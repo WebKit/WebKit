@@ -31,6 +31,7 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCDamageTracker.h"
+#include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCPageScaleAnimation.h"
@@ -187,9 +188,8 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
     return surfaceDamageRect;
 }
 
-void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes)
+void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
 {
-    CCLayerList renderSurfaceLayerList;
     renderSurfaceLayerList.append(rootLayer());
 
     if (!rootLayer()->renderSurface())
@@ -263,13 +263,23 @@ void CCLayerTreeHostImpl::drawLayers()
         return;
 
     CCRenderPassList passes;
-    calculateRenderPasses(passes);
+    CCLayerList renderSurfaceLayerList;
+    calculateRenderPasses(passes, renderSurfaceLayerList);
 
     optimizeRenderPasses(passes);
 
     m_layerRenderer->beginDrawingFrame();
     for (size_t i = 0; i < passes.size(); ++i)
         m_layerRenderer->drawRenderPass(passes[i].get());
+
+    typedef CCLayerIterator<CCLayerImpl, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+
+    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+        if (it.representsItself())
+            it->didDraw();
+    }
+
     m_layerRenderer->finishDrawingFrame();
 
     ++m_frameNumber;

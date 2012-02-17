@@ -75,9 +75,9 @@ public:
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     virtual void willDraw(LayerRendererChromium*) { }
     virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+    virtual void didDraw() { }
     void appendDebugBorderQuad(CCQuadList&, const CCSharedQuadState*) const;
 
-    virtual void draw(LayerRendererChromium*);
     void unreserveContentsTexture();
     virtual void bindContentsTexture(LayerRendererChromium*);
 

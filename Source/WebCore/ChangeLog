@@ -1,3 +1,66 @@
+2012-02-17  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Refactor video drawing to be more data driven
+        https://bugs.webkit.org/show_bug.cgi?id=76720
+
+        Reviewed by James Robinson.
+
+        CCVideoLayerImpl no longer handles drawing itself, but produces a list of CCVideoDrawQuads.
+        These quads are then drawn by LayerRendererChromium.
+
+        CCLayerImpl::willDraw(LayerRendererChromium*) is called directly before appendQuads.
+        CCLayerImpl::didDraw() is called directly after all drawing has been completed.
+        CCLayerImpl::draw has been removed.
+
+        willDraw and didDraw are used to handle interaction with the VideoFrameProvider
+        in CCVideoLayerImpl. willDraw gets a frame from the VideoFrameProvider, and
+        didDraw returns it.
+
+        A unit test has been added: CCLayerTreeHostImplTest.didDrawCalledOnAllLayers.
+        This test ensures that CCLayerImpl::didDraw() is called on all layers,
+        including layers on different render surfaces.
+
+        As this was a refactor, no other tests were added.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawYUV):
+        (WebCore):
+        (WebCore::LayerRendererChromium::drawSingleTextureVideoQuad):
+        (WebCore::LayerRendererChromium::drawRGBA):
+        (WebCore::LayerRendererChromium::drawNativeTexture):
+        (WebCore::LayerRendererChromium::copyFrameToTextures):
+        (WebCore::LayerRendererChromium::copyPlaneToTexture):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::didDraw):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.cpp:
+        (WebCore::CCVideoDrawQuad::create):
+        (WebCore::CCVideoDrawQuad::CCVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.h:
+        (CCVideoDrawQuad):
+        (WebCore::CCVideoDrawQuad::textures):
+        (WebCore::CCVideoDrawQuad::frame):
+        (WebCore::CCVideoDrawQuad::format):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        (WebCore::CCVideoLayerImpl::didDraw):
+        (WebCore::CCVideoLayerImpl::computeVisibleSize):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::providerMutex):
+        (WebCore::CCVideoLayerImpl::provider):
+        (Texture):
+
 2012-02-17  Stephen Chenney  <schenney@chromium.org>
 
         Crash at WebCore::SVGUseElement::expandSymbolElementsInShadowTree

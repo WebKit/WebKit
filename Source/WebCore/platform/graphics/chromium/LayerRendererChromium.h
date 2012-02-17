@@ -168,6 +168,13 @@ private:
     void drawPluginQuad(const CCPluginDrawQuad*);
 
     ManagedTexture* getOffscreenLayerTexture();
+    void copyPlaneToTexture(const CCVideoDrawQuad*, const void* plane, int index);
+    bool copyFrameToTextures(const CCVideoDrawQuad*);
+    template<class Program> void drawSingleTextureVideoQuad(const CCVideoDrawQuad*, Program*, float widthScaleFactor, Platform3DObject textureId);
+    void drawNativeTexture(const CCVideoDrawQuad*);
+    void drawRGBA(const CCVideoDrawQuad*);
+    void drawYUV(const CCVideoDrawQuad*);
+
     void copyOffscreenTextureToDisplay();
 
     void setDrawViewportRect(const IntRect&, bool flipY);

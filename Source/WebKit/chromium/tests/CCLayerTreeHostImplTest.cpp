@@ -276,6 +276,63 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
     }
 }
 
+class DidDrawCheckLayer : public CCLayerImpl {
+public:
+    static PassRefPtr<DidDrawCheckLayer> create(int id) { return adoptRef(new DidDrawCheckLayer(id)); }
+
+    virtual void didDraw()
+    {
+        m_didDrawCalled = true;
+    }
+
+    bool didDrawCalled() const { return m_didDrawCalled; }
+
+private:
+    explicit DidDrawCheckLayer(int id)
+        : CCLayerImpl(id)
+        , m_didDrawCalled(false)
+    {
+        setAnchorPoint(FloatPoint(0, 0));
+        setBounds(IntSize(10, 10));
+        setDrawsContent(true);
+    }
+
+    bool m_didDrawCalled;
+};
+
+TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->setViewportSize(IntSize(10, 10));
+
+    RefPtr<DidDrawCheckLayer> root = DidDrawCheckLayer::create(0);
+    m_hostImpl->setRootLayer(root);
+
+    RefPtr<DidDrawCheckLayer> layer1 = DidDrawCheckLayer::create(1);
+    root->addChild(layer1);
+
+    RefPtr<DidDrawCheckLayer> layer2 = DidDrawCheckLayer::create(2);
+    layer1->addChild(layer2);
+
+    layer1->setOpacity(0.3);
+    layer1->setPreserves3D(false);
+
+    EXPECT_FALSE(root->didDrawCalled());
+    EXPECT_FALSE(layer1->didDrawCalled());
+    EXPECT_FALSE(layer2->didDrawCalled());
+
+    m_hostImpl->drawLayers();
+
+    EXPECT_TRUE(root->didDrawCalled());
+    EXPECT_TRUE(layer1->didDrawCalled());
+    EXPECT_TRUE(layer2->didDrawCalled());
+
+    EXPECT_NE(root->renderSurface(), layer1->renderSurface());
+    EXPECT_TRUE(!!layer1->renderSurface());
+}
+
 class BlendStateTrackerContext: public FakeWebGraphicsContext3D {
 public:
     BlendStateTrackerContext() : m_blend(false) { }
@@ -507,7 +564,6 @@ private:
 class FakeDrawableCCLayerImpl: public CCLayerImpl {
 public:
     explicit FakeDrawableCCLayerImpl(int id) : CCLayerImpl(id) { }
-    virtual void draw(LayerRendererChromium* renderer) { }
 };
 
 // Only reshape when we know we are going to draw. Otherwise, the reshape

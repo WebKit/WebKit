@@ -29,16 +29,17 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::Texture* textures, VideoFrameChromium* frame, GC3Denum format)
 {
-    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, layer));
+    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, textures, frame, format));
 }
 
-CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::Texture* textures, VideoFrameChromium* frame, GC3Denum format)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::VideoContent, quadRect)
-    , m_layer(layer)
+    , m_textures(textures)
+    , m_frame(frame)
+    , m_format(format)
 {
-    ASSERT(m_layer);
 }
 
 }

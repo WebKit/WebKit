@@ -115,11 +115,6 @@ bool CCLayerImpl::descendantDrawsContent()
     return false;
 }
 
-void CCLayerImpl::draw(LayerRendererChromium*)
-{
-    ASSERT_NOT_REACHED();
-}
-
 PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 {
     IntRect layerClipRect;

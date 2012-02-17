@@ -133,7 +133,7 @@ private:
     void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
-    void calculateRenderPasses(CCRenderPassList&);
+    void calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void optimizeRenderPasses(CCRenderPassList&);
     IntSize contentSize() const;
 

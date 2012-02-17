@@ -26,23 +26,28 @@
 #ifndef CCVideoDrawQuad_h
 #define CCVideoDrawQuad_h
 
+#include "GraphicsTypes3D.h"
 #include "cc/CCDrawQuad.h"
+#include "cc/CCVideoLayerImpl.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class CCLayerImpl;
 class CCVideoDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCVideoDrawQuad);
 public:
-    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, VideoFrameChromium*, GC3Denum format);
 
-    CCLayerImpl* layer() const { return m_layer; }
+    CCVideoLayerImpl::Texture* textures() const { return m_textures; }
+    VideoFrameChromium* frame() const { return m_frame; }
+    GC3Denum format() const { return m_format; }
 
 private:
-    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, VideoFrameChromium*, GC3Denum format);
 
-    CCLayerImpl* m_layer;
+    CCVideoLayerImpl::Texture* m_textures;
+    VideoFrameChromium* m_frame;
+    GC3Denum m_format;
 };
 
 }
