@@ -132,17 +132,16 @@ enum ParameterDefaultPolicy {
     {
         if (JSDOMWrapper* wrapper = getInlineCachedWrapper(world, domObject))
             return wrapper;
-        return world->m_wrappers.get(domObject).get();
+        return world->m_wrappers.get(domObject);
     }
 
     template <typename DOMClass> inline void cacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)
     {
         if (setInlineCachedWrapper(world, domObject, wrapper))
             return;
-        pair<DOMObjectWrapperMap::iterator, bool> entry = world->m_wrappers.add(domObject, JSC::Weak<JSDOMWrapper>());
-        ASSERT(entry.second);
-        JSC::Weak<JSDOMWrapper> handle(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
-        entry.first->second.swap(handle);
+        JSC::PassWeak<JSDOMWrapper> passWeak(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
+        pair<DOMObjectWrapperMap::iterator, bool> result = world->m_wrappers.add(domObject, passWeak);
+        ASSERT_UNUSED(result, result.second);
     }
 
     template <typename DOMClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)

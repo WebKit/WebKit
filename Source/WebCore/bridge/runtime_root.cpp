@@ -181,7 +181,7 @@ void RootObject::addRuntimeObject(JSGlobalData& globalData, RuntimeObject* objec
     ASSERT(m_isValid);
     ASSERT(!m_runtimeObjects.get(object));
 
-    m_runtimeObjects.set(object, JSC::Weak<RuntimeObject>(globalData, object, this));
+    m_runtimeObjects.set(object, JSC::PassWeak<RuntimeObject>(globalData, object, this));
 }
 
 void RootObject::removeRuntimeObject(RuntimeObject* object)

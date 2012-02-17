@@ -1,3 +1,51 @@
+2012-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Made Weak<T> single-owner, adding PassWeak<T>
+        https://bugs.webkit.org/show_bug.cgi?id=78740
+
+        Reviewed by Sam Weinig.
+
+        This works basically the same way as OwnPtr<T> and PassOwnPtr<T>.
+
+        This clarifies the semantics of finalizers: It's ambiguous and probably
+        a bug to copy a finalizer (i.e., it's a bug to run a C++ destructor
+        twice), so I've made Weak<T> non-copyable. Anywhere we used to copy a 
+        Weak<T>, we now use PassWeak<T>.
+
+        This also makes Weak<T> HashMaps more efficient.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype): Use PassWeak<T> instead of set(), since 
+        set() is gone now.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Export!
+
+        * heap/PassWeak.h: Added.
+        (JSC):
+        (PassWeak):
+        (JSC::PassWeak::PassWeak):
+        (JSC::PassWeak::~PassWeak):
+        (JSC::PassWeak::get):
+        (JSC::::leakHandle):
+        (JSC::adoptWeak):
+        (JSC::operator==):
+        (JSC::operator!=): This is the Weak<T> version of PassOwnPtr<T>.
+
+        * heap/Weak.h:
+        (Weak):
+        (JSC::Weak::Weak):
+        (JSC::Weak::release):
+        (JSC::Weak::hashTableDeletedValue):
+        (JSC::=):
+        (JSC): Changed to be non-copyable, removing a lot of copying-related
+        APIs. Added hash traits so hash maps still work.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate): Use PassWeak<T>, as required by
+        our new hash map API.
+
 2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the broken viewport tests

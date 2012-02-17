@@ -972,7 +972,7 @@ void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifi
     Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
     d->m_instance = instance;
-    d->m_finalizer.set(exec->globalData(), this, d);
+    d->m_finalizer = PassWeak<QtRuntimeMethod>(exec->globalData(), this, d);
 }
 
 QtRuntimeMethod::~QtRuntimeMethod()

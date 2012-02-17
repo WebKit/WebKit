@@ -3600,15 +3600,15 @@ MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, NativeFunction constructor)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
-    if (!*entry.first->second)
-        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, NoIntrinsic));
-    return entry.first->second.get();
+    std::pair<HostFunctionStubMap::iterator, bool> result = m_hostFunctionStubMap->add(function, PassWeak<NativeExecutable>());
+    if (!result.first->second)
+        result.first->second = PassWeak<NativeExecutable>(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, NoIntrinsic));
+    return result.first->second.get();
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, PassWeak<NativeExecutable>());
     if (!*entry.first->second) {
         MacroAssemblerCodeRef code;
         if (generator) {
@@ -3618,7 +3618,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
                 code = MacroAssemblerCodeRef();
         } else
             code = JIT::compileCTINativeCall(globalData, function);
-        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic));
+        entry.first->second = PassWeak<NativeExecutable>(*globalData, NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic));
     }
     return entry.first->second.get();
 }

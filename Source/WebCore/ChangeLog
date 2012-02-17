@@ -1,3 +1,29 @@
+2012-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Made Weak<T> single-owner, adding PassWeak<T>
+        https://bugs.webkit.org/show_bug.cgi?id=78740
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringSlowCase): Use PassWeak<T>, as required by our new
+        hash map API.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper): Use PassWeak<T> and raw pointer, as required by
+        our new hash map API.
+
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::setWrapper):
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::setWrapper):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::addRuntimeObject): Use PassWeak<T>, as
+        required by our new hash map and Weak<T> APIs.
+
 2012-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in visiblePositionForIndex
@@ -2119,6 +2145,7 @@
         * platform/ScrollView.h:
         Move wheelEvent to FrameView.
 
+>>>>>>> .r108008
 2012-02-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         RootObject::finalize can cause a crash in object->invalidate()
@@ -7640,7 +7667,6 @@
         (WebCore::RenderStyle::getRoundedBorderFor):
         (WebCore::RenderStyle::getRoundedInnerBorderFor):
 
-<<<<<<< .mine
 2012-02-09  Levi Weintraub  <leviw@chromium.org>
 
         Add pixelSnappedIntRect method
