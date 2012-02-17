@@ -127,3 +127,36 @@ function testContentToRegionsMapping(tolerance)
 
     return !results.length && !debug;
 }
+
+function logMessage(message, success)
+{
+    var pElem = document.createElement("p");
+
+    var spanElement = document.createElement("span");
+    spanElement.className = success ? "pass" : "fail";
+    var spanTextNode = success ? document.createTextNode("PASS") : document.createTextNode("FAIL");
+    spanElement.appendChild(spanTextNode);
+    pElem.appendChild(spanElement);
+
+    var textNode = document.createTextNode(message);
+    pElem.appendChild(textNode);
+	document.getElementById("console").appendChild(pElem);
+}
+
+function logPassMessage(message)
+{
+    logMessage(message, true);
+}
+
+function logFailMessage(message)
+{
+    var logMsg = "" + message;
+    if (logMsg.length > 0)
+        logMsg = " : " + logMsg;
+    logMessage(logMsg, false);
+}
+
+function assert(expression, failMessage)
+{
+    expression ? logPassMessage("") : logFailMessage(failMessage);
+}

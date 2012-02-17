@@ -30,14 +30,23 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
+#include "RenderFlowThread.h"
+
 namespace WebCore {
 
-WebKitNamedFlow::WebKitNamedFlow()
+WebKitNamedFlow::WebKitNamedFlow(RenderFlowThread* parentFlowThread)
+: m_parentFlowThread(parentFlowThread)
 {
 }
 
 WebKitNamedFlow::~WebKitNamedFlow()
 {
+}
+
+bool WebKitNamedFlow::overflow() const
+{
+    m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
+    return m_parentFlowThread->overflow();
 }
 
 } // namespace WebCore

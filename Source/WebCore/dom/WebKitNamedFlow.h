@@ -35,17 +35,22 @@
 
 namespace WebCore {
 
+class RenderFlowThread;
+
 class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {
 public:
-    static PassRefPtr<WebKitNamedFlow> create()
+    static PassRefPtr<WebKitNamedFlow> create(RenderFlowThread* parentFlowThread)
     {
-        return adoptRef(new WebKitNamedFlow);
+        return adoptRef(new WebKitNamedFlow(parentFlowThread));
     }
 
     ~WebKitNamedFlow();
 
+    bool overflow() const;
 private:
-    WebKitNamedFlow();
+    WebKitNamedFlow(RenderFlowThread*);
+
+    RenderFlowThread* m_parentFlowThread;
 };
 
 }

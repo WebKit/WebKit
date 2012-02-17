@@ -1,3 +1,27 @@
+2012-02-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Implement NamedFlow::overflow
+        https://bugs.webkit.org/show_bug.cgi?id=78880
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/webkit-named-flow-overflow.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::overflow):
+        (WebCore):
+        * dom/WebKitNamedFlow.h:
+        (WebCore):
+        (WebCore::WebKitNamedFlow::create):
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::ensureNamedFlow):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        * rendering/RenderFlowThread.h:
+
 2012-02-17  Joe Thomas  <joethomas@motorola.com>
 
         flex-wrap:nowrap should be flex-wrap:none

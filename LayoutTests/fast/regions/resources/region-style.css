@@ -37,3 +37,12 @@
     border: 1px solid black;
 }
 
+.pass {
+    font-weight: bold;
+    color: green;
+}
+
+.fail {
+    font-weight: bold;
+    color: red;
+}

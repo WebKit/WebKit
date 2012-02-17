@@ -51,6 +51,7 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
+    , m_overflow(false)
 {
     setIsAnonymous(false);
     setInRenderFlowThread();
@@ -867,7 +868,7 @@ void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
 WebKitNamedFlow* RenderFlowThread::ensureNamedFlow()
 {
     if (!m_namedFlow)
-        m_namedFlow = WebKitNamedFlow::create();
+        m_namedFlow = WebKitNamedFlow::create(this);
 
     return m_namedFlow.get();
 }
@@ -897,6 +898,10 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
             state = RenderRegion::RegionOverflow;
         region->setRegionState(state);
     }
+
+    // With the regions overflow state computed we can also set the overflow for the named flow.
+    RenderRegion* lastReg = lastRegion();
+    m_overflow = lastReg && (lastReg->regionState() == RenderRegion::RegionOverflow);
 }
 
 } // namespace WebCore

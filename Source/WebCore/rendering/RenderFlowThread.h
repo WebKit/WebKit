@@ -135,6 +135,7 @@ public:
     WebKitNamedFlow* ensureNamedFlow();
     void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
+    bool overflow() const { return m_overflow; }
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 
@@ -195,6 +196,7 @@ private:
     bool m_regionsInvalidated;
     bool m_regionsHaveUniformLogicalWidth;
     bool m_regionsHaveUniformLogicalHeight;
+    bool m_overflow;
     RefPtr<WebKitNamedFlow> m_namedFlow;
 };
 
