@@ -234,10 +234,10 @@ static bool webkitPrintOperationRunDialogWin32(WebKitPrintOperation*, GtkWindow*
 
 static void drawPagesForPrintingCompleted(WKErrorRef, void* context)
 {
-    WebKitPrintOperation* printOperation = WEBKIT_PRINT_OPERATION(context);
+    GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(WEBKIT_PRINT_OPERATION(context));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
     page->endPrinting();
-    g_signal_emit(printOperation, signals[DONE], 0, NULL);
+    g_signal_emit(printOperation.get(), signals[DONE], 0, NULL);
 }
 
 void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)
@@ -262,7 +262,7 @@ void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation,
 
     PrintInfo printInfo(priv->printSettings.get(), priv->pageSetup.get());
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(priv->webView));
-    page->drawPagesForPrinting(webFrame, printInfo, VoidCallback::create(printOperation, &drawPagesForPrintingCompleted));
+    page->drawPagesForPrinting(webFrame, printInfo, VoidCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
 }
 
 /**

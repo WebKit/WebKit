@@ -1,3 +1,16 @@
+2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make sure print operation object is alive until printing finishes in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=78829
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted): Adopt the WebKitPrintOperation
+        reference so that it's released when the callback finishes.
+        (webkitPrintOperationRunDialogForFrame): Pass a reference of
+        WebKitPrintOperation to the printing callback.
+
 2012-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Made Weak<T> single-owner, adding PassWeak<T>
