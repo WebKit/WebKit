@@ -14,6 +14,12 @@ pre .code {
 .wrong {
   color: #f00 !important;
 }
+
+.idbutton {
+  color: #888;
+  font-size: smaller;
+  cursor: pointer;
+}
 </style>
 
 
@@ -1104,11 +1110,14 @@ drawJpg(); // TODO: Make this code handle jpg in addition to the png support.
         var item = listItems[i];
         if (!item.id)
             continue;
-        item.setAttribute('title', '#' + listItems[i].id);
-        item.style.cursor = 'pointer';
-        item.addEventListener('click', function(event) {
-            window.location.hash = event.currentTarget.title;
+        var button = document.createElement('span');
+        button.className = 'idbutton';
+        button.setAttribute('data-target-id', listItems[i].id);
+        button.appendChild(document.createTextNode(' [' + listItems[i].id + ']'));
+        button.addEventListener('click', function(event) {
+            window.location.hash = '#' + event.currentTarget.getAttribute('data-target-id');
         });
+        listItems[i].appendChild(button);
         if (idsUsed[item.id])
             alert('The id ' + item.id + ' is used more than once in this document.');
         idsUsed[item.id] = 1;

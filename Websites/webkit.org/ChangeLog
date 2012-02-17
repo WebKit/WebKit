@@ -1,3 +1,15 @@
+2012-02-16  Kent Tamura  <tkent@chromium.org>
+
+        Improve usability of coding-style.html
+        https://bugs.webkit.org/show_bug.cgi?id=78470
+
+        Reviewed by Eric Seidel.
+
+        * coding/coding-style.html:
+        - Do not add a title attribute to each of LI elements
+        - Do not add a click handler to each of them
+        - Add a SPAN element in order to show [id-name] and provide smaller clickable area.
+
 2012-01-23  Seo Sanghyeon  <sh4.seo@samsung.com>
 
         website: Reword WEBKITOUTPUTDIR documentation on Building WebKit page
