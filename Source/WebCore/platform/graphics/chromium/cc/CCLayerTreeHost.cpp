@@ -505,10 +505,18 @@ static void enterTargetRenderSurface(Vector<RenderSurfaceRegion>& stack, RenderS
         stack.append(RenderSurfaceRegion());
         stack.last().surface = newTarget;
     } else if (stack.last().surface != newTarget) {
+        // If we are entering a subtree that is going to move pixels around, then the occlusion we've computed
+        // so far won't apply to the pixels we're drawing here in the same way. We discard the occlusion thus
+        // far to be safe, and ensure we don't cull any pixels that are moved such that they become visible.
+        const RenderSurfaceChromium* oldAncestorThatMovesPixels = stack.last().surface->nearestAncestorThatMovesPixels();
+        const RenderSurfaceChromium* newAncestorThatMovesPixels = newTarget->nearestAncestorThatMovesPixels();
+        bool enteringSubtreeThatMovesPixels = newAncestorThatMovesPixels && newAncestorThatMovesPixels != oldAncestorThatMovesPixels;
+
         stack.append(RenderSurfaceRegion());
         stack.last().surface = newTarget;
         int lastIndex = stack.size() - 1;
-        stack[lastIndex].occludedInScreen = stack[lastIndex - 1].occludedInScreen;
+        if (!enteringSubtreeThatMovesPixels)
+            stack[lastIndex].occludedInScreen = stack[lastIndex - 1].occludedInScreen;
     }
 }
 
@@ -551,7 +559,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             paintMaskAndReplicaForRenderSurface(*it, paintType);
             // FIXME: add the replica layer to the current occlusion
 
-            if (it->maskLayer() || it->renderSurface()->drawOpacity() < 1)
+            if (it->maskLayer() || it->renderSurface()->drawOpacity() < 1 || it->renderSurface()->filters().hasFilterThatAffectsOpacity())
                 targetSurfaceStack.last().occludedInScreen = Region();
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());

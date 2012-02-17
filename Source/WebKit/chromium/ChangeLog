@@ -1,3 +1,17 @@
+2012-02-16  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Occlusion tracking with CSS filters
+        https://bugs.webkit.org/show_bug.cgi?id=77498
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestLayerOcclusionWithFilters):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::CCLayerTreeHostTestLayerOcclusionWithFilters):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::afterTest):
+        (WTF):
+
 2012-02-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Chromium WebKit API support for IDBObjectStore.delete(IDBKeyRange)

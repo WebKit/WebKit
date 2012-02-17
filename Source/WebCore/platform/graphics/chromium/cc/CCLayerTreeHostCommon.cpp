@@ -128,7 +128,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
         return true;
 
     // If the layer uses a CSS filter.
-    if (layer->filters().size() > 0)
+    if (!layer->filters().isEmpty())
         return true;
 
     // If the layer flattens its subtree (i.e. the layer doesn't preserve-3d), but it is
@@ -150,7 +150,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
-static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
+static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, RenderSurfaceType* nearestAncestorThatMovesPixels, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     typedef Vector<RefPtr<LayerType> > LayerList;
 
@@ -312,6 +312,9 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             layer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);
 
         renderSurface->setFilters(layer->filters());
+        if (renderSurface->filters().hasFilterThatMovesPixels())
+            nearestAncestorThatMovesPixels = renderSurface;
+        renderSurface->setNearestAncestorThatMovesPixels(nearestAncestorThatMovesPixels);
 
         renderSurfaceLayerList.append(layer);
     } else {
@@ -393,7 +396,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
         LayerType* child = layer->children()[i].get();
-        bool drawsContent = calculateDrawTransformsAndVisibilityInternal<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
+        bool drawsContent = calculateDrawTransformsAndVisibilityInternal<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, nearestAncestorThatMovesPixels, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
 
         if (drawsContent) {
             if (child->renderSurface()) {
@@ -515,13 +518,13 @@ static void walkLayersAndCalculateVisibleLayerRects(const Vector<RefPtr<LayerTyp
 
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
 {
-    WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, RenderSurfaceChromium, void*>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, 0, maxTextureSize);
+    WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, RenderSurfaceChromium, void*>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, 0, maxTextureSize);
     walkLayersAndCalculateVisibleLayerRects<LayerChromium, RenderSurfaceChromium>(renderSurfaceLayerList);
 }
 
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(CCLayerImpl* layer, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<CCLayerImpl> >& renderSurfaceLayerList, Vector<RefPtr<CCLayerImpl> >& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
 {
-    calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
+    calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
     walkLayersAndCalculateVisibleLayerRects<CCLayerImpl, CCRenderSurface>(renderSurfaceLayerList);
 }
 

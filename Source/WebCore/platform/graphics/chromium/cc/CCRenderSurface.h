@@ -76,6 +76,9 @@ public:
     const FilterOperations& filters() const { return m_filters; }
     SkBitmap applyFilters(LayerRendererChromium*);
 
+    void setNearestAncestorThatMovesPixels(CCRenderSurface* surface) { m_nearestAncestorThatMovesPixels = surface; }
+    const CCRenderSurface* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
+
     void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
 
@@ -131,6 +134,10 @@ private:
     FilterOperations m_filters;
     IntRect m_clipRect;
     Vector<RefPtr<CCLayerImpl> > m_layerList;
+
+    // The nearest ancestor target surface that will contain the contents of this surface, and that is going
+    // to move pixels within the surface (such as with a blur). This can point to itself.
+    CCRenderSurface* m_nearestAncestorThatMovesPixels;
 
     OwnPtr<CCDamageTracker> m_damageTracker;
 

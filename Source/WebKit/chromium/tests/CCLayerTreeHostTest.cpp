@@ -28,6 +28,7 @@
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
+#include "FilterOperations.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "Region.h"
@@ -1664,6 +1665,94 @@ public:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerOcclusion)
+
+class CCLayerTreeHostTestLayerOcclusionWithFilters : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestLayerOcclusionWithFilters() { }
+
+    virtual void beginTest()
+    {
+        RefPtr<TestLayerChromium> rootLayer = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> child = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> child2 = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> grandChild = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> mask = TestLayerChromium::create();
+
+        TransformationMatrix identityMatrix;
+        TransformationMatrix childTransform;
+        childTransform.translate(250, 250);
+        childTransform.rotate(90);
+        childTransform.translate(-250, -250);
+
+        child->setMasksToBounds(true);
+
+        // If the child layer has a filter that changes alpha values, and is below child2, then child2 should contribute to occlusion on everything,
+        // and child shouldn't contribute to the rootLayer
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+
+        {
+            FilterOperations filters;
+            filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::OPACITY));
+            child->setFilters(filters);
+        }
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 40, 90, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(2u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer has a filter that moves pixels/changes alpha, and is below child2, then child should not inherit occlusion from outside its subtree,
+        // and should not contribute to the rootLayer
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+
+        {
+            FilterOperations filters;
+            filters.operations().append(BlurFilterOperation::create(Length(10, WebCore::Percent), FilterOperation::BLUR));
+            child->setFilters(filters);
+        }
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // Kill the layerTreeHost immediately.
+        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost.clear();
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerOcclusionWithFilters)
 
 class CCLayerTreeHostTestManySurfaces : public CCLayerTreeHostTest {
 public:

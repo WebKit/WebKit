@@ -136,6 +136,22 @@ void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit
     }
 }
 
+bool FilterOperations::hasFilterThatAffectsOpacity() const
+{
+    for (size_t i = 0; i < m_operations.size(); ++i)
+        if (m_operations[i]->affectsOpacity())
+            return true;
+    return false;
+}
+
+bool FilterOperations::hasFilterThatMovesPixels() const
+{
+    for (size_t i = 0; i < m_operations.size(); ++i)
+        if (m_operations[i]->movesPixels())
+            return true;
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_FILTERS)
