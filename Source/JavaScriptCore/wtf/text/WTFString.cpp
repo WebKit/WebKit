@@ -1036,7 +1036,7 @@ intptr_t charactersToIntPtr(const UChar* data, size_t length, bool* ok)
     return toIntegralType<intptr_t, UChar>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
 }
 
-template <typename CharType>
+template <typename CharType, WTF::AllowTrailingJunkTag allowTrailingJunk>
 static inline double toDoubleType(const CharType* data, size_t length, bool* ok, bool* didReadNumber)
 {
     if (!length) {
@@ -1053,7 +1053,7 @@ static inline double toDoubleType(const CharType* data, size_t length, bool* ok,
     bytes[length] = '\0';
     char* start = bytes.data();
     char* end;
-    double val = WTF::strtod<WTF::DisallowTrailingJunk>(start, &end);
+    double val = WTF::strtod<allowTrailingJunk>(start, &end);
     if (ok)
         *ok = (end == 0 || *end == '\0') && !isnan(val);
     if (didReadNumber)
@@ -1063,24 +1063,36 @@ static inline double toDoubleType(const CharType* data, size_t length, bool* ok,
 
 double charactersToDouble(const LChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
-    return toDoubleType<LChar>(data, length, ok, didReadNumber);
+    return toDoubleType<LChar, WTF::DisallowTrailingJunk>(data, length, ok, didReadNumber);
 }
 
 double charactersToDouble(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
-    return toDoubleType<UChar>(data, length, ok, didReadNumber);
+    return toDoubleType<UChar, WTF::DisallowTrailingJunk>(data, length, ok, didReadNumber);
 }
 
 float charactersToFloat(const LChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<LChar>(data, length, ok, didReadNumber));
+    return static_cast<float>(toDoubleType<LChar, WTF::DisallowTrailingJunk>(data, length, ok, didReadNumber));
 }
 
 float charactersToFloat(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<UChar>(data, length, ok, didReadNumber));
+    return static_cast<float>(toDoubleType<UChar, WTF::DisallowTrailingJunk>(data, length, ok, didReadNumber));
+}
+
+float charactersToFloatIgnoringJunk(const LChar* data, size_t length, bool* ok, bool* didReadNumber)
+{
+    // FIXME: This will return ok even when the string fits into a double but not a float.
+    return static_cast<float>(toDoubleType<LChar, WTF::AllowTrailingJunk>(data, length, ok, didReadNumber));
+}
+
+float charactersToFloatIgnoringJunk(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
+{
+    // FIXME: This will return ok even when the string fits into a double but not a float.
+    return static_cast<float>(toDoubleType<UChar, WTF::AllowTrailingJunk>(data, length, ok, didReadNumber));
 }
 
 const String& emptyString()

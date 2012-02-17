@@ -1,3 +1,22 @@
+2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix the broken viewport tests
+        https://bugs.webkit.org/show_bug.cgi?id=78774
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/text/WTFString.cpp:
+        (WTF):
+        (WTF::toDoubleType): Template-ized to allow other functions to specify whether they
+        want to allow trailing junk or not when calling strtod.
+        (WTF::charactersToDouble):
+        (WTF::charactersToFloat):
+        (WTF::charactersToFloatIgnoringJunk): Created new version of charactersToFloat that allows 
+        trailing junk.
+        * wtf/text/WTFString.h:
+        (WTF):
+
 2012-02-16  Oliver Hunt  <oliver@apple.com>
 
         Implement Error.stack

@@ -212,7 +212,11 @@ static float numericPrefix(const String& keyString, const String& valueString, D
     // and we should check if the valueString prefix was a number.
 
     bool didReadNumber;
-    float value = valueString.toFloat(ok, &didReadNumber);
+    float value;
+    if (valueString.is8Bit())
+        value = WTF::charactersToFloatIgnoringJunk(valueString.characters8(), valueString.length(), ok, &didReadNumber);
+    else
+        value = WTF::charactersToFloatIgnoringJunk(valueString.characters16(), valueString.length(), ok, &didReadNumber);
     if (!*ok) {
         if (!didReadNumber) {
             ASSERT(!value);
