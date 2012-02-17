@@ -13,7 +13,7 @@ function test()
     InspectorTest.selectNodeAndWaitForStyles("inspected", selectCallback);
     function selectCallback()
     {
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", sniffUpdate, true);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_innerRebuildUpdate", sniffUpdate, true);
         var element = WebInspector.panels.elements.treeOutline.element;
         for (var i = 0; i < keydownCount; ++i)
             element.dispatchEvent(InspectorTest.createKeyEvent("Up"));

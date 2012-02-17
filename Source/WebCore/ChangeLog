@@ -1,3 +1,29 @@
+2012-02-17  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: split innerUpdate into rebuildUpdate and refreshUpdate, make computed styles load lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=78827
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate.computedStyleCallback):
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._validateNode):
+        (WebInspector.StylesSidebarPane.prototype._styleSheetOrMediaQueryResultChanged):
+        (WebInspector.StylesSidebarPane.prototype._attributesModified):
+        (WebInspector.StylesSidebarPane.prototype._attributesRemoved):
+        (WebInspector.StylesSidebarPane.prototype._styleInvalidated):
+        (WebInspector.StylesSidebarPane.prototype._innerRefreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._innerRebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._nodeStylesUpdatedForTest):
+        (WebInspector.StylesSidebarPane.prototype._toggleElementStatePane):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane.clickListener):
+        (WebInspector.StylesSidebarPane.prototype._showUserAgentStylesSettingChanged):
+        (WebInspector.ComputedStyleSidebarPane.prototype.expand):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Allow partial updates

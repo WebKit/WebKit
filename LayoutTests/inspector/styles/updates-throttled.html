@@ -13,7 +13,7 @@ function test()
     InspectorTest.selectNodeAndWaitForStyles("inspected", selectCallback);
     function selectCallback()
     {
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", sniffRebuild, true);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_innerRebuildUpdate", sniffRebuild, true);
         var stylesPane = WebInspector.panels.elements.sidebarPanes.styles;
         for (var i = 0; i < UPDATE_COUNT; ++i)
             stylesPane.update(stylesPane.node, true);

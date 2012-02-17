@@ -69,13 +69,13 @@ InspectorTest.selectNodeWithId = function(idValue, callback)
     InspectorTest.nodeWithId(idValue, onNodeFound);
 }
 
-InspectorTest.waitForStyles = function(idValue, callback)
+InspectorTest.waitForStyles = function(idValue, callback, requireRebuild)
 {
     callback = InspectorTest.safeWrap(callback);
 
-    (function sniff(node)
+    (function sniff(node, rebuild)
     {
-        if (node && node.getAttribute("id") === idValue) {
+        if ((rebuild || !requireRebuild) && node && node.getAttribute("id") === idValue) {
             callback();
             return;
         }
@@ -91,7 +91,7 @@ InspectorTest.selectNodeAndWaitForStyles = function(idValue, callback)
 
     var targetNode;
 
-    InspectorTest.waitForStyles(idValue, stylesUpdated);
+    InspectorTest.waitForStyles(idValue, stylesUpdated, true);
     InspectorTest.selectNodeWithId(idValue, nodeSelected);
 
     function nodeSelected(node)
