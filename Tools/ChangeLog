@@ -1,3 +1,19 @@
+2012-02-17  Dirk Pranke  <dpranke@chromium.org>
+
+        revert r107147 - breaks webkit-patch on Mac SL
+        https://bugs.webkit.org/show_bug.cgi?id=78866
+
+        Reviewed by Adam Barth.
+
+        It appears that zipfile.ExtractAll is broken on Python 2.6.1,
+        which is the version that ships on Mac SL. Reverting this
+        change until we no longer have to worry about that version.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller):
+        (AutoInstaller._extract_all): Added a comment about SL.
+        (AutoInstaller._unzip):
+
 2012-02-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS regions enabled by default

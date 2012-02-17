@@ -259,6 +259,44 @@ class AutoInstaller(object):
 
         return target_path
 
+    # This is a replacement for ZipFile.extractall(), which is
+    # available in Python 2.6 but not in earlier versions.
+    # NOTE: The version in 2.6.1 (which shipped on Snow Leopard) is broken!
+    def _extract_all(self, zip_file, target_dir):
+        self._log_transfer("Extracting zip file...", zip_file, target_dir)
+
+        # This is helpful for debugging purposes.
+        _log.debug("Listing zip file contents...")
+        for name in zip_file.namelist():
+            _log.debug('    * "%s"' % name)
+
+        for name in zip_file.namelist():
+            path = os.path.join(target_dir, name)
+            self._log_transfer("Extracting...", name, path)
+
+            if not os.path.basename(path):
+                # Then the path ends in a slash, so it is a directory.
+                self._create_directory(path)
+                continue
+            # Otherwise, it is a file.
+
+            try:
+                # We open this file w/o encoding, as we're reading/writing
+                # the raw byte-stream from the zip file.
+                outfile = open(path, 'wb')
+            except IOError, err:
+                # Not all zip files seem to list the directories explicitly,
+                # so try again after creating the containing directory.
+                _log.debug("Got IOError: retrying after creating directory...")
+                dir = os.path.dirname(path)
+                self._create_directory(dir)
+                outfile = open(path, 'wb')
+
+            try:
+                outfile.write(zip_file.read(name))
+            finally:
+                outfile.close()
+
     def _unzip(self, path, scratch_dir):
         # zipfile.extractall() extracts to a path without the
         # trailing ".zip".
@@ -276,7 +314,7 @@ class AutoInstaller(object):
             raise Exception(message)
 
         try:
-            zip_file.extractall(scratch_dir)
+            self._extract_all(zip_file, scratch_dir)
         finally:
             zip_file.close()
 
