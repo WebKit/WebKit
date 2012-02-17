@@ -7381,9 +7381,9 @@
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
 		1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageMac.cpp; sourceTree = "<group>"; };
-		1C435CD314E8544F004E10EA /* Inspector.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Inspector.json; sourceTree = "<group>"; };
-		1C435CD414E8545B004E10EA /* Inspector-0.1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Inspector-0.1.json"; sourceTree = "<group>"; };
-		1C435CD514E8545B004E10EA /* Inspector-1.0.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Inspector-1.0.json"; sourceTree = "<group>"; };
+		1C435CD314E8544F004E10EA /* Inspector.json */ = {isa = PBXFileReference; lastKnownFileType = text; path = Inspector.json; sourceTree = "<group>"; };
+		1C435CD414E8545B004E10EA /* Inspector-0.1.json */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Inspector-0.1.json"; sourceTree = "<group>"; };
+		1C435CD514E8545B004E10EA /* Inspector-1.0.json */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Inspector-1.0.json"; sourceTree = "<group>"; };
 		1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButtonController.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C4C8F000AD85D87009475CE /* DeleteButtonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButtonController.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C4C8F630AD8655D009475CE /* DeleteButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButton.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };

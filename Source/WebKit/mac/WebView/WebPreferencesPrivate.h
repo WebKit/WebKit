@@ -189,6 +189,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)cssCustomFilterEnabled;
 - (void)setCSSCustomFilterEnabled:(BOOL)enabled;
 
+- (BOOL)cssRegionsEnabled;
+- (void)setCSSRegionsEnabled:(BOOL)enabled;
+
 - (BOOL)showDebugBorders;
 - (void)setShowDebugBorders:(BOOL)show;
 

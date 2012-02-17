@@ -53,6 +53,7 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     , m_regionsHaveUniformLogicalHeight(true)
     , m_overflow(false)
 {
+    ASSERT(node->document()->cssRegionsEnabled());
     setIsAnonymous(false);
     setInRenderFlowThread();
 }

@@ -1024,8 +1024,15 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
     return e.release();
 }
 
+bool Document::cssRegionsEnabled() const
+{
+    return settings() && settings()->cssRegionsEnabled(); 
+}
+
 PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
 {
+    if (!cssRegionsEnabled())
+        return 0;
     if (!renderer())
         return 0;
     if (RenderView* view = renderer()->view())

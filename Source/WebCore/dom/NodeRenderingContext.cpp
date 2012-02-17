@@ -293,6 +293,9 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
+    if (!m_node->document()->cssRegionsEnabled())
+        return;
+
     if (!m_node->isElementNode() || !m_style || m_style->flowThread().isEmpty())
         return;
 

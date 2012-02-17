@@ -158,7 +158,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     case RUN_IN:
     case COMPACT:
         // Only non-replaced block elements can become a region.
-        if (!style->regionThread().isEmpty() && doc->renderView())
+        if (doc->cssRegionsEnabled() && !style->regionThread().isEmpty() && doc->renderView())
             return new (arena) RenderRegion(node, doc->renderView()->ensureRenderFlowThreadWithName(style->regionThread()));
         return new (arena) RenderBlock(node);
     case LIST_ITEM:

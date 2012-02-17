@@ -1,5 +1,50 @@
 2012-02-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        CSS regions enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=78525
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/css-regions-disabled.html
+
+        Add a runtime preference to enable/disable regions functionality at runtime(WebKitCSSRegionsEnabled).
+        CSSRegions are still enabled by default.
+        In DRT, use layoutTestController.overridePreference("WebKitCSSRegionsEnabled", "0") to disable the css regions functionality.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::cssRegionsEnabled):
+        (WebCore):
+        (WebCore::CSSParser::parseFlowThread):
+        (WebCore::CSSParser::parseRegionThread):
+        (WebCore::CSSParser::createRegionRule):
+        * css/CSSParser.h:
+        * dom/Document.cpp:
+        (WebCore::Document::cssRegionsEnabled):
+        (WebCore):
+        (WebCore::Document::webkitGetFlowByName):
+        * dom/Document.h:
+        (Document):
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRegionOverflow):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setCSSRegionsEnabled):
+        (WebCore::Settings::cssRegionsEnabled):
+        (Settings):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+
+2012-02-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions]Implement NamedFlow::overflow
         https://bugs.webkit.org/show_bug.cgi?id=78880
 

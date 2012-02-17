@@ -82,6 +82,7 @@ struct WebPreferences {
     WebKit::WebString defaultTextEncodingName;
     bool developerExtrasEnabled;
     bool experimentalWebGLEnabled;
+    bool experimentalCSSRegionsEnabled;
     bool javaEnabled;
     bool javaScriptCanAccessClipboard;
     bool javaScriptCanOpenWindowsAutomatically;

@@ -80,6 +80,7 @@ void WebPreferences::reset()
     defaultTextEncodingName = WebString::fromUTF8("ISO-8859-1");
     developerExtrasEnabled = true;
     experimentalWebGLEnabled = false;
+    experimentalCSSRegionsEnabled = true;
     javaEnabled = false;
     javaScriptCanAccessClipboard = true;
     javaScriptCanOpenWindowsAutomatically = true;
@@ -193,6 +194,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setDefaultTextEncodingName(defaultTextEncodingName);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled);
     settings->setExperimentalWebGLEnabled(experimentalWebGLEnabled);
+    settings->setExperimentalCSSRegionsEnabled(experimentalCSSRegionsEnabled);
     settings->setJavaEnabled(javaEnabled);
     settings->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
     settings->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);

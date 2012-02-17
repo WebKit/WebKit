@@ -648,6 +648,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setAcceleratedDrawingEnabled:NO];
 #endif
     [preferences setWebGLEnabled:NO];
+    [preferences setCSSRegionsEnabled:YES];
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
     [preferences setHixie76WebSocketProtocolEnabled:NO];

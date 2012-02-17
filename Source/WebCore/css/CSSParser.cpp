@@ -991,14 +991,14 @@ bool CSSParser::parseValue(int propId, bool important)
             || id == CSSValueAvoid
             || id == CSSValueLeft
             || id == CSSValueRight)
-            validPrimitive = true;
+            validPrimitive = ((propId == CSSPropertyWebkitRegionBreakAfter) || (propId == CSSPropertyWebkitRegionBreakBefore)) ? cssRegionsEnabled() : true;
         break;
 
     case CSSPropertyPageBreakInside:     // avoid | auto | inherit
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitRegionBreakInside:
         if (id == CSSValueAuto || id == CSSValueAvoid)
-            validPrimitive = true;
+            validPrimitive = (propId == CSSPropertyWebkitRegionBreakInside) ? cssRegionsEnabled() : true;
         break;
 
     case CSSPropertyEmptyCells:          // show | hide | inherit
@@ -1756,11 +1756,15 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
         break;
     case CSSPropertyWebkitFlowInto:
+        if (!cssRegionsEnabled())
+            return false;
         return parseFlowThread(propId, important);
     case CSSPropertyWebkitFlowFrom:
+        if (!cssRegionsEnabled())
+            return false;
         return parseRegionThread(propId, important);
     case CSSPropertyWebkitRegionOverflow:
-        if (id == CSSValueAuto || id == CSSValueBreak)
+        if (cssRegionsEnabled() && (id == CSSValueAuto || id == CSSValueBreak))
             validPrimitive = true;
         break;
 
@@ -7063,10 +7067,19 @@ static bool validFlowName(const String& flowName)
     return true;
 }
 
+bool CSSParser::cssRegionsEnabled() const
+{
+    if (Document* document = findDocument())
+        return document->cssRegionsEnabled();
+
+    return false;
+}
+
 // auto | <ident>
 bool CSSParser::parseFlowThread(int propId, bool important)
 {
     ASSERT(propId == CSSPropertyWebkitFlowInto);
+    ASSERT(cssRegionsEnabled());
 
     if (m_valueList->size() != 1)
         return false;
@@ -7098,6 +7111,7 @@ bool CSSParser::parseFlowThread(int propId, bool important)
 bool CSSParser::parseRegionThread(int propId, bool important)
 {
     ASSERT(propId == CSSPropertyWebkitFlowFrom);
+    ASSERT(cssRegionsEnabled());
 
     if (m_valueList->size() != 1)
         return false;
@@ -8929,7 +8943,7 @@ void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector>
 
 CSSRule* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules)
 {
-    if (!regionSelector || !rules)
+    if (!cssRegionsEnabled() || !regionSelector || !rules)
         return 0;
 
     m_allowImportRules = m_allowNamespaceDeclarations = false;

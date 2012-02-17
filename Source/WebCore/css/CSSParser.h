@@ -213,6 +213,7 @@ public:
     bool parseFontFeatureTag(CSSValueList*);
     bool parseFontFeatureSettings(bool important);
 
+    bool cssRegionsEnabled() const;
     bool parseFlowThread(int propId, bool important);
     bool parseRegionThread(int propId, bool important);
 

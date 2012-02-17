@@ -1966,7 +1966,7 @@ const AtomicString& Element::webkitRegionOverflow() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (renderer() && renderer()->isRenderRegion()) {
+    if (document()->cssRegionsEnabled() && renderer() && renderer()->isRenderRegion()) {
         RenderRegion* region = toRenderRegion(renderer());
         switch (region->regionState()) {
         case RenderRegion::RegionFit: {
