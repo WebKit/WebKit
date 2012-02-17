@@ -1182,6 +1182,91 @@ PassRefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelect
     return style;
 }
 
+WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection& selection, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings)
+{
+    hasNestedOrMultipleEmbeddings = true;
+
+    if (selection.isNone())
+        return NaturalWritingDirection;
+
+    Position position = selection.start().downstream();
+
+    Node* node = position.deprecatedNode();
+    if (!node)
+        return NaturalWritingDirection;
+
+    Position end;
+    if (selection.isRange()) {
+        end = selection.end().upstream();
+
+        Node* pastLast = Range::create(end.document(), position.parentAnchoredEquivalent(), end.parentAnchoredEquivalent())->pastLastNode();
+        for (Node* n = node; n && n != pastLast; n = n->traverseNextNode()) {
+            if (!n->isStyledElement())
+                continue;
+
+            RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(n);
+            RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+            if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
+                continue;
+
+            int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+            if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
+                return NaturalWritingDirection;
+        }
+    }
+
+    if (selection.isCaret()) {
+        WritingDirection direction;
+        if (typingStyle && typingStyle->textDirection(direction)) {
+            hasNestedOrMultipleEmbeddings = false;
+            return direction;
+        }
+        node = selection.visibleStart().deepEquivalent().deprecatedNode();
+    }
+
+    // The selection is either a caret with no typing attributes or a range in which no embedding is added, so just use the start position
+    // to decide.
+    Node* block = enclosingBlock(node);
+    WritingDirection foundDirection = NaturalWritingDirection;
+
+    for (; node != block; node = node->parentNode()) {
+        if (!node->isStyledElement())
+            continue;
+
+        RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(node);
+        RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
+            continue;
+
+        int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+        if (unicodeBidiValue == CSSValueNormal)
+            continue;
+
+        if (unicodeBidiValue == CSSValueBidiOverride)
+            return NaturalWritingDirection;
+
+        ASSERT(unicodeBidiValue == CSSValueEmbed);
+        RefPtr<CSSValue> direction = style->getPropertyCSSValue(CSSPropertyDirection);
+        if (!direction || !direction->isPrimitiveValue())
+            continue;
+
+        int directionValue = static_cast<CSSPrimitiveValue*>(direction.get())->getIdent();
+        if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
+            continue;
+
+        if (foundDirection != NaturalWritingDirection)
+            return NaturalWritingDirection;
+
+        // In the range case, make sure that the embedding element persists until the end of the range.
+        if (selection.isRange() && !end.deprecatedNode()->isDescendantOf(node))
+            return NaturalWritingDirection;
+        
+        foundDirection = directionValue == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+    }
+    hasNestedOrMultipleEmbeddings = false;
+    return foundDirection;
+}
+
 static void reconcileTextDecorationProperties(StylePropertySet* style)
 {    
     RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);

@@ -241,7 +241,9 @@ static String valueStyle(Frame* frame, int propertyID)
 static TriState stateTextWritingDirection(Frame* frame, WritingDirection direction)
 {
     bool hasNestedOrMultipleEmbeddings;
-    WritingDirection selectionDirection = frame->editor()->textDirectionForSelection(hasNestedOrMultipleEmbeddings);
+    WritingDirection selectionDirection = EditingStyle::textDirectionForSelection(frame->selection()->selection(),
+        frame->selection()->typingStyle(), hasNestedOrMultipleEmbeddings);
+    // FXIME: We should be returning MixedTriState when selectionDirection == direction && hasNestedOrMultipleEmbeddings
     return (selectionDirection == direction && !hasNestedOrMultipleEmbeddings) ? TrueTriState : FalseTriState;
 }
 

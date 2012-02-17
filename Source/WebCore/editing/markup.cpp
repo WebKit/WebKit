@@ -30,7 +30,6 @@
 #include "markup.h"
 
 #include "CDATASection.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"

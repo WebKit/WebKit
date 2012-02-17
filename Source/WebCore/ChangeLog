@@ -1,3 +1,27 @@
+2012-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move textDirectionForSelection from Editor to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=78868
+
+        Reviewed by Enrica Casucci.
+
+        Move textDirectionForSelection from Editor to EditingStyle to centralize the editing code's
+        dependency on CSSStyleDeclaration.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::textDirectionForSelection):
+        (WebCore):
+        * editing/EditingStyle.h:
+        (EditingStyle):
+        * editing/Editor.cpp:
+        (WebCore):
+        * editing/Editor.h:
+        (Editor):
+        * editing/EditorCommand.cpp:
+        (WebCore::stateTextWritingDirection):
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/markup.cpp:
+
 2012-02-17  David Barton  <dbarton@mathscribe.com>
 
         MathML internals - embellished operators, getBase() accessor functions

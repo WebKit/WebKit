@@ -30,7 +30,6 @@
 #include "ApplyStyleCommand.h"
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"

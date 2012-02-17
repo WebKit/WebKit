@@ -145,6 +145,7 @@ public:
     bool shouldUseFixedDefaultFontSize() const { return m_shouldUseFixedDefaultFontSize; }
 
     static PassRefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
+    static WritingDirection textDirectionForSelection(const VisibleSelection&, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings);
 private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
