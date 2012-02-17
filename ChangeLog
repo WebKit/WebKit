@@ -1,3 +1,9 @@
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r108003.
+
+        * Source/autotools/symbols.filter: Add missing symbol.
+
 2012-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Move event conversion functions from WebCore to WebKit

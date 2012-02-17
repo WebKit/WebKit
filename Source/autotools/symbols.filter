@@ -96,6 +96,7 @@ _ZN7WebCore24FrameDestructionObserverD2Ev;
 _ZN7WebCore24FrameDestructionObserverC2EPNS_5FrameE;
 _ZN7WebCore24FrameDestructionObserver12observeFrameEPNS_5FrameE;
 _ZN7WebCore24FrameDestructionObserver14frameDestroyedEv;
+_ZN7WebCore22RuntimeEnabledFeatures31isMultipleShadowSubtreesEnabledE;
 local:
 _Z*;
 cti*;
