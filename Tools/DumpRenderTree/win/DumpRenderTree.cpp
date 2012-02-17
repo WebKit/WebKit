@@ -722,27 +722,13 @@ void dump()
     BSTR resultString = 0;
 
     if (dumpTree) {
+        ::InvalidateRect(webViewWindow, 0, TRUE);
+        ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
+
         if (::gLayoutTestController->dumpAsText()) {
-            ::InvalidateRect(webViewWindow, 0, TRUE);
-            ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
             wstring result = dumpFramesAsText(frame);
             resultString = SysAllocStringLen(result.data(), result.size());
         } else {
-            bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg\\W3C-SVG-1.1") != string::npos);
-            unsigned width;
-            unsigned height;
-            if (isSVGW3CTest) {
-                width = 480;
-                height = 360;
-            } else {
-                width = LayoutTestController::maxViewWidth;
-                height = LayoutTestController::maxViewHeight;
-            }
-
-            ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
-            ::InvalidateRect(webViewWindow, 0, TRUE);
-            ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
-
             COMPtr<IWebFramePrivate> framePrivate;
             if (FAILED(frame->QueryInterface(&framePrivate)))
                 goto fail;
@@ -946,6 +932,22 @@ static void resetWebViewToConsistentStateBeforeTesting()
         framePrivate->clearOpener();
 }
 
+static void sizeWebViewForCurrentTest()
+{
+    bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg\\W3C-SVG-1.1") != string::npos);
+    unsigned width;
+    unsigned height;
+    if (isSVGW3CTest) {
+        width = 480;
+        height = 360;
+    } else {
+        width = LayoutTestController::maxViewWidth;
+        height = LayoutTestController::maxViewHeight;
+    }
+
+    ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
+}
+
 static void runTest(const string& testPathOrURL)
 {
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
@@ -985,6 +987,7 @@ static void runTest(const string& testPathOrURL)
     done = false;
     topLoadingFrame = 0;
 
+    sizeWebViewForCurrentTest();
     gLayoutTestController->setIconDatabaseEnabled(false);
 
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))

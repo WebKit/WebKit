@@ -1,3 +1,19 @@
+2012-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        layoutTestController.display() is flaky for SVG tests
+        https://bugs.webkit.org/show_bug.cgi?id=78021
+
+        Reviewed by Adam Roben.
+
+        Apply the same fix to DRT/Win, as previously applied to DRT/Mac.
+        Size the web view before running the test, not when dumping.
+        All platforms handle this correctly now.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (sizeWebViewForCurrentTest):
+        (runTest):
+
 2012-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make install is broken when building without --enable-gtk-doc
