@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-    class BumpSpace;
+    class CopiedSpace;
     class CodeBlock;
     class GCActivityCallback;
     class GlobalCodeBlock;
@@ -139,7 +139,7 @@ namespace JSC {
         friend class MarkedSpace;
         friend class MarkedAllocator;
         friend class MarkedBlock;
-        friend class BumpSpace;
+        friend class CopiedSpace;
         friend class SlotVisitor;
         friend class CodeBlock;
         template<typename T> friend void* allocateCell(Heap&);
@@ -197,7 +197,7 @@ namespace JSC {
         
         OperationInProgress m_operationInProgress;
         MarkedSpace m_objectSpace;
-        BumpSpace m_storageSpace;
+        CopiedSpace m_storageSpace;
 
         DoublyLinkedList<HeapBlock> m_freeBlocks;
         size_t m_numberOfFreeBlocks;

@@ -21,8 +21,8 @@
 #include "config.h"
 #include "Heap.h"
 
-#include "BumpSpace.h"
-#include "BumpSpaceInlineMethods.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "CodeBlock.h"
 #include "ConservativeRoots.h"
 #include "GCActivityCallback.h"

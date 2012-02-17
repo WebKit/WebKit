@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpSpaceInlineMethods_h
-#define BumpSpaceInlineMethods_h
+#ifndef CopiedSpaceInlineMethods_h
+#define CopiedSpaceInlineMethods_h
 
-#include "BumpBlock.h"
-#include "BumpSpace.h"
+#include "CopiedBlock.h"
+#include "CopiedSpace.h"
 #include "Heap.h"
 #include "HeapBlock.h"
 #include "JSGlobalData.h"
@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-inline BumpSpace::BumpSpace(Heap* heap)
+inline CopiedSpace::CopiedSpace(Heap* heap)
     : m_heap(heap)
     , m_currentBlock(0)
     , m_toSpace(0)
@@ -47,7 +47,7 @@ inline BumpSpace::BumpSpace(Heap* heap)
 {
 }
 
-inline void BumpSpace::init()
+inline void CopiedSpace::init()
 {
     m_toSpace = &m_blocks1;
     m_fromSpace = &m_blocks2;
@@ -58,19 +58,19 @@ inline void BumpSpace::init()
         CRASH();
 }   
 
-inline bool BumpSpace::contains(void* ptr, BumpBlock*& result)
+inline bool CopiedSpace::contains(void* ptr, CopiedBlock*& result)
 {
-    BumpBlock* block = blockFor(ptr);
+    CopiedBlock* block = blockFor(ptr);
     result = block;
     return !m_toSpaceFilter.ruleOut(reinterpret_cast<Bits>(block)) && m_toSpaceSet.contains(block);
 }
 
-inline void BumpSpace::pin(BumpBlock* block)
+inline void CopiedSpace::pin(CopiedBlock* block)
 {
     block->m_isPinned = true;
 }
 
-inline void BumpSpace::startedCopying()
+inline void CopiedSpace::startedCopying()
 {
     DoublyLinkedList<HeapBlock>* temp = m_fromSpace;
     m_fromSpace = m_toSpace;
@@ -85,7 +85,7 @@ inline void BumpSpace::startedCopying()
     m_inCopyingPhase = true;
 }
 
-inline void BumpSpace::doneCopying()
+inline void CopiedSpace::doneCopying()
 {
     {
         MutexLocker locker(m_loanedBlocksLock);
@@ -96,7 +96,7 @@ inline void BumpSpace::doneCopying()
     ASSERT(m_inCopyingPhase);
     m_inCopyingPhase = false;
     while (!m_fromSpace->isEmpty()) {
-        BumpBlock* block = static_cast<BumpBlock*>(m_fromSpace->removeHead());
+        CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->removeHead());
         if (block->m_isPinned) {
             block->m_isPinned = false;
             m_toSpace->push(block);
@@ -111,25 +111,25 @@ inline void BumpSpace::doneCopying()
         }
     }
 
-    BumpBlock* curr = static_cast<BumpBlock*>(m_oversizeBlocks.head());
+    CopiedBlock* curr = static_cast<CopiedBlock*>(m_oversizeBlocks.head());
     while (curr) {
-        BumpBlock* next = static_cast<BumpBlock*>(curr->next());
+        CopiedBlock* next = static_cast<CopiedBlock*>(curr->next());
         if (!curr->m_isPinned) {
             m_oversizeBlocks.remove(curr);
             m_totalMemoryAllocated -= curr->m_allocation.size();
-            m_totalMemoryUtilized -= curr->m_allocation.size() - sizeof(BumpBlock);
+            m_totalMemoryUtilized -= curr->m_allocation.size() - sizeof(CopiedBlock);
             curr->m_allocation.deallocate();
         } else
             curr->m_isPinned = false;
         curr = next;
     }
 
-    if (!(m_currentBlock = static_cast<BumpBlock*>(m_toSpace->head())))
+    if (!(m_currentBlock = static_cast<CopiedBlock*>(m_toSpace->head())))
         if (!addNewBlock())
             CRASH();
 }
 
-inline void BumpSpace::doneFillingBlock(BumpBlock* block)
+inline void CopiedSpace::doneFillingBlock(CopiedBlock* block)
 {
     ASSERT(block);
     ASSERT(block->m_offset < reinterpret_cast<char*>(block) + s_blockSize);
@@ -161,7 +161,7 @@ inline void BumpSpace::doneFillingBlock(BumpBlock* block)
     }
 }
 
-inline void BumpSpace::recycleBlock(BumpBlock* block)
+inline void CopiedSpace::recycleBlock(CopiedBlock* block)
 {
     {
         MutexLocker locker(m_heap->m_freeBlockLock);
@@ -178,10 +178,10 @@ inline void BumpSpace::recycleBlock(BumpBlock* block)
     }
 }
 
-inline CheckedBoolean BumpSpace::getFreshBlock(AllocationEffort allocationEffort, BumpBlock** outBlock)
+inline CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, CopiedBlock** outBlock)
 {
     HeapBlock* heapBlock = 0;
-    BumpBlock* block = 0;
+    CopiedBlock* block = 0;
     {
         MutexLocker locker(m_heap->m_freeBlockLock);
         if (!m_heap->m_freeBlocks.isEmpty()) {
@@ -190,7 +190,7 @@ inline CheckedBoolean BumpSpace::getFreshBlock(AllocationEffort allocationEffort
         }
     }
     if (heapBlock)
-        block = new (NotNull, heapBlock) BumpBlock(heapBlock->m_allocation);
+        block = new (NotNull, heapBlock) CopiedBlock(heapBlock->m_allocation);
     else if (allocationEffort == AllocationMustSucceed) {
         if (!allocateNewBlock(&block)) {
             *outBlock = 0;
@@ -214,9 +214,9 @@ inline CheckedBoolean BumpSpace::getFreshBlock(AllocationEffort allocationEffort
     return true;
 }
 
-inline CheckedBoolean BumpSpace::borrowBlock(BumpBlock** outBlock)
+inline CheckedBoolean CopiedSpace::borrowBlock(CopiedBlock** outBlock)
 {
-    BumpBlock* block = 0;
+    CopiedBlock* block = 0;
     if (!getFreshBlock(AllocationMustSucceed, &block)) {
         *outBlock = 0;
         return false;
@@ -231,9 +231,9 @@ inline CheckedBoolean BumpSpace::borrowBlock(BumpBlock** outBlock)
     return true;
 }
 
-inline CheckedBoolean BumpSpace::addNewBlock()
+inline CheckedBoolean CopiedSpace::addNewBlock()
 {
-    BumpBlock* block = 0;
+    CopiedBlock* block = 0;
     if (!getFreshBlock(AllocationCanFail, &block))
         return false;
         
@@ -242,7 +242,7 @@ inline CheckedBoolean BumpSpace::addNewBlock()
     return true;
 }
 
-inline CheckedBoolean BumpSpace::allocateNewBlock(BumpBlock** outBlock)
+inline CheckedBoolean CopiedSpace::allocateNewBlock(CopiedBlock** outBlock)
 {
     PageAllocationAligned allocation = PageAllocationAligned::allocate(s_blockSize, s_blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation)) {
@@ -255,21 +255,21 @@ inline CheckedBoolean BumpSpace::allocateNewBlock(BumpBlock** outBlock)
         m_totalMemoryAllocated += s_blockSize;
     }
 
-    *outBlock = new (NotNull, allocation.base()) BumpBlock(allocation);
+    *outBlock = new (NotNull, allocation.base()) CopiedBlock(allocation);
     return true;
 }
 
-inline bool BumpSpace::fitsInBlock(BumpBlock* block, size_t bytes)
+inline bool CopiedSpace::fitsInBlock(CopiedBlock* block, size_t bytes)
 {
     return static_cast<char*>(block->m_offset) + bytes < reinterpret_cast<char*>(block) + s_blockSize && static_cast<char*>(block->m_offset) + bytes > block->m_offset;
 }
 
-inline bool BumpSpace::fitsInCurrentBlock(size_t bytes)
+inline bool CopiedSpace::fitsInCurrentBlock(size_t bytes)
 {
     return fitsInBlock(m_currentBlock, bytes);
 }
 
-inline CheckedBoolean BumpSpace::tryAllocate(size_t bytes, void** outPtr)
+inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
 {
     ASSERT(!m_heap->globalData()->isInitializingObject());
 
@@ -280,17 +280,17 @@ inline CheckedBoolean BumpSpace::tryAllocate(size_t bytes, void** outPtr)
     return true;
 }
 
-inline CheckedBoolean BumpSpace::tryAllocateOversize(size_t bytes, void** outPtr)
+inline CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
 {
     ASSERT(isOversize(bytes));
     
-    size_t blockSize = WTF::roundUpToMultipleOf<s_pageSize>(sizeof(BumpBlock) + bytes);
+    size_t blockSize = WTF::roundUpToMultipleOf<s_pageSize>(sizeof(CopiedBlock) + bytes);
     PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, s_pageSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation)) {
         *outPtr = 0;
         return false;
     }
-    BumpBlock* block = new (NotNull, allocation.base()) BumpBlock(allocation);
+    CopiedBlock* block = new (NotNull, allocation.base()) CopiedBlock(allocation);
     m_oversizeBlocks.push(block);
     ASSERT(isPointerAligned(block->m_offset));
 
@@ -303,7 +303,7 @@ inline CheckedBoolean BumpSpace::tryAllocateOversize(size_t bytes, void** outPtr
     return true;
 }
 
-inline void* BumpSpace::allocateFromBlock(BumpBlock* block, size_t bytes)
+inline void* CopiedSpace::allocateFromBlock(CopiedBlock* block, size_t bytes)
 {
     ASSERT(!isOversize(bytes));
     ASSERT(fitsInBlock(block, bytes));
@@ -318,7 +318,7 @@ inline void* BumpSpace::allocateFromBlock(BumpBlock* block, size_t bytes)
     return ptr;
 }
 
-inline CheckedBoolean BumpSpace::tryReallocate(void** ptr, size_t oldSize, size_t newSize)
+inline CheckedBoolean CopiedSpace::tryReallocate(void** ptr, size_t oldSize, size_t newSize)
 {
     if (oldSize >= newSize)
         return true;
@@ -348,7 +348,7 @@ inline CheckedBoolean BumpSpace::tryReallocate(void** ptr, size_t oldSize, size_
     return true;
 }
 
-inline CheckedBoolean BumpSpace::tryReallocateOversize(void** ptr, size_t oldSize, size_t newSize)
+inline CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, size_t newSize)
 {
     ASSERT(isOversize(oldSize) || isOversize(newSize));
     ASSERT(newSize > oldSize);
@@ -363,10 +363,10 @@ inline CheckedBoolean BumpSpace::tryReallocateOversize(void** ptr, size_t oldSiz
     memcpy(newPtr, oldPtr, oldSize);
 
     if (isOversize(oldSize)) {
-        BumpBlock* oldBlock = oversizeBlockFor(oldPtr);
+        CopiedBlock* oldBlock = oversizeBlockFor(oldPtr);
         m_oversizeBlocks.remove(oldBlock);
         oldBlock->m_allocation.deallocate();
-        m_totalMemoryAllocated -= oldSize + sizeof(BumpBlock);
+        m_totalMemoryAllocated -= oldSize + sizeof(CopiedBlock);
     }
     
     m_totalMemoryUtilized -= oldSize;
@@ -375,24 +375,24 @@ inline CheckedBoolean BumpSpace::tryReallocateOversize(void** ptr, size_t oldSiz
     return true;
 }
 
-inline bool BumpSpace::isOversize(size_t bytes)
+inline bool CopiedSpace::isOversize(size_t bytes)
 {
     return bytes > s_maxAllocationSize;
 }
 
-inline bool BumpSpace::isPinned(void* ptr)
+inline bool CopiedSpace::isPinned(void* ptr)
 {
     return blockFor(ptr)->m_isPinned;
 }
 
-inline BumpBlock* BumpSpace::oversizeBlockFor(void* ptr)
+inline CopiedBlock* CopiedSpace::oversizeBlockFor(void* ptr)
 {
-    return reinterpret_cast<BumpBlock*>(reinterpret_cast<size_t>(ptr) & s_pageMask);
+    return reinterpret_cast<CopiedBlock*>(reinterpret_cast<size_t>(ptr) & s_pageMask);
 }
 
-inline BumpBlock* BumpSpace::blockFor(void* ptr)
+inline CopiedBlock* CopiedSpace::blockFor(void* ptr)
 {
-    return reinterpret_cast<BumpBlock*>(reinterpret_cast<size_t>(ptr) & s_blockMask);
+    return reinterpret_cast<CopiedBlock*>(reinterpret_cast<size_t>(ptr) & s_blockMask);
 }
 
 } // namespace JSC

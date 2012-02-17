@@ -1,3 +1,82 @@
+2012-02-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename Bump* to Copy*
+        https://bugs.webkit.org/show_bug.cgi?id=78573
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed anything with "Bump" in the name to have "Copied" instead.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/BumpBlock.h: Removed.
+        * heap/BumpSpace.cpp: Removed.
+        * heap/BumpSpace.h: Removed.
+        * heap/BumpSpaceInlineMethods.h: Removed.
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::genericAddPointer):
+        * heap/ConservativeRoots.h:
+        (ConservativeRoots):
+        * heap/CopiedBlock.h: Added.
+        (JSC):
+        (CopiedBlock):
+        (JSC::CopiedBlock::CopiedBlock):
+        * heap/CopiedSpace.cpp: Added.
+        (JSC):
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        * heap/CopiedSpace.h: Added.
+        (JSC):
+        (CopiedSpace):
+        (JSC::CopiedSpace::isInCopyPhase):
+        (JSC::CopiedSpace::totalMemoryAllocated):
+        (JSC::CopiedSpace::totalMemoryUtilized):
+        * heap/CopiedSpaceInlineMethods.h: Added.
+        (JSC):
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC::CopiedSpace::init):
+        (JSC::CopiedSpace::contains):
+        (JSC::CopiedSpace::pin):
+        (JSC::CopiedSpace::startedCopying):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::recycleBlock):
+        (JSC::CopiedSpace::getFreshBlock):
+        (JSC::CopiedSpace::borrowBlock):
+        (JSC::CopiedSpace::addNewBlock):
+        (JSC::CopiedSpace::allocateNewBlock):
+        (JSC::CopiedSpace::fitsInBlock):
+        (JSC::CopiedSpace::fitsInCurrentBlock):
+        (JSC::CopiedSpace::tryAllocate):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::allocateFromBlock):
+        (JSC::CopiedSpace::tryReallocate):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::isOversize):
+        (JSC::CopiedSpace::isPinned):
+        (JSC::CopiedSpace::oversizeBlockFor):
+        (JSC::CopiedSpace::blockFor):
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        (JSC):
+        (Heap):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::startCopying):
+        (JSC::SlotVisitor::allocateNewSpace):
+        (JSC::SlotVisitor::doneCopying):
+        * heap/MarkStack.h:
+        (MarkStackThreadSharedData):
+        * heap/SlotVisitor.h:
+        (SlotVisitor):
+        * runtime/JSArray.cpp:
+        * runtime/JSObject.cpp:
+
 2012-02-16  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Add JSC code profiling support on Linux x86

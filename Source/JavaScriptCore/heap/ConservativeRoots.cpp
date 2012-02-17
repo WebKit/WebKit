@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ConservativeRoots.h"
 
-#include "BumpSpace.h"
-#include "BumpSpaceInlineMethods.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "CodeBlock.h"
 #include "DFGCodeBlocks.h"
 #include "JSCell.h"
@@ -36,12 +36,12 @@
 
 namespace JSC {
 
-ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks, BumpSpace* bumpSpace)
+ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks, CopiedSpace* copiedSpace)
     : m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)
     , m_blocks(blocks)
-    , m_bumpSpace(bumpSpace)
+    , m_copiedSpace(copiedSpace)
 {
 }
 
@@ -72,9 +72,9 @@ inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter
 {
     markHook.mark(p);
     
-    BumpBlock* block;
-    if (m_bumpSpace->contains(p, block))
-        m_bumpSpace->pin(block);
+    CopiedBlock* block;
+    if (m_copiedSpace->contains(p, block))
+        m_copiedSpace->pin(block);
     
     MarkedBlock* candidate = MarkedBlock::blockFor(p);
     if (filter.ruleOut(reinterpret_cast<Bits>(candidate))) {

@@ -183,10 +183,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
-	Source/JavaScriptCore/heap/BumpBlock.h \
-	Source/JavaScriptCore/heap/BumpSpace.cpp \
-	Source/JavaScriptCore/heap/BumpSpace.h \
-	Source/JavaScriptCore/heap/BumpSpaceInlineMethods.h \
+	Source/JavaScriptCore/heap/CopiedBlock.h \
+	Source/JavaScriptCore/heap/CopiedSpace.cpp \
+	Source/JavaScriptCore/heap/CopiedSpace.h \
+	Source/JavaScriptCore/heap/CopiedSpaceInlineMethods.h \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \

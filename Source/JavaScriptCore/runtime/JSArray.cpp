@@ -24,8 +24,8 @@
 #include "JSArray.h"
 
 #include "ArrayPrototype.h"
-#include "BumpSpace.h"
-#include "BumpSpaceInlineMethods.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "CachedCall.h"
 #include "Error.h"
 #include "Executable.h"

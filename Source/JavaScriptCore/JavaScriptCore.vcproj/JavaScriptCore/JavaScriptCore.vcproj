@@ -2038,19 +2038,19 @@
 			Name="heap"
 			>
                             <File
-                                    RelativePath="..\..\heap\BumpBlock.h"
+                                    RelativePath="..\..\heap\CopiedBlock.h"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\BumpSpace.cpp"
+                                    RelativePath="..\..\heap\CopiedSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\BumpSpace.h"
+                                    RelativePath="..\..\heap\CopiedSpace.h"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\BumpSpaceInlineMethods.h"
+                                    RelativePath="..\..\heap\CopiedSpaceInlineMethods.h"
                                     >
                             </File>
                             <File

@@ -24,7 +24,7 @@
 #include "config.h"
 #include "JSObject.h"
 
-#include "BumpSpaceInlineMethods.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "GetterSetter.h"

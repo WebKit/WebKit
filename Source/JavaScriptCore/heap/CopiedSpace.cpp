@@ -23,31 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpBlock_h
-#define BumpBlock_h
+#include "config.h"
+#include "CopiedSpace.h"
 
-#include "HeapBlock.h"
+#include "CopiedSpaceInlineMethods.h"
 
 namespace JSC {
 
-class BumpSpace;
-
-class BumpBlock : public HeapBlock {
-    friend class BumpSpace;
-public:
-    BumpBlock(PageAllocationAligned& allocation)
-        : HeapBlock(allocation)
-        , m_offset(m_payload)
-        , m_isPinned(false)
-    {
+CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
+{
+    if (isOversize(bytes))
+        return tryAllocateOversize(bytes, outPtr);
+    
+    m_totalMemoryUtilized += static_cast<size_t>(static_cast<char*>(m_currentBlock->m_offset) - m_currentBlock->m_payload);
+    if (!addNewBlock()) {
+        *outPtr = 0;
+        return false;
     }
-
-private:
-    void* m_offset;
-    uintptr_t m_isPinned;
-    char m_payload[1];
-};
+    m_toSpaceFilter.add(reinterpret_cast<Bits>(m_currentBlock));
+    m_toSpaceSet.add(m_currentBlock);
+    *outPtr = allocateFromBlock(m_currentBlock, bytes);
+    return true;
+}
 
 } // namespace JSC
-
-#endif

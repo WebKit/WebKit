@@ -26,8 +26,8 @@
 #include "config.h"
 #include "MarkStack.h"
 
-#include "BumpSpace.h"
-#include "BumpSpaceInlineMethods.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "ConservativeRoots.h"
 #include "Heap.h"
 #include "Options.h"
@@ -235,7 +235,7 @@ void* MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
 
 MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     : m_globalData(globalData)
-    , m_bumpSpace(&globalData->heap.m_storageSpace)
+    , m_copiedSpace(&globalData->heap.m_storageSpace)
     , m_sharedMarkStack(m_segmentAllocator)
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
@@ -402,7 +402,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 while (true) {
                     // Did we reach termination?
                     if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty()) {
-                        // Let any sleeping slaves know it's time for them to give their private BumpBlocks back
+                        // Let any sleeping slaves know it's time for them to give their private CopiedBlocks back
                         m_shared.m_markingCondition.broadcast();
                         return;
                     }
@@ -459,32 +459,32 @@ void MarkStack::mergeOpaqueRoots()
 void SlotVisitor::startCopying()
 {
     ASSERT(!m_copyBlock);
-    if (!m_shared.m_bumpSpace->borrowBlock(&m_copyBlock))
+    if (!m_shared.m_copiedSpace->borrowBlock(&m_copyBlock))
         CRASH();
 }    
 
 void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
 {
-    if (BumpSpace::isOversize(bytes)) {
-        m_shared.m_bumpSpace->pin(BumpSpace::oversizeBlockFor(ptr));
+    if (CopiedSpace::isOversize(bytes)) {
+        m_shared.m_copiedSpace->pin(CopiedSpace::oversizeBlockFor(ptr));
         return 0;
     }
 
-    if (m_shared.m_bumpSpace->isPinned(ptr))
+    if (m_shared.m_copiedSpace->isPinned(ptr))
         return 0;
 
     // The only time it's possible to have a null copy block is if we have just started copying.
     if (!m_copyBlock)
         startCopying();
 
-    if (!BumpSpace::fitsInBlock(m_copyBlock, bytes)) {
+    if (!CopiedSpace::fitsInBlock(m_copyBlock, bytes)) {
         // We don't need to lock across these two calls because the master thread won't 
         // call doneCopying() because this thread is considered active.
-        m_shared.m_bumpSpace->doneFillingBlock(m_copyBlock);
-        if (!m_shared.m_bumpSpace->borrowBlock(&m_copyBlock))
+        m_shared.m_copiedSpace->doneFillingBlock(m_copyBlock);
+        if (!m_shared.m_copiedSpace->borrowBlock(&m_copyBlock))
             CRASH();
     }
-    return BumpSpace::allocateFromBlock(m_copyBlock, bytes);
+    return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
 }
 
 void SlotVisitor::copy(void** ptr, size_t bytes)
@@ -524,7 +524,7 @@ void SlotVisitor::doneCopying()
     if (!m_copyBlock)
         return;
 
-    m_shared.m_bumpSpace->doneFillingBlock(m_copyBlock);
+    m_shared.m_copiedSpace->doneFillingBlock(m_copyBlock);
 
     m_copyBlock = 0;
 }

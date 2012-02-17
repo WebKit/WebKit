@@ -66,7 +66,7 @@ SOURCES += \
     bytecode/ValueProfile.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
-    heap/BumpSpace.cpp \
+    heap/CopiedSpace.cpp \
     heap/ConservativeRoots.cpp \
     heap/DFGCodeBlocks.cpp \
     heap/HandleHeap.cpp \

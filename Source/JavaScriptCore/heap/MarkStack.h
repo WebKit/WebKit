@@ -26,7 +26,7 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
-#include "BumpSpace.h"
+#include "CopiedSpace.h"
 #include "HandleTypes.h"
 #include "Options.h"
 #include "JSValue.h"
@@ -182,7 +182,7 @@ namespace JSC {
 #endif
 
         JSGlobalData* m_globalData;
-        BumpSpace* m_bumpSpace;
+        CopiedSpace* m_copiedSpace;
         
         MarkStackSegmentAllocator m_segmentAllocator;
         

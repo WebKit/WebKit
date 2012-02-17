@@ -38,7 +38,7 @@ class Heap;
 
 class ConservativeRoots {
 public:
-    ConservativeRoots(const MarkedBlockSet*, BumpSpace*);
+    ConservativeRoots(const MarkedBlockSet*, CopiedSpace*);
     ~ConservativeRoots();
 
     void add(void* begin, void* end);
@@ -63,7 +63,7 @@ private:
     size_t m_size;
     size_t m_capacity;
     const MarkedBlockSet* m_blocks;
-    BumpSpace* m_bumpSpace;
+    CopiedSpace* m_copiedSpace;
     JSCell* m_inlineRoots[inlineCapacity];
 };
 

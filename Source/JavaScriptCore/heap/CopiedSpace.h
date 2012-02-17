@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpSpace_h
-#define BumpSpace_h
+#ifndef CopiedSpace_h
+#define CopiedSpace_h
 
 #include "HeapBlock.h"
 #include "TinyBloomFilter.h"
@@ -40,13 +40,13 @@
 namespace JSC {
 
 class Heap;
-class BumpBlock;
+class CopiedBlock;
 class HeapBlock;
 
-class BumpSpace {
+class CopiedSpace {
     friend class SlotVisitor;
 public:
-    BumpSpace(Heap*);
+    CopiedSpace(Heap*);
     void init();
 
     CheckedBoolean tryAllocate(size_t, void**);
@@ -56,42 +56,42 @@ public:
     void doneCopying();
     bool isInCopyPhase() { return m_inCopyingPhase; }
 
-    void pin(BumpBlock*);
+    void pin(CopiedBlock*);
     bool isPinned(void*);
 
-    bool contains(void*, BumpBlock*&);
+    bool contains(void*, CopiedBlock*&);
 
     size_t totalMemoryAllocated() { return m_totalMemoryAllocated; }
     size_t totalMemoryUtilized() { return m_totalMemoryUtilized; }
 
-    static BumpBlock* blockFor(void*);
+    static CopiedBlock* blockFor(void*);
 
 private:
     CheckedBoolean tryAllocateSlowCase(size_t, void**);
     CheckedBoolean addNewBlock();
-    CheckedBoolean allocateNewBlock(BumpBlock**);
+    CheckedBoolean allocateNewBlock(CopiedBlock**);
     bool fitsInCurrentBlock(size_t);
     
-    static void* allocateFromBlock(BumpBlock*, size_t);
+    static void* allocateFromBlock(CopiedBlock*, size_t);
     CheckedBoolean tryAllocateOversize(size_t, void**);
     CheckedBoolean tryReallocateOversize(void**, size_t, size_t);
     
     static bool isOversize(size_t);
     
-    CheckedBoolean borrowBlock(BumpBlock**);
-    CheckedBoolean getFreshBlock(AllocationEffort, BumpBlock**);
-    void doneFillingBlock(BumpBlock*);
-    void recycleBlock(BumpBlock*);
-    static bool fitsInBlock(BumpBlock*, size_t);
-    static BumpBlock* oversizeBlockFor(void* ptr);
+    CheckedBoolean borrowBlock(CopiedBlock**);
+    CheckedBoolean getFreshBlock(AllocationEffort, CopiedBlock**);
+    void doneFillingBlock(CopiedBlock*);
+    void recycleBlock(CopiedBlock*);
+    static bool fitsInBlock(CopiedBlock*, size_t);
+    static CopiedBlock* oversizeBlockFor(void* ptr);
 
     Heap* m_heap;
 
-    BumpBlock* m_currentBlock;
+    CopiedBlock* m_currentBlock;
 
     TinyBloomFilter m_toSpaceFilter;
     TinyBloomFilter m_oversizeFilter;
-    HashSet<BumpBlock*> m_toSpaceSet;
+    HashSet<CopiedBlock*> m_toSpaceSet;
 
     Mutex m_toSpaceLock;
     Mutex m_memoryStatsLock;
