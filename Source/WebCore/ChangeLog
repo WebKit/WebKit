@@ -1,3 +1,14 @@
+2012-02-16  Daniel Bates  <dbates@webkit.org>
+
+        Add ENABLE(STYLE_SCOPED) around HTMLStyleElement::m_isRegisteredWithScopingNode 
+
+        The instance variable HTMLStyleElement::m_isRegisteredWithScopingNode is only
+        referenced from within ENABLE(STYLE_SCOPED)-guarded code. We should add this
+        guard around its declaration.
+
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+
 2012-02-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         [v8] v8 doesn't assume to do 'new WebKitShadowRoot(host)'

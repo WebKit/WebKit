@@ -74,7 +74,9 @@ private:
     void registerWithScopingNode();
     void unregisterWithScopingNode();
 
+#if ENABLE(STYLE_SCOPED)
     bool m_isRegisteredWithScopingNode;
+#endif
 };
 
 } //namespace
