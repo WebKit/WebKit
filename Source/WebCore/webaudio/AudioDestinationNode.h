@@ -49,8 +49,6 @@ public:
     size_t currentSampleFrame() { return m_currentSampleFrame; }
     double currentTime() { return currentSampleFrame() / static_cast<double>(sampleRate()); }
 
-    virtual float sampleRate() const = 0;
-
     virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
 
     virtual void startRendering() = 0;

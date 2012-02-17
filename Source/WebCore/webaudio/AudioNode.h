@@ -118,7 +118,7 @@ public:
     void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&);
     void disconnect(unsigned outputIndex, ExceptionCode&);
 
-    float sampleRate() const { return m_sampleRate; }
+    virtual float sampleRate() const { return m_sampleRate; }
 
     // processIfNecessary() is called by our output(s) when the rendering graph needs this AudioNode to process.
     // This method ensures that the AudioNode will only process once per rendering time quantum even if it's called repeatedly.

@@ -45,9 +45,6 @@ public:
     // AudioNode   
     virtual void initialize();
     virtual void uninitialize();
-    
-    float sampleRate() const { return m_destination->sampleRate(); }
-
     virtual void startRendering();
     
 private:

@@ -35,7 +35,6 @@ namespace WebCore {
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext* context)
     : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())
 {
-    initialize();
 }
 
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
