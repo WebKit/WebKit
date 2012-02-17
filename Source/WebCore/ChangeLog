@@ -1,3 +1,29 @@
+2012-02-17  Florin Malita  <fmalita@google.com>
+
+        chrome.dll!WebCore::SVGTRefElement::updateReferencedText ReadAV@NULL (e85cb8e140071fa7790cad215b0109dc)
+        https://bugs.webkit.org/show_bug.cgi?id=74858
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests: svg/custom/tref-remove-target-crash-expected.svg
+               svg/custom/tref-remove-target-crash.svg
+
+        Add a DOMNodeRemovedFromDocumentEvent listener to detect when the target element is removed. Upon removal,
+        cleanup all listeners and re-activate the pending resource to attach if the referenced ID is added
+        at a later time programmatically. Also move the DOMSubtreeModifiedEvent listener from the parent to
+        the target element to simplify the implementation and reduce the scope.
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::TargetListener::create):
+        (WebCore::TargetListener::cast):
+        (WebCore::TargetListener::clear):
+        (WebCore::TargetListener::TargetListener):
+        (WebCore::TargetListener::operator==):
+        (WebCore::TargetListener::handleEvent):
+        (WebCore::SVGTRefElement::detachTarget):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGTRefElement.h:
+
 2012-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build after r108077.

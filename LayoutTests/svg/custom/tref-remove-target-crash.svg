@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <text x="100" y="50" font-family="Verdana" font-size="25" fill="green">
+    <!-- Removing the referenced text element should not cause a crash -->
+    <tref xlink:href="#text1"/>
+  </text>
+  <text x="200" y="50" font-family="Verdana" font-size="25" fill="green">
+    <!-- This should pick up the replaced text element and its updated text content -->
+    <tref xlink:href="#text2"/>
+  </text>
+
+  <text x="100" y="100" id="text1">FOO</text>
+  <text x="200" y="100" id="text2">BAR</text>
+
+<script>
+  var el1 = document.getElementById('text1');
+  el1.parentNode.removeChild(el1);
+  var el2 = document.getElementById('text2');
+  el2.parentNode.removeChild(el2);
+  var newel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  newel.setAttribute('id', 'text2');
+  newel.setAttribute('visibility', 'hidden');
+  newel.textContent = 'BAZ';
+  document.documentElement.appendChild(newel);
+  document.getElementById('text2').textContent = 'QUX';
+</script>
+</svg>
