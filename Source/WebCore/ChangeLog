@@ -1,3 +1,16 @@
+2012-02-17  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: check undo-redo boundaries based on current action index, not history size.
+        https://bugs.webkit.org/show_bug.cgi?id=78895
+
+        Reviewed by Vsevolod Vlasov.
+
+        Tests: inspector/elements/perform-undo-undo.html
+               inspector/styles/perform-undo-perform-of-mergable-action.html
+
+        * inspector/InspectorHistory.cpp:
+        (WebCore::InspectorHistory::perform):
+
 2012-02-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r108071.

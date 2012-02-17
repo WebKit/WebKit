@@ -90,7 +90,7 @@ bool InspectorHistory::perform(PassOwnPtr<Action> action, ExceptionCode& ec)
     if (!action->perform(ec))
         return false;
 
-    if (!m_history.isEmpty() && !action->mergeId().isEmpty() && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
+    if (!action->mergeId().isEmpty() && m_afterLastActionIndex > 0 && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
         m_history[m_afterLastActionIndex - 1]->merge(action);
     else {
         m_history.resize(m_afterLastActionIndex);
