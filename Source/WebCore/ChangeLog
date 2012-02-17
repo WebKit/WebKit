@@ -1,3 +1,50 @@
+2012-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rollout r107952 because it broke shadow-boundary-events.html and related-target-focusevent.html on mac.
+        see http://webkit.org/b/78832
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/EventDispatchMediator.cpp:
+        (WebCore::FocusEventDispatchMediator::create):
+        (WebCore):
+        (WebCore::FocusEventDispatchMediator::FocusEventDispatchMediator):
+        (WebCore::FocusEventDispatchMediator::dispatchEvent):
+        (WebCore::BlurEventDispatchMediator::create):
+        (WebCore::BlurEventDispatchMediator::BlurEventDispatchMediator):
+        (WebCore::BlurEventDispatchMediator::dispatchEvent):
+        * dom/EventDispatchMediator.h:
+        (FocusEventDispatchMediator):
+        (WebCore):
+        (BlurEventDispatchMediator):
+        * dom/EventFactory.in:
+        * dom/FocusEvent.cpp: Removed.
+        * dom/FocusEvent.h: Removed.
+        * dom/FocusEvent.idl: Removed.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchFocusInEvent):
+        (WebCore::Node::dispatchFocusOutEvent):
+        * dom/UIEvent.cpp:
+        (WebCore::FocusInEventDispatchMediator::create):
+        (WebCore):
+        (WebCore::FocusInEventDispatchMediator::FocusInEventDispatchMediator):
+        (WebCore::FocusInEventDispatchMediator::dispatchEvent):
+        (WebCore::FocusOutEventDispatchMediator::create):
+        (WebCore::FocusOutEventDispatchMediator::FocusOutEventDispatchMediator):
+        (WebCore::FocusOutEventDispatchMediator::dispatchEvent):
+        * dom/UIEvent.h:
+        (FocusInEventDispatchMediator):
+        (WebCore):
+        (FocusOutEventDispatchMediator):
+        * page/DOMWindow.idl:
+
 2012-02-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Another fix for viewport tests

@@ -183,8 +183,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSFloat64Array.cpp \
 	DerivedSources/WebCore/JSFloat64Array.h \
-	DerivedSources/WebCore/JSFocusEvent.cpp \
-	DerivedSources/WebCore/JSFocusEvent.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
 	DerivedSources/WebCore/JSGeolocation.h \
 	DerivedSources/WebCore/JSGeoposition.cpp \
@@ -705,7 +703,6 @@ dom_binding_idls += \
 	$(WebCore)/dom/ErrorEvent.idl \
 	$(WebCore)/dom/Event.idl \
 	$(WebCore)/dom/EventException.idl \
-	$(WebCore)/dom/FocusEvent.idl \
 	$(WebCore)/dom/HashChangeEvent.idl \
 	$(WebCore)/dom/KeyboardEvent.idl \
 	$(WebCore)/dom/MessageChannel.idl \
@@ -1572,8 +1569,6 @@ webcore_sources += \
 	Source/WebCore/dom/ExceptionCode.h \
 	Source/WebCore/dom/ExceptionCodePlaceholder.cpp \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \
-	Source/WebCore/dom/FocusEvent.cpp \
-	Source/WebCore/dom/FocusEvent.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \

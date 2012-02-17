@@ -521,7 +521,6 @@ SOURCES += \
     dom/EventTarget.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCodePlaceholder.cpp \
-    dom/FocusEvent.cpp \
     dom/GenericEventQueue.cpp \
     dom/IconURL.cpp \
     dom/KeyboardEvent.cpp \
@@ -1636,7 +1635,6 @@ HEADERS += \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
-    dom/FocusEvent.h \
     dom/FragmentScriptingPermission.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \
