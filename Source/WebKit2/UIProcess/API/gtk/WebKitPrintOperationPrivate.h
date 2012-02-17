@@ -23,6 +23,6 @@
 #include "WebFrameProxy.h"
 #include "WebKitPrintOperation.h"
 
-void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation*, GtkWindow* parent, WebKit::WebFrameProxy*);
+WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation*, GtkWindow* parent, WebKit::WebFrameProxy*);
 
 #endif // WebKitPrintOperationPrivate_h

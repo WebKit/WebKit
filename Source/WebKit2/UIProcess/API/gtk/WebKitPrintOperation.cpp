@@ -45,7 +45,7 @@ enum {
 };
 
 enum {
-    DONE,
+    FINISHED,
 
     LAST_SIGNAL
 };
@@ -179,14 +179,14 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
                                                          WEBKIT_PARAM_READWRITE));
 
     /**
-     * WebKitPrintOperation::done:
+     * WebKitPrintOperation::finished:
      * @print_operation: the #WebKitPrintOperation on which the signal was emitted
      *
      * Emitted when the print operation has finished doing everything
      * required for printing.
      */
-    signals[DONE] =
-        g_signal_new("done",
+    signals[FINISHED] =
+        g_signal_new("finished",
                      G_TYPE_FROM_CLASS(gObjectClass),
                      G_SIGNAL_RUN_LAST,
                      0, 0, 0,
@@ -197,7 +197,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
 }
 
 #ifdef HAVE_GTK_UNIX_PRINTING
-static bool webkitPrintOperationRunDialogUnix(WebKitPrintOperation* printOperation, GtkWindow* parent)
+static WebKitPrintOperationResponse webkitPrintOperationRunDialogUnix(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(0));
@@ -211,11 +211,11 @@ static bool webkitPrintOperationRunDialogUnix(WebKitPrintOperation* printOperati
 
     gtk_print_unix_dialog_set_embed_page_setup(printDialog, TRUE);
 
-    bool returnValue = false;
+    WebKitPrintOperationResponse returnValue = WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL;
     if (gtk_dialog_run(GTK_DIALOG(printDialog)) == GTK_RESPONSE_OK) {
         priv->printSettings = adoptGRef(gtk_print_unix_dialog_get_settings(printDialog));
         priv->pageSetup = gtk_print_unix_dialog_get_page_setup(printDialog);
-        returnValue = true;
+        returnValue = WEBKIT_PRINT_OPERATION_RESPONSE_PRINT;
     }
 
     gtk_widget_destroy(GTK_WIDGET(printDialog));
@@ -225,10 +225,10 @@ static bool webkitPrintOperationRunDialogUnix(WebKitPrintOperation* printOperati
 #endif // HAVE_GTK_UNIX_PRINTING
 
 #ifdef G_OS_WIN32
-static bool webkitPrintOperationRunDialogWin32(WebKitPrintOperation*, GtkWindow*)
+static WebKitPrintOperationResponse webkitPrintOperationRunDialogWin32(WebKitPrintOperation*, GtkWindow*)
 {
     notImplemented();
-    return false;
+    return WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL;
 }
 #endif
 
@@ -237,7 +237,7 @@ static void drawPagesForPrintingCompleted(WKErrorRef, void* context)
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(WEBKIT_PRINT_OPERATION(context));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
     page->endPrinting();
-    g_signal_emit(printOperation.get(), signals[DONE], 0, NULL);
+    g_signal_emit(printOperation.get(), signals[FINISHED], 0, NULL);
 }
 
 static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
@@ -247,7 +247,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
     page->drawPagesForPrinting(webFrame, printInfo, VoidCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
 }
 
-void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)
+WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation, GtkWindow* parent, WebFrameProxy* webFrame)
 {
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     if (!parent) {
@@ -256,18 +256,17 @@ void webkitPrintOperationRunDialogForFrame(WebKitPrintOperation* printOperation,
             parent = GTK_WINDOW(toplevel);
     }
 #ifdef HAVE_GTK_UNIX_PRINTING
-    bool shouldPrint = webkitPrintOperationRunDialogUnix(printOperation, parent);
+    WebKitPrintOperationResponse response = webkitPrintOperationRunDialogUnix(printOperation, parent);
 #endif
 #ifdef G_OS_WIN32
-    bool shouldPrint = webkitPrintOperationRunDialogWin32(printOperation, parent);
+    WebKitPrintOperationResponse response = webkitPrintOperationRunDialogWin32(printOperation, parent);
 #endif
 
-    if (!shouldPrint) {
-        g_signal_emit(printOperation, signals[DONE], 0, NULL);
-        return;
-    }
+    if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
+        return response;
 
     webkitPrintOperationPrintPagesForFrame(printOperation, webFrame, priv->printSettings.get(), priv->pageSetup.get());
+    return response;
 }
 
 /**
@@ -364,22 +363,26 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
  * @print_operation: a #WebKitPrintOperation
  * @parent: (allow-none): transient parent of the print dialog
  *
- * Run the print dialog using and start printing using the options selected by
- * the user. This method returns when the print operation is closed.
- * The WebKitPrintOperation::done signal is emitted when the printing
- * operation finishes.
- * Current print settings and page setup of @print_operation are updated with
- * options selected by the user when Print button is pressed in print dialog.
+ * Run the print dialog and start printing using the options selected by
+ * the user. This method returns when the print dialog is closed.
+ * If the print dialog is cancelled %WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL
+ * is returned. If the user clicks on the print button, %WEBKIT_PRINT_OPERATION_RESPONSE_PRINT
+ * is returned and the print operation starts. In this case, the WebKitPrintOperation::finished
+ * signal is emitted when the operation finishes.
+ * If the print dialog is not cancelled current print settings and page setup of @print_operation
+ * are updated with options selected by the user when Print button is pressed in print dialog.
  * You can get the updated print settings and page setup by calling
  * webkit_print_operation_get_print_settings() and webkit_print_operation_get_page_setup()
  * after this method.
+ *
+ * Returns: the #WebKitPrintOperationResponse of the print dialog
  */
-void webkit_print_operation_run_dialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
+WebKitPrintOperationResponse webkit_print_operation_run_dialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
-    g_return_if_fail(WEBKIT_IS_PRINT_OPERATION(printOperation));
+    g_return_val_if_fail(WEBKIT_IS_PRINT_OPERATION(printOperation), WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-    webkitPrintOperationRunDialogForFrame(printOperation, parent, page->mainFrame());
+    return webkitPrintOperationRunDialogForFrame(printOperation, parent, page->mainFrame());
 }
 
 /**
@@ -391,6 +394,8 @@ void webkit_print_operation_run_dialog(WebKitPrintOperation* printOperation, Gtk
  * are not set with webkit_print_operation_set_print_settings() and
  * webkit_print_operation_set_page_setup(), the default options will be used
  * and the print job will be sent to the default printer.
+ * The WebKitPrintOperation::finished signal is emitted when the printing
+ * operation finishes.
  */
 void webkit_print_operation_print(WebKitPrintOperation* printOperation)
 {

@@ -40,6 +40,19 @@ G_BEGIN_DECLS
 typedef struct _WebKitPrintOperationClass   WebKitPrintOperationClass;
 typedef struct _WebKitPrintOperationPrivate WebKitPrintOperationPrivate;
 
+/**
+ * WebKitPrintOperationResponse:
+ * @WEBKIT_PRINT_OPERATION_RESPONSE_PRINT: Print button was cliked in print dialog
+ * @WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL: Print dialog was cancelled
+ *
+ * Enum values representing the response of the print dialog shown with
+ * webkit_print_operation_run_dialog().
+ */
+typedef enum {
+    WEBKIT_PRINT_OPERATION_RESPONSE_PRINT,
+    WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL
+} WebKitPrintOperationResponse;
+
 struct _WebKitPrintOperation {
     GObject parent;
 
@@ -70,7 +83,7 @@ WEBKIT_API void
 webkit_print_operation_set_page_setup     (WebKitPrintOperation *print_operation,
                                            GtkPageSetup         *page_setup);
 
-WEBKIT_API void
+WEBKIT_API WebKitPrintOperationResponse
 webkit_print_operation_run_dialog         (WebKitPrintOperation *print_operation,
                                            GtkWindow            *parent);
 

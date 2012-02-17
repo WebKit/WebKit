@@ -79,7 +79,7 @@ static void testPrintOperationPrintLoadChanged(WebKitWebView*, WebKitLoadEvent l
     g_main_loop_quit(test->m_mainLoop);
 }
 
-static void testPrintOperationPrintDone(WebKitPrintOperation* printOperation, WebViewTest* test)
+static void testPrintOperationPrintFinished(WebKitPrintOperation* printOperation, WebViewTest* test)
 {
     g_object_unref(printOperation);
     g_main_loop_quit(test->m_mainLoop);
@@ -119,7 +119,7 @@ static void testPrintOperationPrint(WebViewTest* test, gconstpointer)
 
     GRefPtr<WebKitPrintOperation> printOperation = webkit_print_operation_new(test->m_webView);
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printOperation.get()));
-    g_signal_connect(printOperation.get(), "done", G_CALLBACK(testPrintOperationPrintDone), test);
+    g_signal_connect(printOperation.get(), "finished", G_CALLBACK(testPrintOperationPrintFinished), test);
     webkit_print_operation_set_print_settings(printOperation.get(), printSettings.get());
     webkit_print_operation_print(printOperation.get());
     g_main_loop_run(test->m_mainLoop);

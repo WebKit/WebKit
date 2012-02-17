@@ -809,8 +809,10 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
     if (returnValue)
         return;
 
-    g_signal_connect(printOperation.get(), "done", G_CALLBACK(g_object_unref), 0);
-    webkitPrintOperationRunDialogForFrame(printOperation.leakRef(), 0, toImpl(wkFrame));
+    WebKitPrintOperationResponse response = webkitPrintOperationRunDialogForFrame(printOperation.get(), 0, toImpl(wkFrame));
+    if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
+        return;
+    g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
 }
 
 /**

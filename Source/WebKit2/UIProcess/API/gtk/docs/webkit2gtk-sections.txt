@@ -420,6 +420,7 @@ webkit_hit_test_result_get_type
 <SECTION>
 <FILE>WebKitPrintOperation</FILE>
 WebKitPrintOperation
+WebKitPrintOperationResponse
 webkit_print_operation_new
 webkit_print_operation_get_print_settings
 webkit_print_operation_set_print_settings

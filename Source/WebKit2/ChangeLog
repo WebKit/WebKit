@@ -1,5 +1,42 @@
 2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Rename WebKitPrintOperation::done signal to ::finished in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=78893
+
+        Reviewed by Gustavo Noronha Silva.
+
+        And it's not emitted anynmore when the print dialog has been
+        cancelled. Since it's not possible to know whether the print
+        dialog was cancelled or not, the enum WebKitPrintOperationResponse
+        has been added, with Print and Cancel values, and it's used as
+        return value of webkit_print_operation_run_dialog().
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkit_print_operation_class_init): Rename done as finished.
+        (webkitPrintOperationRunDialogUnix): Return a
+        WebKitPrintOperationResponse instead of bool.
+        (webkitPrintOperationRunDialogWin32): Ditto.
+        (drawPagesForPrintingCompleted): Emit finished instead of done.
+        (webkitPrintOperationRunDialogForFrame): Do not emit finished if
+        the dialog was cancelled and return a WebKitPrintOperationResponse.
+        (webkit_print_operation_run_dialog): Return
+        WebKitPrintOperationResponse.
+        * UIProcess/API/gtk/WebKitPrintOperation.h: Add
+        WebKitPrintOperationResponse enum.
+        * UIProcess/API/gtk/WebKitPrintOperationPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPrintFrame): Check whether the dialog has been
+        cancelled or not and connect to finish when the print operation is
+        in progress to release the print operation object when printing
+        finishes.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add
+        WebKitPrintOperationResponse symbol.
+        * UIProcess/API/gtk/tests/TestPrinting.cpp:
+        (testPrintOperationPrintFinished): Use finished instead of done.
+        (testPrintOperationPrint): Ditto.
+
+2012-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add webkit_print_operation_print() to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=76536
 
