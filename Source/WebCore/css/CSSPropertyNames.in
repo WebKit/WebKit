@@ -271,6 +271,7 @@ z-index
 -webkit-hyphens
 -epub-hyphens = -webkit-hyphens
 -webkit-line-box-contain
+-webkit-line-align
 -webkit-line-break
 -webkit-line-clamp
 -webkit-line-grid

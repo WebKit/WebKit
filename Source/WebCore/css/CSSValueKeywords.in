@@ -888,6 +888,9 @@ maximum
 wrap
 // none
 
+// -webkit-line-align
+edges
+
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 // -webkit-filter
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS

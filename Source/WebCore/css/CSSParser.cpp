@@ -2054,6 +2054,10 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNone || id == CSSValueBaseline || id == CSSValueContain)
             validPrimitive = true;
         break;
+    case CSSPropertyWebkitLineAlign:
+        if (id == CSSValueNone || id == CSSValueEdges)
+            validPrimitive = true;
+        break;
     case CSSPropertyWebkitLocale:
         if (id == CSSValueAuto || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;

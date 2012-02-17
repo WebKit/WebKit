@@ -54,6 +54,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
     , m_imageRendering(RenderStyle::initialImageRendering())
     , m_lineSnap(RenderStyle::initialLineSnap())
+    , m_lineAlign(RenderStyle::initialLineAlign())
 #if ENABLE(OVERFLOW_SCROLLING)
     , useTouchOverflowScrolling(RenderStyle::initialUseTouchOverflowScrolling())
 #endif
@@ -101,6 +102,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_lineBoxContain(o.m_lineBoxContain)
     , m_imageRendering(o.m_imageRendering)
     , m_lineSnap(o.m_lineSnap)
+    , m_lineAlign(o.m_lineAlign)
 #if ENABLE(OVERFLOW_SCROLLING)
     , useTouchOverflowScrolling(o.useTouchOverflowScrolling)
 #endif
@@ -177,7 +179,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && QuotesData::equal(quotes.get(), o.quotes.get())
         && m_lineGrid == o.m_lineGrid
         && m_imageRendering == o.m_imageRendering
-        && m_lineSnap == o.m_lineSnap;
+        && m_lineSnap == o.m_lineSnap
+        && m_lineAlign == o.m_lineAlign;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

@@ -328,6 +328,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitLines:
     case CSSPropertyWebkitHyphens:
+    case CSSPropertyWebkitLineAlign:
     case CSSPropertyWebkitLineBoxContain:
     case CSSPropertyWebkitLineBreak:
     case CSSPropertyWebkitLineGrid:

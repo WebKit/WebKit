@@ -239,6 +239,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitHyphenateLimitBefore,
     CSSPropertyWebkitHyphenateLimitLines,
     CSSPropertyWebkitHyphens,
+    CSSPropertyWebkitLineAlign,
     CSSPropertyWebkitLineBoxContain,
     CSSPropertyWebkitLineBreak,
     CSSPropertyWebkitLineClamp,
@@ -2231,6 +2232,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->lineGrid(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitLineSnap:
             return CSSPrimitiveValue::create(style->lineSnap());
+        case CSSPropertyWebkitLineAlign:
+            return CSSPrimitiveValue::create(style->lineAlign());
         case CSSPropertyWebkitWritingMode:
             return cssValuePool->createValue(style->writingMode());
         case CSSPropertyWebkitTextCombine:

@@ -466,7 +466,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark
             || rareInheritedData->m_lineBoxContain != other->rareInheritedData->m_lineBoxContain
             || rareInheritedData->m_lineGrid != other->rareInheritedData->m_lineGrid
-            || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap)
+            || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap
+            || rareInheritedData->m_lineAlign != other->rareInheritedData->m_lineAlign)
             return StyleDifferenceLayout;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))

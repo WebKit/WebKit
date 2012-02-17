@@ -3190,6 +3190,33 @@ template<> inline CSSPrimitiveValue::operator LineSnap() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineAlign lineAlign)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (lineAlign) {
+    case LineAlignNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case LineAlignEdges:
+        m_value.ident = CSSValueEdges;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator LineAlign() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return LineAlignNone;
+    case CSSValueEdges:
+        return LineAlignEdges;
+    default:
+        ASSERT_NOT_REACHED();
+        return LineAlignNone;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
     : CSSValue(PrimitiveClass)
 {
