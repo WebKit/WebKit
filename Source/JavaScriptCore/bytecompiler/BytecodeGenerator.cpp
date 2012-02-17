@@ -1278,7 +1278,7 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const ResolveResult&
 #if ENABLE(JIT)
         m_codeBlock->addGlobalResolveInfo(instructions().size());
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
         bool dynamic = resolveResult.isDynamic() && resolveResult.depth();
@@ -1372,7 +1372,7 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
 #if ENABLE(JIT)
         m_codeBlock->addGlobalResolveInfo(instructions().size());
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
         ValueProfile* profile = emitProfiledOpcode(op_resolve_global);
@@ -1494,7 +1494,7 @@ void BytecodeGenerator::emitMethodCheck()
 
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
 
@@ -1522,7 +1522,7 @@ RegisterID* BytecodeGenerator::emitGetArgumentsLength(RegisterID* dst, RegisterI
 
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
 
@@ -1540,7 +1540,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
 RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
     

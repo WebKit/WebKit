@@ -60,7 +60,7 @@ public:
     }
 #endif
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     AbstractPC(Instruction* vPC)
         : m_pointer(vPC)
         , m_mode(Interpreter)

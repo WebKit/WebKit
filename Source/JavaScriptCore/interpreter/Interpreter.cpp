@@ -69,7 +69,7 @@
 #include "JIT.h"
 #endif
 
-#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (ENABLE(COMPUTED_GOTO_INTERPRETER) && !defined(__llvm__))
+#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) && !defined(__llvm__))
 
 using namespace std;
 
@@ -83,7 +83,7 @@ static int depth(CodeBlock* codeBlock, ScopeChainNode* sc)
     return sc->localDepth();
 }
 
-#if ENABLE(INTERPRETER) 
+#if ENABLE(CLASSIC_INTERPRETER) 
 static NEVER_INLINE JSValue concatenateStrings(ExecState* exec, Register* strings, unsigned count)
 {
     return jsString(exec, strings, count);
@@ -365,7 +365,7 @@ NEVER_INLINE bool Interpreter::resolveThisAndProperty(CallFrame* callFrame, Inst
     return false;
 }
 
-#endif // ENABLE(INTERPRETER)
+#endif // ENABLE(CLASSIC_INTERPRETER)
 
 ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, CallFrame* callFrame, size_t registerOffset, int argumentCountIncludingThis)
 {
@@ -394,7 +394,7 @@ ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newC
     return newCallFrame;
 }
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
 static NEVER_INLINE bool isInvalidParamForIn(CallFrame* callFrame, JSValue value, JSValue& exceptionData)
 {
     if (value.isObject())
@@ -549,7 +549,7 @@ Interpreter::Interpreter()
 
 void Interpreter::initialize(bool canUseJIT)
 {
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     if (canUseJIT) {
         // If the JIT is present, don't use jump destinations for opcodes.
         
@@ -567,12 +567,12 @@ void Interpreter::initialize(bool canUseJIT)
     }
 #else
     UNUSED_PARAM(canUseJIT);
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     m_enabled = true;
 #else
     m_enabled = false;
 #endif
-#endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
+#endif // ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
 #if !ASSERT_DISABLED
     m_initialized = true;
 #endif
@@ -667,7 +667,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 
 bool Interpreter::isOpcode(Opcode opcode)
 {
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     if (!m_enabled)
         return opcode >= 0 && static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
     return opcode != HashTraits<Opcode>::emptyValue()
@@ -724,7 +724,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     // the beginning of next instruction to execute. To get an offset
     // inside the call instruction that triggered the exception we
     // have to subtract 1.
-#if ENABLE(JIT) && ENABLE(INTERPRETER)
+#if ENABLE(JIT) && ENABLE(CLASSIC_INTERPRETER)
     if (callerFrame->globalData().canUseJIT())
         bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnPC());
     else
@@ -808,7 +808,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     if (callframeIsHost) {
         // Don't need to deal with inline callframes here as by definition we haven't
         // inlined a call with an intervening native call frame.
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (!globalData->canUseJIT()) {
             bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
             lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
@@ -824,7 +824,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
             bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
 #endif
     } else {
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (!globalData->canUseJIT()) {
             bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnVPC());
             lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
@@ -868,7 +868,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
 static ALWAYS_INLINE const UString getSourceURLFromCallFrame(CallFrame* callFrame) 
 {
     ASSERT(!callFrame->hasHostCallFrameFlag());
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
 #if ENABLE(JIT)
     if (callFrame->globalData().canUseJIT())
         return callFrame->codeBlock()->ownerExecutable()->sourceURL();
@@ -1408,15 +1408,15 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
         
         m_reentryDepth++;  
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (closure.newCallFrame->globalData().canUseJIT())
 #endif
             result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_registerFile, closure.newCallFrame, closure.globalData);
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         else
 #endif
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
             result = privateExecute(Normal, &m_registerFile, closure.newCallFrame);
 #endif
         m_reentryDepth--;
@@ -1514,15 +1514,15 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         m_reentryDepth++;
         
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (callFrame->globalData().canUseJIT())
 #endif
             result = eval->generatedJITCode().execute(&m_registerFile, newCallFrame, scopeChain->globalData);
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         else
 #endif
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
             result = privateExecute(Normal, &m_registerFile, newCallFrame);
 #endif
         m_reentryDepth--;
@@ -1565,7 +1565,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     }
 }
     
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
 NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFrame, const Instruction* vPC)
 {
     int dst = vPC[1].u.operand;
@@ -1797,20 +1797,20 @@ NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock*, Instruction* vPC)
     vPC[4] = 0;
 }
 
-#endif // ENABLE(INTERPRETER)
+#endif // ENABLE(CLASSIC_INTERPRETER)
 
 JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFile, CallFrame* callFrame)
 {
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function.
     if (UNLIKELY(flag == InitializeAndReturn)) {
-        #if ENABLE(COMPUTED_GOTO_INTERPRETER)
+        #if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
             #define LIST_OPCODE_LABEL(id, length) &&id,
                 static Opcode labels[] = { FOR_EACH_OPCODE_ID(LIST_OPCODE_LABEL) };
                 for (size_t i = 0; i < WTF_ARRAY_LENGTH(labels); ++i)
                     m_opcodeTable[i] = labels[i];
             #undef LIST_OPCODE_LABEL
-        #endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
+        #endif // ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
         return JSValue();
     }
     
@@ -1818,14 +1818,14 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     ASSERT(m_enabled);
     
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     // Mixing Interpreter + JIT is not supported.
     if (callFrame->globalData().canUseJIT())
 #endif
         ASSERT_NOT_REACHED();
 #endif
 
-#if !ENABLE(INTERPRETER)
+#if !ENABLE(CLASSIC_INTERPRETER)
     UNUSED_PARAM(registerFile);
     UNUSED_PARAM(callFrame);
     return JSValue();
@@ -1876,7 +1876,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         callFrame->setBytecodeOffsetForNonDFGCode(vPC - codeBlock->instructions().data() + 1);\
     } while (0)
 
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     #define NEXT_INSTRUCTION() SAMPLE(codeBlock, vPC); goto *vPC->u.opcode
 #if ENABLE(OPCODE_STATS)
     #define DEFINE_OPCODE(opcode) \
@@ -5022,7 +5022,7 @@ skip_id_custom_self:
         vPC += target;
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     // Appease GCC
     goto *(&&skip_new_scope);
 #endif
@@ -5038,7 +5038,7 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_push_new_scope);
         NEXT_INSTRUCTION();
     }
-#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     skip_new_scope:
 #endif
     DEFINE_OPCODE(op_catch) {
@@ -5228,14 +5228,14 @@ skip_id_custom_self:
         NEXT_INSTRUCTION();
     }
     }
-#if !ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if !ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     } // iterator loop ends
 #endif
     #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_EXCEPTION
     #undef CHECK_FOR_TIMEOUT
-#endif // ENABLE(INTERPRETER)
+#endif // ENABLE(CLASSIC_INTERPRETER)
 }
 
 JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunction* function) const
@@ -5294,7 +5294,7 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
     if (!callerCodeBlock)
         return;
     unsigned bytecodeOffset = 0;
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!callerFrame->globalData().canUseJIT())
         bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnVPC());
 #if ENABLE(JIT)

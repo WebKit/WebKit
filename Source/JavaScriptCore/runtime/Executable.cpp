@@ -223,7 +223,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!m_jitCodeForCall)
         Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
     else
@@ -349,7 +349,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!m_jitCodeForCall)
         Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
     else
@@ -517,7 +517,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!m_jitCodeForCall)
         Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
     else
@@ -559,7 +559,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!m_jitCodeForConstruct)
         Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
     else

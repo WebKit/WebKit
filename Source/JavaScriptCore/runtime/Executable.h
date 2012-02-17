@@ -199,7 +199,7 @@ namespace JSC {
         }
 #endif
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
             ASSERT(!globalData.canUseJIT());
@@ -237,7 +237,7 @@ namespace JSC {
         }
 #endif
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         void finishCreation(JSGlobalData& globalData)
         {
             ASSERT(!globalData.canUseJIT());

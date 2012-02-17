@@ -131,7 +131,7 @@ namespace JSC  {
             return 0;
         }
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         Instruction* returnVPC() const { return this[RegisterFile::ReturnPC].vPC(); }
 #endif
 

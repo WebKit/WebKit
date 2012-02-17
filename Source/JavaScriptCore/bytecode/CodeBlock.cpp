@@ -412,7 +412,7 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_structureStubInfos.size());
     }
 #endif
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!m_globalResolveInstructions.isEmpty() || !m_propertyAccessInstructions.isEmpty())
         dataLog("\nStructures:\n");
 
@@ -1851,7 +1851,7 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
         visitStructures(visitor, &instructions()[m_propertyAccessInstructions[i]]);
     for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
@@ -1976,7 +1976,7 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     return;
 }
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
 bool CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset)
 {
     if (m_globalResolveInstructions.isEmpty())
@@ -2023,7 +2023,7 @@ void CodeBlock::shrinkToFit()
 {
     instructions().shrinkToFit();
 
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     m_propertyAccessInstructions.shrinkToFit();
     m_globalResolveInstructions.shrinkToFit();
 #endif
