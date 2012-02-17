@@ -1,5 +1,16 @@
 2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Unreviewed, adapt to the changes introduced in r107973.
+
+        SVN r107973 moved some libsoup feature initialization code to
+        WebCore, but only changed the GTK+ bits in WebKit.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body): Do not initialize the content sniffer and the
+        decoder here, the initialization is now done in WebCore.
+
+2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         Unreviewed, fix the build with ENABLE(DEVICE_ORIENTATION) after
         r107518. The EFL EWS bot doesn't enable that flag, so the breakage
         was not spotted earlier.
