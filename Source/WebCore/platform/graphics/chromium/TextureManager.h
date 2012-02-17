@@ -109,6 +109,7 @@ private:
 
     void addTexture(TextureToken, TextureInfo);
     void removeTexture(TextureToken, TextureInfo);
+    void evictTexture(TextureToken, TextureInfo);
 
     HashSet<ManagedTexture*> m_registeredTextures;
 

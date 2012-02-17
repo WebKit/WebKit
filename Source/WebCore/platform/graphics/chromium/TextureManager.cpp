@@ -184,6 +184,12 @@ void TextureManager::unprotectAllTextures()
         it->second.isProtected = false;
 }
 
+void TextureManager::evictTexture(TextureToken token, TextureInfo info)
+{
+    TRACE_EVENT("TextureManager::evictTexture", this, 0);
+    removeTexture(token, info);
+}
+
 void TextureManager::reduceMemoryToLimit(size_t limit)
 {
     while (m_memoryUseBytes > limit) {
@@ -194,7 +200,7 @@ void TextureManager::reduceMemoryToLimit(size_t limit)
             TextureInfo info = m_textures.get(token);
             if (info.isProtected)
                 continue;
-            removeTexture(token, info);
+            evictTexture(token, info);
             foundCandidate = true;
             break;
         }

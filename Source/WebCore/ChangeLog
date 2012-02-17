@@ -1,3 +1,22 @@
+2012-02-17  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Texture eviction doesn't show up in traces.
+        https://bugs.webkit.org/show_bug.cgi?id=78851
+
+        Reviewed by James Robinson.
+
+        Add TextureManager::evictTexture() function with TRACE statement so
+        that texture eviction shows up in traces.
+
+        No new tests.
+
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::evictTexture):
+        (WebCore):
+        (WebCore::TextureManager::reduceMemoryToLimit):
+        * platform/graphics/chromium/TextureManager.h:
+        (TextureManager):
+
 2012-02-17  Kalev Lember  <kalevlember@gmail.com>
 
         Remove unused parameters from WTF threading API
