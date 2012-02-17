@@ -26,9 +26,7 @@
 
 #include "ConstructData.h"
 #include "ErrorConstructor.h"
-#include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
-#include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
@@ -118,7 +116,7 @@ JSObject* createURIError(ExecState* exec, const UString& message)
     return createURIError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
+JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)
 {
     const UString& sourceURL = source.provider()->url();
 
@@ -126,34 +124,13 @@ JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, cons
         error->putDirect(*globalData, Identifier(globalData, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putDirect(*globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
-    if (!stackTrace.isEmpty()) {
-        JSGlobalObject* globalObject = 0;
-        if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
-            globalObject = globalData->dynamicGlobalObject;
-        else
-            globalObject = error->globalObject();
-        // We use the tryCreateUninitialized creation mechanism and related initialization
-        // functions as they're the only mechanism we currently have that will guarantee we
-        // don't call setters on the prototype. Technically it's faster than the alternative,
-        // but the numerous allocations that take place in this loop makes that last bit
-        // somewhat moot.
-        JSArray* stackTraceArray = JSArray::tryCreateUninitialized(*globalData, globalObject->arrayStructure(), stackTrace.size());
-        if (!stackTraceArray)
-            return error;
-        for (unsigned i = 0; i < stackTrace.size(); i++) {
-            UString stackLevel = stackTrace[i].toString(globalObject->globalExec());
-            stackTraceArray->initializeIndex(*globalData, i, jsString(globalData, stackLevel));
-        }
-        stackTraceArray->completeInitialization(stackTrace.size());
-        error->putDirect(*globalData, globalData->propertyNames->stack, stackTraceArray, ReadOnly | DontDelete);
-    }
 
     return error;
 }
 
-JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
+JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source)
 {
-    return addErrorInfo(&exec->globalData(), error, line, source, stackTrace);
+    return addErrorInfo(&exec->globalData(), error, line, source);
 }
 
 bool hasErrorInfo(ExecState* exec, JSObject* error)

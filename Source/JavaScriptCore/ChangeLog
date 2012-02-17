@@ -1,3 +1,26 @@
+2012-02-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Rolling out r107980, because it broke 32 bit platforms.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (Interpreter):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::setInferredName):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+        (JSC):
+
 2012-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         ENABLE_INTERPRETER should be ENABLE_CLASSIC_INTERPRETER
