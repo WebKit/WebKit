@@ -1,3 +1,10 @@
+2012-02-17  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: Qt minimal build fix.
+
+        * inspector/InjectedScript.h:
+        (WebCore):
+
 2012-02-17  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Switch Debugger agent to TypeBuilder
