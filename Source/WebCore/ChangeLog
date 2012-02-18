@@ -1,5 +1,13 @@
 2012-02-18  Sam Weinig  <sam@webkit.org>
 
+        Fix part of the windows build failure.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Don't build JSWebKitCSSRegionRule.cpp, since it is already being built
+        as part of DerivedSources.cpp.
+
+2012-02-18  Sam Weinig  <sam@webkit.org>
+
         Fix the ENABLE(THREADED_SCROLLING) build.
 
         * page/scrolling/ScrollingCoordinator.cpp:
