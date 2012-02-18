@@ -1,5 +1,18 @@
 2012-02-17  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed mac compile fix pt 2
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+
+2012-02-17  James Robinson  <jamesr@chromium.org>
+
         Unreviewed mac compile fix (unused parameter warning)
 
         * page/scrolling/ScrollingCoordinator.cpp:

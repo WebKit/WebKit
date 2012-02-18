@@ -294,38 +294,37 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 #if !ENABLE(THREADED_SCROLLING) && !PLATFORM(CHROMIUM)
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 
 void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer*)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 
 void ScrollingCoordinator::setScrollParameters(ScrollElasticity, ScrollElasticity, bool, bool, const IntRect&, const IntSize&)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
-
 
 void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 
 void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement
 }
 #endif
 
