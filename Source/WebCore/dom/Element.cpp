@@ -638,7 +638,7 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
     }
 
     if (!old) {
-        attributeData->addAttribute(createAttribute(name, value), this);
+        attributeData->addAttribute(Attribute::create(name, value), this);
         return;
     }
 
@@ -650,11 +650,6 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         old->setValue(value);
 
     didModifyAttribute(old);
-}
-
-PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    return Attribute::create(name, value);
 }
 
 void Element::attributeChanged(Attribute* attr)

@@ -42,7 +42,7 @@ struct SVGAnimatedPropertySynchronizer<true> {
         if (old && value.isNull())
             attributeData->removeAttribute(old->name(), ownerElement);
         else if (!old && !value.isNull())
-            attributeData->addAttribute(ownerElement->createAttribute(attrName, value), ownerElement);
+            attributeData->addAttribute(Attribute::create(attrName, value), ownerElement);
         else if (old && !value.isNull())
             old->setValue(value);
     }

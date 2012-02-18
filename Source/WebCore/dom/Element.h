@@ -392,8 +392,6 @@ public:
     
     PassRefPtr<RenderStyle> styleForRenderer();
 
-    PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
-
     const AtomicString& webkitRegionOverflow() const;
 
 protected:
