@@ -1,3 +1,12 @@
+2012-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the TextureMapper build for non-Qt ports. Qt debug builds
+        must use RTTI, but GTK+, at least, does not.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore): Make the RTTI check
+        Qt only.
+
 2012-02-16  Andreas Kling  <awesomekling@apple.com>
 
         FontFamilyValue: Utilize inheritance from CSSPrimitiveValue better.

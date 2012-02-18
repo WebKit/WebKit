@@ -109,7 +109,9 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     if (!m_backingStore)
         m_backingStore = TextureMapperTiledBackingStore::create();
 
+#if PLATFORM(QT)
     ASSERT(dynamic_cast<TextureMapperTiledBackingStore*>(m_backingStore.get()));
+#endif
 
     // Paint the entire dirty rect into an image buffer. This ensures we only paint once.
     OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
