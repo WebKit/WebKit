@@ -37,11 +37,11 @@ namespace JSC { namespace DFG {
 
 class Propagator {
 public:
-    Propagator(Graph& graph, JSGlobalData& globalData, CodeBlock* codeBlock, CodeBlock* profiledBlock)
+    Propagator(Graph& graph)
         : m_graph(graph)
-        , m_globalData(globalData)
-        , m_codeBlock(codeBlock)
-        , m_profiledBlock(profiledBlock)
+        , m_globalData(graph.m_globalData)
+        , m_codeBlock(graph.m_codeBlock)
+        , m_profiledBlock(graph.m_profiledBlock)
     {
         // Replacements are used to implement local common subexpression elimination.
         m_replacements.resize(m_graph.size());
@@ -93,17 +93,17 @@ public:
 private:
     bool isNotNegZero(NodeIndex nodeIndex)
     {
-        if (!m_graph.isNumberConstant(m_codeBlock, nodeIndex))
+        if (!m_graph.isNumberConstant(nodeIndex))
             return false;
-        double value = m_graph.valueOfNumberConstant(m_codeBlock, nodeIndex);
+        double value = m_graph.valueOfNumberConstant(nodeIndex);
         return !value && 1.0 / value < 0.0;
     }
     
     bool isNotZero(NodeIndex nodeIndex)
     {
-        if (!m_graph.isNumberConstant(m_codeBlock, nodeIndex))
+        if (!m_graph.isNumberConstant(nodeIndex))
             return false;
-        return !!m_graph.valueOfNumberConstant(m_codeBlock, nodeIndex);
+        return !!m_graph.valueOfNumberConstant(nodeIndex);
     }
     
     void propagateArithNodeFlags(Node& node)
@@ -301,7 +301,7 @@ private:
         switch (op) {
         case JSConstant:
         case WeakJSConstant: {
-            changed |= setPrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)));
+            changed |= setPrediction(predictionFromValue(m_graph.valueOfJSConstant(m_compileIndex)));
             break;
         }
             
@@ -367,7 +367,7 @@ private:
             
             if (left && right) {
                 if (isNumberPrediction(left) && isNumberPrediction(right)) {
-                    if (m_graph.addShouldSpeculateInteger(node, m_codeBlock))
+                    if (m_graph.addShouldSpeculateInteger(node))
                         changed |= mergePrediction(PredictInt32);
                     else
                         changed |= mergePrediction(PredictDouble);
@@ -386,7 +386,7 @@ private:
             PredictedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
-                if (m_graph.addShouldSpeculateInteger(node, m_codeBlock))
+                if (m_graph.addShouldSpeculateInteger(node))
                     changed |= mergePrediction(PredictInt32);
                 else
                     changed |= mergePrediction(PredictDouble);
@@ -713,7 +713,7 @@ private:
                 VariableAccessData::Ballot ballot;
                 
                 if (isNumberPrediction(left) && isNumberPrediction(right)
-                    && !m_graph.addShouldSpeculateInteger(node, m_codeBlock))
+                    && !m_graph.addShouldSpeculateInteger(node))
                     ballot = VariableAccessData::VoteDouble;
                 else
                     ballot = VariableAccessData::VoteValue;
@@ -1700,7 +1700,7 @@ private:
         
         AbstractState::initialize(m_graph);
         
-        AbstractState state(m_codeBlock, m_graph);
+        AbstractState state(m_graph);
         
         do {
             m_changed = false;
@@ -1726,13 +1726,9 @@ private:
     FixedArray<NodeIndex, LastNodeId> m_lastSeen;
 };
 
-void propagate(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
+void propagate(Graph& graph)
 {
-    ASSERT(codeBlock);
-    CodeBlock* profiledBlock = codeBlock->alternative();
-    ASSERT(profiledBlock);
-    
-    Propagator propagator(graph, *globalData, codeBlock, profiledBlock);
+    Propagator propagator(graph);
     propagator.fixpoint();
     
 }

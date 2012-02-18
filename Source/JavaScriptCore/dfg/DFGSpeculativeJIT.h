@@ -735,15 +735,15 @@ private:
     bool isKnownNotCell(NodeIndex);
     
     // Checks/accessors for constant values.
-    bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
-    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
-    bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
-    bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
-    bool isNumberConstant(NodeIndex nodeIndex) { return m_jit.isNumberConstant(nodeIndex); }
-    bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.isBooleanConstant(nodeIndex); }
-    bool isFunctionConstant(NodeIndex nodeIndex) { return m_jit.isFunctionConstant(nodeIndex); }
-    int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
-    double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.valueOfNumberConstant(nodeIndex); }
+    bool isConstant(NodeIndex nodeIndex) { return m_jit.graph().isConstant(nodeIndex); }
+    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.graph().isJSConstant(nodeIndex); }
+    bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.graph().isInt32Constant(nodeIndex); }
+    bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.graph().isDoubleConstant(nodeIndex); }
+    bool isNumberConstant(NodeIndex nodeIndex) { return m_jit.graph().isNumberConstant(nodeIndex); }
+    bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.graph().isBooleanConstant(nodeIndex); }
+    bool isFunctionConstant(NodeIndex nodeIndex) { return m_jit.graph().isFunctionConstant(nodeIndex); }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.graph().valueOfInt32Constant(nodeIndex); }
+    double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfNumberConstant(nodeIndex); }
     int32_t valueOfNumberConstantAsInt32(NodeIndex nodeIndex)
     {
         if (isInt32Constant(nodeIndex))
@@ -753,9 +753,9 @@ private:
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.addressOfDoubleConstant(nodeIndex); }
 #endif
-    JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
-    bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.valueOfBooleanConstant(nodeIndex); }
-    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return m_jit.valueOfFunctionConstant(nodeIndex); }
+    JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfJSConstant(nodeIndex); }
+    bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfBooleanConstant(nodeIndex); }
+    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfFunctionConstant(nodeIndex); }
     bool isNullConstant(NodeIndex nodeIndex)
     {
         if (!isConstant(nodeIndex))
@@ -1759,7 +1759,7 @@ private:
     {
         if (!m_compileOkay)
             return;
-        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().valueProfileFor(nodeIndex), jumpToFail, this));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail)
     {
@@ -1782,7 +1782,7 @@ private:
         if (!m_compileOkay)
             return;
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
-        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
@@ -2487,7 +2487,7 @@ inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_arguments(jit.codeBlock()->numParameters())
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
-    , m_state(m_jit.codeBlock(), m_jit.graph())
+    , m_state(m_jit.graph())
 {
 }
 

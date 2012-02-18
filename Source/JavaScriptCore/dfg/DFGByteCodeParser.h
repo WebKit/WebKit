@@ -39,7 +39,7 @@ namespace DFG {
 
 // Populate the Graph with a basic block of code from the CodeBlock,
 // starting at the provided bytecode index.
-bool parse(Graph&, JSGlobalData*, CodeBlock*);
+bool parse(Graph&);
 
 } } // namespace JSC::DFG
 

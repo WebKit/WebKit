@@ -1289,8 +1289,8 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         return ValueRecovery::alreadyInRegisterFileAsUnboxedDouble();
 
     case HaveNode: {
-        if (m_jit.isConstant(valueSource.nodeIndex()))
-            return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));
+        if (isConstant(valueSource.nodeIndex()))
+            return ValueRecovery::constant(valueOfJSConstant(valueSource.nodeIndex()));
     
         Node* nodePtr = &at(valueSource.nodeIndex());
         if (!nodePtr->shouldGenerate()) {
@@ -2220,7 +2220,7 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
 
 void SpeculativeJIT::compileAdd(Node& node)
 {
-    if (m_jit.graph().addShouldSpeculateInteger(node, m_jit.codeBlock())) {
+    if (m_jit.graph().addShouldSpeculateInteger(node)) {
         if (isNumberConstant(node.child1().index())) {
             int32_t imm1 = valueOfNumberConstantAsInt32(node.child1().index());
             SpeculateIntegerOperand op2(this, node.child2());
@@ -2305,7 +2305,7 @@ void SpeculativeJIT::compileAdd(Node& node)
 
 void SpeculativeJIT::compileArithSub(Node& node)
 {
-    if (m_jit.graph().addShouldSpeculateInteger(node, m_jit.codeBlock())) {
+    if (m_jit.graph().addShouldSpeculateInteger(node)) {
         if (isNumberConstant(node.child2().index())) {
             SpeculateIntegerOperand op1(this, node.child1());
             int32_t imm2 = valueOfNumberConstantAsInt32(node.child2().index());

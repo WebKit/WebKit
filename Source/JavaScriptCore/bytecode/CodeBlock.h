@@ -1331,6 +1331,17 @@ namespace JSC {
         bool m_oldValueOfShouldDiscardBytecode;
     };
 
+    inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
+    {
+        if (codeOrigin.inlineCallFrame) {
+            ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
+            ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
+            return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
+        }
+        return baselineCodeBlock;
+    }
+    
+
     inline Register& ExecState::r(int index)
     {
         CodeBlock* codeBlock = this->codeBlock();

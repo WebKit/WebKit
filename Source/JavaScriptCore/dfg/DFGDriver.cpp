@@ -47,16 +47,16 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     dataLog("DFG compiling code block %p(%p), number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->instructionCount());
 #endif
     
-    Graph dfg;
-    if (!parse(dfg, &globalData, codeBlock))
+    Graph dfg(globalData, codeBlock);
+    if (!parse(dfg))
         return false;
     
     if (compileMode == CompileFunction)
-        dfg.predictArgumentTypes(codeBlock);
+        dfg.predictArgumentTypes();
     
-    propagate(dfg, &globalData, codeBlock);
+    propagate(dfg);
     
-    JITCompiler dataFlowJIT(&globalData, dfg, codeBlock);
+    JITCompiler dataFlowJIT(dfg);
     if (compileMode == CompileFunction) {
         ASSERT(jitCodeWithArityCheck);
         

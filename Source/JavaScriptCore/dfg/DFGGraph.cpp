@@ -117,7 +117,7 @@ void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
     }
 }
 
-void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
+void Graph::dump(NodeIndex nodeIndex)
 {
     Node& node = at(nodeIndex);
     NodeType op = node.op;
@@ -184,10 +184,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         hasPrinted = true;
     }
     if (node.hasIdentifier()) {
-        if (codeBlock)
-            dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
-        else
-            dataLog("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
+        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), m_codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
         hasPrinted = true;
     }
     if (node.hasStructureSet()) {
@@ -202,10 +199,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     }
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
-        if (codeBlock)
-            dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
-        else
-            dataLog("%sid%u", hasPrinted ? ", " : "", storageAccessData.identifierNumber);
+        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, m_codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
         
         dataLog(", %lu", static_cast<unsigned long>(storageAccessData.offset));
         hasPrinted = true;
@@ -220,24 +214,22 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             dataLog("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
         hasPrinted = true;
     }
-    if (node.hasConstantBuffer() && codeBlock) {
+    if (node.hasConstantBuffer()) {
         if (hasPrinted)
             dataLog(", ");
         dataLog("%u:[", node.startConstant());
         for (unsigned i = 0; i < node.numConstants(); ++i) {
             if (i)
                 dataLog(", ");
-            dataLog("%s", codeBlock->constantBuffer(node.startConstant())[i].description());
+            dataLog("%s", m_codeBlock->constantBuffer(node.startConstant())[i].description());
         }
         dataLog("]");
         hasPrinted = true;
     }
     if (op == JSConstant) {
         dataLog("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
-        if (codeBlock) {
-            JSValue value = valueOfJSConstant(codeBlock, nodeIndex);
-            dataLog(" = %s", value.description());
-        }
+        JSValue value = valueOfJSConstant(nodeIndex);
+        dataLog(" = %s", value.description());
         hasPrinted = true;
     }
     if (op == WeakJSConstant) {
@@ -268,7 +260,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     dataLog("\n");
 }
 
-void Graph::dump(CodeBlock* codeBlock)
+void Graph::dump()
 {
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
@@ -283,7 +275,7 @@ void Graph::dump(CodeBlock* codeBlock)
         dumpOperands(block->variablesAtHead, WTF::dataFile());
         dataLog("\n");
         for (size_t i = block->begin; i < block->end; ++i)
-            dump(i, codeBlock);
+            dump(i);
         dataLog("  vars after: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtTail, WTF::dataFile());
@@ -293,7 +285,7 @@ void Graph::dump(CodeBlock* codeBlock)
     }
     dataLog("Phi Nodes:\n");
     for (size_t i = m_blocks.last()->end; i < size(); ++i)
-        dump(i, codeBlock);
+        dump(i);
 }
 
 // FIXME: Convert this to be iterative, not recursive.
@@ -334,15 +326,11 @@ void Graph::derefChildren(NodeIndex op)
     DO_TO_CHILDREN(at(op), deref);
 }
 
-void Graph::predictArgumentTypes(CodeBlock* codeBlock)
+void Graph::predictArgumentTypes()
 {
-    ASSERT(codeBlock);
-    ASSERT(codeBlock->alternative());
-
-    CodeBlock* profiledCodeBlock = codeBlock->alternative();
-    ASSERT(codeBlock->numParameters() >= 1);
-    for (size_t arg = 0; arg < static_cast<size_t>(codeBlock->numParameters()); ++arg) {
-        ValueProfile* profile = profiledCodeBlock->valueProfileForArgument(arg);
+    ASSERT(m_codeBlock->numParameters() >= 1);
+    for (size_t arg = 0; arg < static_cast<size_t>(m_codeBlock->numParameters()); ++arg) {
+        ValueProfile* profile = m_profiledBlock->valueProfileForArgument(arg);
         if (!profile)
             continue;
         

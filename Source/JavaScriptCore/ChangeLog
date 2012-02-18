@@ -1,3 +1,84 @@
+2012-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Graph should have references to JSGlobalData, the CodeBlock being compiled, and
+        the CodeBlock that was used for profiling
+        https://bugs.webkit.org/show_bug.cgi?id=78954
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/CodeBlock.h:
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        (JSC):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractState.h:
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::parse):
+        * dfg/DFGByteCodeParser.h:
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::Graph):
+        (Graph):
+        (JSC::DFG::Graph::getJSConstantPrediction):
+        (JSC::DFG::Graph::addShouldSpeculateInteger):
+        (JSC::DFG::Graph::isInt32Constant):
+        (JSC::DFG::Graph::isDoubleConstant):
+        (JSC::DFG::Graph::isNumberConstant):
+        (JSC::DFG::Graph::isBooleanConstant):
+        (JSC::DFG::Graph::isFunctionConstant):
+        (JSC::DFG::Graph::valueOfJSConstant):
+        (JSC::DFG::Graph::valueOfInt32Constant):
+        (JSC::DFG::Graph::valueOfNumberConstant):
+        (JSC::DFG::Graph::valueOfBooleanConstant):
+        (JSC::DFG::Graph::valueOfFunctionConstant):
+        (JSC::DFG::Graph::baselineCodeBlockFor):
+        (JSC::DFG::Graph::valueProfileFor):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInteger):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JITCompiler):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::isNotNegZero):
+        (JSC::DFG::Propagator::isNotZero):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::doRoundOfDoubleVoting):
+        (JSC::DFG::Propagator::globalCFA):
+        (JSC::DFG::propagate):
+        * dfg/DFGPropagator.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isConstant):
+        (JSC::DFG::SpeculativeJIT::isJSConstant):
+        (JSC::DFG::SpeculativeJIT::isInt32Constant):
+        (JSC::DFG::SpeculativeJIT::isDoubleConstant):
+        (JSC::DFG::SpeculativeJIT::isNumberConstant):
+        (JSC::DFG::SpeculativeJIT::isBooleanConstant):
+        (JSC::DFG::SpeculativeJIT::isFunctionConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfInt32Constant):
+        (JSC::DFG::SpeculativeJIT::valueOfNumberConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfBooleanConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfFunctionConstant):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+
 2012-02-17  Ahmad Sharif  <asharif.tools@gmail.com>
 
         There is a warning in memset in glibc that gets triggered through a

@@ -92,7 +92,7 @@ public:
         MergeToSuccessors
     };
     
-    AbstractState(CodeBlock*, Graph&);
+    AbstractState(Graph&);
     
     ~AbstractState();
     

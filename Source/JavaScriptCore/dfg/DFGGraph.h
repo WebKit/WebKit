@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
 #include "DFGNode.h"
 #include "PredictionTracker.h"
@@ -71,6 +72,14 @@ struct ResolveGlobalData {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
+    Graph(JSGlobalData& globalData, CodeBlock* codeBlock)
+        : m_globalData(globalData)
+        , m_codeBlock(codeBlock)
+        , m_profiledBlock(codeBlock->alternative())
+    {
+        ASSERT(m_profiledBlock);
+    }
+    
     using Vector<Node, 64>::operator[];
     using Vector<Node, 64>::at;
     
@@ -128,8 +137,8 @@ public:
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
-    void dump(CodeBlock* = 0);
-    void dump(NodeIndex, CodeBlock* = 0);
+    void dump();
+    void dump(NodeIndex);
 
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node.
@@ -147,12 +156,12 @@ public:
         return m_predictions.getGlobalVarPrediction(varNumber);
     }
     
-    PredictedType getJSConstantPrediction(Node& node, CodeBlock* codeBlock)
+    PredictedType getJSConstantPrediction(Node& node)
     {
-        return predictionFromValue(node.valueOfJSConstant(codeBlock));
+        return predictionFromValue(node.valueOfJSConstant(m_codeBlock));
     }
     
-    bool addShouldSpeculateInteger(Node& add, CodeBlock* codeBlock)
+    bool addShouldSpeculateInteger(Node& add)
     {
         ASSERT(add.op == ValueAdd || add.op == ArithAdd || add.op == ArithSub);
         
@@ -160,16 +169,16 @@ public:
         Node& right = at(add.child2());
         
         if (left.hasConstant())
-            return addImmediateShouldSpeculateInteger(codeBlock, add, right, left);
+            return addImmediateShouldSpeculateInteger(add, right, left);
         if (right.hasConstant())
-            return addImmediateShouldSpeculateInteger(codeBlock, add, left, right);
+            return addImmediateShouldSpeculateInteger(add, left, right);
         
         return Node::shouldSpeculateInteger(left, right) && add.canSpeculateInteger();
     }
     
-    bool addShouldSpeculateInteger(NodeIndex nodeIndex, CodeBlock* codeBlock)
+    bool addShouldSpeculateInteger(NodeIndex nodeIndex)
     {
-        return addShouldSpeculateInteger(at(nodeIndex), codeBlock);
+        return addShouldSpeculateInteger(at(nodeIndex));
     }
     
     // Helper methods to check nodes for constants.
@@ -181,50 +190,50 @@ public:
     {
         return at(nodeIndex).hasConstant();
     }
-    bool isInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool isInt32Constant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isInt32Constant(codeBlock);
+        return at(nodeIndex).isInt32Constant(m_codeBlock);
     }
-    bool isDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool isDoubleConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isDoubleConstant(codeBlock);
+        return at(nodeIndex).isDoubleConstant(m_codeBlock);
     }
-    bool isNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool isNumberConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isNumberConstant(codeBlock);
+        return at(nodeIndex).isNumberConstant(m_codeBlock);
     }
-    bool isBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool isBooleanConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isBooleanConstant(codeBlock);
+        return at(nodeIndex).isBooleanConstant(m_codeBlock);
     }
-    bool isFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool isFunctionConstant(NodeIndex nodeIndex)
     {
         if (!isJSConstant(nodeIndex))
             return false;
-        if (!getJSFunction(valueOfJSConstant(codeBlock, nodeIndex)))
+        if (!getJSFunction(valueOfJSConstant(nodeIndex)))
             return false;
         return true;
     }
     // Helper methods get constant values from nodes.
-    JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    JSValue valueOfJSConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfJSConstant(codeBlock);
+        return at(nodeIndex).valueOfJSConstant(m_codeBlock);
     }
-    int32_t valueOfInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
     {
-        return valueOfJSConstant(codeBlock, nodeIndex).asInt32();
+        return valueOfJSConstant(nodeIndex).asInt32();
     }
-    double valueOfNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    double valueOfNumberConstant(NodeIndex nodeIndex)
     {
-        return valueOfJSConstant(codeBlock, nodeIndex).asNumber();
+        return valueOfJSConstant(nodeIndex).asNumber();
     }
-    bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    bool valueOfBooleanConstant(NodeIndex nodeIndex)
     {
-        return valueOfJSConstant(codeBlock, nodeIndex).asBoolean();
+        return valueOfJSConstant(nodeIndex).asBoolean();
     }
-    JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex)
     {
-        JSCell* function = getJSFunction(valueOfJSConstant(codeBlock, nodeIndex));
+        JSCell* function = getJSFunction(valueOfJSConstant(nodeIndex));
         ASSERT(function);
         return asFunction(function);
     }
@@ -234,7 +243,7 @@ public:
     // This is O(n), and should only be used for verbose dumps.
     const char* nameOfVariableAccessData(VariableAccessData*);
 
-    void predictArgumentTypes(CodeBlock*);
+    void predictArgumentTypes();
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
     {
@@ -249,12 +258,18 @@ public:
         return &m_structureTransitionData.last();
     }
     
-    ValueProfile* valueProfileFor(NodeIndex nodeIndex, CodeBlock* profiledBlock)
+    CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
+    {
+        return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
+    }
+    
+    ValueProfile* valueProfileFor(NodeIndex nodeIndex)
     {
         if (nodeIndex == NoNode)
             return 0;
         
         Node& node = at(nodeIndex);
+        CodeBlock* profiledBlock = baselineCodeBlockFor(node.codeOrigin);
         
         if (node.op == GetLocal) {
             if (!operandIsArgument(node.local()))
@@ -270,6 +285,10 @@ public:
         
         return 0;
     }
+    
+    JSGlobalData& m_globalData;
+    CodeBlock* m_codeBlock;
+    CodeBlock* m_profiledBlock;
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeUse, 16> m_varArgChildren;
@@ -284,11 +303,11 @@ public:
     unsigned m_parameterSlots;
 private:
     
-    bool addImmediateShouldSpeculateInteger(CodeBlock* codeBlock, Node& add, Node& variable, Node& immediate)
+    bool addImmediateShouldSpeculateInteger(Node& add, Node& variable, Node& immediate)
     {
         ASSERT(immediate.hasConstant());
         
-        JSValue immediateValue = immediate.valueOfJSConstant(codeBlock);
+        JSValue immediateValue = immediate.valueOfJSConstant(m_codeBlock);
         if (!immediateValue.isNumber())
             return false;
         

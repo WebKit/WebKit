@@ -287,16 +287,6 @@ public:
         return codeOrigin.inlineCallFrame->callee->jsExecutable()->isStrictMode();
     }
     
-    static CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
-    {
-        if (codeOrigin.inlineCallFrame) {
-            ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
-            ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
-            return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
-        }
-        return baselineCodeBlock;
-    }
-    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock());

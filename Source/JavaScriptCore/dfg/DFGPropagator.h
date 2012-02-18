@@ -38,7 +38,7 @@ class JSGlobalData;
 namespace DFG {
 
 // Propagate dynamic predictions from value sources to variables.
-void propagate(Graph&, JSGlobalData*, CodeBlock*);
+void propagate(Graph&);
 
 } } // namespace JSC::DFG
 

@@ -45,10 +45,10 @@ namespace JSC { namespace DFG {
 // This class is used to compile the dataflow graph from a CodeBlock.
 class ByteCodeParser {
 public:
-    ByteCodeParser(JSGlobalData* globalData, CodeBlock* codeBlock, CodeBlock* profiledBlock, Graph& graph)
-        : m_globalData(globalData)
-        , m_codeBlock(codeBlock)
-        , m_profiledBlock(profiledBlock)
+    ByteCodeParser(Graph& graph)
+        : m_globalData(&graph.m_globalData)
+        , m_codeBlock(graph.m_codeBlock)
+        , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
         , m_currentBlock(0)
         , m_currentIndex(0)
@@ -57,10 +57,10 @@ public:
         , m_constantNull(UINT_MAX)
         , m_constantNaN(UINT_MAX)
         , m_constant1(UINT_MAX)
-        , m_constants(codeBlock->numberOfConstantRegisters())
-        , m_numArguments(codeBlock->numParameters())
-        , m_numLocals(codeBlock->m_numCalleeRegisters)
-        , m_preservedVars(codeBlock->m_numVars)
+        , m_constants(m_codeBlock->numberOfConstantRegisters())
+        , m_numArguments(m_codeBlock->numParameters())
+        , m_numLocals(m_codeBlock->m_numCalleeRegisters)
+        , m_preservedVars(m_codeBlock->m_numVars)
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
         , m_globalResolveNumber(0)
@@ -69,7 +69,7 @@ public:
     {
         ASSERT(m_profiledBlock);
         
-        for (int i = 0; i < codeBlock->m_numVars; ++i)
+        for (int i = 0; i < m_codeBlock->m_numVars; ++i)
             m_preservedVars.set(i);
     }
     
@@ -918,7 +918,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, m_currentIndex);
     
-    if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
+    if (m_graph.isFunctionConstant(callTarget))
         callType = ConstantFunction;
     else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
              && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
@@ -946,7 +946,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         Intrinsic intrinsic;
         bool certainAboutExpectedFunction;
         if (callType == ConstantFunction) {
-            expectedFunction = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget);
+            expectedFunction = m_graph.valueOfFunctionConstant(callTarget);
             intrinsic = expectedFunction->executable()->intrinsicFor(kind);
             certainAboutExpectedFunction = true;
         } else {
@@ -2589,15 +2589,13 @@ bool ByteCodeParser::parse()
     return true;
 }
 
-bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
+bool parse(Graph& graph)
 {
 #if DFG_DEBUG_LOCAL_DISBALE
     UNUSED_PARAM(graph);
-    UNUSED_PARAM(globalData);
-    UNUSED_PARAM(codeBlock);
     return false;
 #else
-    return ByteCodeParser(globalData, codeBlock, codeBlock->alternative(), graph).parse();
+    return ByteCodeParser(graph).parse();
 #endif
 }
 
