@@ -1,3 +1,11 @@
+2012-02-18  Sam Weinig  <sam@webkit.org>
+
+        Fix the ENABLE(THREADED_SCROLLING) build.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+
 2012-02-18  Andreas Kling  <awesomekling@apple.com>
 
         HTML: Remove unnecessary attributeChange() overrides.

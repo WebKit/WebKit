@@ -337,7 +337,7 @@ void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
 {
-    m_scrollingTreeState->setNonFastScrollableRegion(nonFastScrollableRegion);
+    m_scrollingTreeState->setNonFastScrollableRegion(region);
     scheduleTreeStateCommit();
 }
 
@@ -348,8 +348,8 @@ void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScroll
                                                const IntRect& viewportRect,
                                                const IntSize& contentsSize)
 {
-    m_scrollingTreeState->setHorizontalScrollElasticity(horizontalScrollElasticity());
-    m_scrollingTreeState->setVerticalScrollElasticity(verticalScrollElasticity());
+    m_scrollingTreeState->setHorizontalScrollElasticity(horizontalScrollElasticity);
+    m_scrollingTreeState->setVerticalScrollElasticity(verticalScrollElasticity);
     m_scrollingTreeState->setHasEnabledHorizontalScrollbar(hasEnabledHorizontalScrollbar);
     m_scrollingTreeState->setHasEnabledVerticalScrollbar(hasEnabledVerticalScrollbar);
 
