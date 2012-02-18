@@ -2576,10 +2576,6 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
-BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
-BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
-BUGWK54322 SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
 BUGWK54322 SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
@@ -3478,7 +3474,6 @@ BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
 //BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
 BUGWK73643 WIN MAC : svg/as-background-image/svg-as-background-2.html = IMAGE
-BUGWK73643 WIN MAC : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
@@ -3627,15 +3622,11 @@ BUGWK76446 : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE+TEXT
 // Caret position reported differently, should start at 0 instead of 18.
 BUGWK76446 : svg/custom/pointer-events-text-css-transform.svg = TEXT
 
-// RenderSVGRoot now reports a correct size.
-BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT
-
 // Slight changes in RenderReplaced extents.
 BUGWK76647 : svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
-BUGWK76647 : tables/mozilla/bugs/bug101674.html = IMAGE+TEXT
 BUGWK76647 : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
 BUGWK76647 : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
 
@@ -3804,10 +3795,6 @@ BUGWK78084 : svg/custom/polyline-setattribute-points-null.svg = IMAGE+TEXT
 // Massive rebaselining, some rebaseline just don't make sense.
 BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
 
-// feImage now supports dynamic invalidations if the target changes.
-BUGWK73860 : svg/filters/feImage-change-target-id.svg = IMAGE+TEXT
-BUGWK73860 : svg/filters/feImage-remove-target.svg = IMAGE+TEXT
-
 BUGWK78038 DEBUG : compositing/iframes/invisible-nested-iframe-show.html = PASS CRASH
 BUGWK78038 DEBUG : compositing/iframes/layout-on-compositing-change.html = PASS CRASH
 
@@ -3836,7 +3823,6 @@ BUGWK78832 MAC : fast/dom/shadow/shadow-boundary-events.html = TEXT
 WONTFIX : fast/js/stack-trace.html = TEXT
 
 // Needs a rebaseline, as svg/dynamic-updates tests are now using the repaint.js harness.
-BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-href-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-target-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGAElement-svgdom-href-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGAElement-svgdom-target-prop.html = IMAGE
@@ -3848,11 +3834,8 @@ BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGClipPath-influences-hitTesting.html = IMAGE+TEXT
-BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html = IMAGE+TEXT
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html = IMAGE+TEXT
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-dom-x-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-dom-y-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-svgdom-x-prop.html = IMAGE
@@ -3867,18 +3850,11 @@ BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr.html = IMAGE
@@ -3892,7 +3868,6 @@ BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFECompositeElement-dom-in-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr.html = IMAGE
@@ -4075,8 +4050,6 @@ BUGWK78219 : svg/dynamic-updates/SVGImageElement-dom-width-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-dom-x-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-dom-y-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-height-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html = IMAGE
@@ -4194,7 +4167,6 @@ BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html = IMAGE
 
 // May need platform specific baselines
