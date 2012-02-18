@@ -47,9 +47,9 @@ module window {
                  attribute [DoNotCheckDomainSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
-        [Custom, V8OnInstance] void assign(in [Optional=DefaultIsUndefined] DOMString url);
-        [Custom, V8OnInstance] void replace(in [Optional=DefaultIsUndefined] DOMString url);
-        [Custom, V8OnInstance] void reload();
+        [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);
+        [Custom, V8Unforgeable] void replace(in [Optional=DefaultIsUndefined] DOMString url);
+        [Custom, V8Unforgeable] void reload();
 
         // URI decomposition attributes
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
@@ -65,10 +65,10 @@ module window {
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
+        [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 #if defined(V8_BINDING) && V8_BINDING
-        [NotEnumerable, Custom, V8OnInstance, V8ReadOnly] DOMObject valueOf();
+        [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] DOMObject valueOf();
 #endif
     };
 

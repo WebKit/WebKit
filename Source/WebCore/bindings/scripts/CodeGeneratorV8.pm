@@ -2384,7 +2384,7 @@ sub GenerateImplementation
 
         my $attrExt = $function->signature->extendedAttributes;
         # Don't put any nonstandard functions into this table:
-        if ($attrExt->{"V8OnInstance"}) {
+        if ($attrExt->{"V8Unforgeable"}) {
             next;
         }
         if ($function->isStatic) {
@@ -2603,7 +2603,7 @@ END
         my $commentInfo = "Function '$name' (ExtAttr: '" . join(' ', keys(%{$attrExt})) . "')";
 
         my $template = "proto";
-        if ($attrExt->{"V8OnInstance"}) {
+        if ($attrExt->{"V8Unforgeable"}) {
             $template = "instance";
         }
         if ($function->isStatic) {
