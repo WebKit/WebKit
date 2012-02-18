@@ -145,8 +145,7 @@ inline IntSize roundedIntSize(const FractionalLayoutSize& s)
     return IntSize(s.width().round(), s.height().round());
 }
 
-// FIXME: Change this method to take a FractionalLayoutPoint once that class has been added.
-IntSize pixelSnappedIntSize(const FractionalLayoutSize&, const IntPoint&);
+IntSize pixelSnappedIntSize(const FractionalLayoutSize&, const FractionalLayoutPoint&);
 
 } // namespace WebCore
 

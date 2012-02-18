@@ -1,3 +1,57 @@
+2012-02-17  Emil A Eklund  <eae@chromium.org>
+
+        Add FractionalLayoutPoint for sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78913
+
+        Reviewed by Eric Seidel.
+
+        Add FractionalLayoutUnit version of Point class and a couple of
+        conversion methods to the Int and Float versions of same.
+
+        No new tests.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore):
+        (WebCore::FloatPoint::moveBy):
+        * platform/graphics/FloatPoint.h:
+        (WebCore):
+        (FloatPoint):
+        * platform/graphics/FractionalLayoutPoint.h: Added.
+        (WebCore):
+        (FractionalLayoutPoint):
+        (WebCore::FractionalLayoutPoint::FractionalLayoutPoint):
+        (WebCore::FractionalLayoutPoint::zero):
+        (WebCore::FractionalLayoutPoint::x):
+        (WebCore::FractionalLayoutPoint::y):
+        (WebCore::FractionalLayoutPoint::setX):
+        (WebCore::FractionalLayoutPoint::setY):
+        (WebCore::FractionalLayoutPoint::move):
+        (WebCore::FractionalLayoutPoint::moveBy):
+        (WebCore::FractionalLayoutPoint::scale):
+        (WebCore::FractionalLayoutPoint::expandedTo):
+        (WebCore::FractionalLayoutPoint::shrunkTo):
+        (WebCore::FractionalLayoutPoint::clampNegativeToZero):
+        (WebCore::FractionalLayoutPoint::transposedPoint):
+        (WebCore::operator+=):
+        (WebCore::operator-=):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::toPoint):
+        (WebCore::toSize):
+        (WebCore::flooredIntPoint):
+        (WebCore::roundedIntPoint):
+        (WebCore::ceiledIntPoint):
+        * platform/graphics/FractionalLayoutSize.cpp:
+        (WebCore::pixelSnappedIntSize):
+        * platform/graphics/FractionalLayoutSize.h:
+        (WebCore):
+
 2012-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move textDirectionForSelection from Editor to EditingStyle

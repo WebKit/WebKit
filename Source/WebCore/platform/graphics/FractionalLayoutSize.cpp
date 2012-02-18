@@ -31,11 +31,11 @@
 #include "config.h"
 #include "FractionalLayoutSize.h"
 
-#include "IntPoint.h"
+#include "FractionalLayoutPoint.h"
 
 namespace WebCore {
 
-IntSize pixelSnappedIntSize(const FractionalLayoutSize& s, const IntPoint& p)
+IntSize pixelSnappedIntSize(const FractionalLayoutSize& s, const FractionalLayoutPoint& p)
 {
     return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));
 }

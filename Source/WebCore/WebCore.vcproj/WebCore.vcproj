@@ -27533,6 +27533,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FractionalLayoutPoint.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FloatPoint.cpp"
 					>
 				</File>
