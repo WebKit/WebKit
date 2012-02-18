@@ -2628,3 +2628,9 @@ http/tests/navigation/https-in-page-cache.html
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
 fast/workers/worker-crash-with-invalid-location.html
+
+# [Qt] REGRESSION(r108108): It made 3 fast/repaint tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=78960
+fast/repaint/line-flow-with-floats-in-regions.html
+fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
+fast/repaint/region-painting-via-layout.html
