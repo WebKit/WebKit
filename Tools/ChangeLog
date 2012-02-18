@@ -1,3 +1,88 @@
+2012-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: remove webkitpy.common.array_stream
+        https://bugs.webkit.org/show_bug.cgi?id=78952
+
+        Reviewed by Eric Seidel.
+
+        Turns out array_stream didn't really do anything that StringIO
+        didn't do (at least as of Python 2.6). This change removes it
+        and updates all of the callers. Where possible, I changed the
+        test assertions in order to capture the intent more clearly,
+        e.g., instead of calling self.assertTrue('foo' in stream.get()),
+        we have self.assertContainsLine(stream, 'foo'), and instead of
+        self.assertTrue(stream.empty()), we have self.assertEmpty(stream) -
+        the latter isn't that much more readable, but StringIO doesn't
+        export an empty() method.
+
+        * Scripts/webkitpy/common/array_stream.py: Removed.
+        * Scripts/webkitpy/common/array_stream_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (passing_run):
+        (run_and_capture):
+        (StreamTestingMixin):
+        (StreamTestingMixin.assertContains):
+        (StreamTestingMixin.assertContainsLine):
+        (StreamTestingMixin.assertEmpty):
+        (StreamTestingMixin.assertNotEmpty):
+        (LintTest):
+        (LintTest.test_lint_test_files):
+        (LintTest.test_lint_test_files__errors):
+        (MainTest):
+        (MainTest.test_child_process_1):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_help_printing):
+        (MainTest.test_hung_thread):
+        (MainTest.test_no_tests_found):
+        (MainTest.test_no_tests_found_2):
+        (MainTest.test_repeat_each_iterations_num_tests):
+        (MainTest.test_test_list):
+        (MainTest.test_unexpected_failures):
+        (MainTest.test_worker_model__inline_with_child_processes):
+        (MainTest.test_additional_platform_directory):
+        (RebaselineTest):
+        (RebaselineTest.assertBaselines):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.update):
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (TestMeteredStream.test_regular):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (TestUtilityFunctions.assertEmpty):
+        (TestUtilityFunctions):
+        (TestUtilityFunctions.assertNotEmpty):
+        (TestUtilityFunctions.assertWritten):
+        (TestUtilityFunctions.test_configure_logging):
+        (Testprinter.assertEmpty):
+        (Testprinter):
+        (Testprinter.assertNotEmpty):
+        (Testprinter.assertWritten):
+        (Testprinter.reset):
+        (Testprinter.get_printer):
+        (Testprinter.test_help_printer):
+        (Testprinter.do_switch_tests.do_helper):
+        (Testprinter.test_print_one_line_summary):
+        (Testprinter.test_print_test_result):
+        (Testprinter.test_print_progress):
+        (Testprinter.test_write_nothing):
+        (Testprinter.test_write_misc):
+        (Testprinter.test_write_everything):
+        (Testprinter.test_write_verbose):
+        (Testprinter.test_print_unexpected_results):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.assertWritten):
+        (create_runner):
+        (test_run_test_set):
+        (test_run_test_set_kills_drt_per_run):
+        (test_run_test_set_for_parser_tests):
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+        (test_run_test_set_with_multiple_repositories):
+        (test_upload_json):
+
 2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Add the WebCore/page/scrolling directory to the build dirs.

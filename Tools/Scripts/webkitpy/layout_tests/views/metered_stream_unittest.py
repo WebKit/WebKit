@@ -27,31 +27,31 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import StringIO
 import unittest
 
-from webkitpy.common.array_stream import ArrayStream
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 
 class TestMeteredStream(unittest.TestCase):
     def test_regular(self):
-        a = ArrayStream()
-        m = MeteredStream(stream=a)
-        self.assertTrue(a.empty())
+        a = StringIO.StringIO()
+        m = MeteredStream(a)
+        self.assertFalse(a.getvalue())
 
         # basic test
         m.write("foo")
         exp = ['foo']
-        self.assertEquals(a.get(), exp)
+        self.assertEquals(a.buflist, exp)
 
         # now check that a second write() does not overwrite the first.
         m.write("bar")
         exp.append('bar')
-        self.assertEquals(a.get(), exp)
+        self.assertEquals(a.buflist, exp)
 
         m.update("batter")
         exp.append('batter')
-        self.assertEquals(a.get(), exp)
+        self.assertEquals(a.buflist, exp)
 
         # The next update() should overwrite the laste update() but not the
         # other text. Note that the cursor is effectively positioned at the
@@ -59,22 +59,23 @@ class TestMeteredStream(unittest.TestCase):
         m.update("foo")
         exp.append('\b\b\b\b\b\b      \b\b\b\b\b\b')
         exp.append('foo')
-        self.assertEquals(a.get(), exp)
+        self.assertEquals(a.buflist, exp)
 
         # now check that a write() does overwrite the update
         m.write("foo")
         exp.append('\b\b\b   \b\b\b')
         exp.append('foo')
-        self.assertEquals(a.get(), exp)
+        self.assertEquals(a.buflist, exp)
 
         # Now test that we only back up to the most recent newline.
 
         # Note also that we do not back up to erase the most recent write(),
         # i.e., write()s do not get erased.
-        a.reset()
+        a = StringIO.StringIO()
+        m = MeteredStream(a)
         m.update("foo\nbar")
         m.update("baz")
-        self.assertEquals(a.get(), ['foo\nbar', '\b\b\b   \b\b\b', 'baz'])
+        self.assertEquals(a.buflist, ['foo\nbar', '\b\b\b   \b\b\b', 'baz'])
 
 
 if __name__ == '__main__':

@@ -67,10 +67,6 @@ class MeteredStream:
         """Write a message that will be overwritten by subsequent update() or write() calls."""
         self._overwrite(txt)
 
-    def flush(self):
-        # This seems to be needed on Python 2.5 for some reason.
-        self._stream.flush()
-
     def _overwrite(self, txt):
         # Print the necessary number of backspaces to erase the previous
         # message.
