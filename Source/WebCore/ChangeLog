@@ -1,3 +1,22 @@
+2012-02-16  Andreas Kling  <awesomekling@apple.com>
+
+        FontFamilyValue: Utilize inheritance from CSSPrimitiveValue better.
+        <http://webkit.org/b/78806>
+
+        Reviewed by Antti Koivisto.
+
+        Now that FontFamilyValue's string doesn't change after creation, we can just
+        pass the massaged family name up to the CSSPrimitiveValue constructor and get
+        cached cssText() for free. This also shrinks FontFamilyValue by sizeof(String)
+        though that's less of an issue now that we cache them in CSSValuePool.
+
+        * css/FontFamilyValue.cpp:
+        (WebCore::stripFontFamilyJunk):
+        (WebCore::FontFamilyValue::FontFamilyValue):
+        * css/FontFamilyValue.h:
+        (WebCore::FontFamilyValue::familyName):
+        (FontFamilyValue):
+
 2012-02-17  Adam Klein  <adamk@chromium.org>
 
         Avoid inconsistency in Node::inDocument due to DOMSubtreeModified dispatch

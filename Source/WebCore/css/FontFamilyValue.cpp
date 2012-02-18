@@ -25,18 +25,16 @@
 
 namespace WebCore {
 
-FontFamilyValue::FontFamilyValue(const String& familyName)
-    : CSSPrimitiveValue(FontFamilyClass, String(), CSS_STRING)
-    , m_familyName(familyName)
+static String stripFontFamilyJunk(const String& familyName)
 {
     // If there is anything in parentheses or square brackets at the end, delete it.
     // FIXME: Do we really need this? The original code mentioned "a language tag in
     // braces at the end" and "[Xft] qualifiers", but it's not clear either of those
     // is in active use on the web.
-    unsigned length = m_familyName.length();
+    unsigned length = familyName.length();
     while (length >= 3) {
         UChar startCharacter = 0;
-        switch (m_familyName[length - 1]) {
+        switch (familyName[length - 1]) {
             case ']':
                 startCharacter = '[';
                 break;
@@ -48,19 +46,19 @@ FontFamilyValue::FontFamilyValue(const String& familyName)
             break;
         unsigned first = 0;
         for (unsigned i = length - 2; i > 0; --i) {
-            if (m_familyName[i - 1] == ' ' && m_familyName[i] == startCharacter)
+            if (familyName[i - 1] == ' ' && familyName[i] == startCharacter)
                 first = i - 1;
         }
         if (!first)
             break;
         length = first;
     }
-    m_familyName.truncate(length);
+    return familyName.left(length);
 }
 
-String FontFamilyValue::customCssText() const
+FontFamilyValue::FontFamilyValue(const String& familyName)
+    : CSSPrimitiveValue(FontFamilyClass, stripFontFamilyJunk(familyName), CSS_STRING)
 {
-    return quoteCSSStringIfNeeded(m_familyName);
 }
 
 }
