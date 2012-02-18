@@ -1,3 +1,16 @@
+2012-02-17  Ahmad Sharif  <asharif.tools@gmail.com>
+
+        There is a warning in memset in glibc that gets triggered through a
+        warndecl when the fill-value of memset is a non-zero constant and the
+        size is zero. This warning is enabled when building with
+        -D_FORTIFY_SOURCE=2. This patch fixes the warning.
+
+        https://bugs.webkit.org/show_bug.cgi?id=78513
+
+        Reviewed by Alexey Proskuryakov
+
+        * wtf/Vector.h:
+
 2012-02-17  Kalev Lember  <kalevlember@gmail.com>
 
         Remove unused parameters from WTF threading API

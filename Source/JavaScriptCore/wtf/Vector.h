@@ -181,7 +181,10 @@ namespace WTF {
         static void uninitializedFill(T* dst, T* dstEnd, const T& val) 
         {
             ASSERT(sizeof(T) == sizeof(char));
-            memset(dst, val, dstEnd - dst);
+#if COMPILER(GCC) && defined(_FORTIFY_SOURCE)
+            if (!__builtin_constant_p(dstEnd - dst) || (!(dstEnd - dst)))
+#endif
+                memset(dst, val, dstEnd - dst);
         }
     };
     
