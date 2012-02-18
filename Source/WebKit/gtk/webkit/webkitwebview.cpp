@@ -3444,11 +3444,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.dragClient = new WebKit::DragClient(webView);
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
 
-#if ENABLE(DEVICE_ORIENTATION)
-    pageClients.deviceMotionClient = static_cast<WebCore::DeviceMotionClient*>(new DeviceMotionClientGtk);
-    pageClients.deviceOrientationClient = static_cast<WebCore::DeviceOrientationClient*>(new DeviceOrientationClientGtk);
-#endif
-
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
         pageClients.geolocationClient = new GeolocationClientMock;
@@ -3457,6 +3452,11 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     priv->corePage = new Page(pageClients);
+
+#if ENABLE(DEVICE_ORIENTATION)
+    WebCore::provideDeviceMotionTo(priv->corePage, new DeviceMotionClientGtk);
+    WebCore::provideDeviceOrientationTo(priv->corePage, new DeviceOrientationClientGtk);
+#endif
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())

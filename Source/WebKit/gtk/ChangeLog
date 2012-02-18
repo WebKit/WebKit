@@ -1,3 +1,17 @@
+2012-02-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [GTK] change the way of registering DeviceOrientation clients.
+        https://bugs.webkit.org/show_bug.cgi?id=78680
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Bug 78085 removed deviceOrientationClient and deviceMotionClient from PageClients. Instead,
+        DeviceOrientationClient and DeviceMotionClient should be registered by PageSupplement class.
+        Chromium, mac and qt ports are already changed by Bug 78085.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2012-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [AC] Events can starve accelerated compositing updates
