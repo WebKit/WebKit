@@ -159,10 +159,8 @@ void SVGTRefElement::createShadowSubtree()
 
 void SVGTRefElement::updateReferencedText()
 {
-    Element* target = SVGURIReference::targetElementFromIRIString(href(), document());
-    ASSERT(target);
     String textContent;
-    if (target->parentNode())
+    if (Element* target = SVGURIReference::targetElementFromIRIString(href(), document()))
         textContent = target->textContent();
 
     ASSERT(hasShadowRoot());
