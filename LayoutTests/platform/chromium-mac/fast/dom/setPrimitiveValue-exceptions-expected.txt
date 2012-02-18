@@ -20,7 +20,7 @@ PASS left.getRGBColorValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exce
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
-FAIL fontFamily.getStringValue() should be Times. Was .
+PASS fontFamily.getStringValue() is "Times"
 PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_STRING, 'Hi there!') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_ATTR, "G'day!") threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_UNKNOWN, 'Hi there!') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
@@ -30,7 +30,7 @@ PASS fontFamily.getFloatValue() threw exception Error: INVALID_ACCESS_ERR: DOM E
 PASS fontFamily.getCounterValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS fontFamily.getRectValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS fontFamily.getRGBColorValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
-FAIL fontFamily.getStringValue() should be Times. Was .
+PASS fontFamily.getStringValue() is "Times"
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
