@@ -1,3 +1,11 @@
+2012-02-17  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed mac compile fix (unused parameter warning)
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+
 2012-02-14  James Robinson  <jamesr@chromium.org>
 
         Move ScrollingCoordinator out of ENABLE(THREADED_SCROLLING) ifdef and enable on all platforms

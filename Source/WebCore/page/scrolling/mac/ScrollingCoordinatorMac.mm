@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(THREADED_SCROLLING)
+
 #import "ScrollingCoordinator.h"
 
 #import "FrameView.h"
@@ -64,3 +66,4 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* f
 
 } // namespace WebCore
 
+#endif // ENABLE(THREADED_SCROLLING)

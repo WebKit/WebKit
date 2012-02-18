@@ -292,12 +292,12 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 }
 
 #if !ENABLE(THREADED_SCROLLING) && !PLATFORM(CHROMIUM)
-void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer)
+void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
 {
     ASSERT_NOT_REACHED();
 }
 
-void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer)
+void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
 {
     ASSERT_NOT_REACHED();
 }
