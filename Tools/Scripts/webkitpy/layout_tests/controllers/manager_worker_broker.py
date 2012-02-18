@@ -231,8 +231,10 @@ class _InlineWorkerConnection(_WorkerConnection):
 
     def run(self):
         self._alive = True
-        self._client.run()
-        self._alive = False
+        try:
+            self._client.run()
+        finally:
+            self._alive = False
 
     def yield_to_broker(self):
         self._broker.run_all_pending(MANAGER_TOPIC, self._manager_client)

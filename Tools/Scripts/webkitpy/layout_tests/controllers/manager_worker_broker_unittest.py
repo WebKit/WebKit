@@ -54,11 +54,9 @@ def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
 
 
 class _TestWorker(manager_worker_broker.AbstractWorker):
-    def __init__(self, broker_connection, worker_obj=None):
-        self._broker_connection = broker_connection
+    def __init__(self, worker_connection, worker_arguments=None):
+        super(_TestWorker, self).__init__(worker_connection)
         self._name = 'TestWorker'
-        self._stopped = False
-        self._canceled = False
         self._thing_to_greet = 'everybody'
         self._starting_queue = starting_queue
         self._stopping_queue = stopping_queue
@@ -67,21 +65,12 @@ class _TestWorker(manager_worker_broker.AbstractWorker):
         self._thing_to_greet = thing_to_greet
 
     def handle_stop(self, src):
-        self._stopped = True
+        self.stop_handling_messages()
 
     def handle_test(self, src, an_int, a_str):
         assert an_int == 1
         assert a_str == "hello, world"
-        self._broker_connection.post_message('test', 2, 'hi, ' + self._thing_to_greet)
-
-    def is_done(self):
-        return self._stopped or self._canceled
-
-    def name(self):
-        return self._name
-
-    def cancel(self):
-        self._canceled = True
+        self._worker_connection.post_message('test', 2, 'hi, ' + self._thing_to_greet)
 
     def run(self):
         if self._starting_queue:
@@ -90,11 +79,9 @@ class _TestWorker(manager_worker_broker.AbstractWorker):
         if self._stopping_queue:
             self._stopping_queue.get()
         try:
-            self._broker_connection.run_message_loop()
-            self._broker_connection.yield_to_broker()
-            self._broker_connection.post_message('done')
-        except Exception, e:
-            self._broker_connection.post_message('exception', (type(e), str(e), None))
+            super(_TestWorker, self).run()
+        finally:
+            self._worker_connection.post_message('done')
 
 
 class FunctionTests(unittest.TestCase):
@@ -128,9 +115,8 @@ class _TestsMixin(object):
         self._an_int = an_int
         self._a_str = a_str
 
-    def handle_exception(self, src, exc_info):
-        self._exception = exc_info
-        self._done = True
+    def handle_exception(self, src, exception_type, exception_value, stack):
+        raise exception_type(exception_value)
 
     def setUp(self):
         self._an_int = None
@@ -168,14 +154,15 @@ class _TestsMixin(object):
         self.make_broker()
         worker = self._broker.start_worker()
         self._broker.post_message('unknown')
-        self._broker.run_message_loop()
-        worker.join(0.5)
-
-        self.assertTrue(self.is_done())
+        try:
+            self._broker.run_message_loop()
+            self.fail()
+        except ValueError, e:
+            self.assertEquals(str(e),
+                              "TestWorker: received message 'unknown' it couldn't handle")
+        finally:
+            worker.join(0.5)
         self.assertFalse(worker.is_alive())
-        self.assertEquals(self._exception[0], ValueError)
-        self.assertEquals(self._exception[1],
-            "TestWorker: received message 'unknown' it couldn't handle")
 
 
 class InlineBrokerTests(_TestsMixin, unittest.TestCase):
