@@ -158,6 +158,7 @@ zoom: 1;
 -webkit-hyphenate-limit-before: auto;
 -webkit-hyphenate-limit-lines: no-limit;
 -webkit-hyphens: manual;
+-webkit-line-align: none;
 -webkit-line-box-contain: block inline replaced;
 -webkit-line-break: normal;
 -webkit-line-clamp: none;
