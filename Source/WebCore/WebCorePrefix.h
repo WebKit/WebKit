@@ -89,6 +89,34 @@
 
 #ifdef __cplusplus
 
+
+#include <ciso646>
+
+#if defined(_LIBCPP_VERSION)
+
+// Add work around for a bug in libc++ that caused standard heap
+// APIs to not compile <rdar://problem/10858112>.
+
+#include <type_traits>
+
+_LIBCPP_BEGIN_NAMESPACE_STD
+
+template <class _Tp>
+inline _LIBCPP_INLINE_VISIBILITY
+typename enable_if
+<
+    !is_convertible<_Tp, __rv<_Tp> >::value,
+    const _Tp&
+>::type
+move(const _Tp& __t)
+{
+    return __t;
+}
+
+_LIBCPP_END_NAMESPACE_STD
+
+#endif // defined(_LIBCPP_VERSION)
+
 #include <algorithm>
 #include <cstddef>
 #include <new>

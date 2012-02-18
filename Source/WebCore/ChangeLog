@@ -1,3 +1,17 @@
+2012-02-14  Sam Weinig  <sam@webkit.org>
+
+        Make WebCore compile with libc++ (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=78974
+
+        Reviewed by Anders Carlsson.
+
+        Add a workaround for <rdar://problem/10858112>, which cause the standard heap functions
+        not to work when using an iterator with proxy objects for reference and pointer types.
+
+        * WebCorePrefix.h:
+        (move):
+        Add an overload of std::move that the heap functions can call successfully.
+
 2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes for C++ bindings after recent changes.
