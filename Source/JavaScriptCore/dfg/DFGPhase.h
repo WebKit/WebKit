@@ -23,24 +23,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPropagator_h
-#define DFGPropagator_h
+#ifndef DFGPhase_h
+#define DFGPhase_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGGraph.h>
+#include "DFGCommon.h"
+#include "DFGGraph.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class CodeBlock;
-class JSGlobalData;
+class Phase {
+public:
+    Phase(Graph& graph, const char* name)
+        : m_graph(graph)
+        , m_name(name)
+    {
+        beginPhase();
+    }
+    
+    ~Phase()
+    {
+        endPhase();
+    }
+    
+    // Each phase must have a run() method.
+    
+protected:
+    // Things you need to have a DFG compiler phase.
+    Graph& m_graph;
+    
+    JSGlobalData& globalData() { return m_graph.m_globalData; }
+    CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
+    CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
+    
+    const char* m_name;
+    
+private:
+    // Call these hooks when starting and finishing.
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    void beginPhase();
+    void endPhase();
+#else // DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    void beginPhase() { }
+    void endPhase() { }
+#endif // DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+};
 
-namespace DFG {
-
-// Propagate dynamic predictions from value sources to variables.
-void propagate(Graph&);
+template<typename PhaseType>
+void runPhase(Graph& graph)
+{
+    PhaseType phase(graph);
+    phase.run();
+}
 
 } } // namespace JSC::DFG
 
-#endif
-#endif
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGPhase_h
+

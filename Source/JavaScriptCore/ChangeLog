@@ -1,3 +1,64 @@
+2012-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGPropagator.cpp has too many things
+        https://bugs.webkit.org/show_bug.cgi?id=78956
+
+        Reviewed by Oliver Hunt.
+        
+        Added the notion of a DFG::Phase. Removed DFG::Propagator, and took its
+        various things and put them into separate files. These new phases follow
+        the naming convention "DFG<name>Phase" where <name> is a noun. They are
+        called via functions of the form "perform<name>".
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGArithNodeFlagsInferencePhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::performArithNodeFlagsInference):
+        * dfg/DFGArithNodeFlagsInferencePhase.h: Added.
+        (DFG):
+        * dfg/DFGCFAPhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::performCFA):
+        * dfg/DFGCFAPhase.h: Added.
+        (DFG):
+        * dfg/DFGCSEPhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::performCSE):
+        * dfg/DFGCSEPhase.h: Added.
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGPhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::Phase::beginPhase):
+        (JSC::DFG::Phase::endPhase):
+        * dfg/DFGPhase.h: Added.
+        (DFG):
+        (Phase):
+        (JSC::DFG::Phase::Phase):
+        (JSC::DFG::Phase::~Phase):
+        (JSC::DFG::Phase::globalData):
+        (JSC::DFG::Phase::codeBlock):
+        (JSC::DFG::Phase::profiledBlock):
+        (JSC::DFG::Phase::beginPhase):
+        (JSC::DFG::Phase::endPhase):
+        (JSC::DFG::runPhase):
+        * dfg/DFGPredictionPropagationPhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::performPredictionPropagation):
+        * dfg/DFGPredictionPropagationPhase.h: Added.
+        (DFG):
+        * dfg/DFGPropagator.cpp: Removed.
+        * dfg/DFGPropagator.h: Removed.
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp: Added.
+        (DFG):
+        (JSC::DFG::performVirtualRegisterAllocation):
+        * dfg/DFGVirtualRegisterAllocationPhase.h: Added.
+        (DFG):
+
 2012-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Graph should have references to JSGlobalData, the CodeBlock being compiled, and

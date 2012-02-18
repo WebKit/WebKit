@@ -84,9 +84,12 @@ SOURCES += \
     debugger/Debugger.cpp \
     dfg/DFGAbstractState.cpp \
     dfg/DFGAssemblyHelpers.cpp \
+    dfg/DFGArithNodeFlagsInferencePhase.cpp \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \
+    dfg/DFGCFAPhase.cpp \
     dfg/DFGCorrectableJumpPoint.cpp \
+    dfg/DFGCSEPhase.cpp \
     dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCompiler.cpp \
@@ -96,12 +99,14 @@ SOURCES += \
     dfg/DFGOSRExitCompiler.cpp \
     dfg/DFGOSRExitCompiler64.cpp \
     dfg/DFGOSRExitCompiler32_64.cpp \
-    dfg/DFGPropagator.cpp \
+    dfg/DFGPhase.cpp \
+    dfg/DFGPredictionPropagationPhase.cpp \
     dfg/DFGRepatch.cpp \
     dfg/DFGSpeculativeJIT.cpp \
     dfg/DFGSpeculativeJIT32_64.cpp \
     dfg/DFGSpeculativeJIT64.cpp \
     dfg/DFGThunks.cpp \
+    dfg/DFGVirtualRegisterAllocationPhase.cpp \
     interpreter/AbstractPC.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \

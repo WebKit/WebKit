@@ -126,9 +126,7 @@
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
 		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC815121405118600CFA603 /* VTableSpectrum.cpp */; };
-		0FD3C82514115D4000FD81CB /* DFGPropagator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82314115D1A00FD81CB /* DFGPropagator.cpp */; };
 		0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82014115CF800FD81CB /* DFGDriver.cpp */; };
-		0FD3C82714115D4F00FD81CB /* DFGPropagator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82414115D2200FD81CB /* DFGPropagator.h */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
 		0FD52AAE143035A00026DC9F /* UnionFind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD52AAC1430359D0026DC9F /* UnionFind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */; };
@@ -143,6 +141,18 @@
 		0FD82F4B142806A100179C94 /* BitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82F491428069200179C94 /* BitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
+		0FFFC95514EF909A00C72532 /* DFGArithNodeFlagsInferencePhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94914EF909500C72532 /* DFGArithNodeFlagsInferencePhase.cpp */; };
+		0FFFC95614EF909C00C72532 /* DFGArithNodeFlagsInferencePhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94A14EF909500C72532 /* DFGArithNodeFlagsInferencePhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
+		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */; };
+		0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFFC95B14EF90AD00C72532 /* DFGPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94F14EF909500C72532 /* DFGPhase.cpp */; };
+		0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC95014EF909500C72532 /* DFGPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFFC95D14EF90B300C72532 /* DFGPredictionPropagationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */; };
+		0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC95314EF909500C72532 /* DFGVirtualRegisterAllocationPhase.cpp */; };
+		0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -944,8 +954,6 @@
 		0FC815141405118D00CFA603 /* VTableSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTableSpectrum.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
-		0FD3C82314115D1A00FD81CB /* DFGPropagator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPropagator.cpp; path = dfg/DFGPropagator.cpp; sourceTree = "<group>"; };
-		0FD3C82414115D2200FD81CB /* DFGPropagator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPropagator.h; path = dfg/DFGPropagator.h; sourceTree = "<group>"; };
 		0FD52AAC1430359D0026DC9F /* UnionFind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnionFind.h; sourceTree = "<group>"; };
 		0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCapabilities.cpp; path = dfg/DFGCapabilities.cpp; sourceTree = "<group>"; };
 		0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCapabilities.h; path = dfg/DFGCapabilities.h; sourceTree = "<group>"; };
@@ -960,6 +968,18 @@
 		0FD82F491428069200179C94 /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		0FFFC94914EF909500C72532 /* DFGArithNodeFlagsInferencePhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArithNodeFlagsInferencePhase.cpp; path = dfg/DFGArithNodeFlagsInferencePhase.cpp; sourceTree = "<group>"; };
+		0FFFC94A14EF909500C72532 /* DFGArithNodeFlagsInferencePhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArithNodeFlagsInferencePhase.h; path = dfg/DFGArithNodeFlagsInferencePhase.h; sourceTree = "<group>"; };
+		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
+		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
+		0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCSEPhase.cpp; path = dfg/DFGCSEPhase.cpp; sourceTree = "<group>"; };
+		0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCSEPhase.h; path = dfg/DFGCSEPhase.h; sourceTree = "<group>"; };
+		0FFFC94F14EF909500C72532 /* DFGPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPhase.cpp; path = dfg/DFGPhase.cpp; sourceTree = "<group>"; };
+		0FFFC95014EF909500C72532 /* DFGPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPhase.h; path = dfg/DFGPhase.h; sourceTree = "<group>"; };
+		0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPredictionPropagationPhase.cpp; path = dfg/DFGPredictionPropagationPhase.cpp; sourceTree = "<group>"; };
+		0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPredictionPropagationPhase.h; path = dfg/DFGPredictionPropagationPhase.h; sourceTree = "<group>"; };
+		0FFFC95314EF909500C72532 /* DFGVirtualRegisterAllocationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVirtualRegisterAllocationPhase.cpp; path = dfg/DFGVirtualRegisterAllocationPhase.cpp; sourceTree = "<group>"; };
+		0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVirtualRegisterAllocationPhase.h; path = dfg/DFGVirtualRegisterAllocationPhase.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -2521,6 +2541,8 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0FFFC94914EF909500C72532 /* DFGArithNodeFlagsInferencePhase.cpp */,
+				0FFFC94A14EF909500C72532 /* DFGArithNodeFlagsInferencePhase.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
 				0F62016E143FCD2F0068B77C /* DFGAbstractState.h */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
@@ -2531,6 +2553,10 @@
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
 				0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */,
+				0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */,
+				0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */,
+				0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */,
+				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */,
 				0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
@@ -2559,8 +2585,10 @@
 				0FC0976F14693AEF00CF2442 /* DFGOSRExitCompiler.h */,
 				0FC09775146943AD00CF2442 /* DFGOSRExitCompiler32_64.cpp */,
 				0FC0977014693AEF00CF2442 /* DFGOSRExitCompiler64.cpp */,
-				0FD3C82314115D1A00FD81CB /* DFGPropagator.cpp */,
-				0FD3C82414115D2200FD81CB /* DFGPropagator.h */,
+				0FFFC94F14EF909500C72532 /* DFGPhase.cpp */,
+				0FFFC95014EF909500C72532 /* DFGPhase.h */,
+				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
+				0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
 				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
 				86BB09BF138E381B0056702F /* DFGRepatch.h */,
@@ -2572,6 +2600,8 @@
 				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
 				0FC097A0146B28C700CF2442 /* DFGThunks.h */,
 				0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */,
+				0FFFC95314EF909500C72532 /* DFGVirtualRegisterAllocationPhase.cpp */,
+				0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */,
 			);
 			name = dfg;
 			sourceTree = "<group>";
@@ -2862,7 +2892,6 @@
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
-				0FD3C82714115D4F00FD81CB /* DFGPropagator.h in Headers */,
 				86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */,
 				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
 				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
@@ -3229,6 +3258,12 @@
 				0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
+				0FFFC95614EF909C00C72532 /* DFGArithNodeFlagsInferencePhase.h in Headers */,
+				0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */,
+				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
+				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
+				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
+				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
 				1497209114EB831500FEB1B7 /* PassWeak.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3597,7 +3632,6 @@
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
-				0FD3C82514115D4000FD81CB /* DFGPropagator.cpp in Sources */,
 				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
@@ -3782,6 +3816,12 @@
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
 				0F9FC8D014E612D800D52AE0 /* DataLog.cpp in Sources */,
 				0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */,
+				0FFFC95514EF909A00C72532 /* DFGArithNodeFlagsInferencePhase.cpp in Sources */,
+				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,
+				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
+				0FFFC95B14EF90AD00C72532 /* DFGPhase.cpp in Sources */,
+				0FFFC95D14EF90B300C72532 /* DFGPredictionPropagationPhase.cpp in Sources */,
+				0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

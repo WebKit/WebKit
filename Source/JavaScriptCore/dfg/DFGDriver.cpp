@@ -28,9 +28,13 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGArithNodeFlagsInferencePhase.h"
 #include "DFGByteCodeParser.h"
+#include "DFGCFAPhase.h"
+#include "DFGCSEPhase.h"
 #include "DFGJITCompiler.h"
-#include "DFGPropagator.h"
+#include "DFGPredictionPropagationPhase.h"
+#include "DFGVirtualRegisterAllocationPhase.h"
 
 namespace JSC { namespace DFG {
 
@@ -53,8 +57,12 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     
     if (compileMode == CompileFunction)
         dfg.predictArgumentTypes();
-    
-    propagate(dfg);
+
+    performArithNodeFlagsInference(dfg);
+    performPredictionPropagation(dfg);
+    performCSE(dfg);
+    performVirtualRegisterAllocation(dfg);
+    performCFA(dfg);
     
     JITCompiler dataFlowJIT(dfg);
     if (compileMode == CompileFunction) {
