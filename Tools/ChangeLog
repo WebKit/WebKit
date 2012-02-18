@@ -1,5 +1,30 @@
 2012-02-17  Dirk Pranke  <dpranke@chromium.org>
 
+        NRWT does not report failure for a skipped test
+        https://bugs.webkit.org/show_bug.cgi?id=78750
+
+        Reviewed by Eric Seidel.
+
+        If a test is listed in a Skipped file and you run it anyway
+        with --force, and the test fails, currently NRWT will print
+        "test ran as expected"; this is confusing, because you probably
+        expect the test to fail and yet this might lead you to think the
+        test passed. This patch changes the expected behavior to "PASS",
+        so tests that fail will be reported.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (result_was_expected):
+        (TestExpectationParser):
+        (TestExpectationParser.expectation_for_skipped_test):
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_add_skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (unit_test_list): Add some tests that are expected to be in a Skipped file.
+        (TestPort.skipped_tests): This adds actual integration test coverage of Skipped files.
+
+2012-02-17  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: fix test code after bug 78181
         https://bugs.webkit.org/show_bug.cgi?id=78870
 

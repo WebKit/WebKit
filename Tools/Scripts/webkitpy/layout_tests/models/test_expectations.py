@@ -182,7 +182,7 @@ class TestExpectationParser(object):
     BUG_MODIFIER_PREFIX = 'bug'
     BUG_MODIFIER_REGEX = 'bug\d+'
     REBASELINE_MODIFIER = 'rebaseline'
-    FAIL_EXPECTATION = 'fail'
+    PASS_EXPECTATION = 'pass'
     SKIP_MODIFIER = 'skip'
     SLOW_MODIFIER = 'slow'
     WONTFIX_MODIFIER = 'wontfix'
@@ -206,7 +206,7 @@ class TestExpectationParser(object):
         expectation_line.original_string = test_name
         expectation_line.modifiers = [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER]
         expectation_line.name = test_name
-        expectation_line.expectations = [TestExpectationParser.FAIL_EXPECTATION]
+        expectation_line.expectations = [TestExpectationParser.PASS_EXPECTATION]
         self._parse_line(expectation_line)
         return expectation_line
 

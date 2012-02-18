@@ -135,6 +135,7 @@ def unit_test_list():
     tests.add('failures/expected/newlines_with_excess_CR.html',
               expected_text="foo\r\r\r\n", actual_text="foo\n")
     tests.add('failures/expected/text.html', actual_text='text_fail-png')
+    tests.add('failures/expected/skip_text.html', actual_text='text diff')
     tests.add('failures/unexpected/missing_text.html', expected_text=None)
     tests.add('failures/unexpected/missing_image.html', expected_image=None)
     tests.add('failures/unexpected/missing_render_tree_dump.html', actual_text="""layer at (0,0) size 800x600
@@ -155,6 +156,7 @@ layer at (0,0) size 800x34
               actual_checksum='text-image-checksum_fail-checksum')
     tests.add('failures/unexpected/checksum-with-matching-image.html',
               actual_checksum='text-image-checksum_fail-checksum')
+    tests.add('failures/unexpected/skip_pass.html')
     tests.add('failures/unexpected/timeout.html', timeout=True)
     tests.add('http/tests/passes/text.html')
     tests.add('http/tests/passes/image.html')
@@ -391,6 +393,12 @@ class TestPort(Port):
 
     def webkit_base(self):
         return '/test.checkout'
+
+    def skipped_tests(self, test_list):
+        # This allows us to test the handling Skipped files, both with a test
+        # that actually passes, and a test that does fail.
+        return set(['failures/expected/skip_text.html',
+                    'failures/unexpected/skip_pass.html'])
 
     def name(self):
         return self._name

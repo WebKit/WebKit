@@ -272,7 +272,7 @@ SKIP : failures/expected/image.html""", is_lint_mode=True)
         port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
         expectations = TestExpectations(port, tests=['failures/expected/text.html'], expectations='', test_config=port.test_configuration())
         self.assertEquals(expectations.get_modifiers('failures/expected/text.html'), [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER])
-        self.assertEquals(expectations.get_expectations('failures/expected/text.html'), set([FAIL]))
+        self.assertEquals(expectations.get_expectations('failures/expected/text.html'), set([PASS]))
 
     def test_add_skipped_tests_duplicate(self):
         port = MockHost().port_factory.get('qt')
