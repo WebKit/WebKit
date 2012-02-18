@@ -321,11 +321,10 @@ bool HTMLMediaElement::isMouseFocusable() const
     return false;
 }
 
-void HTMLMediaElement::attributeChanged(Attribute* attr)
+void HTMLMediaElement::parseAttribute(Attribute* attr)
 {
-    HTMLElement::attributeChanged(attr);
-
     const QualifiedName& attrName = attr->name();
+
     if (attrName == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
         if (fastHasAttribute(srcAttr))
@@ -336,13 +335,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr)
     else if (attrName == loopAttr)
         updateDisableSleep();
 #endif
-}
-
-void HTMLMediaElement::parseAttribute(Attribute* attr)
-{
-    const QualifiedName& attrName = attr->name();
-
-    if (attrName == preloadAttr) {
+    else if (attrName == preloadAttr) {
         String value = attr->value();
 
         if (equalIgnoringCase(value, "none"))

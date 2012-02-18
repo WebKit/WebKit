@@ -76,7 +76,6 @@ private:
     virtual ~HTMLTrackElement();
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
-    virtual void attributeChanged(Attribute*) OVERRIDE;
 
     virtual void insertedIntoDocument() OVERRIDE;
     virtual void removedFromDocument() OVERRIDE;

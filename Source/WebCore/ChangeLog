@@ -1,5 +1,28 @@
 2012-02-18  Andreas Kling  <awesomekling@apple.com>
 
+        HTML: Remove unnecessary attributeChange() overrides.
+        <http://webkit.org/b/78890>
+
+        Reviewed by Anders Carlsson.
+
+        Move logic from attributeChanged() overrides into parseAttribute().
+        This is a step towards making attributeChanged() non-virtual.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseAttribute):
+        * html/HTMLScriptElement.h:
+        (HTMLScriptElement):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute):
+        * html/HTMLTrackElement.h:
+        (HTMLTrackElement):
+
+2012-02-18  Andreas Kling  <awesomekling@apple.com>
+
         Remove Element::createAttribute().
         <http://webkit.org/b/78965>
 

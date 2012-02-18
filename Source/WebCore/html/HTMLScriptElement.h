@@ -47,7 +47,6 @@ private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    virtual void attributeChanged(Attribute*) OVERRIDE;
 
     virtual bool isURLAttribute(Attribute*) const;
 
