@@ -28,7 +28,3 @@ BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = C
 
 // Needs baseline
 BUGWK76118 : fast/css/text-overflow-input.html = MISSING
-
-// Need rebaselining.
-BUGWK37244: tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244: tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
