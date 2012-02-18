@@ -1,3 +1,24 @@
+2012-02-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Support overloaded methods that take IDBKey or IDBKeyRange
+        https://bugs.webkit.org/show_bug.cgi?id=78399
+
+        Implements the WebKit API for IDBObjectStore.delete(IDBKeyRange),
+        to exercise the overload capability.
+
+        Reviewed by Tony Chang.
+
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::deleteFunction):
+        (WebKit):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::deleteFunction):
+        (WebKit):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-02-17  Michal Mocny  <mmocny@google.com>
 
         [chromium] GL_CHROMIUM_gpu_memory_manager extension

@@ -121,9 +121,25 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
     return request.release();
 }
 
+PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+{
+    if (!keyRange) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    m_backend->deleteFunction(keyRange, request, m_transaction->backend(), ec);
+    if (ec) {
+        request->markEarlyDeath();
+        return 0;
+    }
+    return request.release();
+}
+
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
-    if (key && (key->type() == IDBKey::InvalidType)) {
+    if (!key || !key->valid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }

@@ -3177,7 +3177,7 @@ sub GenerateFunctionCallString()
         my $paramName = $parameter->name;
         my $paramType = $parameter->type;
 
-        if ($parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
+        if ($parameter->type eq "IDBKey" || $parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
             push @arguments, "$paramName.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";

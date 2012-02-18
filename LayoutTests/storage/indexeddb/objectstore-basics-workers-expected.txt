@@ -113,10 +113,10 @@ PASS [Worker] event.target.result.y is "value"
 PASS [Worker] event.target.result.x is "foo"
 [Worker] store.delete('key')
 [Worker] removeSuccess():
-PASS [Worker] event.target.result is true
+PASS [Worker] event.target.result is undefined
 [Worker] store.delete('key')
-[Worker] removeSuccessButFalse():
-PASS [Worker] event.target.result is false
+[Worker] removeSuccessButNotThere():
+PASS [Worker] event.target.result is undefined
 [Worker] store = event.target.source
 [Worker] Passing an invalid key into store.get().
 [Worker] Expecting exception from store.get({})

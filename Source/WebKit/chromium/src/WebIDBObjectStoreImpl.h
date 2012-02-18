@@ -51,7 +51,8 @@ public:
 
     void get(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
-    void deleteFunction(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    void deleteFunction(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
     // FIXME: Remove once callers are updated.

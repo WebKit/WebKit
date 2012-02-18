@@ -968,7 +968,7 @@ public:
     virtual PassRefPtr<IDBKey> key() { return m_currentKey; }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentKey; }
     virtual String value() = 0;
-    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0; // FIXME: I don't think this is actually used, so drop it.
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
     virtual int64_t indexDataId() = 0;
     virtual void close() { }
 
@@ -1117,7 +1117,10 @@ public:
 
     // CursorImplCommon
     virtual String value() { return m_currentValue; }
-    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() OVERRIDE
+    {
+        return m_identifier;
+    }
     virtual int64_t indexDataId() { ASSERT_NOT_REACHED(); return 0; }
     virtual bool loadCurrentRow();
 
@@ -1134,6 +1137,7 @@ private:
     }
 
     String m_currentValue;
+    RefPtr<LevelDBRecordIdentifier> m_identifier;
 };
 
 bool ObjectStoreCursorImpl::loadCurrentRow()
@@ -1154,7 +1158,9 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
     ASSERT(q);
     if (!q)
         return false;
-    (void) version;
+
+    // FIXME: This re-encodes what was just decoded; try and optimize.
+    m_identifier = LevelDBRecordIdentifier::create(encodeIDBKey(*m_currentKey), version);
 
     m_currentValue = decodeString(q, m_iterator->value().end());
 

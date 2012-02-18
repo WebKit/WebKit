@@ -58,7 +58,7 @@ function deleteRecord1()
 
 function deleteRecord2()
 {
-    shouldBe("event.target.result", "true");
+    shouldBe("event.target.result", "undefined");
     request = evalAndLog("request = objectStore.delete(id);");
     request.onsuccess = finalCheck;
     request.onerror = unexpectedSuccessCallback;
@@ -66,7 +66,7 @@ function deleteRecord2()
 
 function finalCheck()
 {
-    shouldBe("event.target.result", "false");
+    shouldBe("event.target.result", "undefined");
     done();
 }
 

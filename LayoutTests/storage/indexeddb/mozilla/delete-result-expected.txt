@@ -13,9 +13,9 @@ objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true }
 request = objectStore.add({});
 id = event.target.result;
 request = objectStore.delete(id);
-PASS event.target.result is true
+PASS event.target.result is undefined
 request = objectStore.delete(id);
-PASS event.target.result is false
+PASS event.target.result is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

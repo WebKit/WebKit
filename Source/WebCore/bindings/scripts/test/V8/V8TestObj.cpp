@@ -1076,7 +1076,7 @@ static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    imp->idbKey(key);
+    imp->idbKey(key.get());
     return v8::Handle<v8::Value>();
 }
 

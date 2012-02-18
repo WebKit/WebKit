@@ -90,7 +90,7 @@ function createIndex()
     shouldBeTrue("store.indexNames.contains('indexName')");
     index = evalAndLog("index = store.index('indexName')");
     shouldBeTrue("index !== null");
- 
+
     debug("Ask for an index that doesn't exist:");
     try {
         debug("index = store.index('asdf')");
@@ -248,18 +248,18 @@ function removeSuccess(evt)
 {
     event = evt;
     debug("removeSuccess():");
-    shouldBe("event.target.result", "true");
+    shouldBe("event.target.result", "undefined");
 
     request = evalAndLog("store.delete('key')");
-    request.onsuccess = removeSuccessButFalse;
+    request.onsuccess = removeSuccessButNotThere;
     request.onerror = unexpectedErrorCallback;
 }
 
-function removeSuccessButFalse(evt)
+function removeSuccessButNotThere(evt)
 {
     event = evt;
-    debug("removeSuccessButFalse():");
-    shouldBe("event.target.result", "false");
+    debug("removeSuccessButNotThere():");
+    shouldBe("event.target.result", "undefined");
     var store = evalAndLog("store = event.target.source");
 
     debug("Passing an invalid key into store.get().");
