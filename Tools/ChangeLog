@@ -1,5 +1,26 @@
 2012-02-17  Dirk Pranke  <dpranke@chromium.org>
 
+        The new run-webkit-tests needs to dump out pixel hash failures even if the pixel test passes.
+        https://bugs.webkit.org/show_bug.cgi?id=69444
+
+        Reviewed by Tony Chang.
+
+        Currently if a test's image checksum doesn't match the checksum
+        in the baseline, but the images themselves match according to
+        ImageDiff, new-run-webkit-tests ignores the problem. This is
+        probably bad, but it's not yet clear what the right thing to do
+        is. This patch will log a warning to stderr, at least (but the
+        test will still pass).
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (unit_test_list):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+
+2012-02-17  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT does not report failure for a skipped test
         https://bugs.webkit.org/show_bug.cgi?id=78750
 

@@ -100,8 +100,6 @@ class TestList(object):
 
 def unit_test_list():
     tests = TestList()
-    tests.add('failures/expected/checksum.html',
-              actual_checksum='checksum_fail-checksum')
     tests.add('failures/expected/crash.html', crash=True)
     tests.add('failures/expected/exception.html', exception=True)
     tests.add('failures/expected/timeout.html', timeout=True)
@@ -173,6 +171,10 @@ layer at (0,0) size 800x34
               expected_checksum=None,
               expected_image='tEXtchecksum\x00checksum_in_image-checksum')
 
+    # Note that here the checksums don't match but the images do, so this test passes "unexpectedly".
+    # See https://bugs.webkit.org/show_bug.cgi?id=69444 .
+    tests.add('failures/unexpected/checksum.html', actual_checksum='checksum_fail-checksum')
+
     # Text output files contain "\r\n" on Windows.  This may be
     # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
     tests.add('passes/text.html',
@@ -239,7 +241,6 @@ def add_unit_tests_to_mock_filesystem(filesystem):
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/platform/test')
     if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'):
         filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt', """
-WONTFIX : failures/expected/checksum.html = IMAGE
 WONTFIX : failures/expected/crash.html = CRASH
 WONTFIX : failures/expected/image.html = IMAGE
 WONTFIX : failures/expected/audio.html = AUDIO

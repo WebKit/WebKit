@@ -264,6 +264,9 @@ class SingleTestRunner:
             driver_output.image_diff = diff_result[0]
             if driver_output.image_diff:
                 failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
+            else:
+                # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
+                _log.warning('%s -> pixel hash failed (but pixel test still passes)' % self._test_name)
         return failures
 
     def _run_reftest(self):
@@ -272,8 +275,8 @@ class SingleTestRunner:
         reference_output = None
         test_result = None
 
-        # A reftest can have multiple match references and multiple mismatch references; 
-        # the test fails if any mismatch matches and all of the matches don't match. 
+        # A reftest can have multiple match references and multiple mismatch references;
+        # the test fails if any mismatch matches and all of the matches don't match.
         # To minimize the number of references we have to check, we run all of the mismatches first,
         # then the matches, and short-circuit out as soon as we can.
         # Note that sorting by the expectation sorts "!=" before "==" so this is easy to do.

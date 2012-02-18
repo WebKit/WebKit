@@ -183,17 +183,14 @@ class MockDRTTest(unittest.TestCase):
         self.assertTest('http/tests/passes/text.html', True)
 
     def test_pixeltest__fails(self):
-        self.assertTest('failures/expected/checksum.html', pixel_tests=True,
-            expected_checksum='wrong-checksum',
+        self.assertTest('failures/expected/image_checksum.html', pixel_tests=True,
+            expected_checksum='image_checksum-checksum',
             drt_output=['Content-Type: text/plain\n',
-                        'checksum-txt',
+                        'image_checksum-txt',
                         '#EOF\n',
                         '\n',
-                        'ActualHash: checksum-checksum\n',
-                        'ExpectedHash: wrong-checksum\n',
-                        'Content-Type: image/png\n',
-                        'Content-Length: 43\n',
-                        'checksum\x8a-pngtEXtchecksum\x00checksum-checksum',
+                        'ActualHash: image_checksum-checksum\n',
+                        'ExpectedHash: image_checksum-checksum\n',
                         '#EOF\n'])
 
     def test_textonly(self):
@@ -245,17 +242,17 @@ class MockChromiumDRTTest(MockDRTTest):
         if sys.platform == 'win32':
             host = MockSystemHost(os_name='win', os_version='xp')
             url = '#URL:file:///'
-        url = url + '%s/failures/expected/checksum.html' % PortFactory(host).get('test').layout_tests_dir()
-        self.assertTest('failures/expected/checksum.html', pixel_tests=True,
-            expected_checksum='wrong-checksum',
+        url = url + '%s/failures/expected/image_checksum.html' % PortFactory(host).get('test').layout_tests_dir()
+        self.assertTest('failures/expected/image_checksum.html', pixel_tests=True,
+            expected_checksum='image_checksum',
             drt_output=[url + '\n',
-                        '#MD5:checksum-checksum\n',
-                        'checksum-txt',
+                        '#MD5:image_checksum-checksum\n',
+                        'image_checksum-txt',
                         '\n',
                         '#EOF\n'],
             host=host)
         self.assertEquals(host.filesystem.written_files,
-            {'/tmp/png_result0.png': 'checksum\x8a-pngtEXtchecksum\x00checksum-checksum'})
+            {'/tmp/png_result0.png': 'image_checksum\x8a-pngtEXtchecksum\x00image_checksum-checksum'})
 
     def test_chromium_parse_options(self):
         options, args = mock_drt.parse_options(['--platform', 'chromium-mac',
