@@ -1,3 +1,14 @@
+2012-02-18  Sam Weinig  <sam@webkit.org>
+
+        Fix the libc++ build.
+
+        Reviewed by Anders Carlsson.
+
+        * heap/Weak.h:
+        Libc++'s nullptr emulation does not allow default construction
+        of the nullptr_t type. Work around this with the arguably clearer
+        just returning nullptr.
+
 2012-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFGPropagator.cpp has too many things

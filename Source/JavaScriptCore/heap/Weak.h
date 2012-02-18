@@ -142,7 +142,7 @@ template<typename T> struct HashTraits<JSC::Weak<T> > : SimpleClassHashTraits<JS
     typedef JSC::Weak<T> StorageType;
 
     typedef std::nullptr_t EmptyValueType;
-    static EmptyValueType emptyValue() { return EmptyValueType(); }
+    static EmptyValueType emptyValue() { return nullptr; }
 
     typedef JSC::PassWeak<T> PassInType;
     static void store(PassInType value, StorageType& storage) { storage = value; }
