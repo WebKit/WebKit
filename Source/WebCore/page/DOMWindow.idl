@@ -54,8 +54,9 @@ module window {
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
         readonly attribute Crypto crypto;
+#ifndef LANGUAGE_CPP || !LANGUAGE_CPP
         attribute [DoNotCheckDomainSecurity, JSCustom, V8CustomSetter, V8Unforgeable] Location location;
-
+#endif
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
 

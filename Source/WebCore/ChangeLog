@@ -1,5 +1,14 @@
 2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Build fixes for C++ bindings after recent changes.
+        
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (ShouldSkipType):
+        (GenerateHeader):
+        * page/DOMWindow.idl:
+
+2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix, add new platform method wx impl.
 
         * platform/wx/ContextMenuWx.cpp:
