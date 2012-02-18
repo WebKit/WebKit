@@ -43,8 +43,9 @@ INCLUDEPATH += \
     $$SOURCE_DIR/mathml \
     $$SOURCE_DIR/notifications \
     $$SOURCE_DIR/page \
-    $$SOURCE_DIR/page/qt \
     $$SOURCE_DIR/page/animation \
+    $$SOURCE_DIR/page/qt \
+    $$SOURCE_DIR/page/scrolling \
     $$SOURCE_DIR/platform \
     $$SOURCE_DIR/platform/animation \
     $$SOURCE_DIR/platform/audio \

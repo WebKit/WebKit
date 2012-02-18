@@ -27,6 +27,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/notifications"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
+    "${WEBCORE_DIR}/page/scrolling"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
@@ -1049,6 +1050,8 @@ SET(WebCore_SOURCES
     page/animation/CompositeAnimation.cpp
     page/animation/ImplicitAnimation.cpp
     page/animation/KeyframeAnimation.cpp
+
+    page/scrolling/ScrollingCoordinator.cpp
 
     platform/Arena.cpp
     platform/CalculationValue.cpp

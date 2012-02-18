@@ -37,11 +37,9 @@ namespace WebCore {
 class GraphicsLayer;
 class RenderEmbeddedObject;
 class RenderPart;
+class ScrollingCoordinator;
 #if ENABLE(VIDEO)
 class RenderVideo;
-#endif
-#if ENABLE(THREADED_SCROLLING)
-class ScrollingCoordinator;
 #endif
 
 enum CompositingUpdateType {
@@ -274,6 +272,8 @@ private:
 
     bool isFlushingLayers() const { return m_flushingLayers; }
 
+    ScrollingCoordinator* scrollingCoordinator() const;
+
     // Whether a running transition or animation enforces the need for a compositing layer.
     bool requiresCompositingForAnimation(RenderObject*) const;
     bool requiresCompositingForTransform(RenderObject*) const;
@@ -294,10 +294,6 @@ private:
 #if ENABLE(RUBBER_BANDING)
     bool requiresOverhangAreasLayer() const;
     bool requiresContentShadowLayer() const;
-#endif
-
-#if ENABLE(THREADED_SCROLLING)
-    ScrollingCoordinator* scrollingCoordinator() const;
 #endif
 
 private:

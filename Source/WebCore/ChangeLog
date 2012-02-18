@@ -1,3 +1,64 @@
+2012-02-14  James Robinson  <jamesr@chromium.org>
+
+        Move ScrollingCoordinator out of ENABLE(THREADED_SCROLLING) ifdef and enable on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=78401
+
+        Reviewed by Adam Barth.
+
+        Separates THREADED_SCROLLING from ScrollingCoordinator and enables ScrollingCoordinator-related code on
+        chromium. ScrollingCoordinator receives scrolling information to be used with an external scrolling source.
+        ENABLE(THREADED_SCROLLING) enables a codepath that uses a thread in WebCore to handle scrolling related input
+        events and interact with composited layers.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * dom/Document.cpp:
+        (WebCore::wheelEventHandlerCountChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore):
+        * page/Page.h:
+        (Page):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+        (WebCore):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore):
+        (ScrollingCoordinator):
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        * page/scrolling/ScrollingTreeState.cpp:
+        * page/scrolling/ScrollingTreeState.h:
+        * page/scrolling/chromium/ScrollingCoordinator.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollingCoordinator::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinator::frameViewScrollLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        (WebCore::shouldCompositeOverflowControls):
+        (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore):
+        (RenderLayerCompositor):
+
 2012-02-17  Emil A Eklund  <eae@chromium.org>
 
         Add FractionalLayoutPoint for sub-pixel layout

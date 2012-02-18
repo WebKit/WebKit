@@ -26,14 +26,16 @@
 #ifndef ScrollingCoordinator_h
 #define ScrollingCoordinator_h
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "GraphicsLayer.h"
 #include "IntRect.h"
+#include "ScrollTypes.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
+
+#if ENABLE(THREADED_SCROLLING)
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
+#endif
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -45,8 +47,12 @@ class FrameView;
 class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
-class ScrollingTree;
+class Region;
 class ScrollingTreeState;
+
+#if ENABLE(THREADED_SCROLLING)
+class ScrollingTree;
+#endif
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
@@ -59,7 +65,9 @@ public:
 
     void pageDestroyed();
 
+#if ENABLE(THREADED_SCROLLING)
     ScrollingTree* scrollingTree() const;
+#endif
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
     bool coordinatesScrollingForFrameView(FrameView*) const;
@@ -108,20 +116,29 @@ private:
     void recomputeWheelEventHandlerCount();
     void updateShouldUpdateScrollLayerPositionOnMainThread();
 
+    void setScrollLayer(GraphicsLayer*);
+    void setNonFastScrollableRegion(const Region&);
+    void setScrollParameters(ScrollElasticity horizontalScrollElasticity, ScrollElasticity verticalScrollElasticity,
+                             bool hasEnabledHorizontalScrollbar, bool hasEnabledVerticalScrollbar,
+                             const IntRect& viewportRect, const IntSize& contentsSize);
+    void setWheelEventHandlerCount(unsigned);
+    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
+
+    Page* m_page;
+
+#if ENABLE(THREADED_SCROLLING)
     void scheduleTreeStateCommit();
+
     void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);
     void commitTreeStateIfNeeded();
     void commitTreeState();
 
-    Page* m_page;
-    RefPtr<ScrollingTree> m_scrollingTree;
-
     OwnPtr<ScrollingTreeState> m_scrollingTreeState;
+    RefPtr<ScrollingTree> m_scrollingTree;
     Timer<ScrollingCoordinator> m_scrollingTreeStateCommitterTimer;
+#endif
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // ScrollingCoordinator_h

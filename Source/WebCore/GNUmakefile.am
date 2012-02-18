@@ -42,6 +42,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/notifications \
 	-I$(srcdir)/Source/WebCore/page \
 	-I$(srcdir)/Source/WebCore/page/animation \
+	-I$(srcdir)/Source/WebCore/page/scrolling \
 	-I$(srcdir)/Source/WebCore/platform \
 	-I$(srcdir)/Source/WebCore/platform/animation \
 	-I$(srcdir)/Source/WebCore/platform/audio \

@@ -238,9 +238,7 @@ Settings::Settings(Page* page)
 #endif
     , m_perTileDrawingEnabled(false)
     , m_partialSwapEnabled(false)
-#if ENABLE(THREADED_SCROLLING)
     , m_scrollingCoordinatorEnabled(false)
-#endif
     , m_notificationsEnabled(true)
     , m_needsIsLoadingInAPISenseQuirk(false)
 #if ENABLE(TOUCH_EVENTS)

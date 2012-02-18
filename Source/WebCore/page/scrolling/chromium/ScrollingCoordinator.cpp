@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,52 @@
 
 #include "config.h"
 
-#import "ScrollingCoordinator.h"
-
-#import "FrameView.h"
-#import "Page.h"
-#import "ScrollingThread.h"
-#import "ScrollingTreeState.h"
-#import <QuartzCore/QuartzCore.h>
-#import <wtf/Functional.h>
-#import <wtf/MainThread.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/StdLibExtras.h>
-#import <wtf/Vector.h>
+#include "ScrollingCoordinator.h"
 
 namespace WebCore {
 
-void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
+void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (frameView->frame() != m_page->mainFrame())
-        return;
-
-    // FIXME: Implement.
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
 }
 
-void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
+void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    
-    if (frameView->frame() != m_page->mainFrame())
-        return;
-
-    // FIXME: Implement.
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
 }
 
-} // namespace WebCore
+void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
+{
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
+}
 
+void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
+{
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
+}
+
+void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScrollElasticity, ScrollElasticity verticalScrollElasticity,
+                                               bool hasEnabledHorizontalScrollbar, bool hasEnabledVerticalScrollbar,
+                                               const IntRect& viewportRect, const IntSize& contentsSize)
+{
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
+}
+
+void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
+{
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
+}
+
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
+{
+    ASSERT_NOT_REACHED();
+    // FIXME: Implement!
+}
+
+}

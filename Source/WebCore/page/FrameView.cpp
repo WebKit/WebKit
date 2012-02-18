@@ -61,6 +61,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
+#include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 
@@ -80,10 +81,6 @@
 
 #if USE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"
-#endif
-
-#if ENABLE(THREADED_SCROLLING)
-#include "ScrollingCoordinator.h"
 #endif
 
 namespace WebCore {
@@ -1315,12 +1312,10 @@ void FrameView::addSlowRepaintObject()
     if (!m_slowRepaintObjectCount++) {
         updateCanBlitOnScrollRecursively();
 
-#if ENABLE(THREADED_SCROLLING)
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
         }
-#endif
     }
 }
 
@@ -1331,12 +1326,10 @@ void FrameView::removeSlowRepaintObject()
     if (!m_slowRepaintObjectCount) {
         updateCanBlitOnScrollRecursively();
 
-#if ENABLE(THREADED_SCROLLING)
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(this);
         }
-#endif
     }
 }
 
@@ -2329,12 +2322,10 @@ void FrameView::performPostLayoutTasks()
             break;
     }
 
-#if ENABLE(THREADED_SCROLLING)
     if (Page* page = m_frame->page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewLayoutUpdated(this);
     }
-#endif
 
     scrollToAnchor();
 

@@ -25761,6 +25761,14 @@
 				RelativePath="..\page\WorkerNavigator.h"
 				>
 			</File>
+			<File
+				RelativePath="..\page\scrolling\ScrollingCoordinator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\scrolling\ScrollingCoordinator.h"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>

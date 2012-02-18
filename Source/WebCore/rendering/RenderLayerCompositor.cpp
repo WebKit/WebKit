@@ -51,14 +51,11 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScrollbarTheme.h"
+#include "ScrollingCoordinator.h"
 #include "Settings.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
-#endif
-
-#if ENABLE(THREADED_SCROLLING)
-#include "ScrollingCoordinator.h"
 #endif
 
 #if PROFILE_LAYER_REBUILD
@@ -986,14 +983,12 @@ void RenderLayerCompositor::frameViewDidScroll()
     if (!m_scrollLayer)
         return;
 
-#if ENABLE(THREADED_SCROLLING)
     // If there's a scrolling coordinator that manages scrolling for this frame view,
     // it will also manage updating the scroll layer position.
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(frameView))
             return;
     }
-#endif
 
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
@@ -1715,12 +1710,10 @@ static bool shouldCompositeOverflowControls(FrameView* view)
     if (view->platformWidget())
         return false;
 
-#if ENABLE(THREADED_SCROLLING)
     if (Page* page = view->frame()->page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             return scrollingCoordinator->coordinatesScrollingForFrameView(view);
     }
-#endif
 
 #if !PLATFORM(CHROMIUM)
     if (!view->hasOverlayScrollbars())
@@ -1755,10 +1748,8 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
         return false;
 
     // We do want a layer if we have a scrolling coordinator.
-#if ENABLE(THREADED_SCROLLING)
     if (scrollingCoordinator())
         return true;
-#endif
 
     // Chromium always wants a layer.
 #if PLATFORM(CHROMIUM)
@@ -1774,7 +1765,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
     if (m_renderView->document()->ownerElement())
         return false;
 
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
+#if PLATFORM(MAC)
     // On Mac, we want a content shadow layer if we have a scrolling coordinator.
     if (scrollingCoordinator())
         return true;
@@ -1833,19 +1824,15 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
 
-#if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->frameViewHorizontalScrollbarLayerDidChange(m_renderView->frameView(), m_layerForHorizontalScrollbar.get());
-#endif
         }
     } else if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
         m_layerForHorizontalScrollbar = nullptr;
 
-#if ENABLE(THREADED_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewHorizontalScrollbarLayerDidChange(m_renderView->frameView(), 0);
-#endif
     }
 
     if (requiresVerticalScrollbarLayer()) {
@@ -1856,19 +1843,15 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
 
-#if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->frameViewVerticalScrollbarLayerDidChange(m_renderView->frameView(), m_layerForVerticalScrollbar.get());
-#endif
         }
     } else if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
         m_layerForVerticalScrollbar = nullptr;
 
-#if ENABLE(THREADED_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewVerticalScrollbarLayerDidChange(m_renderView->frameView(), 0);
-#endif
     }
 
     if (requiresScrollCornerLayer()) {
@@ -2020,10 +2003,8 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
         }
     }
 
-#if ENABLE(THREADED_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
-#endif
 
     m_rootLayerAttachment = attachment;
     rootLayerAttachmentChanged();
@@ -2150,7 +2131,6 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-#if ENABLE(THREADED_SCROLLING)
 ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 {
     if (Frame* frame = m_renderView->frameView()->frame()) {
@@ -2160,7 +2140,6 @@ ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 
     return 0;
 }
-#endif
 
 } // namespace WebCore
 

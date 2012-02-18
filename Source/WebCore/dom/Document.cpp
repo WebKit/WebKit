@@ -133,6 +133,7 @@
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
 #include "ScriptRunner.h"
+#include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "SegmentedString.h"
@@ -201,10 +202,6 @@
 #if ENABLE(MICRODATA)
 #include "MicroDataItemList.h"
 #include "NodeRareData.h"
-#endif
-
-#if ENABLE(THREADED_SCROLLING)
-#include "ScrollingCoordinator.h"
 #endif
 
 using namespace std;
@@ -5382,7 +5379,6 @@ PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
 
 static void wheelEventHandlerCountChanged(Document* document)
 {
-#if ENABLE(THREADED_SCROLLING)
     Page* page = document->page();
     if (!page)
         return;
@@ -5396,9 +5392,6 @@ static void wheelEventHandlerCountChanged(Document* document)
         return;
 
     scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
-#else
-    UNUSED_PARAM(document);
-#endif
 }
 
 void Document::didAddWheelEventHandler()

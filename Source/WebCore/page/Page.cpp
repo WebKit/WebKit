@@ -64,6 +64,7 @@
 #include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
+#include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "SpeechInput.h"
@@ -83,10 +84,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaClient.h"
-#endif
-
-#if ENABLE(THREADED_SCROLLING)
-#include "ScrollingCoordinator.h"
 #endif
 
 namespace WebCore {
@@ -216,10 +213,8 @@ Page::~Page()
         m_userMediaClient->pageDestroyed();
 #endif
 
-#if ENABLE(THREADED_SCROLLING)
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();
-#endif
 
     backForward()->close();
 
@@ -234,7 +229,6 @@ ViewportArguments Page::viewportArguments() const
     return mainFrame() && mainFrame()->document() ? mainFrame()->document()->viewportArguments() : ViewportArguments();
 }
 
-#if ENABLE(THREADED_SCROLLING)
 ScrollingCoordinator* Page::scrollingCoordinator()
 {
     if (!m_scrollingCoordinator && m_settings->scrollingCoordinatorEnabled())
@@ -242,7 +236,6 @@ ScrollingCoordinator* Page::scrollingCoordinator()
 
     return m_scrollingCoordinator.get();
 }
-#endif
 
 struct ViewModeInfo {
     const char* name;

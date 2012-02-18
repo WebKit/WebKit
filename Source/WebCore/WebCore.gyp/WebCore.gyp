@@ -89,6 +89,7 @@
       '../page',
       '../page/animation',
       '../page/chromium',
+      '../page/scrolling',
       '../platform',
       '../platform/animation',
       '../platform/audio',
