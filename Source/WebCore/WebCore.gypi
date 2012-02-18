@@ -2718,7 +2718,7 @@
             'page/scrolling/ScrollingThread.h',
             'page/scrolling/ScrollingTreeNode.cpp',
             'page/scrolling/ScrollingTreeNode.h',
-            'page/scrolling/chromium/ScrollingCoordinator.cpp',
+            'page/scrolling/chromium/ScrollingCoordinatorChromium.cpp',
             'page/win/DragControllerWin.cpp',
             'page/win/EventHandlerWin.cpp',
             'page/win/FrameCGWin.cpp',

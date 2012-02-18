@@ -1,5 +1,21 @@
 2012-02-17  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Unreviewed build fix. MSVS gyp generator can't handle multiple .cpps with the same name in the same
+        target from different paths.
+
+        * WebCore.gypi:
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp: Renamed from Source/WebCore/page/scrolling/chromium/ScrollingCoordinator.cpp.
+        (WebCore):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+
+2012-02-17  James Robinson  <jamesr@chromium.org>
+
         Unreviewed mac compile fix pt 2
 
         * page/scrolling/ScrollingCoordinator.cpp:
