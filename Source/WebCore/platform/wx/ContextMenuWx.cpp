@@ -110,3 +110,11 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
 
     return description;
 }
+
+unsigned ContextMenu::itemCount() const
+{
+    if (m_platformDescription)
+        return m_platformDescription->GetMenuItemCount();
+    
+    return 0;
+}
