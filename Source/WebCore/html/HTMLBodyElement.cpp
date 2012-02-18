@@ -112,9 +112,8 @@ void HTMLBodyElement::parseAttribute(Attribute* attr)
                     document()->setActiveLinkColor(color);
             }
         }
-        
-        if (attached())
-            document()->recalcStyle(Force);
+
+        setNeedsStyleRecalc();
     } else if (attr->name() == onloadAttr)
         document()->setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onbeforeunloadAttr)
