@@ -1,3 +1,11 @@
+2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Don't error out or hang if we have
+        downloaded dependencies but server update check fails.
+
+        * waf/build/build_utils.py:
+        (download_if_newer):
+
 2012-02-17  Dirk Pranke  <dpranke@chromium.org>
 
         The new run-webkit-tests needs to dump out pixel hash failures even if the pixel test passes.

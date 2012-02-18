@@ -30,6 +30,7 @@ import platform
 import re
 import shutil
 import sys
+import urllib2
 import urllib
 import urlparse
 
@@ -91,7 +92,13 @@ def download_if_newer(url, destdir):
     filename = os.path.basename(obj.path)
     destfile = os.path.join(destdir, filename)
 
-    urlobj = urllib.urlopen(url)
+    try:
+        urlobj = urllib2.urlopen(url, timeout=20)
+    except:
+        if os.path.exists(destfile):
+            return None # 
+        else:
+            raise
     size = long(urlobj.info().getheader('Content-Length'))
 
     def download_callback(downloaded, block_size, total_size):
