@@ -325,6 +325,8 @@ def build(bld):
         excludes.append('WebDOMNodeCustom.cpp')
         excludes.append('WebDOMHTMLDocumentCustom.cpp')
         excludes.append('WebDOMHTMLCollectionCustom.cpp')
+        excludes.append('WebNativeNodeFilterCondition.cpp')
+        excludes.append('WebDOMNodeFilterCustom.cpp')
         
         # this file is unused by any port, not sure why it was
         # left in the tree

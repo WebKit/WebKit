@@ -1,5 +1,11 @@
 2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Add the WebCore/page/scrolling directory to the build dirs.
+
+        * waf/build/settings.py:
+
+2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Don't error out or hang if we have
         downloaded dependencies but server update check fails.
 

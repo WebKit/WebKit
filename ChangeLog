@@ -1,3 +1,10 @@
+2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Exclude a couple unused bindings files from the build
+        as they do not compile currently.
+
+        * wscript:
+
 2012-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         perf-o-matic needs model unit tests

@@ -127,6 +127,7 @@ webcore_dirs_common = [
     'Source/WebCore/notifications',
     'Source/WebCore/page',
     'Source/WebCore/page/animation',
+    'Source/WebCore/page/scrolling',
     'Source/WebCore/platform',
     'Source/WebCore/platform/animation',
     'Source/WebCore/platform/graphics',
