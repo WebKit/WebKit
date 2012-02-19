@@ -1,3 +1,9 @@
+2012-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2012-02-18  Sam Weinig  <sam@webkit.org>
 
         Fix style issues in DFG Phase classes

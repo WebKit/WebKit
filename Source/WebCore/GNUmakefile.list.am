@@ -2858,6 +2858,7 @@ webcore_sources += \
 	Source/WebCore/platform/FileSystem.cpp \
 	Source/WebCore/platform/FileSystem.h \
 	Source/WebCore/platform/FloatConversion.h \
+	Source/WebCore/platform/FractionalLayoutUnit.h \
 	Source/WebCore/platform/GeolocationService.cpp \
 	Source/WebCore/platform/GeolocationService.h \
 	Source/WebCore/platform/HashTools.h \

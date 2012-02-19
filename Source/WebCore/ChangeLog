@@ -1,3 +1,9 @@
+2012-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am: Add missing header.
+
 2012-02-18  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: inline-box-002.htm fails

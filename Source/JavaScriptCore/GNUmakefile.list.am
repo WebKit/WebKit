@@ -221,14 +221,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
-    Source/JavaScriptCore/heap/MarkedAllocator.cpp \
-    Source/JavaScriptCore/heap/MarkedAllocator.h \
+	Source/JavaScriptCore/heap/MarkedAllocator.cpp \
+	Source/JavaScriptCore/heap/MarkedAllocator.h \
 	Source/JavaScriptCore/heap/MarkedBlock.cpp \
 	Source/JavaScriptCore/heap/MarkedBlock.h \
 	Source/JavaScriptCore/heap/MarkedBlockSet.h \
 	Source/JavaScriptCore/heap/TinyBloomFilter.h \
 	Source/JavaScriptCore/heap/MarkedSpace.cpp \
 	Source/JavaScriptCore/heap/MarkedSpace.h \
+	Source/JavaScriptCore/heap/PassWeak.h \
 	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/StrongInlines.h \
 	Source/JavaScriptCore/heap/UnconditionalFinalizer.h \
