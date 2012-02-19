@@ -25,10 +25,6 @@
 
 extern "C" {
 
-#ifdef HAVE_GSETTINGS
-GSettings* inspectorGSettings();
-#endif
-
 void webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebCore::Page*);
 
 void webkit_web_inspector_set_web_view(WebKitWebInspector*, WebKitWebView*);

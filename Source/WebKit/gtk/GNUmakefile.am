@@ -385,10 +385,6 @@ $(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefi
 	&& cp xgen-gtc $@ \
 	&& rm -f xgen-gtc
 
-# GSettings
-gsettings_SCHEMAS = $(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
-@GSETTINGS_RULES@
-
 EXTRA_DIST += \
 	$(WebKit)/ChangeLog \
 	$(WebKit)/NEWS \
