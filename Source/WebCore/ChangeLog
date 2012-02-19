@@ -1,3 +1,29 @@
+2012-02-19  Kentaro Hara  <haraken@chromium.org>
+
+        Rename [CheckAccessToNode] to [CheckSecurityForNode]
+        https://bugs.webkit.org/show_bug.cgi?id=78991
+
+        Reviewed by Adam Barth.
+
+        For naming consistency with [CheckSecurity], this patch renames
+        [CheckAccessToNode] to [CheckSecurityForNode].
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateFunctionCallback):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/DOMWindow.idl:
+
 2012-02-19  James Robinson  <jamesr@chromium.org>
 
         Sort WebCore XCode project files with sort-Xcode-project-files script. Unreviewed.

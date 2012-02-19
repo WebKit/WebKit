@@ -195,8 +195,8 @@ module test {
         void methodWithUnsignedLongArray(in unsigned long[] unsignedLongArray);
 #endif
 
-        readonly attribute [CheckAccessToNode] Document contentDocument;
-        [CheckAccessToNode] SVGDocument getSVGDocument()
+        readonly attribute [CheckSecurityForNode] Document contentDocument;
+        [CheckSecurityForNode] SVGDocument getSVGDocument()
             raises(DOMException);
 
         void convert1(in [TreatReturnedNullStringAs=Null] a);
