@@ -435,15 +435,13 @@ END
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput})
 {
 END
-    if (!IsCSSValueType($interfaceName)) {
-        push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
-        push(@headerContent, <<END);
+    push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
+    push(@headerContent, <<END);
         v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
 END
-        push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
-    }
+    push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
     push(@headerContent, <<END);
     return ${className}::wrapSlow(impl);
 }
@@ -3609,21 +3607,6 @@ sub IsArrayType
     my $type = $codeGenerator->StripModule(shift);
     # FIXME: Add proper support for T[], T[]?, sequence<T>.
     return $type =~ m/\[\]$/;
-}
-
-sub IsCSSValueType
-{
-    my $type = shift;
-
-    return 1 if $type eq 'CSSPrimitiveValue';
-    return 1 if $type eq 'CSSValue';
-    return 1 if $type eq 'CSSValueList';
-    return 1 if $type eq 'SVGColor';
-    return 1 if $type eq 'SVGPaint';
-    return 1 if $type eq 'WebKitCSSFilterValue';
-    return 1 if $type eq 'WebKitCSSTransformValue';
-
-    return 0;
 }
 
 sub IsDOMNodeType

@@ -76,24 +76,31 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
     if (!value)
         return jsNull();
 
-    if (value->isWebKitCSSTransformValue())
-        return JSWebKitCSSTransformValue::create(getDOMStructure<JSWebKitCSSTransformValue>(exec, globalObject), globalObject, static_cast<WebKitCSSTransformValue*>(value));
-#if ENABLE(CSS_FILTERS)
-    if (value->isWebKitCSSFilterValue())
-        return JSWebKitCSSFilterValue::create(getDOMStructure<JSWebKitCSSFilterValue>(exec, globalObject), globalObject, static_cast<WebKitCSSFilterValue*>(value));
-#endif
-    if (value->isValueList())
-        return JSCSSValueList::create(getDOMStructure<JSCSSValueList>(exec, globalObject), globalObject, static_cast<CSSValueList*>(value));
-#if ENABLE(SVG)
-    if (value->isSVGPaint())
-        return JSSVGPaint::create(getDOMStructure<JSSVGPaint>(exec, globalObject), globalObject, static_cast<SVGPaint*>(value));
-    if (value->isSVGColor())
-        return JSSVGColor::create(getDOMStructure<JSSVGColor>(exec, globalObject), globalObject, static_cast<SVGColor*>(value));
-#endif
-    if (value->isPrimitiveValue())
-        return JSCSSPrimitiveValue::create(getDOMStructure<JSCSSPrimitiveValue>(exec, globalObject), globalObject, static_cast<CSSPrimitiveValue*>(value));
+    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), value);
 
-    return JSCSSValue::create(getDOMStructure<JSCSSValue>(exec, globalObject), globalObject, value);
+    if (wrapper)
+        return wrapper;
+
+    if (value->isWebKitCSSTransformValue())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSTransformValue, value);
+#if ENABLE(CSS_FILTERS)
+    else if (value->isWebKitCSSFilterValue())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSFilterValue, value);
+#endif
+    else if (value->isValueList())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValueList, value);
+#if ENABLE(SVG)
+    else if (value->isSVGPaint())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGPaint, value);
+    else if (value->isSVGColor())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGColor, value);
+#endif
+    else if (value->isPrimitiveValue())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSPrimitiveValue, value);
+    else
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValue, value);
+
+    return wrapper;
 }
 
 } // namespace WebCore

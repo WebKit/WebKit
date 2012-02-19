@@ -31,7 +31,7 @@ PASS: document.getElementsByTagName('table')[0].tBodies[0].rows.myCustomProperty
 PASS: document.body.children.myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('map')[0].areas.myCustomProperty should be 1 and is.
 PASS: document.body.style.myCustomProperty should be 1 and is.
-PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be undefined and is.
+PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 and is.
 PASS: document.styleSheets.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules.myCustomProperty should be undefined and is.
@@ -67,7 +67,7 @@ PASS: document.getElementsByTagName('table')[0].tBodies[0].rows.myCustomProperty
 PASS: document.body.children.myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('map')[0].areas.myCustomProperty should be 1 and is.
 PASS: document.body.style.myCustomProperty should be 1 and is.
-PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be undefined and is.
+PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 and is.
 PASS: document.styleSheets.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules.myCustomProperty should be undefined and is.

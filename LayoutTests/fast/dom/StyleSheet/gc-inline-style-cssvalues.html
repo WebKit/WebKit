@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body style="color:black">
+<script>
+    description("Test that custom properties on CSSValues of inline style declarations survive GC");
+
+    var expr = 'document.body.style.getPropertyCSSValue("color")';
+    shouldBe(expr + ".cssText", '"black"');
+    eval(expr).foo = "bar"
+    gc();
+    shouldBe(expr + ".foo", "'bar'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
