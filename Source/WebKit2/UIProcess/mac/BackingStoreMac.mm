@@ -31,26 +31,109 @@
 #import "UpdateInfo.h"
 #import "WebPageProxy.h"
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/Region.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
+void BackingStore::performWithScrolledRectTransform(const IntRect& rect, void (^block)(const IntRect&, const IntSize&))
 {
-    if (m_cgLayer) {
-        CGContextSaveGState(context);
-        CGContextClipToRect(context, rect);
-
-        CGContextScaleCTM(context, 1, -1);
-        CGContextDrawLayerAtPoint(context, CGPointMake(0, -m_size.height()), m_cgLayer.get());
-
-        CGContextRestoreGState(context);
+    if (m_scrolledRect.isEmpty() || m_scrolledRectOffset.isZero() || !m_scrolledRect.intersects(rect)) {
+        block(rect, IntSize());
         return;
     }
 
-    ASSERT(m_bitmapContext);
-    paintBitmapContext(context, m_bitmapContext.get(), rect.location(), rect);
+    // The part of rect that's outside the scrolled rect is not translated.
+    Region untranslatedRegion = rect;
+    untranslatedRegion.subtract(m_scrolledRect);
+    Vector<IntRect> untranslatedRects = untranslatedRegion.rects();
+    for (size_t i = 0; i < untranslatedRects.size(); ++i)
+        block(untranslatedRects[i], IntSize());
+
+    // The part of rect that intersects the scrolled rect comprises up to four parts, each subject
+    // to a different translation (all translations are equivalent modulo the dimensions of the
+    // scrolled rect to the scroll offset).
+    IntRect intersection = rect;
+    intersection.intersect(m_scrolledRect);
+
+    IntRect scrolledRect = m_scrolledRect;
+    IntSize offset = m_scrolledRectOffset;
+    scrolledRect.move(-offset);
+
+    IntRect part = intersection;
+    part.intersect(scrolledRect);
+    if (!part.isEmpty())
+        block(part, offset);
+
+    part = intersection;
+    offset += IntSize(0, -m_scrolledRect.height());
+    scrolledRect.move(IntSize(0, m_scrolledRect.height()));
+    part.intersect(scrolledRect);
+    if (!part.isEmpty())
+        block(part, offset);
+
+    part = intersection;
+    offset += IntSize(-m_scrolledRect.width(), 0);
+    scrolledRect.move(IntSize(m_scrolledRect.width(), 0));
+    part.intersect(scrolledRect);
+    if (!part.isEmpty())
+        block(part, offset);
+
+    part = intersection;
+    offset += IntSize(0, m_scrolledRect.height());
+    scrolledRect.move(IntSize(0, -m_scrolledRect.height()));
+    part.intersect(scrolledRect);
+    if (!part.isEmpty())
+        block(part, offset);
+}
+
+void BackingStore::resetScrolledRect()
+{
+    ASSERT(!m_scrolledRect.isEmpty());
+
+    if (m_scrolledRectOffset.isZero()) {
+        m_scrolledRect = IntRect();
+        return;
+    }
+
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(0, m_scrolledRect.size().width(), m_scrolledRect.size().height(), 8, m_scrolledRect.size().width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+
+    CGContextTranslateCTM(context.get(), -m_scrolledRect.location().x(), -m_scrolledRect.location().y());
+    CGContextTranslateCTM(context.get(), 0, m_scrolledRect.size().height());
+    CGContextScaleCTM(context.get(), 1, -1);
+    paint(context.get(), m_scrolledRect);
+
+    IntRect sourceRect(IntPoint(), m_scrolledRect.size());
+    paintBitmapContext(backingStoreContext(), context.get(), m_scrolledRect.location(), sourceRect);
+
+    m_scrolledRect = IntRect();
+    m_scrolledRectOffset = IntSize();
+}
+
+void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
+{
+    // FIXME: This is defined outside the block to work around bugs in llvm-gcc 4.2.
+    __block CGRect source;
+    performWithScrolledRectTransform(rect, ^(const IntRect& part, const IntSize& offset) {
+        if (m_cgLayer) {
+            CGContextSaveGState(context);
+            CGContextClipToRect(context, part);
+
+            CGContextScaleCTM(context, 1, -1);
+            CGContextDrawLayerAtPoint(context, CGPointMake(-offset.width(), offset.height() - m_size.height()), m_cgLayer.get());
+
+            CGContextRestoreGState(context);
+            return;
+        }
+
+        ASSERT(m_bitmapContext);
+        source = part;
+        source.origin.x += offset.width();
+        source.origin.y += offset.height();
+        paintBitmapContext(context, m_bitmapContext.get(), part.location(), source);
+    });
 }
 
 CGContextRef BackingStore::backingStoreContext()
@@ -101,15 +184,20 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContext ctx(context);
+    __block GraphicsContext* graphicsContext = &ctx;
 
     // Paint all update rects.
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
         IntRect updateRect = updateInfo.updateRects[i];
         IntRect srcRect = updateRect;
-        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
-
-        bitmap->paint(graphicsContext, updateInfo.deviceScaleFactor, updateRect.location(), srcRect);
+        // FIXME: This is defined outside the block to work around bugs in llvm-gcc 4.2.
+        __block IntRect srcPart;
+        performWithScrolledRectTransform(srcRect, ^(const IntRect& part, const IntSize& offset) {
+            srcPart = part;
+            srcPart.move(-updateRectLocation.x(), -updateRectLocation.y());
+            bitmap->paint(*graphicsContext, updateInfo.deviceScaleFactor, part.location() + offset, srcPart);
+        });
     }
 }
 
@@ -118,26 +206,20 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (scrollOffset.isZero())
         return;
 
-    if (m_cgLayer) {
-        CGContextRef layerContext = CGLayerGetContext(m_cgLayer.get());
+    if (!m_scrolledRect.isEmpty() && m_scrolledRect != scrollRect)
+        resetScrolledRect();
 
-        // Scroll the layer by painting it into itself with the given offset.
-        CGContextSaveGState(layerContext);
-        CGContextClipToRect(layerContext, scrollRect);
-        CGContextScaleCTM(layerContext, 1, -1);
-        CGContextDrawLayerAtPoint(layerContext, CGPointMake(scrollOffset.width(), -m_size.height() - scrollOffset.height()), m_cgLayer.get());
-        CGContextRestoreGState(layerContext);
+    m_scrolledRect = scrollRect;
 
-        return;
-    }
+    int width = (m_scrolledRectOffset.width() - scrollOffset.width()) % m_scrolledRect.width();
+    if (width < 0)
+        width += m_scrolledRect.width();
+    m_scrolledRectOffset.setWidth(width);
 
-    ASSERT(m_bitmapContext);
-
-    CGContextSaveGState(m_bitmapContext.get());
-    CGContextClipToRect(m_bitmapContext.get(), scrollRect);
-    CGPoint destination = CGPointMake(scrollRect.x() + scrollOffset.width(), scrollRect.y() + scrollOffset.height());
-    paintBitmapContext(m_bitmapContext.get(), m_bitmapContext.get(), destination, scrollRect);
-    CGContextRestoreGState(m_bitmapContext.get());
+    int height = (m_scrolledRectOffset.height() - scrollOffset.height()) % m_scrolledRect.height();
+    if (height < 0)
+        height += m_scrolledRect.height();
+    m_scrolledRectOffset.setHeight(height);
 }
 
 } // namespace WebKit

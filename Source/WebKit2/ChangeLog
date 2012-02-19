@@ -1,3 +1,27 @@
+2012-02-18  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10891801> BackingStore::scroll() unnecessarily copies pixels around
+        https://bugs.webkit.org/show_bug.cgi?id=78976
+
+        Reviewed by Anders Carlsson.
+
+        Rather than move pixels in the backing store in response to scrolling, we can maintain a
+        mapping, for the most recently scrolled rect, from backing store coordinates to view
+        client coordinates.
+
+        * UIProcess/BackingStore.h:
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::performWithScrolledRectTransform): Added. Given a block to be
+        performed on a rect, divides the rect into parts such that for each part the mapping from
+        backing store coordinates to client coordinates is a (uniform) translation, and performs
+        the block on that part, passing it the translation that applies to the part.
+        (WebKit::BackingStore::resetScrolledRect): Added. Copies everything in the scrolled rect
+        back to where it should be under the identity map, and resets the scrolled rect and offset.
+        (WebKit::BackingStore::paint): Changed to call through performWithScrolledRectTransform().
+        (WebKit::BackingStore::incorporateUpdate): Ditto.
+        (WebKit::BackingStore::scroll): Now instead of copying pixels, just updates the scrolled
+        rect and offset.
+
 2012-02-17  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Allow opaque tiles

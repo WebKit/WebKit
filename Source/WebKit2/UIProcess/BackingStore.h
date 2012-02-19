@@ -26,7 +26,7 @@
 #ifndef BackingStore_h
 #define BackingStore_h
 
-#include <WebCore/IntSize.h>
+#include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -45,10 +45,6 @@
 #include <RefPtrCairo.h>
 #include <WebCore/WidgetBackingStore.h>
 #endif
-
-namespace WebCore {
-    class IntRect;
-}
 
 namespace WebKit {
 
@@ -92,8 +88,18 @@ private:
 #if PLATFORM(MAC)
     CGContextRef backingStoreContext();
 
+    void performWithScrolledRectTransform(const WebCore::IntRect&, void (^)(const WebCore::IntRect&, const WebCore::IntSize&));
+    void resetScrolledRect();
+
     RetainPtr<CGLayerRef> m_cgLayer;
     RetainPtr<CGContextRef> m_bitmapContext;
+
+    // The rectange that was scrolled most recently.
+    WebCore::IntRect m_scrolledRect;
+
+    // Contents of m_scrolledRect are offset by this amount (and wrapped around) with respect to
+    // their original location.
+    WebCore::IntSize m_scrolledRectOffset;
 #elif PLATFORM(WIN) || PLATFORM(WIN_CAIRO)
     OwnPtr<HBITMAP> m_bitmap;
 #elif PLATFORM(QT)
