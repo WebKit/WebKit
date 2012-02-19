@@ -1,3 +1,14 @@
+2012-02-18  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed, rolling out r107965.
+        http://trac.webkit.org/changeset/107965
+        https://bugs.webkit.org/show_bug.cgi?id=78273
+
+        crashes
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+
 2012-02-18  Sam Weinig  <sam@webkit.org>
 
         Make WebCore compile with libc++ (Part 2)
