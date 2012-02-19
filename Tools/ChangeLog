@@ -1,3 +1,15 @@
+2012-02-19  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Use modifier keys to execute pre-rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=77933
+
+        Reviewed by Chang Shu.
+
+        Use modifier key to execute pre-rendering instead of using reserved function keys.
+
+        * EWebLauncher/main.c:
+        (on_key_down):
+
 2012-02-18  Dirk Pranke  <dpranke@chromium.org>
 
         Fix one more dangling reference to worker_connection.name, delete unused code.
