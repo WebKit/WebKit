@@ -178,9 +178,9 @@ bool GtkPopupMenu::typeAheadFind(GdkEventKey* event)
     // menulists.
     bool repeatingCharacter = unicodeCharacter != m_previousKeyEventCharacter;
     if (event->time - m_previousKeyEventTimestamp > gSearchTimeoutMs)
-        m_currentSearchString = String(static_cast<UChar*>(utf16String.get()), charactersWritten);
+        m_currentSearchString = String(reinterpret_cast<UChar*>(utf16String.get()), charactersWritten);
     else if (repeatingCharacter)
-        m_currentSearchString.append(String(static_cast<UChar*>(utf16String.get()), charactersWritten));
+        m_currentSearchString.append(String(reinterpret_cast<UChar*>(utf16String.get()), charactersWritten));
 
     m_previousKeyEventTimestamp = event->time;
     m_previousKeyEventCharacter = unicodeCharacter;

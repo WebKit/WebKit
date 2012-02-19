@@ -136,7 +136,7 @@ static gchar* utf16ToUtf8(const UChar* aText, gint aLength, gint &length)
 
     gchar* utf8Text;
     glong itemsWritten;
-    utf8Text = g_utf16_to_utf8(static_cast<const gunichar2*>(aText), aLength, 0, &itemsWritten, 0);
+    utf8Text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, 0, &itemsWritten, 0);
     length = itemsWritten;
 
     return utf8Text;

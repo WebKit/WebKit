@@ -1,3 +1,18 @@
+2012-02-19  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Fix build on platforms where UChar is wchar_t
+        https://bugs.webkit.org/show_bug.cgi?id=78996
+
+        Reviewed by Martin Robinson.
+
+        The ICU backend defines UChar as wchar_t for platforms where wchar_t is
+        16 bits wide, e.g. win32.
+
+        * platform/graphics/pango/FontPango.cpp:
+        (WebCore::utf16ToUtf8): Use reinterpret_cast instead of static_cast.
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::typeAheadFind): Ditto.
+
 2012-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.
