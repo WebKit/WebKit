@@ -48,55 +48,16 @@ public:
     virtual ~InspectorFrontendSettingsGtk() { }
 
 private:
-#ifdef HAVE_GSETTINGS
-    static bool shouldIgnoreSetting(const String& key)
-    {
-        // GSettings considers trying to fetch or set a setting that is
-        // not backed by a schema as programmer error, and aborts the
-        // program's execution. We check here to avoid having an unhandled
-        // setting as a fatal error.
-        LOG_VERBOSE(NotYetImplemented, "Unknown key ignored: %s", key.ascii().data());
-        return true;
-    }
-
     virtual String getProperty(const String& name)
-    {
-        if (shouldIgnoreSetting(name))
-            return String();
-
-        GSettings* settings = inspectorGSettings();
-        if (!settings)
-            return String();
-
-        GRefPtr<GVariant> variant = adoptGRef(g_settings_get_value(settings, name.utf8().data()));
-        return String(g_variant_get_string(variant.get(), 0));
-    }
-
-    virtual void setProperty(const String& name, const String& value)
-    {
-        // Avoid setting unknown keys to avoid aborting the execution.
-        if (shouldIgnoreSetting(name))
-            return;
-
-        GSettings* settings = inspectorGSettings();
-        if (!settings)
-            return;
-
-        GRefPtr<GVariant> variant = adoptGRef(g_variant_new_string(value.utf8().data()));
-        g_settings_set_value(settings, name.utf8().data(), variant.get());
-    }
-#else
-    virtual String getProperty(const String&)
     {
         notImplemented();
         return String();
     }
 
-    virtual void setProperty(const String&, const String&)
+    virtual void setProperty(const String& name, const String& value)
     {
         notImplemented();
     }
-#endif // HAVE_GSETTINGS
 };
 
 } // namespace
