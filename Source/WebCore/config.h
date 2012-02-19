@@ -77,6 +77,8 @@
 #undef delete
 #include <wtf/FastMalloc.h>
 
+#include <ciso646>
+
 #endif
 
 // On MSW, wx headers need to be included before windows.h is.
@@ -90,7 +92,7 @@
 // are used from wx headers. On GTK+ for Mac many GTK+ files include <libintl.h>
 // or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
 // isacii(). 
-#if !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !(OS(DARWIN) && PLATFORM(GTK))
+#if !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !(OS(DARWIN) && PLATFORM(GTK)) && !defined(_LIBCPP_VERSION)
 #include <wtf/DisallowCType.h>
 #endif
 
