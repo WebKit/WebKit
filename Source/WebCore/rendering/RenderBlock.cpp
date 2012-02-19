@@ -659,8 +659,10 @@ RenderObject* RenderBlock::splitTablePartsAroundChild(RenderObject* beforeChild)
 {
     ASSERT(beforeChild->isTablePart());
 
-    while (beforeChild->parent() != this && !beforeChild->isTable()) {
+    while (beforeChild->parent() != this) {
         RenderObject* tablePartToSplit = beforeChild->parent();
+        if (!tablePartToSplit->isTablePart() && !tablePartToSplit->isTable())
+            break;
         if (tablePartToSplit->firstChild() != beforeChild) {
             // Get our table container.
             RenderObject* curr = tablePartToSplit;
@@ -668,7 +670,7 @@ RenderObject* RenderBlock::splitTablePartsAroundChild(RenderObject* beforeChild)
                 curr = curr->parent();
             RenderTable* table = toRenderTable(curr);
 
-            // Create an anonymous table container next to our table container. 
+            // Create an anonymous table container next to our table container.
             RenderBlock* parentBlock = toRenderBlock(table->parent());
             RenderTable* postTable = parentBlock->createAnonymousTable();
             parentBlock->children()->insertChildNode(parentBlock, postTable, table->nextSibling());
