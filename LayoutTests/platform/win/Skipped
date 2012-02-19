@@ -1645,3 +1645,10 @@ fast/repaint/table-section-repaint.html
 // Need rebaselining after bug 37244.
 tables/mozilla/bugs/bug27038-1.html
 tables/mozilla/bugs/bug27038-2.html
+
+// Need rebaselining after bug 69210.
+fast/encoding/utf-16-big-endian.html
+fast/encoding/utf-16-little-endian.html
+fast/inline/continuation-outlines-with-layers-2.html
+fast/inline/continuation-outlines-with-layers.html
+fast/repaint/transform-absolute-in-positioned-container.html

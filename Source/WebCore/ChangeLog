@@ -1,3 +1,65 @@
+2012-02-18  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: inline-box-002.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=69210
+
+        Reviewed by David Hyatt.
+
+        Tests: css2.1/20110323/dynamic-top-change-005.htm
+               css2.1/20110323/dynamic-top-change-005a.htm
+               css2.1/20110323/dynamic-top-change-005b.htm
+               css2.1/20110323/inline-box-002.htm
+               fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed.html
+               fast/css/relative-positioned-block-nested-with-inline-parent-dynamic.html
+               fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic.html
+               fast/css/relative-positioned-block-nested-with-inline-parent.html
+               fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
+               fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed.html
+               fast/css/relative-positioned-block-with-inline-ancestor-dynamic.html
+               fast/css/relative-positioned-block-with-inline-ancestor.html
+               fast/css/relative-positioned-block-with-inline-parent-dynamic-removed.html
+               fast/css/relative-positioned-block-with-inline-parent-dynamic.html
+               fast/css/relative-positioned-block-with-inline-parent-keeps-style.html
+               fast/css/relative-positioned-block-with-inline-parent.html
+
+        A block within an inline is affected by relative positioning on the inline box. Give
+        the anonymous block containing the block a layer and make it relative positioned. Then
+        calculate the offset of the anonymous block's layer by accumulating the offsets from its
+        inline continuation and the inline continuation's inline parents.
+        If the position of an inline changes from or to relative positioned then ensure that any
+        descendant blocks update their position and layer accordingly.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (): add an enum RelPosAxis
+        (WebCore::accumulateRelativePositionOffsets): 
+        Total up the offsets of all relatively positioned inlines that are de-facto parents of the relatively 
+        positioned anonymous block's child block.
+
+        (WebCore):
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX): 
+        Use accumulateRelativePositionOffsets when calculating the relative position offset of a relatively positioned anonymous block.
+
+        (WebCore::RenderBoxModelObject::relativePositionOffsetY): ditto
+
+        * rendering/RenderInline.cpp:
+        (WebCore::hasRelPositionedInlineAncestor): 
+        Detects if the anonymous block contains a block that is the de-facto descendant of a relatively positioned inline.
+
+        (WebCore::updateStyleOfAnonymousBlockContinuations): 
+        Update the style's positioning for each anonymous block containing a block that is descendant from the inline whose style has changed.
+
+        (WebCore::RenderInline::styleDidChange): 
+        If an inline changes to or from relative positioning ensure that any descendant blocks change to or from relative positioning
+        as well, unless they still have a relatively positioned ancestor after the current ancestor loses its relative positioning.
+
+        (WebCore::RenderInline::addChildIgnoringContinuation): 
+        If the anonymous block contains a block that is effectively descended from a relatively positioned inline, make it relatively
+        positioned so the block will respect its inline ancestor's relative positioning.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateStyleToAnonymousChildren): 
+        Preserve style position in anonymous block continuations when the parent block propagates a style change. 
+
 2012-02-18  raman Tenneti  <rtenneti@chromium.org>
 
         Track the NPN protocol version negotiated with the server

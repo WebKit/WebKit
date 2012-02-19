@@ -401,8 +401,26 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 
+enum RelPosAxis { RelPosX, RelPosY };
+
+static LayoutUnit accumulateRelativePositionOffsets(const RenderObject* child, RelPosAxis axis)
+{
+    if (!child->isAnonymousBlock() || !child->isRelPositioned())
+        return 0;
+    LayoutUnit offset = 0;
+    RenderObject* p = toRenderBlock(child)->inlineElementContinuation();
+    while (p && p->isRenderInline()) {
+        if (p->isRelPositioned())
+            offset += (axis == RelPosX) ? toRenderInline(p)->relativePositionOffsetX() : toRenderInline(p)->relativePositionOffsetY();
+        p = p->parent();
+    }
+    return offset;
+}
+
 LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
 {
+    LayoutUnit offset = accumulateRelativePositionOffsets(this, RelPosX);
+
     // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
     // available width of the containing block.  Therefore we don't use containingBlockLogicalWidthForContent() here, but instead explicitly
@@ -411,19 +429,20 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
         RenderBlock* cb = containingBlock();
         if (!style()->right().isAuto() && !cb->style()->isLeftToRightDirection())
             return -style()->right().calcValue(cb->availableWidth());
-        return style()->left().calcValue(cb->availableWidth());
+        return offset + style()->left().calcValue(cb->availableWidth());
     }
     if (!style()->right().isAuto()) {
         RenderBlock* cb = containingBlock();
-        return -style()->right().calcValue(cb->availableWidth());
+        return offset + -style()->right().calcValue(cb->availableWidth());
     }
-    return 0;
+    return offset;
 }
 
 LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
 {
+    LayoutUnit offset = accumulateRelativePositionOffsets(this, RelPosY);
+    
     RenderBlock* containingBlock = this->containingBlock();
-
     // If the containing block of a relatively positioned element does not
     // specify a height, a percentage top or bottom offset should be resolved as
     // auto. An exception to this is if the containing block has the WinIE quirk
@@ -434,15 +453,15 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
         && (!containingBlock->style()->height().isAuto()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
-        return style()->top().calcValue(containingBlock->availableHeight());
+        return offset + style()->top().calcValue(containingBlock->availableHeight());
 
     if (!style()->bottom().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
-        return -style()->bottom().calcValue(containingBlock->availableHeight());
+        return offset + -style()->bottom().calcValue(containingBlock->availableHeight());
 
-    return 0;
+    return offset;
 }
 
 LayoutUnit RenderBoxModelObject::offsetLeft() const

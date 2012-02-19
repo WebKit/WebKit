@@ -1,5 +1,5 @@
-layer at (0,0) size 785x1146
-  RenderView at (0,0) size 785x600
+layer at (0,0) size 792x1146
+  RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1146
   RenderBlock {HTML} at (0,0) size 785x1146
     RenderBody {BODY} at (8,8) size 769x1125 [bgcolor=#EEEEEE]
@@ -70,7 +70,6 @@ layer at (0,0) size 785x1146
                 text run at (63,0) width 63: "Phones "
               RenderBR {BR} at (126,15) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,217) size 769x62
       RenderBlock (anonymous) at (0,279) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -468,7 +467,9 @@ layer at (23,184) size 20x16
     RenderText {#text} at (0,0) size 0x0
     RenderImage {IMG} at (0,21) size 20x20
     RenderText {#text} at (0,0) size 0x0
-layer at (28,210) size 520x62
+layer at (23,225) size 769x62
+  RenderBlock (anonymous) at (0,217) size 769x62
+layer at (43,210) size 520x62
   RenderTable {TABLE} at (0,0) size 520x62 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 518x60
       RenderTableRow {TR} at (0,2) size 518x23 [bgcolor=#E0E0E0]

@@ -126,6 +126,33 @@ void RenderInline::updateBoxModelInfoFromStyle()
     setHasReflection(false);    
 }
 
+static bool hasRelPositionedInlineAncestor(RenderObject* p)
+{
+    while (p && p->isRenderInline()) {
+        if (p->isRelPositioned())
+            return true;
+        p = p->parent();
+    }
+    return false;
+}
+
+static void updateStyleOfAnonymousBlockContinuations(RenderObject* block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+{
+    for (;block && block->isAnonymousBlock(); block = block->nextSibling()) {
+        if (!toRenderBlock(block)->isAnonymousBlockContinuation() || block->style()->position() == newStyle->position())
+            continue;
+        // If we are no longer relatively positioned but our descendant block(s) still have a relatively positioned ancestor then 
+        // their containing anonymous block should keep its relative positioning. 
+        RenderInline* cont = toRenderBlock(block)->inlineElementContinuation();
+        if (oldStyle->position() == RelativePosition && hasRelPositionedInlineAncestor(cont))
+            continue;
+        RefPtr<RenderStyle> blockStyle = RenderStyle::createAnonymousStyle(block->style());
+        blockStyle->setPosition(newStyle->position());
+        blockStyle->setDisplay(BLOCK);
+        block->setStyle(blockStyle);
+    }
+}
+
 void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
@@ -137,11 +164,22 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // and after the block share the same style, but the block doesn't
     // need to pass its style on to anyone else.
     RenderStyle* newStyle = style();
-    for (RenderInline* currCont = inlineElementContinuation(); currCont; currCont = currCont->inlineElementContinuation()) {
+    RenderInline* continuation = inlineElementContinuation();
+    for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
         RenderBoxModelObject* nextCont = currCont->continuation();
         currCont->setContinuation(0);
         currCont->setStyle(newStyle);
         currCont->setContinuation(nextCont);
+    }
+
+    // If an inline's relative positioning has changed then any descendant blocks will need to change their relative positioning accordingly.
+    // Do this by updating the position of the descendant blocks' containing anonymous blocks - there may be more than one.
+    if (continuation && oldStyle && newStyle->position() != oldStyle->position() 
+        && (newStyle->position() == RelativePosition || (oldStyle->position() == RelativePosition))) {
+        // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
+        RenderObject* block = containingBlock()->nextSibling();
+        ASSERT(block && block->isAnonymousBlock());
+        updateStyleOfAnonymousBlockContinuations(block, newStyle, oldStyle);
     }
 
     if (!m_alwaysCreateLineBoxes) {
@@ -245,6 +283,11 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // the children after |beforeChild| and put them in a clone of this object.
         RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
         newStyle->setDisplay(BLOCK);
+        
+        // If inside an inline affected by relative positioning the block needs to be affected by it too.
+        // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
+        if (hasRelPositionedInlineAncestor(this))
+            newStyle->setPosition(RelativePosition);
 
         RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
         newBox->setStyle(newStyle.release());

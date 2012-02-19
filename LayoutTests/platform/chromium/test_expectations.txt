@@ -4181,3 +4181,9 @@ BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
 // Needs baselines for MAC and WIN.
 BUGWK76465 MAC WIN : fast/css/non-empty-span.html = IMAGE+TEXT
+
+// Need rebaselining.
+BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
+BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
+BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers-2.html = TEXT
+BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT

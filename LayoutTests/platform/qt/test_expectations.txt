@@ -28,3 +28,10 @@ BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = C
 
 // Needs baseline
 BUGWK76118 : fast/css/text-overflow-input.html = MISSING
+
+// Need rebaselining.
+BUGWK69210: fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
+BUGWK69210: fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
+BUGWK69210: fast/inline/continuation-outlines-with-layers-2.html = TEXT
+BUGWK69210: fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
+BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT

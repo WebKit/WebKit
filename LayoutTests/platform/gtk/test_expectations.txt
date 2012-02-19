@@ -100,3 +100,10 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
+
+// Need rebaselining.
+BUGWK69210: fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
+BUGWK69210: fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
+BUGWK69210: fast/inline/continuation-outlines-with-layers-2.html = TEXT
+BUGWK69210: fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
+BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
