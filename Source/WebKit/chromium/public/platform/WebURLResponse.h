@@ -50,6 +50,11 @@ class WebURLResponsePrivate;
 
 class WebURLResponse {
 public:
+    class ExtraData {
+    public:
+        virtual ~ExtraData() { }
+    };
+
     ~WebURLResponse() { reset(); }
 
     WebURLResponse() : m_private(0) { }
@@ -173,6 +178,15 @@ public:
     // Remote port number of the socket which fetched this resource.
     WEBKIT_EXPORT unsigned short remotePort() const;
     WEBKIT_EXPORT void setRemotePort(unsigned short);
+
+    // Extra data associated with the underlying resource response. Resource
+    // responses can be copied. If non-null, each copy of a resource response
+    // holds a pointer to the extra data, and the extra data pointer will be
+    // deleted when the last resource response is destroyed. Setting the extra
+    // data pointer will cause the underlying resource response to be
+    // dissociated from any existing non-null extra data pointer.
+    WEBKIT_EXPORT ExtraData* extraData() const;
+    WEBKIT_EXPORT void setExtraData(ExtraData*);
 
 protected:
     void assign(WebURLResponsePrivate*);

@@ -36,6 +36,11 @@ namespace WebCore {
 
     class ResourceResponse : public ResourceResponseBase {
     public:
+        class ExtraData : public RefCounted<ExtraData> {
+        public:
+            virtual ~ExtraData() { }
+        };
+
         ResourceResponse()
             : m_appCacheID(0)
             , m_isMultipartPayload(false)
@@ -103,6 +108,10 @@ namespace WebCore {
         const File* downloadedFile() const { return m_downloadedFile.get(); }
         void setDownloadedFile(PassRefPtr<File> downloadedFile) { m_downloadedFile = downloadedFile; }
 
+        // Extra data associated with this response.
+        ExtraData* extraData() const { return m_extraData.get(); }
+        void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+
     private:
         friend class ResourceResponseBase;
 
@@ -155,6 +164,9 @@ namespace WebCore {
 
         // The downloaded file if the load streamed to a file.
         RefPtr<File> m_downloadedFile;
+
+        // ExtraData associated with the response.
+        RefPtr<ExtraData> m_extraData;
     };
 
     struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {

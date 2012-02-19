@@ -1,3 +1,28 @@
+2012-02-18  raman Tenneti  <rtenneti@chromium.org>
+
+        Track the NPN protocol version negotiated with the server
+        https://bugs.webkit.org/show_bug.cgi?id=77349
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Added ExtraData to WebURLResponse.
+
+        * WebKit.gypi:
+        * public/platform/WebURLResponse.h:
+        (ExtraData):
+        (WebKit::WebURLResponse::ExtraData::~ExtraData):
+        (WebURLResponse):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::extraData):
+        (WebKit):
+        (WebKit::WebURLResponse::setExtraData):
+        * tests/WebURLResponseTest.cpp: Added.
+        (WebKit):
+        (TestExtraData):
+        (WebKit::TestExtraData::TestExtraData):
+        (WebKit::TestExtraData::~TestExtraData):
+        (WebKit::TEST):
+
 2012-02-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Support overloaded methods that take IDBKey or IDBKeyRange

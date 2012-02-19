@@ -1,3 +1,21 @@
+2012-02-18  raman Tenneti  <rtenneti@chromium.org>
+
+        Track the NPN protocol version negotiated with the server
+        https://bugs.webkit.org/show_bug.cgi?id=77349
+
+        Reviewed by Darin Fisher..
+
+        [chromium] Added ExtraData to WebURLResponse.
+        
+        No intended functionality change.
+
+        * platform/network/chromium/ResourceResponse.h:
+        (ExtraData):
+        (WebCore::ResourceResponse::ExtraData::~ExtraData):
+        (ResourceResponse):
+        (WebCore::ResourceResponse::extraData):
+        (WebCore::ResourceResponse::setExtraData):
+
 2012-02-18  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed, rolling out r107965.

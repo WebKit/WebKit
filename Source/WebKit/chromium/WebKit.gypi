@@ -120,6 +120,7 @@
             'tests/WebPageSerializerTest.cpp',
             'tests/WebSocketExtensionDispatcherTest.cpp',
             'tests/WebURLRequestTest.cpp',
+            'tests/WebURLResponseTest.cpp',
             'tests/WebViewTest.cpp',
         ],
 
