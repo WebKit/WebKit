@@ -54,16 +54,29 @@ var OVERVIEW_OPTIONS = {
     }
 };
 
-function urlForChangeset(branch, changeset)
+var REPOSITORIES = ['WebKit', 'Chromium'];
+var DEFAULT_REPOSITORY = 'WebKit';
+
+function urlForChangeset(branch, changeset, repository)
 {
-    return 'http://trac.webkit.org/changeset/' + changeset;
+    if (repository == 'Chromium')
+        return 'http://src.chromium.org/viewvc/chrome?view=rev&revision=' +
+               changeset;
+    else
+        return 'http://trac.webkit.org/changeset/' + changeset;
 }
 
-function urlForChangesetList(branch, changesetList)
+function urlForChangesetList(branch, changesetList, repository)
 {
     var min = Math.min.apply(Math, changesetList);
     var max = Math.max.apply(Math, changesetList);
-    return 'http://trac.webkit.org/log/?rev=' + max + '&stop_rev=' + min + '&verbose=on';
+    if (repository == 'Chromium')
+        return 'http://build.chromium.org/f/chromium/perf/dashboard/ui/' +
+               'changelog.html?url=/trunk/src&mode=html&range=' + min + ':' +
+               max;
+    else
+        return 'http://trac.webkit.org/log/?rev=' + max + '&stop_rev=' + min +
+               '&verbose=on';
 }
 
 // FIXME move this back to dashboard.js once the bug 718925 is fixed

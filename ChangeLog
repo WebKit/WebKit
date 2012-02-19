@@ -1,3 +1,18 @@
+2012-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic should show both WebKit and Chromium revisions
+        https://bugs.webkit.org/show_bug.cgi?id=78955
+
+        Reviewed by Andreas Kling.
+
+        Include Chromium revision numbers in runs responses when available.
+
+        * Websites/webkit-perf.appspot.com/js/config.js:
+        (urlForChangeset):
+        (urlForChangesetList):
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.post):
+
 2012-02-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Exclude a couple unused bindings files from the build
