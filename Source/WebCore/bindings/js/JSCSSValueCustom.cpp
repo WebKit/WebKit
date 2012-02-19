@@ -76,31 +76,24 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
     if (!value)
         return jsNull();
 
-    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), value);
-
-    if (wrapper)
-        return wrapper;
-
     if (value->isWebKitCSSTransformValue())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSTransformValue, value);
+        return JSWebKitCSSTransformValue::create(getDOMStructure<JSWebKitCSSTransformValue>(exec, globalObject), globalObject, static_cast<WebKitCSSTransformValue*>(value));
 #if ENABLE(CSS_FILTERS)
-    else if (value->isWebKitCSSFilterValue())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSFilterValue, value);
+    if (value->isWebKitCSSFilterValue())
+        return JSWebKitCSSFilterValue::create(getDOMStructure<JSWebKitCSSFilterValue>(exec, globalObject), globalObject, static_cast<WebKitCSSFilterValue*>(value));
 #endif
-    else if (value->isValueList())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValueList, value);
+    if (value->isValueList())
+        return JSCSSValueList::create(getDOMStructure<JSCSSValueList>(exec, globalObject), globalObject, static_cast<CSSValueList*>(value));
 #if ENABLE(SVG)
-    else if (value->isSVGPaint())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGPaint, value);
-    else if (value->isSVGColor())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, SVGColor, value);
+    if (value->isSVGPaint())
+        return JSSVGPaint::create(getDOMStructure<JSSVGPaint>(exec, globalObject), globalObject, static_cast<SVGPaint*>(value));
+    if (value->isSVGColor())
+        return JSSVGColor::create(getDOMStructure<JSSVGColor>(exec, globalObject), globalObject, static_cast<SVGColor*>(value));
 #endif
-    else if (value->isPrimitiveValue())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSPrimitiveValue, value);
-    else
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValue, value);
+    if (value->isPrimitiveValue())
+        return JSCSSPrimitiveValue::create(getDOMStructure<JSCSSPrimitiveValue>(exec, globalObject), globalObject, static_cast<CSSPrimitiveValue*>(value));
 
-    return wrapper;
+    return JSCSSValue::create(getDOMStructure<JSCSSValue>(exec, globalObject), globalObject, value);
 }
 
 } // namespace WebCore

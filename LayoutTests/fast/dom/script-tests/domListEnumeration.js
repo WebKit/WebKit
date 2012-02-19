@@ -185,9 +185,9 @@ var cssValueList = window.getComputedStyle(document.getElementsByTagName('ol')[0
 resultArray = iterateList(cssValueList);
 shouldBe("resultArray.length", "10");
 shouldBe("resultArray[0].i", "'0'");
-shouldBe("resultArray[0].item", "cssValueList.item(0)");
+shouldBe("resultArray[0].item.cssText", "cssValueList.item(0).cssText");
 shouldBe("resultArray[1].i", "'1'");
-shouldBe("resultArray[1].item", "cssValueList.item(1)");
+shouldBe("resultArray[1].item.cssText", "cssValueList.item(1).cssText");
 
 // MediaList
 var mediaList = document.styleSheets[3].cssRules[0].media;

@@ -76,9 +76,9 @@ PASS resultArray[2].item is cssStyleDeclaration.item(2)
 [object CSSValueList]
 PASS resultArray.length is 10
 PASS resultArray[0].i is '0'
-PASS resultArray[0].item is cssValueList.item(0)
+PASS resultArray[0].item.cssText is cssValueList.item(0).cssText
 PASS resultArray[1].i is '1'
-PASS resultArray[1].item is cssValueList.item(1)
+PASS resultArray[1].item.cssText is cssValueList.item(1).cssText
 
 [object MediaList]
 PASS resultArray.length is 8

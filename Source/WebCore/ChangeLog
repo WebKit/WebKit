@@ -1,3 +1,24 @@
+2012-02-19  Andreas Kling  <awesomekling@apple.com>
+
+        Make CSSValue wrapper getters return unique objects every time.
+        <http://webkit.org/b/77700>
+
+        Reviewed by Antti Koivisto.
+
+        Change the behavior of CSSValue getters to return unique JS wrappers every
+        time they are called. This means we no longer have to deal with the risk
+        of leaking custom properties between unrelated documents, and are free to
+        implement global value sharing across WebCore.
+
+        This patch will be followed by one making CSSValuePool globally shared,
+        it's done in two steps to monitor the impact of this change.
+
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (IsCSSValueType):
+
 2012-02-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::splitAnonymousBlocksAroundChild.
