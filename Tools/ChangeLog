@@ -1,5 +1,28 @@
 2012-02-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Add a change that should've been in r108005.
+
+        Unreviewed, build fix.
+
+        In the refactoring/cleanup in r108005 I should've changed the
+        implementation of WorkerConnection to make it match BrokerClient
+        (and everything else) so that objects had a name() method
+        instead of a name property.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_WorkerConnection.__init__):
+        (_WorkerConnection.name):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker.__init__):
+        (_TestsMixin.name):
+        (_TestsMixin.test_name):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_unknown_message):
+
+2012-02-18  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: remove webkitpy.common.array_stream
         https://bugs.webkit.org/show_bug.cgi?id=78952
 

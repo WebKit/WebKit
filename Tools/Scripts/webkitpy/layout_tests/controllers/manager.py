@@ -772,7 +772,7 @@ class Manager(object):
                 worker_connection.set_inline_arguments(self._port)
 
             worker_state = _WorkerState(worker_number, worker_connection)
-            self._worker_states[worker_connection.name] = worker_state
+            self._worker_states[worker_connection.name()] = worker_state
 
             # FIXME: If we start workers up too quickly, DumpRenderTree appears
             # to thrash on something and time out its first few tests. Until

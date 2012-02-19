@@ -194,9 +194,11 @@ class _MultiProcessManager(_ManagerConnection):
 class _WorkerConnection(message_broker.BrokerConnection):
     def __init__(self, broker, worker_class, worker_arguments=None):
         self._client = worker_class(self, worker_arguments)
-        self.name = self._client.name()
         message_broker.BrokerConnection.__init__(self, broker, self._client,
                                                  ANY_WORKER_TOPIC, MANAGER_TOPIC)
+
+    def name(self):
+        return self._client.name()
 
     def cancel(self):
         raise NotImplementedError

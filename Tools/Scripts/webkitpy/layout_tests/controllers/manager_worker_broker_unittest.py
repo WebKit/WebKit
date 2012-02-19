@@ -45,6 +45,8 @@ starting_queue = None
 stopping_queue = None
 
 
+WORKER_NAME = 'TestWorker'
+
 def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
     global starting_queue
     global stopping_queue
@@ -56,7 +58,7 @@ def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
 class _TestWorker(manager_worker_broker.AbstractWorker):
     def __init__(self, worker_connection, worker_arguments=None):
         super(_TestWorker, self).__init__(worker_connection)
-        self._name = 'TestWorker'
+        self._name = WORKER_NAME
         self._thing_to_greet = 'everybody'
         self._starting_queue = starting_queue
         self._stopping_queue = stopping_queue
@@ -103,7 +105,7 @@ class _TestsMixin(object):
     contract all implementations must follow."""
 
     def name(self):
-        return 'Tester'
+        return 'TesterManager'
 
     def is_done(self):
         return self._done
@@ -130,12 +132,20 @@ class _TestsMixin(object):
         self._broker = make_broker(self, self._worker_model, starting_queue,
                                    stopping_queue)
 
+    def test_name(self):
+        self.make_broker()
+        worker = self._broker.start_worker()
+        self.assertEquals(worker.name(), WORKER_NAME)
+        worker.cancel()
+        worker.join(0.1)
+        self.assertFalse(worker.is_alive())
+
     def test_cancel(self):
         self.make_broker()
         worker = self._broker.start_worker()
         worker.cancel()
         self._broker.post_message('test', 1, 'hello, world')
-        worker.join(0.5)
+        worker.join(0.1)
         self.assertFalse(worker.is_alive())
 
     def test_done(self):
@@ -159,7 +169,7 @@ class _TestsMixin(object):
             self.fail()
         except ValueError, e:
             self.assertEquals(str(e),
-                              "TestWorker: received message 'unknown' it couldn't handle")
+                              "%s: received message 'unknown' it couldn't handle" % WORKER_NAME)
         finally:
             worker.join(0.5)
         self.assertFalse(worker.is_alive())
