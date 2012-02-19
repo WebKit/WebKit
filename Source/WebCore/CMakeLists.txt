@@ -1052,6 +1052,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     page/scrolling/ScrollingCoordinator.cpp
+    page/scrolling/ScrollingCoordinatorNone.cpp
 
     platform/Arena.cpp
     platform/CalculationValue.cpp

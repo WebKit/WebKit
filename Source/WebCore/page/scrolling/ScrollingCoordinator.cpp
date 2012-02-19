@@ -51,11 +51,6 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
-{
-    return adoptRef(new ScrollingCoordinator(page));
-}
-
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
 #if ENABLE(THREADED_SCROLLING)
@@ -290,43 +285,6 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
     // FIXME: Having fixed objects on the page should not trigger the slow path.
     setShouldUpdateScrollLayerPositionOnMainThread(frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects());
 }
-
-#if !ENABLE(THREADED_SCROLLING) && !PLATFORM(CHROMIUM)
-void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::setScrollLayer(GraphicsLayer*)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::setScrollParameters(ScrollElasticity, ScrollElasticity, bool, bool, const IntRect&, const IntSize&)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
-{
-    // FIXME: Implement
-}
-
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
-{
-    // FIXME: Implement
-}
-#endif
 
 #if ENABLE(THREADED_SCROLLING)
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)

@@ -2768,8 +2768,7 @@ webcore_sources += \
 	Source/WebCore/page/Screen.h \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.cpp \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.h \
-	Source/WebCore/page/scrolling/ScrollingTreeState.cpp \
-	Source/WebCore/page/scrolling/ScrollingTreeState.h \
+	Source/WebCore/page/scrolling/ScrollingCoordinatorNone.cpp \
 	Source/WebCore/page/SecurityOrigin.cpp \
 	Source/WebCore/page/SecurityOrigin.h \
 	Source/WebCore/page/SecurityOriginHash.h \

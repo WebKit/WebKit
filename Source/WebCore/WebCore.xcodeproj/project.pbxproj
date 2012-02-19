@@ -297,10 +297,9 @@
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
-		144FCE5914EC79E7000D17A3 /* FractionalLayoutPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */; };
 		144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -988,6 +987,7 @@
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
+		3866AF3814F1C17100283D68 /* ScrollingCoordinatorNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */; };
 		3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB02D2812D4F91600FBB694 /* StorageTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB02D2912D4F91600FBB694 /* StorageTracker.cpp */; };
 		3AC3680012EF7A09006A3D6F /* StorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC367FE12EF7A09006A3D6F /* StorageTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7021,10 +7021,10 @@
 		1432E8480C51493F00B1500F /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
+		144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
 		144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutPoint.h; sourceTree = "<group>"; };
 		144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractionalLayoutSize.cpp; sourceTree = "<group>"; };
 		144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutSize.h; sourceTree = "<group>"; };
-		144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
 		1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaListCustom.cpp; sourceTree = "<group>"; };
 		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
 		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
@@ -7786,6 +7786,7 @@
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingFloatsRootInlineBox.h; sourceTree = "<group>"; };
 		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
+		3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingCoordinatorNone.cpp; sourceTree = "<group>"; };
 		3AB02D2812D4F91600FBB694 /* StorageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTracker.h; sourceTree = "<group>"; };
 		3AB02D2912D4F91600FBB694 /* StorageTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageTracker.cpp; sourceTree = "<group>"; };
 		3AC367FE12EF7A09006A3D6F /* StorageTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTrackerClient.h; sourceTree = "<group>"; };
@@ -14019,6 +14020,7 @@
 				1AF62EE214DA22A70041556C /* mac */,
 				1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */,
 				1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */,
+				3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */,
 				1AF62F2014DAFE790041556C /* ScrollingThread.cpp */,
 				1AF62F2114DAFE790041556C /* ScrollingThread.h */,
 				1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */,
@@ -22321,7 +22323,6 @@
 				41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */,
 				935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */,
 				144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */,
-				BAB22AD414B7A02D00D8ABA6 /* FractionalLayoutUnit.h in Headers */,
 				144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */,
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
@@ -26711,6 +26712,7 @@
 				1AA84F04143BA7BD0051D153 /* ScrollElasticityController.mm in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
+				3866AF3814F1C17100283D68 /* ScrollingCoordinatorNone.cpp in Sources */,
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,
 				1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */,
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,

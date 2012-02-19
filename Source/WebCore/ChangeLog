@@ -1,3 +1,36 @@
+2012-02-19  James Robinson  <jamesr@chromium.org>
+
+        Move stub implementations of ScrollingCoordinator functions into ScrollingCoordinatorNone.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=78951
+
+        Reviewed by Adam Barth.
+
+        This move stubs for ScrollingCoordinator functions into ScrollingCoordinatorNone.cpp instead of #ifdefing inside
+        ScrollingCoordinator.cpp.  The mac port uses ScrollingCoordinator when #if ENABLE(THREADED_SCROLLING) is not set
+        and implementations in ScrollingCoordinator.cpp / ScrollingCoordinatorMac.mm otherwise.  The chromium port
+        always uses implementations in ScrollingCoordinatorChromium.cpp.  All other ports use
+        ScrollingCoordinatorNone.cpp.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbx:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * page/scrolling/ScrollingCoordinatorNone.cpp:
+        (WebCore):
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore):
+
 2012-02-19  Kentaro Hara  <haraken@chromium.org>
 
         Rename [CheckDomainSecurity] to [CheckSecurity]
