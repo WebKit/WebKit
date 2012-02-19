@@ -1,3 +1,9 @@
+2012-02-19  James Robinson  <jamesr@chromium.org>
+
+        Sort WebCore XCode project files with sort-Xcode-project-files script. Unreviewed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-02-19  Andreas Kling  <awesomekling@apple.com>
 
         Make CSSValue wrapper getters return unique objects every time.
