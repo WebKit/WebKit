@@ -27,7 +27,7 @@
 module window {
 
     interface [
-        CheckDomainSecurity,
+        CheckSecurity,
         JSCustomDefineOwnProperty,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
@@ -44,7 +44,7 @@ module window {
     ] DOMWindow {
         // DOM Level 0
         attribute [Replaceable] Screen screen;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, JSCustomGetter] History history;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter, JSCustomGetter] History history;
         attribute [Replaceable] BarInfo locationbar;
         attribute [Replaceable] BarInfo menubar;
         attribute [Replaceable] BarInfo personalbar;
@@ -55,7 +55,7 @@ module window {
         attribute [Replaceable] Navigator clientInformation;
         readonly attribute Crypto crypto;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        attribute [DoNotCheckDomainSecurity, JSCustom, V8CustomSetter, V8Unforgeable] Location location;
+        attribute [DoNotCheckSecurity, JSCustom, V8CustomSetter, V8Unforgeable] Location location;
 #endif
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
@@ -64,9 +64,9 @@ module window {
 
         readonly attribute [CheckSecurityForNode] Element frameElement;
 
-        [DoNotCheckDomainSecurity] void focus();
-        [DoNotCheckDomainSecurity] void blur();
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void close();
+        [DoNotCheckSecurity] void focus();
+        [DoNotCheckSecurity] void blur();
+        [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void close();
 
         void print();
         void stop();
@@ -115,9 +115,9 @@ module window {
         void resizeBy(in [Optional=DefaultIsUndefined] float x, in [Optional=DefaultIsUndefined] float y); // FIXME: this should take longs not floats.
         void resizeTo(in [Optional=DefaultIsUndefined] float width, in [Optional=DefaultIsUndefined] float height); // FIXME: this should take longs not floats.
 
-        readonly attribute [DoNotCheckDomainSecurity] boolean closed;
+        readonly attribute [DoNotCheckSecurity] boolean closed;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] unsigned long length;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter] unsigned long length;
 
         attribute DOMString name;
 
@@ -129,13 +129,13 @@ module window {
 #endif
 
         // Self referential attributes
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow self;
-        readonly attribute [DoNotCheckDomainSecurity, V8Unforgeable] DOMWindow window;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow frames;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow self;
+        readonly attribute [DoNotCheckSecurity, V8Unforgeable] DOMWindow window;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow frames;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, V8CustomSetter] DOMWindow opener;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter] DOMWindow parent;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnGetter, V8Unforgeable, V8ReadOnly] DOMWindow top;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter, V8CustomSetter] DOMWindow opener;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow parent;
+        attribute [Replaceable, DoNotCheckSecurityOnGetter, V8Unforgeable, V8ReadOnly] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
@@ -191,18 +191,18 @@ module window {
 
         // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin)
+        [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin)
             raises(DOMException);
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array messagePorts)
+        [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array messagePorts)
             raises(DOMException);
 
-        [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin)
+        [DoNotCheckSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin)
             raises(DOMException);
-        [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array transferList)
+        [DoNotCheckSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array transferList)
             raises(DOMException);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in [Optional] MessagePort messagePort, in DOMString targetOrigin)
+        [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in [Optional] MessagePort messagePort, in DOMString targetOrigin)
             raises(DOMException);
 #endif
 
@@ -797,7 +797,7 @@ module window {
 
 #if defined(V8_BINDING) && V8_BINDING
         // window.toString() requires special handling in V8
-        [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, NotEnumerable] DOMString toString();
+        [V8DoNotCheckSignature, DoNotCheckSecurity, Custom, NotEnumerable] DOMString toString();
 #endif // defined(V8_BINDING)
     };
 

@@ -30,7 +30,7 @@ module window {
 
     interface [
 #if defined(V8_BINDING) && V8_BINDING
-        CheckDomainSecurity,
+        CheckSecurity,
 #endif
         JSCustomGetOwnPropertySlotAndDescriptor,
         CustomNamedSetter,
@@ -44,7 +44,7 @@ module window {
         V8CustomToJSObject
     ] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-                 attribute [DoNotCheckDomainSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
+                 attribute [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
         [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);

@@ -28,10 +28,10 @@
 
 module test {
     interface [
-        CheckDomainSecurity
+        CheckSecurity
     ] TestActiveDOMObject {
         readonly attribute long excitingAttr;
         void excitingFunction(in Node nextChild);
-        [DoNotCheckDomainSecurity] void postMessage(in DOMString message);
+        [DoNotCheckSecurity] void postMessage(in DOMString message);
     };
 }

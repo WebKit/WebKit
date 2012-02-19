@@ -407,7 +407,7 @@ END
     GenerateHeaderCustomCall($dataNode);
     GenerateHeaderCustomInternalFieldIndices($dataNode);
 
-    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+    if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
         push(@headerContent, <<END);
     static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
     static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
@@ -675,7 +675,7 @@ sub IsNodeSubType
 sub IsVisibleAcrossOrigins
 {
     my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($dataNode->name eq "DOMWindow");
+    return $dataNode->extendedAttributes->{"CheckSecurity"} && !($dataNode->name eq "DOMWindow");
 }
 
 sub IsConstructable
@@ -1387,9 +1387,9 @@ END
     }
 
     # Check domain security if needed
-    if (($dataNode->extendedAttributes->{"CheckDomainSecurity"}
+    if (($dataNode->extendedAttributes->{"CheckSecurity"}
        || $interfaceName eq "DOMWindow")
-       && !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+       && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
     # We have not find real use cases yet.
     push(@implContentDecls, <<END);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
@@ -1929,11 +1929,11 @@ sub GenerateSingleBatchedAttribute
     my $attrExt = $attribute->signature->extendedAttributes;
 
     my $accessControl = "v8::DEFAULT";
-    if ($attrExt->{"DoNotCheckDomainSecurityOnGetter"}) {
+    if ($attrExt->{"DoNotCheckSecurityOnGetter"}) {
         $accessControl = "v8::ALL_CAN_READ";
-    } elsif ($attrExt->{"DoNotCheckDomainSecurityOnSetter"}) {
+    } elsif ($attrExt->{"DoNotCheckSecurityOnSetter"}) {
         $accessControl = "v8::ALL_CAN_WRITE";
-    } elsif ($attrExt->{"DoNotCheckDomainSecurity"}) {
+    } elsif ($attrExt->{"DoNotCheckSecurity"}) {
         $accessControl = "v8::ALL_CAN_READ";
         if (!($attribute->type =~ /^readonly/) && !($attrExt->{"V8ReadOnly"})) {
             $accessControl .= " | v8::ALL_CAN_WRITE";
@@ -2333,7 +2333,7 @@ sub GenerateImplementation
         # If the function does not need domain security check, we need to
         # generate an access getter that returns different function objects
         # for different calling context.
-        if (($dataNode->extendedAttributes->{"CheckDomainSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+        if (($dataNode->extendedAttributes->{"CheckSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
             if (!$isCustom || $function->{overloadIndex} == 1) {
                 GenerateDomainSafeFunctionGetter($function, $implClassName);
             }
@@ -2393,8 +2393,8 @@ sub GenerateImplementation
         if ($attrExt->{"V8EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
             next;
         }
-        if ($attrExt->{"DoNotCheckDomainSecurity"} &&
-            ($dataNode->extendedAttributes->{"CheckDomainSecurity"} || $interfaceName eq "DOMWindow")) {
+        if ($attrExt->{"DoNotCheckSecurity"} &&
+            ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
             next;
         }
         if ($attrExt->{"NotEnumerable"} || $attrExt->{"V8ReadOnly"}) {
@@ -2460,7 +2460,7 @@ END
     }
 
     my $access_check = "";
-    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
+    if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
         $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::Wrap(&V8${interfaceName}::info));";
     }
 
@@ -2617,8 +2617,8 @@ END
             $conditional = "if (${enable_function}())\n        ";
         }
 
-        if ($attrExt->{"DoNotCheckDomainSecurity"} &&
-            ($dataNode->extendedAttributes->{"CheckDomainSecurity"} || $interfaceName eq "DOMWindow")) {
+        if ($attrExt->{"DoNotCheckSecurity"} &&
+            ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
             # Mark the accessor as ReadOnly and set it on the proto object so
             # it can be shadowed. This is really a hack to make it work.
             # There are several sceneria to call into the accessor:
@@ -3045,7 +3045,7 @@ END
 
     # FIXME: We need a better way of recovering the correct prototype chain
     # for every sort of object. For now, we special-case cross-origin visible
-    # objects (i.e., those with CheckDomainSecurity).
+    # objects (i.e., those with CheckSecurity).
     if (IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);
     if (impl->frame()) {

@@ -497,7 +497,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     
     my @getOwnPropertyDescriptorImpl = ();
-    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+    if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
         if ($interfaceName eq "DOMWindow") {
             push(@implContent, "    if (!thisObject->allowsAccessFrom(exec))\n");
         } else {
@@ -1688,9 +1688,9 @@ sub GenerateImplementation
                     $needsMarkChildren = 1;
                 }
 
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
-                        !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} &&
-                        !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnGetter"}) {
+                if ($dataNode->extendedAttributes->{"CheckSecurity"} && 
+                        !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
+                        !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
                     push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
                     push(@implContent, "        return jsUndefined();\n");
                 }
@@ -1803,7 +1803,7 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slotBase));\n");
 
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+                if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
                     push(@implContent, "    if (!domObject->allowsAccessFrom(exec))\n");
                     push(@implContent, "        return jsUndefined();\n");
                 }
@@ -1874,7 +1874,7 @@ sub GenerateImplementation
                         push(@implContent, "void ${putFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                         push(@implContent, "{\n");
 
-                        if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+                        if ($dataNode->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                             if ($interfaceName eq "DOMWindow") {
                                 push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                             } else {
@@ -1999,7 +1999,7 @@ sub GenerateImplementation
 
                 push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                 push(@implContent, "{\n");
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+                if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
                     if ($interfaceName eq "DOMWindow") {
                         push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                     } else {
@@ -2090,8 +2090,8 @@ sub GenerateImplementation
 
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n") unless ($function->isStatic);
 
-            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} and
-                !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} and
+            if ($dataNode->extendedAttributes->{"CheckSecurity"} and
+                !$function->signature->extendedAttributes->{"DoNotCheckSecurity"} and
                 !$function->isStatic) {
                 push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");

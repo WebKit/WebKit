@@ -27,7 +27,7 @@ module window {
 
     interface [
 #if defined(V8_BINDING) && V8_BINDING
-        CheckDomainSecurity,
+        CheckSecurity,
 #endif
         JSCustomGetOwnPropertySlotAndDescriptor,
         CustomNamedSetter,
@@ -39,9 +39,9 @@ module window {
         readonly attribute unsigned long length;
         readonly attribute [CachedAttribute, Custom] SerializedScriptValue state;
 
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void back();
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=DefaultIsUndefined] long distance);
+        [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void back();
+        [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();
+        [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=DefaultIsUndefined] long distance);
         
         [Custom, V8EnabledAtRuntime] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
             raises(DOMException);
