@@ -397,8 +397,7 @@ EXTRA_DIST += \
 	$(WebKit)/po/* \
 	$(WebKit)/resources/* \
 	$(WebKit)/tests/resources/* \
-	$(WebKit)/tests/test_utils.h \
-	$(WebKit)/org.webkitgtk.gschema.xml.in
+	$(WebKit)/tests/test_utils.h
 
 # extra resource files
 resourcesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/resources

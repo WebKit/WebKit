@@ -1,5 +1,11 @@
 2012-02-19  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed. Remove gsettings schema from EXTRA_DIST.
+
+        * GNUmakefile.am:
+
+2012-02-19  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Remove unused GSettings stuff
         https://bugs.webkit.org/show_bug.cgi?id=78995
 
