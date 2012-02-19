@@ -1,3 +1,9 @@
+2012-02-18  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * page/DOMWindow.idl:
+
 2012-02-14  Sam Weinig  <sam@webkit.org>
 
         Make WebCore compile with libc++ (Part 1)
