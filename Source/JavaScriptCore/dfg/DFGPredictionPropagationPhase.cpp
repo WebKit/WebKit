@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-class PredictionPropagationPhase: public Phase {
+class PredictionPropagationPhase : public Phase {
 public:
     PredictionPropagationPhase(Graph& graph)
         : Phase(graph, "prediction propagation")

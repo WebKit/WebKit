@@ -34,7 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-class CFAPhase: public Phase {
+class CFAPhase : public Phase {
 public:
     CFAPhase(Graph& graph)
         : Phase(graph, "control flow analysis")

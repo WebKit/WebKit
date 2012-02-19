@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-class CSEPhase: public Phase {
+class CSEPhase : public Phase {
 public:
     CSEPhase(Graph& graph)
         : Phase(graph, "common subexpression elimination")

@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-class VirtualRegisterAllocationPhase: public Phase {
+class VirtualRegisterAllocationPhase : public Phase {
 public:
     VirtualRegisterAllocationPhase(Graph& graph)
         : Phase(graph, "virtual register allocation")

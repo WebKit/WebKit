@@ -1,3 +1,17 @@
+2012-02-18  Sam Weinig  <sam@webkit.org>
+
+        Fix style issues in DFG Phase classes
+        https://bugs.webkit.org/show_bug.cgi?id=78983
+
+        Reviewed by Ryosuke Niwa.
+
+        * dfg/DFGArithNodeFlagsInferencePhase.cpp:
+        * dfg/DFGCFAPhase.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        Add a space before the colon in class declarations.
+
 2012-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to fix Windows build.

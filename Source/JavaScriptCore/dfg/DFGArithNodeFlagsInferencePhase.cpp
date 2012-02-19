@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-class ArithNodeFlagsInferencePhase: public Phase {
+class ArithNodeFlagsInferencePhase : public Phase {
 public:
     ArithNodeFlagsInferencePhase(Graph& graph)
         : Phase(graph, "arithmetic node flags inference")
