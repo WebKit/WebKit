@@ -1,3 +1,15 @@
+2012-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Needs to claim being a more up-to-date Chrome
+        https://bugs.webkit.org/show_bug.cgi?id=79044
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebsettings.cpp:
+        (chromeUserAgent): update the version of Chrome we claim to be
+        to avoid warnings from sites such as Wordpress saying that our
+        browser is outdated.
+
 2012-02-19  Paweł Forysiuk  <tuxator@o2.pl>
         [GTK] Can't find webinspector and error page redirection on Windows
         https://bugs.webkit.org/show_bug.cgi?id=51616
