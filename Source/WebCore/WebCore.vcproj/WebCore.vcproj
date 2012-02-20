@@ -73458,6 +73458,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\websockets\WebSocketFrame.h"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\WebSocketHandshake.cpp"
 				>
 			</File>

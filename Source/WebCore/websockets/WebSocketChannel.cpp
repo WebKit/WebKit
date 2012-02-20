@@ -81,13 +81,6 @@ const size_t payloadLengthWithTwoByteExtendedLengthField = 126;
 const size_t payloadLengthWithEightByteExtendedLengthField = 127;
 const size_t maskingKeyWidthInBytes = 4;
 
-const WebSocketChannel::OpCode WebSocketChannel::OpCodeContinuation = 0x0;
-const WebSocketChannel::OpCode WebSocketChannel::OpCodeText = 0x1;
-const WebSocketChannel::OpCode WebSocketChannel::OpCodeBinary = 0x2;
-const WebSocketChannel::OpCode WebSocketChannel::OpCodeClose = 0x8;
-const WebSocketChannel::OpCode WebSocketChannel::OpCodePing = 0x9;
-const WebSocketChannel::OpCode WebSocketChannel::OpCodePong = 0xA;
-
 WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* client)
     : m_document(document)
     , m_client(client)
@@ -183,7 +176,7 @@ bool WebSocketChannel::send(const ArrayBuffer& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send arraybuffer %p", this, &binaryData);
     ASSERT(!m_useHixie76Protocol);
-    enqueueRawFrame(OpCodeBinary, static_cast<const char*>(binaryData.data()), binaryData.byteLength());
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const char*>(binaryData.data()), binaryData.byteLength());
     return true;
 }
 
@@ -191,7 +184,7 @@ bool WebSocketChannel::send(const Blob& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().string().utf8().data());
     ASSERT(!m_useHixie76Protocol);
-    enqueueBlobFrame(OpCodeBinary, binaryData);
+    enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     return true;
 }
 
@@ -199,7 +192,7 @@ bool WebSocketChannel::send(const char* data, int length)
 {
     LOG(Network, "WebSocketChannel %p send binary %p (%dB)", this, data, length);
     ASSERT(!m_useHixie76Protocol);
-    enqueueRawFrame(OpCodeBinary, data, length);
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, data, length);
     return true;
 }
 
@@ -527,7 +520,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
             buf.append(static_cast<char>(lowByte));
             buf.append(reason.utf8().data(), reason.utf8().length());
         }
-        enqueueRawFrame(OpCodeClose, buf.data(), buf.size());
+        enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
     }
     m_closing = true;
     if (m_client)
@@ -542,7 +535,7 @@ void WebSocketChannel::closingTimerFired(Timer<WebSocketChannel>* timer)
         m_handle->disconnect();
 }
 
-WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(FrameData& frame)
+WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& frame, const char*& frameEnd)
 {
     const char* p = m_buffer;
     const char* bufferEnd = m_buffer + m_bufferSize;
@@ -557,7 +550,7 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(FrameData& frame
     bool reserved1 = firstByte & reserved1Bit;
     bool reserved2 = firstByte & reserved2Bit;
     bool reserved3 = firstByte & reserved3Bit;
-    OpCode opCode = firstByte & opCodeMask;
+    unsigned char opCode = firstByte & opCodeMask;
 
     bool masked = secondByte & maskBit;
     uint64_t payloadLength64 = secondByte & payloadLengthMask;
@@ -601,7 +594,7 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(FrameData& frame
             payload[i] ^= maskingKey[i % maskingKeyWidthInBytes]; // Unmask the payload.
     }
 
-    frame.opCode = opCode;
+    frame.opCode = static_cast<WebSocketFrame::OpCode>(opCode);
     frame.final = final;
     frame.reserved1 = reserved1;
     frame.reserved2 = reserved2;
@@ -609,7 +602,7 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(FrameData& frame
     frame.masked = masked;
     frame.payload = p + maskingKeyLength;
     frame.payloadLength = payloadLength;
-    frame.frameEnd = p + maskingKeyLength + payloadLength;
+    frameEnd = p + maskingKeyLength + payloadLength;
     return FrameOK;
 }
 
@@ -617,12 +610,16 @@ bool WebSocketChannel::processFrame()
 {
     ASSERT(m_buffer);
 
-    FrameData frame;
-    if (parseFrame(frame) != FrameOK)
+    WebSocketFrame frame;
+    const char* frameEnd;
+    if (parseFrame(frame, frameEnd) != FrameOK)
         return false;
 
+    ASSERT(m_buffer < frameEnd);
+    ASSERT(frameEnd <= m_buffer + m_bufferSize);
+
     // Validate the frame data.
-    if (isReservedOpCode(frame.opCode)) {
+    if (WebSocketFrame::isReservedOpCode(frame.opCode)) {
         fail("Unrecognized frame opcode: " + String::number(frame.opCode));
         return false;
     }
@@ -633,34 +630,34 @@ bool WebSocketChannel::processFrame()
     }
 
     // All control frames must not be fragmented.
-    if (isControlOpCode(frame.opCode) && !frame.final) {
+    if (WebSocketFrame::isControlOpCode(frame.opCode) && !frame.final) {
         fail("Received fragmented control frame: opcode = " + String::number(frame.opCode));
         return false;
     }
 
     // All control frames must have a payload of 125 bytes or less, which means the frame must not contain
     // the "extended payload length" field.
-    if (isControlOpCode(frame.opCode) && frame.payloadLength > maxPayloadLengthWithoutExtendedLengthField) {
+    if (WebSocketFrame::isControlOpCode(frame.opCode) && frame.payloadLength > maxPayloadLengthWithoutExtendedLengthField) {
         fail("Received control frame having too long payload: " + String::number(frame.payloadLength) + " bytes");
         return false;
     }
 
     // A new data frame is received before the previous continuous frame finishes.
     // Note that control frames are allowed to come in the middle of continuous frames.
-    if (m_hasContinuousFrame && frame.opCode != OpCodeContinuation && !isControlOpCode(frame.opCode)) {
+    if (m_hasContinuousFrame && frame.opCode != WebSocketFrame::OpCodeContinuation && !WebSocketFrame::isControlOpCode(frame.opCode)) {
         fail("Received new data frame but previous continuous frame is unfinished.");
         return false;
     }
 
     switch (frame.opCode) {
-    case OpCodeContinuation:
+    case WebSocketFrame::OpCodeContinuation:
         // An unexpected continuation frame is received without any leading frame.
         if (!m_hasContinuousFrame) {
             fail("Received unexpected continuation frame.");
             return false;
         }
         m_continuousFrameData.append(frame.payload, frame.payloadLength);
-        skipBuffer(frame.frameEnd - m_buffer);
+        skipBuffer(frameEnd - m_buffer);
         if (frame.final) {
             // onmessage handler may eventually call the other methods of this channel,
             // so we should pretend that we have finished to read this frame and
@@ -670,7 +667,7 @@ bool WebSocketChannel::processFrame()
             OwnPtr<Vector<char> > continuousFrameData = adoptPtr(new Vector<char>);
             m_continuousFrameData.swap(*continuousFrameData);
             m_hasContinuousFrame = false;
-            if (m_continuousFrameOpCode == OpCodeText) {
+            if (m_continuousFrameOpCode == WebSocketFrame::OpCodeText) {
                 String message;
                 if (continuousFrameData->size())
                     message = String::fromUTF8(continuousFrameData->data(), continuousFrameData->size());
@@ -680,48 +677,48 @@ bool WebSocketChannel::processFrame()
                     fail("Could not decode a text frame as UTF-8.");
                 else
                     m_client->didReceiveMessage(message);
-            } else if (m_continuousFrameOpCode == OpCodeBinary)
+            } else if (m_continuousFrameOpCode == WebSocketFrame::OpCodeBinary)
                 m_client->didReceiveBinaryData(continuousFrameData.release());
         }
         break;
 
-    case OpCodeText:
+    case WebSocketFrame::OpCodeText:
         if (frame.final) {
             String message;
             if (frame.payloadLength)
                 message = String::fromUTF8(frame.payload, frame.payloadLength);
             else
                 message = "";
-            skipBuffer(frame.frameEnd - m_buffer);
+            skipBuffer(frameEnd - m_buffer);
             if (message.isNull())
                 fail("Could not decode a text frame as UTF-8.");
             else
                 m_client->didReceiveMessage(message);
         } else {
             m_hasContinuousFrame = true;
-            m_continuousFrameOpCode = OpCodeText;
+            m_continuousFrameOpCode = WebSocketFrame::OpCodeText;
             ASSERT(m_continuousFrameData.isEmpty());
             m_continuousFrameData.append(frame.payload, frame.payloadLength);
-            skipBuffer(frame.frameEnd - m_buffer);
+            skipBuffer(frameEnd - m_buffer);
         }
         break;
 
-    case OpCodeBinary:
+    case WebSocketFrame::OpCodeBinary:
         if (frame.final) {
             OwnPtr<Vector<char> > binaryData = adoptPtr(new Vector<char>(frame.payloadLength));
             memcpy(binaryData->data(), frame.payload, frame.payloadLength);
-            skipBuffer(frame.frameEnd - m_buffer);
+            skipBuffer(frameEnd - m_buffer);
             m_client->didReceiveBinaryData(binaryData.release());
         } else {
             m_hasContinuousFrame = true;
-            m_continuousFrameOpCode = OpCodeBinary;
+            m_continuousFrameOpCode = WebSocketFrame::OpCodeBinary;
             ASSERT(m_continuousFrameData.isEmpty());
             m_continuousFrameData.append(frame.payload, frame.payloadLength);
-            skipBuffer(frame.frameEnd - m_buffer);
+            skipBuffer(frameEnd - m_buffer);
         }
         break;
 
-    case OpCodeClose:
+    case WebSocketFrame::OpCodeClose:
         if (frame.payloadLength >= 2) {
             unsigned char highByte = static_cast<unsigned char>(frame.payload[0]);
             unsigned char lowByte = static_cast<unsigned char>(frame.payload[1]);
@@ -732,7 +729,7 @@ bool WebSocketChannel::processFrame()
             m_closeEventReason = String::fromUTF8(&frame.payload[2], frame.payloadLength - 2);
         else
             m_closeEventReason = "";
-        skipBuffer(frame.frameEnd - m_buffer);
+        skipBuffer(frameEnd - m_buffer);
         m_receivedClosingHandshake = true;
         startClosingHandshake(m_closeEventCode, m_closeEventReason);
         if (m_closing) {
@@ -741,20 +738,20 @@ bool WebSocketChannel::processFrame()
         }
         break;
 
-    case OpCodePing:
-        enqueueRawFrame(OpCodePong, frame.payload, frame.payloadLength);
-        skipBuffer(frame.frameEnd - m_buffer);
+    case WebSocketFrame::OpCodePing:
+        enqueueRawFrame(WebSocketFrame::OpCodePong, frame.payload, frame.payloadLength);
+        skipBuffer(frameEnd - m_buffer);
         break;
 
-    case OpCodePong:
+    case WebSocketFrame::OpCodePong:
         // A server may send a pong in response to our ping, or an unsolicited pong which is not associated with
         // any specific ping. Either way, there's nothing to do on receipt of pong.
-        skipBuffer(frame.frameEnd - m_buffer);
+        skipBuffer(frameEnd - m_buffer);
         break;
 
     default:
         ASSERT_NOT_REACHED();
-        skipBuffer(frame.frameEnd - m_buffer);
+        skipBuffer(frameEnd - m_buffer);
         break;
     }
 
@@ -855,14 +852,14 @@ void WebSocketChannel::enqueueTextFrame(const String& string)
     ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
-    frame->opCode = OpCodeText;
+    frame->opCode = WebSocketFrame::OpCodeText;
     frame->frameType = QueuedFrameTypeString;
     frame->stringData = string;
     m_outgoingFrameQueue.append(frame.release());
     processOutgoingFrameQueue();
 }
 
-void WebSocketChannel::enqueueRawFrame(OpCode opCode, const char* data, size_t dataLength)
+void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength)
 {
     ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
@@ -876,7 +873,7 @@ void WebSocketChannel::enqueueRawFrame(OpCode opCode, const char* data, size_t d
     processOutgoingFrameQueue();
 }
 
-void WebSocketChannel::enqueueBlobFrame(OpCode opCode, const Blob& blob)
+void WebSocketChannel::enqueueBlobFrame(WebSocketFrame::OpCode opCode, const Blob& blob)
 {
     ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
@@ -967,44 +964,55 @@ void WebSocketChannel::abortOutgoingFrameQueue()
 #endif
 }
 
-bool WebSocketChannel::sendFrame(OpCode opCode, const char* data, size_t dataLength)
+static void appendMaskedFramePayload(const WebSocketFrame& frame, Vector<char>& frameData)
 {
-    ASSERT(m_handle);
-    ASSERT(!m_suspended);
+    size_t maskingKeyStart = frameData.size();
+    frameData.grow(frameData.size() + maskingKeyWidthInBytes); // Add placeholder for masking key. Will be overwritten.
+    size_t payloadStart = frameData.size();
+    frameData.append(frame.payload, frame.payloadLength);
 
-    Vector<char> frame;
-    ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
-    frame.append(finalBit | opCode);
-    if (dataLength <= maxPayloadLengthWithoutExtendedLengthField)
-        frame.append(maskBit | dataLength);
-    else if (dataLength <= 0xFFFF) {
-        frame.append(maskBit | payloadLengthWithTwoByteExtendedLengthField);
-        frame.append((dataLength & 0xFF00) >> 8);
-        frame.append(dataLength & 0xFF);
+    cryptographicallyRandomValues(frameData.data() + maskingKeyStart, maskingKeyWidthInBytes);
+    for (size_t i = 0; i < frame.payloadLength; ++i)
+        frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
+}
+
+static void makeFrameData(const WebSocketFrame& frame, Vector<char>& frameData)
+{
+    unsigned char firstByte = (frame.final ? finalBit : 0) | frame.opCode;
+    frameData.append(firstByte);
+    if (frame.payloadLength <= maxPayloadLengthWithoutExtendedLengthField)
+        frameData.append(maskBit | frame.payloadLength);
+    else if (frame.payloadLength <= 0xFFFF) {
+        frameData.append(maskBit | payloadLengthWithTwoByteExtendedLengthField);
+        frameData.append((frame.payloadLength & 0xFF00) >> 8);
+        frameData.append(frame.payloadLength & 0xFF);
     } else {
-        frame.append(maskBit | payloadLengthWithEightByteExtendedLengthField);
+        frameData.append(maskBit | payloadLengthWithEightByteExtendedLengthField);
         char extendedPayloadLength[8];
-        size_t remaining = dataLength;
+        size_t remaining = frame.payloadLength;
         // Fill the length into extendedPayloadLength in the network byte order.
         for (int i = 0; i < 8; ++i) {
             extendedPayloadLength[7 - i] = remaining & 0xFF;
             remaining >>= 8;
         }
         ASSERT(!remaining);
-        frame.append(extendedPayloadLength, 8);
+        frameData.append(extendedPayloadLength, 8);
     }
 
-    // Mask the frame.
-    size_t maskingKeyStart = frame.size();
-    frame.grow(frame.size() + maskingKeyWidthInBytes); // Add placeholder for masking key. Will be overwritten.
-    size_t payloadStart = frame.size();
-    frame.append(data, dataLength);
+    appendMaskedFramePayload(frame, frameData);
+}
 
-    cryptographicallyRandomValues(frame.data() + maskingKeyStart, maskingKeyWidthInBytes);
-    for (size_t i = 0; i < dataLength; ++i)
-        frame[payloadStart + i] ^= frame[maskingKeyStart + i % maskingKeyWidthInBytes];
+bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength)
+{
+    ASSERT(m_handle);
+    ASSERT(!m_suspended);
 
-    return m_handle->send(frame.data(), frame.size());
+    ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
+    WebSocketFrame frame(opCode, true, true, data, dataLength);
+    Vector<char> frameData;
+    makeFrameData(frame, frameData);
+
+    return m_handle->send(frameData.data(), frameData.size());
 }
 
 bool WebSocketChannel::sendFrameHixie76(const char* data, size_t dataLength)

@@ -4337,6 +4337,7 @@ webcore_sources += \
 	Source/WebCore/websockets/WebSocketExtensionDispatcher.cpp \
 	Source/WebCore/websockets/WebSocketExtensionDispatcher.h \
 	Source/WebCore/websockets/WebSocketExtensionProcessor.h \
+	Source/WebCore/websockets/WebSocketFrame.h \
 	Source/WebCore/websockets/WebSocketHandshake.cpp \
 	Source/WebCore/websockets/WebSocketHandshake.h \
 	Source/WebCore/websockets/WebSocketHandshakeRequest.cpp \

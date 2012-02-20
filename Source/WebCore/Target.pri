@@ -3668,6 +3668,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         websockets/WebSocketChannelClient.h \
         websockets/WebSocketExtensionDispatcher.h \
         websockets/WebSocketExtensionProcessor.h \
+        websockets/WebSocketFrame.h \
         websockets/WebSocketHandshake.h \
         websockets/WebSocketHandshakeRequest.h \
         websockets/WebSocketHandshakeResponse.h \

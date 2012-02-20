@@ -1,3 +1,44 @@
+2012-02-20  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Move WebSocketChannel::FrameData into a separate header file
+        https://bugs.webkit.org/show_bug.cgi?id=78682
+
+        Extract WebSocketChannel::FrameData as WebSocketFrame. This brings
+        flexibility to add classes which want to do something for
+        incoming/outgoing frames (e.g. compression/decompression).
+
+        Reviewed by Kent Tamura.
+
+        No new tests. No behavior change.
+
+        * GNUmakefile.list.am: AddedWebSocketFrame.h
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * websockets/WebSocketChannel.cpp: Modified to use WebSocketFrame instead of FrameData
+        (WebCore):
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::parseFrame):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::enqueueBlobFrame):
+        (WebCore::appendMaskedFramePayload): Added.
+        (WebCore::makeFrameData): Added.
+        (WebCore::WebSocketChannel::sendFrame):
+        * websockets/WebSocketChannel.h: Removed FrameData.
+        (WebSocketChannel):
+        (QueuedFrame):
+        * websockets/WebSocketFrame.h: Added.
+        (WebCore):
+        (WebSocketFrame):
+        (WebCore::WebSocketFrame::isNonControlOpCode):
+        (WebCore::WebSocketFrame::isControlOpCode):
+        (WebCore::WebSocketFrame::isReservedOpCode):
+        (WebCore::WebSocketFrame::WebSocketFrame):
+
 2012-02-20  Adam Roben  <aroben@apple.com>
 
         32-bit build fix

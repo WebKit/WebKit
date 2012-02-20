@@ -4816,6 +4816,7 @@
             'websockets/WebSocketExtensionDispatcher.cpp',
             'websockets/WebSocketExtensionDispatcher.h',
             'websockets/WebSocketExtensionProcessor.h',
+            'websockets/WebSocketFrame.h',
             'websockets/WebSocketHandshake.cpp',
             'websockets/WebSocketHandshake.h',
             'websockets/WebSocketHandshakeRequest.cpp',
