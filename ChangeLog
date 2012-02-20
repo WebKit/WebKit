@@ -1,3 +1,11 @@
+2012-02-20  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Fix PLATFORM() define for Windows.
+
+        Define WTF_PLATFORM_WIN instead of WTF_PLATFORM_WINDOWS.
+
+        * Source/cmake/OptionsWindows.cmake:
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix WebKit2GTK+ for 'make distcheck'.
