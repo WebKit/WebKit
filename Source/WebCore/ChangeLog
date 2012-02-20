@@ -1,3 +1,37 @@
+2012-02-20  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Upstream the first few files in platform/graphics/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=79023
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstreaming, no new tests.
+
+        * platform/graphics/blackberry/FloatPointBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::FloatPoint::operator BlackBerry::Platform::FloatPoint):
+        * platform/graphics/blackberry/FloatRectBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::operator BlackBerry::Platform::FloatRect):
+        * platform/graphics/blackberry/FloatSizeBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::FloatSize::FloatSize):
+        (WebCore::FloatSize::operator BlackBerry::Platform::FloatSize):
+        * platform/graphics/blackberry/IntPointBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator BlackBerry::Platform::IntPoint):
+        * platform/graphics/blackberry/IntRectBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator BlackBerry::Platform::IntRect):
+        * platform/graphics/blackberry/IntSizeBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator BlackBerry::Platform::IntSize):
+
 2012-02-20  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Share openTemporaryFile with WinCE
