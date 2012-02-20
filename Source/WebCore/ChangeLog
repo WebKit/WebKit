@@ -1,3 +1,16 @@
+2012-02-20  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Share openTemporaryFile with WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=58750
+
+        Reviewed by Adam Roben.
+
+        Use pathByAppendingComponent instead of PathCombine to share the
+        code with WinCE. Also use the wide version of Windows functions.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openTemporaryFile):
+
 2012-02-20  Victor Carbune  <victor@rosedu.org>
 
         Added code to support dispatching of missed cues in case of normal playback

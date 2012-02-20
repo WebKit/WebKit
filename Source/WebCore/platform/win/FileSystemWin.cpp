@@ -194,8 +194,8 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
 {
     handle = INVALID_HANDLE_VALUE;
 
-    char tempPath[MAX_PATH];
-    int tempPathLength = ::GetTempPathA(WTF_ARRAY_LENGTH(tempPath), tempPath);
+    wchar_t tempPath[MAX_PATH];
+    int tempPathLength = ::GetTempPathW(WTF_ARRAY_LENGTH(tempPath), tempPath);
     if (tempPathLength <= 0 || tempPathLength > WTF_ARRAY_LENGTH(tempPath))
         return String();
 
@@ -203,11 +203,11 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
     if (!CryptAcquireContext(&hCryptProv, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
         return String();
 
-    char proposedPath[MAX_PATH];
-    while (1) {
-        char tempFile[] = "XXXXXXXX.tmp"; // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
+    String proposedPath;
+    do {
+        wchar_t tempFile[] = L"XXXXXXXX.tmp"; // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
         const int randomPartLength = 8;
-        if (!CryptGenRandom(hCryptProv, randomPartLength, reinterpret_cast<BYTE*>(tempFile)))
+        if (!CryptGenRandom(hCryptProv, randomPartLength * sizeof(wchar_t), reinterpret_cast<BYTE*>(tempFile)))
             break;
 
         // Limit to valid filesystem characters, also excluding others that could be problematic, like punctuation.
@@ -216,25 +216,22 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
         for (int i = 0; i < randomPartLength; ++i)
             tempFile[i] = validChars[tempFile[i] % (sizeof(validChars) - 1)];
 
-        ASSERT(strlen(tempFile) == sizeof(tempFile) - 1);
+        ASSERT(wcslen(tempFile) == WTF_ARRAY_LENGTH(tempFile) - 1);
 
-        if (!PathCombineA(proposedPath, tempPath, tempFile))
+        proposedPath = pathByAppendingComponent(tempPath, tempFile);
+        if (proposedPath.isEmpty())
             break;
- 
-        // use CREATE_NEW to avoid overwriting an existing file with the same name
-        handle = CreateFileA(proposedPath, GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
-        if (!isHandleValid(handle) && GetLastError() == ERROR_ALREADY_EXISTS)
-            continue;
 
-        break;
-    }
+        // use CREATE_NEW to avoid overwriting an existing file with the same name
+        handle = ::CreateFileW(proposedPath.charactersWithNullTermination(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+    } while (!isHandleValid(handle) && GetLastError() == ERROR_ALREADY_EXISTS);
 
     CryptReleaseContext(hCryptProv, 0);
 
     if (!isHandleValid(handle))
         return String();
 
-    return String::fromUTF8(proposedPath);
+    return proposedPath;
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
