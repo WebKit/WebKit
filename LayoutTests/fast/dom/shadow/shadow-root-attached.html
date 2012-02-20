@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/shadow-test-driver.js"></script>
+</head>
+<body>
+<p>This test checks nodes are reallyed attached.</p>
+<pre id="console"></pre>
+<div id="container"></div>
+
+<script>
+var container = document.getElementById("container");
+
+(function testAttachedInLightChildren() {
+    var root = document.createElement('div');
+    window.light = createSpanWithText('LIGHT');
+    root.appendChild(light);
+
+    var shadowRoot = new WebKitShadowRoot(root);
+
+    shouldBe('internals.attached(light)', 'false');
+    document.getElementById('container').appendChild(root);
+    shouldBe('internals.attached(light)', 'true');
+})();
+
+(function testNotDistributedElementAttached() {
+    var root = document.createElement('div');
+    window.light = createSpanWithText('LIGHT');
+    root.appendChild(light);
+
+    var shadowRoot = new WebKitShadowRoot(root);
+    shadowRoot.appendChild(createContentWithSelect('span'));
+
+    shouldBe('internals.attached(light)', 'false');
+    document.getElementById('container').appendChild(root);
+    shouldBe('internals.attached(light)', 'true');
+})();
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

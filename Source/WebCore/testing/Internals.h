@@ -76,6 +76,8 @@ public:
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
     bool isValidContentSelect(Element* contentElement, ExceptionCode&);
 
+    bool attached(Node*, ExceptionCode&);
+
 #if ENABLE(INPUT_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif

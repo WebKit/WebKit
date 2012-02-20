@@ -1,0 +1,10 @@
+This test checks nodes are reallyed attached.
+
+PASS internals.attached(light) is false
+PASS internals.attached(light) is true
+PASS internals.attached(light) is false
+PASS internals.attached(light) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+LIGHT

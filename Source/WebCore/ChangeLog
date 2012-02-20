@@ -1,3 +1,21 @@
+2012-02-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Attached/Detached state must be testable
+        https://bugs.webkit.org/show_bug.cgi?id=79010
+
+        Reviewed by Hajime Morita.
+
+        Added a method to check an element attached or not.
+
+        Test: fast/dom/shadow/shadow-root-attached.html
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::attached):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-20  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add deflater/inflater classes

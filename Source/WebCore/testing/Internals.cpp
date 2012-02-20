@@ -156,6 +156,16 @@ bool Internals::isValidContentSelect(Element* contentElement, ExceptionCode& ec)
     return toHTMLContentElement(contentElement)->isSelectValid();
 }
 
+bool Internals::attached(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return node->attached();
+}
+
 String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
 {
     if (!element) {
