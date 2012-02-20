@@ -1451,8 +1451,11 @@ fast/css-grid-layout
 fast/css/style-scoped
 
 # ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow/content-element-api.html
+fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-new.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
@@ -1523,10 +1526,6 @@ webintents/
 
 # Pointer Lock is not implemented.
 pointer-lock/
-
-# Needs ENABLE_SHADOW_DOM
-fast/dom/shadow/content-element-api.html
-fast/dom/shadow/content-element-outside-shadow.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
