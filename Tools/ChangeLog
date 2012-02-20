@@ -1,3 +1,23 @@
+2012-02-20  János Badics  <dicska@gmail.com>
+
+        [Qt] run-qtwebkit-tests doesn't consider timeouts as failures
+        https://bugs.webkit.org/show_bug.cgi?id=71816
+
+        RunQtAPITests will notify if a timeout occurs during testing.
+        Added unittest to the master.cfg
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunQtAPITests.evaluateCommand):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunQtAPITestsTest):
+        (RunQtAPITestsTest.assertResults):
+        (RunQtAPITestsTest.test_timeout):
+        (test_success):
+        (test_failure):
+        (test_timeout_and_failure):
+
 2012-02-20  Andy Wingo  <wingo@igalia.com>
 
         Add wingo as a committer.
