@@ -59,7 +59,7 @@ PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& t
 }
 
 HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
-    : HTMLElement(name, document)
+    : InsertionPoint(name, document)
     , m_selections(adoptPtr(new HTMLContentSelectionList()))
 {
 }
@@ -79,7 +79,7 @@ void HTMLContentElement::attach()
         selector->select(this, m_selections.get());
     }
 
-    HTMLElement::attach();
+    InsertionPoint::attach();
 
     if (root) {
         for (HTMLContentSelection* selection = m_selections->first(); selection; selection = selection->next())
@@ -99,7 +99,7 @@ void HTMLContentElement::detach()
     }
 
     ASSERT(m_selections->isEmpty());
-    HTMLElement::detach();
+    InsertionPoint::detach();
 }
 
 const AtomicString& HTMLContentElement::select() const
@@ -124,7 +124,7 @@ void HTMLContentElement::parseAttribute(Attribute* attr)
         if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
             root->setNeedsReattachHostChildrenAndShadow();
     } else
-        HTMLElement::parseAttribute(attr);
+        InsertionPoint::parseAttribute(attr);
 }
 
 }

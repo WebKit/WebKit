@@ -1,3 +1,38 @@
+2012-02-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Introduce InsertionPoint, which will be a common base class of HTMLShadowElement and HTMLContentElement.
+        https://bugs.webkit.org/show_bug.cgi?id=78771
+
+        Reviewed by Hajime Morita.
+
+        This patch introduces InsertionPoint, which will be a common base class of HTMLShadowElement and HTMLContentElement.
+
+        This is a step for rendering <shadow> correctly, because <shadow> has almost the same function of <content>.
+        After this patch, we will change NodeRenderingContext and related classes to accept InsertionPoint instead of
+        HTMLContentElement only.
+
+        No new tests, no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        (WebCore::HTMLContentElement::parseAttribute):
+        * html/shadow/HTMLContentElement.h:
+        * html/shadow/InsertionPoint.cpp: Added.
+        (WebCore):
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::~InsertionPoint):
+        * html/shadow/InsertionPoint.h: Added.
+        (WebCore):
+        (InsertionPoint):
+
 2012-02-19  Paweł Forysiuk  <tuxator@o2.pl>
 
         [GTK] Can't find webinspector and error page redirection on Windows

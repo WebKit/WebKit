@@ -869,6 +869,7 @@ SET(WebCore_SOURCES
     html/shadow/HTMLContentElement.cpp
     html/shadow/HTMLContentSelector.cpp
     html/shadow/HTMLShadowElement.cpp
+    html/shadow/InsertionPoint.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp
     html/shadow/MeterShadowElement.cpp

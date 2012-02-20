@@ -32,7 +32,7 @@
 #define HTMLContentElement_h
 
 #include "HTMLContentSelector.h"
-#include "HTMLElement.h"
+#include "InsertionPoint.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ class HTMLContentSelectionList;
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of HTMLContentElement.
 // You should create HTMLContentElement during the host construction.
-class HTMLContentElement : public HTMLElement {
+class HTMLContentElement : public InsertionPoint {
 public:
     static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document*);
     static PassRefPtr<HTMLContentElement> create(Document*);

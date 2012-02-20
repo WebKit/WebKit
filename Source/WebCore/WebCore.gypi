@@ -5558,6 +5558,8 @@
             'html/shadow/HTMLContentSelector.h',
             'html/shadow/HTMLShadowElement.cpp',
             'html/shadow/HTMLShadowElement.h',
+            'html/shadow/InsertionPoint.cpp',
+            'html/shadow/InsertionPoint.h',
             'html/shadow/MediaControls.cpp',
             'html/shadow/MediaControls.h',
             'html/shadow/MediaControlElements.cpp',
