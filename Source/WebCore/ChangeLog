@@ -1,3 +1,12 @@
+2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] box-shadow and -webkit-box-shadow properties are not considered color-aware
+        https://bugs.webkit.org/show_bug.cgi?id=78988
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/CSSKeywordCompletions.js:
+
 2012-02-20  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Spin buttons of number input type should fire both input and change event
