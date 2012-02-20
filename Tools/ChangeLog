@@ -1,3 +1,19 @@
+2012-02-20  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] check that we're not running multiple modal dialogs at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=78486
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setIsDisplayingModalDialog):
+        (TestShell::isDisplayingModalDialog):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::runModal):
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix WebKit2GTK+ for 'make distcheck'.
