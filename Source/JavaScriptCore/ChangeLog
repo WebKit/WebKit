@@ -1,3 +1,10 @@
+2012-02-20  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix Visual Studio 2010 build.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+
 2012-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         Move special __proto__ property to Object.prototype
