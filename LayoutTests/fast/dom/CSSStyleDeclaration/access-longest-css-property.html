@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+* {
+-webkit-match-nearest-mail-blockquote-color: match;
+}
+</style>
+</head>
+<body>
+<div id="target" style="-webkit-match-nearest-mail-blockquote-color: match;"></div>
+<!--
+Note for updating the test:
+Please replace '-webkit-match-nearest-mail-blockquote-color' by the longest name if '-webkit-match-nearest-mail-blockquote-color' is removed.
+-->
+<script>
+description("The test parsing of the boundary value by checking the longest CSS property.");
+shouldBeEqualToString('getComputedStyle(document.body).webkitMatchNearestMailBlockquoteColor', 'match');
+shouldBeEqualToString('document.getElementById("target").style.webkitMatchNearestMailBlockquoteColor', 'match');
+shouldBeEqualToString('document.body.style.webkitMatchNearestMailBlockquoteColor', '');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

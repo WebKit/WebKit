@@ -9138,14 +9138,8 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
             memcpy(buffer, "-webkit", 7);
             ++length;
         }
-
 #if PLATFORM(IOS)
-        if (!strcmp(buffer, "-webkit-hyphenate-locale")) {
-            // Worked in iOS 4.2.
-            const char* const webkitLocale = "-webkit-locale";
-            name = webkitLocale;
-            length = strlen(webkitLocale);
-        }
+        cssPropertyNameIOSAliasing(buffer, name, length);
 #endif
     }
 
@@ -9162,6 +9156,18 @@ int cssPropertyID(const CSSParserString& string)
 {
     return cssPropertyID(string.characters, string.length);
 }
+
+#if PLATFORM(IOS)
+void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength)
+{
+    if (!strcmp(propertyName, "-webkit-hyphenate-locale")) {
+        // Worked in iOS 4.2.
+        static const char* const webkitLocale = "-webkit-locale";
+        propertyNameAlias = webkitLocale;
+        newLength = strlen(webkitLocale);
+    }
+}
+#endif
 
 int cssValueKeywordID(const CSSParserString& string)
 {

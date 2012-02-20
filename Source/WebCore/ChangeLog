@@ -1,3 +1,45 @@
+2012-02-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make JSCSSStyleDeclaration work directly with CSS Property ID
+        https://bugs.webkit.org/show_bug.cgi?id=79014
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, accessing the CSS property was done by converting from
+        the JavaScript name to the CSS name, then converting that name to a lowercase
+        character array, and finally getting the CSS property ID.
+
+        This patch cut the indirection and make the code go directly from the
+        JavaScript name conversion to the CSS property ID.
+
+        This improves the performance mainly due to the following:
+        -avoid dynamic memory allocation
+        -cut the conversion early when possible
+        -do not parse the string twice
+        The previous fast-path optimization was removed because it is no longer
+        necessary with this change.
+
+        The improvement are the following:
+        -previous fast-path: no change
+        -previous slow-path: ~3 times faster
+
+        Test: fast/dom/CSSStyleDeclaration/access-longest-css-property.html
+        This just test the edge case of CSSPropertyName.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::writeWebKitPrefix):
+        (WebCore::writeEpubPrefix):
+        (WebCore::cssPropertyIDForJSCSSPropertyName):
+        (WebCore::isCSSPropertyName):
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID):
+        (WebCore):
+        (WebCore::cssPropertyNameIOSAliasing):
+        * css/CSSParser.h:
+        (WebCore):
+
 2012-02-20  Dan Bernstein  <mitz@apple.com>
 
         Updated Localizable.strings after r107440.
