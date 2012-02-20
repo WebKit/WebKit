@@ -92,9 +92,16 @@ bool FatFingers::isElementClickable(Element* element) const
     case ClickableByDefault: {
         ExceptionCode ec = 0;
         return element->webkitMatchesSelector("a[href],*:link,*:visited,*[role=button],button,input,select,label[for],area[href],textarea,embed,object", ec)
+            || element->isMediaControlElement()
             || element->isContentEditable();
     }
     case MadeClickableByTheWebpage:
+
+        // Elements within a shadow DOM can not be 'made clickable by the webpage', since
+        // they are not accessible.
+        if (element->isInShadowTree())
+            return false;
+
         // FIXME: We fall back to checking for the presence of CSS style "cursor: pointer" to indicate whether the element A
         // can be clicked when A neither registers mouse events handlers nor is a hyperlink or form control. This workaround
         // ensures that we don't break various Google web apps, including <http://maps.google.com>. Ideally, we should walk

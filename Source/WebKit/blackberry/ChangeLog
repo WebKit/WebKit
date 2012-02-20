@@ -1,3 +1,19 @@
+2012-02-20  Antonio Gomes  <agomes@rim.com>
+
+        All default video/audio control elements should be rect-hit testable (Part II)
+        PR #139518 / MKS_3005538
+
+        Reviewed by George Staikos.
+
+        Add HTMLInputElement::isMediaControlElement as a criteria
+        to consider a element as clickable.
+
+        Note that is should be only used while in the "ClickableByDefault"
+        phase of FatFingers.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2012-02-16  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Implemented a way to defer client navigation change client notifications
