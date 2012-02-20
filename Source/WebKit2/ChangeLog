@@ -1,3 +1,9 @@
+2012-02-20  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Update and sort list of source files.
+
+        * CMakeLists.txt:
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix WebKit2GTK+ for 'make distcheck'.

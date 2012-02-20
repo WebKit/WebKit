@@ -95,6 +95,10 @@ SET(WebKit2_INCLUDE_DIRECTORIES
 )
 
 SET(WebKit2_SOURCES
+    Platform/Logging.cpp
+    Platform/Module.cpp
+    Platform/WorkQueue.cpp
+
     Platform/CoreIPC/ArgumentCoders.cpp
     Platform/CoreIPC/ArgumentDecoder.cpp
     Platform/CoreIPC/ArgumentEncoder.cpp
@@ -103,37 +107,17 @@ SET(WebKit2_SOURCES
     Platform/CoreIPC/Connection.cpp
     Platform/CoreIPC/DataReference.cpp
 
-    Platform/Logging.cpp
-    Platform/Module.cpp
-    Platform/WorkQueue.cpp
-
     PluginProcess/PluginControllerProxy.cpp
+    PluginProcess/PluginCreationParameters.cpp
     PluginProcess/PluginProcess.cpp
     PluginProcess/WebProcessConnection.cpp
-
-    Shared/API/c/WKArray.cpp
-    Shared/API/c/WKCertificateInfo.cpp
-    Shared/API/c/WKContextMenuItem.cpp
-    Shared/API/c/WKData.cpp
-    Shared/API/c/WKDictionary.cpp
-    Shared/API/c/WKError.cpp
-    Shared/API/c/WKGraphicsContext.cpp
-    Shared/API/c/WKImage.cpp
-    Shared/API/c/WKMutableArray.cpp
-    Shared/API/c/WKMutableDictionary.cpp
-    Shared/API/c/WKNumber.cpp
-    Shared/API/c/WKSecurityOrigin.cpp
-    Shared/API/c/WKSerializedScriptValue.cpp
-    Shared/API/c/WKString.cpp
-    Shared/API/c/WKType.cpp
-    Shared/API/c/WKURL.cpp
-    Shared/API/c/WKURLRequest.cpp
-    Shared/API/c/WKURLResponse.cpp
-    Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/APIClientTraits.cpp
     Shared/APIObject.cpp
     Shared/ChildProcess.cpp
+    Shared/DictionaryPopupInfo.cpp
+    Shared/EditorState.cpp
+    Shared/FontInfo.cpp
     Shared/ImmutableArray.cpp
     Shared/ImmutableDictionary.cpp
     Shared/MutableArray.cpp
@@ -148,6 +132,8 @@ SET(WebKit2_SOURCES
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
+    Shared/WebConnection.cpp
+    Shared/WebConnectionClient.cpp
     Shared/WebContextMenuItem.cpp
     Shared/WebContextMenuItemData.cpp
     Shared/WebCoreArgumentCoders.cpp
@@ -155,10 +141,12 @@ SET(WebKit2_SOURCES
     Shared/WebEvent.cpp
     Shared/WebEventConversion.cpp
     Shared/WebGeolocationPosition.cpp
+    Shared/WebGestureEvent.cpp
     Shared/WebGraphicsContext.cpp
     Shared/WebHitTestResult.cpp
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
+    Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
     Shared/WebOpenPanelParameters.cpp
     Shared/WebPageCreationParameters.cpp
@@ -172,48 +160,38 @@ SET(WebKit2_SOURCES
     Shared/WebURLResponse.cpp
     Shared/WebWheelEvent.cpp
 
+    Shared/API/c/WKArray.cpp
+    Shared/API/c/WKCertificateInfo.cpp
+    Shared/API/c/WKConnectionRef.cpp
+    Shared/API/c/WKContextMenuItem.cpp
+    Shared/API/c/WKData.cpp
+    Shared/API/c/WKDictionary.cpp
+    Shared/API/c/WKError.cpp
+    Shared/API/c/WKGeometry.cpp
+    Shared/API/c/WKGraphicsContext.cpp
+    Shared/API/c/WKImage.cpp
+    Shared/API/c/WKMutableArray.cpp
+    Shared/API/c/WKMutableDictionary.cpp
+    Shared/API/c/WKNumber.cpp
+    Shared/API/c/WKSecurityOrigin.cpp
+    Shared/API/c/WKSerializedScriptValue.cpp
+    Shared/API/c/WKString.cpp
+    Shared/API/c/WKType.cpp
+    Shared/API/c/WKURL.cpp
+    Shared/API/c/WKURLRequest.cpp
+    Shared/API/c/WKURLResponse.cpp
+    Shared/API/c/WKUserContentURLPattern.cpp
+
     Shared/Plugins/NPIdentifierData.cpp
     Shared/Plugins/NPObjectMessageReceiver.cpp
     Shared/Plugins/NPObjectProxy.cpp
     Shared/Plugins/NPRemoteObjectMap.cpp
     Shared/Plugins/NPVariantData.cpp
+    Shared/Plugins/PluginModuleInfo.cpp
     Shared/Plugins/PluginProcessCreationParameters.cpp
 
     Shared/Plugins/Netscape/NetscapePluginModule.cpp
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
-    UIProcess/API/C/WKApplicationCacheManager.cpp
-    UIProcess/API/C/WKAuthenticationChallenge.cpp
-    UIProcess/API/C/WKAuthenticationDecisionListener.cpp
-    UIProcess/API/C/WKBackForwardList.cpp
-    UIProcess/API/C/WKBackForwardListItem.cpp
-    UIProcess/API/C/WKContext.cpp
-    UIProcess/API/C/WKCookieManager.cpp
-    UIProcess/API/C/WKCredential.cpp
-    UIProcess/API/C/WKDatabaseManager.cpp
-    UIProcess/API/C/WKDownload.cpp
-    UIProcess/API/C/WKFormSubmissionListener.cpp
-    UIProcess/API/C/WKFrame.cpp
-    UIProcess/API/C/WKFramePolicyListener.cpp
-    UIProcess/API/C/WKGeolocationManager.cpp
-    UIProcess/API/C/WKGeolocationPermissionRequest.cpp
-    UIProcess/API/C/WKGeolocationPosition.cpp
-    UIProcess/API/C/WKGrammarDetail.cpp
-    UIProcess/API/C/WKHitTestResult.cpp
-    UIProcess/API/C/WKIconDatabase.cpp
-    UIProcess/API/C/WKInspector.cpp
-    UIProcess/API/C/WKKeyValueStorageManager.cpp
-    UIProcess/API/C/WKMediaCacheManager.cpp
-    UIProcess/API/C/WKNavigationData.cpp
-    UIProcess/API/C/WKOpenPanelParameters.cpp
-    UIProcess/API/C/WKOpenPanelResultListener.cpp
-    UIProcess/API/C/WKPage.cpp
-    UIProcess/API/C/WKPageGroup.cpp
-    UIProcess/API/C/WKPluginSiteDataManager.cpp
-    UIProcess/API/C/WKPreferences.cpp
-    UIProcess/API/C/WKProtectionSpace.cpp
-    UIProcess/API/C/WKResourceCacheManager.cpp
-    UIProcess/API/C/WKTextChecker.cpp
 
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
@@ -225,7 +203,9 @@ SET(WebKit2_SOURCES
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp
+    UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContext.cpp
+    UIProcess/WebContextConnectionClient.cpp
     UIProcess/WebContextInjectedBundleClient.cpp
     UIProcess/WebContextMenuProxy.cpp
     UIProcess/WebCookieManagerProxy.cpp
@@ -265,6 +245,42 @@ SET(WebKit2_SOURCES
     UIProcess/WebTextCheckerClient.cpp
     UIProcess/WebUIClient.cpp
 
+    UIProcess/API/C/WKApplicationCacheManager.cpp
+    UIProcess/API/C/WKAuthenticationChallenge.cpp
+    UIProcess/API/C/WKAuthenticationDecisionListener.cpp
+    UIProcess/API/C/WKBackForwardList.cpp
+    UIProcess/API/C/WKBackForwardListItem.cpp
+    UIProcess/API/C/WKContext.cpp
+    UIProcess/API/C/WKCookieManager.cpp
+    UIProcess/API/C/WKCredential.cpp
+    UIProcess/API/C/WKDatabaseManager.cpp
+    UIProcess/API/C/WKDownload.cpp
+    UIProcess/API/C/WKFormSubmissionListener.cpp
+    UIProcess/API/C/WKFrame.cpp
+    UIProcess/API/C/WKFramePolicyListener.cpp
+    UIProcess/API/C/WKGeolocationManager.cpp
+    UIProcess/API/C/WKGeolocationPermissionRequest.cpp
+    UIProcess/API/C/WKGeolocationPosition.cpp
+    UIProcess/API/C/WKGrammarDetail.cpp
+    UIProcess/API/C/WKHitTestResult.cpp
+    UIProcess/API/C/WKIconDatabase.cpp
+    UIProcess/API/C/WKInspector.cpp
+    UIProcess/API/C/WKKeyValueStorageManager.cpp
+    UIProcess/API/C/WKMediaCacheManager.cpp
+    UIProcess/API/C/WKNavigationData.cpp
+    UIProcess/API/C/WKNotification.cpp
+    UIProcess/API/C/WKNotificationManager.cpp
+    UIProcess/API/C/WKNotificationPermissionRequest.cpp
+    UIProcess/API/C/WKOpenPanelParameters.cpp
+    UIProcess/API/C/WKOpenPanelResultListener.cpp
+    UIProcess/API/C/WKPage.cpp
+    UIProcess/API/C/WKPageGroup.cpp
+    UIProcess/API/C/WKPluginSiteDataManager.cpp
+    UIProcess/API/C/WKPreferences.cpp
+    UIProcess/API/C/WKProtectionSpace.cpp
+    UIProcess/API/C/WKResourceCacheManager.cpp
+    UIProcess/API/C/WKTextChecker.cpp
+
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp
     UIProcess/Authentication/AuthenticationDecisionListener.cpp
     UIProcess/Authentication/WebCredential.cpp
@@ -275,11 +291,18 @@ SET(WebKit2_SOURCES
     UIProcess/Launcher/ProcessLauncher.cpp
     UIProcess/Launcher/ThreadLauncher.cpp
 
+    UIProcess/Notifications/NotificationPermissionRequest.cpp
+    UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
+    UIProcess/Notifications/WebNotification.cpp
+    UIProcess/Notifications/WebNotificationManagerProxy.cpp
+    UIProcess/Notifications/WebNotificationProvider.cpp
+
     UIProcess/Plugins/PluginInfoStore.cpp
     UIProcess/Plugins/PluginProcessManager.cpp
     UIProcess/Plugins/PluginProcessProxy.cpp
     UIProcess/Plugins/WebPluginSiteDataManager.cpp
 
+    WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebKitMain.cpp
     WebProcess/WebProcess.cpp
 
@@ -337,6 +360,9 @@ SET(WebKit2_SOURCES
 
     WebProcess/MediaCache/WebMediaCacheManager.cpp
 
+    WebProcess/Notifications/NotificationPermissionRequestManager.cpp
+    WebProcess/Notifications/WebNotificationManager.cpp
+
     WebProcess/Plugins/Plugin.cpp
     WebProcess/Plugins/PluginProcessConnection.cpp
     WebProcess/Plugins/PluginProcessConnectionManager.cpp
@@ -364,6 +390,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp
+    WebProcess/WebCoreSupport/WebNotificationClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
@@ -372,55 +399,82 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/DrawingArea.cpp
     WebProcess/WebPage/DrawingAreaImpl.cpp
     WebProcess/WebPage/EncoderAdapter.cpp
+    WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
+    WebProcess/WebPage/TapHighlightController.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
-    WebProcess/WebPage/WebUndoStep.cpp
     WebProcess/WebPage/WebFrame.cpp
     WebProcess/WebPage/WebInspector.cpp
     WebProcess/WebPage/WebOpenPanelResultListener.cpp
     WebProcess/WebPage/WebPage.cpp
     WebProcess/WebPage/WebPageGroupProxy.cpp
+    WebProcess/WebPage/WebUndoStep.cpp
 )
 
 SET(WebKit2_MESSAGES_IN_FILES
-    UIProcess/WebMediaCacheManagerProxy.messages.in
-    UIProcess/WebCookieManagerProxy.messages.in
-    UIProcess/Plugins/PluginProcessProxy.messages.in
-    UIProcess/WebInspectorProxy.messages.in
-    UIProcess/WebFullScreenManagerProxy.messages.in
-    UIProcess/WebDatabaseManagerProxy.messages.in
-    UIProcess/WebPageProxy.messages.in
-    UIProcess/WebIconDatabase.messages.in
-    UIProcess/Downloads/DownloadProxy.messages.in
-    UIProcess/WebContext.messages.in
-    UIProcess/WebGeolocationManagerProxy.messages.in
-    UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/WebKeyValueStorageManagerProxy.messages.in
-    UIProcess/WebResourceCacheManagerProxy.messages.in
-    UIProcess/WebProcessProxy.messages.in
-    UIProcess/WebApplicationCacheManagerProxy.messages.in
-    PluginProcess/WebProcessConnection.messages.in
     PluginProcess/PluginControllerProxy.messages.in
     PluginProcess/PluginProcess.messages.in
+    PluginProcess/WebProcessConnection.messages.in
+
     Shared/Plugins/NPObjectMessageReceiver.messages.in
-    WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in
-    WebProcess/MediaCache/WebMediaCacheManager.messages.in
-    WebProcess/Plugins/PluginProxy.messages.in
+
+    UIProcess/DrawingAreaProxy.messages.in
+    UIProcess/LayerTreeHostProxy.messages.in
+    UIProcess/WebApplicationCacheManagerProxy.messages.in
+    UIProcess/WebContext.messages.in
+    UIProcess/WebCookieManagerProxy.messages.in
+    UIProcess/WebDatabaseManagerProxy.messages.in
+    UIProcess/WebFullScreenManagerProxy.messages.in
+    UIProcess/WebGeolocationManagerProxy.messages.in
+    UIProcess/WebIconDatabase.messages.in
+    UIProcess/WebInspectorProxy.messages.in
+    UIProcess/WebKeyValueStorageManagerProxy.messages.in
+    UIProcess/WebMediaCacheManagerProxy.messages.in
+    UIProcess/WebPageProxy.messages.in
+    UIProcess/WebProcessProxy.messages.in
+    UIProcess/WebResourceCacheManagerProxy.messages.in
+
+    UIProcess/Downloads/DownloadProxy.messages.in
+
+    UIProcess/Notifications/WebNotificationManagerProxy.messages.in
+
+    UIProcess/Plugins/PluginProcessProxy.messages.in
+
     WebProcess/WebProcess.messages.in
-    WebProcess/Geolocation/WebGeolocationManager.messages.in
-    WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
-    WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in
+
+    WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in
+
     WebProcess/Authentication/AuthenticationManager.messages.in
-    WebProcess/ResourceCache/WebResourceCacheManager.messages.in
-    WebProcess/FullScreen/WebFullScreenManager.messages.in
+
     WebProcess/Cookies/WebCookieManager.messages.in
+
+    WebProcess/FullScreen/WebFullScreenManager.messages.in
+
+    WebProcess/Geolocation/WebGeolocationManager.messages.in
+
+    WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in
+
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in
-    WebProcess/WebPage/WebPage.messages.in
-    WebProcess/WebPage/WebInspector.messages.in
+
+    WebProcess/MediaCache/WebMediaCacheManager.messages.in
+
+    WebProcess/Notifications/WebNotificationManager.messages.in
+
+    WebProcess/Plugins/PluginProcessConnection.messages.in
+    WebProcess/Plugins/PluginProxy.messages.in
+
+    WebProcess/ResourceCache/WebResourceCacheManager.messages.in
+
+    WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
+
     WebProcess/WebPage/DrawingArea.messages.in
+    WebProcess/WebPage/EventDispatcher.messages.in
+    WebProcess/WebPage/LayerTreeHost.messages.in
+    WebProcess/WebPage/WebInspector.messages.in
+    WebProcess/WebPage/WebPage.messages.in
 )
 
 # Create JavaScript C++ code given an IDL input
