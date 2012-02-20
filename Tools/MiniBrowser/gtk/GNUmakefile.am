@@ -1,5 +1,7 @@
+if ENABLE_WEBKIT2
 noinst_PROGRAMS += \
 	Programs/MiniBrowser
+endif
 
 Programs_MiniBrowser_CPPFLAGS = \
 	-I$(srcdir)/Source \

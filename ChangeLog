@@ -1,3 +1,12 @@
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix WebKit2GTK+ for 'make distcheck'.
+
+        Instead of conditionally including WebKit2 GNUmakefiles, always
+        include them and conditionally activate the final targets.
+
+        * GNUmakefile.am:
+
 2012-02-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Check gstreamer minimum required version.

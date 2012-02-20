@@ -1047,9 +1047,11 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXX
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLAGS = \
 	$(global_cflags)
 
+if ENABLE_WEBKIT2
 # Shared libraries
 lib_LTLIBRARIES += \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+endif
 
 # Artificial dependency to make sure libwebkit2gtk and libwebkitgtk are not linked at the same time
 # The variable creation is to avoid having automake override the entire rule instead of adding the
@@ -1103,7 +1105,9 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(XRENDER_LIBS) \
 	$(XT_LIBS)
 
+if ENABLE_WEBKIT2
 pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
+endif
 
 # WebKit2 specific variables
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
@@ -1237,9 +1241,10 @@ CLEANFILES += \
 DISTCLEANFILES += \
 	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
-# WebKitWebProcess
+if ENABLE_WEBKIT2
 libexec_PROGRAMS += \
 	Programs/WebKitWebProcess
+endif
 
 Programs_WebKitWebProcess_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2 \
@@ -1504,7 +1509,7 @@ Programs_WebKitPluginProcess_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	$(global_cxxflags)
 
-endif
+endif # ENABLE_PLUGIN_PROCESS
 
 EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \

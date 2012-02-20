@@ -1,3 +1,13 @@
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix WebKit2GTK+ for 'make distcheck'.
+
+        Instead of conditionally including WebKit2 GNUmakefiles, always
+        include them and conditionally activate the final targets.
+
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * WebKitTestRunner/GNUmakefile.am:
+
 2012-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Enable video option for EFL port in build-webkit.

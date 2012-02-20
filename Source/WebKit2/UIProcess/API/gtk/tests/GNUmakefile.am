@@ -1,3 +1,5 @@
+if ENABLE_WEBKIT2
+
 TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitWebContext \
 	Programs/WebKit2APITests/TestWebKitWebView \
@@ -125,3 +127,5 @@ Programs_WebKit2APITests_TestPrinting_SOURCES = \
 Programs_WebKit2APITests_TestPrinting_CPPFLAGS = $(webkit2_tests_cppflags) $(GTK_UNIX_PRINTING_CFLAGS)
 Programs_WebKit2APITests_TestPrinting_LDADD = $(webkit2_tests_ldadd) $(GTK_UNIX_PRINTING_LIBS)
 Programs_WebKit2APITests_TestPrinting_LDFLAGS = $(webkit2_tests_ldflags)
+
+endif # ENABLE_WEBKIT2
