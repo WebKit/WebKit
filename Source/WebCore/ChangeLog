@@ -1,3 +1,13 @@
+2012-02-20  Kwonjin Jeong  <gram@company100.net>
+
+        Correct a typo error in ScrollingCoordinator.h
+        https://bugs.webkit.org/show_bug.cgi?id=79012
+
+        Reviewed by Andreas Kling.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+
 2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] box-shadow and -webkit-box-shadow properties are not considered color-aware

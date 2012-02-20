@@ -94,7 +94,7 @@ public:
     // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
     void frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer);
 
-    // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
+    // Should be called whenever the vertical scrollbar layer for the given frame view changes.
     void frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer);
 
     // Requests that the scrolling coordinator updates the scroll position of the given frame view. If this function returns true, it means that the
