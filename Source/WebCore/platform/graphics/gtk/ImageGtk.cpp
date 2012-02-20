@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "BitmapImage.h"
+#include "FileSystem.h"
 #include "GdkCairoUtilities.h"
 #include "GOwnPtrGtk.h"
 #include "SharedBuffer.h"
@@ -33,62 +34,15 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 
-#if PLATFORM(WIN)
-#include <mbstring.h>
-#include <shlobj.h>
-
-static HMODULE hmodule;
-
-extern "C" {
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-    if (fdwReason == DLL_PROCESS_ATTACH)
-        hmodule = hinstDLL;
-    return TRUE;
-}
-}
-
-static char* getPathToImageResource(char* resource)
-{
-    static char* dataDirectory = 0;
-    if (!dataDirectory) {
-        dataDirectory = new char[PATH_MAX];
-        if (!GetModuleFileName(hmodule, static_cast<CHAR*>(dataDirectory), sizeof(dataDirectory) - 10))
-            dataDirectory = DATA_DIR;
-
-        // FIXME: This is pretty ugly. Ideally we should be using Windows API
-        // functions or GLib methods to calculate paths.
-        unsigned char *p;
-        p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
-        *p = '\0';
-        p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
-        if (p) {
-            if (!stricmp((const char *) (p+1), "bin"))
-                *p = '\0';
-        }
-        strcat(dataDirectory, "\\share\\webkitgtk-"WEBKITGTK_API_VERSION_STRING"\\images\\");
-    }
-
-    char* imageResourcePath = new char[PATH_MAX];
-    strcat(imageResourcePath, dataDirectory);
-    strcat(imageResourcePath, resource);
-
-    return imageResourcePath;
-}
-
-#else
+namespace WebCore {
 
 static char* getPathToImageResource(char* resource)
 {
     if (g_getenv("WEBKIT_TOP_LEVEL"))
         return g_build_filename(g_getenv("WEBKIT_TOP_LEVEL"), "Source", "WebCore", "Resources", resource, NULL);
 
-    return g_build_filename(DATA_DIR, "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "images", resource, NULL);
+    return g_build_filename(sharedResourcesPath().data(), "images", resource, NULL);
 }
-
-#endif
-
-namespace WebCore {
 
 static CString getThemeIconFileName(const char* name, int size)
 {
