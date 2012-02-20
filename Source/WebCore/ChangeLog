@@ -1,3 +1,11 @@
+2012-02-20  Dan Bernstein  <mitz@apple.com>
+
+        Updated Localizable.strings after r107440.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * English.lproj/Localizable.strings:
+
 2012-02-20  David Barton  <dbarton@mathscribe.com>
 
         MathML internals - remove nonOperatorHeight(), hasBase()
