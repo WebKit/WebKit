@@ -115,9 +115,6 @@ bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* thisObject, ExecSta
 
     targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(otherObject));
     return false;
-
-
-    return static_cast<const JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec);
 }
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)

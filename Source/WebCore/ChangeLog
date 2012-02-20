@@ -1,3 +1,11 @@
+2012-02-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::allowsAccessFrom):
+            - Errk, remove dead code from end of function.
+
 2012-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         Move special __proto__ property to Object.prototype
