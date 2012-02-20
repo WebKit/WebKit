@@ -1,3 +1,14 @@
+2012-02-19  Keishi Hattori  <keishi@webkit.org>
+
+        Use shadowRootList for ColorInputType
+        https://bugs.webkit.org/show_bug.cgi?id=79007
+
+        Reviewed by Kent Tamura.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree): Changed shadowRoot to shadowRootList.
+        (WebCore::ColorInputType::shadowColorSwatch): Changed shadowRoot to shadowRootList.
+
 2012-02-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         Introduce InsertionPoint, which will be a common base class of HTMLShadowElement and HTMLContentElement.

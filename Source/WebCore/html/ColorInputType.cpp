@@ -106,7 +106,7 @@ Color ColorInputType::valueAsColor() const
 
 void ColorInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadowRoot());
+    ASSERT(element()->hasShadowRoot());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);
@@ -116,7 +116,7 @@ void ColorInputType::createShadowSubtree()
     ExceptionCode ec = 0;
     wrapperElement->appendChild(colorSwatch.release(), ec);
     ASSERT(!ec);
-    element()->shadowRoot()->appendChild(wrapperElement.release(), ec);
+    element()->shadowRootList()->oldestShadowRoot()->appendChild(wrapperElement.release(), ec);
     ASSERT(!ec);
     
     updateColorSwatch();
@@ -185,7 +185,7 @@ void ColorInputType::updateColorSwatch()
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
-    ShadowRoot* shadow = element()->shadowRoot();
+    ShadowRoot* shadow = element()->shadowRootList()->oldestShadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
 }
 
