@@ -1,3 +1,12 @@
+2012-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Enable video option for EFL port in build-webkit.
+        https://bugs.webkit.org/show_bug.cgi?id=79006
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit:
+
 2012-02-19  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Use modifier keys to execute pre-rendering.

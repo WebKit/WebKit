@@ -330,7 +330,7 @@ my @features = (
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
     { option => "video", desc => "Toggle Video support",
-      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$videoSupport },
+      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$videoSupport },
 
     { option => "video-track", desc => "Toggle Video Track support",
       define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk()), value => \$videoTrackSupport },
