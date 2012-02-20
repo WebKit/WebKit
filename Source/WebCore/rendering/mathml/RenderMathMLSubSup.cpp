@@ -155,13 +155,6 @@ void RenderMathMLSubSup::stretchToHeight(int height)
     }
 }
 
-int RenderMathMLSubSup::nonOperatorHeight() const 
-{
-    if (m_kind == SubSup) 
-       return static_cast<int>(style()->fontSize()*gSubSupStretch);
-    return static_cast<int>(style()->fontSize());
-}
-
 void RenderMathMLSubSup::layout() 
 {
     if (firstChild())

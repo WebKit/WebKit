@@ -39,8 +39,6 @@ public:
     
     virtual RenderMathMLOperator* unembellishedOperator();
     virtual void layout();
-    virtual bool hasBase() const { return true; }
-    virtual int nonOperatorHeight() const;
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual void stretchToHeight(int pixelHeight);
     

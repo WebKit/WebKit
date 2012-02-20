@@ -1,3 +1,42 @@
+2012-02-20  David Barton  <dbarton@mathscribe.com>
+
+        MathML internals - remove nonOperatorHeight(), hasBase()
+        https://bugs.webkit.org/show_bug.cgi?id=78977
+
+        Reviewed by Eric Seidel.
+
+        Stretchy operators, including embellished ones, should stretch to the largest height of
+        the non-stretchy items in the same explicit or implicit <mrow>.
+        RenderMathMLRow::layout() used to use hasBase(), isRenderMathMLOperator(), and
+        nonOperatorHeight() to approximate this height. We now use unembellishedOperator() to
+        improve this approximation, while also simplifying the code. More plainly, the code used
+        to skip all operators when estimating this height, instead of just the stretchy ones. We
+        continue to do that for now, but we more accurately skip all embellished operators
+        (using our currently implemented approximate definition of this), and use the simple and
+        true height of the remaining items. In case all items in the row are stretchy,
+        style()->fontSize() is better than using whatever heights these items currently happen
+        to be stretched to.
+
+        Test: mathml/presentation/mo-stretch.html, and many existing tests
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::unembellishedOperator):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore):
+        (WebCore::RenderMathMLRow::layout):
+        * rendering/mathml/RenderMathMLRow.h:
+        (WebCore::RenderMathMLRow::isRenderMathMLRow):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (RenderMathMLUnderOver):
+
 2012-02-17  Anders Carlsson  <andersca@apple.com>
 
         Stop the committer timer when the page is destroyed

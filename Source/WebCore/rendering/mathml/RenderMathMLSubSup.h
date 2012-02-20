@@ -38,8 +38,6 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     
     virtual RenderMathMLOperator* unembellishedOperator();
-    virtual bool hasBase() const { return true; }
-    virtual int nonOperatorHeight() const;
     virtual void stretchToHeight(int pixelHeight);
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 

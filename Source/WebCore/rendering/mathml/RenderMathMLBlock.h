@@ -54,8 +54,6 @@ public:
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
-    virtual bool hasBase() const { return false; }
-    virtual int nonOperatorHeight() const;
     virtual void stretchToHeight(int height);
 
 #if ENABLE(DEBUG_MATH_LAYOUT)

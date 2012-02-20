@@ -57,14 +57,6 @@ PassRefPtr<RenderStyle> RenderMathMLBlock::createBlockStyle()
     return newStyle;
 }
 
-int RenderMathMLBlock::nonOperatorHeight() const
-{
-    if (!isRenderMathMLOperator())
-        return offsetHeight();
-        
-    return 0;
-}
-
 void RenderMathMLBlock::stretchToHeight(int height) 
 {
     for (RenderObject* current = firstChild(); current; current = current->nextSibling())

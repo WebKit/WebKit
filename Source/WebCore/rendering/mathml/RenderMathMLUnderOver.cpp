@@ -279,21 +279,6 @@ LayoutUnit RenderMathMLUnderOver::baselinePosition(FontBaseline, bool firstLine,
     return baseline;
 }
 
-
-int RenderMathMLUnderOver::nonOperatorHeight() const 
-{
-    int nonOperators = 0;
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
-        if (current->firstChild() && current->firstChild()->isRenderMathMLBlock()) {
-            RenderMathMLBlock* block = toRenderMathMLBlock(current->firstChild());
-            if (!block->isRenderMathMLOperator()) 
-                nonOperators += getOffsetHeight(current);
-        } else
-            nonOperators += getOffsetHeight(current);
-    }
-    return nonOperators;
-}
-
 }
 
 #endif // ENABLE(MATHML)
