@@ -12,6 +12,18 @@ PASS String("ǰ").toUpperCase() is "J̌"
 PASS String("ﬃ").toUpperCase() is "FFI"
 PASS String("FFI").toLowerCase() is "ffi"
 PASS String("Ĳ").toLowerCase() is "ĳ"
+PASS expected[String.fromCharCode(0xA78D).toLowerCase()] is true
+PASS expected[String.fromCharCode(0x0265).toUpperCase()] is true
+PASS expected[String.fromCharCode(0x10C7).toLowerCase()] is true
+PASS expected[String.fromCharCode(0x2D27).toUpperCase()] is true
+PASS expected[String.fromCharCode(0x2D2D).toLowerCase()] is true
+PASS expected[String.fromCharCode(0x10CD).toUpperCase()] is true
+PASS expected[String.fromCharCode(0x2CF2).toLowerCase()] is true
+PASS expected[String.fromCharCode(0x2CF3).toUpperCase()] is true
+PASS expected[String.fromCharCode(0xA792).toLowerCase()] is true
+PASS expected[String.fromCharCode(0xA793).toUpperCase()] is true
+PASS expected[String.fromCharCode(0xA7AA).toLowerCase()] is true
+PASS expected[String.fromCharCode(0x0266).toUpperCase()] is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

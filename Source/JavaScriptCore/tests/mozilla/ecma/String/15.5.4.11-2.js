@@ -84,7 +84,7 @@ function getTestCases() {
     // Georgian
     // Range: U+10A0 to U+10FF
     for ( var i = 0x10A0; i <= 0x10FF; i++ ) {
-        var U = new Array(new Unicode( i, 4 ), new Unicode( i, 5 ));
+        var U = new Array(new Unicode( i, 4 ), new Unicode( i, 5 ), new Unicode( i, 6.1));
 
 /*
         array[item++] = new TestCase(   SECTION,
@@ -92,7 +92,7 @@ function getTestCases() {
                                         String.fromCharCode(U.lower),
                                         eval("var s = new String( String.fromCharCode("+i+") ); s.toLowerCase()") );
 */
-        array[item++] = new TestCaseDualExpected(   SECTION,
+        array[item++] = new TestCaseMultiExpected(   SECTION,
                                         "var s = new String( String.fromCharCode("+i+") ); s.toLowerCase().charCodeAt(0)",
                                         U,
                                         eval("var s = new String( String.fromCharCode(i) ); s.toLowerCase().charCodeAt(0)") );
@@ -106,7 +106,7 @@ function getTestCases() {
  *
  */
 
-function TestCaseDualExpected( n, d, e, a ) {
+function TestCaseMultiExpected( n, d, e, a ) {
     this.name        = n;
     this.description = d;
     this.expect      = e;
@@ -115,26 +115,27 @@ function TestCaseDualExpected( n, d, e, a ) {
     this.reason      = "";
     this.bugnumber   = BUGNUMBER;
 
-    this.passed = getTestCaseResultDualExpected( this.expect, this.actual );
+    this.passed = getTestCaseResultMultiExpected( this.expect, this.actual );
     if ( DEBUG ) {
         writeLineToLog( "added " + this.description );
     }
 }
 
 // Added so that either Unicode 4.0 or 5.0 results will be considered correct.
-function writeTestCaseResultDualExpected( expect, actual, string ) {
-        var passed = getTestCaseResultDualExpected( expect, actual );
+function writeTestCaseResultMultiExpected( expect, actual, string ) {
+        var passed = getTestCaseResultMultiExpected( expect, actual );
         writeFormattedResult( expect[1].lower, actual, string, passed );
         return passed;
 }
 /*
- * Added so that either Unicode 4.0 or 5.0 results will be considered correct.
+ * Added so that either Unicode 4.0, 5.0 or 6.1 results will be considered correct.
  * Compare expected result to the actual result and figure out whether
  * the test case passed.
  */
-function getTestCaseResultDualExpected( expect, actual ) {
+function getTestCaseResultMultiExpected( expect, actual ) {
     expectedU4 = expect[0].lower;
     expectedU5 = expect[1].lower;
+    expectedU6_1 = expect[2].lower;
     //  because ( NaN == NaN ) always returns false, need to do
     //  a special compare to see if we got the right result.
         if ( actual != actual ) {
@@ -159,22 +160,30 @@ function getTestCaseResultDualExpected( expect, actual ) {
                 expectedU5 = "NaN number";
             }
         }
+        if ( expectedU6_1 != expectedU6_1 )   {
+            if ( typeof expectedU6_1 == "object" ) {
+                expectedU6_1 = "NaN object";
+            } else {
+                expectedU6_1 = "NaN number";
+            }
+        }
 
-        var passed = ( expectedU4 == actual || expectedU5 == actual ) ? true : false;
+        var passed = ( expectedU4 == actual || expectedU5 == actual || expectedU6_1 == actual ) ? true : false;
         
         //  if both objects are numbers
         // need to replace w/ IEEE standard for rounding
         if ( !passed &&
              typeof(actual) == "number" &&
             (typeof(expectedU4) == "number" ||
-             typeof(expectedU5) == "number")) {
-            if (( Math.abs(actual-expectedU4) < 0.0000001 ) || ( Math.abs(actual-expectedU5) < 0.0000001 )) {
+             typeof(expectedU5) == "number" ||
+             typeof(expectedU6_1) == "number")) {
+            if (( Math.abs(actual-expectedU4) < 0.0000001 ) || ( Math.abs(actual-expectedU5) < 0.0000001 ) || ( Math.abs(actual-expectedU6_1) < 0.0000001 )) {
                 passed = true;
             }
         }
 
         //  verify type is the same
-        if ( typeof(expectedU4) != typeof(actual) && typeof(expectedU5) != typeof(actual) )   {
+        if ( typeof(expectedU4) != typeof(actual) && typeof(expectedU5) != typeof(actual) && typeof(expectedU6_1) != typeof(actual) )   {
             passed = false;
         }
 
@@ -183,7 +192,7 @@ function getTestCaseResultDualExpected( expect, actual ) {
 
 function test() {
     for ( tc=0; tc < testcases.length; tc++ ) {
-        testcases[tc].passed = writeTestCaseResultDualExpected(
+        testcases[tc].passed = writeTestCaseResultMultiExpected(
                             testcases[tc].expect,
                             testcases[tc].actual,
                             testcases[tc].description +" = "+ testcases[tc].actual );
@@ -438,7 +447,12 @@ function GetUnicodeValues( c, version ) {
 
     // Georgian
     // Range: U+10A0 to U+10F0
-    if ( version == 5 ) {
+    if ( version >= 5 ) {
+        if ( version >= 6.1 && ( c == 0x10c7 || c == 0x10cd ) ) {
+            u[0] = c;
+            u[1] = c + 7264; //48;
+            return u;
+        }
         if ( c >= 0x10A0 && c <= 0x10C5 ) {
             u[0] = c;
             u[1] = c + 7264; //48;

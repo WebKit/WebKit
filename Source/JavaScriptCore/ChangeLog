@@ -1,3 +1,21 @@
+2012-02-20  Michael Saboff  <msaboff@apple.com>
+
+        Update toLower and toUpper tests for Unicode 6.1 changes
+        https://bugs.webkit.org/show_bug.cgi?id=78923
+
+        Reviewed by Oliver Hunt.
+
+        * tests/mozilla/ecma/String/15.5.4.11-2.js: Updated the test
+        to handle a third set of results for updated Unicode 6.1
+        changes.
+        (getTestCases):
+        (TestCaseMultiExpected):
+        (writeTestCaseResultMultiExpected):
+        (getTestCaseResultMultiExpected):
+        (test):
+        (GetUnicodeValues):
+        (DecimalToHexString):
+
 2012-02-20  Andy Wingo  <wingo@igalia.com>
 
         Remove unused features from CodeFeatures
