@@ -1,3 +1,16 @@
+2012-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Stop the committer timer when the page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=78907
+
+        Reviewed by Adam Roben.
+
+        We don't want the committer timer to fire after the scrolling tree has been invalidated,
+        so stop the committer timer to prevent it from firing and trying to access the scrolling tree.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+
 2012-02-20  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Allow compiling FileSystem without CoreFoundation.

@@ -75,6 +75,8 @@ void ScrollingCoordinator::pageDestroyed()
     m_page = 0;
 
 #if ENABLE(THREADED_SCROLLING)
+    m_scrollingTreeStateCommitterTimer.stop();
+
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
     ScrollingThread::dispatch(bind(&ScrollingTree::invalidate, m_scrollingTree.release()));
 #endif
