@@ -1,3 +1,12 @@
+2012-02-20  Andy Wingo  <wingo@igalia.com>
+
+        Add wingo as a committer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py: Add myself to the
+        committers list.
+
 2012-02-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] check that we're not running multiple modal dialogs at the same time

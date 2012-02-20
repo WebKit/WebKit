@@ -179,6 +179,7 @@ committers_unable_to_review = [
     Committer("Andrew Scherkus", "scherkus@chromium.org", "scherkus"),
     Committer("Andrey Kosyakov", "caseq@chromium.org", "caseq"),
     Committer("Andras Becsi", ["abecsi@webkit.org", "andras.becsi@nokia.com"], "bbandix"),
+    Committer("Andy Wingo", "wingo@igalia.com", "wingo"),
     Committer("Anna Cavender", "annacc@chromium.org", "annacc"),
     Committer("Anthony Ricaud", "rik@webkit.org", "rik"),
     Committer("Antoine Labour", "piman@chromium.org", "piman"),
