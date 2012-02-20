@@ -1,3 +1,16 @@
+2012-02-19  Paweł Forysiuk  <tuxator@o2.pl>
+        [GTK] Can't find webinspector and error page redirection on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=51616
+
+        Use an abstraction for finding shared resources on Windows.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::inspectorFilesPath):
+
 2012-02-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Remove gsettings schema from EXTRA_DIST.

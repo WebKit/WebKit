@@ -33,6 +33,7 @@
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "ErrorsGtk.h"
+#include "FileSystem.h"
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameNetworkingContextGtk.h"
@@ -1105,7 +1106,9 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 
     String content;
     gchar* fileContent = 0;
-    gchar* errorURI = g_filename_to_uri(DATA_DIR"/webkit-1.0/resources/error.html", NULL, NULL);
+    GOwnPtr<gchar> errorPath(g_build_filename(sharedResourcesPath().data(), "resources", "error.html", NULL));
+    gchar* errorURI = g_filename_to_uri(errorPath.get(), 0, 0);
+
     GFile* errorFile = g_file_new_for_uri(errorURI);
     g_free(errorURI);
 

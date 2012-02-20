@@ -23,6 +23,7 @@
 #include "AudioBus.h"
 
 #include "AudioFileReader.h"
+#include "FileSystem.h"
 #include "GOwnPtr.h"
 
 #include <gio/gio.h>
@@ -33,7 +34,7 @@ namespace WebCore {
 PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     GOwnPtr<gchar> filename(g_strdup_printf("%s.wav", name));
-    GOwnPtr<gchar> absoluteFilename(g_build_filename(DATA_DIR, "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "resources", "audio", filename.get(), NULL));
+    GOwnPtr<gchar> absoluteFilename(g_build_filename(sharedResourcesPath().data(), "resources", "audio", filename.get(), NULL));
 
     GFile* file = g_file_new_for_path(filename.get());
     if (!g_file_query_exists(file, 0)) {

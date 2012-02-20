@@ -1,3 +1,22 @@
+2012-02-19  Paweł Forysiuk  <tuxator@o2.pl>
+
+        [GTK] Can't find webinspector and error page redirection on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=51616
+
+        Create and use an abstraction for finding shared resources on Windows.
+
+        Reviewed by Martin Robinson.
+
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/audio/gtk/AudioBusGtk.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getPathToImageResource):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::sharedResourcesPath):
+        (WebCore):
+
 2012-02-19  James Robinson  <jamesr@chromium.org>
 
         Move stub implementations of ScrollingCoordinator functions into ScrollingCoordinatorNone.cpp

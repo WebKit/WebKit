@@ -20,6 +20,7 @@
 #include "config.h"
 #include "InspectorClientGtk.h"
 
+#include "FileSystem.h"
 #include "Frame.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
@@ -163,7 +164,7 @@ const char* InspectorClient::inspectorFilesPath()
     if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
         m_inspectorFilesPath.set(g_strdup(environmentPath));
     else
-        m_inspectorFilesPath.set(g_build_filename(DATA_DIR, "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "webinspector", NULL));
+        m_inspectorFilesPath.set(g_build_filename(sharedResourcesPath().data(), "webinspector", NULL));
 
     return m_inspectorFilesPath.get();
 }
