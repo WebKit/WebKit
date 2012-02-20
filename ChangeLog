@@ -1,3 +1,21 @@
+2012-02-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Check gstreamer minimum required version.
+        https://bugs.webkit.org/show_bug.cgi?id=79005
+
+        Reviewed by Daniel Bates.
+
+        To enable video, Gstreamer version requires to be above 0.10.30.
+        This patch checks whether Gstreamer version is greater than 0.10.30.
+
+        * Source/cmake/FindGStreamer-App.cmake:
+        * Source/cmake/FindGStreamer-Base.cmake:
+        * Source/cmake/FindGStreamer-Interfaces.cmake:
+        * Source/cmake/FindGStreamer-Pbutils.cmake:
+        * Source/cmake/FindGStreamer-Plugins-Base.cmake:
+        * Source/cmake/FindGStreamer-Video.cmake:
+        * Source/cmake/FindGStreamer.cmake:
+
 2012-02-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Remove unused GSettings stuff

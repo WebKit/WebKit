@@ -12,7 +12,7 @@ libfind_package(GStreamer-Video GStreamer)
 libfind_package(GStreamer-Video GStreamer-Base)
 
 # Use pkg-config to get hints about paths
-libfind_pkg_check_modules(GStreamer-Video_PKGCONF gstreamer-video-0.10)
+libfind_pkg_check_modules(GStreamer-Video_PKGCONF gstreamer-video-0.10>=0.10.30)
 
 # Include dir
 find_path(GStreamer-Video_INCLUDE_DIR

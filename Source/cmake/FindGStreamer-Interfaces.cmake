@@ -11,7 +11,7 @@ include(LibFindMacros)
 libfind_package(GStreamer-Interfaces GStreamer)
 
 # Use pkg-config to get hints about paths
-libfind_pkg_check_modules(GStreamer-Interfaces_PKGCONF gstreamer-interfaces-0.10)
+libfind_pkg_check_modules(GStreamer-Interfaces_PKGCONF gstreamer-interfaces-0.10>=0.10.30)
 
 # Include dir
 find_path(GStreamer-Interfaces_INCLUDE_DIR
