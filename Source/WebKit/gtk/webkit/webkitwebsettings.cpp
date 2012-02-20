@@ -183,7 +183,7 @@ static String chromeUserAgent()
 
     DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
     DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), webkitOSVersion(), ") AppleWebKit/", uaVersion) +
-                                                 makeString(" (KHTML, like Gecko) Chromium/15.0.874.120 Chrome/15.0.874.120 Safari/", uaVersion)));
+                                                 makeString(" (KHTML, like Gecko) Chromium/17.0.963.56 Chrome/17.0.963.56 Safari/", uaVersion)));
 
     return staticUA;
 }
