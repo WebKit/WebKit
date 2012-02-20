@@ -1,3 +1,37 @@
+2012-02-18  Jon Lee  <jonlee@apple.com>
+
+        HTML input file control "No File Selected" needs more room in some languages
+        https://bugs.webkit.org/show_bug.cgi?id=32366
+        <rdar://problem/4481028>
+
+        Reviewed by David Hyatt.
+
+        The patch exposes a function to return the "no file(s) selected" label text.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::fileListDefaultLabel): Added to expose the text for the label in
+        file upload controls when nothing has been selected.
+        (WebCore::RenderTheme::fileListNameForWidth): Refactor to use fileListDefaultLabel().
+        * rendering/RenderTheme.h: Change fileListNameForWidth() to be a const function.
+
+        * rendering/RenderThemeMac.h: Update fileListNameForWidth() to be a const function for
+        platform implementations.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth): Refactor to use fileListDefaultLabel().
+
+        Update fileListNameForWidth() to be a const function for platform implementations.
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/RenderThemeQt.cpp:
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths): Change the calculation
+        of the max preferred logical width. Calculate the length of the "no file(s) selected" text,
+        and include the button and after-button margin. Take the max of that and the original
+        default width, which was a string of 34 (defaultWidthNumChars) "0"'s, in the case that the
+        label text is too short.
+
 2012-02-20  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

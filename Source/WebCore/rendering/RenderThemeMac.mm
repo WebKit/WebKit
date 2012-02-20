@@ -2115,18 +2115,14 @@ NSTextFieldCell* RenderThemeMac::textField() const
     return m_textField.get();
 }
 
-String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
+String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
 
     String strToTruncate;
-    if (filenames.isEmpty()) {
-        if (multipleFilesAllowed)
-            strToTruncate = fileButtonNoFilesSelectedLabel();
-        else
-            strToTruncate = fileButtonNoFileSelectedLabel();
-    }
+    if (filenames.isEmpty())
+        strToTruncate = fileListDefaultLabel(multipleFilesAllowed);
     else if (filenames.size() == 1)
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(filenames[0])];
     else

@@ -1,7 +1,7 @@
 /**
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1125,18 +1125,21 @@ Color RenderTheme::focusRingColor()
     return customFocusRingColor().isValid() ? customFocusRingColor() : defaultTheme()->platformFocusRingColor();
 }
 
-String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
+String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
+{
+    if (multipleFilesAllowed)
+        return fileButtonNoFilesSelectedLabel();
+    return fileButtonNoFileSelectedLabel();
+}
+
+String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
 
     String string;
-    if (filenames.isEmpty()) {
-        if (multipleFilesAllowed)
-            string = fileButtonNoFilesSelectedLabel();
-        else
-            string = fileButtonNoFileSelectedLabel();
-    }
+    if (filenames.isEmpty())
+        string = fileListDefaultLabel(multipleFilesAllowed);
     else if (filenames.size() == 1)
         string = pathGetFileName(filenames[0]);
     else
