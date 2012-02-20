@@ -4167,7 +4167,6 @@ BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html = IMAGE
 
 // May need platform specific baselines
 BUGWK77498 : compositing/culling/filter-occlusion-alpha.html = PASS IMAGE
