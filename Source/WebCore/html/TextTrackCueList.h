@@ -45,6 +45,8 @@ public:
     ~TextTrackCueList() { }
 
     unsigned long length() const;
+    unsigned long getCueIndex(TextTrackCue*) const;
+
     TextTrackCue* item(unsigned index) const;
     TextTrackCue* getCueById(const String&) const;
     TextTrackCueList* activeCues();
@@ -57,10 +59,11 @@ private:
     TextTrackCueList();
     bool add(PassRefPtr<TextTrackCue>, size_t, size_t);
     void clear();
-    
+    void invalidateCueIndexes(size_t);
+
     Vector<RefPtr<TextTrackCue> > m_list;
     RefPtr<TextTrackCueList> m_activeCues;
-    
+
 };
 
 } // namespace WebCore

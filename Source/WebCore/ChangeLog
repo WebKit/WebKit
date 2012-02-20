@@ -1,3 +1,85 @@
+2012-02-20  Victor Carbune  <victor@rosedu.org>
+
+        Added code to support dispatching of missed cues in case of normal playback
+        and event sorting in case of simultaneous event triggering.
+
+        <track>-related events cuechange, enter, and exit should be sorted and filtered before dispatching
+        https://bugs.webkit.org/show_bug.cgi?id=72171
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/track/track-cues-missed.html
+               media/track/track-cues-sorted-before-dispatch.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Added initialization code
+        for newly added state variables.
+        (WebCore::trackIndexCompare): Static boolean compare function between
+        the index of two tracks.
+        (WebCore):
+        (WebCore::eventTimeCueCompare): Static boolean compare function between
+        events associated with text track cues.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Added code to
+        sort the events associated with text track cues before dispatching.
+        Each step from the specification is commented within the code.
+        (WebCore::HTMLMediaElement::finishSeek): Added a boolean variable that
+        is needed within the text track update function, to know whether a seek
+        event has occured before or not.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Moved the update
+        call for text tracks at the beginning of the function instead of the end.
+        'ended' events for video should be dispatched after track specific events.
+        * html/HTMLMediaElement.h: Added variables to keep
+        state information required by the text track update algorithm (last time
+        the algorithm was run, and whether a seeking event has occured)
+        (HTMLMediaElement):
+
+        * html/LoadableTextTrack.cpp: Refactored fireCueChangeEvent method
+        (WebCore::LoadableTextTrack::fireCueChangeEvent): The method dispatches a
+        synchronous cue change event for the track element.
+        * html/LoadableTextTrack.h:
+        (LoadableTextTrack):
+        * html/TextTrack.cpp: Modified the fireCueChange method, cached track index.
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::trackIndex): Cached the track index.
+        (WebCore):
+        (WebCore::TextTrack::invalidateTrackIndex): Invalidates the track. Used
+        when a new track is added in a TextTrackList instance.
+        * html/TextTrack.h:
+        (TextTrack):
+        (WebCore::TextTrack::fireCueChangeEvent): The fireCueChangeEvent has been changed,
+        as events need to be fired asyncronously.
+        * html/TextTrackCue.cpp: Added internal variables to keep the current index
+        position in the track cue order. This is invalidated when an element is
+        inserted before.
+        (WebCore::TextTrackCue::TextTrackCue):
+        (WebCore::TextTrackCue::cueIndex): Getter for the cueIndex.
+        (WebCore):
+        (WebCore::TextTrackCue::invalidateCueIndex): Invalidates the currently stored
+        cue index.
+        (WebCore::TextTrackCue::dispatchEvent): Event dispatching is done asynchronously
+        now. This should be the only method used for event dispatching.
+        (WebCore::TextTrackCue::setIsActive): The setIsActive method no longer dispatches
+        events, but rather just changes the m_isActive variable.
+        * html/TextTrackCue.h:
+        (TextTrackCue):
+
+        * html/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::getCueIndex): Retrieves the cue index, in the track cue
+        order, of a given cue.
+        (WebCore):
+        (WebCore::TextTrackCueList::add): Modified the add method such that all the next cue
+        indexes are invalidated.
+        (WebCore::TextTrackCueList::invalidateCueIndexes): Invalidates all cue indexes starting
+        with a specific position.
+        * html/TextTrackCueList.h:
+        (TextTrackCueList):
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::getTrackIndex): Retrieves the track index position.
+        (TextTrackList::append): Added method for invalidating the text track index in case of
+        changing the list contents.
+        * html/track/TextTrackList.h:
+        (TextTrackList):
+
 2012-02-20  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Move WebSocketChannel::FrameData into a separate header file

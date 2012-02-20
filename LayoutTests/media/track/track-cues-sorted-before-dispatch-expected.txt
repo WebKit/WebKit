@@ -1,0 +1,22 @@
+Tests that all events events are triggered in chronological order.
+
+EVENT(canplaythrough)
+EXPECTED (testTrack.track.cues.length == '8') OK
+RUN(video.play())
+EVENT(ended)
+Cue event: enter id: 1 time: 5.1
+Cue event: enter id: 3 time: 5.1
+Cue event: enter id: 2 time: 5.1
+Cue event: enter id: 4 time: 5.1
+Cue event: exit id: 2 time: 5.101
+Cue event: exit id: 4 time: 5.101
+Cue event: enter id: 5 time: 5.3
+Cue event: exit id: 3 time: 5.301
+Cue event: exit id: 1 time: 5.8
+Cue event: exit id: 5 time: 5.8
+Cue event: enter id: 6 time: 5.99
+Cue event: exit id: 6 time: 5.993
+Cue event: enter id: 7 time: 5.994
+Cue event: exit id: 7 time: 5.998
+END OF TEST
+

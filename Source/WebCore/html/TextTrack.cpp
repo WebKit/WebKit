@@ -37,10 +37,14 @@
 
 #include "Event.h"
 #include "ExceptionCode.h"
+#include "HTMLMediaElement.h"
 #include "TextTrackCueList.h"
+#include "TextTrackList.h"
 #include "TrackBase.h"
 
 namespace WebCore {
+
+static const int invalidTrackIndex = -1;
 
 const AtomicString& TextTrack::subtitlesKeyword()
 {
@@ -82,6 +86,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_trackType(type)
     , m_readinessState(NotLoaded)
     , m_showingByDefault(false)
+    , m_trackIndex(invalidTrackIndex)
 {
     setKind(kind);
 }
@@ -243,12 +248,6 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
         m_client->textTrackRemoveCue(this, cue);
 }
 
-void TextTrack::fireCueChangeEvent()
-{
-    ExceptionCode ec = 0;
-    dispatchEvent(Event::create(eventNames().cuechangeEvent, false, false), ec);
-}
-    
 void TextTrack::cueWillChange(TextTrackCue* cue)
 {
     if (!m_client)
@@ -266,6 +265,21 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
 
     // ... and add it back again.
     m_client->textTrackAddCue(this, cue);
+}
+
+int TextTrack::trackIndex()
+{
+    ASSERT(m_mediaElement);
+
+    if (m_trackIndex == invalidTrackIndex)
+        m_trackIndex = m_mediaElement->textTracks()->getTrackIndex(this);
+
+    return m_trackIndex;
+}
+
+void TextTrack::invalidateTrackIndex()
+{
+    m_trackIndex = invalidTrackIndex;
 }
 
 TextTrackCueList* TextTrack::ensureTextTrackCueList()

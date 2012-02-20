@@ -57,9 +57,11 @@ public:
     void scheduleLoad(const KURL&);
 
     virtual void clearClient();
-    
+
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
+
+    virtual void fireCueChangeEvent();
 
 private:
     // TextTrackLoaderClient
@@ -71,8 +73,6 @@ private:
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language, bool isDefault);
 
     void loadTimerFired(Timer<LoadableTextTrack>*);
-    
-    virtual void fireCueChangeEvent();
 
     HTMLTrackElement* m_trackElement;
     Timer<LoadableTextTrack> m_loadTimer;

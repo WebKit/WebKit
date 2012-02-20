@@ -31,9 +31,14 @@
         function cueChangedFromTrackElement()
         {
             consoleWrite("EVENT(cuechange) from &lt;track&gt;");
-            
-            currentCueIndex = Math.floor(cueChangeCount/2);
-            currentCue = event.target.track.cues[currentCueIndex];
+        }
+
+        function cueChangedFromTextTrack()
+        {
+            consoleWrite("EVENT(cuechange) from TextTrack");
+
+            currentCueIndex = Math.floor(cueChangeCount / 2);
+            currentCue = event.target.cues[currentCueIndex];
             checkCue();
 
             ++cueChangeCount;
@@ -41,15 +46,6 @@
                 endTest();
         }
 
-        function cueChangedFromTextTrack()
-        {
-            consoleWrite("EVENT(cuechange) from TextTrack");
-            
-            currentCueIndex = Math.floor(cueChangeCount/2);
-            currentCue = event.target.cues[currentCueIndex];
-            checkCue();
-        }
-        
         function checkCue()
         {
             if (cueChangeCount % 2 == 0) {

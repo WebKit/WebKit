@@ -594,10 +594,13 @@ private:
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
+    float m_lastTextTrackUpdateTime;
 
     RefPtr<TextTrackList> m_textTracks;
     Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;
+
     CueIntervalTree m_cueTree;
+
     CueList m_currentlyActiveCues;
     int m_ignoreTrackDisplayUpdate;
 #endif

@@ -59,7 +59,7 @@ public:
         return adoptRef(new TextTrack(context, client, kind, label, language, AddTrack));
     }
     virtual ~TextTrack();
-    
+
     void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
 
@@ -99,14 +99,18 @@ public:
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     void removeCue(TextTrackCue*, ExceptionCode&);
 
+    virtual void fireCueChangeEvent() { };
+
     void cueWillChange(TextTrackCue*);
     void cueDidChange(TextTrackCue*);
-    
-    virtual void fireCueChangeEvent();
+
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);
 
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }
+
+    int trackIndex();
+    void invalidateTrackIndex();
 
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language, TextTrackType);
@@ -124,6 +128,7 @@ private:
     TextTrackType m_trackType;
     ReadinessState m_readinessState;
     bool m_showingByDefault;
+    int m_trackIndex;
 };
 
 } // namespace WebCore

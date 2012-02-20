@@ -125,9 +125,10 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
 void LoadableTextTrack::fireCueChangeEvent()
 {
-    TextTrack::fireCueChangeEvent();
+    RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
     ExceptionCode ec = 0;
-    m_trackElement->dispatchEvent(Event::create(eventNames().cuechangeEvent, false, false), ec);
+
+    m_trackElement->dispatchEvent(event, ec);
 }
 
 size_t LoadableTextTrack::trackElementIndex()

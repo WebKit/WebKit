@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            var videoCanPlayThrough = false;
+            var trackLoaded = false;
+
+            var currentCue;
+            var testTrack;
+
+            var dispatchedEvents = [];
+
+            function runTests()
+            {
+                if (!trackLoaded || !videoCanPlayThrough)
+                    return;
+
+                testTrack = document.getElementById("testTrack");
+                testExpected("testTrack.track.cues.length", 8);
+
+                for (var i = 0; i < testTrack.track.cues.length; ++i) {
+                    testTrack.track.cues[i].addEventListener('enter', cueEnteredOrExited);
+                    testTrack.track.cues[i].addEventListener('exit', cueEnteredOrExited);
+                }
+
+                run("video.play()");
+            }
+
+            function cueEnteredOrExited(event)
+            {
+                currentCue = event.target;
+
+                var eventObj = {};
+
+                eventObj.time = currentCue.startTime;
+                if (event.type == 'exit')
+                    eventObj.time = currentCue.endTime;
+
+                eventObj.type = event.type;
+                eventObj.cue = currentCue;
+
+                dispatchedEvents.push(eventObj);
+            }
+
+            function loaded()
+            {
+                trackLoaded = true;
+                runTests();
+            }
+
+            function bodyLoaded()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "../content/test");
+            }
+
+            function logEndTest()
+            {
+                for (var i = 0; i < dispatchedEvents.length; ++i) {
+                    consoleWrite("Cue event: " + dispatchedEvents[i].type +
+                                 " id: " + dispatchedEvents[i].cue.id +
+                                 " time: " + dispatchedEvents[i].time);
+                }
+
+                endTest();
+            }
+
+            waitForEvent('ended', logEndTest);
+
+            waitForEvent('canplaythrough', function() {
+                video.currentTime = 5.00;
+                videoCanPlayThrough = true;
+
+                runTests();
+            });
+
+        </script>
+    </head>
+    <body onload="bodyLoaded()">
+        <p>Tests that all events events are triggered in chronological order.</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/sorted-dispatch.vtt" onload="loaded()" default>
+        </video>
+    </body>
+</html>

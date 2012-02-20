@@ -40,6 +40,11 @@ unsigned long TextTrackCueList::length() const
     return m_list.size();
 }
 
+unsigned long TextTrackCueList::getCueIndex(TextTrackCue* cue) const
+{
+    return m_list.find(cue);
+}
+
 TextTrackCue* TextTrackCueList::item(unsigned index) const
 {
     if (index < m_list.size())
@@ -88,6 +93,7 @@ bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t
             return false;
 
        m_list.insert(start, cue);
+       invalidateCueIndexes(start);
        return true;
     }
 
@@ -117,6 +123,12 @@ bool TextTrackCueList::contains(TextTrackCue* cue) const
 void TextTrackCueList::clear()
 {
     m_list.clear();
+}
+
+void TextTrackCueList::invalidateCueIndexes(size_t start)
+{
+    for (size_t i = start; i < m_list.size(); ++i)
+        m_list[i]->invalidateCueIndex();
 }
 
 } // namespace WebCore

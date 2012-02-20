@@ -38,10 +38,13 @@
 #include "Event.h"
 #include "DocumentFragment.h"
 #include "TextTrack.h"
+#include "TextTrackCueList.h"
 #include "WebVTTParser.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+static const int invalidCueIndex = -1;
 
 static const AtomicString& startKeyword()
 {
@@ -87,6 +90,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_linePosition(-1)
     , m_textPosition(50)
     , m_cueSize(100)
+    , m_cueIndex(invalidCueIndex)
     , m_cueAlignment(Middle)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
@@ -324,6 +328,19 @@ void TextTrackCue::setText(const String& text)
     cueDidChange();
 }
 
+int TextTrackCue::cueIndex()
+{
+    if (m_cueIndex == invalidCueIndex)
+        m_cueIndex = track()->cues()->getCueIndex(this);
+
+    return m_cueIndex;
+}
+
+void TextTrackCue::invalidateCueIndex()
+{
+    m_cueIndex = invalidCueIndex;
+}
+
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
     if (!m_documentFragment)
@@ -337,6 +354,20 @@ void TextTrackCue::setCueHTML(PassRefPtr<DocumentFragment> fragment)
     m_documentFragment = fragment;
 }
 
+bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event)
+{
+    // When a TextTrack's mode is disabled: no cues are active, no events fired.
+    if (!track() || track()->mode() == TextTrack::DISABLED)
+        return false;
+
+    return EventTarget::dispatchEvent(event);
+}
+
+bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event, ExceptionCode &ec)
+{
+    return EventTarget::dispatchEvent(event, ec);
+}
+
 bool TextTrackCue::isActive()
 {
     return m_isActive && track() && track()->mode() != TextTrack::DISABLED;
@@ -345,19 +376,6 @@ bool TextTrackCue::isActive()
 void TextTrackCue::setIsActive(bool active)
 {
     m_isActive = active;
-
-    // When a TextTrack's mode is disabled: No cues are active, no events are fired ...
-    if (!track() || track()->mode() == TextTrack::DISABLED)
-        return;
-
-    ExceptionCode ec = 0;
-    if (active)
-        dispatchEvent(Event::create(eventNames().enterEvent, false, false), ec);
-    else
-        dispatchEvent(Event::create(eventNames().exitEvent, false, false), ec);
-
-    if (m_track)
-        m_track->fireCueChangeEvent();
 }
 
 void TextTrackCue::parseSettings(const String& input)

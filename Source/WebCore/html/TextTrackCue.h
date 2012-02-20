@@ -50,7 +50,7 @@ public:
     {
         return adoptRef(new TextTrackCue(context, id, start, end, content, settings, pauseOnExit));
     }
-    
+
     enum Direction { Horizontal, VerticalGrowingLeft, VerticalGrowingRight };
     enum Alignment { Start, Middle, End };
 
@@ -92,12 +92,18 @@ public:
     const String& text() const { return m_content; }
     void setText(const String&);
 
+    int cueIndex();
+    void invalidateCueIndex();
+
     PassRefPtr<DocumentFragment> getCueAsHTML();
     void setCueHTML(PassRefPtr<DocumentFragment>);
 
+    virtual bool dispatchEvent(PassRefPtr<Event>);
+    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+
     bool isActive();
     void setIsActive(bool);
-    
+
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -118,10 +124,10 @@ private:
     void parseSettings(const String&);
     void cueWillChange();
     void cueDidChange();
-    
+
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
-    
+
     String m_id;
     double m_startTime;
     double m_endTime;
@@ -130,6 +136,8 @@ private:
     int m_linePosition;
     int m_textPosition;
     int m_cueSize;
+    int m_cueIndex;
+
     Alignment m_cueAlignment;
     RefPtr<DocumentFragment> m_documentFragment;
     RefPtr<TextTrack> m_track;
