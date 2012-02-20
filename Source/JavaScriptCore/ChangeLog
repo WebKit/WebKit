@@ -1,3 +1,60 @@
+2012-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Factor out allocation in CopySpace into a separate CopyAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=78610
+
+        Reviewed by Oliver Hunt.
+
+        Added a new CopyAllocator class, which allows us to do allocations without 
+        having to load the current offset and store the current offset in the current 
+        block. This change will allow us to easily do inline assembly in the JIT for 
+        array allocations.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopiedAllocator.h: Added.
+        (JSC):
+        (CopiedAllocator):
+        (JSC::CopiedAllocator::currentBlock):
+        (JSC::CopiedAllocator::CopiedAllocator):
+        (JSC::CopiedAllocator::allocate):
+        (JSC::CopiedAllocator::fitsInCurrentBlock):
+        (JSC::CopiedAllocator::wasLastAllocation):
+        (JSC::CopiedAllocator::startedCopying):
+        (JSC::CopiedAllocator::resetCurrentBlock):
+        (JSC::CopiedAllocator::currentUtilization):
+        (JSC::CopiedAllocator::resetLastAllocation):
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        * heap/CopiedSpace.cpp: Moved some stuff from CopiedSpaceInlineMethods to here because we 
+        weren't really getting any benefits from having such big functions in a header file.
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC):
+        (JSC::CopiedSpace::init):
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocate):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::getFreshBlock):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC):
+        (JSC::CopiedSpace::startedCopying):
+        (JSC::CopiedSpace::addNewBlock):
+        (JSC::CopiedSpace::allocateNewBlock):
+        (JSC::CopiedSpace::fitsInBlock):
+        (JSC::CopiedSpace::tryAllocate):
+        (JSC::CopiedSpace::allocateFromBlock):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        * heap/HeapBlock.h:
+        (HeapBlock):
+
 2012-02-20  Patrick Gansterer  <paroga@webkit.org>
 
         Fix Visual Studio 2010 build.

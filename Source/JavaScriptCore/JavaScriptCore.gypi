@@ -27,6 +27,7 @@
             'API/OpaqueJSString.h',
             'assembler/MacroAssemblerCodeRef.h',
             'bytecode/Opcode.h',
+            'heap/CopiedAllocator.h',
             'heap/CopiedBlock.h',
             'heap/CopiedSpace.h',
             'heap/CopiedSpaceInlineMethods.h',

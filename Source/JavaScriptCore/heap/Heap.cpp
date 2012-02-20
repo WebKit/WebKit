@@ -767,8 +767,8 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-    if (!m_globalData->dynamicGlobalObject)
-        m_globalData->recompileAllJSFunctions();
+    //if (!m_globalData->dynamicGlobalObject)
+    //    m_globalData->recompileAllJSFunctions();
 
     collect(DoSweep);
 }

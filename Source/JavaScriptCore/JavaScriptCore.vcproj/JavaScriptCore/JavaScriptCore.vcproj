@@ -2038,6 +2038,10 @@
 			Name="heap"
 			>
                             <File
+                                    RelativePath="..\..\heap\CopiedAllocator.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\CopiedBlock.h"
                                     >
                             </File>

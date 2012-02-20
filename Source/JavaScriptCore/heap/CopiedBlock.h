@@ -34,6 +34,7 @@ class CopiedSpace;
 
 class CopiedBlock : public HeapBlock {
     friend class CopiedSpace;
+    friend class CopiedAllocator;
 public:
     CopiedBlock(PageAllocationAligned& allocation)
         : HeapBlock(allocation)

@@ -28,6 +28,7 @@
 
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/PageAllocationAligned.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -47,6 +48,8 @@ public:
     HeapBlock* m_prev;
     HeapBlock* m_next;
     PageAllocationAligned m_allocation;
+    
+    static const size_t s_blockSize = 64 * KB;
 };
 
 } // namespace JSC

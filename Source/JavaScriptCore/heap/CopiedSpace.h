@@ -26,6 +26,7 @@
 #ifndef CopiedSpace_h
 #define CopiedSpace_h
 
+#include "CopiedAllocator.h"
 #include "HeapBlock.h"
 #include "TinyBloomFilter.h"
 #include <wtf/Assertions.h>
@@ -70,7 +71,6 @@ private:
     CheckedBoolean tryAllocateSlowCase(size_t, void**);
     CheckedBoolean addNewBlock();
     CheckedBoolean allocateNewBlock(CopiedBlock**);
-    bool fitsInCurrentBlock(size_t);
     
     static void* allocateFromBlock(CopiedBlock*, size_t);
     CheckedBoolean tryAllocateOversize(size_t, void**);
@@ -87,7 +87,7 @@ private:
 
     Heap* m_heap;
 
-    CopiedBlock* m_currentBlock;
+    CopiedAllocator m_allocator;
 
     TinyBloomFilter m_toSpaceFilter;
     TinyBloomFilter m_oversizeFilter;
@@ -112,12 +112,11 @@ private:
     ThreadCondition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
 
-    static const size_t s_blockSize = 64 * KB;
     static const size_t s_maxAllocationSize = 32 * KB;
     static const size_t s_pageSize = 4 * KB;
     static const size_t s_pageMask = ~(s_pageSize - 1);
     static const size_t s_initialBlockNum = 16;
-    static const size_t s_blockMask = ~(s_blockSize - 1);
+    static const size_t s_blockMask = ~(HeapBlock::s_blockSize - 1);
 };
 
 } // namespace JSC
