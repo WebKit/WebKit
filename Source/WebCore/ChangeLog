@@ -1,3 +1,32 @@
+2012-02-20  Raymond Liu  <raymond.liu@intel.com>
+
+        Have the DynamicsCompressorNode support multi-channel data
+        https://bugs.webkit.org/show_bug.cgi?id=77856
+
+        Reviewed by Chris Rogers.
+
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::DynamicsCompressor):
+        (WebCore::DynamicsCompressor::setEmphasisStageParameters):
+        (WebCore::DynamicsCompressor::process):
+        (WebCore::DynamicsCompressor::reset):
+        (WebCore::DynamicsCompressor::setNumberOfChannels):
+        (WebCore):
+        * platform/audio/DynamicsCompressor.h:
+        (DynamicsCompressor):
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::DynamicsCompressorKernel):
+        (WebCore::DynamicsCompressorKernel::setNumberOfChannels):
+        (WebCore):
+        (WebCore::DynamicsCompressorKernel::setPreDelayTime):
+        (WebCore::DynamicsCompressorKernel::process):
+        (WebCore::DynamicsCompressorKernel::reset):
+        * platform/audio/DynamicsCompressorKernel.h:
+        (DynamicsCompressorKernel):
+        * webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::initialize):
+
 2012-02-20  David Barton  <dbarton@mathscribe.com>
 
         RenderMathMLRow::baselinePosition() only if linePositionMode == PositionOnContainingLine

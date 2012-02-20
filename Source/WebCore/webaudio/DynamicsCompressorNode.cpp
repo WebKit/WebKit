@@ -33,13 +33,16 @@
 #include "AudioNodeOutput.h"
 #include "DynamicsCompressor.h"
 
+// Set output to stereo by default.
+static const unsigned defaultNumberOfOutputChannels = 2;
+
 namespace WebCore {
 
 DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
+    addOutput(adoptPtr(new AudioNodeOutput(this, defaultNumberOfOutputChannels)));
     
     setNodeType(NodeTypeDynamicsCompressor);
     
@@ -70,7 +73,7 @@ void DynamicsCompressorNode::initialize()
         return;
 
     AudioNode::initialize();    
-    m_dynamicsCompressor = adoptPtr(new DynamicsCompressor(true, sampleRate()));
+    m_dynamicsCompressor = adoptPtr(new DynamicsCompressor(sampleRate(), defaultNumberOfOutputChannels));
 }
 
 void DynamicsCompressorNode::uninitialize()
