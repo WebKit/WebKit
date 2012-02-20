@@ -1,3 +1,20 @@
+2012-02-20  David Barton  <dbarton@mathscribe.com>
+
+        RenderMathMLRow::baselinePosition() only if linePositionMode == PositionOnContainingLine
+        https://bugs.webkit.org/show_bug.cgi?id=79039
+
+        Reviewed by Eric Seidel.
+
+        RenderMathMLRow::baselinePosition() is actually unnecessary, but I am deleting it in two
+        steps. First we add a guard to restrict it to the intended PositionOnContainingLine
+        case, leaving PositionOfInteriorLineBoxes to a superclass, RenderBlock. This removes
+        some randomness, and tightens up the results of four existing test files.
+
+        Test: mathml/presentation/row.xhtml, fenced.xhtml, mo.xhtml, and mo-stretch.html
+
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::baselinePosition):
+
 2012-02-18  Jon Lee  <jonlee@apple.com>
 
         HTML input file control "No File Selected" needs more room in some languages
