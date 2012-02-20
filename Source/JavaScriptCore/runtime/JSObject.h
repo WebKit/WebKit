@@ -105,6 +105,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
+        bool allowsAccessFrom(ExecState*);
+
         JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
@@ -486,19 +488,6 @@ inline JSValue JSObject::prototype() const
     return structure()->storedPrototype();
 }
 
-inline bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSValue prototype)
-{
-    JSValue nextPrototypeValue = prototype;
-    while (nextPrototypeValue && nextPrototypeValue.isObject()) {
-        JSObject* nextPrototype = asObject(nextPrototypeValue)->unwrappedObject();
-        if (nextPrototype == this)
-            return false;
-        nextPrototypeValue = nextPrototype->prototype();
-    }
-    setPrototype(globalData, prototype);
-    return true;
-}
-
 inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 {
     ASSERT(prototype);
@@ -547,12 +536,6 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Ide
             fillGetterPropertySlot(slot, location);
         else
             slot.setValue(this, location->get(), offsetForLocation(location));
-        return true;
-    }
-
-    // non-standard Netscape extension
-    if (propertyName == exec->propertyNames().underscoreProto) {
-        slot.setValue(prototype());
         return true;
     }
 
@@ -803,8 +786,6 @@ inline JSValue JSValue::get(ExecState* exec, const Identifier& propertyName, Pro
 {
     if (UNLIKELY(!isCell())) {
         JSObject* prototype = synthesizePrototype(exec);
-        if (propertyName == exec->propertyNames().underscoreProto)
-            return prototype;
         if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
         return slot.getValue(exec, propertyName);

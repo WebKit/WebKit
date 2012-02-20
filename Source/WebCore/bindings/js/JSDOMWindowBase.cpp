@@ -43,7 +43,7 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
 
 JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(globalData, structure, shell->world(), &s_globalObjectMethodTable)
@@ -90,6 +90,34 @@ String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* othe
 void JSDOMWindowBase::printErrorMessage(const String& message) const
 {
     printErrorMessageForFrame(impl()->frame(), message);
+}
+
+// This method checks whether accesss to *this* global object is permitted from
+// the given context; this differs from allowsAccessFromPrivate, since that
+// method checks whether the given context is permitted to access the current
+// window the shell is referencing (which may come from a different security
+// origin to this global object).
+bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* thisObject, ExecState* exec)
+{
+    JSGlobalObject* otherObject = exec->lexicalGlobalObject();
+
+    const JSDOMWindow* originWindow = asJSDOMWindow(otherObject);
+    const JSDOMWindow* targetWindow = asJSDOMWindow(thisObject);
+
+    if (originWindow == targetWindow)
+        return true;
+
+    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
+    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
+
+    if (originSecurityOrigin->canAccess(targetSecurityOrigin))
+        return true;
+
+    targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(otherObject));
+    return false;
+
+
+    return static_cast<const JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec);
 }
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)

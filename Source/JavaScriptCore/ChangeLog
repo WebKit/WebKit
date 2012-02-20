@@ -1,3 +1,57 @@
+2012-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Move special __proto__ property to Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=78409
+
+        Reviewed by Oliver Hunt.
+
+        Re-implement this as a regular accessor property.  This has three key benefits:
+        1) It makes it possible for objects to be given properties named __proto__.
+        2) Object.prototype.__proto__ can be deleted, preventing object prototypes from being changed.
+        3) This largely removes the magic used the implement __proto__, it can just be made a regular accessor property.
+
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+            - No need to prohibit functions named __proto__.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+            - Add __proto__ accessor to Object.prototype.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+            - Definition of the __proto__ accessor functions.
+        * runtime/JSGlobalObjectFunctions.h:
+            - Declaration of the __proto__ accessor functions.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+            - Remove the special handling for __proto__, there is still a check to allow for a fast guard for accessors excluding __proto__.
+        (JSC::JSObject::putDirectAccessor):
+            - Track on the structure whether an object contains accessors other than one for __proto__.
+        (JSC::JSObject::defineOwnProperty):
+            - No need to prohibit definition of own properties named __proto__.
+        * runtime/JSObject.h:
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+            - Remove the special handling for __proto__.
+        (JSC::JSValue::get):
+            - Remove the special handling for __proto__.
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot):
+            - Remove the special handling for __proto__.
+        * runtime/JSValue.h:
+        (JSValue):
+            - Made synthesizePrototype public (this may be needed by the __proto__ getter).
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+            - Perform the security check & call prototype() directly.
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+            - Added 'ExcludingProto' variant of the 'hasGetterSetterProperties' state.
+        * runtime/Structure.h:
+        (JSC::Structure::hasGetterSetterPropertiesExcludingProto):
+        (JSC::Structure::setHasGetterSetterProperties):
+        (Structure):
+            - Added 'ExcludingProto' variant of the 'hasGetterSetterProperties' state.
+
 2012-02-20  Michael Saboff  <msaboff@apple.com>
 
         Update toLower and toUpper tests for Unicode 6.1 changes

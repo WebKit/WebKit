@@ -140,10 +140,10 @@ CallFrame* CallFrame::trueCallerFrame()
     //
     // machineCaller -> The caller according to the machine, which may be zero or
     //    more frames above the true caller due to inlining.
-    
+
     // Am I an inline call frame? If so, we're done.
-    if (isInlineCallFrame())
-        return callerFrame();
+    if (isInlineCallFrame() || !hasReturnPC())
+        return callerFrame()->removeHostCallFrameFlag();
     
     // I am a machine call frame, so the question is: is my caller a machine call frame
     // that has inlines or a machine call frame that doesn't?
@@ -154,9 +154,9 @@ CallFrame* CallFrame::trueCallerFrame()
     
     // Figure out how we want to get the current code location.
     if (hasHostCallFrameFlag() || returnAddressIsInCtiTrampoline(returnPC()))
-        return machineCaller->trueCallFrameFromVMCode();
+        return machineCaller->trueCallFrameFromVMCode()->removeHostCallFrameFlag();
     
-    return machineCaller->trueCallFrame(returnPC());
+    return machineCaller->trueCallFrame(returnPC())->removeHostCallFrameFlag();
 }
 #endif
 

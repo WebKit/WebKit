@@ -1,3 +1,23 @@
+2012-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Move special __proto__ property to Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=78409
+
+        Reviewed by Oliver Hunt.
+
+        Re-implement this as a regular accessor property.  This has three key benefits:
+        1) It makes it possible for objects to be given properties named __proto__.
+        2) Object.prototype.__proto__ can be deleted, preventing object prototypes from being changed.
+        3) This largely removes the magic used the implement __proto__, it can just be made a regular accessor property.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::allowsAccessFrom):
+        (WebCore):
+            - expose allowsAccessFrom check to JSC.
+        * bindings/js/JSDOMWindowBase.h:
+        (JSDOMWindowBase):
+            - expose allowsAccessFrom check to JSC.
+
 2012-02-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Make JSCSSStyleDeclaration work directly with CSS Property ID

@@ -56,6 +56,9 @@ namespace JSC {
     typedef Vector<ExecState*, 16> ExecStateStack;
     
     struct GlobalObjectMethodTable {
+        typedef bool (*AllowsAccessFromFunctionPtr)(const JSGlobalObject*, ExecState*);
+        AllowsAccessFromFunctionPtr allowsAccessFrom;
+
         typedef bool (*SupportsProfilingFunctionPtr)(const JSGlobalObject*); 
         SupportsProfilingFunctionPtr supportsProfiling;
 
@@ -279,6 +282,7 @@ namespace JSC {
 
         const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 
+        static bool allowsAccessFrom(const JSGlobalObject*, ExecState*) { return true; }
         static bool supportsProfiling(const JSGlobalObject*) { return false; }
         static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 

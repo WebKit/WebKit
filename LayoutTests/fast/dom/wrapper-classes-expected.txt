@@ -18,7 +18,7 @@ PASS jsWrapperClass(document.implementation) is 'DOMImplementation'
 PASS jsWrapperClass(document.implementation.__proto__) is 'DOMImplementationPrototype'
 PASS jsWrapperClass(document.implementation.constructor) is 'DOMImplementationConstructor'
 PASS jsWrapperClass(root.attributes) is 'NamedNodeMap'
-FAIL jsWrapperClass(root.attributes.__proto__) should be NamedNodeMapPrototype. Was Object.
+PASS jsWrapperClass(root.attributes.__proto__) is 'NamedNodeMapPrototype'
 FAIL jsWrapperClass(root.attributes.constructor) should be NamedNodeMapConstructor. Was Function.
 PASS jsWrapperClass(document.createNodeIterator(root, 0, null, false)) is 'NodeIterator'
 PASS jsWrapperClass(document.createNodeIterator(root, 0, null, false).__proto__) is 'NodeIteratorPrototype'
@@ -135,13 +135,13 @@ PASS jsWrapperClass(window.constructor) is 'DOMWindowConstructor'
 HTML DOM
 
 PASS jsWrapperClass(root.children) is 'HTMLCollection'
-FAIL jsWrapperClass(root.children.__proto__) should be HTMLCollectionPrototype. Was Object.
+PASS jsWrapperClass(root.children.__proto__) is 'HTMLCollectionPrototype'
 FAIL jsWrapperClass(root.children.constructor) should be HTMLCollectionConstructor. Was Function.
 PASS jsWrapperClass(document) is 'HTMLDocument'
 PASS jsWrapperClass(document.__proto__) is 'HTMLDocumentPrototype'
 PASS jsWrapperClass(document.constructor) is 'HTMLDocumentConstructor'
 PASS jsWrapperClass(document.createElement('select').options) is 'HTMLOptionsCollection'
-FAIL jsWrapperClass(document.createElement('select').options.__proto__) should be HTMLOptionsCollectionPrototype. Was HTMLCollectionPrototype.
+PASS jsWrapperClass(document.createElement('select').options.__proto__) is 'HTMLOptionsCollectionPrototype'
 PASS jsWrapperClass(document.createElement('select').options.constructor) is 'HTMLOptionsCollectionConstructor'
 
 HTML Elements

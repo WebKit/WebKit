@@ -103,6 +103,7 @@ namespace JSC  {
 
         CallFrame* callerFrame() const { return this[RegisterFile::CallerFrame].callFrame(); }
 #if ENABLE(JIT)
+        bool hasReturnPC() const { return this[RegisterFile::ReturnPC].vPC(); }
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
 #endif
         AbstractPC abstractReturnPC(JSGlobalData& globalData) { return AbstractPC(globalData, this); }

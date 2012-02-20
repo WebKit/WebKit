@@ -48,6 +48,8 @@ namespace JSC {
     EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
     EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
     EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;
     double parseIntOverflow(const LChar*, int length, int radix);
