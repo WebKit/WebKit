@@ -205,6 +205,9 @@ uint64_t getVolumeFreeSizeForPath(const char*);
 #if PLATFORM(WIN) && !OS(WINCE)
 String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
+#endif
+
+#if PLATFORM(WIN) && USE(CF)
 bool safeCreateFile(const String&, CFDataRef);
 #endif
 

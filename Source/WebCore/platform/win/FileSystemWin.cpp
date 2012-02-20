@@ -145,8 +145,10 @@ String directoryName(const String& path)
 
 static String bundleName()
 {
-    static bool initialized;
     static String name = "WebKit";
+
+#if USE(CF)
+    static bool initialized;
 
     if (!initialized) {
         initialized = true;
@@ -156,6 +158,7 @@ static String bundleName()
                 if (CFGetTypeID(bundleExecutable) == CFStringGetTypeID())
                     name = reinterpret_cast<CFStringRef>(bundleExecutable);
     }
+#endif
 
     return name;
 }
@@ -291,6 +294,8 @@ String roamingUserSpecificStorageDirectory()
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
+#if USE(CF)
+
 bool safeCreateFile(const String& path, CFDataRef data)
 {
     // Create a temporary file.
@@ -320,6 +325,8 @@ bool safeCreateFile(const String& path, CFDataRef data)
 
     return true;
 }
+
+#endif // USE(CF)
 
 Vector<String> listDirectory(const String& directory, const String& filter)
 {

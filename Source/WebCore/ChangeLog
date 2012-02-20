@@ -1,3 +1,15 @@
+2012-02-20  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Allow compiling FileSystem without CoreFoundation.
+        https://bugs.webkit.org/show_bug.cgi?id=79032
+
+        Reviewed by Adam Roben.
+
+        Add #if USE(CF) around code using the CoreFoundation functions.
+
+        * platform/FileSystem.h:
+        * platform/win/FileSystemWin.cpp:
+
 2012-02-20  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Upstream the first few files in platform/graphics/blackberry
