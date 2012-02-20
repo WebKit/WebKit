@@ -1,3 +1,10 @@
+2012-02-20  Adam Roben  <aroben@apple.com>
+
+        Clang build fix
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::willModifyDOMAttr): Removed unused parameter.
+
 2012-02-20  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed manual rollout of r107970 which breaks table column widths
