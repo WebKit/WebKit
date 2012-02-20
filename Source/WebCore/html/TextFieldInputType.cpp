@@ -80,34 +80,49 @@ bool TextFieldInputType::canSetSuggestedValue()
 
 void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
+    // Grab this input element to keep reference even if JS event handler
+    // changes input type.
+    RefPtr<HTMLInputElement> input(element());
+
     // We don't ask InputType::setValue to dispatch events because
     // TextFieldInputType dispatches events different way from InputType.
     InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent);
 
     if (valueChanged)
-        element()->updateInnerTextValue();
+        input->updateInnerTextValue();
 
     unsigned max = visibleValue().length();
-    if (element()->focused())
-        element()->setSelectionRange(max, max);
+    if (input->focused())
+        input->setSelectionRange(max, max);
     else
-        element()->cacheSelectionInResponseToSetValue(max);
+        input->cacheSelectionInResponseToSetValue(max);
 
     if (!valueChanged)
         return;
 
-    if (eventBehavior != DispatchNoEvent) {
+    switch (eventBehavior) {
+    case DispatchChangeEvent:
         // If the user is still editing this field, dispatch an input event rather than a change event.
         // The change event will be dispatched when editing finishes.
-        if (element()->focused())
-            element()->dispatchFormControlInputEvent();
+        if (input->focused())
+            input->dispatchFormControlInputEvent();
         else
-            element()->dispatchFormControlChangeEvent();
+            input->dispatchFormControlChangeEvent();
+        break;
+
+    case DispatchInputAndChangeEvent: {
+        input->dispatchFormControlInputEvent();
+        input->dispatchFormControlChangeEvent();
+        break;
+    }
+
+    case DispatchNoEvent:
+        break;
     }
 
     // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
-    if (!element()->focused() || eventBehavior == DispatchNoEvent)
-        element()->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
+    if (!input->focused() || eventBehavior == DispatchNoEvent)
+        input->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
 }
 
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)

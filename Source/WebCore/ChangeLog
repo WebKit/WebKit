@@ -1,3 +1,21 @@
+2012-02-20  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Spin buttons of number input type should fire both input and change event
+        https://bugs.webkit.org/show_bug.cgi?id=75067
+
+        Reviewed by Kent Tamura.
+
+        This patch makes spin button in number input field clicks to fire input and change events as described in WHATWG HTML5 specification.
+        To implement this behavior, this patch introduces new value DispatchInputAndChangeEvent in TextFieldEventBehavior.
+
+        Test: fast/forms/number/spin-button-events.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUpFromRenderer): Pass DispatchInputAndChangeEvent instead of DispatchChangeEvent to applyStep, setValue, and setValueAsNumber.
+        * html/HTMLTextFormControlElement.h: Add new enum value DispatchInputAndChangeEvent to TextFieldEventBehavior.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue): Handle DispatchInputAndChangeEvent and use RefPtr for element to keep reference.
+
 2012-02-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         Attached/Detached state must be testable

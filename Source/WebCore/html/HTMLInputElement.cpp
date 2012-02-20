@@ -1636,10 +1636,10 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             current = m_inputType->minimum() - nextDiff;
         if (current > m_inputType->maximum() - nextDiff)
             current = m_inputType->maximum() - nextDiff;
-        setValueAsNumber(current, ec, DispatchChangeEvent);
+        setValueAsNumber(current, ec, DispatchInputAndChangeEvent);
     }
     if ((sign > 0 && current < m_inputType->minimum()) || (sign < 0 && current > m_inputType->maximum()))
-        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()), DispatchChangeEvent);
+        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()), DispatchInputAndChangeEvent);
     else {
         ExceptionCode ec;
         if (stepMismatch(value())) {
@@ -1659,14 +1659,14 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             if (newValue > m_inputType->maximum())
                 newValue = m_inputType->maximum();
 
-            setValueAsNumber(newValue, ec, n == 1 || n == -1 ? DispatchChangeEvent : DispatchNoEvent);
+            setValueAsNumber(newValue, ec, n == 1 || n == -1 ? DispatchInputAndChangeEvent : DispatchNoEvent);
             current = newValue;
             if (n > 1)
-                applyStep(n - 1, AnyIsDefaultStep, DispatchChangeEvent, ec);
+                applyStep(n - 1, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
             else if (n < -1)
-                applyStep(n + 1, AnyIsDefaultStep, DispatchChangeEvent, ec);
+                applyStep(n + 1, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
         } else
-            applyStep(n, AnyIsDefaultStep, DispatchChangeEvent, ec);
+            applyStep(n, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
     }
 }
 
