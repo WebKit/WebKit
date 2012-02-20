@@ -73438,6 +73438,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\websockets\WebSocketDeflater.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketDeflater.h"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\WebSocketExtensionDispatcher.cpp"
 				>
 			</File>
