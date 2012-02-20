@@ -1,5 +1,15 @@
 2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
 
+        Web Inspector: [Styles] Inconsistent alignment of non-parsed properties (having an exclamation mark)
+        https://bugs.webkit.org/show_bug.cgi?id=79028
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/elementsPanel.css:
+        (.styles-section .properties li.not-parsed-ok img.exclamation-mark):
+
+2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: DOMAttrModified should not be fired if the attribute value remains the same
         https://bugs.webkit.org/show_bug.cgi?id=79025
 

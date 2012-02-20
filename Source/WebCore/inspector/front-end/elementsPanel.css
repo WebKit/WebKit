@@ -248,8 +248,8 @@
     opacity: 0.75;
     width: 12px;
     height: 10px;
-    margin: 0;
-    padding-right: 2px;
+    margin: 0 6px 0 0;
+    padding: 0 1px;
     vertical-align: baseline;
     -webkit-user-select: none;
     cursor: default;
