@@ -58,12 +58,12 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     WTF::initializeMainThread();
 
     RunLoop::initializeMainRunLoop();
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-
-    soup_session_add_feature_by_type(session, WEB_TYPE_AUTH_DIALOG);
-
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
+
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    soup_session_add_feature_by_type(session, WEB_TYPE_AUTH_DIALOG);
+
     RunLoop::run();
 
     return 0;
