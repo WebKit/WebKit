@@ -197,7 +197,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
 }
 
 #ifdef HAVE_GTK_UNIX_PRINTING
-static WebKitPrintOperationResponse webkitPrintOperationRunDialogUnix(WebKitPrintOperation* printOperation, GtkWindow* parent)
+static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
@@ -228,10 +228,9 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialogUnix(WebKitPrin
 
     return returnValue;
 }
-#endif // HAVE_GTK_UNIX_PRINTING
-
-#ifdef G_OS_WIN32
-static WebKitPrintOperationResponse webkitPrintOperationRunDialogWin32(WebKitPrintOperation*, GtkWindow*)
+#else
+// TODO: We need to add an implementation for Windows.
+static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOperation*, GtkWindow*)
 {
     notImplemented();
     return WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL;
@@ -261,13 +260,8 @@ WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOp
         if (WebCore::widgetIsOnscreenToplevelWindow(toplevel))
             parent = GTK_WINDOW(toplevel);
     }
-#ifdef HAVE_GTK_UNIX_PRINTING
-    WebKitPrintOperationResponse response = webkitPrintOperationRunDialogUnix(printOperation, parent);
-#endif
-#ifdef G_OS_WIN32
-    WebKitPrintOperationResponse response = webkitPrintOperationRunDialogWin32(printOperation, parent);
-#endif
 
+    WebKitPrintOperationResponse response = webkitPrintOperationRunDialog(printOperation, parent);
     if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
         return response;
 

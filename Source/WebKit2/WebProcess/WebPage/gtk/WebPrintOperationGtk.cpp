@@ -367,9 +367,10 @@ PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, con
 {
 #ifdef HAVE_GTK_UNIX_PRINTING
     return adoptRef(new WebPrintOperationGtkUnix(page, printInfo));
-#endif
-#ifdef G_OS_WIN32
+#elif defined(G_OS_WIN32)
     return adoptRef(new WebPrintOperationGtkWin32(page, printInfo));
+#else
+    return 0;
 #endif
 }
 
