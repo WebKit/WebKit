@@ -154,11 +154,13 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents* instrum
         domAgent->didRemoveDOMNode(node);
 }
 
-void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents* instrumentingAgents, Element* element)
+void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents* instrumentingAgents, Element* element, const AtomicString& oldValue, const AtomicString& newValue)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents->inspectorDOMDebuggerAgent())
         domDebuggerAgent->willModifyDOMAttr(element);
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->willModifyDOMAttr(element, oldValue, newValue);
 #endif
 }
 

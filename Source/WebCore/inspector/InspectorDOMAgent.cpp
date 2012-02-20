@@ -197,6 +197,7 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, I
     , m_domListener(0)
     , m_lastNodeId(1)
     , m_searchingForNode(false)
+    , m_suppressAttributeModifiedEvent(false)
 {
 }
 
@@ -1401,8 +1402,18 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
     unbind(node, &m_documentNodeToIdMap);
 }
 
+void InspectorDOMAgent::willModifyDOMAttr(Element* element, const AtomicString& oldValue, const AtomicString& newValue)
+{
+    m_suppressAttributeModifiedEvent = (oldValue == newValue);
+}
+
 void InspectorDOMAgent::didModifyDOMAttr(Element* element, const AtomicString& name, const AtomicString& value)
 {
+    bool shouldSuppressEvent = m_suppressAttributeModifiedEvent;
+    m_suppressAttributeModifiedEvent = false;
+    if (shouldSuppressEvent)
+        return;
+
     int id = boundNodeId(element);
     // If node is not mapped yet -> ignore the event.
     if (!id)

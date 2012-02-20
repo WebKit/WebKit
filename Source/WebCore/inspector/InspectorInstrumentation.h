@@ -85,7 +85,7 @@ public:
     static void willInsertDOMNode(Document*, Node*, Node* parent);
     static void didInsertDOMNode(Document*, Node*);
     static void willRemoveDOMNode(Document*, Node*);
-    static void willModifyDOMAttr(Document*, Element*);
+    static void willModifyDOMAttr(Document*, Element*, const AtomicString& oldValue, const AtomicString& newValue);
     static void didModifyDOMAttr(Document*, Element*, const AtomicString& name, const AtomicString& value);
     static void didRemoveDOMAttr(Document*, Element*, const AtomicString& name);
     static void characterDataModified(Document*, CharacterData*);
@@ -235,7 +235,7 @@ private:
     static void didInsertDOMNodeImpl(InstrumentingAgents*, Node*);
     static void willRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
     static void didRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
-    static void willModifyDOMAttrImpl(InstrumentingAgents*, Element*);
+    static void willModifyDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& oldValue, const AtomicString& newValue);
     static void didModifyDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& name, const AtomicString& value);
     static void didRemoveDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& name);
     static void characterDataModifiedImpl(InstrumentingAgents*, CharacterData*);
@@ -424,12 +424,12 @@ inline void InspectorInstrumentation::willRemoveDOMNode(Document* document, Node
 #endif
 }
 
-inline void InspectorInstrumentation::willModifyDOMAttr(Document* document, Element* element)
+inline void InspectorInstrumentation::willModifyDOMAttr(Document* document, Element* element, const AtomicString& oldValue, const AtomicString& newValue)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        willModifyDOMAttrImpl(instrumentingAgents, element);
+        willModifyDOMAttrImpl(instrumentingAgents, element, oldValue, newValue);
 #endif
 }
 

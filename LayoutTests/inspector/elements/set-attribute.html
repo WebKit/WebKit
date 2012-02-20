@@ -46,6 +46,22 @@ function test()
             InspectorTest.evaluateInPage("setAttribute('name', 'value')");
         },
 
+        function testAttributeSameValueNotUpdated(next)
+        {
+            function callback()
+            {
+                InspectorTest.addResult("===== On attribute modified (should be 'newValue') =====");
+                InspectorTest.dumpElementsTree(targetNode);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                next();
+            }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            // Setting the same property value should not result in the AttrModified event.
+            InspectorTest.evaluateInPage("setAttribute('name', 'value')");
+            InspectorTest.evaluateInPage("setAttribute('name', 'value')");
+            InspectorTest.evaluateInPage("setAttribute('name', 'newValue')");
+        },
+
         function testAttributeRemoved(next)
         {
             function callback()

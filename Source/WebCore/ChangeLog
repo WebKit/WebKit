@@ -1,3 +1,25 @@
+2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: DOMAttrModified should not be fired if the attribute value remains the same
+        https://bugs.webkit.org/show_bug.cgi?id=79025
+
+        Reviewed by Pavel Feldman.
+
+        * dom/Element.cpp:
+        (WebCore::Element::willModifyAttribute):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::willModifyDOMAttr):
+        (WebCore):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttr):
+
 2012-02-20  Kwonjin Jeong  <gram@company100.net>
 
         Correct a typo error in ScrollingCoordinator.h

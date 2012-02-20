@@ -2005,7 +2005,7 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this);
+        InspectorInstrumentation::willModifyDOMAttr(document(), this, oldValue, newValue);
 #endif
 }
 

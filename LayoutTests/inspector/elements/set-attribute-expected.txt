@@ -9,6 +9,10 @@ Running: testAttributeUpdated
 ===== On attribute set =====
   <div id="node" name="value"></div>
 
+Running: testAttributeSameValueNotUpdated
+===== On attribute modified (should be 'newValue') =====
+  <div id="node" name="newValue"></div>
+
 Running: testAttributeRemoved
 === On attribute removed ===
   <div id="node"></div>

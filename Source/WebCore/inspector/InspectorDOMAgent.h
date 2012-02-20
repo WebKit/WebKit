@@ -161,6 +161,7 @@ public:
 
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
+    void willModifyDOMAttr(Element*, const AtomicString& oldValue, const AtomicString& newValue);
     void didModifyDOMAttr(Element*, const AtomicString& name, const AtomicString& value);
     void didRemoveDOMAttr(Element*, const AtomicString& name);
     void styleAttributeInvalidated(const Vector<Element*>& elements);
@@ -250,6 +251,7 @@ private:
     bool m_searchingForNode;
     OwnPtr<InspectorHistory> m_history;
     OwnPtr<DOMEditor> m_domEditor;
+    bool m_suppressAttributeModifiedEvent;
 };
 
 #endif // ENABLE(INSPECTOR)
