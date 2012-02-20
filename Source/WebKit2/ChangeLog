@@ -1,3 +1,18 @@
+2012-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Adding SOUP_TYPE_PROXY_RESOLVER_DEFAULT feature to soup session makes WebProcess to hang
+        https://bugs.webkit.org/show_bug.cgi?id=79036
+
+        Reviewed by Martin Robinson.
+
+        This looks like a bug in gobject. Initializing the WebProcess
+        before creating the soup session seems to fix the problem. It's
+        actually a workaround, but initializing the WebProcess as sson as
+        possible it's a good idea in any case.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+
 2012-02-20  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Implement proxy authentication handling.
