@@ -1,3 +1,15 @@
+2012-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        MediaPlayer: MediaPlayerPrivate registration cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=78897
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines): Simplified GStreamer Private
+        player registration by using the PlatformMediaEngineClassName
+        macro like other players do.
+
 2012-02-17  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: terminated workers are not removed from dedicated worker list

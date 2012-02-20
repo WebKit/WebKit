@@ -46,6 +46,7 @@
 
 #if USE(GSTREAMER)
 #include "MediaPlayerPrivateGStreamer.h"
+#define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
 #endif
 
 #if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
@@ -193,10 +194,6 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
     if (!enginesQueried) {
         enginesQueried = true;
 
-#if USE(GSTREAMER)
-        MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
-#endif
-
 #if USE(AVFOUNDATION)
         if (Settings::isAVFoundationEnabled()) {
 #if PLATFORM(MAC)
@@ -207,7 +204,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         }
 #endif
 
-#if !PLATFORM(GTK) && !PLATFORM(EFL) && !(PLATFORM(QT) && USE(GSTREAMER))
+#if defined(PlatformMediaEngineClassName)
         PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
     }
