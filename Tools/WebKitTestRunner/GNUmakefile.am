@@ -5,8 +5,10 @@ generate-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwar
 	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include gtk
 	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include soup
 
+if ENABLE_WEBKIT2
 noinst_PROGRAMS += \
 	Programs/WebKitTestRunner
+endif
 
 Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/EventSenderProxy.h \
