@@ -612,7 +612,6 @@ BUGCR20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = F
 
 // Proper retention of CSS objects is tricky.  Disable the tests for now.
 BUGWK66377 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
@@ -4178,9 +4177,6 @@ BUGWK77498 : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
 // Needs new baselines.
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
-
-// Needs baselines for MAC and WIN.
-BUGWK76465 MAC WIN : fast/css/non-empty-span.html = IMAGE+TEXT
 
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
