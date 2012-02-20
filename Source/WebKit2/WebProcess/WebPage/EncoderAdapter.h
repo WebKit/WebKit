@@ -46,6 +46,7 @@ public:
 private:
     virtual void encodeBytes(const uint8_t*, size_t);
     virtual void encodeBool(bool);
+    virtual void encodeUInt16(uint16_t value);
     virtual void encodeUInt32(uint32_t);
     virtual void encodeUInt64(uint64_t);
     virtual void encodeInt32(int32_t);

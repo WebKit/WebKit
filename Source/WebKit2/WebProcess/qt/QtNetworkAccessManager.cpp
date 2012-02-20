@@ -33,6 +33,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <QAuthenticator>
+#include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
@@ -71,6 +72,27 @@ QNetworkReply* QtNetworkAccessManager::createRequest(Operation operation, const 
 void QtNetworkAccessManager::registerApplicationScheme(const WebPage* page, const QString& scheme)
 {
     m_applicationSchemes.insert(page, scheme.toLower());
+}
+
+void QtNetworkAccessManager::onProxyAuthenticationRequired(QNetworkReply* reply, QAuthenticator* authenticator)
+{
+    WebPage* webPage = obtainOriginatingWebPage(reply->request());
+
+    String hostname = proxy().hostName();
+    uint16_t port = static_cast<uint16_t>(proxy().port());
+    String prefilledUsername = authenticator->user();
+    String username;
+    String password;
+
+    if (webPage->sendSync(
+         Messages::WebPageProxy::ProxyAuthenticationRequiredRequest(hostname, port, prefilledUsername),
+         Messages::WebPageProxy::ProxyAuthenticationRequiredRequest::Reply(username, password))) {
+         if (!username.isEmpty())
+             authenticator->setUser(username);
+         if (!password.isEmpty())
+             authenticator->setPassword(password);
+     }
+
 }
 
 void QtNetworkAccessManager::onAuthenticationRequired(QNetworkReply* reply, QAuthenticator* authenticator)

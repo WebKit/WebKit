@@ -102,6 +102,39 @@ private:
     QString m_prefilledUsername;
 };
 
+class ProxyAuthenticationDialogContextObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString hostname READ hostname CONSTANT)
+    Q_PROPERTY(quint16 port READ port CONSTANT)
+    Q_PROPERTY(QString prefilledUsername READ prefilledUsername CONSTANT)
+
+public:
+    ProxyAuthenticationDialogContextObject(const QString& hostname, quint16 port, const QString& prefilledUsername)
+        : QObject()
+        , m_hostname(hostname)
+        , m_port(port)
+        , m_prefilledUsername(prefilledUsername)
+    {
+    }
+
+    QString hostname() const { return m_hostname; }
+    quint16 port() const { return m_port; }
+    QString prefilledUsername() const { return m_prefilledUsername; }
+
+public slots:
+    void accept(const QString& username, const QString& password) { emit accepted(username, password); }
+    void reject() { emit rejected(); }
+
+signals:
+    void accepted(const QString& username, const QString& password);
+    void rejected();
+
+private:
+    QString m_hostname;
+    quint16 m_port;
+    QString m_prefilledUsername;
+};
+
 class CertificateVerificationDialogContextObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString hostname READ hostname CONSTANT)
@@ -164,6 +197,19 @@ bool QtDialogRunner::initForPrompt(QDeclarativeComponent* component, QQuickItem*
 bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername)
 {
     AuthenticationDialogContextObject* contextObject = new AuthenticationDialogContextObject(hostname, realm, prefilledUsername);
+    if (!createDialog(component, dialogParent, contextObject))
+        return false;
+
+    connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(onAuthenticationAccepted(QString, QString)));
+    connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(quit()));
+    connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+
+    return true;
+}
+
+bool QtDialogRunner::initForProxyAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, uint16_t port, const QString& prefilledUsername)
+{
+    ProxyAuthenticationDialogContextObject* contextObject = new ProxyAuthenticationDialogContextObject(hostname, port, prefilledUsername);
     if (!createDialog(component, dialogParent, contextObject))
         return false;
 

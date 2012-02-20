@@ -46,6 +46,7 @@ public:
     void encodeVariableLengthByteArray(const DataReference&);
 
     void encodeBool(bool);
+    void encodeUInt16(uint16_t);
     void encodeUInt32(uint32_t);
     void encodeUInt64(uint64_t);
     void encodeInt32(int32_t);
@@ -92,6 +93,11 @@ private:
 template<> inline void ArgumentEncoder::encode(const bool& n)
 {
     encodeBool(n);
+}
+
+template<> inline void ArgumentEncoder::encode(const uint16_t& n)
+{
+    encodeUInt16(n);
 }
 
 template<> inline void ArgumentEncoder::encode(const uint32_t& n)

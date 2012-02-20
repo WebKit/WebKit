@@ -115,6 +115,13 @@ void ArgumentEncoder::encodeBool(bool n)
     *reinterpret_cast<bool*>(buffer) = n;
 }
 
+void ArgumentEncoder::encodeUInt16(uint16_t n)
+{
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
+
+    *reinterpret_cast<uint16_t*>(buffer) = n;
+}
+
 void ArgumentEncoder::encodeUInt32(uint32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));

@@ -123,6 +123,17 @@ void QtPageClient::handleCertificateVerificationRequest(const String& hostname, 
     ignoreErrors = QQuickWebViewPrivate::get(m_webView)->handleCertificateVerificationRequest(hostname);
 }
 
+void QtPageClient::handleProxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password)
+{
+    QString qUsername;
+    QString qPassword;
+
+    QQuickWebViewPrivate::get(m_webView)->handleProxyAuthenticationRequiredRequest(hostname, port, prefilledUsername, qUsername, qPassword);
+
+    username = qUsername;
+    password = qPassword;
+}
+
 void QtPageClient::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: This is a temporary fix until we get cursor support in QML items.

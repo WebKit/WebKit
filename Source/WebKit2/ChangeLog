@@ -1,3 +1,84 @@
+2012-02-20  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Implement proxy authentication handling.
+        https://bugs.webkit.org/show_bug.cgi?id=78792
+
+        Reviewed by Simon Hausmann.
+
+        This patch implements the proxy authentication handling
+        for the Qt port in a similar matter to the http authentication
+        implementation.
+
+        Since there is a need to pass the proxy port, which is of type uint16_t,
+        from the WebProcess to the UIProcess, an encoder and a decoder for
+        this type was added because it did not exist.
+        
+        The message that was added to the WebPageProxy is called synchronously
+        as this is needed by the implementation of the network access manager
+        and has also been implemented this way already for the http 
+        authentication.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeUInt16):
+        (CoreIPC):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (ArgumentDecoder):
+        (CoreIPC::ArgumentDecoder::decode):
+        (CoreIPC):
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::encodeUInt16):
+        (CoreIPC):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (ArgumentEncoder):
+        (CoreIPC::ArgumentEncoder::encode):
+        (CoreIPC):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest):
+        (QQuickWebViewExperimental::proxyAuthenticationDialog):
+        (QQuickWebViewExperimental::setProxyAuthenticationDialog):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::proxyAuthenticationRequiredRequest):
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (ProxyAuthenticationDialogContextObject):
+        (ProxyAuthenticationDialogContextObject::ProxyAuthenticationDialogContextObject):
+        (ProxyAuthenticationDialogContextObject::hostname):
+        (ProxyAuthenticationDialogContextObject::port):
+        (ProxyAuthenticationDialogContextObject::prefilledUsername):
+        (ProxyAuthenticationDialogContextObject::accept):
+        (ProxyAuthenticationDialogContextObject::reject):
+        (QtDialogRunner::initForProxyAuthentication):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::handleProxyAuthenticationRequiredRequest):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeUInt16):
+        (WebKit):
+        * WebProcess/WebPage/DecoderAdapter.h:
+        (DecoderAdapter):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::encodeUInt16):
+        (WebKit):
+        * WebProcess/WebPage/EncoderAdapter.h:
+        (EncoderAdapter):
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::onProxyAuthenticationRequired):
+        (WebKit):
+        * WebProcess/qt/QtNetworkAccessManager.h:
+        (QtNetworkAccessManager):
+
 2012-02-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Update and sort list of source files.

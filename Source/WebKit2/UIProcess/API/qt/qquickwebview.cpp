@@ -74,6 +74,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , authenticationDialog(0)
     , certificateVerificationDialog(0)
     , itemSelector(0)
+    , proxyAuthenticationDialog(0)
     , userDidOverrideContentWidth(false)
     , userDidOverrideContentHeight(false)
     , m_navigatorQtObjectEnabled(false)
@@ -303,6 +304,25 @@ void QQuickWebViewPrivate::handleAuthenticationRequiredRequest(const QString& ho
 
     setViewInAttachedProperties(dialogRunner.dialog());
 
+    disableMouseEvents();
+    dialogRunner.exec();
+    enableMouseEvents();
+
+    username = dialogRunner.username();
+    password = dialogRunner.password();
+}
+
+void QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest(const QString& hostname, uint16_t port, const QString& prefilledUsername, QString& username, QString& password)
+{
+    if (!proxyAuthenticationDialog)
+        return;
+
+    Q_Q(QQuickWebView);
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForProxyAuthentication(proxyAuthenticationDialog, q, hostname, port, prefilledUsername))
+        return;
+
+    setViewInAttachedProperties(dialogRunner.dialog());
     disableMouseEvents();
     dialogRunner.exec();
     enableMouseEvents();
@@ -842,6 +862,20 @@ void QQuickWebViewExperimental::setAuthenticationDialog(QDeclarativeComponent* a
     emit authenticationDialogChanged();
 }
 
+QDeclarativeComponent* QQuickWebViewExperimental::proxyAuthenticationDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->proxyAuthenticationDialog;
+}
+
+void QQuickWebViewExperimental::setProxyAuthenticationDialog(QDeclarativeComponent* proxyAuthenticationDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->proxyAuthenticationDialog == proxyAuthenticationDialog)
+        return;
+    d->proxyAuthenticationDialog = proxyAuthenticationDialog;
+    emit proxyAuthenticationDialogChanged();
+}
 QDeclarativeComponent* QQuickWebViewExperimental::certificateVerificationDialog() const
 {
     Q_D(const QQuickWebView);

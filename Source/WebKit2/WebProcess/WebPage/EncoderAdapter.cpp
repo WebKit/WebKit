@@ -52,6 +52,11 @@ void EncoderAdapter::encodeBool(bool value)
     m_encoder->encodeBool(value);
 }
 
+void EncoderAdapter::encodeUInt16(uint16_t value)
+{
+    m_encoder->encodeUInt16(value);
+}
+
 void EncoderAdapter::encodeUInt32(uint32_t value)
 {
     m_encoder->encodeUInt32(value);

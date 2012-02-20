@@ -47,6 +47,7 @@ protected:
 
 private Q_SLOTS:
     void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
+    void onProxyAuthenticationRequired(QNetworkReply *, QAuthenticator *);
     void onSslErrors(QNetworkReply*, const QList<QSslError>&);
 
 private:

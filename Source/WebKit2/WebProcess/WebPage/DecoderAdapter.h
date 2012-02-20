@@ -39,6 +39,7 @@ public:
 private:
     virtual bool decodeBytes(Vector<uint8_t>&);
     virtual bool decodeBool(bool&);
+    virtual bool decodeUInt16(uint16_t&);
     virtual bool decodeUInt32(uint32_t&);
     virtual bool decodeUInt64(uint64_t&);
     virtual bool decodeInt32(int32_t&);

@@ -52,6 +52,11 @@ bool DecoderAdapter::decodeBool(bool& value)
     return m_decoder.decodeBool(value);
 }
 
+bool DecoderAdapter::decodeUInt16(uint16_t& value)
+{
+    return m_decoder.decodeUInt16(value);
+}
+
 bool DecoderAdapter::decodeUInt32(uint32_t& value)
 {
     return m_decoder.decodeUInt32(value);

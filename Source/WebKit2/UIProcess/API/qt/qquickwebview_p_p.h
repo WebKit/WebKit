@@ -102,6 +102,7 @@ public:
 
     void handleAuthenticationRequiredRequest(const QString& hostname, const QString& realm, const QString& prefilledUsername, QString& username, QString& password);
     bool handleCertificateVerificationRequest(const QString& hostname);
+    void handleProxyAuthenticationRequiredRequest(const QString& hostname, uint16_t port, const QString& prefilledUsername, QString& username, QString& password);
 
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setViewInAttachedProperties(QObject*);
@@ -145,6 +146,7 @@ protected:
     QDeclarativeComponent* authenticationDialog;
     QDeclarativeComponent* certificateVerificationDialog;
     QDeclarativeComponent* itemSelector;
+    QDeclarativeComponent* proxyAuthenticationDialog;
 
     WebCore::ViewportArguments viewportArguments;
     QFileDialog* fileDialog;

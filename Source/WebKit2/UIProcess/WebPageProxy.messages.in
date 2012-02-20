@@ -76,6 +76,7 @@ messages -> WebPageProxy {
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
     AuthenticationRequiredRequest(WTF::String hostname, WTF::String realm, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
     CertificateVerificationRequest(WTF::String hostname) -> (bool ignoreErrors)
+    ProxyAuthenticationRequiredRequest(WTF::String hostname, uint16_t port, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     NeedTouchEvents(bool needTouchEvents)

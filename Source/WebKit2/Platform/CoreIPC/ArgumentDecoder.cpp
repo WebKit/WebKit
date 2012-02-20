@@ -141,6 +141,16 @@ bool ArgumentDecoder::decodeBool(bool& result)
     return true;
 }
 
+bool ArgumentDecoder::decodeUInt16(uint16_t& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+
+    result = *reinterpret_cast<uint16_t*>(m_bufferPos);
+    m_bufferPos += sizeof(result);
+    return true;
+}
+
 bool ArgumentDecoder::decodeUInt32(uint32_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))

@@ -53,6 +53,7 @@ public:
     bool decodeVariableLengthByteArray(DataReference&);
 
     bool decodeBool(bool&);
+    bool decodeUInt16(uint16_t&);
     bool decodeUInt32(uint32_t&);
     bool decodeUInt64(uint64_t&);
     bool decodeInt32(int32_t&);
@@ -124,6 +125,11 @@ private:
 template<> inline bool ArgumentDecoder::decode(bool& n)
 {
     return decodeBool(n);
+}
+
+template<> inline bool ArgumentDecoder::decode(uint16_t& n)
+{
+    return decodeUInt16(n);
 }
 
 template<> inline bool ArgumentDecoder::decode(uint32_t& n)

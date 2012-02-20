@@ -2396,6 +2396,11 @@ void WebPageProxy::authenticationRequiredRequest(const String& hostname, const S
     m_pageClient->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, username, password);
 }
 
+void WebPageProxy::proxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password)
+{
+    m_pageClient->handleProxyAuthenticationRequiredRequest(hostname, port, prefilledUsername, username, password);
+}
+
 void WebPageProxy::certificateVerificationRequest(const String& hostname, bool& ignoreErrors)
 {
     m_pageClient->handleCertificateVerificationRequest(hostname, ignoreErrors);

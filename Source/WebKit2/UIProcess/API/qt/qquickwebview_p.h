@@ -227,6 +227,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* authenticationDialog READ authenticationDialog WRITE setAuthenticationDialog NOTIFY authenticationDialogChanged)
+    Q_PROPERTY(QDeclarativeComponent* proxyAuthenticationDialog READ proxyAuthenticationDialog WRITE setProxyAuthenticationDialog NOTIFY proxyAuthenticationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* certificateVerificationDialog READ certificateVerificationDialog WRITE setCertificateVerificationDialog NOTIFY certificateVerificationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
@@ -254,6 +255,8 @@ public:
     void setCertificateVerificationDialog(QDeclarativeComponent*);
     QDeclarativeComponent* itemSelector() const;
     void setItemSelector(QDeclarativeComponent*);
+    QDeclarativeComponent* proxyAuthenticationDialog() const;
+    void setProxyAuthenticationDialog(QDeclarativeComponent*);
 
     QWebViewportInfo* viewportInfo();
 
@@ -305,6 +308,7 @@ Q_SIGNALS:
     void downloadRequested(QWebDownloadItem* downloadItem);
     void permissionRequested(QWebPermissionRequest* permission);
     void messageReceived(const QVariantMap& message);
+    void proxyAuthenticationDialogChanged();
 
 private:
     QQuickWebView* q_ptr;
