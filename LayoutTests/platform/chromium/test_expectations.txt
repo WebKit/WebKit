@@ -39,6 +39,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
+BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG MAC : svg/hixie/perf/007.xml = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
@@ -702,8 +703,7 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
-// Put back WIN when WK78251 is solved.
-BUGWK60109 SLOW VISTA WIN7 DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 SLOW WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
 
@@ -3745,7 +3745,6 @@ BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 
-BUGWK77047 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS TIMEOUT
 BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
 BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
@@ -4183,3 +4182,7 @@ BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
 BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers-2.html = TEXT
 BUGWK69210 MAC : fast/inline/continuation-outlines-with-layers.html = IMAGE+TEXT
+
+BUGWK77047 BUGWK79013 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH TIMEOUT
+BUGWK79013 WIN RELEASE : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
+BUGWK79013 MAC LINUX : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
