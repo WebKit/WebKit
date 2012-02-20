@@ -67,7 +67,7 @@ public:
     inline void setRawValue(long long value)
     {
         ASSERT(value > std::numeric_limits<int>::min() && value < std::numeric_limits<int>::max());
-        m_value = value;
+        m_value = static_cast<int>(value);
     }
 
     inline FractionalLayoutUnit abs()

@@ -1,5 +1,13 @@
 2012-02-20  Adam Roben  <aroben@apple.com>
 
+        32-bit build fix
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::setRawValue): Explicitly cast long long to int, since they
+        are different widths in 32-bit.
+
+2012-02-20  Adam Roben  <aroben@apple.com>
+
         Clang build fix
 
         * inspector/InspectorDOMAgent.cpp:
