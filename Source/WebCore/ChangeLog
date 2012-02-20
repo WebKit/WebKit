@@ -1,3 +1,13 @@
+2012-02-20  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed manual rollout of r107970 which breaks table column widths
+        updates from javascript (e.g. inspector's network panel).
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        * rendering/RenderTableCol.h:
+        (RenderTableCol):
+
 2012-02-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Inconsistent alignment of non-parsed properties (having an exclamation mark)
