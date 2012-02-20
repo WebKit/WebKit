@@ -1,4 +1,4 @@
-2012-02-120  Andy Wingo  <wingo@pobox.com>
+2012-02-20  Andy Wingo  <wingo@igalia.com>
 
         Remove unused features from CodeFeatures
         https://bugs.webkit.org/show_bug.cgi?id=78804
