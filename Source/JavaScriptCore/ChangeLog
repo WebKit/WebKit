@@ -1,3 +1,25 @@
+2012-02-120  Andy Wingo  <wingo@pobox.com>
+
+        Remove unused features from CodeFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=78804
+
+        Reviewed by Gavin Barraclough.
+
+        * parser/Nodes.h:
+        * parser/ASTBuilder.h:
+        (JSC::ClosureFeature):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::usesClosures):
+        Remove "ClosureFeature".  Since we track captured variables more
+        precisely, this bit doesn't do us any good.
+
+        (JSC::AssignFeature):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::makePrefixNode):
+        (JSC::ASTBuilder::makePostfixNode):
+        (JSC::ASTBuilder::usesAssignment):
+        Similarly, remove AssignFeature.  It is unused.
+
 2012-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

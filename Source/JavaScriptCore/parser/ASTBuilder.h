@@ -265,7 +265,6 @@ public:
 
     FunctionBodyNode* createFunctionBody(int lineNumber, bool inStrictContext)
     {
-        usesClosures();
         return FunctionBodyNode::create(m_globalData, lineNumber, inStrictContext);
     }
     
@@ -624,9 +623,7 @@ private:
     void incConstants() { m_scope.m_numConstants++; }
     void usesThis() { m_scope.m_features |= ThisFeature; }
     void usesCatch() { m_scope.m_features |= CatchFeature; }
-    void usesClosures() { m_scope.m_features |= ClosureFeature; }
     void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
-    void usesAssignment() { m_scope.m_features |= AssignFeature; }
     void usesWith() { m_scope.m_features |= WithFeature; }
     void usesEval() 
     {
@@ -904,7 +901,6 @@ ExpressionNode* ASTBuilder::makeBinaryNode(int lineNumber, int token, pair<Expre
 
 ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
 {
-    usesAssignment();
     if (!loc->isLocation())
         return new (m_globalData) AssignErrorNode(lineNumber, loc, op, expr, divot, divot - start, end - divot);
 
@@ -942,7 +938,6 @@ ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, 
 
 ExpressionNode* ASTBuilder::makePrefixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
-    usesAssignment();
     if (!expr->isLocation())
         return new (m_globalData) PrefixErrorNode(lineNumber, expr, op, divot, divot - start, end - divot);
 
@@ -965,7 +960,6 @@ ExpressionNode* ASTBuilder::makePrefixNode(int lineNumber, ExpressionNode* expr,
 
 ExpressionNode* ASTBuilder::makePostfixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
-    usesAssignment();
     if (!expr->isLocation())
         return new (m_globalData) PostfixErrorNode(lineNumber, expr, op, divot, divot - start, end - divot);
 
