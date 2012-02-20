@@ -276,6 +276,7 @@ void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const Strin
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->headerType());
     workerThreadCreated(thread);
     thread->start();
+    InspectorInstrumentation::didStartWorkerContext(m_scriptExecutionContext.get(), this, scriptURL);
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)

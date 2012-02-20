@@ -1,3 +1,17 @@
+2012-02-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: terminated workers are not removed from dedicated worker list
+        https://bugs.webkit.org/show_bug.cgi?id=78899
+
+        Notify inspector about starting context from WorkerContextProxy not from Worker.
+
+        Reviewed by Pavel Feldman.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+
 2012-02-19  Keishi Hattori  <keishi@webkit.org>
 
         Use shadowRootList for ColorInputType

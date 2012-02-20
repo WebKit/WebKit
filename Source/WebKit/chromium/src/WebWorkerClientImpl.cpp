@@ -39,6 +39,7 @@
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
@@ -90,6 +91,7 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->headerType());
     m_proxy->workerThreadCreated(thread);
     thread->start();
+    InspectorInstrumentation::didStartWorkerContext(m_scriptExecutionContext.get(), m_proxy, scriptURL);
 }
 
 void WebWorkerClientImpl::terminateWorkerContext()
