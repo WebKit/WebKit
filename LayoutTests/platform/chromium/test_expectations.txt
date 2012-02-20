@@ -612,6 +612,7 @@ BUGCR20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = F
 
 // Proper retention of CSS objects is tricky.  Disable the tests for now.
 BUGWK66377 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
