@@ -88,6 +88,10 @@ public:
 
     virtual Color platformActiveSelectionBackgroundColor() const;
 
+    // Highlighting colors for TextMatches.
+    virtual Color platformActiveTextSearchHighlightColor() const;
+    virtual Color platformInactiveTextSearchHighlightColor() const;
+
 private:
     static const String& defaultGUIFont();
 

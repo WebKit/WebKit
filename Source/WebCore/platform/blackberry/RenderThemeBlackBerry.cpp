@@ -965,4 +965,14 @@ bool RenderThemeBlackBerry::paintProgressBar(RenderObject* object, const PaintIn
     return false;
 }
 
+Color RenderThemeBlackBerry::platformActiveTextSearchHighlightColor() const
+{
+    return Color(255, 150, 50); // Orange.
+}
+
+Color RenderThemeBlackBerry::platformInactiveTextSearchHighlightColor() const
+{
+    return Color(255, 255, 0); // Yellow.
+}
+
 } // namespace WebCore
