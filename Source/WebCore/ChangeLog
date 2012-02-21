@@ -1,3 +1,15 @@
+2012-02-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [crash] upon style modification after navigation
+        https://bugs.webkit.org/show_bug.cgi?id=79108
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorHistory.cpp:
+        (WebCore::InspectorHistory::undo):
+        (WebCore::InspectorHistory::redo):
+        (WebCore::InspectorHistory::reset):
+
 2012-02-21  Patrick Gansterer  <paroga@webkit.org>
 
         Use WTF::cryptographicallyRandomValues in FileSystemWin.cpp

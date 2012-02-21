@@ -114,8 +114,7 @@ bool InspectorHistory::undo(ExceptionCode& ec)
     while (m_afterLastActionIndex > 0) {
         Action* action = m_history[m_afterLastActionIndex - 1].get();
         if (!action->undo(ec)) {
-            m_history.clear();
-            m_afterLastActionIndex = 0;
+            reset();
             return false;
         }
         --m_afterLastActionIndex;
@@ -134,7 +133,7 @@ bool InspectorHistory::redo(ExceptionCode& ec)
     while (m_afterLastActionIndex < m_history.size()) {
         Action* action = m_history[m_afterLastActionIndex].get();
         if (!action->redo(ec)) {
-            m_history.clear();
+            reset();
             return false;
         }
         ++m_afterLastActionIndex;
@@ -146,6 +145,7 @@ bool InspectorHistory::redo(ExceptionCode& ec)
 
 void InspectorHistory::reset()
 {
+    m_afterLastActionIndex = 0;
     m_history.clear();
 }
 
