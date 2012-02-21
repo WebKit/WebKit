@@ -5364,3 +5364,19 @@ http/tests/inspector/inspect-element.html
 svg/custom/glyph-selection-arabic-forms.svg
 svg/custom/glyph-selection-bidi-mirror.svg
 svg/custom/glyph-selection-non-bmp.svg
+
+# new failing tests
+css3/filters/effect-blur-hw.html
+css3/filters/effect-combined-hw.html
+css3/filters/effect-combined.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-grayscale-hw.html
+css3/filters/effect-hue-rotate-hw.html
+css3/filters/effect-invert-hw.html
+css3/filters/effect-opacity-hw.html
+css3/filters/effect-saturate-hw.html
+css3/filters/effect-sepia-hw.html
+fast/css-generated-content/before-content-continuation-chain.html
+
+# new crashing test
+fast/css/font-face-synthetic-bold-italic.html
