@@ -34,11 +34,11 @@ namespace WebCore {
 
 class ContainerNode;
 class Document;
+class InsertionPoint;
 class Node;
 class RenderFlowThread;
 class RenderObject;
 class RenderStyle;
-class HTMLContentElement;
 class ShadowRoot;
 
 class NodeRenderingContext {
@@ -52,7 +52,7 @@ public:
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
-    HTMLContentElement* insertionPoint() const;
+    InsertionPoint* insertionPoint() const;
 
     RenderStyle* style() const;
     void setStyle(PassRefPtr<RenderStyle>);
@@ -81,7 +81,7 @@ private:
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
-    HTMLContentElement* m_insertionPoint;
+    InsertionPoint* m_insertionPoint;
     RefPtr<RenderStyle> m_style;
     RenderFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;
@@ -103,7 +103,7 @@ inline RenderStyle* NodeRenderingContext::style() const
     return m_style.get();
 }
 
-inline HTMLContentElement* NodeRenderingContext::insertionPoint() const
+inline InsertionPoint* NodeRenderingContext::insertionPoint() const
 {
     return m_insertionPoint;
 }

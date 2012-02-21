@@ -32,6 +32,7 @@
 #include "HTMLContentElement.h"
 #include "HTMLContentSelector.h"
 #include "HTMLNames.h"
+#include "InsertionPoint.h"
 #include "NodeRareData.h"
 #include "ShadowRootList.h"
 #include "SVGNames.h"
@@ -182,7 +183,7 @@ void ShadowRoot::setNeedsReattachHostChildrenAndShadow()
         shadowHost()->setNeedsStyleRecalc();
 }
 
-HTMLContentElement* ShadowRoot::insertionPointFor(Node* node) const
+InsertionPoint* ShadowRoot::insertionPointFor(Node* node) const
 {
     if (!m_selector)
         return 0;

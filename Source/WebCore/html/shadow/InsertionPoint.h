@@ -31,6 +31,7 @@
 #ifndef InsertionPoint_h
 #define InsertionPoint_h
 
+#include "HTMLContentSelector.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -39,8 +40,12 @@ class InsertionPoint : public HTMLElement {
 public:
     virtual ~InsertionPoint();
 
+    const HTMLContentSelectionList* selections() const { return &m_selections; }
+    bool hasSelection() const { return m_selections.first(); }
+
 protected:
     InsertionPoint(const QualifiedName&, Document*);
+    HTMLContentSelectionList m_selections;
 };
 
 } // namespace WebCore

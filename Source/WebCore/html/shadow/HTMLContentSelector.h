@@ -40,14 +40,15 @@ namespace WebCore {
 
 class Element;
 class HTMLContentElement;
+class InsertionPoint;
 class Node;
 class ShadowRoot;
 
 class HTMLContentSelection : public RefCounted<HTMLContentSelection> {
 public:
-    static PassRefPtr<HTMLContentSelection> create(HTMLContentElement*, Node*);
+    static PassRefPtr<HTMLContentSelection> create(InsertionPoint*, Node*);
 
-    HTMLContentElement* insertionPoint() const { return m_insertionPoint; }
+    InsertionPoint* insertionPoint() const { return m_insertionPoint; }
     Node* node() const { return m_node.get(); }
     HTMLContentSelection* next() const { return m_next.get(); }
     HTMLContentSelection* previous() const { return m_previous.get(); }
@@ -56,19 +57,19 @@ public:
     void unlink();
 
 private:
-    HTMLContentSelection(HTMLContentElement*, Node*);
+    HTMLContentSelection(InsertionPoint*, Node*);
 
-    HTMLContentElement* m_insertionPoint;
+    InsertionPoint* m_insertionPoint;
     RefPtr<Node> m_node;
     RefPtr<HTMLContentSelection> m_next;
     RefPtr<HTMLContentSelection> m_previous;
 };
 
-inline HTMLContentSelection::HTMLContentSelection(HTMLContentElement* insertionPoint, Node* node)
+inline HTMLContentSelection::HTMLContentSelection(InsertionPoint* insertionPoint, Node* node)
     : m_insertionPoint(insertionPoint), m_node(node)
 { }
 
-inline PassRefPtr<HTMLContentSelection> HTMLContentSelection::create(HTMLContentElement* insertionPoint, Node* node)
+inline PassRefPtr<HTMLContentSelection> HTMLContentSelection::create(InsertionPoint* insertionPoint, Node* node)
 {
     return adoptRef(new HTMLContentSelection(insertionPoint, node));
 }

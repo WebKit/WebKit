@@ -121,6 +121,7 @@ void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContent
             continue;
 
         RefPtr<HTMLContentSelection> selection = HTMLContentSelection::create(contentElement, child);
+
         selections->append(selection);
         m_selectionSet.add(selection.get());
         m_candidates[i] = 0;

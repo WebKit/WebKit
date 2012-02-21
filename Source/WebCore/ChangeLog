@@ -1,3 +1,49 @@
+2012-02-20  Hayato Ito  <hayato@chromium.org>
+
+        Use InsertinonPoint instead of HTMLContentElement.
+        https://bugs.webkit.org/show_bug.cgi?id=78778
+
+        Reviewed by Hajime Morita.
+
+        Replace HTMLContentElement with InsertionPoint in NodeRenderingContext and HTMLContentSelection.
+        This is one of followup patches for r108207.
+
+        No new tests, no change in behavior.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::nextRendererOf):
+        (WebCore::previousRendererOf):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        * dom/NodeRenderingContext.h:
+        (WebCore):
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::insertionPoint):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertionPointFor):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        * html/shadow/HTMLContentSelector.cpp:
+        (WebCore::HTMLContentSelector::select):
+        * html/shadow/HTMLContentSelector.h:
+        (WebCore):
+        (HTMLContentSelection):
+        (WebCore::HTMLContentSelection::insertionPoint):
+        (WebCore::HTMLContentSelection::HTMLContentSelection):
+        (WebCore::HTMLContentSelection::create):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::InsertionPoint::selections):
+        (WebCore::InsertionPoint::hasSelection):
+        (InsertionPoint):
+
 2012-02-20  David Barton  <dbarton@mathscribe.com>
 
         MathML internals - code clean-up for RenderMathMLSubSup

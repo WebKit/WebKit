@@ -60,7 +60,6 @@ PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& t
 
 HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
     : InsertionPoint(name, document)
-    , m_selections(adoptPtr(new HTMLContentSelectionList()))
 {
 }
 
@@ -75,14 +74,14 @@ void HTMLContentElement::attach()
     // Before calling StyledElement::attach, selector must be calculated.
     if (root) {
         HTMLContentSelector* selector = root->ensureSelector();
-        selector->unselect(m_selections.get());
-        selector->select(this, m_selections.get());
+        selector->unselect(&m_selections);
+        selector->select(this, &m_selections);
     }
 
     InsertionPoint::attach();
 
     if (root) {
-        for (HTMLContentSelection* selection = m_selections->first(); selection; selection = selection->next())
+        for (HTMLContentSelection* selection = m_selections.first(); selection; selection = selection->next())
             selection->node()->attach();
     }
 }
@@ -91,14 +90,14 @@ void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
         if (HTMLContentSelector* selector = root->selector())
-            selector->unselect(m_selections.get());
+            selector->unselect(&m_selections);
 
         // When content element is detached, shadow tree should be recreated to re-calculate selector for
         // other content elements.
         root->setNeedsReattachHostChildrenAndShadow();
     }
 
-    ASSERT(m_selections->isEmpty());
+    ASSERT(m_selections.isEmpty());
     InsertionPoint::detach();
 }
 

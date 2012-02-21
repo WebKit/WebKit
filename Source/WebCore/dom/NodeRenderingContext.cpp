@@ -119,7 +119,7 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
     return m_style.release();
 }
 
-static RenderObject* nextRendererOf(HTMLContentElement* parent, Node* current)
+static RenderObject* nextRendererOf(InsertionPoint* parent, Node* current)
 {
     HTMLContentSelection* currentSelection = parent->selections()->find(current);
     if (!currentSelection)
@@ -133,7 +133,7 @@ static RenderObject* nextRendererOf(HTMLContentElement* parent, Node* current)
     return 0;
 }
 
-static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* current)
+static RenderObject* previousRendererOf(InsertionPoint* parent, Node* current)
 {
     RenderObject* lastRenderer = 0;
 
@@ -147,7 +147,7 @@ static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* curren
     return lastRenderer;
 }
 
-static RenderObject* firstRendererOf(HTMLContentElement* parent)
+static RenderObject* firstRendererOf(InsertionPoint* parent)
 {
     for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
         if (RenderObject* renderer = selection->node()->renderer())
@@ -157,7 +157,7 @@ static RenderObject* firstRendererOf(HTMLContentElement* parent)
     return 0;
 }
 
-static RenderObject* lastRendererOf(HTMLContentElement* parent)
+static RenderObject* lastRendererOf(InsertionPoint* parent)
 {
     for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
         if (RenderObject* renderer = selection->node()->renderer())

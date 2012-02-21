@@ -31,14 +31,11 @@
 #include "config.h"
 #include "InsertionPoint.h"
 
-#include "HTMLNames.h"
-
 namespace WebCore {
-
-class Document;
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_selections()
 {
 }
 

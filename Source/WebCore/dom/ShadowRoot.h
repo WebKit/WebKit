@@ -37,6 +37,7 @@ namespace WebCore {
 class Document;
 class HTMLContentElement;
 class HTMLContentSelector;
+class InsertionPoint;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
@@ -59,7 +60,7 @@ public:
     void clearNeedsReattachHostChildrenAndShadow();
     bool needsReattachHostChildrenAndShadow();
 
-    HTMLContentElement* insertionPointFor(Node*) const;
+    InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();
     bool isSelectorActive() const;
 
