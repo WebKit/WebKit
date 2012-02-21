@@ -112,8 +112,6 @@ fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 fast/html/keygen.html
 fast/invalid/residual-style.html
 
-# WebKit2 needs to support defaultLanguage
-
 # WebKit2 needs to support authentication
 http/tests/appcache/auth.html
 http/tests/xmlhttprequest/logout.html

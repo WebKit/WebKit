@@ -962,12 +962,6 @@ userscripts/user-script-plugin-document.html
 userscripts/user-script-audio-document.html
 userscripts/user-script-video-document.html
 
-# WebKit2 needs to support authentication
-http/tests/security/credentials-in-referer.html
-http/tests/xmlhttprequest/basic-auth.html
-http/tests/xmlhttprequest/basic-auth-default.html
-http/tests/xmlhttprequest/re-login-async.html
-
 # WebKit2 needs showModalDialog
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
