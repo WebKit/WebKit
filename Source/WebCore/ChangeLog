@@ -1,3 +1,56 @@
+2012-02-20  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add a new API for the Vibration API(W3C).
+        https://bugs.webkit.org/show_bug.cgi?id=72010
+
+        http://dev.w3.org/2009/dap/vibration/
+        This patch implements navigator.webkitvibrate() API.
+        This API operates differently depending upon a given parameter:
+        1. It cancels vibration when given 0 or [].
+        2. It gives a vibration duration in milliseconds when given as a single integer value.
+        3. It gives a vibration pattern when given as an integer array. For instance, [1000 300 1000] generates a vibration of 1000ms followed by 300ms of idle time, and then creates another vibration of 1000ms.
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/dom/navigator-vibration.html
+
+        * CMakeLists.txt:
+        * Modules/vibration/NavigatorVibration.cpp: Added.
+        (WebCore):
+        (WebCore::NavigatorVibration::NavigatorVibration):
+        (WebCore::NavigatorVibration::~NavigatorVibration):
+        (WebCore::NavigatorVibration::webkitVibrate):
+        Add webkitVibrate method to get an array or single integer parameter for vibrating.
+        They check vibration is activated in the platform, and then call vibrate() in the Vibration class.
+        * Modules/vibration/NavigatorVibration.h: Added.
+        (WebCore):
+        (NavigatorVibration):
+        * Modules/vibration/NavigatorVibration.idl: Added.
+        * Modules/vibration/Vibration.cpp: Added.
+        This class implements the entire vibration logic.
+        (WebCore):
+        (WebCore::Vibration::Vibration):
+        (WebCore::Vibration::~Vibration):
+        (WebCore::Vibration::create):
+        (WebCore::Vibration::vibrate):
+        (WebCore::Vibration::cancelVibration):
+        (WebCore::Vibration::suspendVibration):
+        (WebCore::Vibration::resumeVibration):
+        (WebCore::Vibration::timerStartFired):
+        (WebCore::Vibration::timerStopFired):
+        (WebCore::Vibration::supplementName):
+        (WebCore::Vibration::isActive):
+        (WebCore::provideVibrationTo):
+        * Modules/vibration/Vibration.h: Added.
+        (WebCore):
+        (Vibration):
+        (WebCore::Vibration::from):
+        * Modules/vibration/VibrationClient.h: Added.
+        vibrate() and cancelVibrate() need to be implemented in the VibrationClient.
+        (WebCore):
+        (VibrationClient):
+        (WebCore::VibrationClient::~VibrationClient):
+
 2012-02-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r108263.

@@ -396,6 +396,9 @@ http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 
+#Vibration API support not yet. http://webkit.org/b/72010
+fast/dom/navigator-vibration.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

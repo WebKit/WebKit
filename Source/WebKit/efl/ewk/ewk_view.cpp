@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2011 Samsung Electronics
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -68,6 +68,10 @@
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionClientEfl.h"
 #include "DeviceOrientationClientEfl.h"
+#endif
+
+#if ENABLE(VIBRATION)
+#include "VibrationClientEfl.h"
 #endif
 
 static const float zoomMinimum = 0.05;
@@ -615,6 +619,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::provideDeviceMotionTo(priv->page, new WebCore::DeviceMotionClientEfl);
     WebCore::provideDeviceOrientationTo(priv->page, new WebCore::DeviceOrientationClientEfl);
+#endif
+
+#if ENABLE(VIBRATION)
+    WebCore::provideVibrationTo(priv->page, new WebCore::VibrationClientEfl(smartData->self));
 #endif
 
     priv->pageSettings = priv->page->settings();

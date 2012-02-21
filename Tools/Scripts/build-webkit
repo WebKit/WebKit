@@ -128,6 +128,7 @@ my (
     $tiledBackingStoreSupport,
     $touchEventsSupport,
     $touchIconLoadingSupport,
+    $vibrationSupport,
     $videoSupport,
     $videoTrackSupport,
     $webAudioSupport,
@@ -328,6 +329,9 @@ my @features = (
 
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
+
+    { option => "vibration", desc => "Toggle Video support",
+      define => "ENABLE_VIBRATION", default => isEfl(), value => \$vibrationSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$videoSupport },

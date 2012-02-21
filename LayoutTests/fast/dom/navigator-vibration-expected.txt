@@ -1,0 +1,15 @@
+Test for the Vibration API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.webkitVibrate(0); is undefined
+PASS navigator.webkitVibrate([]); is undefined
+PASS navigator.webkitVibrate(1000); is undefined
+PASS navigator.webkitVibrate([1000, 300, 500]); is undefined
+PASS navigator.webkitVibrate(4294967295); is undefined
+PASS navigator.webkitVibrate(); threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2252,6 +2252,19 @@ IF (ENABLE_REQUEST_ANIMATION_FRAME)
     )
 ENDIF ()
 
+IF (ENABLE_VIBRATION)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${WEBCORE_DIR}/Modules/vibration
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/vibration/NavigatorVibration.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        Modules/vibration/NavigatorVibration.cpp
+        Modules/vibration/Vibration.cpp
+    )
+ENDIF ()
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm

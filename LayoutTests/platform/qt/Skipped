@@ -331,6 +331,9 @@ fast/parser/pre-html5-parser-quirks.html
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html
 
+#Vibration API is not implemented.
+fast/dom/navigator-vibration.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

@@ -39,6 +39,7 @@
 #cmakedefine01 ENABLE_SVG_FONTS
 #cmakedefine01 ENABLE_TOUCH_EVENTS
 #cmakedefine01 ENABLE_TOUCH_ICON_LOADING
+#cmakedefine01 ENABLE_VIBRATION
 #cmakedefine01 ENABLE_VIDEO
 #cmakedefine01 ENABLE_WEBGL
 #cmakedefine01 ENABLE_WEB_SOCKETS

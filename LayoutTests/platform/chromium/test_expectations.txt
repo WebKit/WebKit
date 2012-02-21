@@ -112,6 +112,9 @@ BUGNOEL : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
 // New test, needs baselines.
 
 
+// Vibration API is not supported yet in the chromium port.
+BUGWK72010 SKIP : fast/dom/navigator-vibration.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

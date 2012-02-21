@@ -1,3 +1,16 @@
+2012-02-20  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add a new API for the Vibration API(W3C).
+        https://bugs.webkit.org/show_bug.cgi?id=72010
+
+        Reviewed by Hajime Morita.
+
+        Add Implementation for the Vibration API to the WebKit-EFL port.
+        http://dev.w3.org/2009/dap/vibration/
+
+        * Source/cmake/OptionsEfl.cmake: Add ENABLE_VIBRATION feature.
+        * Source/cmakeconfig.h.cmake:
+
 2012-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move more logic from handler classes to model classes and add unit tests

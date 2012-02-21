@@ -553,3 +553,7 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
 fast/mutation/end-of-task-delivery.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=72010
+# Needs PageClients::vibrationClient() implementation.
+fast/dom/navigator-vibration.html

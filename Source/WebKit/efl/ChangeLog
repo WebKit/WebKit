@@ -1,3 +1,31 @@
+2012-02-20  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add a new API for the Vibration API(W3C).
+        https://bugs.webkit.org/show_bug.cgi?id=72010
+
+        Reviewed by Hajime Morita.
+
+        Implementation for the Vibration API feature to the EFL-port layer.
+        http://dev.w3.org/2009/dap/vibration/
+        There are two methods for vibration API.
+        - vibrate : Vibrate device for receiving as a parameter.
+        - cancelVibrate : Cancel current vibration.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/VibrationClientEfl.cpp: Added.
+        (WebCore):
+        (WebCore::VibrationClientEfl::VibrationClientEfl):
+        (WebCore::VibrationClientEfl::vibrate):
+        (WebCore::VibrationClientEfl::cancelVibration):
+        (WebCore::VibrationClientEfl::vibrationDestroyed):
+        * WebCoreSupport/VibrationClientEfl.h: Added.
+        (WebCore):
+        (VibrationClientEfl):
+        (WebCore::VibrationClientEfl::~VibrationClientEfl):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+
 2012-02-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Unreviewed, adapt to the changes introduced in r107973.

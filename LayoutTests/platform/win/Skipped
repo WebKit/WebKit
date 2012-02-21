@@ -1651,3 +1651,6 @@ fast/encoding/utf-16-little-endian.html
 fast/inline/continuation-outlines-with-layers-2.html
 fast/inline/continuation-outlines-with-layers.html
 fast/repaint/transform-absolute-in-positioned-container.html
+
+#Vibration API is not implemented.
+fast/dom/navigator-vibration.html
