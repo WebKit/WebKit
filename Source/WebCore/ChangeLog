@@ -1,3 +1,10 @@
+2012-02-21  Adam Roben  <aroben@apple.com>
+
+        Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Mark TextTrack.h and TextTrackCue.h private so that
+        WebKit can include them.
+
 2012-02-21  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix the N9 build
