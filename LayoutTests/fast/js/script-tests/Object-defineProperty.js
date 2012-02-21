@@ -156,3 +156,8 @@ shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo
 shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result;", '13')
 shouldBe("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo", '42')
 shouldThrow("'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result;")
+
+Object.defineProperty(Object.prototype, 0, {get:function(){ return false; }, configurable:true})
+shouldBeTrue("0 in Object.prototype");
+shouldBeTrue("'0' in Object.prototype");
+delete Object.prototype[0];

@@ -112,6 +112,8 @@ PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result; is 13
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo is 42
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS 0 in Object.prototype is true
+PASS '0' in Object.prototype is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -51,6 +51,7 @@ namespace JSC {
     private:
         ObjectPrototype(ExecState*, Structure*);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);

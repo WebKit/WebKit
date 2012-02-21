@@ -80,7 +80,7 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     ObjectPrototype* thisObject = jsCast<ObjectPrototype*>(cell);
-    JSNonFinalObject::put(cell, exec, propertyName, value, slot);
+    Base::put(cell, exec, propertyName, value, slot);
 
     if (thisObject->m_hasNoPropertiesWithUInt32Names) {
         bool isUInt32;
@@ -89,12 +89,26 @@ void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& prope
     }
 }
 
+bool ObjectPrototype::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    ObjectPrototype* thisObject = jsCast<ObjectPrototype*>(object);
+    bool result = Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
+
+    if (thisObject->m_hasNoPropertiesWithUInt32Names) {
+        bool isUInt32;
+        propertyName.toUInt32(isUInt32);
+        thisObject->m_hasNoPropertiesWithUInt32Names = !isUInt32;
+    }
+
+    return result;
+}
+
 bool ObjectPrototype::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     ObjectPrototype* thisObject = jsCast<ObjectPrototype*>(cell);
     if (thisObject->m_hasNoPropertiesWithUInt32Names)
         return false;
-    return JSNonFinalObject::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
+    return Base::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
 }
 
 bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

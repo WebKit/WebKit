@@ -1,3 +1,21 @@
+2012-02-20  Gavin Barraclough  <barraclough@apple.com>
+
+        DefineOwnProperty fails with numeric properties & Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=79059
+
+        Reviewed by Oliver Hunt.
+
+        ObjectPrototype caches whether it contains any numeric properties (m_hasNoPropertiesWithUInt32Names),
+        calls to defineOwnProperty need to update this cache.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::put):
+        (JSC::ObjectPrototype::defineOwnProperty):
+        (JSC):
+        (JSC::ObjectPrototype::getOwnPropertySlotByIndex):
+        * runtime/ObjectPrototype.h:
+        (ObjectPrototype):
+
 2012-02-20  Pino Toscano  <pino@debian.org>
 
         Does not build on GNU Hurd
