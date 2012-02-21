@@ -46,6 +46,9 @@ class WebKitQmlExperimentalExtensionPlugin: public QDeclarativeExtensionPlugin {
 public:
     virtual void registerTypes(const char* uri)
     {
+        qWarning("\nWARNING: This project is using the experimental QML API extensions for QtWebKit and is therefore tied to a specific QtWebKit release.\n"
+                 "WARNING: The experimental API will change from version to version, or even be removed. You have been warned!\n");
+
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit.experimental"));
 
         qmlRegisterUncreatableType<QWebDownloadItem>(uri, 1, 0, "DownloadItem", QObject::tr("Cannot create separate instance of DownloadItem"));

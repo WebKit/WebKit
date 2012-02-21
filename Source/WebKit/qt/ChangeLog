@@ -1,3 +1,12 @@
+2012-02-21  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Print warning when importing experimental WK2 APIs in QML
+        https://bugs.webkit.org/show_bug.cgi?id=78817
+
+        Reviewed by Simon Hausmann.
+
+        * declarative/experimental/plugin.cpp:
+
 2012-02-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Get rid of the LocalizationStrategy
