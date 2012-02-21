@@ -618,7 +618,7 @@ static void scissorClip(const IntRect& rect)
 {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height());
+    glScissor(rect.x(), viewport[3] - rect.maxY() + 1, rect.width() - 1, rect.height() - 1);
 }
 
 bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)

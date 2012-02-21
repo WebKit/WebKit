@@ -94,7 +94,7 @@ PassRefPtr<BitmapTexture> LayerBackingStore::texture() const
     return PassRefPtr<BitmapTexture>();
 }
 
-void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect&, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     Vector<TextureMapperTile*> tilesToPaint;
 
@@ -115,8 +115,16 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
             tilesToPaint.prepend(&tile);
     }
 
+    bool shouldClip = !targetRect.contains(coveredRect);
+
+    if (shouldClip)
+        textureMapper->beginClip(transform, targetRect);
+
     for (size_t i = 0; i < tilesToPaint.size(); ++i)
         tilesToPaint[i]->paint(textureMapper, transform, opacity, mask);
+
+    if (shouldClip)
+        textureMapper->endClip();
 }
 
 void LayerBackingStore::swapBuffers(TextureMapper* textureMapper)
