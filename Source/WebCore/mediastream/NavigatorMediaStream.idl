@@ -24,8 +24,8 @@ module window {
         Supplemental=Navigator
     ] NavigatorGamepad {
         [V8EnabledAtRuntime] void webkitGetUserMedia(in DOMString options,
-                                                     in [Callback=FunctionOnly] NavigatorUserMediaSuccessCallback successCallback,
-                                                     in [Callback=FunctionOnly, Optional] NavigatorUserMediaErrorCallback errorCallback)
+                                                     in [Callback] NavigatorUserMediaSuccessCallback successCallback,
+                                                     in [Callback, Optional] NavigatorUserMediaErrorCallback errorCallback)
             raises(DOMException);
     };
 

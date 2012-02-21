@@ -25,7 +25,7 @@
 module window {
     interface [
         Conditional=MEDIA_STREAM,
-        Callback=FunctionOnly
+        Callback
     ] NavigatorUserMediaErrorCallback {
         boolean handleEvent(in NavigatorUserMediaError error);
     };

@@ -30,7 +30,7 @@
 
 module core {
     interface [
-        Callback=FunctionOnly,
+        Callback,
         Conditional=REQUEST_ANIMATION_FRAME,
     ] RequestAnimationFrameCallback{
 #if defined(V8_BINDING) && V8_BINDING

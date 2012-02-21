@@ -26,7 +26,7 @@ module p2p {
 
     interface [
         Conditional=MEDIA_STREAM,
-        Callback=FunctionOnly
+        Callback
     ] SignalingCallback {
         boolean handleEvent(in DOMString message, in PeerConnection source);
     };

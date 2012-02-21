@@ -25,7 +25,7 @@
 module core {
     interface [
         Conditional=GEOLOCATION,
-        Callback=FunctionOnly
+        Callback
     ] PositionCallback {
         boolean handleEvent(in Geoposition position);
     };

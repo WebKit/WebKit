@@ -28,7 +28,7 @@ module p2p {
         Conditional=MEDIA_STREAM,
         ActiveDOMObject,
         ConstructorParameters=2,
-        Constructor(in DOMString serverConfiguration, in [Callback=FunctionOnly] SignalingCallback signalingCallback),
+        Constructor(in DOMString serverConfiguration, in [Callback] SignalingCallback signalingCallback),
         CallWith=ScriptExecutionContext,
         JSCustomConstructor,
         EventTarget

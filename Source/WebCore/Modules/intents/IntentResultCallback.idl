@@ -26,7 +26,7 @@
 module window {
   interface [
       Conditional=WEB_INTENTS,
-      Callback=FunctionOnly
+      Callback
   ] IntentResultCallback {
       boolean handleEvent(in SerializedScriptValue result);
   };

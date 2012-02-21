@@ -1,3 +1,26 @@
+2012-02-20  Kentaro Hara  <haraken@chromium.org>
+
+        Replace [Callback=FunctionOnly] with [Callback]
+        https://bugs.webkit.org/show_bug.cgi?id=79060
+
+        Reviewed by Adam Barth.
+
+        [Callback=FunctionOnly] is not implemented by any code generator.
+        This patch replaces it with [Callback].
+
+        No tests. No change in behavior.
+
+        * Modules/intents/IntentResultCallback.idl:
+        * Modules/intents/NavigatorIntents.idl:
+        * dom/RequestAnimationFrameCallback.idl:
+        * mediastream/NavigatorMediaStream.idl:
+        * mediastream/NavigatorUserMediaErrorCallback.idl:
+        * mediastream/NavigatorUserMediaSuccessCallback.idl:
+        * mediastream/PeerConnection.idl:
+        * mediastream/SignalingCallback.idl:
+        * page/PositionCallback.idl:
+        * page/PositionErrorCallback.idl:
+
 2012-02-20  Andy Chen  <andchen@rim.com>
 
         2012-02-17  Andy Chen  <andchen@rim.com>
