@@ -1,3 +1,13 @@
+2012-02-21  Gustavo Noronha Silva  <kov@debian.org> and Bob Tracy  <rct@frus.com>
+
+        Does not build on IA64, SPARC and Alpha
+        https://bugs.webkit.org/show_bug.cgi?id=79047
+
+        Rubber-stamped by Kent Tamura.
+
+        * wtf/dtoa/utils.h: these architectures also have correct double
+        operations, so add them to the appropriate side of the check.
+
 2012-02-20  Pino Toscano  <pino@debian.org>
 
         Does not build on GNU Hurd
