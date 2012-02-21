@@ -65,19 +65,15 @@ public:
     bool isPropertyImplicit(int propertyID) const;
 
     bool setProperty(int propertyID, int value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
-    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    bool setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
     bool setProperty(int propertyID, const String& value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
     void setProperty(const CSSProperty&, CSSProperty* slot = 0);
     
     bool removeProperty(int propertyID, String* returnText = 0);
 
-    // The following parses an entire new style declaration.
     void parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet);
 
-    // Besides adding the properties, this also removes any existing properties with these IDs.
-    // It does no notification since it's called by the parser.
     void addParsedProperties(const CSSProperty* const *, int numProperties);
-    // This does no change notifications since it's only called by createMarkup.
     void addParsedProperty(const CSSProperty&);
 
     PassRefPtr<StylePropertySet> copyBlockProperties() const;
@@ -131,8 +127,8 @@ private:
     bool removeShorthandProperty(int propertyID);
     bool propertyMatches(const CSSProperty*) const;
 
-    const CSSProperty* findPropertyWithId(int propertyId) const;
-    CSSProperty* findPropertyWithId(int propertyId);
+    const CSSProperty* findPropertyWithId(int propertyID) const;
+    CSSProperty* findPropertyWithId(int propertyID);
 
     Vector<CSSProperty, 4> m_properties;
 
