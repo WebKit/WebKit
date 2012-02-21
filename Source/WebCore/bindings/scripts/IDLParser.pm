@@ -215,7 +215,7 @@ sub parseExtendedAttributes
             if ($name eq "Constructor") {
                 $attrs{$name} = "";
             } else {
-                $attrs{$name} = 1;
+                $attrs{$name} = "VALUE_IS_MISSING";
             }
             $str =~ s/^\s*,?//;
         } else {
@@ -297,7 +297,7 @@ sub ParseInterface
             $newDataNode->signature->name("Constructor");
             $newDataNode->signature->extendedAttributes($extendedAttributes);
             parseParameters($newDataNode, $extendedAttributes->{"Constructor"});
-            $extendedAttributes->{"Constructor"} = 1;
+            $extendedAttributes->{"Constructor"} = "VALUE_IS_MISSING";
             $dataNode->constructor($newDataNode);
         } elsif (defined $extendedAttributes->{"NamedConstructor"}) {
             my $newDataNode = new domFunction();

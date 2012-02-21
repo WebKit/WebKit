@@ -478,6 +478,7 @@
           'inputs': [
             '../bindings/scripts/resolve-supplemental.pl',
             '../bindings/scripts/IDLParser.pm',
+            '../bindings/scripts/IDLAttributes.txt',
             '<(idl_files_list)',
             '<!@(cat <(idl_files_list))',
           ],
@@ -495,6 +496,8 @@
             '<(idl_files_list)',
             '--supplementalDependencyFile',
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
+            '--idlAttributesFile',
+            '../bindings/scripts/IDLAttributes.txt',
           ],
           'message': 'Resolving [Supplemental=XXX] dependencies in all IDL files',
         }

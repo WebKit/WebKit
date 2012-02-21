@@ -1,0 +1,109 @@
+#
+# This file describes all IDL attributes.
+# If any IDL file uses an IDL attribute not listed below, the WebKit build will fail.
+# If you want to add a new IDL attribute, you need to add it to this file
+# and the WebKit IDL document (https://trac.webkit.org/wiki/WebKitIDL).
+#
+# The syntax of this file is as follows:
+#     - You can write one IDL attribute per one line.
+#     - "ATTR" means that the IDL attribute ATTR does not take any argument; i.e. [ATTR].
+#     - "ATTR=X" means that the IDL attribute ATTR always takes one argument X; i.e. [ATTR=X].
+#     - "ATTR=X|Y|Z" means that the IDL attribute ATTR takes one or more arguments
+#       and the arguments are X, Y or Z; e.g. [ATTR=X], [ATTR=Y], [ATTR=X|Z], [ATTR=X|Y|Z].
+#     - "ATTR=|X|Y|Z" means that the IDL attribute ATTR can take arguments
+#       and the arguments are X, Y or Z; e.g. [ATTR], [ATTR=X], [ATTR=Y], [ATTR=X|Z], [ATTR=X|Y|Z].
+#     - "ATTR=*" means that the IDL attribute ATTR can take arbitrary arguments;
+#       e.g. [ATTR=INDEXED_DATABASE], [ATTR=deleteFunction].
+#
+
+ActiveDOMObject
+CPPPureInterface
+CachedAttribute
+CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
+Callback
+CheckSecurity
+CheckSecurityForNode
+Conditional=*
+Constructor
+ConstructorParameters=*
+ConstructorRaisesException
+ConstructorTemplate=Event
+Custom
+CustomCall
+CustomConstructor
+CustomDeleteProperty
+CustomEnumerateProperty
+CustomGetOwnPropertySlot
+CustomGetter
+CustomIndexedSetter
+CustomNamedGetter
+CustomNamedSetter
+CustomPutFunction
+CustomReturn
+CustomSetter
+CustomToJSObject
+Deletable
+DoNotCheckConstants
+DoNotCheckSecurity
+DoNotCheckSecurityOnGetter
+DoNotCheckSecurityOnSetter
+EventTarget
+ExtendsDOMGlobalObject
+Immutable
+ImplementedAs=*
+IndexedGetter
+InitializedByEventConstructor
+IsIndex
+IsWorkerContext
+JSCustom
+JSCustomConstructor
+JSCustomDefineOwnProperty
+JSCustomDefineOwnPropertyOnPrototype
+JSCustomFinalize
+JSCustomGetOwnPropertySlotAndDescriptor
+JSCustomGetter
+JSCustomHeader
+JSCustomIsReachable
+JSCustomMarkFunction
+JSCustomNamedGetterOnPrototype
+JSCustomPushEventHandlerScope
+JSCustomSetter
+JSCustomToJSObject
+JSCustomToNativeObject
+JSGenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame
+JSGenerateToJSObject
+JSGenerateToNativeObject
+JSInlineGetOwnPropertySlot
+JSLegacyParent=*
+JSNoStaticTables
+JSWindowEventListener
+MasqueradesAsUndefined
+NamedConstructor=*
+NamedGetter
+NotEnumerable
+NumericIndexedGetter
+ObjCLegacyUnnamedParameters
+ObjCPolymorphic
+ObjCProtocol
+OmitConstructor
+Optional=|DefaultIsNullString|DefaultIsUndefined
+Reflect=*
+Replaceable
+ReplaceableConstructor
+ReturnNewObject
+StrictTypeChecking
+Supplemental=*
+TreatNullAs=NullString
+TreatReturnedNullStringAs=False|Null|Undefined
+TreatUndefinedAs=NullString
+URL
+V8Custom
+V8CustomConstructor
+V8CustomGetter
+V8CustomSetter
+V8CustomToJSObject
+V8DependentLifetime
+V8DoNotCheckSignature
+V8EnabledAtRuntime=*
+V8ReadOnly
+V8Unforgeable

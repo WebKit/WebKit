@@ -30,12 +30,14 @@ my $defines;
 my $preprocessor;
 my $verbose;
 my $idlFilesList;
+my $idlAttributesFile;
 my $supplementalDependencyFile;
 
 GetOptions('defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor,
            'verbose' => \$verbose,
            'idlFilesList=s' => \$idlFilesList,
+           'idlAttributesFile=s' => \$idlAttributesFile,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
@@ -59,6 +61,16 @@ foreach my $idlFile (@idlFiles) {
     my $parser = IDLParser->new(!$verbose);
     $documents{$fullPath} = $parser->Parse($idlFile, $defines, $preprocessor);
     $interfaceNameToIdlFile{fileparse(basename($idlFile), ".idl")} = $fullPath;
+}
+
+# FIXME: After enabling the IDL attribute checker on all build systems
+# we can remove the if statement.
+if ($idlAttributesFile) {
+    # Runs the IDL attribute checker.
+    my $idlAttributes = loadIDLAttributes($idlAttributesFile);
+    foreach my $idlFile (keys %documents) {
+        checkIDLAttributes($idlAttributes, $documents{$idlFile}, basename($idlFile));
+    }
 }
 
 # Resolves [Supplemental=XXX] dependencies.
@@ -93,3 +105,86 @@ foreach my $idlFile (sort keys %supplementals) {
     print FH $idlFile, " @{$supplementals{$idlFile}}\n";
 }
 close FH;
+
+sub loadIDLAttributes
+{
+    my $idlAttributesFile = shift;
+
+    my %idlAttributes;
+    open FH, "<", $idlAttributesFile or die "Couldn't open $idlAttributesFile: $!";
+    while (my $line = <FH>) {
+        chomp $line;
+        next if $line =~ /^\s*#/;
+        next if $line =~ /^\s*$/;
+
+        if ($line =~ /^\s*([^=\s]*)\s*=?\s*(.*)/) {
+            my $name = $1;
+            $idlAttributes{$name} = {};
+            if ($2) {
+                foreach my $rightValue (split /\|/, $2) {
+                    $rightValue =~ s/^\s*|\s*$//g;
+                    $rightValue = "VALUE_IS_MISSING" unless $rightValue;
+                    $idlAttributes{$name}{$rightValue} = 1;
+                }
+            } else {
+                $idlAttributes{$name}{"VALUE_IS_MISSING"} = 1;
+            }
+        } else {
+            die "The format of " . basename($idlAttributesFile) . " is wrong: line $.\n";
+        }
+    }
+    close FH;
+
+    return \%idlAttributes;
+}
+
+sub checkIDLAttributes
+{
+    my $idlAttributes = shift;
+    my $document = shift;
+    my $idlFile = shift;
+
+    foreach my $dataNode (@{$document->classes}) {
+        checkIfIDLAttributesExists($idlAttributes, $dataNode->extendedAttributes, $idlFile);
+
+        foreach my $attribute (@{$dataNode->attributes}) {
+            checkIfIDLAttributesExists($idlAttributes, $attribute->signature->extendedAttributes, $idlFile);
+        }
+
+        foreach my $function (@{$dataNode->functions}) {
+            checkIfIDLAttributesExists($idlAttributes, $function->signature->extendedAttributes, $idlFile);
+            foreach my $parameter (@{$function->parameters}) {
+                checkIfIDLAttributesExists($idlAttributes, $parameter->extendedAttributes, $idlFile);
+            }
+        }
+    }
+}
+
+sub checkIfIDLAttributesExists
+{
+    my $idlAttributes = shift;
+    my $extendedAttributes = shift;
+    my $idlFile = shift;
+
+    my $error;
+    OUTER: for my $name (keys %$extendedAttributes) {
+        if (!exists $idlAttributes->{$name}) {
+            $error = "Unknown IDL attribute [$name] is found at $idlFile.";
+            last OUTER;
+        }
+        if ($idlAttributes->{$name}{"*"}) {
+            next;
+        }
+        for my $rightValue (split /\s*\|\s*/, $extendedAttributes->{$name}) {
+            if (!exists $idlAttributes->{$name}{$rightValue}) {
+                $error = "Unknown IDL attribute [$name=" . $extendedAttributes->{$name} . "] is found at $idlFile.";
+                last OUTER;
+            }
+        }
+    }
+    if ($error) {
+        die "IDL ATTRIBUTE CHECKER ERROR: $error
+If you want to add a new IDL attribute, you need to add it to WebCore/bindings/scripts/IDLAttributes.txt and add explanations to the WebKit IDL document (https://trac.webkit.org/wiki/WebKitIDL).
+";
+    }
+}

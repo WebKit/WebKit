@@ -1,3 +1,45 @@
+2012-02-21  Kentaro Hara  <haraken@chromium.org>
+
+        Enable the IDL attribute checker in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=79082
+
+        Reviewed by Adam Barth.
+
+        We have fixed 10~ bugs caused by typos of IDL attributes.
+        This patch adds an IDL attribute checker, which checks if all IDL attributes
+        used in IDL files are implemented by code generators.
+
+            - The IDL attribute checker uses IDLAttributes.txt, which lists all
+              IDL attributes implemented in code generators. If we want to add
+              a new IDL attribute, we need to add it to IDLAttributes.txt manually.
+            - The IDL attribute checker checks if all IDL attributes used in IDL files
+              are listed in IDLAttributes.txt.
+            - If the IDL attribute checker fails, the build fails with a verbose error message.
+
+        No tests. I manually checked that [Custommm], [CallWith=],
+        [CallWith=ScriptExecutionContext|Foo] cause build failures.
+
+        * WebCore.gyp/WebCore.gyp: Modified to enable the IDL attribute checker.
+
+        * bindings/scripts/resolve-supplemental.pl:
+        (loadIDLAttributes): This method loads a list of IDL attributes from IDLAttributes.txt.
+        (checkIDLAttributes): This method implementes the IDL attribute checker as described above.
+        (checkIfIDLAttributesExists):
+
+        * bindings/scripts/IDLParser.pm: "1" is not good to represent that
+        the IDL attribute does not have any value. This patch changed it to "VALUE_IS_MISSING".
+        (parseExtendedAttributes):
+        (ParseInterface):
+        * bindings/scripts/CodeGenerator.pm: Ditto.
+        (ContentAttributeName):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateSingleBatchedAttribute):
+        (GetRuntimeEnableFunctionName):
+        * bindings/scripts/IDLAttributes.txt: Added. This file lists all IDL attributes implemented
+        in code generators.
+
 2012-02-21  Patrick Gansterer  <paroga@webkit.org>
 
         Use Win32 API to get file information

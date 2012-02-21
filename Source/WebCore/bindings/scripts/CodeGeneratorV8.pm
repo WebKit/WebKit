@@ -828,7 +828,7 @@ END
         my $url = $attribute->signature->extendedAttributes->{"URL"};
         if ($getterStringUsesImp && $reflect && !$url && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
-            my $contentAttributeName = $reflect eq "1" ? lc $attrName : $reflect;
+            my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
             push(@implContentDecls, "    return getElementStringAttr(info, ${namespace}::${contentAttributeName}Attr);\n");
@@ -1069,7 +1069,7 @@ END
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         if ($reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
-            my $contentAttributeName = $reflect eq "1" ? lc $attrName : $reflect;
+            my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
             push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
@@ -1952,7 +1952,7 @@ sub GenerateSingleBatchedAttribute
         $attrExt->{"V8CustomSetter"} ||
         $attrExt->{"V8CustomGetter"} ||
         "";
-    if ($customAccessor eq 1) {
+    if ($customAccessor eq "VALUE_IS_MISSING") {
         # use the naming convension, interface + (capitalize) attr name
         $customAccessor = $interfaceName . "::" . $attrName;
     }
@@ -3822,7 +3822,7 @@ sub GetRuntimeEnableFunctionName
     my $signature = shift;
 
     # If a parameter is given (e.g. "V8EnabledAtRuntime=FeatureName") return the RuntimeEnabledFeatures::{FeatureName}Enabled() method.
-    return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->extendedAttributes->{"V8EnabledAtRuntime"}) . "Enabled" if ($signature->extendedAttributes->{"V8EnabledAtRuntime"} && $signature->extendedAttributes->{"V8EnabledAtRuntime"} ne "1");
+    return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->extendedAttributes->{"V8EnabledAtRuntime"}) . "Enabled" if ($signature->extendedAttributes->{"V8EnabledAtRuntime"} && $signature->extendedAttributes->{"V8EnabledAtRuntime"} ne "VALUE_IS_MISSING");
 
     # Otherwise return a function named RuntimeEnabledFeatures::{methodName}Enabled().
     return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->name) . "Enabled";
