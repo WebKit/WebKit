@@ -399,10 +399,10 @@ void InspectorInstrumentation::didLoadXHRImpl(const InspectorInstrumentationCook
         timelineAgent->didLoadXHR();
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, GraphicsContext* context, const LayoutRect& rect)
+InspectorInstrumentationCookie InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, GraphicsContext* context, const LayoutRect& rect)
 {
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->willPaint(frame, context, rect);
+        pageAgent->willPaint(context, rect);
 
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {

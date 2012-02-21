@@ -1,3 +1,22 @@
+2012-02-21  'Pavel Feldman'  <pfeldman@google.com>
+
+        Not reviewed: fixing Mac build.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawOutline):
+        * inspector/DOMNodeHighlighter.h:
+        (DOMNodeHighlighter):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willPaint):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::willPaint):
+        (WebCore::InspectorPageAgent::didPaint):
+        * inspector/InspectorPageAgent.h:
+
 2012-02-21  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Switch Debugger agent to TypeBuilder

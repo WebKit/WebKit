@@ -113,7 +113,7 @@ public:
     void loaderDetachedFromFrame(DocumentLoader*);
     void applyScreenWidthOverride(long*);
     void applyScreenHeightOverride(long*);
-    void willPaint(Frame*, GraphicsContext*, const LayoutRect&);
+    void willPaint(GraphicsContext*, const LayoutRect&);
     void didPaint();
 
     // Inspector Controller API
@@ -150,7 +150,6 @@ private:
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     OwnPtr<IntSize> m_originalFixedLayoutSize;
     bool m_originalUseFixedLayout;
-    Frame* m_lastPaintFrame;
     GraphicsContext* m_lastPaintContext;
     LayoutRect m_lastPaintRect;
 };

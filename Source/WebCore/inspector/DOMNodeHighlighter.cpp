@@ -514,7 +514,7 @@ void getHighlight(Document* document, HighlightData* highlightData, Highlight* h
         getOrDrawRectHighlight(0, document, highlightData, highlight);
 }
 
-void drawOutline(GraphicsContext& context, FrameView* view, const LayoutRect& rect, const Color& color)
+void drawOutline(GraphicsContext& context, const LayoutRect& rect, const Color& color)
 {
     FloatRect outlineRect = rect;
     drawOutlinedQuad(context, outlineRect, Color(), color);

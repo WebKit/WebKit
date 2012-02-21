@@ -271,7 +271,7 @@ private:
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, Frame*, GraphicsContext*, const LayoutRect&);
+    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
@@ -728,7 +728,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame*
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willPaintImpl(instrumentingAgents, frame, context, rect);
+        return willPaintImpl(instrumentingAgents, context, rect);
 #endif
     return InspectorInstrumentationCookie();
 }

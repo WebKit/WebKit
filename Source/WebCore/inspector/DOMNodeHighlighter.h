@@ -79,7 +79,7 @@ namespace DOMNodeHighlighter {
 
 void drawHighlight(GraphicsContext&, Document*, HighlightData*);
 void getHighlight(Document*, HighlightData*, Highlight*);
-void drawOutline(GraphicsContext&, FrameView*, const LayoutRect&, const Color&);
+void drawOutline(GraphicsContext&, const LayoutRect&, const Color&);
 
 } // namespace DOMNodeHighlighter
 

@@ -284,7 +284,6 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_frontend(0)
     , m_lastScriptIdentifier(0)
     , m_originalUseFixedLayout(false)
-    , m_lastPaintFrame(0)
     , m_lastPaintContext(0)
 {
 }
@@ -765,10 +764,9 @@ void InspectorPageAgent::applyScreenHeightOverride(long* height)
         *height = heightOverride;
 }
 
-void InspectorPageAgent::willPaint(Frame* frame, GraphicsContext* context, const LayoutRect& rect)
+void InspectorPageAgent::willPaint(GraphicsContext* context, const LayoutRect& rect)
 {
     if (m_state->getBoolean(PageAgentState::showPaintRects)) {
-        m_lastPaintFrame = frame;
         m_lastPaintContext = context;
         m_lastPaintRect = rect;
         m_lastPaintRect.inflate(-1);
@@ -777,7 +775,7 @@ void InspectorPageAgent::willPaint(Frame* frame, GraphicsContext* context, const
 
 void InspectorPageAgent::didPaint()
 {
-    if (!m_lastPaintFrame || !m_state->getBoolean(PageAgentState::showPaintRects))
+    if (!m_lastPaintContext || !m_state->getBoolean(PageAgentState::showPaintRects))
         return;
 
     static int colorSelector = 0;
@@ -787,9 +785,8 @@ void InspectorPageAgent::didPaint()
         Color(0, 0, 0xFF, 0x3F),
     };
 
-    DOMNodeHighlighter::drawOutline(*m_lastPaintContext, m_lastPaintFrame->view(), m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
+    DOMNodeHighlighter::drawOutline(*m_lastPaintContext, m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
 
-    m_lastPaintFrame = 0;
     m_lastPaintContext = 0;
 }
 
