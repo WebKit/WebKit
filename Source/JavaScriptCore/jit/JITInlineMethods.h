@@ -454,65 +454,6 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 #endif
 }
 
-inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result, RegisterID storagePtr)
-{
-    CopiedAllocator* allocator = &m_globalData->heap.storageAllocator();
-
-    // FIXME: We need to check for wrap-around.
-    // Check to make sure that the allocation will fit in the current block.
-    loadPtr(&allocator->m_currentOffset, result);
-    addPtr(TrustedImm32(size), result);
-    loadPtr(&allocator->m_currentBlock, storagePtr);
-    addPtr(TrustedImm32(HeapBlock::s_blockSize), storagePtr);
-    addSlowCase(branchPtr(AboveOrEqual, result, storagePtr));
-
-    // Load the original offset.
-    loadPtr(&allocator->m_currentOffset, result);
-
-    // Bump the pointer forward.
-    move(result, storagePtr);
-    addPtr(TrustedImm32(size), storagePtr);
-    storePtr(storagePtr, &allocator->m_currentOffset);
-}
-
-inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr)
-{
-    unsigned initialLength = std::max(length, 4U);
-    size_t initialStorage = JSArray::storageSize(initialLength);
-
-    // Allocate the cell for the array.
-    emitAllocateBasicJSObject<JSArray, false>(TrustedImmPtr(m_codeBlock->globalObject()->arrayStructure()), cellResult, storagePtr);
-
-    // Allocate the backing store for the array.
-    emitAllocateBasicStorage(initialStorage, storageResult, storagePtr);
-
-    // Store all the necessary info in the ArrayStorage.
-    storePtr(storageResult, Address(storageResult, ArrayStorage::allocBaseOffset()));
-    store32(Imm32(length), Address(storageResult, ArrayStorage::lengthOffset()));
-    store32(Imm32(length), Address(storageResult, ArrayStorage::numValuesInVectorOffset()));
-
-    // Store the newly allocated ArrayStorage.
-    storePtr(storageResult, Address(cellResult, JSArray::storageOffset()));
-
-    // Store the vector length and index bias.
-    store32(Imm32(initialLength), Address(cellResult, JSArray::vectorLengthOffset()));
-    store32(TrustedImm32(0), Address(cellResult, JSArray::indexBiasOffset()));
-
-    // Initialize the subclass data and the sparse value map.
-    storePtr(TrustedImmPtr(0), Address(cellResult, JSArray::subclassDataOffset()));
-    storePtr(TrustedImmPtr(0), Address(cellResult, JSArray::sparseValueMapOffset()));
-
-    // Store the values we have.
-    for (unsigned i = 0; i < length; i++) {
-        loadPtr(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        storePtr(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
-    }
-
-    // Zero out the remaining slots.
-    for (unsigned i = length; i < initialLength; i++)
-        storePtr(TrustedImmPtr(0), Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
-}
-
 #if ENABLE(VALUE_PROFILER)
 inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 {

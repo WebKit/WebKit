@@ -46,7 +46,6 @@ class HeapBlock;
 
 class CopiedSpace {
     friend class SlotVisitor;
-    friend class JIT;
 public:
     CopiedSpace(Heap*);
     void init();
@@ -54,8 +53,6 @@ public:
     CheckedBoolean tryAllocate(size_t, void**);
     CheckedBoolean tryReallocate(void**, size_t, size_t);
     
-    CopiedAllocator& allocator() { return m_allocator; }
-
     void startedCopying();
     void doneCopying();
     bool isInCopyPhase() { return m_inCopyingPhase; }

@@ -1,3 +1,28 @@
+2012-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, rolling out http://trac.webkit.org/changeset/108291
+        It completely broke the 32-bit JIT.
+
+        * heap/CopiedAllocator.h:
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/Heap.h:
+        (JSC::Heap::allocatorForObjectWithDestructor):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+        * runtime/JSArray.cpp:
+        (JSC::storageSize):
+        (JSC):
+        * runtime/JSArray.h:
+        (ArrayStorage):
+        (JSArray):
+
 2012-02-20  Gavin Barraclough  <barraclough@apple.com>
 
         [[Put]] should throw if prototype chain contains a readonly property.

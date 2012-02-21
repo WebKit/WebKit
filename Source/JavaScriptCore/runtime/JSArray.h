@@ -119,16 +119,10 @@ namespace JSC {
         bool m_inCompactInitialization;
 #endif
         WriteBarrier<Unknown> m_vector[1];
-
-        static ptrdiff_t lengthOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_length); }
-        static ptrdiff_t numValuesInVectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector); }
-        static ptrdiff_t allocBaseOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_allocBase); }
-        static ptrdiff_t vectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_vector); }
     };
 
     class JSArray : public JSNonFinalObject {
         friend class Walker;
-        friend class JIT;
 
     protected:
         JS_EXPORT_PRIVATE explicit JSArray(JSGlobalData&, Structure*);
@@ -264,7 +258,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE void setSubclassData(void*);
 
     private:
-        static size_t storageSize(unsigned vectorLength);
         bool isLengthWritable()
         {
             SparseArrayValueMap* map = m_sparseValueMap;
@@ -296,10 +289,6 @@ namespace JSC {
         // FIXME: Maybe SparseArrayValueMap should be put into its own JSCell?
         SparseArrayValueMap* m_sparseValueMap;
         void* m_subclassData; // A JSArray subclass can use this to fill the vector lazily.
-
-        static ptrdiff_t sparseValueMapOffset() { return OBJECT_OFFSETOF(JSArray, m_sparseValueMap); }
-        static ptrdiff_t subclassDataOffset() { return OBJECT_OFFSETOF(JSArray, m_subclassData); }
-        static ptrdiff_t indexBiasOffset() { return OBJECT_OFFSETOF(JSArray, m_indexBias); }
     };
 
     inline JSArray* JSArray::create(JSGlobalData& globalData, Structure* structure, unsigned initialLength)
@@ -341,30 +330,6 @@ namespace JSC {
         return i;
     }
 
-// The definition of MAX_STORAGE_VECTOR_LENGTH is dependant on the definition storageSize
-// function below - the MAX_STORAGE_VECTOR_LENGTH limit is defined such that the storage
-// size calculation cannot overflow.  (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>)) +
-// (vectorLength * sizeof(WriteBarrier<Unknown>)) must be <= 0xFFFFFFFFU (which is maximum value of size_t).
-#define MAX_STORAGE_VECTOR_LENGTH static_cast<unsigned>((0xFFFFFFFFU - (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))) / sizeof(WriteBarrier<Unknown>))
-
-// These values have to be macros to be used in max() and min() without introducing
-// a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
-#define MIN_SPARSE_ARRAY_INDEX 10000U
-#define MAX_STORAGE_VECTOR_INDEX (MAX_STORAGE_VECTOR_LENGTH - 1)
-    inline size_t JSArray::storageSize(unsigned vectorLength)
-    {
-        ASSERT(vectorLength <= MAX_STORAGE_VECTOR_LENGTH);
-    
-        // MAX_STORAGE_VECTOR_LENGTH is defined such that provided (vectorLength <= MAX_STORAGE_VECTOR_LENGTH)
-        // - as asserted above - the following calculation cannot overflow.
-        size_t size = (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>)) + (vectorLength * sizeof(WriteBarrier<Unknown>));
-        // Assertion to detect integer overflow in previous calculation (should not be possible, provided that
-        // MAX_STORAGE_VECTOR_LENGTH is correctly defined).
-        ASSERT(((size - (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))) / sizeof(WriteBarrier<Unknown>) == vectorLength) && (size >= (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))));
-    
-        return size;
-    }
-    
-    } // namespace JSC
+} // namespace JSC
 
 #endif // JSArray_h

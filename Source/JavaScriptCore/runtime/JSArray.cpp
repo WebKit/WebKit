@@ -104,6 +104,20 @@ const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0, CRE
 // This value is capped by the constant FIRST_VECTOR_GROW defined above.
 static unsigned lastArraySize = 0;
 
+static inline size_t storageSize(unsigned vectorLength)
+{
+    ASSERT(vectorLength <= MAX_STORAGE_VECTOR_LENGTH);
+
+    // MAX_STORAGE_VECTOR_LENGTH is defined such that provided (vectorLength <= MAX_STORAGE_VECTOR_LENGTH)
+    // - as asserted above - the following calculation cannot overflow.
+    size_t size = (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>)) + (vectorLength * sizeof(WriteBarrier<Unknown>));
+    // Assertion to detect integer overflow in previous calculation (should not be possible, provided that
+    // MAX_STORAGE_VECTOR_LENGTH is correctly defined).
+    ASSERT(((size - (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))) / sizeof(WriteBarrier<Unknown>) == vectorLength) && (size >= (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))));
+
+    return size;
+}
+
 static inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {
     return length <= MIN_SPARSE_ARRAY_INDEX || length / minDensityMultiplier <= numValues;

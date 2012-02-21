@@ -97,7 +97,6 @@ namespace JSC {
         
         MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
         MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
-        CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
         CheckedBoolean tryAllocateStorage(size_t, void**);
         CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
 
