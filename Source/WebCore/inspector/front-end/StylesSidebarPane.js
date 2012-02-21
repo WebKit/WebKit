@@ -941,7 +941,8 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
 
             if (media.sourceURL) {
                 var refElement = mediaDataElement.createChild("div", "subtitle");
-                var anchor = WebInspector.linkifyResourceAsNode(media.sourceURL, media.sourceLine < 0 ? undefined : media.sourceLine, "subtitle");
+                var lineNumber = media.sourceLine < 0 ? undefined : media.sourceLine;
+                var anchor = WebInspector.linkifyResourceAsNode(media.sourceURL, lineNumber, "subtitle", media.sourceURL + (isNaN(lineNumber) ? "" : (":" + (lineNumber + 1))));
                 anchor.style.float = "right";
                 refElement.appendChild(anchor);
             }
@@ -1174,7 +1175,7 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         function linkifyUncopyable(url, line)
         {
-            var link = WebInspector.linkifyResourceAsNode(url, line);
+            var link = WebInspector.linkifyResourceAsNode(url, line, "", url + ":" + (line + 1));
             link.classList.add("webkit-html-resource-link");
             link.setAttribute("data-uncopyable", link.textContent);
             link.textContent = "";
