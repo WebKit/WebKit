@@ -1,3 +1,43 @@
+2012-02-20  Adam Barth  <abarth@webkit.org>
+
+        Unite TextTrack-related files with their friends in WebCore/html/track
+        https://bugs.webkit.org/show_bug.cgi?id=78941
+
+        Reviewed by Eric Seidel.
+
+        The code that supports <track> seems to be split between the
+        WebCore/html directory and the WebCore/html/track directory.  This
+        patch unites this code in the WebCore/html/track directory.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/LoadableTextTrack.cpp: Removed.
+        * html/LoadableTextTrack.h: Removed.
+        * html/TextTrack.cpp: Removed.
+        * html/TextTrack.h: Removed.
+        * html/TextTrack.idl: Removed.
+        * html/TextTrackCue.cpp: Removed.
+        * html/TextTrackCue.h: Removed.
+        * html/TextTrackCue.idl: Removed.
+        * html/TextTrackCueList.cpp: Removed.
+        * html/TextTrackCueList.h: Removed.
+        * html/TextTrackCueList.idl: Removed.
+        * html/track/LoadableTextTrack.cpp: Copied from Source/WebCore/html/LoadableTextTrack.cpp.
+        * html/track/LoadableTextTrack.h: Copied from Source/WebCore/html/LoadableTextTrack.h.
+        * html/track/TextTrack.cpp: Copied from Source/WebCore/html/TextTrack.cpp.
+        * html/track/TextTrack.h: Copied from Source/WebCore/html/TextTrack.h.
+        * html/track/TextTrack.idl: Copied from Source/WebCore/html/TextTrack.idl.
+        * html/track/TextTrackCue.cpp: Copied from Source/WebCore/html/TextTrackCue.cpp.
+        * html/track/TextTrackCue.h: Copied from Source/WebCore/html/TextTrackCue.h.
+        * html/track/TextTrackCue.idl: Copied from Source/WebCore/html/TextTrackCue.idl.
+        * html/track/TextTrackCueList.cpp: Copied from Source/WebCore/html/TextTrackCueList.cpp.
+        * html/track/TextTrackCueList.h: Copied from Source/WebCore/html/TextTrackCueList.h.
+        * html/track/TextTrackCueList.idl: Copied from Source/WebCore/html/TextTrackCueList.idl.
+
 2012-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be a triple-tier VM

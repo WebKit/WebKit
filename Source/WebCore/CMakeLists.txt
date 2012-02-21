@@ -284,9 +284,6 @@ SET(WebCore_IDL_FILES
     html/MediaController.idl
     html/MediaError.idl
     html/TextMetrics.idl
-    html/TextTrack.idl
-    html/TextTrackCue.idl
-    html/TextTrackCueList.idl
     html/TimeRanges.idl
     html/ValidityState.idl
     html/VoidCallback.idl
@@ -311,6 +308,9 @@ SET(WebCore_IDL_FILES
     html/shadow/HTMLContentElement.idl
     html/shadow/HTMLShadowElement.idl
 
+    html/track/TextTrack.idl
+    html/track/TextTrackCue.idl
+    html/track/TextTrackCueList.idl
     html/track/TextTrackList.idl
     html/track/TrackEvent.idl
 
@@ -2113,10 +2113,10 @@ ENDIF ()
 IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
         html/HTMLTrackElement.cpp
-        html/LoadableTextTrack.cpp
-        html/TextTrack.cpp
-        html/TextTrackCue.cpp
-        html/TextTrackCueList.cpp
+        html/track/LoadableTextTrack.cpp
+        html/track/TextTrack.cpp
+        html/track/TextTrackCue.cpp
+        html/track/TextTrackCueList.cpp
         html/track/TextTrackList.cpp
         html/track/TrackBase.cpp
         html/track/TrackEvent.cpp

@@ -260,9 +260,6 @@ BINDING_IDLS = \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaError.idl \
     $(WebCore)/html/TextMetrics.idl \
-    $(WebCore)/html/TextTrack.idl \
-    $(WebCore)/html/TextTrackCue.idl \
-    $(WebCore)/html/TextTrackCueList.idl \
     $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/ValidityState.idl \
     $(WebCore)/html/canvas/ArrayBuffer.idl \
@@ -300,6 +297,9 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
     $(WebCore)/html/shadow/HTMLContentElement.idl \
     $(WebCore)/html/shadow/HTMLShadowElement.idl \
+    $(WebCore)/html/track/TextTrack.idl \
+    $(WebCore)/html/track/TextTrackCue.idl \
+    $(WebCore)/html/track/TextTrackCueList.idl \
     $(WebCore)/html/track/TextTrackList.idl \
     $(WebCore)/html/track/TrackEvent.idl \
     $(WebCore)/inspector/InjectedScriptHost.idl \

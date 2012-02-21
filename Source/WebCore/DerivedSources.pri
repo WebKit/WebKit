@@ -599,9 +599,9 @@ contains(DEFINES, ENABLE_SVG=1) {
 
 contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
   IDL_BINDINGS += \
-    $$PWD/html/TextTrack.idl \
-    $$PWD/html/TextTrackCue.idl \
-    $$PWD/html/TextTrackCueList.idl \
+    $$PWD/html/track/TextTrack.idl \
+    $$PWD/html/track/TextTrackCue.idl \
+    $$PWD/html/track/TextTrackCueList.idl \
     $$PWD/html/track/TextTrackList.idl \
     $$PWD/html/track/TrackEvent.idl \
 }

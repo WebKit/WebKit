@@ -828,9 +828,6 @@ dom_binding_idls += \
 	$(WebCore)/html/MediaController.idl \
 	$(WebCore)/html/MediaError.idl \
 	$(WebCore)/html/TextMetrics.idl \
-	$(WebCore)/html/TextTrack.idl \
-	$(WebCore)/html/TextTrackCue.idl \
-	$(WebCore)/html/TextTrackCueList.idl \
 	$(WebCore)/html/TimeRanges.idl \
 	$(WebCore)/html/ValidityState.idl \
 	$(WebCore)/html/VoidCallback.idl \
@@ -868,6 +865,9 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/shadow/HTMLContentElement.idl \
+	$(WebCore)/html/track/TextTrack.idl \
+	$(WebCore)/html/track/TextTrackCue.idl \
+	$(WebCore)/html/track/TextTrackCueList.idl \
 	$(WebCore)/html/track/TextTrackList.idl \
 	$(WebCore)/html/track/TrackEvent.idl \
 	$(WebCore)/inspector/InjectedScriptHost.idl \
@@ -2181,8 +2181,6 @@ webcore_sources += \
 	Source/WebCore/html/LabelsNodeList.h \
 	Source/WebCore/html/LinkRelAttribute.cpp \
 	Source/WebCore/html/LinkRelAttribute.h \
-	Source/WebCore/html/LoadableTextTrack.cpp \
-	Source/WebCore/html/LoadableTextTrack.h \
 	Source/WebCore/html/MediaController.cpp \
 	Source/WebCore/html/MediaController.h \
 	Source/WebCore/html/MediaControllerInterface.h \
@@ -2290,16 +2288,18 @@ webcore_sources += \
 	Source/WebCore/html/TextInputType.cpp \
 	Source/WebCore/html/TextInputType.h \
 	Source/WebCore/html/TextMetrics.h \
-	Source/WebCore/html/TextTrack.cpp \
-	Source/WebCore/html/TextTrack.h \
-	Source/WebCore/html/TextTrackCue.cpp \
-	Source/WebCore/html/TextTrackCue.h \
-	Source/WebCore/html/TextTrackCueList.cpp \
-	Source/WebCore/html/TextTrackCueList.h \
 	Source/WebCore/html/TimeInputType.cpp \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/LoadableTextTrack.cpp \
+	Source/WebCore/html/track/LoadableTextTrack.h \
+	Source/WebCore/html/track/TextTrack.cpp \
+	Source/WebCore/html/track/TextTrack.h \
+	Source/WebCore/html/track/TextTrackCue.cpp \
+	Source/WebCore/html/track/TextTrackCue.h \
+	Source/WebCore/html/track/TextTrackCueList.cpp \
+	Source/WebCore/html/track/TextTrackCueList.h \
 	Source/WebCore/html/track/TextTrackList.cpp \
 	Source/WebCore/html/track/TextTrackList.h \
 	Source/WebCore/html/track/TrackBase.cpp \
