@@ -1,3 +1,13 @@
+2012-02-21  Philippe Normand  <pnormand@igalia.com>
+
+        Fix one more GTK+ unit test after r108278.
+
+        Reviewed by Alejandro G. Castro.
+
+        * tests/testkeyevents.c:
+        (map_event_cb): No longer grab focus here.
+        (setup_keyevent_test): Grabbing focus here seems to be late enough in the process.
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ unit tests after r108281.
