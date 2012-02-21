@@ -1,5 +1,41 @@
 2012-02-21  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: merge message_broker.py into manager_worker_broker.py
+        https://bugs.webkit.org/show_bug.cgi?id=78999
+
+        Reviewed by Tony Chang.
+
+        This is pretty much a straight cut-and-paste of one file into
+        another (broken up so that docstrings and imports are in the
+        right place).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (BrokerClient):
+        (BrokerClient.is_done):
+        (BrokerClient.name):
+        (Broker):
+        (Broker.__init__):
+        (Broker.add_topic):
+        (Broker._get_queue_for_topic):
+        (Broker.post_message):
+        (Broker.run_message_loop):
+        (Broker.run_all_pending):
+        (Broker._run_loop):
+        (Broker._dispatch_message):
+        (_Message):
+        (_Message.loads):
+        (_Message.__init__):
+        (_Message.dumps):
+        (_Message.__repr__):
+        (BrokerConnection):
+        (BrokerConnection.__init__):
+        (BrokerConnection.run_message_loop):
+        (BrokerConnection.post_message):
+        (BrokerConnection.raise_exception):
+        * Scripts/webkitpy/layout_tests/controllers/message_broker.py: Removed.
+
+2012-02-21  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: prepare to delete message_broker.py
         https://bugs.webkit.org/show_bug.cgi?id=78997
 
