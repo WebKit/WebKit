@@ -26618,14 +26618,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\DefaultLocalizationStrategy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DefaultLocalizationStrategy.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\DragData.cpp"
 				>
 			</File>
@@ -26763,10 +26755,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\LinkHash.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\LocalizationStrategy.h"
 				>
 			</File>
 			<File

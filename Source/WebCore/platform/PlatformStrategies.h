@@ -33,7 +33,6 @@ namespace WebCore {
 class CookiesStrategy;
 class PasteboardStrategy;
 class PluginStrategy;
-class LocalizationStrategy;
 class VisitedLinkStrategy;
 
 class PlatformStrategies {
@@ -50,13 +49,6 @@ public:
         if (!m_pluginStrategy)
             m_pluginStrategy = createPluginStrategy();
         return m_pluginStrategy;
-    }
-
-    LocalizationStrategy* localizationStrategy()
-    {
-        if (!m_localizationStrategy)
-            m_localizationStrategy = createLocalizationStrategy();
-        return m_localizationStrategy;
     }
 
     VisitedLinkStrategy* visitedLinkStrategy()
@@ -76,7 +68,6 @@ protected:
     PlatformStrategies()
         : m_cookiesStrategy(0)
         , m_pluginStrategy(0)
-        , m_localizationStrategy(0)
         , m_visitedLinkStrategy(0)
         , m_pasteboardStrategy(0)
     {
@@ -89,13 +80,11 @@ protected:
 private:
     virtual CookiesStrategy* createCookiesStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
-    virtual LocalizationStrategy* createLocalizationStrategy();
     virtual VisitedLinkStrategy* createVisitedLinkStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0; 
 
     CookiesStrategy* m_cookiesStrategy;
     PluginStrategy* m_pluginStrategy;
-    LocalizationStrategy* m_localizationStrategy;
     VisitedLinkStrategy* m_visitedLinkStrategy;
     PasteboardStrategy* m_pasteboardStrategy;
 };

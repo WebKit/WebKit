@@ -26,7 +26,6 @@
 #define PlatformStrategiesWinCE_h
 
 #include "CookiesStrategy.h"
-#include "LocalizationStrategy.h"
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
 #include "VisitedLinkStrategy.h"
