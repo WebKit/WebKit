@@ -281,7 +281,7 @@ bool isMainThreadOrGCThread()
 
     return isMainThread();
 }
-#elif PLATFORM(MAC) || PLATFORM(WINDOWS)
+#elif PLATFORM(MAC)
 // This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
 bool isMainThreadOrGCThread()
 {

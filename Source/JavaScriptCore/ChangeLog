@@ -1,3 +1,15 @@
+2012-02-21  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        Unnecessary preprocessor macros in MainThread.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=79083
+
+        Removed invalid/wrong PLATFORM(WINDOWS) preprocessor macro.
+
+        * wtf/MainThread.cpp:
+        (WTF):
+        * wtf/MainThread.h:
+        (WTF):
+
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Snow Leopard build.

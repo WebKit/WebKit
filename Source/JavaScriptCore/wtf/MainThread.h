@@ -58,7 +58,7 @@ void initializeGCThreads();
 #if ENABLE(PARALLEL_GC)
 void registerGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
-#elif PLATFORM(MAC) || PLATFORM(WINDOWS)
+#elif PLATFORM(MAC)
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 #else
 inline bool isMainThreadOrGCThread() { return isMainThread(); }
