@@ -188,11 +188,11 @@ noinst_LTLIBRARIES += \
 
 TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/DumpRenderTree \
-	-I$(srcdir)/Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/bridge \
 	-I$(srcdir)/Source/WebCore/plugins \
 	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn \
+	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
@@ -202,9 +202,6 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DXP_UNIX
 endif
 
 TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
-	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h \
-	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
-	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/FormValue.cpp \
@@ -227,7 +224,10 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.h \
-	Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp
+	Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npapi.h \
+	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npfunctions.h \
+	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npruntime.h
 
 TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \

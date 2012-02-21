@@ -36,8 +36,8 @@ VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
 
 
 INCLUDEPATH += \
-    ../../unix/TestNetscapePlugin/ForwardingHeaders \
-    ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
+    ../../TestNetscapePlugIn/unix/ForwardingHeaders \
+    ../../TestNetscapePlugIn/unix/ForwardingHeaders/WebKit \
     ../../TestNetscapePlugIn
 
 DESTDIR = $${ROOT_BUILD_DIR}/lib/plugins
