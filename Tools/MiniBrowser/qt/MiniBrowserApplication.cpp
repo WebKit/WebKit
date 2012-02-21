@@ -35,7 +35,6 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QTouchEvent>
-#include <QApplication>
 
 static inline bool isTouchEvent(const QEvent* event)
 {
@@ -63,13 +62,14 @@ static inline bool isMouseEvent(const QEvent* event)
 }
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
-    : QApplication(argc, argv)
+    : QGuiApplication(argc, argv)
     , m_realTouchEventReceived(false)
     , m_pendingFakeTouchEventCount(0)
     , m_isRobotized(false)
     , m_robotTimeoutSeconds(0)
     , m_robotExtraTimeSeconds(0)
     , m_windowOptions(this)
+    , m_holdingControl(false)
 {
     setOrganizationName("Nokia");
     setApplicationName("QtMiniBrowser");
@@ -80,23 +80,28 @@ MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
 
 bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
 {
+    if(QInputEvent* ie = static_cast<QInputEvent*>(event))
+        m_holdingControl = ie->modifiers().testFlag(Qt::ControlModifier);
+    else
+        m_holdingControl = false;
+
     // We try to be smart, if we received real touch event, we are probably on a device
     // with touch screen, and we should not have touch mocking.
 
     if (!event->spontaneous() || m_realTouchEventReceived || !m_windowOptions.touchMockingEnabled())
-        return QApplication::notify(target, event);
+        return QGuiApplication::notify(target, event);
 
     if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
         if (m_pendingFakeTouchEventCount)
             --m_pendingFakeTouchEventCount;
         else
             m_realTouchEventReceived = true;
-        return QApplication::notify(target, event);
+        return QGuiApplication::notify(target, event);
     }
 
     BrowserWindow* browserWindow = qobject_cast<BrowserWindow*>(target);
     if (!browserWindow)
-        return QApplication::notify(target, event);
+        return QGuiApplication::notify(target, event);
 
     // In QML events are propagated through parents. But since the WebView
     // may consume key events, a shortcut might never reach the top QQuickItem.
@@ -139,16 +144,16 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             break;
         case QEvent::MouseMove:
             if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
-                return QApplication::notify(target, event);
+                return QGuiApplication::notify(target, event);
             touchPoint.id = mouseEvent->buttons();
             touchPoint.state = Qt::TouchPointMoved;
             break;
         case QEvent::MouseButtonRelease:
             touchPoint.state = Qt::TouchPointReleased;
             touchPoint.id = mouseEvent->button();
-            if (mouseEvent->modifiers().testFlag(Qt::ControlModifier)) {
+            if (m_holdingControl) {
                 m_heldTouchPoints.insert(touchPoint.id);
-                return QApplication::notify(target, event);
+                return QGuiApplication::notify(target, event);
             }
             break;
         default:
@@ -167,7 +172,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         sendTouchEvent(browserWindow);
     }
 
-    return QApplication::notify(target, event);
+    return QGuiApplication::notify(target, event);
 }
 
 void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
@@ -182,14 +187,13 @@ void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
     m_pendingFakeTouchEventCount++;
     QWindowSystemInterface::handleTouchEvent(browserWindow, device, m_touchPoints.values());
 
-    bool holdingControl = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
     if (QQuickWebViewExperimental::flickableViewportEnabled())
-        browserWindow->updateVisualMockTouchPoints(holdingControl ? m_touchPoints.values() : QList<QWindowSystemInterface::TouchPoint>());
+        browserWindow->updateVisualMockTouchPoints(m_holdingControl ? m_touchPoints.values() : QList<QWindowSystemInterface::TouchPoint>());
 
     // Get rid of touch-points that are no longer valid
     foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {
-    if (touchPoint.state ==  Qt::TouchPointReleased)
-        m_touchPoints.remove(touchPoint.id);
+        if (touchPoint.state ==  Qt::TouchPointReleased)
+            m_touchPoints.remove(touchPoint.id);
     }
 }
 

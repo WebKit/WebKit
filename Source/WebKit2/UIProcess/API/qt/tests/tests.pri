@@ -9,7 +9,7 @@ SOURCES += ../util.cpp \
            ../bytearraytestdata.cpp
 INCLUDEPATH += $$PWD
 
-QT += testlib declarative widgets quick
+QT += testlib declarative quick
 
 CONFIG += qtwebkit
 

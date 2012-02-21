@@ -24,7 +24,7 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 CONFIG += qtwebkit qtwebkit-private
 
-QT += network declarative widgets quick
+QT += network declarative quick
 macx: QT += xml
 
 RESOURCES += MiniBrowser.qrc

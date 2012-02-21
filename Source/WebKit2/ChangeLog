@@ -1,3 +1,17 @@
+2012-02-21  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Get rid of the dependency to QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=76276
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/util.h:
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         [UNIX] Plugin information fields are not interpreted as UTF-8

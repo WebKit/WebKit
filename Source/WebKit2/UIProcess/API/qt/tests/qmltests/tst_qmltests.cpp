@@ -21,9 +21,9 @@
 #include "../util.h"
 
 #include "qquickwebview_p.h"
+#include <QGuiApplication>
 #include <QVarLengthArray>
 #include <QtQuickTest/quicktest.h>
-#include <QtWidgets/QApplication>
 
 int main(int argc, char** argv)
 {
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
     // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
     // This can be removed as soon as we do not use QtWidgets any more.
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     qmlRegisterType<ByteArrayTestData>("Test", 1, 0, "ByteArrayTestData");
 
 #ifdef DISABLE_FLICKABLE_VIEWPORT

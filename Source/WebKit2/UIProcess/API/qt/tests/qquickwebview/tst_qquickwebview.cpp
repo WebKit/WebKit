@@ -356,7 +356,7 @@ void tst_QQuickWebView::scrollRequest()
     QVERIFY(webView()->experimental()->contentY() == y);
 }
 
-QTWEBKIT_API_TEST_MAIN(tst_QQuickWebView)
+QTEST_MAIN(tst_QQuickWebView)
 
 #include "tst_qquickwebview.moc"
 

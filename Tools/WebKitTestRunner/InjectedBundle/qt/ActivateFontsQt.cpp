@@ -33,7 +33,6 @@
 #include "QtInitializeTestFonts.h"
 
 #include <QApplication>
-#include <QWidget>
 #include <QWindowsStyle>
 
 namespace WTR {
@@ -41,11 +40,7 @@ namespace WTR {
 void activateFonts()
 {
     WebKit::initializeTestFonts();
-
-    QApplication::setGraphicsSystem(QLatin1String("raster"));
-#if HAVE(QSTYLE)
     QApplication::setStyle(new QWindowsStyle);
-#endif
 }
 
 }

@@ -33,7 +33,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QtDeclarative>
-#include <QtWidgets/QApplication>
+#include <QGuiApplication>
 #include <QTouchEvent>
 #include <QUrl>
 #include "qwindowsysteminterface_qpa.h"
@@ -84,7 +84,7 @@ private:
     QSize m_windowSize;
 };
 
-class MiniBrowserApplication : public QApplication {
+class MiniBrowserApplication : public QGuiApplication {
     Q_OBJECT
 
 public:
@@ -113,6 +113,7 @@ private:
     QSet<int> m_heldTouchPoints;
 
     WindowOptions m_windowOptions;
+    bool m_holdingControl;
 };
 
 QML_DECLARE_TYPE(WindowOptions);

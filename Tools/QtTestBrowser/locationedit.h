@@ -28,8 +28,6 @@
 #ifndef locationedit_h
 #define locationedit_h
 
-#include <qconfig.h>
-
 #ifndef QT_NO_INPUTDIALOG
 #include <QApplication>
 #include <QIcon>
