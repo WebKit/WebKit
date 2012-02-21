@@ -33,6 +33,7 @@
 #include "WebKitCSSShaderValue.h"
 
 #include "CachedResourceLoader.h"
+#include "CSSParser.h"
 #include "Document.h"
 #include "StyleCachedShader.h"
 #include "StylePendingShader.h"
@@ -40,7 +41,8 @@
 namespace WebCore {
 
 WebKitCSSShaderValue::WebKitCSSShaderValue(const String& url)
-    : CSSPrimitiveValue(WebKitCSSShaderClass, url, CSS_URI)
+    : CSSValue(WebKitCSSShaderClass)
+    , m_url(url)
     , m_accessedShader(false)
 {
 }
@@ -56,7 +58,7 @@ StyleCachedShader* WebKitCSSShaderValue::cachedShader(CachedResourceLoader* load
     if (!m_accessedShader) {
         m_accessedShader = true;
 
-        ResourceRequest request(loader->document()->completeURL(getStringValue()));
+        ResourceRequest request(loader->document()->completeURL(m_url));
         if (CachedShader* cachedShader = loader->requestShader(request))
             m_shader = StyleCachedShader::create(cachedShader);
     }
@@ -72,6 +74,10 @@ StyleShader* WebKitCSSShaderValue::cachedOrPendingShader()
     return m_shader.get();
 }
 
+String WebKitCSSShaderValue::customCssText() const
+{
+    return "url(" + quoteCSSURLIfNeeded(m_url) + ")";
+}
 
 } // namespace WebCore
 

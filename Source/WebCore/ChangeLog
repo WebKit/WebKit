@@ -1,3 +1,23 @@
+2012-02-21  Andreas Kling  <awesomekling@apple.com>
+
+        Make WebKitCSSShaderValue inherit directly from CSSValue.
+        <http://webkit.org/b/79144>
+
+        Reviewed by Antti Koivisto.
+
+        WebKitCSSShaderValue was inheriting from CSSPrimitiveValue but only used
+        it for storing the shader URL. Moved that to a String member instead.
+
+        WebKitCSSShaderValues didn't even return true for isPrimitiveValue() so
+        there should be no behavior change whatsoever here.
+
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::WebKitCSSShaderValue):
+        (WebCore::WebKitCSSShaderValue::cachedShader):
+        (WebCore::WebKitCSSShaderValue::customCssText):
+        * css/WebKitCSSShaderValue.h:
+        (WebKitCSSShaderValue):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         Unreviewed windows build fix - avoid return statement after return if USE(ACCELERATED_COMPOSITING) is set.
