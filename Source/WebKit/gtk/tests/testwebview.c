@@ -382,6 +382,40 @@ static void test_webkit_web_view_in_offscreen_window_does_not_crash()
     g_main_loop_unref(loop);
 }
 
+static void test_webkit_web_view_does_not_steal_focus()
+{
+    loop = g_main_loop_new(NULL, TRUE);
+
+    GtkWidget *window = gtk_offscreen_window_new();
+    GtkWidget *webView = webkit_web_view_new();
+    GtkWidget *entry = gtk_entry_new();
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+    gtk_container_add(GTK_CONTAINER(box), webView);
+    gtk_container_add(GTK_CONTAINER(box), entry);
+    gtk_container_add(GTK_CONTAINER(window), box);
+    gtk_widget_show_all(window);
+
+    gtk_widget_grab_focus(entry);
+    g_assert(gtk_widget_is_focus(entry));
+
+    g_signal_connect(webView, "notify::load-status", G_CALLBACK(idle_quit_loop_cb), NULL);
+    webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(webView),
+        "<html><body>"
+        "    <input id=\"entry\" type=\"text\"/>"
+        "    <script>"
+        "        document.getElementById(\"entry\").focus();"
+        "    </script>"
+        "</body></html>", "file://");
+
+    g_main_loop_run(loop);
+
+    g_assert(gtk_widget_is_focus(entry));
+
+    gtk_widget_destroy(window);
+    g_main_loop_unref(loop);
+}
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -410,6 +444,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/grab_focus", test_webkit_web_view_grab_focus);
     g_test_add_func("/webkit/webview/window-features", test_webkit_web_view_window_features);
     g_test_add_func("/webkit/webview/webview-in-offscreen-window-does-not-crash", test_webkit_web_view_in_offscreen_window_does_not_crash);
+    g_test_add_func("/webkit/webview/webview-does-not-steal-focus", test_webkit_web_view_does_not_steal_focus);
 
     return g_test_run ();
 }

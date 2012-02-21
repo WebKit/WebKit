@@ -58,18 +58,6 @@ Widget::~Widget()
 
 void Widget::setFocus(bool focused)
 {
-    if (!focused)
-        return;
-
-    GtkWidget* widget = platformWidget() ? platformWidget() : root()->hostWindow()->platformPageClient();
-    if (widget) {
-        gtk_widget_grab_focus(widget);
-        return;
-    }
-
-    // We are running WK2.
-    if (Frame* frame = Frame::frameForWidget(this))
-        frame->page()->chrome()->focus();
 }
 
 void Widget::setCursor(const Cursor& cursor)
