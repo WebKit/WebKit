@@ -82,6 +82,7 @@ NamedConstructor=*
 NamedGetter
 NotEnumerable
 NumericIndexedGetter
+ObjCCustomImplementation
 ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol

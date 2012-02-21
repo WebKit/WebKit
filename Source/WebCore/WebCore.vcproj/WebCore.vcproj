@@ -68856,6 +68856,10 @@
 					RelativePath="..\bindings\scripts\resolve-supplemental.pl"
 					>
 				</File>
+				<File
+					RelativePath="..\bindings\scripts\IDLAttributes.txt"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

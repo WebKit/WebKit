@@ -1,3 +1,28 @@
+2012-02-21  Kentaro Hara  <haraken@chromium.org>
+
+        Enable the IDL attribute checker in all build systems
+        https://bugs.webkit.org/show_bug.cgi?id=79090
+
+        Reviewed by Adam Barth.
+
+        We have enabled the IDL attribute checker in Chromium in r108322.
+        This patch enables the IDL attribute checker in all other
+        build systems.
+
+        No tests. I manually checked that [Custommm], [CallWith=],
+        [CallWith=ScriptExecutionContext|Foo] cause build failures.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/IDLAttributes.txt: Added [ObjCCustomImplementation]
+        since I forgot to add it in r108322.
+
 2012-02-21  Yael Aharon  <yael.aharon@nokia.com>
 
         [Texmap] Better management of shaders in TextureMapperGL

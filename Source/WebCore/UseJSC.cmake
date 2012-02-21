@@ -267,8 +267,8 @@ FILE(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
 ADD_CUSTOM_COMMAND(
     OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    DEPENDS ${WEBCORE_DIR}/bindings/scripts/resolve-supplemental.pl ${SCRIPTS_RESOLVE_SUPPLEMENTAL} ${WebCore_IDL_FILES}
-    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/resolve-supplemental.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/resolve-supplemental.pl ${SCRIPTS_RESOLVE_SUPPLEMENTAL} ${WebCore_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/resolve-supplemental.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
     VERBATIM)
 
 FOREACH (_file ${WebCore_IDL_FILES})

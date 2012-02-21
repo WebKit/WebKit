@@ -789,13 +789,14 @@ DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
 SUPPLEMENTAL_DEPENDENCY_FILE = $(top_builddir)/DerivedSources/WebCore/supplemental_dependency.tmp
 IDL_FILES_TMP = $(top_builddir)/DerivedSources/WebCore/idl_files.tmp
+IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.txt
 
 .SECONDARY:
-$(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls)
+$(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls) $(IDL_ATTRIBUTES_FILE)
 	$(AM_V_GEN)
 	$(AM_V_at)echo -n > $(IDL_FILES_TMP)
 	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@ --idlAttributesFile $(IDL_ATTRIBUTES_FILE)
 
 .SECONDARY:
 DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(SUPPLEMENTAL_DEPENDENCY_FILE)

@@ -659,8 +659,9 @@ GENERATORS += cssvalues
 SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
 IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
 RESOLVE_SUPPLEMENTAL_SCRIPT = $$PWD/bindings/scripts/resolve-supplemental.pl
+IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
 
-resolveSupplemental.input = RESOLVE_SUPPLEMENTAL_SCRIPT # dummy input to fire this rule
+resolveSupplemental.input = IDL_ATTRIBUTES_FILE
 resolveSupplemental.script = $$RESOLVE_SUPPLEMENTAL_SCRIPT
 # FIXME : We need to use only perl at some point.
 resolveSupplemental.commands = echo $$IDL_BINDINGS | tr \' \' \'\\n\' > $$IDL_FILES_TMP && \
@@ -668,6 +669,7 @@ resolveSupplemental.commands = echo $$IDL_BINDINGS | tr \' \' \'\\n\' > $$IDL_FI
                                --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                               --idlAttributesFile $${IDL_ATTRIBUTES_FILE} \
                                --preprocessor \"$${QMAKE_MOC} -E\"
 resolveSupplemental.output = $$SUPPLEMENTAL_DEPENDENCY_FILE
 resolveSupplemental.add_output_to_sources = false
