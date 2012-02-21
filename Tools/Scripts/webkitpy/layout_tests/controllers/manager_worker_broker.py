@@ -50,18 +50,18 @@ Messages must be picklable.
 
 The module defines one interface and two classes. Callers of this package
 must implement the BrokerClient interface, and most callers will create
-BrokerConnections as well as Brokers.
+_BrokerConnections as well as Brokers.
 
 The classes relate to each other as:
 
-    BrokerClient   ------>    BrokerConnection
+    BrokerClient   ------>    _BrokerConnection
          ^                         |
          |                         v
-         \----------------      Broker
+         \----------------      _Broker
 
 (The BrokerClient never calls broker directly after it is created, only
-BrokerConnection.  BrokerConnection passes a reference to BrokerClient to
-Broker, and Broker only invokes that reference, never talking directly to
+_BrokerConnection.  _BrokerConnection passes a reference to BrokerClient to
+_Broker, and _Broker only invokes that reference, never talking directly to
 BrokerConnection).
 """
 
@@ -108,7 +108,7 @@ def get(worker_model, client, worker_class):
     else:
         raise ValueError("unsupported value for --worker-model: %s" % worker_model)
 
-    broker = Broker(queue_class)
+    broker = _Broker(queue_class)
     return manager_class(broker, client, worker_class)
 
 
@@ -132,7 +132,7 @@ class BrokerClient(object):
         raise NotImplementedError
 
 
-class Broker(object):
+class _Broker(object):
     """Brokers provide the basic model of a set of topics. Clients can post a
     message to any topic using post_message(), and can process messages on one
     topic at a time using run_message_loop()."""
@@ -212,15 +212,15 @@ class _Message(object):
                 (self.src, self.topic_name, self.name))
 
 
-class BrokerConnection(object):
-    """BrokerConnection provides a connection-oriented facade on top of a
+class _BrokerConnection(object):
+    """_BrokerConnection provides a connection-oriented facade on top of a
     Broker, so that callers don't have to repeatedly pass the same topic
     names over and over."""
 
     def __init__(self, broker, client, run_topic, post_topic):
-        """Create a BrokerConnection on top of a Broker. Note that the Broker
-        is passed in rather than created so that a single Broker can be used
-        by multiple BrokerConnections."""
+        """Create a _BrokerConnection on top of a _Broker. Note that the _Broker
+        is passed in rather than created so that a single _Broker can be used
+        by multiple _BrokerConnections."""
         self._broker = broker
         self._client = client
         self._post_topic = post_topic
@@ -252,7 +252,7 @@ class AbstractWorker(BrokerClient):
         start of the run() call.
 
         Args:
-            worker_connection - handle to the BrokerConnection object creating
+            worker_connection - handle to the _BrokerConnection object creating
                 the worker and that can be used for messaging.
             worker_arguments - (optional, Picklable) object passed to the worker from the manager"""
         BrokerClient.__init__(self)
@@ -297,7 +297,7 @@ class AbstractWorker(BrokerClient):
         self._canceled = True
 
 
-class _ManagerConnection(BrokerConnection):
+class _ManagerConnection(_BrokerConnection):
     def __init__(self, broker, client, worker_class):
         """Base initialization for all Manager objects.
 
@@ -306,7 +306,7 @@ class _ManagerConnection(BrokerConnection):
             client: callback object (the caller)
             worker_class: class object to use to create workers.
         """
-        BrokerConnection.__init__(self, broker, client, MANAGER_TOPIC, ANY_WORKER_TOPIC)
+        _BrokerConnection.__init__(self, broker, client, MANAGER_TOPIC, ANY_WORKER_TOPIC)
         self._worker_class = worker_class
 
     def start_worker(self, worker_arguments=None):
@@ -349,10 +349,10 @@ class _MultiProcessManager(_ManagerConnection):
         return worker_connection
 
 
-class _WorkerConnection(BrokerConnection):
+class _WorkerConnection(_BrokerConnection):
     def __init__(self, broker, worker_class, worker_arguments=None):
         self._client = worker_class(self, worker_arguments)
-        BrokerConnection.__init__(self, broker, self._client, ANY_WORKER_TOPIC, MANAGER_TOPIC)
+        _BrokerConnection.__init__(self, broker, self._client, ANY_WORKER_TOPIC, MANAGER_TOPIC)
 
     def name(self):
         return self._client.name()

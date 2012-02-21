@@ -1,5 +1,27 @@
 2012-02-21  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: update names after deleting message_broker
+        https://bugs.webkit.org/show_bug.cgi?id=79000
+
+        Reviewed by Eric Seidel.
+
+        Part 3 of 3 in deleting message_broker.py; this change just
+        adjusts the names for the newly merged symbols so that they are
+        private as appropriate.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (_Broker):
+        (_BrokerConnection):
+        (_BrokerConnection.__init__):
+        (AbstractWorker.__init__):
+        (_ManagerConnection):
+        (_ManagerConnection.__init__):
+        (_WorkerConnection):
+        (_WorkerConnection.__init__):
+
+2012-02-21  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: merge message_broker.py into manager_worker_broker.py
         https://bugs.webkit.org/show_bug.cgi?id=78999
 
