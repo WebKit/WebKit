@@ -39,6 +39,7 @@ namespace JSC {
 
     class ConservativeRoots;
     class DFGCodeBlocks;
+    class LLIntOffsetsExtractor;
 
     class RegisterFile {
         WTF_MAKE_NONCOPYABLE(RegisterFile);
@@ -81,6 +82,8 @@ namespace JSC {
         }
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         bool growSlowCase(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);

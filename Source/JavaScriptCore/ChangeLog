@@ -1,5 +1,400 @@
 2012-02-20  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC should be a triple-tier VM
+        https://bugs.webkit.org/show_bug.cgi?id=75812
+        <rdar://problem/10079694>
+
+        Reviewed by Gavin Barraclough.
+        
+        Implemented an interpreter that uses the JIT's calling convention. This
+        interpreter is called LLInt, or the Low Level Interpreter. JSC will now
+        will start by executing code in LLInt and will only tier up to the old
+        JIT after the code is proven hot.
+        
+        LLInt is written in a modified form of our macro assembly. This new macro
+        assembly is compiled by an offline assembler (see offlineasm), which
+        implements many modern conveniences such as a Turing-complete CPS-based
+        macro language and direct access to relevant C++ type information
+        (basically offsets of fields and sizes of structs/classes).
+        
+        Code executing in LLInt appears to the rest of the JSC world "as if" it
+        were executing in the old JIT. Hence, things like exception handling and
+        cross-execution-engine calls just work and require pretty much no
+        additional overhead.
+        
+        This interpreter is 2-2.5x faster than our old interpreter on SunSpider,
+        V8, and Kraken. With triple-tiering turned on, we're neutral on SunSpider,
+        V8, and Kraken, but appear to get a double-digit improvement on real-world
+        websites due to a huge reduction in the amount of JIT'ing.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/LinkBuffer.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        (MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+        * bytecode/BytecodeConventions.h: Added.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC):
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::isSet):
+        (JSC::CallLinkStatus::operator!):
+        (CallLinkStatus):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC):
+        (JSC::CodeBlock::unlinkCalls):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        (JSC::ProgramCodeBlock::jitCompileImpl):
+        (JSC::EvalCodeBlock::jitCompileImpl):
+        (JSC::FunctionCodeBlock::jitCompileImpl):
+        * bytecode/CodeBlock.h:
+        (JSC):
+        (CodeBlock):
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::jitCompile):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::addGlobalResolveInstruction):
+        (JSC::CodeBlock::addLLIntCallLinkInfo):
+        (JSC::CodeBlock::addGlobalResolveInfo):
+        (JSC::CodeBlock::numberOfMethodCallLinkInfos):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::dontJITAnytimeSoon):
+        (JSC::CodeBlock::jitAfterWarmUp):
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::llintExecuteCounter):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::wasSeenInJIT):
+        (GetByIdStatus):
+        * bytecode/Instruction.h:
+        (JSC):
+        (JSC::Instruction::Instruction):
+        (Instruction):
+        * bytecode/LLIntCallLinkInfo.h: Added.
+        (JSC):
+        (JSC::LLIntCallLinkInfo::LLIntCallLinkInfo):
+        (LLIntCallLinkInfo):
+        (JSC::LLIntCallLinkInfo::~LLIntCallLinkInfo):
+        (JSC::LLIntCallLinkInfo::isLinked):
+        (JSC::LLIntCallLinkInfo::unlink):
+        * bytecode/MethodCallLinkStatus.cpp:
+        (JSC::MethodCallLinkStatus::computeFor):
+        * bytecode/Opcode.cpp:
+        (JSC):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        (PutByIdStatus):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitCatch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.h:
+        (JSC):
+        (JSC::Heap::firstAllocatorWithoutDestructors):
+        (Heap):
+        * heap/MarkStack.cpp:
+        (JSC::visitChildren):
+        * heap/MarkedAllocator.h:
+        (JSC):
+        (MarkedAllocator):
+        * heap/MarkedSpace.h:
+        (JSC):
+        (MarkedSpace):
+        (JSC::MarkedSpace::firstAllocator):
+        * interpreter/CallFrame.cpp:
+        (JSC):
+        (JSC::CallFrame::bytecodeOffsetForNonDFGCode):
+        (JSC::CallFrame::setBytecodeOffsetForNonDFGCode):
+        (JSC::CallFrame::currentVPC):
+        (JSC::CallFrame::setCurrentVPC):
+        (JSC::CallFrame::trueCallerFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::hasReturnPC):
+        (JSC::ExecState::clearReturnPC):
+        (ExecState):
+        (JSC::ExecState::bytecodeOffsetForNonDFGCode):
+        (JSC::ExecState::currentVPC):
+        (JSC::ExecState::setCurrentVPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::~Interpreter):
+        (JSC):
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::isOpcode):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::getCallerInfo):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (Interpreter):
+        (JSC::Interpreter::getOpcode):
+        (JSC::Interpreter::getOpcodeID):
+        (JSC::Interpreter::classicEnabled):
+        * interpreter/RegisterFile.h:
+        (JSC):
+        (RegisterFile):
+        * jit/ExecutableAllocator.h:
+        (JSC):
+        * jit/HostCallReturnValue.cpp: Added.
+        (JSC):
+        (JSC::getHostCallReturnValueWithExecState):
+        * jit/HostCallReturnValue.h: Added.
+        (JSC):
+        (JSC::initializeHostCallReturnValue):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JITCode.h:
+        (JSC::JITCode::isOptimizingJIT):
+        (JITCode):
+        (JSC::JITCode::isBaselineCode):
+        (JSC::JITCode::JITCode):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITExceptions.cpp:
+        (JSC::jitThrow):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC):
+        * jit/JITStubs.h:
+        (JSC):
+        * jit/JSInterfaceJIT.h:
+        * llint: Added.
+        * llint/LLIntCommon.h: Added.
+        * llint/LLIntData.cpp: Added.
+        (LLInt):
+        (JSC::LLInt::Data::Data):
+        (JSC::LLInt::Data::performAssertions):
+        (JSC::LLInt::Data::~Data):
+        * llint/LLIntData.h: Added.
+        (JSC):
+        (LLInt):
+        (Data):
+        (JSC::LLInt::Data::exceptionInstructions):
+        (JSC::LLInt::Data::opcodeMap):
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntEntrypoints.cpp: Added.
+        (LLInt):
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntEntrypoints.h: Added.
+        (JSC):
+        (LLInt):
+        (JSC::LLInt::getEntrypoint):
+        * llint/LLIntExceptions.cpp: Added.
+        (LLInt):
+        (JSC::LLInt::interpreterThrowInCaller):
+        (JSC::LLInt::returnToThrowForThrownException):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntExceptions.h: Added.
+        (JSC):
+        (LLInt):
+        * llint/LLIntOfflineAsmConfig.h: Added.
+        * llint/LLIntOffsetsExtractor.cpp: Added.
+        (JSC):
+        (LLIntOffsetsExtractor):
+        (JSC::LLIntOffsetsExtractor::dummy):
+        (main):
+        * llint/LLIntSlowPaths.cpp: Added.
+        (LLInt):
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::resolveGlobal):
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        (JSC::LLInt::genericCall):
+        * llint/LLIntSlowPaths.h: Added.
+        (JSC):
+        (LLInt):
+        * llint/LLIntThunks.cpp: Added.
+        (LLInt):
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunkGenerator):
+        (JSC::LLInt::functionForConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator):
+        (JSC::LLInt::evalEntryThunkGenerator):
+        (JSC::LLInt::programEntryThunkGenerator):
+        * llint/LLIntThunks.h: Added.
+        (JSC):
+        (LLInt):
+        * llint/LowLevelInterpreter.asm: Added.
+        * llint/LowLevelInterpreter.cpp: Added.
+        * llint/LowLevelInterpreter.h: Added.
+        * offlineasm: Added.
+        * offlineasm/armv7.rb: Added.
+        * offlineasm/asm.rb: Added.
+        * offlineasm/ast.rb: Added.
+        * offlineasm/backends.rb: Added.
+        * offlineasm/generate_offset_extractor.rb: Added.
+        * offlineasm/instructions.rb: Added.
+        * offlineasm/offset_extractor_constants.rb: Added.
+        * offlineasm/offsets.rb: Added.
+        * offlineasm/opt.rb: Added.
+        * offlineasm/parser.rb: Added.
+        * offlineasm/registers.rb: Added.
+        * offlineasm/self_hash.rb: Added.
+        * offlineasm/settings.rb: Added.
+        * offlineasm/transform.rb: Added.
+        * offlineasm/x86.rb: Added.
+        * runtime/CodeSpecializationKind.h: Added.
+        (JSC):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        (CommonSlowPaths):
+        * runtime/Executable.cpp:
+        (JSC::jettisonCodeBlock):
+        (JSC):
+        (JSC::EvalExecutable::jitCompile):
+        (JSC::samplingDescription):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::jitCompile):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::jitCompileForCall):
+        (JSC::FunctionExecutable::jitCompileForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC):
+        (EvalExecutable):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::jitCompileFor):
+        * runtime/ExecutionHarness.h: Added.
+        (JSC):
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+        * runtime/JSArray.h:
+        (JSC):
+        (JSArray):
+        * runtime/JSCell.h:
+        (JSC):
+        (JSCell):
+        * runtime/JSFunction.h:
+        (JSC):
+        (JSFunction):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSGlobalData):
+        * runtime/JSGlobalObject.h:
+        (JSC):
+        (JSGlobalObject):
+        * runtime/JSObject.h:
+        (JSC):
+        (JSObject):
+        (JSFinalObject):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC):
+        (JSPropertyNameIterator):
+        * runtime/JSString.h:
+        (JSC):
+        (JSString):
+        * runtime/JSTypeInfo.h:
+        (JSC):
+        (TypeInfo):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/JSValue.h:
+        (LLInt):
+        (JSValue):
+        * runtime/JSVariableObject.h:
+        (JSC):
+        (JSVariableObject):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+        * runtime/ScopeChain.h:
+        (JSC):
+        (ScopeChainNode):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        * runtime/Structure.h:
+        (JSC):
+        (Structure):
+        * runtime/StructureChain.h:
+        (JSC):
+        (StructureChain):
+        * wtf/InlineASM.h:
+        * wtf/Platform.h:
+        * wtf/SentinelLinkedList.h:
+        (SentinelLinkedList):
+        (WTF::SentinelLinkedList::isEmpty):
+        * wtf/text/StringImpl.h:
+        (JSC):
+        (StringImpl):
+
+2012-02-20  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, rolling out http://trac.webkit.org/changeset/108291
         It completely broke the 32-bit JIT.
 

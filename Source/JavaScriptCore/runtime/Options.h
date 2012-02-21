@@ -37,6 +37,10 @@ extern unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
 extern unsigned maximumInliningDepth; // Depth of inline stack, so 1 = no inlining, 2 = one level, etc.
 
+extern int32_t executionCounterValueForJITAfterWarmUp;
+extern int32_t executionCounterValueForDontJITAnytimeSoon;
+extern int32_t executionCounterValueForJITSoon;
+
 extern int32_t executionCounterValueForOptimizeAfterWarmUp;
 extern int32_t executionCounterValueForOptimizeAfterLongWarmUp;
 extern int32_t executionCounterValueForDontOptimizeAnytimeSoon;

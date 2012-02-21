@@ -34,6 +34,7 @@
 #include "JSFunction.h"
 #include "JSValue.h"
 #include "JSObject.h"
+#include "LLIntData.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
 
@@ -46,6 +47,7 @@ namespace JSC {
     class ExecutableBase;
     class FunctionExecutable;
     class JSGlobalObject;
+    class LLIntOffsetsExtractor;
     class ProgramExecutable;
     class Register;
     class ScopeChainNode;
@@ -158,19 +160,21 @@ namespace JSC {
 
     class Interpreter {
         WTF_MAKE_FAST_ALLOCATED;
-        friend class JIT;
         friend class CachedCall;
+        friend class LLIntOffsetsExtractor;
+        friend class JIT;
     public:
         Interpreter();
+        ~Interpreter();
         
-        void initialize(bool canUseJIT);
+        void initialize(LLInt::Data*, bool canUseJIT);
 
         RegisterFile& registerFile() { return m_registerFile; }
         
         Opcode getOpcode(OpcodeID id)
         {
             ASSERT(m_initialized);
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
             return m_opcodeTable[id];
 #else
             return id;
@@ -180,15 +184,23 @@ namespace JSC {
         OpcodeID getOpcodeID(Opcode opcode)
         {
             ASSERT(m_initialized);
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#if ENABLE(LLINT)
             ASSERT(isOpcode(opcode));
-            if (!m_enabled)
+            return m_opcodeIDTable.get(opcode);
+#elif ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+            ASSERT(isOpcode(opcode));
+            if (!m_classicEnabled)
                 return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
 
             return m_opcodeIDTable.get(opcode);
 #else
             return opcode;
 #endif
+        }
+        
+        bool classicEnabled()
+        {
+            return m_classicEnabled;
         }
 
         bool isOpcode(Opcode);
@@ -259,7 +271,10 @@ namespace JSC {
 
         RegisterFile m_registerFile;
         
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#if ENABLE(LLINT)
+        Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
+        HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
+#elif ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
@@ -267,7 +282,7 @@ namespace JSC {
 #if !ASSERT_DISABLED
         bool m_initialized;
 #endif
-        bool m_enabled;
+        bool m_classicEnabled;
     };
 
     // This value must not be an object that would require this conversion (WebCore's global object).

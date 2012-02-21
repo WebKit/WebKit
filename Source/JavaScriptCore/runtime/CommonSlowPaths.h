@@ -27,6 +27,7 @@
 #define CommonSlowPaths_h
 
 #include "CodeBlock.h"
+#include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
 
@@ -40,6 +41,38 @@ namespace JSC {
 // from any optimizing JIT, like the DFG).
 
 namespace CommonSlowPaths {
+
+ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFile, CodeSpecializationKind kind)
+{
+    JSFunction* callee = asFunction(exec->callee());
+    ASSERT(!callee->isHostFunction());
+    CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeFor(kind);
+    int argumentCountIncludingThis = exec->argumentCountIncludingThis();
+
+    // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
+    if (!registerFile->grow(exec->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
+        return 0;
+
+    ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
+
+    // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
+    size_t delta = newCodeBlock->numParameters() - argumentCountIncludingThis;
+    Register* src = exec->registers();
+    Register* dst = exec->registers() + delta;
+
+    int i;
+    int end = -ExecState::offsetFor(argumentCountIncludingThis);
+    for (i = -1; i >= end; --i)
+        dst[i] = src[i];
+
+    end -= delta;
+    for ( ; i >= end; --i)
+        dst[i] = jsUndefined();
+
+    ExecState* newExec = ExecState::create(dst);
+    ASSERT((void*)newExec <= registerFile->end());
+    return newExec;
+}
 
 ALWAYS_INLINE bool opInstanceOfSlow(ExecState* exec, JSValue value, JSValue baseVal, JSValue proto)
 {

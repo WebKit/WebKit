@@ -38,6 +38,7 @@ namespace JSC {
 
     class Identifier;
     class JSObject;
+    class LLIntOffsetsExtractor;
 
     class JSPropertyNameIterator : public JSCell {
         friend class JIT;
@@ -96,6 +97,8 @@ namespace JSC {
         }
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);
 
         WriteBarrier<Structure> m_cachedStructure;

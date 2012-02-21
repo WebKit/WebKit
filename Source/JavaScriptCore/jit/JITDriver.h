@@ -33,14 +33,20 @@
 #include "BytecodeGenerator.h"
 #include "DFGDriver.h"
 #include "JIT.h"
+#include "LLIntEntrypoints.h"
 
 namespace JSC {
 
 template<typename CodeBlockType>
 inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType)
 {
+    if (jitType == codeBlock->getJITType())
+        return true;
+    
     if (!globalData.canUseJIT())
         return true;
+    
+    codeBlock->unlinkIncomingCalls();
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
@@ -62,8 +68,13 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
 
 inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType)
 {
+    if (jitType == codeBlock->getJITType())
+        return true;
+    
     if (!globalData.canUseJIT())
         return true;
+    
+    codeBlock->unlinkIncomingCalls();
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
@@ -79,7 +90,6 @@ inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<Fun
         }
         jitCode = JIT::compile(&globalData, codeBlock.get(), &jitCodeWithArityCheck);
     }
-    
     codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
     
     return true;

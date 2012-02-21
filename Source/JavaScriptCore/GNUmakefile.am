@@ -57,6 +57,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/interpreter \
 	-I$(srcdir)/Source/JavaScriptCore/jit \
 	-I$(srcdir)/Source/JavaScriptCore/jit \
+	-I$(srcdir)/Source/JavaScriptCore/llint \
 	-I$(srcdir)/Source/JavaScriptCore/parser \
 	-I$(srcdir)/Source/JavaScriptCore/profiler \
 	-I$(srcdir)/Source/JavaScriptCore/runtime \

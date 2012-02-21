@@ -93,6 +93,8 @@ public:
     size_t offset() const { return m_offset; }
     
 private:
+    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, Identifier&);
+    
     State m_state;
     Structure* m_oldStructure;
     Structure* m_newStructure;

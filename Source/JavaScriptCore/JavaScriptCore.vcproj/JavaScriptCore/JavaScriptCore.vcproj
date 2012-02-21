@@ -1762,6 +1762,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\HostCallReturnValue.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JIT.cpp"
 				>
 			</File>
@@ -1843,6 +1847,14 @@
 			</File>
 			<File
 				RelativePath="..\..\jit\ThunkGenerators.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="llint"
+			>
+			<File
+				RelativePath="..\..\llint\LLIntData.h"
 				>
 			</File>
 		</Filter>

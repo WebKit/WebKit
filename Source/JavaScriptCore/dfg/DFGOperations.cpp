@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
+#include "HostCallReturnValue.h"
 #include "GetterSetter.h"
 #include "InlineASM.h"
 #include "Interpreter.h"
@@ -737,50 +738,6 @@ size_t DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue en
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-EncodedJSValue DFG_OPERATION getHostCallReturnValue();
-EncodedJSValue DFG_OPERATION getHostCallReturnValueWithExecState(ExecState*);
-
-#if CPU(X86_64)
-asm (
-".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
-HIDE_SYMBOL(getHostCallReturnValue) "\n"
-SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov -40(%r13), %r13\n"
-    "mov %r13, %rdi\n"
-    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
-);
-#elif CPU(X86)
-asm (
-".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
-HIDE_SYMBOL(getHostCallReturnValue) "\n"
-SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov -40(%edi), %edi\n"
-    "mov %edi, 4(%esp)\n"
-    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
-);
-#elif CPU(ARM_THUMB2)
-asm (
-".text" "\n"
-".align 2" "\n"
-".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
-HIDE_SYMBOL(getHostCallReturnValue) "\n"
-".thumb" "\n"
-".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
-SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "ldr r5, [r5, #-40]" "\n"
-    "cpy r0, r5" "\n"
-    "b " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
-);
-#endif
-
-EncodedJSValue DFG_OPERATION getHostCallReturnValueWithExecState(ExecState* exec)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-    
-    return JSValue::encode(exec->globalData().hostCallReturnValue);
-}
-
 static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializationKind kind)
 {
     ExecState* exec = execCallee->callerFrame();
@@ -788,6 +745,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
 
     execCallee->setScopeChain(exec->scopeChain());
     execCallee->setCodeBlock(0);
+    execCallee->clearReturnPC();
 
     if (kind == CodeForCall) {
         CallData callData;

@@ -32,6 +32,7 @@
 namespace JSC {
 
     class JSString;
+    class LLIntOffsetsExtractor;
 
     JSString* jsEmptyString(JSGlobalData*);
     JSString* jsEmptyString(ExecState*);
@@ -240,6 +241,8 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
         void resolveRopeSlowCase8(LChar*) const;
         void resolveRopeSlowCase(UChar*) const;

@@ -11,6 +11,7 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
+    "${JAVASCRIPTCORE_DIR}/llint"
     "${JAVASCRIPTCORE_DIR}/parser"
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
@@ -102,6 +103,7 @@ SET(JavaScriptCore_SOURCES
     interpreter/RegisterFile.cpp
 
     jit/ExecutableAllocator.cpp
+    jit/HostCallReturnValue.cpp
     jit/JITArithmetic32_64.cpp
     jit/JITArithmetic.cpp
     jit/JITCall32_64.cpp

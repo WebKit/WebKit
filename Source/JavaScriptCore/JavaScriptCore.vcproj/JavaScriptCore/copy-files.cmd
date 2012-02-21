@@ -43,6 +43,7 @@ for %%d in (
     debugger
     interpreter
     jit
+    llint
     parser
     profiler
     runtime

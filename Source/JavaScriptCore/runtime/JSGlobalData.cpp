@@ -35,6 +35,7 @@
 #include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
 #include "GetterSetter.h"
+#include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSAPIValueWrapper.h"
@@ -141,6 +142,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , keywords(adoptPtr(new Keywords(this)))
     , interpreter(0)
     , heap(this, heapSize)
+    , jsArrayClassInfo(&JSArray::s_info)
+    , jsFinalObjectClassInfo(&JSFinalObject::s_info)
 #if ENABLE(DFG_JIT)
     , sizeOfLastScratchBuffer(0)
 #endif
@@ -216,9 +219,13 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
 
-    interpreter->initialize(this->canUseJIT());
+    interpreter->initialize(&llintData, this->canUseJIT());
+    
+    initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
 
     heap.notifyIsSafeToCollect();
+    
+    llintData.performAssertions(*this);
 }
 
 void JSGlobalData::clearBuiltinStructures()

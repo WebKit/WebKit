@@ -325,7 +325,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
             transition->growPropertyStorageCapacity();
         return transition;
     }
-
+    
     Structure* transition = create(globalData, structure);
 
     transition->m_cachedPrototypeChain.setMayBeNull(globalData, transition, structure->m_cachedPrototypeChain.get());

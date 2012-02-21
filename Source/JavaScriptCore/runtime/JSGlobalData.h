@@ -30,15 +30,16 @@
 #define JSGlobalData_h
 
 #include "CachedTranscendentalFunction.h"
-#include "Intrinsic.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
 #include "Heap.h"
-#include "Strong.h"
+#include "Intrinsic.h"
 #include "JITStubs.h"
 #include "JSValue.h"
+#include "LLIntData.h"
 #include "NumericStrings.h"
 #include "SmallStrings.h"
+#include "Strong.h"
 #include "Terminator.h"
 #include "TimeoutChecker.h"
 #include "WeakRandom.h"
@@ -65,6 +66,7 @@ namespace JSC {
     class JSGlobalObject;
     class JSObject;
     class Keywords;
+    class LLIntOffsetsExtractor;
     class NativeExecutable;
     class ParserArena;
     class RegExpCache;
@@ -241,7 +243,12 @@ namespace JSC {
         Heap heap;
 
         JSValue exception;
-#if ENABLE(JIT)
+
+        const ClassInfo* const jsArrayClassInfo;
+        const ClassInfo* const jsFinalObjectClassInfo;
+
+        LLInt::Data llintData;
+
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
         CallFrame* callFrameForThrow;
@@ -270,7 +277,6 @@ namespace JSC {
             
             return scratchBuffers.last();
         }
-#endif
 #endif
 
         HashMap<OpaqueJSClass*, OwnPtr<OpaqueJSClassContextData> > opaqueJSClassData;
@@ -346,6 +352,8 @@ namespace JSC {
 #undef registerTypedArrayFunction
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();

@@ -89,11 +89,11 @@ inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 
 }
 
-#if ENABLE(JIT) && ENABLE(ASSEMBLER)
-
 namespace JSC {
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
+
+#if ENABLE(JIT) && ENABLE(ASSEMBLER)
 
 class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
@@ -235,8 +235,8 @@ private:
 #endif
 };
 
-} // namespace JSC
-
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
+
+} // namespace JSC
 
 #endif // !defined(ExecutableAllocator)

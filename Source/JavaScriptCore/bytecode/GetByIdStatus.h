@@ -49,10 +49,11 @@ public:
     {
     }
     
-    GetByIdStatus(State state, const StructureSet& structureSet, size_t offset)
+    GetByIdStatus(State state, const StructureSet& structureSet, size_t offset, bool wasSeenInJIT)
         : m_state(state)
         , m_structureSet(structureSet)
         , m_offset(offset)
+        , m_wasSeenInJIT(wasSeenInJIT)
     {
         ASSERT((state == SimpleDirect) == (offset != notFound));
     }
@@ -70,10 +71,15 @@ public:
     const StructureSet& structureSet() const { return m_structureSet; }
     size_t offset() const { return m_offset; }
     
+    bool wasSeenInJIT() const { return m_wasSeenInJIT; }
+    
 private:
+    static GetByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, Identifier&);
+    
     State m_state;
     StructureSet m_structureSet;
     size_t m_offset;
+    bool m_wasSeenInJIT;
 };
 
 } // namespace JSC

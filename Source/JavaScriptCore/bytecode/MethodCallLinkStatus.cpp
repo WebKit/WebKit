@@ -35,6 +35,11 @@ MethodCallLinkStatus MethodCallLinkStatus::computeFor(CodeBlock* profiledBlock, 
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+    // NOTE: This does not have an LLInt fall-back because LLInt does not do any method
+    // call link caching.
+    if (!profiledBlock->numberOfMethodCallLinkInfos())
+        return MethodCallLinkStatus();
+    
     MethodCallLinkInfo& methodCall = profiledBlock->getMethodCallLinkInfo(bytecodeIndex);
     
     if (!methodCall.seen || !methodCall.cachedStructure)
