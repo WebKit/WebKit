@@ -1,5 +1,28 @@
 2012-02-20  Adam Barth  <abarth@webkit.org>
 
+        Invalid cast in WebCore::toElement / WebCore::HTMLElementStack::ElementRecord::element
+        https://bugs.webkit.org/show_bug.cgi?id=78975
+
+        Reviewed by Eric Seidel.
+
+        We're supposed to set the action attribute on the form element we just
+        created.  Previously, we assumed the newly created form element would
+        be on the top of the stack of open elements, but if we're in the table
+        body insertion mode, the form element gets treated as self closing and
+        is therefore popped off the stack of open elements.
+
+        Fortunately, we already cache a pointer to the most recently inserted
+        form element on the HTMLConstructionSite, so we can just grab the
+        element from there.
+
+        Test: html5lib/runner.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody):
+        (WebCore):
+
+2012-02-20  Adam Barth  <abarth@webkit.org>
+
         Unite TextTrack-related files with their friends in WebCore/html/track
         https://bugs.webkit.org/show_bug.cgi?id=78941
 
