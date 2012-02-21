@@ -42,11 +42,11 @@ class WorkerContext;
 class WorkerScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
-    WorkerScriptDebugServer();
+    explicit WorkerScriptDebugServer(WorkerContext*);
     ~WorkerScriptDebugServer() { }
 
-    void addListener(ScriptDebugListener*, WorkerContext*);
-    void removeListener(ScriptDebugListener*, WorkerContext*);
+    void addListener(ScriptDebugListener*);
+    void removeListener(ScriptDebugListener*);
 
 private:
     virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>);
@@ -54,8 +54,8 @@ private:
     virtual void quitMessageLoopOnPause();
 
     typedef HashMap<WorkerContext*, ScriptDebugListener*> ListenersMap;
-    ListenersMap m_listenersMap;
-    WorkerContext* m_pausedWorkerContext;
+    ScriptDebugListener* m_listener;
+    WorkerContext* m_workerContext;
 };
 
 } // namespace WebCore

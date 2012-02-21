@@ -34,22 +34,20 @@
 
 #include "WorkerScriptDebugServer.h"
 
-#include "WorkerContext.h"
-
 namespace WebCore {
 
 const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
 
-WorkerScriptDebugServer::WorkerScriptDebugServer()
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext*)
     : ScriptDebugServer()
 {
 }
 
-void WorkerScriptDebugServer::addListener(ScriptDebugListener*, WorkerContext*)
+void WorkerScriptDebugServer::addListener(ScriptDebugListener*)
 {
 }
 
-void WorkerScriptDebugServer::removeListener(ScriptDebugListener*, WorkerContext*)
+void WorkerScriptDebugServer::removeListener(ScriptDebugListener*)
 {
 }
 

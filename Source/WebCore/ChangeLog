@@ -1,3 +1,26 @@
+2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        [V8] Web Inspector: simplify worker debugger implementation
+        https://bugs.webkit.org/show_bug.cgi?id=79085
+
+        There is one instance of WorkerScriptDebugServer per worker thread. We don't
+        need to resolve WorkerContext from V8::Context anymore.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        (WebCore::WorkerScriptDebugServer::getDebugListenerForContext):
+        (WebCore::WorkerScriptDebugServer::runMessageLoopOnPause):
+        * bindings/v8/WorkerScriptDebugServer.h:
+        (WorkerScriptDebugServer):
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::startListeningScriptDebugServer):
+        (WebCore::WorkerDebuggerAgent::stopListeningScriptDebugServer):
+
 2012-02-21  Kentaro Hara  <haraken@chromium.org>
 
         Enable the IDL attribute checker in Chromium

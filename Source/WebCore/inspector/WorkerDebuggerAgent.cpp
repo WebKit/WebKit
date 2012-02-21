@@ -46,6 +46,7 @@ PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents*
 
 WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
     : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
+    , m_scriptDebugServer(inspectedWorkerContext)
     , m_inspectedWorkerContext(inspectedWorkerContext)
 {
 }
@@ -56,12 +57,12 @@ WorkerDebuggerAgent::~WorkerDebuggerAgent()
 
 void WorkerDebuggerAgent::startListeningScriptDebugServer()
 {
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
+    scriptDebugServer().addListener(this);
 }
 
 void WorkerDebuggerAgent::stopListeningScriptDebugServer()
 {
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
+    scriptDebugServer().removeListener(this);
 }
 
 WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()

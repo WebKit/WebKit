@@ -34,9 +34,6 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
 
 #include "ScriptDebugListener.h"
-#include "V8DOMWrapper.h"
-#include "V8DedicatedWorkerContext.h"
-#include "V8SharedWorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerDebuggerAgent.h"
@@ -46,50 +43,28 @@
 
 namespace WebCore {
 
-static WorkerContext* retrieveWorkerContext(v8::Handle<v8::Context> context)
-{
-    v8::Handle<v8::Object> global = context->Global();
-    ASSERT(!global.IsEmpty());
-
-    v8::Handle<v8::Object> prototype = v8::Handle<v8::Object>::Cast(global->GetPrototype());
-    ASSERT(!prototype.IsEmpty());
-
-    prototype = v8::Handle<v8::Object>::Cast(prototype->GetPrototype());
-    ASSERT(!prototype.IsEmpty());
-
-    WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(prototype);
-    if (&V8DedicatedWorkerContext::info == typeInfo)
-        return V8DedicatedWorkerContext::toNative(prototype);
-#if ENABLE(SHARED_WORKERS)
-    if (&V8SharedWorkerContext::info == typeInfo)
-        return V8SharedWorkerContext::toNative(prototype);
-#endif
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-WorkerScriptDebugServer::WorkerScriptDebugServer()
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* workerContext)
     : ScriptDebugServer()
-    , m_pausedWorkerContext(0)
+    , m_listener(0)
+    , m_workerContext(workerContext)
 {
 }
 
-void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener, WorkerContext* workerContext)
+void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
 
-    if (!m_listenersMap.size()) {
-        // FIXME: synchronize access to this code.
-        ensureDebuggerScriptCompiled();
-        ASSERT(!m_debuggerScript.get()->IsUndefined());
-        v8::Debug::SetDebugEventListener2(&WorkerScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
-    }
-    m_listenersMap.set(workerContext, listener);
+    ASSERT(!m_listener);
+    m_listener = listener;
+
+    ensureDebuggerScriptCompiled();
+    ASSERT(!m_debuggerScript.get()->IsUndefined());
+    v8::Debug::SetDebugEventListener2(&WorkerScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
     
     // TODO: Should we remove |proxy|? It looks like unused now.
-    WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
+    WorkerContextExecutionProxy* proxy = m_workerContext->script()->proxy();
     if (!proxy)
         return;
 
@@ -104,45 +79,31 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener, WorkerC
         dispatchDidParseSource(listener, v8::Handle<v8::Object>::Cast(scriptsArray->Get(v8::Integer::New(i))));
 }
 
-void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, WorkerContext* workerContext)
+void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener)
 {
-    if (!m_listenersMap.contains(workerContext))
-        return;
-
-    if (m_pausedWorkerContext == workerContext)
-        continueProgram();
-
-    m_listenersMap.remove(workerContext);
-
-    if (m_listenersMap.isEmpty())
-        v8::Debug::SetDebugEventListener2(0);
+    ASSERT(m_listener == listener);
+    continueProgram();
+    m_listener = 0;
+    v8::Debug::SetDebugEventListener2(0);
 }
 
-ScriptDebugListener* WorkerScriptDebugServer::getDebugListenerForContext(v8::Handle<v8::Context> context)
+ScriptDebugListener* WorkerScriptDebugServer::getDebugListenerForContext(v8::Handle<v8::Context>)
 {
-    WorkerContext* workerContext = retrieveWorkerContext(context);
-    if (!workerContext)
-        return 0;
-    return m_listenersMap.get(workerContext);
+    // There is only one worker context in isolate.
+    return m_listener;
 }
 
-void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context> context)
+void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context>)
 {
-    WorkerContext* workerContext = retrieveWorkerContext(context);
-    WorkerThread* workerThread = workerContext->thread();
-
-    m_pausedWorkerContext = workerContext;
-
     MessageQueueWaitResult result;
     do {
-        result = workerThread->runLoop().runInMode(workerContext, WorkerDebuggerAgent::debuggerTaskMode);
+        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, WorkerDebuggerAgent::debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && isPaused());
-    m_pausedWorkerContext = 0;
     
     // The listener may have been removed in the nested loop.
-    if (ScriptDebugListener* listener = m_listenersMap.get(workerContext))
-        listener->didContinue();
+    if (m_listener)
+        m_listener->didContinue();
 }
 
 void WorkerScriptDebugServer::quitMessageLoopOnPause()
