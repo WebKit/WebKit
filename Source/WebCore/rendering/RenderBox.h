@@ -330,7 +330,9 @@ public:
     bool sizesToIntrinsicLogicalWidth(LogicalWidthType) const;
     virtual bool stretchesToMinIntrinsicLogicalWidth() const { return false; }
 
-    LayoutUnit computeLogicalWidthUsing(LogicalWidthType, LayoutUnit availableLogicalWidth);
+    LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);
+
+    LayoutUnit computeLogicalWidthInRegionUsing(LogicalWidthType, LayoutUnit availableLogicalWidth, const RenderBlock* containingBlock, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);
     LayoutUnit computeLogicalHeightUsing(const Length& height);
     LayoutUnit computeReplacedLogicalWidthUsing(Length width) const;
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, bool includeMaxWidth = true) const;

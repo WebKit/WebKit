@@ -1,3 +1,63 @@
+2012-02-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=79046
+        
+        width of overflow:hidden blocks is wrong when their margins overlap floats.
+        
+        Relevant discussion is here: http://lists.w3.org/Archives/Public/www-style/2012Feb/0954.html
+        
+        This patch makes the following changes to how objects shrink when avoiding floats:
+        (1) The containing block width used for percentage calculations is now constant. This means that
+        an overflow:hidden block with a margin-left of 10% will no longer change what 10% means depending
+        on the available line width. From a code perspective, containingBlockLogicalWidthForContent and
+        containingBlockLogicalWidthForContentInRegion no longer contain any special-case code for
+        shrinkToAvoidFloats() objects.
+
+        (2) Now the computation of the logical width for the shrinking object itself handles the adjustments.
+        Two kinds of adjustments are made for both the start and end margins. Conceptually what we do is shrink
+        the object to the available line width minus our margins, and then expand the width back out to the content edge
+        or to the float edge as necessary. If the float fully fits in the margin, then we expand back out to the
+        content edge. Otherwise if the float doesn't fit, then we expand only to the float edge, making sure our
+        margin overlaps with the float. This expansion is not performed for negative margins, since our result is already
+        correct in that case.
+        
+        Reviewed by Dan Bernstein.
+
+        Added the new tests from the thread on www-style about this issue (from Alan Gresley and George Talbot)
+        in fast/block/float.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::containsFloat):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::containsFloats):
+        Changed to be const.
+
+        (WebCore::RenderBlock::endOffsetForLine):
+        (WebCore::RenderBlock::endOffsetForContent):
+        Added endOffsetForXXX methods to mirror their startOffset counterparts. Used by the width adjustment code.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        New method that handles shrinking the logical width to the line width (and then re-expanding back out to the
+        float and/or content edges as needed).
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        Patched to no longer do the shrinking of objects to avoid floats.
+
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        Patched to handle calling the new shrinking code to adjust our logical width.
+
+        * rendering/RenderBox.h:
+        (RenderBox):
+        The signature of computeLogicalWithUsing changed to be region-specific and to carry along enough information
+        to efficiently perform the shrinking.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        Patched to handle calling the new shrinking code to adjust our logical width.
+
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Snow Leopard build.

@@ -122,8 +122,8 @@ public:
     void markPositionedObjectsForLayout();
     virtual void markForPaginationRelayoutIfNeeded();
     
-    bool containsFloats() { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
-    bool containsFloat(RenderBox*);
+    bool containsFloats() const { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
+    bool containsFloat(RenderBox*) const;
 
     // Versions that can compute line offsets with the region and page offset passed in. Used for speed to avoid having to
     // compute the region all over again when you already know it.
@@ -145,6 +145,11 @@ public:
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine, region, offsetFromLogicalTopOfFirstPage)
             : logicalWidth() - logicalRightOffsetForLine(position, firstLine, region, offsetFromLogicalTopOfFirstPage);
     }
+    LayoutUnit endOffsetForLine(LayoutUnit position, bool firstLine, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
+    {
+        return !style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine, region, offsetFromLogicalTopOfFirstPage)
+            : logicalWidth() - logicalRightOffsetForLine(position, firstLine, region, offsetFromLogicalTopOfFirstPage);
+    }
 
     LayoutUnit availableLogicalWidthForLine(LayoutUnit position, bool firstLine) const
     {
@@ -161,6 +166,11 @@ public:
     LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const
     {
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine)
+            : logicalWidth() - logicalRightOffsetForLine(position, firstLine);
+    }
+    LayoutUnit endOffsetForLine(LayoutUnit position, bool firstLine) const
+    {
+        return !style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine)
             : logicalWidth() - logicalRightOffsetForLine(position, firstLine);
     }
 
@@ -326,6 +336,11 @@ public:
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForContent(region, offsetFromLogicalTopOfFirstPage)
             : logicalWidth() - logicalRightOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
     }
+    LayoutUnit endOffsetForContent(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
+    {
+        return !style()->isLeftToRightDirection() ? logicalLeftOffsetForContent(region, offsetFromLogicalTopOfFirstPage)
+            : logicalWidth() - logicalRightOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
+    }
     LayoutUnit logicalLeftOffsetForContent(LayoutUnit blockOffset) const
     {
         return logicalLeftOffsetForContent(regionAtBlockOffset(blockOffset), offsetFromLogicalTopOfFirstPage());
@@ -342,9 +357,14 @@ public:
     {
         return startOffsetForContent(regionAtBlockOffset(blockOffset), offsetFromLogicalTopOfFirstPage());
     }
+    LayoutUnit endOffsetForContent(LayoutUnit blockOffset) const
+    {
+        return endOffsetForContent(regionAtBlockOffset(blockOffset), offsetFromLogicalTopOfFirstPage());
+    }
     LayoutUnit logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
     LayoutUnit logicalRightOffsetForContent() const { return logicalLeftOffsetForContent() + availableLogicalWidth(); }
     LayoutUnit startOffsetForContent() const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForContent() : logicalWidth() - logicalRightOffsetForContent(); }
+    LayoutUnit endOffsetForContent() const { return !style()->isLeftToRightDirection() ? logicalLeftOffsetForContent() : logicalWidth() - logicalRightOffsetForContent(); }
     
     void setStaticInlinePositionForChild(RenderBox*, LayoutUnit blockOffset, LayoutUnit inlinePosition);
 

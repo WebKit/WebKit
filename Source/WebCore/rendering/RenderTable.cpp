@@ -232,14 +232,16 @@ void RenderTable::computeLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginTotal = 0;
-        if (!style()->marginStart().isAuto())
-            marginTotal += style()->marginStart().calcValue(availableLogicalWidth);
-        if (!style()->marginEnd().isAuto())
-            marginTotal += style()->marginEnd().calcValue(availableLogicalWidth);
-
+        LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginTotal = marginStart + marginEnd;
+        
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
+        if (shrinkToAvoidFloats() && cb->containsFloats() && !hasPerpendicularContainingBlock) {
+            // FIXME: Work with regions someday.
+            availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb, 0, 0);
+        }
 
         // Ensure we aren't bigger than our available width.
         setLogicalWidth(min(availableContentLogicalWidth, maxPreferredLogicalWidth()));

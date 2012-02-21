@@ -1252,11 +1252,50 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location, RenderRegion* region
     return clipRect;
 }
 
+LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
+{    
+    RenderRegion* containingBlockRegion = 0;
+    LayoutUnit logicalTopPosition = logicalTop();
+    LayoutUnit adjustedPageOffsetForContainingBlock = offsetFromLogicalTopOfFirstPage - logicalTop();
+    if (region) {
+        LayoutUnit offsetFromLogicalTopOfRegion = region ? region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage : 0;
+        logicalTopPosition = max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfRegion);
+        containingBlockRegion = cb->clampToStartAndEndRegions(region);
+    }
+
+    LayoutUnit result = cb->availableLogicalWidthForLine(logicalTopPosition, false, containingBlockRegion, adjustedPageOffsetForContainingBlock) - childMarginStart - childMarginEnd;
+
+    // We need to see if margins on either the start side or the end side can contain the floats in question. If they can,
+    // then just using the line width is inaccurate. In the case where a float completely fits, we don't need to use the line
+    // offset at all, but can instead push all the way to the content edge of the containing block. In the case where the float
+    // doesn't fit, we can use the line offset, but we need to grow it by the margin to reflect the fact that the margin was
+    // "consumed" by the float. Negative margins aren't consumed by the float, and so we ignore them.
+    if (childMarginStart > 0) {
+        LayoutUnit startContentSide = cb->startOffsetForContent(containingBlockRegion, adjustedPageOffsetForContainingBlock);
+        LayoutUnit startContentSideWithMargin = startContentSide + childMarginStart;
+        LayoutUnit startOffset = cb->startOffsetForLine(logicalTopPosition, false, containingBlockRegion, adjustedPageOffsetForContainingBlock);
+        if (startOffset > startContentSideWithMargin)
+            result += childMarginStart;
+        else
+            result += startOffset - startContentSide;
+    }
+    
+    if (childMarginEnd > 0) {
+        LayoutUnit endContentSide = cb->endOffsetForContent(containingBlockRegion, adjustedPageOffsetForContainingBlock);
+        LayoutUnit endContentSideWithMargin = endContentSide + childMarginEnd;
+        LayoutUnit endOffset = cb->endOffsetForLine(logicalTopPosition, false, containingBlockRegion, adjustedPageOffsetForContainingBlock);
+        if (endOffset > endContentSideWithMargin)
+            result += childMarginEnd;
+        else
+            result += endOffset - endContentSide;
+    }
+
+    return result;
+}
+
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
     RenderBlock* cb = containingBlock();
-    if (shrinkToAvoidFloats() && !inRenderFlowThread())
-        return cb->availableLogicalWidthForLine(logicalTop(), false);
     return cb->availableLogicalWidth();
 }
 
@@ -1267,10 +1306,6 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
 
     RenderBlock* cb = containingBlock();
     RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
-    if (shrinkToAvoidFloats()) {
-        LayoutUnit offsetFromLogicalTopOfRegion = region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage;
-        return cb->availableLogicalWidthForLine(max(logicalTop(), logicalTop() + offsetFromLogicalTopOfRegion), false, containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
-    }
     LayoutUnit result = cb->availableLogicalWidth();
     RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     if (!boxInfo)
@@ -1692,11 +1727,11 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
         setLogicalWidth(logicalWidthLength.value() + borderAndPaddingLogicalWidth());
     else {
         // Calculate LogicalWidth
-        setLogicalWidth(computeLogicalWidthUsing(LogicalWidth, containerWidthInInlineDirection));
+        setLogicalWidth(computeLogicalWidthInRegionUsing(LogicalWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage));
 
         // Calculate MaxLogicalWidth
         if (!styleToUse->logicalMaxWidth().isUndefined()) {
-            LayoutUnit maxLogicalWidth = computeLogicalWidthUsing(MaxLogicalWidth, containerWidthInInlineDirection);
+            LayoutUnit maxLogicalWidth = computeLogicalWidthInRegionUsing(MaxLogicalWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
             if (logicalWidth() > maxLogicalWidth) {
                 setLogicalWidth(maxLogicalWidth);
                 logicalWidthLength = styleToUse->logicalMaxWidth();
@@ -1704,7 +1739,7 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
         }
 
         // Calculate MinLogicalWidth
-        LayoutUnit minLogicalWidth = computeLogicalWidthUsing(MinLogicalWidth, containerWidthInInlineDirection);
+        LayoutUnit minLogicalWidth = computeLogicalWidthInRegionUsing(MinLogicalWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
         if (logicalWidth() < minLogicalWidth) {
             setLogicalWidth(minLogicalWidth);
             logicalWidthLength = styleToUse->logicalMinWidth();
@@ -1729,7 +1764,8 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
         cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, LayoutUnit availableLogicalWidth)
+LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(LogicalWidthType widthType, LayoutUnit availableLogicalWidth,
+    const RenderBlock* cb, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
     LayoutUnit logicalWidthResult = logicalWidth();
     RenderStyle* styleToUse = style();
@@ -1745,6 +1781,9 @@ LayoutUnit RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, Layou
         LayoutUnit marginStart = styleToUse->marginStart().calcMinValue(availableLogicalWidth);
         LayoutUnit marginEnd = styleToUse->marginEnd().calcMinValue(availableLogicalWidth);
         logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
+
+        if (shrinkToAvoidFloats() && cb->containsFloats())
+            logicalWidthResult = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb, region, offsetFromLogicalTopOfFirstPage);
 
         if (sizesToIntrinsicLogicalWidth(widthType)) {
             logicalWidthResult = max(logicalWidthResult, minPreferredLogicalWidth());

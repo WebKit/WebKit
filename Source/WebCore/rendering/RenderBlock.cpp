@@ -4180,7 +4180,7 @@ bool RenderBlock::avoidsFloats() const
     return RenderBox::avoidsFloats() || !style()->hasAutoColumnCount() || !style()->hasAutoColumnWidth();
 }
 
-bool RenderBlock::containsFloat(RenderBox* renderer)
+bool RenderBlock::containsFloat(RenderBox* renderer) const
 {
     return m_floatingObjects && m_floatingObjects->set().contains<RenderBox*, FloatingObjectHashTranslator>(renderer);
 }
