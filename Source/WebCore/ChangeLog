@@ -1,3 +1,18 @@
+2012-02-20  Yael Aharon  <yael.aharon@nokia.com>
+
+        Regression (108135) isOpaque() returns uninitialized variable.
+        https://bugs.webkit.org/show_bug.cgi?id=79049
+
+        Reviewed by Noam Rosenthal.
+
+        isOpaque() should use the new m_flags instead of the old m_isOpaque.
+        No new tests. No new functionality.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::reset):
+        (WebCore::BitmapTexture::isOpaque):
+        (BitmapTexture):
+
 2012-02-20  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

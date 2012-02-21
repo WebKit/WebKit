@@ -70,7 +70,7 @@ public:
 
     virtual int bpp() const { return 32; }
     virtual void didReset() { }
-    void reset(const IntSize& size, Flags flags = 0)
+    void reset(const IntSize& size, Flags flags)
     {
         m_flags = flags;
         m_contentSize = size;
@@ -79,7 +79,7 @@ public:
 
     inline IntSize contentSize() const { return m_contentSize; }
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
-    inline bool isOpaque() const { return m_isOpaque; }
+    inline bool isOpaque() const { return !(m_flags & SupportsAlpha); }
 
 #if ENABLE(CSS_FILTERS)
     virtual void applyFilters(const BitmapTexture& contentTexture, const FilterOperations&) { }
@@ -87,7 +87,6 @@ public:
 
 protected:
     IntSize m_contentSize;
-    bool m_isOpaque;
 
 private:
     Flags m_flags;
