@@ -76,7 +76,8 @@ class BindingsTests:
                'WebCore/bindings/scripts/resolve-supplemental.pl',
                '--idlFilesList', idl_files_list[1],
                '--defines', '',
-               '--supplementalDependencyFile', supplemental_dependency_file]
+               '--supplementalDependencyFile', supplemental_dependency_file,
+               '--idlAttributesFile', 'WebCore/bindings/scripts/IDLAttributes.txt']
 
         exit_code = 0
         try:

@@ -1,3 +1,20 @@
+2012-02-21  Kentaro Hara  <haraken@chromium.org>
+
+        Enable the IDL attribute checker in run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=79091
+
+        Reviewed by Adam Barth.
+
+        We have enabled the IDL attribute checker in Chromium in r108322.
+        This patch enables the IDL attribute checker in run-bindings-tests.
+
+        No tests. I manually checked that [Custommm], [CallWith=],
+        [CallWith=ScriptExecutionContext|Foo] in TestObj.idl cause
+        run-bindings-tests failures.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+
 2012-02-21  Rafael Weinstein  <rafaelw@chromium.org>
 
         Add rafaelw as a committer.
