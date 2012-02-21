@@ -1306,6 +1306,9 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     }
 
     LayoutUnit offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
+    
+    recalcCellsIfNeeded();
+
     // Find the first row that starts after offsetInColumnDirection.
     unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), offsetInColumnDirection) - m_rowPos.begin();
     if (nextRow == m_rowPos.size())
