@@ -82,17 +82,6 @@ void RenderMathMLRow::layout()
     }
     
 }    
-
-LayoutUnit RenderMathMLRow::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    if (firstChild() && firstChild()->isRenderMathMLBlock() && linePositionMode == PositionOnContainingLine) {
-        RenderMathMLBlock* block = toRenderMathMLBlock(firstChild());
-        if (block->isRenderMathMLOperator())
-            return block->y() + block->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
-    }
-    
-    return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
-}
     
 }
 

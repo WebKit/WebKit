@@ -125,63 +125,39 @@ RenderMathMLOperator* RenderMathMLSubSup::unembellishedOperator()
 
 void RenderMathMLSubSup::stretchToHeight(int height)
 {
-    RenderObject* baseWrapper = firstChild();
-    if (!baseWrapper || !baseWrapper->firstChild())
-        return;
-    
-    if (baseWrapper->firstChild() && baseWrapper->firstChild()->isRenderMathMLBlock()) {
-        RenderMathMLBlock* block = toRenderMathMLBlock(baseWrapper->firstChild());
-        block->stretchToHeight(static_cast<int>(gSubSupStretch * height));
+    RenderBoxModelObject* base = this->base();
+    if (base && base->isRenderMathMLBlock()) {
+        toRenderMathMLBlock(base)->stretchToHeight(static_cast<int>(gSubSupStretch * height));
         
         // Adjust the script placement after we stretch
         if (height > 0 && m_kind == SubSup && m_scripts) {
-            RenderObject* script = m_scripts->firstChild();
-            if (script) {
+            RenderObject* supWrapper = m_scripts->firstChild();
+            if (supWrapper) {
                 // Calculate the script height without the container margins.
-                RenderObject* top = script;
-                int topHeight = getBoxModelObjectHeight(top->firstChild());
-                int topAdjust = topHeight / gTopAdjustDivisor;
-                top->style()->setMarginTop(Length(-topAdjust, Fixed));
-                top->style()->setMarginBottom(Length(height - topHeight + topAdjust, Fixed));
-                if (top->isBoxModelObject()) {
-                    RenderBoxModelObject* topBox = toRenderBoxModelObject(top);
-                    topBox->updateBoxModelInfoFromStyle();
-                }
-                m_scripts->setNeedsLayout(true);
-                setNeedsLayout(true);
+                int supHeight = getBoxModelObjectHeight(supWrapper->firstChild());
+                int supTopAdjust = supHeight / gTopAdjustDivisor;
+                supWrapper->style()->setMarginTop(Length(-supTopAdjust, Fixed));
+                supWrapper->style()->setMarginBottom(Length(height - supHeight + supTopAdjust, Fixed));
+                supWrapper->setNeedsLayout(true);
             }
         }
-        
     }
 }
 
-void RenderMathMLSubSup::layout() 
+void RenderMathMLSubSup::layout()
 {
-    if (firstChild())
-        firstChild()->setNeedsLayout(true);
-    if (m_scripts) 
-        m_scripts->setNeedsLayout(true);
-    
     RenderBlock::layout();
     
-    if (m_kind == SubSup) {
-        if (RenderObject* baseWrapper = firstChild()) {
-            LayoutUnit maxHeight = 0;
-            RenderObject* current = baseWrapper->firstChild();
-            while (current) {
-                LayoutUnit height = getBoxModelObjectHeight(current);
-                if (height > maxHeight)
-                    maxHeight = height;
-                current = current->nextSibling();
-            }
-            LayoutUnit heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : zeroLayoutUnit;
+    if (m_kind == SubSup && m_scripts) {
+        if (RenderBoxModelObject* base = this->base()) {
+            LayoutUnit heightDiff = (m_scripts->offsetHeight() - base->offsetHeight()) / 2;
             if (heightDiff < 0) 
                 heightDiff = 0;
+            RenderObject* baseWrapper = firstChild();
             baseWrapper->style()->setPaddingTop(Length(heightDiff, Fixed));
             baseWrapper->setNeedsLayout(true);
+            RenderBlock::layout();
         }
-        setNeedsLayout(true);
-        RenderBlock::layout();
     }    
 }
 

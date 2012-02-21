@@ -1,3 +1,25 @@
+2012-02-20  David Barton  <dbarton@mathscribe.com>
+
+        MathML internals - code clean-up for RenderMathMLSubSup
+        https://bugs.webkit.org/show_bug.cgi?id=79063
+
+        Reviewed by Eric Seidel.
+
+        In the next patch, I will shrink and revise the <msubsup> formatting code. To make this
+        easier to follow, I am first doing some simple code clean-up.
+
+        No new tests.
+
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+        * rendering/mathml/RenderMathMLRow.h:
+        (WebCore::RenderMathMLRow::isRenderMathMLRow):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        (WebCore::RenderMathMLSubSup::layout):
+            - There is no need to iterate over baseWrapper's children since it should have only
+              one child, the base of the <msubsup>.
+
 2012-02-20  Kentaro Hara  <haraken@chromium.org>
 
         Replace [V8Custom=DOMWindowNOP] with [V8Custom]

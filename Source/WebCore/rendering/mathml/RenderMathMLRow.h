@@ -36,7 +36,6 @@ class RenderMathMLRow : public RenderMathMLBlock {
 public:
     RenderMathMLRow(Element*);
     virtual bool isRenderMathMLRow() const { return true; }
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
     virtual void stretchToHeight(int) {}
 protected:
     virtual void layout();
