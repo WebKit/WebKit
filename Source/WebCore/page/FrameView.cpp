@@ -1337,12 +1337,10 @@ void FrameView::addFixedObject()
         if (platformWidget())
             updateCanBlitOnScrollRecursively();
 
-#if ENABLE(THREADED_SCROLLING)
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewHasFixedObjectsDidChange(this);
         }
-#endif
     }
 }
 
@@ -1352,12 +1350,10 @@ void FrameView::removeFixedObject()
     --m_fixedObjectCount;
 
     if (!m_fixedObjectCount) {
-#if ENABLE(THREADED_SCROLLING)
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewHasFixedObjectsDidChange(this);
         }
-#endif
 
         // FIXME: In addFixedObject() we only call this if there's a platform widget,
         // why isn't the same check being made here?

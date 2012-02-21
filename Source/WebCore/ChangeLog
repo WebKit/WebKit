@@ -1,5 +1,24 @@
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
+        ScrollingCoordinator::coordinatesScrollingForFrameView should be conditional on compositing being active
+        https://bugs.webkit.org/show_bug.cgi?id=79126
+
+        Reviewed by Anders Carlsson.
+
+        The ScrollingCoordinator should only attempt to coordinate scrolling when compositing is active, since it's all
+        about manipulating GraphicsLayers. Adds a runtime check.
+
+        Also removes some stray #if ENABLE(THREADED_SCROLLING) guards that snuck into FrameView.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addFixedObject):
+        (WebCore::FrameView::removeFixedObject):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
         Chromium build fix. Unreviwed but rubber-stamped by Antti.
 
         * dom/Document.cpp:

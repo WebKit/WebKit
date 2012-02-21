@@ -99,7 +99,15 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     if (frameView->frame() != m_page->mainFrame())
         return false;
 
-    return true;
+    // We currently only support composited mode.
+#if USE(ACCELERATED_COMPOSITING)
+    RenderView* renderView = m_page->mainFrame()->contentRenderer();
+    if (!renderView)
+        return false;
+    return renderView->usesCompositing();
+#endif
+
+    return false;
 }
 
 static Region computeNonFastScrollableRegion(FrameView* frameView)
