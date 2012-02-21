@@ -61,6 +61,7 @@ WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-securit
 OTHER_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv;
 
 CLANG_CXX_LIBRARY = $(CLANG_CXX_LIBRARY_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+CLANG_CXX_LIBRARY_1060 = libstdc++;
 CLANG_CXX_LIBRARY_1070 = libc++;
 CLANG_CXX_LIBRARY_1080 = libc++;
 CLANG_CXX_LIBRARY_1090 = libc++;

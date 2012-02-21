@@ -1,5 +1,11 @@
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
+        Attempt to fix the Snow Leopard build.
+
+        * Configurations/Base.xcconfig:
+
+2012-02-21  Sam Weinig  <sam@webkit.org>
+
         Use libc++ when building with Clang on Mac
         https://bugs.webkit.org/show_bug.cgi?id=78981
 
