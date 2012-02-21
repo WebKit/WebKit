@@ -256,11 +256,21 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     setDelayCallbacks(true);
 
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote], AVURLAssetReferenceRestrictionsKey, 
-                        nil];
+    RetainPtr<NSMutableDictionary> options(AdoptNS, [[NSMutableDictionary alloc] init]);    
+
+    [options.get() setObject:[NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote] forKey:AVURLAssetReferenceRestrictionsKey];
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    String referrer = player()->referrer();
+    if (!referrer.isEmpty()) {
+        RetainPtr<NSMutableDictionary> headerFields(AdoptNS, [[NSMutableDictionary alloc] init]);
+        [headerFields.get() setObject:referrer forKey:@"Referer"];
+        [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
+    }
+#endif
+
     NSURL *cocoaURL = KURL(ParsedURLString, url);
-    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options]);
+    m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
     m_haveCheckedPlayability = false;
 

@@ -1,3 +1,26 @@
+2012-02-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Set Referrer header for media downloads
+        https://bugs.webkit.org/show_bug.cgi?id=78614
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/media/video-referer.html was modified to test this change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerReferrer): New, return the document's referer.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::referrer): New, return the client's mediaPlayerReferrer.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerReferrer):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Tell AVFoundation to add
+            a referer header.
+
 2012-02-21  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.

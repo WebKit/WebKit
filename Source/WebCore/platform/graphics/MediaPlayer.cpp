@@ -928,6 +928,14 @@ AudioSourceProvider* MediaPlayer::audioSourceProvider()
     return m_private->audioSourceProvider();
 }
 #endif // WEB_AUDIO
+    
+String MediaPlayer::referrer() const
+{
+    if (!m_mediaPlayerClient)
+        return String();
+
+    return m_mediaPlayerClient->mediaPlayerReferrer();
+}
 
 }
 

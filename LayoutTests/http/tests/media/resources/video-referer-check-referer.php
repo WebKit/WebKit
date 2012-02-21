@@ -1,24 +1,52 @@
 <?php
-    if($_SERVER['HTTP_REFERER'])
-    {
-        $extension = substr($_COOKIE["TEST"], -3);
 
-        if ($extension == 'mp4') {
-               header("Content-Type: video/mp4");
-               $fileName = "test.mp4";
-        } else if ($extension == 'ogv') {
-               header("Content-Type: video/ogg");
-               $fileName = "test.ogv";
-        } else
-               die;
-
-        header("Cache-Control: no-store");
-        header("Connection: close");
-
-        $fn = fopen($fileName, "r");
-        fpassthru($fn);
-        fclose($fn);
-        exit;
-    } else
+    $refer = $_SERVER["HTTP_REFERER"];
+    if (!isset($refer) || stripos($refer, "video-referer.html") === false)
         die;
+
+    $fileName = $_GET["name"];
+    $type = $_GET["type"];
+
+    $fileSize = filesize($fileName);
+    $start = 0;
+    $end = $fileSize - 1;
+    $contentRange = $_SERVER["HTTP_RANGE"];
+    if (isset($contentRange))
+    {
+        $range = explode("-", substr($contentRange, 6)); 
+        $start = intval($range[0]); 
+        if (!empty($range[1]))
+            $end = intval($range[1]);
+        $httpStatus = "HTTP/1.1 206 Partial Content";
+    } else
+        $httpStatus = "200 OK";
+
+    header("Status: " . $httpStatus);
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+    header("Pragma: no-cache");
+    header("Etag: " . '"' . $fileSize . "-" . filemtime($fileName) . '"');
+    header("Content-Type: " . $type);
+    header("Accept-Ranges: bytes");
+    header("Content-Length: " . ($end - $start) + 1);
+    if ($contentRange)
+		header("Content-Range: bytes " . $start . "-" . $end . "/" . $fileSize); 
+    header("Connection: close");
+
+    $chunkSize = 1024 * 256;
+    $offset = $start;
+
+    $fn = fopen($fileName, "rb");
+    fseek($fn, $offset, 0);
+
+    while (!feof($fn) && $offset <= $end && connection_status() == 0)
+    {
+        $readSize = min($chunkSize, ($end - $offset) + 1);
+        $buffer = fread($fn, $readSize);
+        print($buffer);
+        flush();
+        $offset += $chunkSize;
+    }
+    fclose($fn);
+
+    exit;
 ?>

@@ -242,6 +242,8 @@ protected:
 
     const String& assetURL() const { return m_assetURL; }
 
+    MediaPlayer* player() { return m_player; }
+
 private:
     MediaPlayer* m_player;
 

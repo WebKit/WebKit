@@ -167,6 +167,8 @@ public:
     virtual void mediaPlayerSourceOpened() { }
     virtual String mediaPlayerSourceURL() const { return "x-media-source-unsupported:"; }
 #endif
+
+    virtual String mediaPlayerReferrer() const { return String(); }
 };
 
 class MediaPlayer {
@@ -286,7 +288,6 @@ public:
     void firstVideoFrameAvailable();
     void characteristicChanged();
 
-
     void repaint();
 
     MediaPlayerClient* mediaPlayerClient() const { return m_mediaPlayerClient; }
@@ -333,6 +334,8 @@ public:
     void sourceOpened();
     String sourceURL() const;
 #endif
+
+    String referrer() const;
 
 private:
     MediaPlayer(MediaPlayerClient*);

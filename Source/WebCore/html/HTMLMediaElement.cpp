@@ -69,6 +69,7 @@
 #include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShadowRootList.h"
@@ -4022,6 +4023,14 @@ bool HTMLMediaElement::shouldDisableSleep() const
 }
 #endif
 
+String HTMLMediaElement::mediaPlayerReferrer() const
+{
+    Frame* frame = document()->frame();
+    if (!frame)
+        return String();
+
+    return SecurityPolicy::generateReferrerHeader(document()->referrerPolicy(), m_currentSrc, frame->loader()->outgoingReferrer());
 }
 
+}
 #endif

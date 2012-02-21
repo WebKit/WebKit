@@ -388,6 +388,8 @@ private:
     virtual String mediaPlayerSourceURL() const;
 #endif
 
+    virtual String mediaPlayerReferrer() const OVERRIDE;
+
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void progressEventTimerFired(Timer<HTMLMediaElement>*);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>*);
