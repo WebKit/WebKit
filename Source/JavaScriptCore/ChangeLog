@@ -1,3 +1,15 @@
+2012-02-20  Pino Toscano  <pino@debian.org>
+
+        Does not build on GNU Hurd
+        https://bugs.webkit.org/show_bug.cgi?id=79045
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * wtf/Platform.h: define WTF_OS_HURD.
+        * wtf/ThreadIdentifierDataPthreads.cpp: adds a band-aid fix
+        for the lack of PTHREAD_KEYS_MAX definition, with a value which
+        should not cause issues.
+
 2012-02-20  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed windows build fix.

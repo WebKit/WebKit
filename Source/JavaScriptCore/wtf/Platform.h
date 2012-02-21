@@ -351,6 +351,11 @@
 #define WTF_OS_FREEBSD 1
 #endif
 
+/* OS(HURD) - GNU/Hurd */
+#ifdef __GNU__
+#define WTF_OS_HURD 1
+#endif
+
 /* OS(LINUX) - Linux */
 #ifdef __linux__
 #define WTF_OS_LINUX 1
@@ -394,6 +399,7 @@
     || OS(ANDROID)          \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
+    || OS(HURD)             \
     || OS(LINUX)            \
     || OS(NETBSD)           \
     || OS(OPENBSD)          \
