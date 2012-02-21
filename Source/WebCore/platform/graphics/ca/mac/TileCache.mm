@@ -93,7 +93,7 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
     // Find the tiles that need to be invalidated.
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(rect, topLeft, bottomRight);
+    getTileIndexRangeForRect(intersection(rect, m_tileCoverageRect), topLeft, bottomRight);
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
@@ -331,6 +331,13 @@ void TileCache::revalidateTiles()
             [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
             [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
         }
+    }
+
+    m_tileCoverageRect = IntRect();
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        const TileIndex& tileIndex = it->first;
+
+        m_tileCoverageRect.unite(rectForTileIndex(tileIndex));
     }
 
     if (!didCreateNewTiles)

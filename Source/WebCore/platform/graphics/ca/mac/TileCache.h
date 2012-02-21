@@ -27,7 +27,7 @@
 #define TileCache_h
 
 #include "IntPointHash.h"
-#include "IntSize.h"
+#include "IntRect.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -97,6 +97,7 @@ private:
     typedef HashMap<TileIndex, RetainPtr<WebTileLayer> > TileMap;
     TileMap m_tiles;
     Timer<TileCache> m_tileRevalidationTimer;
+    IntRect m_tileCoverageRect;
 
     bool m_acceleratesDrawing;
 

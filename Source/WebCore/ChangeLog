@@ -1,3 +1,19 @@
+2012-02-21  Anders Carlsson  <andersca@apple.com>
+
+        The tile cache should keep track of the tile coverage rect
+        https://bugs.webkit.org/show_bug.cgi?id=79149
+        <rdar://problem/10877338>
+
+        Reviewed by Andreas Kling.
+
+        Keep track of the tile coverage rect and use it to avoid trying to iterate over non-existent tiles on large pages.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        (TileCache):
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setNeedsDisplayInRect):
+        (WebCore::TileCache::revalidateTiles):
+
 2012-02-21  Andreas Kling  <awesomekling@apple.com>
 
         Make WebKitCSSShaderValue inherit directly from CSSValue.
