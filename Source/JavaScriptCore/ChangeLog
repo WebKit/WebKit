@@ -1,3 +1,9 @@
+2012-02-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Undoing accidental changes
