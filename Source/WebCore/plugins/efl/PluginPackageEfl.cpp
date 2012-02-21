@@ -69,16 +69,16 @@ bool PluginPackage::fetchInfo()
     NPError err = getValue(0, NPPVpluginNameString, static_cast<void*>(&buffer));
     if (err != NPERR_NO_ERROR)
         return false;
-    m_name = buffer;
+    m_name = String::fromUTF8(buffer);
 
     buffer = 0;
     err = getValue(0, NPPVpluginDescriptionString, static_cast<void*>(&buffer));
     if (err != NPERR_NO_ERROR)
         return false;
-    m_description = buffer;
+    m_description = String::fromUTF8(buffer);
     determineModuleVersionFromDescription();
 
-    String description = getMIMEDescription();
+    String description = String::fromUTF8(getMIMEDescription());
 
     Vector<String> types;
     description.split(UChar(';'), false, types);

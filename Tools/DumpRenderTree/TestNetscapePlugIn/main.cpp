@@ -773,7 +773,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
         return NPERR_NO_ERROR;
     }
     if (variable == NPPVpluginDescriptionString) {
-        *((char **)value) = const_cast<char*>("Simple Netscape plug-in that handles test content for WebKit");
+        *((char **)value) = const_cast<char*>("Simple Netscape® plug-in that handles test content for WebKit");
         return NPERR_NO_ERROR;
     }
     if (variable == NPPVpluginNeedsXEmbed) {

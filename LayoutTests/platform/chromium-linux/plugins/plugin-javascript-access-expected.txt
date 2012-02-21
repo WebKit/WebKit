@@ -1,6 +1,6 @@
 Name: WebKit Test PlugIn
 
-Description: Simple Netscape plug-in that handles test content for WebKit
+Description: Simple Netscape® plug-in that handles test content for WebKit
 
 Filename: libTestNetscapePlugIn.so
 

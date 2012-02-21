@@ -1,3 +1,16 @@
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [UNIX] Plugin information fields are not interpreted as UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=78635
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Interpret plugin metadata as UTF8 aways. This matches the behavior
+        of Chromium and the Totem plugin.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin): Use String::fromUTF8.
+
 2012-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Adding SOUP_TYPE_PROXY_RESOLVER_DEFAULT feature to soup session makes WebProcess to hang
