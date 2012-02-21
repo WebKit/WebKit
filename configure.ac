@@ -1035,8 +1035,8 @@ AC_MSG_RESULT([$enable_animation_api])
 AC_MSG_CHECKING([whether to enable requestAnimationFrame support])
 AC_ARG_ENABLE(request_animation_frame,
               AC_HELP_STRING([--enable-request-animation-frame],
-                             [enable support for requestAnimationFrame (experimental) [default=no]]),
-              [],[enable_request_animation_frame="no"])
+                             [enable support for requestAnimationFrame (experimental) [default=yes]]),
+              [],[enable_request_animation_frame="yes"])
 AC_MSG_RESULT([$enable_request_animation_frame])
 
 # check whether to enable touch icon loading 
