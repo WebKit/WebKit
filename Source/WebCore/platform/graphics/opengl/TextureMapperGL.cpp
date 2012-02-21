@@ -617,7 +617,9 @@ void BitmapTextureGL::didReset()
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE))
         GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0))
     }
-    m_relativeSize = FloatSize(float(contentSize().width()) / m_textureSize.width(), float(contentSize().height()) / m_textureSize.height());
+
+    // We decrease the size by one, since this is used as rectangle coordinates and not as size.
+    m_relativeSize = FloatSize(float(contentSize().width() - 1) / m_textureSize.width(), float(contentSize().height() - 1) / m_textureSize.height());
     m_surfaceNeedsReset = true;
 }
 

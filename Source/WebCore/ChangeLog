@@ -1,3 +1,18 @@
+2012-02-20  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Layers and tiles appear to have missing pixels in their right/bottom borders
+        https://bugs.webkit.org/show_bug.cgi?id=78961
+
+        The relativeSize member should point to one pixel before the edge, since it's used
+        by glVertexAttribPointer, which takes edge points and not sizes.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new funcionality.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::didReset):
+
 2012-02-20  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add a new API for the Vibration API(W3C).
