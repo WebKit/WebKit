@@ -52,28 +52,18 @@ static float saturate(float x, float k)
     return 1 - exp(-k * x);
 }
 
-DynamicsCompressorKernel::DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels)
+DynamicsCompressorKernel::DynamicsCompressorKernel(float sampleRate)
     : m_sampleRate(sampleRate)
     , m_lastPreDelayFrames(DefaultPreDelayFrames)
+    , m_preDelayBufferL(MaxPreDelayFrames)
+    , m_preDelayBufferR(MaxPreDelayFrames)
     , m_preDelayReadIndex(0)
     , m_preDelayWriteIndex(DefaultPreDelayFrames)
 {
-    setNumberOfChannels(numberOfChannels);
-
     // Initializes most member variables
     reset();
     
     m_meteringReleaseK = discreteTimeConstantForSampleRate(meteringReleaseTimeConstant, sampleRate);
-}
-
-void DynamicsCompressorKernel::setNumberOfChannels(unsigned numberOfChannels)
-{
-    if (m_preDelayBuffers.size() == numberOfChannels)
-        return;
-
-    m_preDelayBuffers.clear();
-    for (unsigned i = 0; i < numberOfChannels; ++i)
-        m_preDelayBuffers.append(adoptPtr(new AudioFloatArray(MaxPreDelayFrames)));
 }
 
 void DynamicsCompressorKernel::setPreDelayTime(float preDelayTime)
@@ -85,17 +75,17 @@ void DynamicsCompressorKernel::setPreDelayTime(float preDelayTime)
         
     if (m_lastPreDelayFrames != preDelayFrames) {
         m_lastPreDelayFrames = preDelayFrames;
-        for (unsigned i = 0; i < m_preDelayBuffers.size(); ++i)
-            m_preDelayBuffers[i]->zero();
-
+        m_preDelayBufferL.zero();
+        m_preDelayBufferR.zero();
         m_preDelayReadIndex = 0;
         m_preDelayWriteIndex = preDelayFrames;
     }
 }
 
-void DynamicsCompressorKernel::process(float* sourceChannels[],
-                                       float* destinationChannels[],
-                                       unsigned numberOfChannels,
+void DynamicsCompressorKernel::process(const float* sourceL,
+                                       float* destinationL,
+                                       const float* sourceR, /* stereo-linked */
+                                       float* destinationR,
                                        unsigned framesToProcess,
 
                                        float dbThreshold,
@@ -112,8 +102,7 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
                                        float releaseZone4
                                        )
 {
-    ASSERT(m_preDelayBuffers.size() == numberOfChannels);
-
+    bool isStereo = destinationR;
     float sampleRate = this->sampleRate();
 
     float dryMix = 1 - effectBlend;
@@ -175,7 +164,6 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
 
     const int nDivisions = framesToProcess / nDivisionFrames;
 
-    unsigned frameIndex = 0;
     for (int i = 0; i < nDivisions; ++i) {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Calculate desired gain
@@ -259,6 +247,8 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         {
+            float* delayBufferL = m_preDelayBufferL.data();
+            float* delayBufferR = m_preDelayBufferR.data();
             int preDelayReadIndex = m_preDelayReadIndex;
             int preDelayWriteIndex = m_preDelayWriteIndex;
             float detectorAverage = m_detectorAverage;
@@ -266,18 +256,31 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
 
             int loopFrames = nDivisionFrames;
             while (loopFrames--) {
-                float compressorInput = 0;
+                float compressorInput;
+                float inputL;
+                float inputR = 0;
 
                 // Predelay signal, computing compression amount from un-delayed version.
-                for (unsigned i = 0; i < numberOfChannels; ++i) {
-                    float* delayBuffer = m_preDelayBuffers[i]->data();
-                    float undelayedSource = sourceChannels[i][frameIndex];
-                    delayBuffer[preDelayWriteIndex] = undelayedSource;
+                if (isStereo) {
+                    float undelayedL = *sourceL++;
+                    float undelayedR = *sourceR++;
 
-                    float absUndelayedSource = undelayedSource > 0 ? undelayedSource : -undelayedSource;
-                    if (compressorInput < absUndelayedSource)
-                        compressorInput = absUndelayedSource;
+                    compressorInput = 0.5f * (undelayedL + undelayedR);
+
+                    inputL = delayBufferL[preDelayReadIndex];
+                    inputR = delayBufferR[preDelayReadIndex];
+
+                    delayBufferL[preDelayWriteIndex] = undelayedL;
+                    delayBufferR[preDelayWriteIndex] = undelayedR;
+                } else {
+                    compressorInput = *sourceL++;
+
+                    inputL = delayBufferL[preDelayReadIndex];
+                    delayBufferL[preDelayWriteIndex] = compressorInput;
                 }
+
+                preDelayReadIndex = (preDelayReadIndex + 1) & MaxPreDelayFramesMask;
+                preDelayWriteIndex = (preDelayWriteIndex + 1) & MaxPreDelayFramesMask;
 
                 // Calculate shaped power on undelayed input.
 
@@ -334,14 +337,17 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
                     m_meteringGain += (dbRealGain - m_meteringGain) * m_meteringReleaseK;
 
                 // Apply final gain.
-                for (unsigned i = 0; i < numberOfChannels; ++i) {
-                    float* delayBuffer = m_preDelayBuffers[i]->data();
-                    destinationChannels[i][frameIndex] = delayBuffer[preDelayReadIndex] * totalGain;
-                }
+                if (isStereo) {
+                    float outputL = inputL;
+                    float outputR = inputR;
 
-                frameIndex++;
-                preDelayReadIndex = (preDelayReadIndex + 1) & MaxPreDelayFramesMask;
-                preDelayWriteIndex = (preDelayWriteIndex + 1) & MaxPreDelayFramesMask;
+                    outputL *= totalGain;
+                    outputR *= totalGain;
+
+                    *destinationL++ = outputL;
+                    *destinationR++ = outputR;
+                } else
+                    *destinationL++ = inputL * totalGain;
             }
 
             // Locals back to member variables.
@@ -360,9 +366,8 @@ void DynamicsCompressorKernel::reset()
     m_meteringGain = 1;
 
     // Predelay section.
-    for (unsigned i = 0; i < m_preDelayBuffers.size(); ++i)
-        m_preDelayBuffers[i]->zero();
-
+    m_preDelayBufferL.zero();
+    m_preDelayBufferR.zero();
     m_preDelayReadIndex = 0;
     m_preDelayWriteIndex = DefaultPreDelayFrames;
 

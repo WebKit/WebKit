@@ -31,21 +31,17 @@
 
 #include "AudioArray.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
 namespace WebCore {
 
 class DynamicsCompressorKernel {
 public:
-    DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels);
-
-    void setNumberOfChannels(unsigned);
+    DynamicsCompressorKernel(float sampleRate);
 
     // Performs stereo-linked compression.
-    void process(float* sourceChannels[],
-                 float* destinationChannels[],
-                 unsigned numberOfChannels,
+    void process(const float *sourceL,
+                 float *destinationL,
+                 const float *sourceR,
+                 float *destinationR,
                  unsigned framesToProcess,
 
                  float dbThreshold,
@@ -70,7 +66,7 @@ public:
 
 protected:
     float m_sampleRate;
-
+    
     float m_detectorAverage;
     float m_compressorGain;
 
@@ -85,7 +81,8 @@ protected:
     unsigned m_lastPreDelayFrames;
     void setPreDelayTime(float);
 
-    Vector<OwnPtr<AudioFloatArray> > m_preDelayBuffers;
+    AudioFloatArray m_preDelayBufferL;
+    AudioFloatArray m_preDelayBufferR;
     int m_preDelayReadIndex;
     int m_preDelayWriteIndex;
 
