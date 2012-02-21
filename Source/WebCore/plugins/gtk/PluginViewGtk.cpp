@@ -165,6 +165,8 @@ void PluginView::updatePluginWidget()
 void PluginView::setFocus(bool focused)
 {
     ASSERT(platformPluginWidget() == platformWidget());
+    if (focused && platformWidget())
+        gtk_widget_grab_focus(platformWidget());
     Widget::setFocus(focused);
 }
 

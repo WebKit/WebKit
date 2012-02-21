@@ -1,3 +1,17 @@
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Web content oftens steals focus from other widgets
+        https://bugs.webkit.org/show_bug.cgi?id=77791
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setFocus): No longer do anything special to try
+        to grab "real" widget focus. This matches the behavior on Qt.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setFocus): Moved the focus handling to here.
+        This ensures that behavior for plugins does not change.
+
 2012-02-20  Yael Aharon  <yael.aharon@nokia.com>
 
         Regression (108135) isOpaque() returns uninitialized variable.
