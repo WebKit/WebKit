@@ -1,3 +1,14 @@
+2012-02-21  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix the N9 build
+        https://bugs.webkit.org/show_bug.cgi?id=79101
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests needed.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp: Add missing include.
+
 2012-02-21  Adam Roben  <aroben@apple.com>
 
         Roll out r108309, r108323, and r108326

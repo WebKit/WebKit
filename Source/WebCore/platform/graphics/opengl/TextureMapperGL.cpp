@@ -32,6 +32,7 @@
 #if PLATFORM(QT)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QPlatformPixmap>
+#include <qopenglfunctions.h>
 #endif
 #endif
 
