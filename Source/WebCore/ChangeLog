@@ -1,3 +1,17 @@
+2012-02-21  Lin Wei  <wei.a.lin@intel.com>
+
+        Fix bug from r107672.
+        https://bugs.webkit.org/show_bug.cgi?id=78773
+
+        Before set MediaStreamTrack disable/enable operation,
+        checking the status of MediaStream that contains this MediaStreamTrack.
+        if MediaStream is finished, then skipping operation of 
+        didSetMediaStreamTrackEnabled().
+
+        Reviewed by Adam Barth.
+        * mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::setEnabled):
+
 2012-02-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Move RenderLayer::scrolledContentOffset calls to a common function
