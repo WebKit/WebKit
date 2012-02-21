@@ -1,3 +1,20 @@
+2012-02-21  Pavel Feldman  <pfeldman@chomium.org>
+
+        Web Inspector: evaluate on hover does not work for large files.
+        https://bugs.webkit.org/show_bug.cgi?id=79015
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._getPopoverAnchor):
+        (WebInspector.JavaScriptSourceFrame.prototype._highlightExpression):
+        * inspector/front-end/Popover.js:
+        (WebInspector.PopoverHelper.prototype._handleMouseAction):
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer):
+        (WebInspector.SourceJavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+
 2012-02-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add "show paint rectangles" setting.

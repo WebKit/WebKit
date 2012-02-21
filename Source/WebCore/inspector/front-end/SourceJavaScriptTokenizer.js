@@ -50,13 +50,6 @@ WebInspector.SourceJavaScriptTokenizer = function()
 {
     WebInspector.SourceTokenizer.call(this);
 
-    this._keywords = [
-        "null", "true", "false", "break", "case", "catch", "const", "default", "finally", "for",
-        "instanceof", "new", "var", "continue", "function", "return", "void", "delete", "if",
-        "this", "do", "while", "else", "in", "switch", "throw", "try", "typeof", "debugger",
-        "class", "enum", "export", "extends", "import", "super", "get", "set", "with"
-    ].keySet();
-
     this._lexConditions = {
         DIV: 0,
         NODIV: 1,
@@ -75,6 +68,13 @@ WebInspector.SourceJavaScriptTokenizer = function()
 
     this.condition = this.createInitialCondition();
 }
+
+WebInspector.SourceJavaScriptTokenizer.Keywords = [
+        "null", "true", "false", "break", "case", "catch", "const", "default", "finally", "for",
+        "instanceof", "new", "var", "continue", "function", "return", "void", "delete", "if",
+        "this", "do", "while", "else", "in", "switch", "throw", "try", "typeof", "debugger",
+        "class", "enum", "export", "extends", "import", "super", "get", "set", "with"
+    ].keySet();
 
 WebInspector.SourceJavaScriptTokenizer.prototype = {
     createInitialCondition: function()
@@ -257,7 +257,7 @@ case 20:
 case 21:
             {
                     var token = this._line.substring(cursorOnEnter, cursor);
-                    if (this._keywords[token] === true && token !== "__proto__")
+                    if (WebInspector.SourceJavaScriptTokenizer.Keywords[token] === true && token !== "__proto__")
                         this.tokenType = "javascript-keyword";
                     else
                         this.tokenType = "javascript-ident";
@@ -1189,7 +1189,7 @@ case 142:
             this.setLexCondition(this._lexConditions.DIV);
             {
                     var token = this._line.substring(cursorOnEnter, cursor);
-                    if (this._keywords[token] === true && token !== "__proto__")
+                    if (WebInspector.SourceJavaScriptTokenizer.Keywords[token] === true && token !== "__proto__")
                         this.tokenType = "javascript-keyword";
                     else
                         this.tokenType = "javascript-ident";

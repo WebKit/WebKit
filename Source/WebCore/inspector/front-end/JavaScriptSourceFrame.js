@@ -254,28 +254,51 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         delete this._javaScriptSourceFrameState;
     },
 
-    // Popover callbacks
-    _shouldShowPopover: function(element)
+    _getPopoverAnchor: function(element, event)
     {
         if (!this._model.paused)
-            return false;
-        if (!element.enclosingNodeOrSelfWithClass("webkit-line-content"))
-            return false;
+            return null;
         if (window.getSelection().type === "Range")
-            return false;
+            return null;
+        var lineElement = element.enclosingNodeOrSelfWithClass("webkit-line-content");
+        if (!lineElement)
+            return null;
+
+        if (element.hasStyleClass("webkit-javascript-ident"))
+            return element;
+
+        if (element.hasStyleClass("source-frame-token"))
+            return element;
 
         // We are interested in identifiers and "this" keyword.
         if (element.hasStyleClass("webkit-javascript-keyword"))
-            return element.textContent === "this";
+            return element.textContent === "this" ? element : null;
 
-        return element.hasStyleClass("webkit-javascript-ident");
-    },
+        if (element !== lineElement || element.querySelectorAll(".source-frame-token").length)
+            return null;
 
-    _getPopoverAnchor: function(element)
-    {
-        if (!this._shouldShowPopover(element))
-            return;
-        return element;
+        // Handle non-highlighted case
+        // 1. Collect ranges of identifier suspects
+        var lineContent = lineElement.textContent;
+        var ranges = [];
+        var regex = new RegExp("[a-zA-Z_\$0-9]+", "g");
+        var match;
+        while (regex.lastIndex < lineContent.length && (match = regex.exec(lineContent)))
+            ranges.push({offset: match.index, length: regex.lastIndex - match.index});
+
+        // 2. 'highlight' them with artificial style to detect word boundaries
+        var changes = [];
+        highlightRangesWithStyleClass(lineElement, ranges, "source-frame-token", changes);
+        var lineOffsetLeft = lineElement.totalOffsetLeft();
+        for (var child = lineElement.firstChild; child; child = child.nextSibling) {
+            if (child.nodeType !== Node.ELEMENT_NODE || !child.hasStyleClass("source-frame-token"))
+                continue;
+            if (event.x > lineOffsetLeft + child.offsetLeft && event.x < lineOffsetLeft + child.offsetLeft + child.offsetWidth) {
+                var text = child.textContent;
+                return (text === "this" || !WebInspector.SourceJavaScriptTokenizer.Keywords[text]) ? child : null;
+            }
+        }
+        return null;
     },
 
     _resolveObjectForPopover: function(element, showCallback, objectGroupName)
@@ -328,7 +351,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         // Collect tokens belonging to evaluated expression.
         var tokens = [ element ];
         var token = element.previousSibling;
-        while (token && (token.className === "webkit-javascript-ident" || token.className === "webkit-javascript-keyword" || token.textContent.trim() === ".")) {
+        while (token && (token.className === "webkit-javascript-ident" || token.className === "source-frame-token" || token.className === "webkit-javascript-keyword" || token.textContent.trim() === ".")) {
             tokens.push(token);
             token = token.previousSibling;
         }

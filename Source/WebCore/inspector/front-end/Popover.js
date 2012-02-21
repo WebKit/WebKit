@@ -246,7 +246,7 @@ WebInspector.PopoverHelper.prototype = {
         this._resetHoverTimer();
         if (event.which && this._disableOnClick)
             return;
-        this._hoverElement = this._getAnchor(event.target);
+        this._hoverElement = this._getAnchor(event.target, event);
         if (!this._hoverElement)
             return;
         const toolTipDelay = isMouseDown ? 0 : (this._popup ? this._timeout * 0.6 : this._timeout);
