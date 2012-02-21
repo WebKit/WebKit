@@ -1031,7 +1031,7 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
         LayoutRect repaintRect(r);
-        repaintRect.move(-cb->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
+        repaintRect.move(-cb->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
         LayoutRect boxRect(LayoutPoint(), cb->layer()->size());
         r = intersection(repaintRect, boxRect);
@@ -1132,7 +1132,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
         // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
-        topLeft -= containerBox->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
+        topLeft -= containerBox->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         LayoutRect repaintRect(topLeft, rect.size());
         LayoutRect boxRect(LayoutPoint(), containerBox->layer()->size());
@@ -1163,7 +1163,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const Layo
     container->adjustForColumns(offset, point);
 
     if (container->hasOverflowClip())
-        offset -= toRenderBox(container)->layer()->scrolledContentOffset();
+        offset -= toRenderBox(container)->scrolledContentOffset();
 
     return offset;
 }

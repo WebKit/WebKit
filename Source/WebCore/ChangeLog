@@ -1,3 +1,58 @@
+2012-02-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Move RenderLayer::scrolledContentOffset calls to a common function
+        https://bugs.webkit.org/show_bug.cgi?id=76971
+
+        Reviewed by David Hyatt.
+
+        Refactoring without any change in behavior.
+
+        This change adds a RenderBox::scrolledContentOffset function to handle all
+        the calls that goes through the layer(). This indirection will enable us to
+        add layer() checks without patching a lot of call sites as part of bug 75568.
+
+        We also moved down the concept of scroll offset down to RenderBox where it belongs!
+
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        (WebCore::RenderLayer::scrolledContentOffset):
+        Moved scrolledContent to the private section of the class to prevent misuse.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrolledContentOffset):
+        New function to add an indirection with RenderLayer.
+
+        * editing/visible_units.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::offsetFromContainer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::offsetFromContainer):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        Patched all those call sites to use the new function.
+
 2012-02-21  Emil A Eklund  <eae@chromium.org>
 
         Remove obsolete float comparison FIXMEs

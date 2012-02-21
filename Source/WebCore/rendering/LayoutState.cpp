@@ -79,7 +79,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
             m_clipped = true;
         }
 
-        m_paintOffset -= layer->scrolledContentOffset();
+        m_paintOffset -= renderer->scrolledContentOffset();
     }
 
     // If we establish a new page height, then cache the offset to the top of the first page.
@@ -156,10 +156,11 @@ LayoutState::LayoutState(RenderObject* root)
     m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 
     if (container->hasOverflowClip()) {
-        RenderLayer* layer = toRenderBoxModelObject(container)->layer();
+        RenderBox* containerBox = toRenderBox(container);
+        RenderLayer* layer = containerBox->layer();
         m_clipped = true;
         m_clipRect = LayoutRect(toPoint(m_paintOffset), layer->size());
-        m_paintOffset -= layer->scrolledContentOffset();
+        m_paintOffset -= containerBox->scrolledContentOffset();
     }
 }
 

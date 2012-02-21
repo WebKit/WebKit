@@ -1509,7 +1509,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         
         if (hasOverflowClip()) {
             // Adjust repaint rect for scroll offset
-            repaintRect.move(-layer()->scrolledContentOffset());
+            repaintRect.move(-scrolledContentOffset());
 
             // Don't allow this rect to spill out of our overflow box.
             repaintRect.intersect(LayoutRect(LayoutPoint(), size()));
@@ -2771,7 +2771,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
     if (hasOverflowClip())
-        scrolledOffset.move(-layer()->scrolledContentOffset());
+        scrolledOffset.move(-scrolledContentOffset());
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -3019,7 +3019,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
     LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint());
 
     if (hasOverflowClip())
-        offsetFromRepaintContainer -= layer()->scrolledContentOffset();
+        offsetFromRepaintContainer -= scrolledContentOffset();
 
     LayoutUnit lastTop = 0;
     LayoutUnit lastLeft = logicalLeftSelectionOffset(this, lastTop);
@@ -3044,7 +3044,8 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
                     LayoutRect localBounds(gapRectsBounds);
                     flipForWritingMode(localBounds);
                     gapRectsBounds = localToContainerQuad(FloatRect(localBounds), layer->renderer()).enclosingBoundingBox();
-                    gapRectsBounds.move(layer->scrolledContentOffset());
+                    if (layer->renderer()->hasOverflowClip())
+                        gapRectsBounds.move(layer->renderBox()->scrolledContentOffset());
                 }
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
             }
@@ -4332,9 +4333,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (checkChildren) {
         // Hit test descendants first.
         LayoutSize scrolledOffset(localOffset);
-        if (hasOverflowClip()) {
-            scrolledOffset -= layer()->scrolledContentOffset();
-        }
+        if (hasOverflowClip())
+            scrolledOffset -= scrolledContentOffset();
 
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
@@ -4681,7 +4681,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
 void RenderBlock::offsetForContents(LayoutPoint& offset) const
 {
     if (hasOverflowClip())
-        offset += layer()->scrolledContentOffset();
+        offset += scrolledContentOffset();
 
     if (hasColumns())
         adjustPointToColumnContents(offset);

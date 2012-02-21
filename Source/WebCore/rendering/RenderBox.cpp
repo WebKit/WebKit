@@ -746,6 +746,13 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
     return style()->paddingStart().isPercent() || style()->paddingEnd().isPercent();
 }
 
+IntSize RenderBox::scrolledContentOffset() const
+{
+    ASSERT(hasOverflowClip());
+    ASSERT(hasLayer());
+    return layer()->scrolledContentOffset();
+}
+
 LayoutUnit RenderBox::minPreferredLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
@@ -1433,7 +1440,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     }
 
     if (o->hasOverflowClip())
-        offset -= toRenderBox(o)->layer()->scrolledContentOffset();
+        offset -= toRenderBox(o)->scrolledContentOffset();
 
     if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
         offset += toRenderInline(o)->relativePositionedInlineOffset(this);
@@ -1632,7 +1639,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
         // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
-        topLeft -= containerBox->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
+        topLeft -= containerBox->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         LayoutRect repaintRect(topLeft, rect.size());
         LayoutRect boxRect(LayoutPoint(), containerBox->layer()->size());

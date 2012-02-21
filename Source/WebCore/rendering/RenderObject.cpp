@@ -1506,7 +1506,7 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             RenderBox* boxParent = toRenderBox(o);
 
             LayoutRect repaintRect(rect);
-            repaintRect.move(-boxParent->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
+            repaintRect.move(-boxParent->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
             LayoutRect boxRect(LayoutPoint(), boxParent->layer()->size());
             rect = intersection(repaintRect, boxRect);
@@ -2018,7 +2018,7 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
         transformState.move(columnOffset);
 
     if (o->hasOverflowClip())
-        transformState.move(-toRenderBox(o)->layer()->scrolledContentOffset());
+        transformState.move(-toRenderBox(o)->scrolledContentOffset());
 
     o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
@@ -2029,7 +2029,7 @@ void RenderObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Trans
     if (o) {
         o->mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
         if (o->hasOverflowClip())
-            transformState.move(toRenderBox(o)->layer()->scrolledContentOffset());
+            transformState.move(toRenderBox(o)->scrolledContentOffset());
     }
 }
 
@@ -2091,7 +2091,7 @@ LayoutSize RenderObject::offsetFromContainer(RenderObject* o, const LayoutPoint&
     o->adjustForColumns(offset, point);
 
     if (o->hasOverflowClip())
-        offset -= toRenderBox(o)->layer()->scrolledContentOffset();
+        offset -= toRenderBox(o)->scrolledContentOffset();
 
     return offset;
 }

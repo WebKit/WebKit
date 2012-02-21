@@ -545,7 +545,7 @@ static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineB
     RenderBlock* containingBlock = root->block();
     FloatPoint absoluteBlockPoint = containingBlock->localToAbsolute(FloatPoint());
     if (containingBlock->hasOverflowClip())
-        absoluteBlockPoint -= containingBlock->layer()->scrolledContentOffset();
+        absoluteBlockPoint -= containingBlock->scrolledContentOffset();
 
     if (root->block()->isHorizontalWritingMode())
         return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), root->blockDirectionPointInLine());

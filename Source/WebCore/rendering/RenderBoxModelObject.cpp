@@ -727,10 +727,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     LayoutRect scrolledPaintRect = rect;
     if (clippedWithLocalScrolling) {
         // Clip to the overflow area.
-        context->clip(toRenderBox(this)->overflowClipRect(rect.location(), paintInfo.renderRegion));
+        RenderBox* thisBox = toRenderBox(this);
+        context->clip(thisBox->overflowClipRect(rect.location(), paintInfo.renderRegion));
         
         // Adjust the paint rect to reflect a scrolled content box with borders at the ends.
-        LayoutSize offset = layer()->scrolledContentOffset();
+        IntSize offset = thisBox->scrolledContentOffset();
         scrolledPaintRect.move(-offset);
         scrolledPaintRect.setWidth(bLeft + layer()->scrollWidth() + bRight);
         scrolledPaintRect.setHeight(borderTop() + layer()->scrollHeight() + borderBottom());

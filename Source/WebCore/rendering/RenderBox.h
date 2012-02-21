@@ -447,6 +447,8 @@ public:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
 
+    IntSize scrolledContentOffset() const;
+
 protected:
     virtual void willBeDestroyed();
 

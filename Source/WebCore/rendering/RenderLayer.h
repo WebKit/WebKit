@@ -295,8 +295,6 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta, ScrollOffsetClamping = ScrollOffsetUnclamped);
 
-    IntSize scrolledContentOffset() const { return scrollOffset() + roundedIntSize(m_scrollOverflow); }
-
     int scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
     int scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
     IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
@@ -578,6 +576,9 @@ private:
     void restoreClip(GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&);
 
     bool shouldRepaintAfterLayout() const;
+
+    friend IntSize RenderBox::scrolledContentOffset() const;
+    IntSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();

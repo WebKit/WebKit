@@ -60,7 +60,7 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint&
     if (m_multiLine) {
         RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
         if (renderer->hasOverflowClip())
-            contentsPoint += renderer->layer()->scrolledContentOffset();
+            contentsPoint += renderer->scrolledContentOffset();
     }
 
     return RenderBlock::positionForPoint(contentsPoint);
