@@ -187,15 +187,7 @@ void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* ca
         callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
         return;
     }
-    WorkerLoaderProxy* workerLoaderProxy = &context->thread()->workerLoaderProxy();
-    WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-    WebView* webView = webWorker->view();
-    if (!webView) {
-        // Frame is closed, worker is terminaring.
-        return;
-    }
-    WebFrame* webFrame = webView->mainFrame();
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, /*webFrame*/0, dataDir);
 #endif
 }
 

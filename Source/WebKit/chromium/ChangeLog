@@ -1,3 +1,19 @@
+2012-02-21  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: webFrame isn't threadsafe, don't use it from a worker thread
+        https://bugs.webkit.org/show_bug.cgi?id=78659
+
+        After crrev.com/121669, indexed db doesn't use the web frame for
+        anything if called from a web worker.
+
+        No new tests - this check was defensive and possibly not ever
+        triggered.
+
+        Reviewed by Tony Chang.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::openFromWorker):
+
 2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         [V8] Web Inspector: set breakpoint/pause doesn't work when worker is in a tight loop
