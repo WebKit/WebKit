@@ -166,8 +166,10 @@ void StyledElement::updateAttributeStyle()
 
     if (style->isEmpty())
         attributeData()->setAttributeStyle(0);
-    else
+    else {
+        style->shrinkToFit();
         attributeData()->setAttributeStyle(style.release());
+    }
 }
 
 }

@@ -1,3 +1,18 @@
+2012-02-21  Andreas Kling  <awesomekling@apple.com>
+
+        Shrink attribute style property sets after populating them.
+        <http://webkit.org/b/78972>
+
+        Reviewed by Antti Koivisto.
+
+        Add a StylePropertySet::shrinkToFit() and call it at the end of updateStyleAttribute()
+        to minimize the amount of wasted space.
+
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::shrinkToFit):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateAttributeStyle):
+
 2012-02-21  Antti Koivisto  <antti@apple.com>
 
         Remove stylesheet pointer from StylePropertySet

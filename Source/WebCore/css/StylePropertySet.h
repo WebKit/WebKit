@@ -55,6 +55,8 @@ public:
     bool isEmpty() const { return m_properties.isEmpty(); }
     const CSSProperty& propertyAt(unsigned index) const { return m_properties[index]; }
 
+    void shrinkToFit() { m_properties.shrinkToFit(); }
+
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;
     String getPropertyValue(int propertyID) const;
     bool propertyIsImportant(int propertyID) const;
