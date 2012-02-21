@@ -114,6 +114,8 @@ PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
 PASS 0 in Object.prototype is true
 PASS '0' in Object.prototype is true
+PASS var o = {}; o.readOnly = false; o.readOnly is true
+PASS 'use strict'; var o = {}; o.readOnly = false; o.readOnly threw exception TypeError: Attempted to assign to readonly property..
 PASS successfullyParsed is true
 
 TEST COMPLETE

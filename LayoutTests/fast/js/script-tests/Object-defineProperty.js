@@ -161,3 +161,10 @@ Object.defineProperty(Object.prototype, 0, {get:function(){ return false; }, con
 shouldBeTrue("0 in Object.prototype");
 shouldBeTrue("'0' in Object.prototype");
 delete Object.prototype[0];
+
+Object.defineProperty(Object.prototype, 'readOnly', {value:true, configurable:true, writable:false})
+shouldBeTrue("var o = {}; o.readOnly = false; o.readOnly");
+shouldThrow("'use strict'; var o = {}; o.readOnly = false; o.readOnly");
+delete Object.prototype.readOnly;
+
+

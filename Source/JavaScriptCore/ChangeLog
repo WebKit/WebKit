@@ -1,3 +1,29 @@
+2012-02-20  Gavin Barraclough  <barraclough@apple.com>
+
+        [[Put]] should throw if prototype chain contains a readonly property.
+        https://bugs.webkit.org/show_bug.cgi?id=79069
+
+        Reviewed by Oliver Hunt.
+
+        Currently we only check the base of the put, not the prototype chain.
+        Fold this check in with the test for accessors.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+            - Updated to test all objects in the propotype chain for readonly properties.
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::putDescriptor):
+            - Record the presence of readonly properties on the structure.
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+            - hasGetterSetterPropertiesExcludingProto expanded to hasReadOnlyOrGetterSetterPropertiesExcludingProto.
+        * runtime/Structure.h:
+        (JSC::Structure::hasReadOnlyOrGetterSetterPropertiesExcludingProto):
+        (JSC::Structure::setHasGetterSetterProperties):
+            - hasGetterSetterPropertiesExcludingProto expanded to hasReadOnlyOrGetterSetterPropertiesExcludingProto.
+        (JSC::Structure::setContainsReadOnlyProperties):
+            - Added.
+
 2012-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implement fast path for op_new_array in the baseline JIT

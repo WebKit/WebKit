@@ -145,12 +145,16 @@ namespace JSC {
         }
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
-        bool hasGetterSetterPropertiesExcludingProto() const { return m_hasGetterSetterPropertiesExcludingProto; }
+        bool hasReadOnlyOrGetterSetterPropertiesExcludingProto() const { return m_hasReadOnlyGetterSetterPropertiesExcludingProto; }
         void setHasGetterSetterProperties(bool is__proto__)
         {
             m_hasGetterSetterProperties = true;
             if (!is__proto__)
-                m_hasGetterSetterPropertiesExcludingProto = true;
+                m_hasReadOnlyGetterSetterPropertiesExcludingProto = true;
+        }
+        void setContainsReadOnlyProperties()
+        {
+            m_hasReadOnlyGetterSetterPropertiesExcludingProto = true;
         }
 
         bool hasNonEnumerableProperties() const { return m_hasNonEnumerableProperties; }
@@ -288,7 +292,7 @@ namespace JSC {
         unsigned m_dictionaryKind : 2;
         bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
-        bool m_hasGetterSetterPropertiesExcludingProto : 1;
+        bool m_hasReadOnlyGetterSetterPropertiesExcludingProto : 1;
         bool m_hasNonEnumerableProperties : 1;
         unsigned m_attributesInPrevious : 7;
         unsigned m_specificFunctionThrashCount : 2;

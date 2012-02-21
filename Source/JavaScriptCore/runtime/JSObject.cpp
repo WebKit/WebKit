@@ -135,7 +135,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
     // Check if there are any setters or getters in the prototype chain
     JSValue prototype;
     if (propertyName != exec->propertyNames().underscoreProto) {
-        for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
+        for (JSObject* obj = thisObject; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
             prototype = obj->prototype();
             if (prototype.isNull()) {
                 if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
@@ -145,16 +145,18 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
         }
     }
 
-    unsigned attributes;
-    JSCell* specificValue;
-    if ((thisObject->structure()->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
-        if (slot.isStrictMode())
-            throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
-        return;
-    }
-
     for (JSObject* obj = thisObject; ; obj = asObject(prototype)) {
-        if (JSValue gs = obj->getDirect(globalData, propertyName)) {
+        unsigned attributes;
+        JSCell* specificValue;
+        size_t offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
+        if (offset != WTF::notFound) {
+            if (attributes & ReadOnly) {
+                if (slot.isStrictMode())
+                    throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+                return;
+            }
+
+            JSValue gs = obj->getDirectOffset(offset);
             if (gs.isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
@@ -236,6 +238,9 @@ void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& pro
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty)
         setStructure(globalData, Structure::attributeChangeTransition(globalData, structure(), propertyName, attributes));
+
+    if (attributes & ReadOnly)
+        structure()->setContainsReadOnlyProperties();
 
     structure()->setHasGetterSetterProperties(propertyName == globalData.propertyNames->underscoreProto);
 }
@@ -619,6 +624,8 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
         target->putDirect(exec->globalData(), propertyName, newValue, attributes & ~Accessor);
+        if (attributes & ReadOnly)
+            target->structure()->setContainsReadOnlyProperties();
         return true;
     }
     attributes &= ~ReadOnly;
