@@ -672,34 +672,43 @@ WebInspector.TimelinePanel.prototype = {
         this._calculator.calculateWindow();
     },
 
-    /**
-     * @param {boolean=} parentIsCollapsed
-     */
-    _addToRecordsWindow: function(record, recordsWindow, parentIsCollapsed)
-    {
-        if (!this._showShortEvents && !record.isLong())
-            return;
-        var percentages = this._calculator.computeBarGraphPercentages(record);
-        if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden) {
-            ++this._rootRecord._visibleRecordsCount;
-            ++record.parent._invisibleChildrenCount;
-            if (!parentIsCollapsed)
-                recordsWindow.push(record);
-        }
-
-        var index = recordsWindow.length;
-        record._invisibleChildrenCount = 0;
-        for (var i = 0; i < record.children.length; ++i)
-            this._addToRecordsWindow(record.children[i], recordsWindow, parentIsCollapsed || record.collapsed);
-        record._visibleChildrenCount = recordsWindow.length - index;
-    },
-
     _filterRecords: function()
     {
         var recordsInWindow = [];
         this._rootRecord._visibleRecordsCount = 0;
-        for (var i = 0; i < this._rootRecord.children.length; ++i)
-            this._addToRecordsWindow(this._rootRecord.children[i], recordsInWindow);
+
+        var stack = [{children: this._rootRecord.children, index: 0, parentIsCollapsed: false}];
+        while (stack.length) {
+            var entry = stack[stack.length - 1];
+            var records = entry.children;
+            if (records && entry.index < records.length) {
+                 var record = records[entry.index];
+                 ++entry.index;
+
+                 if (!this._showShortEvents && !record.isLong())
+                     continue;
+                 var percentages = this._calculator.computeBarGraphPercentages(record);
+                 if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden) {
+                     ++this._rootRecord._visibleRecordsCount;
+                     ++record.parent._invisibleChildrenCount;
+                     if (!entry.parentIsCollapsed)
+                         recordsInWindow.push(record);
+                 }
+
+                 record._invisibleChildrenCount = 0;
+
+                 stack.push({children: record.children,
+                             index: 0,
+                             parentIsCollapsed: (entry.parentIsCollapsed || record.collapsed),
+                             parentRecord: record,
+                             windowLengthBeforeChildrenTraversal: recordsInWindow.length});
+            } else {
+                stack.pop();
+                if (entry.parentRecord)
+                    entry.parentRecord._visibleChildrenCount = recordsInWindow.length - entry.windowLengthBeforeChildrenTraversal;
+            }
+        }
+
         return recordsInWindow;
     },
 

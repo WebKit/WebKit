@@ -126,9 +126,18 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         if (!recordsArray)
             return;
-        for (var i = 0; i < recordsArray.length; ++i) {
-            callback(recordsArray[i]);
-            this._forAllRecords(recordsArray[i].children, callback);
+        var stack = [{array: recordsArray, index: 0}];
+        while (stack.length) {
+            var entry = stack[stack.length - 1];
+            var records = entry.array;
+            if (entry.index < records.length) {
+                 var record = records[entry.index];
+                 callback(record);
+                 if (record.children)
+                     stack.push({array: record.children, index: 0});
+                 ++entry.index;
+            } else
+                stack.pop();
         }
     },
 
