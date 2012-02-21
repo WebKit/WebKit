@@ -1,3 +1,12 @@
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Geolocation support should be on by default
+        https://bugs.webkit.org/show_bug.cgi?id=79037
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac: Turn on geolocation support in release builds.
+
 2012-02-20  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add a new API for the Vibration API(W3C).
