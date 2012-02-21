@@ -100,6 +100,7 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
 
     // We have to do this every time we paint, in case the opacity has changed.
     HashMap<int, LayerBackingStoreTile>::iterator end = m_tiles.end();
+    FloatRect coveredRect;
     for (HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
         LayerBackingStoreTile& tile = it->second;
         if (!tile.texture())
@@ -107,12 +108,17 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
 
         if (tile.scale() == m_scale) {
             tilesToPaint.append(&tile);
+            coveredRect.unite(tile.rect());
             continue;
         }
 
         // Only show the previous tile if the opacity is high, otherwise effect looks like a bug.
-        if (opacity > 0.95)
-            tilesToPaint.prepend(&tile);
+        // We show the previous-scale tile anyway if it doesn't intersect with any current-scale tile.
+        if (opacity < 0.95 && coveredRect.intersects(tile.rect()))
+            continue;
+
+        tilesToPaint.prepend(&tile);
+        coveredRect.unite(tile.rect());
     }
 
     bool shouldClip = !targetRect.contains(coveredRect);
