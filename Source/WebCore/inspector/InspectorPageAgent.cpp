@@ -44,6 +44,7 @@
 #include "ContentSearchUtils.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "DOMNodeHighlighter.h"
 #include "DOMPatchSupport.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -53,6 +54,7 @@
 #include "HTMLNames.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
+#include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorState.h"
@@ -80,6 +82,7 @@ static const char pageAgentEnabled[] = "pageAgentEnabled";
 static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
 static const char pageAgentScreenWidthOverride[] = "pageAgentScreenWidthOverride";
 static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverride";
+static const char showPaintRects[] = "showPaintRects";
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -188,9 +191,9 @@ bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, co
     return decodeSharedBuffer(buffer, textEncodingName, result);
 }
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, state, injectedScriptManager));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, state, injectedScriptManager, client));
 }
 
 // static
@@ -273,13 +276,16 @@ String InspectorPageAgent::cachedResourceTypeString(const CachedResource& cached
     return resourceTypeString(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
     : InspectorBaseAgent<InspectorPageAgent>("Page", instrumentingAgents, inspectorState)
     , m_page(page)
     , m_injectedScriptManager(injectedScriptManager)
+    , m_client(client)
     , m_frontend(0)
     , m_lastScriptIdentifier(0)
     , m_originalUseFixedLayout(false)
+    , m_lastPaintFrame(0)
+    , m_lastPaintContext(0)
 {
 }
 
@@ -623,6 +629,13 @@ void InspectorPageAgent::setScreenSizeOverride(ErrorString* errorString, const i
     updateFrameViewFixedLayout(width, height);
 }
 
+void InspectorPageAgent::setShowPaintRects(ErrorString* errorString, bool show)
+{
+    m_state->setBoolean(PageAgentState::showPaintRects, show);
+    if (!show)
+        m_page->mainFrame()->view()->invalidate();
+}
+
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
     if (world != mainThreadNormalWorld())
@@ -750,6 +763,34 @@ void InspectorPageAgent::applyScreenHeightOverride(long* height)
     long heightOverride = m_state->getLong(PageAgentState::pageAgentScreenHeightOverride);
     if (heightOverride)
         *height = heightOverride;
+}
+
+void InspectorPageAgent::willPaint(Frame* frame, GraphicsContext* context, const LayoutRect& rect)
+{
+    if (m_state->getBoolean(PageAgentState::showPaintRects)) {
+        m_lastPaintFrame = frame;
+        m_lastPaintContext = context;
+        m_lastPaintRect = rect;
+        m_lastPaintRect.inflate(-1);
+    }
+}
+
+void InspectorPageAgent::didPaint()
+{
+    if (!m_lastPaintFrame || !m_state->getBoolean(PageAgentState::showPaintRects))
+        return;
+
+    static int colorSelector = 0;
+    const Color colors[] = {
+        Color(0xFF, 0, 0, 0x3F),
+        Color(0xFF, 0, 0xFF, 0x3F),
+        Color(0, 0, 0xFF, 0x3F),
+    };
+
+    DOMNodeHighlighter::drawOutline(*m_lastPaintContext, m_lastPaintFrame->view(), m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
+
+    m_lastPaintFrame = 0;
+    m_lastPaintContext = 0;
 }
 
 PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame)

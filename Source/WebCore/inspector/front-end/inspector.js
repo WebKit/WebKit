@@ -406,7 +406,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this._createPanels();
     this._createGlobalStatusBarItems();
 
-
     this.toolbar = new WebInspector.Toolbar();
     WebInspector._installDockToRight();
 
@@ -439,6 +438,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     InspectorAgent.enable(showInitialPanel);
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
+
+    if (WebInspector.settings.showPaintRects.get())
+        PageAgent.setShowPaintRects(true);
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();

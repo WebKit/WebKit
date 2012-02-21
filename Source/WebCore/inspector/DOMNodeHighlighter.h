@@ -31,6 +31,7 @@
 
 #include "Color.h"
 #include "FloatQuad.h"
+#include "LayoutTypes.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,8 +41,8 @@ namespace WebCore {
 
 class Color;
 class Document;
+class FrameView;
 class GraphicsContext;
-class IntRect;
 class Node;
 
 struct HighlightData {
@@ -78,6 +79,7 @@ namespace DOMNodeHighlighter {
 
 void drawHighlight(GraphicsContext&, Document*, HighlightData*);
 void getHighlight(Document*, HighlightData*, Highlight*);
+void drawOutline(GraphicsContext&, FrameView*, const LayoutRect&, const Color&);
 
 } // namespace DOMNodeHighlighter
 

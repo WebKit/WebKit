@@ -47,6 +47,10 @@ WebInspector.SettingsScreen = function()
         if (Preferences.exposeDisableCache)
             p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     }
+    
+    p = this._appendSection(WebInspector.UIString("Rendering"));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show paint rectangles"), WebInspector.settings.showPaintRects));
+    WebInspector.settings.showPaintRects.addChangeListener(this._showPaintRectsChanged, this);
 
     p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
@@ -373,6 +377,11 @@ WebInspector.SettingsScreen.prototype = {
 
         selectionChanged.call(this);
         return fieldsetElement;
+    },
+
+    _showPaintRectsChanged: function()
+    {
+        PageAgent.setShowPaintRects(WebInspector.settings.showPaintRects.get());
     }
 }
 
