@@ -38,7 +38,7 @@ They interact more or less like:
   Manager  -->  _InlineManager ---> _InlineWorker <-> Worker
      ^                    \               /              ^
      |                     v             v               |
-     \--------------------  MessageBroker   -------------/
+     \-----------------------  Broker   ----------------/
 """
 
 import logging
@@ -47,10 +47,11 @@ import optparse
 import Queue
 import sys
 
-from webkitpy.layout_tests.controllers import message_broker
+from webkitpy.layout_tests.controllers.message_broker import Broker, BrokerClient, BrokerConnection, _Message
 
 
 _log = logging.getLogger(__name__)
+
 
 #
 # Topic names for Manager <-> Worker messaging
@@ -64,7 +65,7 @@ def get(worker_model, client, worker_class):
 
     Args:
         worker_model - concurrency model to use (inline/processes)
-        client - message_broker.BrokerClient implementation to dispatch
+        client - BrokerClient implementation to dispatch
             replies to.
         worker_class - type of workers to create. This class should override
             the methods in AbstractWorker.
@@ -80,11 +81,11 @@ def get(worker_model, client, worker_class):
     else:
         raise ValueError("unsupported value for --worker-model: %s" % worker_model)
 
-    broker = message_broker.Broker(queue_class)
+    broker = Broker(queue_class)
     return manager_class(broker, client, worker_class)
 
 
-class AbstractWorker(message_broker.BrokerClient):
+class AbstractWorker(BrokerClient):
     def __init__(self, worker_connection, worker_arguments=None):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
@@ -96,7 +97,7 @@ class AbstractWorker(message_broker.BrokerClient):
             worker_connection - handle to the BrokerConnection object creating
                 the worker and that can be used for messaging.
             worker_arguments - (optional, Picklable) object passed to the worker from the manager"""
-        message_broker.BrokerClient.__init__(self)
+        BrokerClient.__init__(self)
         self._worker_connection = worker_connection
         self._name = 'worker'
         self._done = False
@@ -138,7 +139,7 @@ class AbstractWorker(message_broker.BrokerClient):
         self._canceled = True
 
 
-class _ManagerConnection(message_broker.BrokerConnection):
+class _ManagerConnection(BrokerConnection):
     def __init__(self, broker, client, worker_class):
         """Base initialization for all Manager objects.
 
@@ -147,8 +148,7 @@ class _ManagerConnection(message_broker.BrokerConnection):
             client: callback object (the caller)
             worker_class: class object to use to create workers.
         """
-        message_broker.BrokerConnection.__init__(self, broker, client,
-            MANAGER_TOPIC, ANY_WORKER_TOPIC)
+        BrokerConnection.__init__(self, broker, client, MANAGER_TOPIC, ANY_WORKER_TOPIC)
         self._worker_class = worker_class
 
     def start_worker(self, worker_arguments=None):
@@ -191,11 +191,10 @@ class _MultiProcessManager(_ManagerConnection):
         return worker_connection
 
 
-class _WorkerConnection(message_broker.BrokerConnection):
+class _WorkerConnection(BrokerConnection):
     def __init__(self, broker, worker_class, worker_arguments=None):
         self._client = worker_class(self, worker_arguments)
-        message_broker.BrokerConnection.__init__(self, broker, self._client,
-                                                 ANY_WORKER_TOPIC, MANAGER_TOPIC)
+        BrokerConnection.__init__(self, broker, self._client, ANY_WORKER_TOPIC, MANAGER_TOPIC)
 
     def name(self):
         return self._client.name()

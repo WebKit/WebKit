@@ -33,7 +33,6 @@ import unittest
 
 from webkitpy.common.system import outputcapture
 from webkitpy.layout_tests.controllers import manager_worker_broker
-from webkitpy.layout_tests.controllers import message_broker
 
 
 # In order to reliably control when child workers are starting and stopping,
@@ -204,6 +203,13 @@ class InterfaceTest(unittest.TestCase):
 
     # FIXME: There must be a better way to do this and also verify
     # that classes do implement every abstract method in an interface.
+    def test_brokerclient_is_abstract(self):
+        # Test that all the base class methods are abstract and have the
+        # signature we expect.
+        obj = manager_worker_broker.BrokerClient()
+        self.assertRaises(NotImplementedError, obj.is_done)
+        self.assertRaises(NotImplementedError, obj.name)
+
     def test_managerconnection_is_abstract(self):
         # Test that all the base class methods are abstract and have the
         # signature we expect.
@@ -219,6 +225,29 @@ class InterfaceTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, obj.cancel)
         self.assertRaises(NotImplementedError, obj.is_alive)
         self.assertRaises(NotImplementedError, obj.join, None)
+
+
+class MessageTest(unittest.TestCase):
+    def test__no_body(self):
+        msg = manager_worker_broker._Message('src', 'topic_name', 'message_name', None)
+        self.assertTrue(repr(msg))
+        s = msg.dumps()
+        new_msg = manager_worker_broker._Message.loads(s)
+        self.assertEqual(new_msg.name, 'message_name')
+        self.assertEqual(new_msg.args, None)
+        self.assertEqual(new_msg.topic_name, 'topic_name')
+        self.assertEqual(new_msg.src, 'src')
+
+    def test__body(self):
+        msg = manager_worker_broker._Message('src', 'topic_name', 'message_name', ('body', 0))
+        self.assertTrue(repr(msg))
+        s = msg.dumps()
+        new_msg = manager_worker_broker._Message.loads(s)
+        self.assertEqual(new_msg.name, 'message_name')
+        self.assertEqual(new_msg.args, ('body', 0))
+        self.assertEqual(new_msg.topic_name, 'topic_name')
+        self.assertEqual(new_msg.src, 'src')
+
 
 
 if __name__ == '__main__':

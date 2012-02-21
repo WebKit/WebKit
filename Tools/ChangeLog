@@ -1,3 +1,34 @@
+2012-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: prepare to delete message_broker.py
+        https://bugs.webkit.org/show_bug.cgi?id=78997
+
+        Reviewed by Eric Seidel.
+
+        This is part 1 of 3 changes to fix bug 78187. This change
+        prepares the code for merging message_broker.py into
+        manager_worker_broker.py; the tests in message_broker_unittest
+        are merged into manager_worker_broker_unittest, the symbols
+        needed by the tests are exported from manager_worker_broker.py,
+        and manager_worker_broker itself is updated to refer to the
+        symbols directly (without the module prefix).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (AbstractWorker):
+        (AbstractWorker.__init__):
+        (_ManagerConnection):
+        (_ManagerConnection.__init__):
+        (_WorkerConnection):
+        (_WorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (InterfaceTest.test_brokerclient_is_abstract):
+        (InterfaceTest.test_brokerclient_is_abstract.methods):
+        (MessageTest):
+        (MessageTest.test__no_body):
+        (MessageTest.test__body):
+        * Scripts/webkitpy/layout_tests/controllers/message_broker_unittest.py: Removed.
+
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Snow Leopard build.
