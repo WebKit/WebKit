@@ -1,5 +1,18 @@
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
+        [UNIX] Plugin information fields are not interpreted as UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=78635
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Interpret plugin metadata as UTF8 aways. This matches the behavior
+        of Chromium and the Totem plugin.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_GetValue): Include a UTF-8 character in the description string for testing purposes.
+
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] [Qt] Move the unix forwarding headers for TestNetscapePlugin to the TestNetscapePlugin directory
         https://bugs.webkit.org/show_bug.cgi?id=78935
 

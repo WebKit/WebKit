@@ -58,12 +58,12 @@ bool PluginPackage::fetchInfo()
     char* buffer = 0;
     NPError err = NPP_GetValue(0, NPPVpluginNameString, &buffer);
     if (err == NPERR_NO_ERROR)
-        m_name = buffer;
+        m_name = String::fromUTF8(buffer);
 
     buffer = 0;
     err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
     if (err == NPERR_NO_ERROR) {
-        m_description = buffer;
+        m_description = String::fromUTF8(buffer);
         determineModuleVersionFromDescription();
     }
 
