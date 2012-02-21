@@ -31,6 +31,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "DocumentFragment.h"

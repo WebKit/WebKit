@@ -1,3 +1,11 @@
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
+        Chromium build fix. Unreviwed but rubber-stamped by Antti.
+
+        * dom/Document.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * inspector/InspectorStyleSheet.h:
+
 2012-02-21  Eric Carlson  <eric.carlson@apple.com>
 
         Set Referrer header for media downloads

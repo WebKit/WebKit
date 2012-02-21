@@ -26,6 +26,7 @@
 #define InspectorStyleSheet_h
 
 #include "CSSPropertySourceData.h"
+#include "CSSStyleDeclaration.h"
 #include "ExceptionCode.h"
 #include "InspectorStyleTextEditor.h"
 #include "InspectorValues.h"
