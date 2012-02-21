@@ -1,3 +1,24 @@
+2012-02-20  John Knottenbelt  <jknotten@chromium.org>
+
+        Default canvas backing store to be 1:1 with specified dimensions.
+        https://bugs.webkit.org/show_bug.cgi?id=78971
+
+        Reviewed by Adam Barth.
+
+        Although the canvas specification states that the backing image may
+        be larger than the user-specified dimensions, there are a number of
+        philip canvas tests that fail when the backing image data is not
+        1:1 with the specified canvas dimensions. These failures are
+        tracked in https://bugs.webkit.org/show_bug.cgi?id=73645
+
+        This change defaults the canvas backing store to be 1:1 with the
+        user-specified dimensions, while also providing an
+        ENABLE(HIGH_DPI_CANVAS) build option to reinstate the original
+        behaviour, so that the above bug may be more easily fixed.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+
 2012-02-20  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream RenderThemeBlackberry.h/.cpp into WebCore/platform/blackberry

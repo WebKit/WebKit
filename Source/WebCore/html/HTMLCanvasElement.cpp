@@ -79,7 +79,12 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
+#if ENABLE(HIGH_DPI_CANVAS)
+      // FIXME: Make this the default once https://bugs.webkit.org/show_bug.cgi?id=73645 has been fixed.
     , m_deviceScaleFactor(document->frame() ? document->frame()->page()->deviceScaleFactor() : 1)
+#else
+    , m_deviceScaleFactor(1)
+#endif
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
 {
