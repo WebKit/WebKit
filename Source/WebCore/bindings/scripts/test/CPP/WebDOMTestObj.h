@@ -120,22 +120,6 @@ public:
     void setStringAttrWithGetterException(const WebDOMString&);
     WebDOMString stringAttrWithSetterException() const;
     void setStringAttrWithSetterException(const WebDOMString&);
-    int withScriptStateAttribute() const;
-    void setWithScriptStateAttribute(int);
-    WebDOMTestObj withScriptExecutionContextAttribute() const;
-    void setWithScriptExecutionContextAttribute(const WebDOMTestObj&);
-    WebDOMTestObj withScriptStateAttributeRaises() const;
-    void setWithScriptStateAttributeRaises(const WebDOMTestObj&);
-    WebDOMTestObj withScriptExecutionContextAttributeRaises() const;
-    void setWithScriptExecutionContextAttributeRaises(const WebDOMTestObj&);
-    WebDOMTestObj withScriptExecutionContextAndScriptStateAttribute() const;
-    void setWithScriptExecutionContextAndScriptStateAttribute(const WebDOMTestObj&);
-    WebDOMTestObj withScriptExecutionContextAndScriptStateAttributeRaises() const;
-    void setWithScriptExecutionContextAndScriptStateAttributeRaises(const WebDOMTestObj&);
-    WebDOMTestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute() const;
-    void setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(const WebDOMTestObj&);
-    WebDOMTestObj withScriptArgumentsAndCallStackAttribute() const;
-    void setWithScriptArgumentsAndCallStackAttribute(const WebDOMTestObj&);
 #if ENABLE(Condition1)
     int conditionalAttr1() const;
     void setConditionalAttr1(int);
@@ -185,15 +169,6 @@ public:
     void methodWithException();
     void addEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
     void removeEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
-    void withScriptStateVoid();
-    WebDOMTestObj withScriptStateObj();
-    void withScriptStateVoidException();
-    WebDOMTestObj withScriptStateObjException();
-    void withScriptExecutionContext();
-    void withScriptExecutionContextAndScriptState();
-    WebDOMTestObj withScriptExecutionContextAndScriptStateObjException();
-    WebDOMTestObj withScriptExecutionContextAndScriptStateWithSpaces();
-    void withScriptArgumentsAndCallStack();
     void methodWithOptionalArg(int opt);
     void methodWithNonOptionalArgAndOptionalArg(int nonOpt, int opt);
     void methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int opt1, int opt2);
@@ -214,7 +189,7 @@ public:
     void convert5(const WebDOMe& );
     WebDOMSVGPoint mutablePointFunction();
     WebDOMSVGPoint immutablePointFunction();
-    void orange();
+    void banana();
     WebDOMbool strictFunction(const WebDOMString& str, float a, int b);
 
     WebCore::TestObj* impl() const;

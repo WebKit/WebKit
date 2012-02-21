@@ -32,7 +32,6 @@ namespace WebCore {
 class TestInterface;
 };
 
-class WebDOMTestObj;
 
 class WebDOMTestInterface : public WebDOMObject {
 public:
@@ -61,7 +60,6 @@ public:
 #endif
 
     void supplementalMethod1();
-    WebDOMTestObj supplementalMethod2(const WebDOMString& strArg, const WebDOMTestObj& objArg);
 
     WebCore::TestInterface* impl() const;
 
