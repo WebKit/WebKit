@@ -1048,6 +1048,52 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
 #endif
 
 } // extern "C"
-} } // namespace JSC::DFG
+} // namespace DFG
+
+#if COMPILER(GCC)
+
+#if CPU(X86_64)
+asm (
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "mov -40(%r13), %r13\n"
+    "mov %r13, %rdi\n"
+    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+);
+#elif CPU(X86)
+asm (
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "mov -40(%edi), %edi\n"
+    "mov %edi, 4(%esp)\n"
+    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+);
+#elif CPU(ARM_THUMB2)
+asm (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+".thumb" "\n"
+".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "ldr r5, [r5, #-40]" "\n"
+    "cpy r0, r5" "\n"
+    "b " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+);
+#endif
+
+extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWithExecState(ExecState* exec)
+{
+    if (!exec)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(exec->globalData().hostCallReturnValue);
+}
+
+#endif // COMPILER(GCC)
+
+} // namespace JSC
 
 #endif

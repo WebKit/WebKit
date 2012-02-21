@@ -1,3 +1,15 @@
+2012-02-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Attempted build fix for ELF platforms.
+
+        * dfg/DFGOperations.cpp:
+        (JSC):
+        (JSC::getHostCallReturnValueWithExecState):
+        * jit/HostCallReturnValue.cpp:
+        (JSC):
+        * jit/HostCallReturnValue.h:
+        (JSC::initializeHostCallReturnValue):
+
 2012-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be a triple-tier VM
