@@ -1,5 +1,17 @@
 2012-02-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix massive crashes in all tests introduced by previous build fix, and fix non-DFG build.
+        https://bugs.webkit.org/show_bug.cgi?id=75812
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGOperations.cpp:
+        (JSC):
+        * jit/HostCallReturnValue.h:
+        (JSC::initializeHostCallReturnValue):
+
+2012-02-21  Filip Pizlo  <fpizlo@apple.com>
+
         Attempted build fix for ELF platforms.
 
         * dfg/DFGOperations.cpp:

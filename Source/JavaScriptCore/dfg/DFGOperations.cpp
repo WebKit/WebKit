@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DFGOperations.h"
 
-#if ENABLE(DFG_JIT)
-
 #include "CodeBlock.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
@@ -38,6 +36,8 @@
 #include "JSByteArray.h"
 #include "JSGlobalData.h"
 #include "Operations.h"
+
+#if ENABLE(DFG_JIT)
 
 #if CPU(X86_64)
 
@@ -1048,9 +1048,13 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
 #endif
 
 } // extern "C"
-} // namespace DFG
+} } // namespace JSC::DFG
+
+#endif
 
 #if COMPILER(GCC)
+
+namespace JSC {
 
 #if CPU(X86_64)
 asm (
@@ -1092,8 +1096,7 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
     return JSValue::encode(exec->globalData().hostCallReturnValue);
 }
 
-#endif // COMPILER(GCC)
-
 } // namespace JSC
 
-#endif
+#endif // COMPILER(GCC)
+

@@ -50,7 +50,6 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
 
 inline void initializeHostCallReturnValue()
 {
-    getHostCallReturnValue();
     getHostCallReturnValueWithExecState(0);
 }
 
