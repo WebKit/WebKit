@@ -1,3 +1,11 @@
+2012-02-21  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Add rafaelw as a committer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-21  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: update names after deleting message_broker
