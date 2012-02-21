@@ -1,5 +1,15 @@
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Fix GTK+ unit tests after r108281.
+
+        Reviewed by Alejandro G. Castro.
+
+        * tests/testwebplugindatabase.c:
+        (test_webkit_web_plugin_database_get_plugins): Update the description used
+        in the test.
+
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
         Fix GTK+ unit tests after r108278.
 
         Reviewed by Alejandro G. Castro.

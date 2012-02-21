@@ -44,7 +44,7 @@ static void test_webkit_web_plugin_database_get_plugins()
     for (p = pluginList; p; p = p->next) {
         WebKitWebPlugin* plugin = (WebKitWebPlugin*)p->data;
         if (!g_strcmp0(webkit_web_plugin_get_name(plugin), "WebKit Test PlugIn") &&
-            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape plug-in that handles test content for WebKit")) {
+            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape® plug-in that handles test content for WebKit")) {
             found = TRUE;
             enabled = webkit_web_plugin_get_enabled(plugin);
             webkit_web_plugin_set_enabled(plugin, FALSE);
@@ -60,7 +60,7 @@ static void test_webkit_web_plugin_database_get_plugins()
     for (p = pluginList; p; p = p->next) {
         WebKitWebPlugin* plugin = (WebKitWebPlugin*)p->data;
         if (!g_strcmp0(webkit_web_plugin_get_name(plugin), "WebKit Test PlugIn") &&
-            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape plug-in that handles test content for WebKit"))
+            !g_strcmp0(webkit_web_plugin_get_description(plugin), "Simple Netscape® plug-in that handles test content for WebKit"))
             enabled = webkit_web_plugin_get_enabled(plugin);
     }
     webkit_web_plugin_database_plugins_list_free(pluginList);
