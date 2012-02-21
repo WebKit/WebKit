@@ -1,3 +1,22 @@
+2012-02-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Accelerated animations don't work on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=78963
+
+        Problem came from using a non-RunLoop timer.
+        Remove the unused viewportUpdateTimer, and use the existing animationTimer instead.
+        Use a continuous timer that we only stop when animations stop.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::LayerTreeHostProxy):
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::syncAnimations):
+
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Snow Leopard build.

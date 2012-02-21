@@ -85,7 +85,6 @@ protected:
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
 
-    WebCore::RunLoop::Timer<LayerTreeHostProxy> m_animationTimer;
     DrawingAreaProxy* m_drawingAreaProxy;
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
@@ -116,17 +115,13 @@ protected:
     void ensureLayer(WebLayerID);
     PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
     void swapBuffers();
+    void syncAnimations();
 #endif
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
     HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
     HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
-
-#if PLATFORM(QT)
-    void didFireViewportUpdateTimer(WebCore::Timer<LayerTreeHostProxy>*);
-    WebCore::Timer<LayerTreeHostProxy> m_viewportUpdateTimer;
-#endif
 
     LayerMap m_layers;
     WebLayerID m_rootLayerID;

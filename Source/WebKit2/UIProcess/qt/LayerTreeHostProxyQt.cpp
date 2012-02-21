@@ -155,9 +155,7 @@ PassOwnPtr<GraphicsLayer> LayerTreeHostProxy::createLayer(WebLayerID layerID)
 }
 
 LayerTreeHostProxy::LayerTreeHostProxy(DrawingAreaProxy* drawingAreaProxy)
-    : m_animationTimer(RunLoop::main(), this, &LayerTreeHostProxy::updateViewport)
-    , m_drawingAreaProxy(drawingAreaProxy)
-    , m_viewportUpdateTimer(this, &LayerTreeHostProxy::didFireViewportUpdateTimer)
+    : m_drawingAreaProxy(drawingAreaProxy)
     , m_rootLayerID(0)
 {
 }
@@ -198,10 +196,17 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
-    if (layer->descendantsOrSelfHaveRunningAnimations()) {
-        layer->syncAnimationsRecursively();
-        m_viewportUpdateTimer.startOneShot(0);
-    }
+    syncAnimations();
+}
+
+void LayerTreeHostProxy::syncAnimations()
+{
+    TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
+    ASSERT(layer);
+
+    layer->syncAnimationsRecursively();
+    if (layer->descendantsOrSelfHaveRunningAnimations())
+        updateViewport();
 }
 
 void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
@@ -222,12 +227,6 @@ void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
     layer->paint();
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);
-}
-
-
-void LayerTreeHostProxy::didFireViewportUpdateTimer(Timer<LayerTreeHostProxy>*)
-{
-    updateViewport();
 }
 
 void LayerTreeHostProxy::updateViewport()
