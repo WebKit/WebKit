@@ -4172,11 +4172,11 @@ BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html = IMA
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
 
-// May need platform specific baselines
-BUGWK77498 : compositing/culling/filter-occlusion-alpha.html = PASS IMAGE
-BUGWK77498 : compositing/culling/filter-occlusion-alpha-large.html = PASS IMAGE
-BUGWK77498 : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
-BUGWK77498 : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
+// Test is acting extra flakey on Mac and Win Debug
+BUGCR114777 MAC : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
+BUGCR114777 MAC : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
+BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
+BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
 
 // Needs new baselines.
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
