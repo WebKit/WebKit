@@ -1219,11 +1219,6 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleSelectorClick: function(event)
     {
-        event.stopPropagation();
-    },
-
-    _handleSelectorClick: function(event)
-    {
         this._startEditingOnMouseEvent();
         event.stopPropagation();
         event.preventDefault();

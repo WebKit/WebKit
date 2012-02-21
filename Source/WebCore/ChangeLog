@@ -1,3 +1,11 @@
+2012-02-21  'Pavel Feldman'  <pfeldman@google.com>
+
+        Not reviewed: fixing poor merge in r108332.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorClick):
+        * inspector/front-end/externs.js:
+
 2012-02-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Rule source URL tooltip should show line number

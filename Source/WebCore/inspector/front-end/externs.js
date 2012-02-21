@@ -191,3 +191,6 @@ WebInspector.showPanel = function(panel)
 WebInspector.inspectedPageDomain;
 
 WebInspector.isCompactMode = function() { return false; }
+
+WebInspector.SourceJavaScriptTokenizer = {}
+WebInspector.SourceJavaScriptTokenizer.Keywords = {}
