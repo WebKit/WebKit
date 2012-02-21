@@ -1,5 +1,26 @@
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] [EFL] Collapse duplicate WebGL support code
+        https://bugs.webkit.org/show_bug.cgi?id=78970
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This just cleans up duplicated code.
+
+        Centralize duplicated WebGL code for EFL and GTK+ in the Cairo
+        directory. This is in preparation for the changes necessary to
+        connect WebGL to the TextureMapper AC.
+
+        * GNUmakefile.list.am: Update source list.
+        * PlatformEfl.cmake: Update source list.
+        * platform/graphics/cairo/DrawingBufferCairo.cpp: Renamed from Source/WebCore/platform/graphics/gtk/DrawingBufferGtk.cpp.
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp: Integrated the code From GraphicsContext3DGtk.cpp.
+        * platform/graphics/efl/DrawingBufferEfl.cpp: Removed.
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp: Removed.
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp: Removed.
+
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
         [UNIX] Plugin information fields are not interpreted as UTF-8
         https://bugs.webkit.org/show_bug.cgi?id=78635
 

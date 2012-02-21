@@ -259,9 +259,8 @@ IF (ENABLE_WEBGL)
     ${OPENGL_gl_LIBRARY}
   )
   LIST(APPEND WebCore_SOURCES
+    platform/graphics/cairo/DrawingBufferCairo.cpp
     platform/graphics/cairo/GraphicsContext3DCairo.cpp
-    platform/graphics/efl/DrawingBufferEfl.cpp
-    platform/graphics/efl/GraphicsContext3DEfl.cpp
     platform/graphics/glx/GraphicsContext3DPrivate.cpp
     platform/graphics/OpenGLShims.cpp
     platform/graphics/opengl/Extensions3DOpenGL.cpp
