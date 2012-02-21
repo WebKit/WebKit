@@ -1,3 +1,82 @@
+2012-02-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Texmap] Better management of shaders in TextureMapperGL
+        https://bugs.webkit.org/show_bug.cgi?id=78674
+ 
+        Reviewed by Noam Rosenthal.
+ 
+        Split TextureMapperGL.cpp into two files.
+        Get rid of the enums that we were using to identify shaders and to identify variables.
+        Switch flip and opaque from using bool to using enums.
+ 
+        No new tests. This is refactoring only.
+ 
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore):
+        (SharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::SharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::~SharedGLData):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (TextureMapperGLData):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawTextureWithMaskAndOpacity):
+        (WebCore::TextureMapperGL::drawTextureSimple):
+        (WebCore::TextureMapperGL::beginClip):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        * platform/graphics/opengl/TextureMapperShaderManager.cpp: Added.
+        (WebCore):
+        (WebCore::FRAGMENT_SHADER):
+        (WebCore::TextureMapperShaderProgram::initializeProgram):
+        (WebCore::TextureMapperShaderProgram::getUniformLocation):
+        (WebCore::TextureMapperShaderProgram::~TextureMapperShaderProgram):
+        (WebCore::TextureMapperShaderProgramSimple::create):
+        (WebCore::TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple):
+        (WebCore::TextureMapperShaderProgramSimple::vertexShaderSource):
+        (WebCore::TextureMapperShaderProgramSimple::fragmentShaderSource):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::create):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::vertexShaderSource):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource):
+        (WebCore::TextureMapperShaderProgramClip::create):
+        (WebCore::TextureMapperShaderProgramClip::TextureMapperShaderProgramClip):
+        (WebCore::TextureMapperShaderProgramClip::vertexShaderSource):
+        (WebCore::TextureMapperShaderProgramClip::fragmentShaderSource):
+        (WebCore::TextureMapperShaderManager::TextureMapperShaderManager):
+        (WebCore::TextureMapperShaderManager::~TextureMapperShaderManager):
+        * platform/graphics/opengl/TextureMapperShaderManager.h: Added.
+        (WebCore):
+        (WebCore::debugGLCommand):
+        (TextureMapperShaderProgram):
+        (WebCore::TextureMapperShaderProgram::id):
+        (WebCore::TextureMapperShaderProgram::vertexAttrib):
+        (WebCore::TextureMapperShaderProgram::shaderType):
+        (TextureMapperShaderProgramSimple):
+        (WebCore::TextureMapperShaderProgramSimple::matrixVariable):
+        (WebCore::TextureMapperShaderProgramSimple::sourceMatrixVariable):
+        (WebCore::TextureMapperShaderProgramSimple::sourceTextureVariable):
+        (WebCore::TextureMapperShaderProgramSimple::opacityVariable):
+        (TextureMapperShaderProgramOpacityAndMask):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::sourceMatrixVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::matrixVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskMatrixVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::sourceTextureVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskTextureVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::opacityVariable):
+        (TextureMapperShaderProgramClip):
+        (WebCore::TextureMapperShaderProgramClip::matrixVariable):
+        (TextureMapperShaderManager):
+        (WebCore::TextureMapperShaderManager::getShaderProgram):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::reset):
+        (WebCore::BitmapTexture::isOpaque):
+        (BitmapTexture):
+
 2012-02-21  Anders Carlsson  <andersca@apple.com>
 
         The tile cache should keep track of the tile coverage rect

@@ -17,6 +17,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef OpenGLShims_h
+#define OpenGLShims_h
+
 #if PLATFORM(QT)
 #include <qglobal.h>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -344,4 +347,6 @@ typedef struct _OpenGLFunctionTable {
 #define glVertexAttrib4f                       LOOKUP_GL_FUNCTION(glVertexAttrib4f)
 #define glVertexAttrib4fv                      LOOKUP_GL_FUNCTION(glVertexAttrib4fv)
 #define glVertexAttribPointer                  LOOKUP_GL_FUNCTION(glVertexAttribPointer)
+#endif
+
 #endif

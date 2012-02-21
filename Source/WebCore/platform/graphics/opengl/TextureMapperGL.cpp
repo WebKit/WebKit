@@ -22,6 +22,7 @@
 
 #include "GraphicsContext.h"
 #include "Image.h"
+#include "TextureMapperShaderManager.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
@@ -34,17 +35,6 @@
 #include <QPlatformPixmap>
 #include <qopenglfunctions.h>
 #endif
-#endif
-
-#if PLATFORM(QT) || USE(CAIRO)
-#include "OpenGLShims.h"
-#elif defined(TEXMAP_OPENGL_ES_2)
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#elif OS(MAC_OS_X)
-#include <gl.h>
-#else
-#include <GL/gl.h>
 #endif
 
 #if defined(TEXMAP_OPENGL_ES_2)
@@ -62,50 +52,6 @@
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <wtf/ByteArray.h>
-#endif
-
-#if !defined(TEXMAP_OPENGL_ES_2) && !PLATFORM(QT) && !PLATFORM(GTK)
-extern "C" {
-    void glUniform1f(GLint, GLfloat);
-    void glUniform1i(GLint, GLint);
-    void glVertexAttribPointer(GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid*);
-    void glUniform4f(GLint, GLfloat, GLfloat, GLfloat, GLfloat);
-    void glShaderSource(GLuint, GLsizei, const char**, const GLint*);
-    GLuint glCreateShader(GLenum);
-    void glShaderSource(GLuint, GLsizei, const char**, const GLint*);
-    void glCompileShader(GLuint);
-    void glDeleteShader(GLuint);
-    void glUniformMatrix4fv(GLint, GLsizei, GLboolean, const GLfloat*);
-    GLuint glCreateProgram();
-    void glAttachShader(GLuint, GLuint);
-    void glLinkProgram(GLuint);
-    void glUseProgram(GLuint);
-    void glDisableVertexAttribArray(GLuint);
-    void glEnableVertexAttribArray(GLuint);
-    void glBindFramebuffer(GLenum target, GLuint framebuffer);
-    void glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers);
-    void glGenFramebuffers(GLsizei n, GLuint* framebuffers);
-    void glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
-    void glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint* params);
-    void glBindBuffer(GLenum, GLuint);
-    void glDeleteBuffers(GLsizei, const GLuint*);
-    void glGenBuffers(GLsizei, GLuint*);
-    void glBufferData(GLenum, GLsizeiptr, const GLvoid*, GLenum);
-    void glBufferSubData(GLenum, GLsizeiptr, GLsizeiptr, const GLvoid*);
-    void glGetProgramInfoLog(GLuint, GLsizei, GLsizei*, GLchar*);
-    void glGetShaderInfoLog(GLuint, GLsizei, GLsizei*, GLchar*);
-    void glGenRenderbuffers(GLsizei n, GLuint* ids);
-    void glDeleteRenderbuffers(GLsizei n, const GLuint* ids);
-    void glBindRenderbuffer(GLenum target, GLuint id);
-    void glRenderbufferStorage(GLenum target, GLenum internalFormat, GLsizei width, GLsizei height);
-    void glFramebufferRenderbuffer(GLenum target, GLenum attachmentPoint, GLenum renderbufferTarget, GLuint renderbufferId);
-    GLenum glCheckFramebufferStatus(GLenum target);
-    GLint glGetAttribLocation(GLuint program, const GLchar* name);
-#if !OS(MAC_OS_X)
-    GLint glGetUniformLocation(GLuint, const GLchar*);
-    GLint glBindAttribLocation(GLuint, GLuint, const GLchar*);
-#endif
-}
 #endif
 
 namespace WebCore {
@@ -180,91 +126,18 @@ struct TextureMapperGLData {
             return adoptRef(new SharedGLData(getCurrentGLContext()));
         }
 
-        enum ShaderProgramIndex {
-            NoProgram = -1,
-            SimpleProgram,
-            OpacityAndMaskProgram,
-            ClipProgram,
-
-            ProgramCount
-        };
-
-        enum ShaderVariableIndex {
-            InMatrixVariable,
-            InSourceMatrixVariable,
-            InMaskMatrixVariable,
-            OpacityVariable,
-            SourceTextureVariable,
-            MaskTextureVariable,
-
-            VariableCount
-        };
-
-        struct ProgramInfo {
-            GLuint id;
-            GLuint vertexAttrib;
-            GLint vars[VariableCount];
-            GLuint vertexShader;
-            GLuint fragmentShader;
-            ProgramInfo() : id(0) { }
-        };
-
-        GLint getUniformLocation(ShaderProgramIndex prog, ShaderVariableIndex var, const char* name)
-        {
-            return programs[prog].vars[var] = glGetUniformLocation(programs[prog].id, name);
-        }
-
-        void createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource, ShaderProgramIndex index)
-        {
-            GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            GL_CMD(glShaderSource(vertexShader, 1, &vertexShaderSource, 0))
-            GL_CMD(glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0))
-            GLuint programID = glCreateProgram();
-            GL_CMD(glCompileShader(vertexShader))
-            GL_CMD(glCompileShader(fragmentShader))
-            GL_CMD(glAttachShader(programID, vertexShader))
-            GL_CMD(glAttachShader(programID, fragmentShader))
-            GL_CMD(glLinkProgram(programID))
-            programs[index].vertexAttrib = glGetAttribLocation(programID, "InVertex");
-            programs[index].id = programID;
-            programs[index].vertexShader = vertexShader;
-            programs[index].fragmentShader = fragmentShader;
-        }
-
-        void deleteShaderProgram(ShaderProgramIndex index)
-        {
-            ProgramInfo& programInfo = programs[index];
-            GLuint programID = programInfo.id;
-            if (!programID)
-                return;
-
-            GL_CMD(glDetachShader(programID, programInfo.vertexShader))
-            GL_CMD(glDeleteShader(programInfo.vertexShader))
-            GL_CMD(glDetachShader(programID, programInfo.fragmentShader))
-            GL_CMD(glDeleteShader(programInfo.fragmentShader))
-            GL_CMD(glDeleteProgram(programID))
-        }
-
-        void initializeShaders();
-
-        ProgramInfo programs[ProgramCount];
-
         int stencilIndex;
         Vector<IntRect> clipStack;
+        TextureMapperShaderManager textureMapperShaderManager;
 
         SharedGLData(GLContext glContext)
             : stencilIndex(1)
         {
             glContextDataMap().add(glContext, this);
-            initializeShaders();
         }
 
         ~SharedGLData()
         {
-            for (int i = SimpleProgram; i < ProgramCount; ++i)
-                deleteShaderProgram(ShaderProgramIndex(i));
-
             GLContextDataMap::const_iterator end = glContextDataMap().end();
             GLContextDataMap::iterator it;
             for (it = glContextDataMap().begin(); it != end; ++it) {
@@ -293,8 +166,7 @@ struct TextureMapperGLData {
     }
 
     TextureMapperGLData()
-        : currentProgram(SharedGLData::NoProgram)
-        , previousProgram(0)
+        : previousProgram(0)
         , didModifyStencil(false)
         , previousScissorState(0)
         , previousDepthState(0)
@@ -302,7 +174,6 @@ struct TextureMapperGLData {
     { }
 
     TransformationMatrix projectionMatrix;
-    int currentProgram;
     GLint previousProgram;
     bool didModifyStencil;
     GLint previousScissorState;
@@ -346,125 +217,10 @@ private:
     friend class TextureMapperGL;
 };
 
-#define TEXMAP_GET_SHADER_VAR_LOCATION(prog, var) \
-    if (getUniformLocation(prog##Program, var##Variable, #var) < 0) \
-            LOG_ERROR("Couldn't find variable "#var" in program "#prog"\n");
-
-#define TEXMAP_BUILD_SHADER(program) \
-    createShaderProgram(vertexShaderSource##program, fragmentShaderSource##program, program##Program);
-
 TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
     , m_context(0)
 {
-}
-
-void TextureMapperGLData::SharedGLData::initializeShaders()
-{
-#ifndef TEXMAP_OPENGL_ES_2
-#define OES2_PRECISION_DEFINITIONS \
-    "#define lowp\n#define highp\n"
-#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
-#else
-#define OES2_PRECISION_DEFINITIONS
-#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION \
-    "precision mediump float; \n"
-#endif
-
-#define VERTEX_SHADER(src...) OES2_PRECISION_DEFINITIONS#src
-#define FRAGMENT_SHADER(src...) OES2_PRECISION_DEFINITIONS\
-                                OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
-                                #src
-
-    if (!initializeOpenGLShims())
-        return;
-
-    const char* fragmentShaderSourceOpacityAndMask =
-        FRAGMENT_SHADER(
-            uniform sampler2D SourceTexture, MaskTexture;
-            uniform lowp float Opacity;
-            varying highp vec2 OutTexCoordSource, OutTexCoordMask;
-            void main(void)
-            {
-                lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
-                lowp vec4 maskColor = texture2D(MaskTexture, OutTexCoordMask);
-                lowp float fragmentAlpha = Opacity * maskColor.a;
-                gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
-            }
-        );
-
-    const char* vertexShaderSourceOpacityAndMask =
-        VERTEX_SHADER(
-            uniform mat4 InMatrix, InSourceMatrix, InMaskMatrix;
-            attribute vec4 InVertex;
-            varying highp vec2 OutTexCoordSource, OutTexCoordMask;
-            void main(void)
-            {
-                OutTexCoordSource = vec2(InSourceMatrix * InVertex);
-                OutTexCoordMask = vec2(InMaskMatrix * InVertex);
-                gl_Position = InMatrix * InVertex;
-            }
-        );
-
-    const char* fragmentShaderSourceSimple =
-        FRAGMENT_SHADER(
-            uniform sampler2D SourceTexture;
-            uniform lowp float Opacity;
-            varying highp vec2 OutTexCoordSource;
-            void main(void)
-            {
-                lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
-                gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
-            }
-        );
-
-    const char* vertexShaderSourceSimple =
-        VERTEX_SHADER(
-            uniform mat4 InMatrix, InSourceMatrix;
-            attribute vec4 InVertex;
-            varying highp vec2 OutTexCoordSource;
-            void main(void)
-            {
-                OutTexCoordSource = vec2(InSourceMatrix * InVertex);
-                gl_Position = InMatrix * InVertex;
-            }
-        );
-    const char* fragmentShaderSourceClip =
-        FRAGMENT_SHADER(
-            void main(void)
-            {
-                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-            }
-        );
-
-    const char* vertexShaderSourceClip =
-        VERTEX_SHADER(
-            uniform mat4 InMatrix;
-            attribute vec4 InVertex;
-            void main(void)
-            {
-                gl_Position = InMatrix * InVertex;
-            }
-        );
-
-
-    TEXMAP_BUILD_SHADER(Simple)
-    TEXMAP_BUILD_SHADER(OpacityAndMask)
-    TEXMAP_BUILD_SHADER(Clip)
-
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, InMatrix)
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, InSourceMatrix)
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, InMaskMatrix)
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, SourceTexture)
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, MaskTexture)
-    TEXMAP_GET_SHADER_VAR_LOCATION(OpacityAndMask, Opacity)
-
-    TEXMAP_GET_SHADER_VAR_LOCATION(Simple, InSourceMatrix)
-    TEXMAP_GET_SHADER_VAR_LOCATION(Simple, InMatrix)
-    TEXMAP_GET_SHADER_VAR_LOCATION(Simple, SourceTexture)
-    TEXMAP_GET_SHADER_VAR_LOCATION(Simple, Opacity)
-
-    TEXMAP_GET_SHADER_VAR_LOCATION(Clip, InMatrix)
 }
 
 void TextureMapperGL::beginPainting()
@@ -526,26 +282,28 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     if (!texture.isValid())
         return;
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
-    drawTexture(textureGL.id(), textureGL.isOpaque(), textureGL.relativeSize(), targetRect, matrix, opacity, mask, false);
+    drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.relativeSize(), targetRect, matrix, opacity, mask);
 }
 
-void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, bool flip)
+void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
-    TextureMapperGLData::SharedGLData::ShaderProgramIndex program;
     if (maskTexture)
-        program = TextureMapperGLData::SharedGLData::OpacityAndMaskProgram;
+        drawTextureWithMaskAndOpacity(texture, flags, relativeSize, targetRect, modelViewMatrix, opacity, maskTexture);
     else
-        program = TextureMapperGLData::SharedGLData::SimpleProgram;
+        drawTextureSimple(texture, flags, relativeSize, targetRect, modelViewMatrix, opacity, maskTexture);
+}
 
-    const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
-    GL_CMD(glUseProgram(programInfo.id))
-    data().currentProgram = program;
-    GL_CMD(glEnableVertexAttribArray(programInfo.vertexAttrib))
+void TextureMapperGL::drawTextureWithMaskAndOpacity(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
+{
+    RefPtr<TextureMapperShaderProgramOpacityAndMask> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramOpacityAndMask>();
+
+    GL_CMD(glUseProgram(shaderInfo->id()))
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
     GL_CMD(glActiveTexture(GL_TEXTURE0))
     GL_CMD(glBindTexture(GL_TEXTURE_2D, texture))
     GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(programInfo.vertexAttrib, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
             targetRect.width(), 0, 0, 0,
@@ -560,16 +318,16 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
     const GLfloat m4src[] = {relativeSize.width(), 0, 0, 0,
-                                     0, relativeSize.height() * (flip ? -1 : 1), 0, 0,
+                                     0, relativeSize.height() * ((flags & ShouldFlipTexture) ? -1 : 1), 0, 0,
                                      0, 0, 1, 0,
-                                     0, flip ? relativeSize.height() : 0, 0, 1};
+                                     0, (flags & ShouldFlipTexture) ? relativeSize.height() : 0, 0, 1};
 
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMatrixVariable], 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InSourceMatrixVariable], 1, GL_FALSE, m4src))
-    GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::SharedGLData::SourceTextureVariable], 0))
-    GL_CMD(glUniform1f(programInfo.vars[TextureMapperGLData::SharedGLData::OpacityVariable], opacity))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
+    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0))
+    GL_CMD(glUniform1f(shaderInfo->opacityVariable(), opacity))
 
-    if (maskTexture && maskTexture->isValid()) {
+    if (maskTexture->isValid()) {
         const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
         GL_CMD(glActiveTexture(GL_TEXTURE1))
         GL_CMD(glBindTexture(GL_TEXTURE_2D, maskTextureGL->id()))
@@ -577,12 +335,53 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
                                          0, maskTextureGL->relativeSize().height(), 0, 0,
                                          0, 0, 1, 0,
                                          0, 0, 0, 1};
-        GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMaskMatrixVariable], 1, GL_FALSE, m4mask));
-        GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::SharedGLData::MaskTextureVariable], 1))
+        GL_CMD(glUniformMatrix4fv(shaderInfo->maskMatrixVariable(), 1, GL_FALSE, m4mask));
+        GL_CMD(glUniform1i(shaderInfo->maskTextureVariable(), 1))
         GL_CMD(glActiveTexture(GL_TEXTURE0))
     }
 
-    bool needsBlending = !opaque || opacity < 0.99 || maskTexture;
+    GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
+    GL_CMD(glEnable(GL_BLEND))
+
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
+    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
+}
+
+void TextureMapperGL::drawTextureSimple(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture*)
+{
+    RefPtr<TextureMapperShaderProgramSimple> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
+
+    GL_CMD(glUseProgram(shaderInfo->id()))
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
+    GL_CMD(glActiveTexture(GL_TEXTURE0))
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, texture))
+    GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
+    const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
+    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+
+    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
+            targetRect.width(), 0, 0, 0,
+            0, targetRect.height(), 0, 0,
+            0, 0, 1, 0,
+            targetRect.x(), targetRect.y(), 0, 1));
+
+    const GLfloat m4[] = {
+        matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
+        matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
+        matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
+        matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
+    };
+    const GLfloat m4src[] = {relativeSize.width(), 0, 0, 0,
+                                     0, relativeSize.height() * ((flags & ShouldFlipTexture) ? -1 : 1), 0, 0,
+                                     0, 0, 1, 0,
+                                     0, (flags & ShouldFlipTexture) ? relativeSize.height() : 0, 0, 1};
+
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
+    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0))
+    GL_CMD(glUniform1f(shaderInfo->opacityVariable(), opacity))
+
+    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99;
 
     if (needsBlending) {
         GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
@@ -590,9 +389,8 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
     } else
         GL_CMD(glDisable(GL_BLEND))
 
-
     GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
-    GL_CMD(glDisableVertexAttribArray(programInfo.vertexAttrib))
+    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
 }
 
 const char* TextureMapperGL::type() const
@@ -870,12 +668,13 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
         return;
 
     data().initStencil();
-    TextureMapperGLData::SharedGLData::ShaderProgramIndex program = TextureMapperGLData::SharedGLData::ClipProgram;
-    const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
-    GL_CMD(glUseProgram(programInfo.id))
-    GL_CMD(glEnableVertexAttribArray(programInfo.vertexAttrib))
+
+    RefPtr<TextureMapperShaderProgramClip> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramClip>();
+
+    GL_CMD(glUseProgram(shaderInfo->id()))
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(programInfo.vertexAttrib, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
+    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix)
             .multiply(modelViewMatrix)
@@ -893,7 +692,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     int& stencilIndex = data().sharedGLData().stencilIndex;
 
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMatrixVariable], 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
     GL_CMD(glEnable(GL_STENCIL_TEST))
     GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex))
     GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE))
@@ -902,7 +701,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
     GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
     stencilIndex <<= 1;
     glStencilFunc(stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, stencilIndex - 1, stencilIndex - 1);
-    GL_CMD(glDisableVertexAttribArray(programInfo.vertexAttrib))
+    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
 }
 
 void TextureMapperGL::endClip()

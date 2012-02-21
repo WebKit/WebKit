@@ -3971,8 +3971,14 @@ contains(CONFIG, texmap) {
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 
     !win32-*:contains(QT_CONFIG, opengl) {
-        HEADERS += platform/graphics/opengl/TextureMapperGL.h
-        SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
+        HEADERS += \
+            platform/graphics/opengl/TextureMapperGL.h \
+            platform/graphics/opengl/TextureMapperShaderManager.h
+
+        SOURCES += \
+            platform/graphics/opengl/TextureMapperGL.cpp \
+            platform/graphics/opengl/TextureMapperShaderManager.cpp
+
         CONFIG += opengl-shims
         DEFINES += WTF_USE_TEXTURE_MAPPER_GL
     }

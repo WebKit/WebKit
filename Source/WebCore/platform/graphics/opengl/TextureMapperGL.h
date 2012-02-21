@@ -38,9 +38,18 @@ public:
     TextureMapperGL();
     virtual ~TextureMapperGL();
 
+    enum Flag {
+        SupportsBlending = 0x01,
+        ShouldFlipTexture = 0x02
+    };
+
+    typedef int Flags;
+
     // reimps from TextureMapper
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTexture(uint32_t texture, bool opaque, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, bool flip);
+    virtual void drawTexture(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTextureWithMaskAndOpacity(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTextureSimple(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
     virtual void beginPainting();

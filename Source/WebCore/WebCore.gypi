@@ -3490,6 +3490,8 @@
             'platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp',
             'platform/graphics/opengl/TextureMapperGL.cpp',
             'platform/graphics/opengl/TextureMapperGL.h',
+            'platform/graphics/opengl/TextureMapperShaderManager.cpp',
+            'platform/graphics/opengl/TextureMapperShaderManager.h',
             'platform/graphics/opentype/OpenTypeSanitizer.cpp',
             'platform/graphics/opentype/OpenTypeSanitizer.h',
             'platform/graphics/opentype/OpenTypeUtilities.cpp',
