@@ -132,26 +132,28 @@ void WorkerRunLoop::run(WorkerContext* context)
     ModePredicate modePredicate(defaultMode());
     MessageQueueWaitResult result;
     do {
-        result = runInMode(context, modePredicate);
+        result = runInMode(context, modePredicate, WaitForMessage);
     } while (result != MessageQueueTerminated);
     runCleanupTasks(context);
 }
 
-MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const String& mode)
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const String& mode, WaitMode waitMode)
 {
     RunLoopSetup setup(*this);
     ModePredicate modePredicate(mode);
-    MessageQueueWaitResult result = runInMode(context, modePredicate);
+    MessageQueueWaitResult result = runInMode(context, modePredicate, waitMode);
     return result;
 }
 
-MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const ModePredicate& predicate)
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const ModePredicate& predicate, WaitMode waitMode)
 {
     ASSERT(context);
     ASSERT(context->thread());
     ASSERT(context->thread()->threadID() == currentThread());
 
-    double absoluteTime = (predicate.isDefaultMode() && m_sharedTimer->isActive()) ? m_sharedTimer->fireTime() : MessageQueue<Task>::infiniteTime();
+    double absoluteTime = 0.0;
+    if (waitMode == WaitForMessage)
+        absoluteTime = (predicate.isDefaultMode() && m_sharedTimer->isActive()) ? m_sharedTimer->fireTime() : MessageQueue<Task>::infiniteTime();
     MessageQueueWaitResult result;
     OwnPtr<WorkerRunLoop::Task> task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, absoluteTime);
 

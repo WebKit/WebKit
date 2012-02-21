@@ -33,6 +33,7 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
 
 #include "WorkerScriptDebugServer.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -48,6 +49,10 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener*)
 }
 
 void WorkerScriptDebugServer::removeListener(ScriptDebugListener*)
+{
+}
+
+void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>)
 {
 }
 

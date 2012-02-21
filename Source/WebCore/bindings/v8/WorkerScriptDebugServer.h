@@ -35,9 +35,14 @@
 
 #include "ScriptDebugServer.h"
 
+namespace v8 {
+class Isolate;
+}
+
 namespace WebCore {
 
 class WorkerContext;
+class WorkerThread;
 
 class WorkerScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
@@ -48,6 +53,8 @@ public:
     void addListener(ScriptDebugListener*);
     void removeListener(ScriptDebugListener*);
 
+    void interruptAndRunTask(PassOwnPtr<Task>);
+
 private:
     virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>);
     virtual void runMessageLoopOnPause(v8::Handle<v8::Context>);
@@ -56,6 +63,7 @@ private:
     typedef HashMap<WorkerContext*, ScriptDebugListener*> ListenersMap;
     ScriptDebugListener* m_listener;
     WorkerContext* m_workerContext;
+    v8::Isolate* m_isolate;
 };
 
 } // namespace WebCore

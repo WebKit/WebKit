@@ -1,3 +1,15 @@
+2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        [V8] Web Inspector: set breakpoint/pause doesn't work when worker is in a tight loop
+        https://bugs.webkit.org/show_bug.cgi?id=79097
+
+        Worker script execution will be interrupted for dispatching inspector commands.
+
+        Reviewed by Pavel Feldman.
+
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::dispatchDevToolsMessage):
+
 2012-02-20  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

@@ -50,6 +50,8 @@ public:
 
     static const char* debuggerTaskMode;
 
+    void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
+
 private:
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>*) { }
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) { return 0; }

@@ -92,6 +92,12 @@ public:
 
     bool isPaused() { return m_paused; }
 
+    class Task {
+    public:
+        virtual ~Task() { }
+        virtual void run() = 0;
+    };
+
 protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);

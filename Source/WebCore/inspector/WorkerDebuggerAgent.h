@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class WorkerContext;
+class WorkerThread;
 
 class WorkerDebuggerAgent : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
@@ -47,6 +48,7 @@ public:
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;
+    static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
 private:
     WorkerDebuggerAgent(InstrumentingAgents*, InspectorState*, WorkerContext*, InjectedScriptManager*);

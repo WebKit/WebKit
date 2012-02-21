@@ -443,6 +443,7 @@ static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, cons
 void WebSharedWorkerImpl::dispatchDevToolsMessage(const WebString& message)
 {
     workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
+    WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(workerThread());
 }
 
 WebSharedWorker* WebSharedWorker::create(WebSharedWorkerClient* client)

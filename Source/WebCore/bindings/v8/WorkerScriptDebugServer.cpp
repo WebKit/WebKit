@@ -41,13 +41,16 @@
 #include <v8.h>
 #include <wtf/MessageQueue.h>
 
+
 namespace WebCore {
 
 WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* workerContext)
     : ScriptDebugServer()
     , m_listener(0)
     , m_workerContext(workerContext)
+    , m_isolate(v8::Isolate::GetCurrent())
 {
+    ASSERT(m_isolate);
 }
 
 void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
@@ -85,6 +88,11 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener)
     continueProgram();
     m_listener = 0;
     v8::Debug::SetDebugEventListener2(0);
+}
+
+void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<Task> task)
+{
+    interruptAndRun(task, m_isolate);
 }
 
 ScriptDebugListener* WorkerScriptDebugServer::getDebugListenerForContext(v8::Handle<v8::Context>)

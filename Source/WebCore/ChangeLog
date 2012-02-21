@@ -1,3 +1,51 @@
+2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        [V8] Web Inspector: set breakpoint/pause doesn't work when worker is in a tight loop
+        https://bugs.webkit.org/show_bug.cgi?id=79097
+
+        Worker script will be interrupted to dispatch all arriving inspector commands.
+        This way debugger will be operable even if worker is in a tight loop.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/js/ScriptDebugServer.h:
+        (Task):
+        (WebCore::ScriptDebugServer::Task::~Task):
+        (ScriptDebugServer):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::interruptAndRunTask):
+        (WebCore):
+        * bindings/js/WorkerScriptDebugServer.h:
+        (WorkerScriptDebugServer):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::interruptAndRun):
+        * bindings/v8/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::interruptAndRunTask):
+        (WebCore):
+        * bindings/v8/WorkerScriptDebugServer.h:
+        (v8):
+        (WebCore):
+        (WorkerScriptDebugServer):
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        (WebCore):
+        (WebCore::WorkerDebuggerAgent::interruptAndDispatchInspectorCommands):
+        * inspector/WorkerDebuggerAgent.h:
+        (WebCore):
+        (WorkerDebuggerAgent):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::run):
+        (WebCore::WorkerRunLoop::runInMode):
+        * workers/WorkerRunLoop.h:
+        (WorkerRunLoop):
+
 2012-02-21  'Pavel Feldman'  <pfeldman@google.com>
 
         Not reviewed: fixing Mac build (take 2).

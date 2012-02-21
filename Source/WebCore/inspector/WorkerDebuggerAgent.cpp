@@ -34,8 +34,48 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
 #include "ScriptDebugServer.h"
 #include "WorkerContext.h"
+#include "WorkerThread.h"
+#include <wtf/MessageQueue.h>
 
 namespace WebCore {
+
+namespace {
+
+Mutex& workerDebuggerAgentsMutex()
+{
+    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
+    return mutex;
+}
+
+typedef HashMap<WorkerThread*, WorkerDebuggerAgent*> WorkerDebuggerAgents;
+
+WorkerDebuggerAgents& workerDebuggerAgents()
+{
+    DEFINE_STATIC_LOCAL(WorkerDebuggerAgents, agents, ());
+    return agents;
+}
+
+
+class RunInspectorCommandsTask : public ScriptDebugServer::Task {
+public:
+    RunInspectorCommandsTask(WorkerThread* thread, WorkerContext* workerContext)
+        : m_thread(thread)
+        , m_workerContext(workerContext) { }
+    virtual ~RunInspectorCommandsTask() { }
+    virtual void run()
+    {
+        // Process all queued debugger commands. It is safe to use m_workerContext here
+        // because it is alive if RunWorkerLoop is not terminated, otherwise it will
+        // just be ignored.
+        while (MessageQueueMessageReceived == m_thread->runLoop().runInMode(m_workerContext, WorkerDebuggerAgent::debuggerTaskMode, WorkerRunLoop::DontWaitForMessage)) { }
+    }
+
+private:
+    RefPtr<WorkerThread> m_thread;
+    WorkerContext* m_workerContext;
+};
+
+} // namespace
 
 const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
 
@@ -49,10 +89,23 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgent
     , m_scriptDebugServer(inspectedWorkerContext)
     , m_inspectedWorkerContext(inspectedWorkerContext)
 {
+    MutexLocker lock(workerDebuggerAgentsMutex());
+    workerDebuggerAgents().set(inspectedWorkerContext->thread(), this);
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent()
 {
+    MutexLocker lock(workerDebuggerAgentsMutex());
+    ASSERT(workerDebuggerAgents().contains(m_inspectedWorkerContext->thread()));
+    workerDebuggerAgents().remove(m_inspectedWorkerContext->thread());
+}
+
+void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* thread)
+{
+    MutexLocker lock(workerDebuggerAgentsMutex());
+    WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread);
+    if (agent)
+        agent->m_scriptDebugServer.interruptAndRunTask(adoptPtr(new RunInspectorCommandsTask(thread, agent->m_inspectedWorkerContext)));
 }
 
 void WorkerDebuggerAgent::startListeningScriptDebugServer()
