@@ -1,3 +1,24 @@
+2012-02-20  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream RenderThemeBlackberry.h/.cpp into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=78785
+
+        Main Contributors:
+        Daniel Bates <dbates@rim.com>
+        Bryan Gislason <bgislason@rim.com>
+        Akash Vaswani <akvaswani@rim.com>
+        Dave Battista <dbattista@rim.com>
+        Robin Cao  <robin.cao@torchmobile.com.cn>
+        Genevieve Mak <gmak@rim.com>
+        Mike Fenton  <mifenton@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp: Added.
+        * platform/blackberry/RenderThemeBlackBerry.h: Added.
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [EFL] Collapse duplicate WebGL support code
