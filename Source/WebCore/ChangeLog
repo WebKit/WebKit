@@ -1,5 +1,31 @@
 2012-02-20  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Clipping is broken
+        https://bugs.webkit.org/show_bug.cgi?id=78677
+
+        It's not necessary to add a full-viewport rect to the scissor clip stack.
+        It creates a situation where if there's a clip in the page, we return to
+        the viewport clip instead of applying the WebView's clip we got from the
+        scenegraph.
+
+        Also, it's unnecessary to clip before we paint the layer's content, we should
+        only clip afterwards, before painting the children. 
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new functionality.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::size):
+        (WebCore::scissorClip):
+        (WebCore):
+        (WebCore::TextureMapperGL::beginScissorClip):
+        (WebCore::TextureMapperGL::endScissorClip):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+
+2012-02-20  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Texmap] Layers and tiles appear to have missing pixels in their right/bottom borders
         https://bugs.webkit.org/show_bug.cgi?id=78961
 

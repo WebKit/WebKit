@@ -175,16 +175,19 @@ void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array, int f
 
 void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& options)
 {
-    bool hasClip = m_state.masksToBounds && !m_children.isEmpty();
-    if (hasClip)
-        options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_transform.combined()), FloatRect(0, 0, m_size.width(), m_size.height()));
-
     paintSelf(options);
 
-    for (size_t i = 0; i < m_children.size(); ++i)
+    if (m_children.isEmpty())
+        return;
+
+    bool shouldClip = m_state.masksToBounds || m_state.maskLayer;
+    if (shouldClip)
+        options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_transform.combined()), FloatRect(0, 0, m_size.width(), m_size.height()));
+
+    for (int i = 0; i < m_children.size(); ++i)
         m_children[i]->paintRecursive(options);
 
-    if (hasClip)
+    if (shouldClip)
         options.textureMapper->endClip();
 }
 

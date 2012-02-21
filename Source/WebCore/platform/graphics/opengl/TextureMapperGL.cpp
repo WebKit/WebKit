@@ -809,7 +809,6 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
         GL_CMD(glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1))
         GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
         GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()))
-        data().sharedGLData().clipStack.append(IntRect(data().viewport[0], data().viewport[1], data().viewport[2], data().viewport[3]));
         return;
     }
 
@@ -835,8 +834,15 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
     }
 
     // Intersect with previous clip.
-    if (!data().sharedGLData().clipStack.isEmpty())
-        rect.intersect(data().sharedGLData().clipStack.last());
+    for (int i = data().sharedGLData().clipStack.size() - 1; i >= 0; --i) {
+        const IntRect& prevRect = data().sharedGLData().clipStack[i];
+        if (prevRect.isEmpty())
+            continue;
+
+        // We only need the last valid clip.
+        rect.intersect(prevRect);
+        break;
+    }
 
     scissorClip(rect);
     data().sharedGLData().clipStack.append(rect);
@@ -861,6 +867,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 {
     if (beginScissorClip(modelViewMatrix, targetRect))
         return;
+
     data().initStencil();
     TextureMapperGLData::SharedGLData::ShaderProgramIndex program = TextureMapperGLData::SharedGLData::ClipProgram;
     const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
