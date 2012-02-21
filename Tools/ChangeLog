@@ -4104,7 +4104,7 @@
         run-perf-test should include relative file paths in test names
         https://bugs.webkit.org/show_bug.cgi?id=77144
 
-        Reviewed by Adam Birth.
+        Reviewed by Adam Barth.
 
         Include all directory names in the test name separated by "/".
         e.g. Bindings/event-target-wrapper.html translates to Bindings/event-target-wrapper

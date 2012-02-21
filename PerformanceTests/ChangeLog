@@ -354,7 +354,7 @@
         DOM/DOMDivWalk.html result is unreliable
         https://bugs.webkit.org/show_bug.cgi?id=77313
 
-        Reviewed by Adam Birth.
+        Reviewed by Adam Barth.
 
         Trigger garbage collection manually between test runs to avoid GC
         to occur in the middle of runs.
