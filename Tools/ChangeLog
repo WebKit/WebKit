@@ -1,3 +1,15 @@
+2012-02-20  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Update pywebsocket to 0.7.2
+        https://bugs.webkit.org/show_bug.cgi?id=79066
+
+        This version includes vendor-prefixed deflate-frame extension support.
+
+        Reviewed by Kent Tamura.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pywebsocket):
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         [UNIX] Plugin information fields are not interpreted as UTF-8

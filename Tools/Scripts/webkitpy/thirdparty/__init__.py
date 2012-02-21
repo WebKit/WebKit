@@ -127,8 +127,8 @@ class AutoinstallImportHook(object):
     def _install_pywebsocket(self):
         pywebsocket_dir = self._fs.join(_AUTOINSTALLED_DIR, "pywebsocket")
         installer = AutoInstaller(target_dir=pywebsocket_dir)
-        installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.7.1.tar.gz",
-                          url_subpath="pywebsocket-0.7.1/src/mod_pywebsocket")
+        installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.7.2.tar.gz",
+                          url_subpath="pywebsocket-0.7.2/src/mod_pywebsocket")
 
     def _install_xmlrunner(self):
         self._install("http://pypi.python.org/packages/source/u/unittest-xml-reporting/unittest-xml-reporting-1.0.3.tar.gz#md5=cebf83281b0753b5d42bad38c91fd4d6",
