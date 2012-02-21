@@ -1,3 +1,9 @@
+2012-02-21  Matt Lilek  <mrl@apple.com>
+
+        Not reviewed, build fix for non-client-based Geolocation builds after r107982.
+
+        * page/Geolocation.cpp:
+
 2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         [V8] Web Inspector: simplify worker debugger implementation

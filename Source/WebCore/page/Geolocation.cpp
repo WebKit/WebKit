@@ -31,6 +31,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Geoposition.h"
