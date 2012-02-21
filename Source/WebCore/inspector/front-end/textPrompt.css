@@ -31,14 +31,10 @@
 .suggest-box {
     position: absolute;
     background-color: #FFFFFF;
-    display: none;
+    display: block;
     border: 1px solid black;
     padding: 2px;
     z-index: 100;
-}
-
-.suggest-box.visible {
-    display: block;
 }
 
 .suggest-box .container {

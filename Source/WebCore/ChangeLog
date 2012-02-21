@@ -1,3 +1,19 @@
+2012-02-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [SuggestBox] textPrompt.css disablement displays garbled suggest box
+        https://bugs.webkit.org/show_bug.cgi?id=79107
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.SuggestBox):
+        (WebInspector.TextPrompt.SuggestBox.prototype.get visible):
+        (WebInspector.TextPrompt.SuggestBox.prototype.hide):
+        (WebInspector.TextPrompt.SuggestBox.prototype.removeFromElement):
+        (WebInspector.TextPrompt.SuggestBox.prototype._completionsReady):
+        * inspector/front-end/textPrompt.css:
+        (.suggest-box):
+
 2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: timeline hangs on a page with deep chain of nested events.

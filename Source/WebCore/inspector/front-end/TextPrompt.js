@@ -927,8 +927,9 @@ WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, classNam
     window.addEventListener("scroll", this._boundOnScroll, true);
     window.addEventListener("resize", this._boundOnResize, true);
 
-    var bodyElement = inputElement.ownerDocument.body;
-    this._element = bodyElement.createChild("div", "suggest-box " + (className || ""));
+    this._bodyElement = inputElement.ownerDocument.body;
+    this._element = inputElement.ownerDocument.createElement("div");
+    this._element.className = "suggest-box " + (className || "");
     this._element.addEventListener("mousedown", this._onboxmousedown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
     this.contentElement = this.containerElement.createChild("div", "content");
@@ -937,7 +938,7 @@ WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, classNam
 WebInspector.TextPrompt.SuggestBox.prototype = {
     get visible()
     {
-        return this._element.hasStyleClass("visible");
+        return !!this._element.parentElement;
     },
 
     get hasSelection()
@@ -1020,7 +1021,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         if (!this.visible)
             return;
 
-        this._element.removeStyleClass("visible");
+        this._element.parentElement.removeChild(this._element);
         delete this._selectedElement;
     },
 
@@ -1028,7 +1029,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     {
         window.removeEventListener("scroll", this._boundOnScroll, true);
         window.removeEventListener("resize", this._boundOnResize, true);
-        this._element.parentElement.removeChild(this._element);
+        this.hide();
     },
 
     /**
@@ -1225,7 +1226,8 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         if (this._canShowBox(completions, canShowForSingleItem)) {
             this._updateItems(completions, canShowForSingleItem);
             this._updateBoxPosition(anchorBox);
-            this._element.addStyleClass("visible");
+            if (!this.visible)
+                this._bodyElement.appendChild(this._element);
             this._rememberRowCountPerViewport();
         } else
             this.hide();
