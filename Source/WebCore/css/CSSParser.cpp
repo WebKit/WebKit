@@ -348,14 +348,22 @@ static bool parseColorValue(StylePropertySet* declaration, int propertyId, const
 
     Document* document = contextStyleSheet->findDocument();
     if (validPrimitive) {
-        RefPtr<CSSValue> value = document ? document->cssValuePool()->createIdentifierValue(valueID) : CSSPrimitiveValue::createIdentifier(valueID);
+        RefPtr<CSSValue> value;
+        if (document)
+            value = document->cssValuePool()->createIdentifierValue(valueID);
+        else
+            value = CSSPrimitiveValue::createIdentifier(valueID);
         declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
         return true;
     }
     RGBA32 color;
     if (!CSSParser::fastParseColor(color, string, strict && string[0] != '#'))
         return false;
-    RefPtr<CSSValue> value = document ? document->cssValuePool()->createColorValue(color) : CSSPrimitiveValue::createColor(color);
+    RefPtr<CSSValue> value;
+    if (document)
+        value = document->cssValuePool()->createColorValue(color);
+    else
+        value = CSSPrimitiveValue::createColor(color);
     declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
     return true;
 }

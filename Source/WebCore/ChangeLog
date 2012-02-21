@@ -1,3 +1,15 @@
+2012-02-21  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Remove stylesheet pointer from StylePropertySet
+        https://bugs.webkit.org/show_bug.cgi?id=79092
+
+        Reviewed by Csaba Osztrogonác.
+
+        Qt buildfix after r108345.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+
 2012-02-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove stylesheet pointer from StylePropertySet
