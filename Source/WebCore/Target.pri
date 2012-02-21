@@ -1881,7 +1881,6 @@ HEADERS += \
     html/ImageDocument.h \
     html/LabelsNodeList.h \
     html/LinkRelAttribute.h \
-    html/LoadableTextTrack.h \
     html/MediaController.h \
     html/MediaDocument.h \
     html/MediaFragmentURIParser.h \
@@ -1890,9 +1889,6 @@ HEADERS += \
     html/PublicURLManager.h \
     html/StepRange.h \
     html/TextDocument.h \
-    html/TextTrack.h \
-    html/TextTrackCue.h \
-    html/TextTrackCueList.h \
     html/TimeRanges.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \
@@ -1918,6 +1914,10 @@ HEADERS += \
     html/shadow/HTMLShadowElement.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
+    html/track/LoadableTextTrack.h \
+    html/track/TextTrack.h \
+    html/track/TextTrackCue.h \
+    html/track/TextTrackCueList.h \
     html/track/TextTrackList.h \
     html/track/TrackBase.h \
     html/track/TrackEvent.h \
