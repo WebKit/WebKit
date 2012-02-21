@@ -29,6 +29,7 @@
 #include "JIT.h"
 
 #include "Arguments.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "Heap.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
@@ -1645,6 +1646,29 @@ void JIT::emitSlow_op_new_func_exp(Instruction* currentInstruction, Vector<SlowC
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
+    int length = currentInstruction[3].u.operand;
+    // FIXME: Add support for non-empty arrays. This involves copying the values over.
+    if (CopiedSpace::isOversize(JSArray::storageSize(length))) {
+        JITStubCall stubCall(this, cti_op_new_array);
+        stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
+        stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+        stubCall.call(currentInstruction[1].u.operand);
+        return;
+    }
+    int dst = currentInstruction[1].u.operand;
+    int values = currentInstruction[2].u.operand;
+
+    emitAllocateJSArray(values, length, regT0, regT1, regT2);
+    emitStoreCell(dst, regT0); 
+}
+
+void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    int length = currentInstruction[3].u.operand;
+    if (CopiedSpace::isOversize(JSArray::storageSize(length)))
+        return;
+    linkSlowCase(iter); // Not enough space in MarkedSpace for cell.
+    linkSlowCase(iter); // Not enough space in CopiedSpace for storage.
     JITStubCall stubCall(this, cti_op_new_array);
     stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));

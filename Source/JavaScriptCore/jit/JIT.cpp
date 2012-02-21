@@ -477,6 +477,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_negate)
 #endif
         DEFINE_SLOWCASE_OP(op_neq)
+        DEFINE_SLOWCASE_OP(op_new_array)
         DEFINE_SLOWCASE_OP(op_new_object)
         DEFINE_SLOWCASE_OP(op_new_func)
         DEFINE_SLOWCASE_OP(op_new_func_exp)
