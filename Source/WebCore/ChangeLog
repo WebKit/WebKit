@@ -1,3 +1,21 @@
+2012-02-21  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Little optimization for CSSParser::parseFillShorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=79042
+
+        Reviewed by Hajime Morita.
+
+        Remove one extra loop that we can combine with the following one
+        which adds the properties to the parser's list of properties. I also
+        removed a useless check.
+        Instruments shows on the css-parser-yui benchmark an improvement
+        of 13ms (from 77ms spent in the function to 64ms).
+
+        No new tests : refactoring, existings tests should cover.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillShorthand):
+
 2012-02-20  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=79046
