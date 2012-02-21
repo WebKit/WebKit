@@ -48,7 +48,6 @@
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
 #include "FontValue.h"
-#include "FontFamilyValue.h"
 #include "FontFeatureValue.h"
 #include "ShadowValue.h"
 #include "SVGColor.h"
@@ -110,8 +109,6 @@ String CSSValue::cssText() const
         return static_cast<const FontValue*>(this)->customCssText();
     case FontFaceSrcClass:
         return static_cast<const CSSFontFaceSrcValue*>(this)->customCssText();
-    case FontFamilyClass:
-        return static_cast<const FontFamilyValue*>(this)->customCssText();
     case FontFeatureClass:
         return static_cast<const FontFeatureValue*>(this)->customCssText();
     case FunctionClass:
@@ -191,9 +188,6 @@ void CSSValue::destroy()
         return;
     case FontFaceSrcClass:
         delete static_cast<CSSFontFaceSrcValue*>(this);
-        return;
-    case FontFamilyClass:
-        delete static_cast<FontFamilyValue*>(this);
         return;
     case FontFeatureClass:
         delete static_cast<FontFeatureValue*>(this);

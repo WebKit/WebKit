@@ -54,7 +54,6 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #include "CursorList.h"
-#include "FontFamilyValue.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -3210,10 +3209,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
             Settings* settings = m_checker.document()->settings();
-            if (contentValue->isString()) {
-                if (contentValue->isFontFamilyValue())
-                    face = static_cast<FontFamilyValue*>(contentValue)->familyName();
-            } else if (settings) {
+            if (contentValue->isString())
+                face = contentValue->getStringValue();
+            else if (settings) {
                 switch (contentValue->getIdent()) {
                     case CSSValueWebkitBody:
                         face = settings->standardFontFamily();

@@ -441,7 +441,6 @@ SOURCES += \
     css/CSSValueList.cpp \
     css/CSSValuePool.cpp \
     css/CSSWrapShapes.cpp \
-    css/FontFamilyValue.cpp \
     css/FontFeatureValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
@@ -1561,7 +1560,6 @@ HEADERS += \
     css/CSSValueList.h \
     css/CSSValuePool.h \
     css/CSSWrapShapes.h \
-    css/FontFamilyValue.h \
     css/FontFeatureValue.h \
     css/FontValue.h \
     css/MediaFeatureNames.h \

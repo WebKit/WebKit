@@ -42,7 +42,6 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "FontCache.h"
-#include "FontFamilyValue.h"
 #include "Frame.h"
 #include "RenderObject.h"
 #include "Settings.h"
@@ -254,11 +253,10 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         CSSPrimitiveValue* item = static_cast<CSSPrimitiveValue*>(familyList->itemWithoutBoundsCheck(i));
         String familyName;
         if (item->isString())
-            familyName = static_cast<FontFamilyValue*>(item)->familyName();
+            familyName = item->getStringValue();
         else if (item->isIdent()) {
             // We need to use the raw text for all the generic family types, since @font-face is a way of actually
             // defining what font to use for those types.
-            String familyName;
             switch (item->getIdent()) {
                 case CSSValueSerif:
                     familyName = serifFamily;

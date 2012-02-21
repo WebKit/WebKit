@@ -35350,14 +35350,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\FontFamilyValue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\FontFamilyValue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\FontFeatureValue.cpp"
 				>
 			</File>

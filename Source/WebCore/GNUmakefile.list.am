@@ -1388,8 +1388,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSValuePool.cpp \
 	Source/WebCore/css/CSSValuePool.h \
 	Source/WebCore/css/DashboardRegion.h \
-	Source/WebCore/css/FontFamilyValue.cpp \
-	Source/WebCore/css/FontFamilyValue.h \
 	Source/WebCore/css/FontFeatureValue.cpp \
 	Source/WebCore/css/FontFeatureValue.h \
 	Source/WebCore/css/FontValue.cpp \

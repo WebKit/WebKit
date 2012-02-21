@@ -1,3 +1,42 @@
+2012-02-21  Andreas Kling  <awesomekling@apple.com>
+
+        Kill FontFamilyValue.
+        <http://webkit.org/b/79103>
+
+        Reviewed by Antti Koivisto.
+
+        Remove FontFamilyValue and replace all usage by CSSPrimitiveValue.
+        The class was only used to filter font family names, removing bracketed
+        suffixes, e.g "[Xft]".
+
+        This was added to KHTML in 2002 to support the use of specific X11 font
+        families inside KMail: <https://bugs.kde.org/show_bug.cgi?id=38808>
+
+        Test: fast/css/font-family-trailing-bracket-gunk.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSParser.cpp:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+        * css/CSSValuePool.h:
+        (CSSValuePool):
+        * css/FontFamilyValue.cpp: Removed.
+        * css/FontFamilyValue.h: Removed.
+
 2012-02-21  Alexis Menard  <alexis.menard@openbossa.org>
 
         Little optimization for CSSParser::parseFillShorthand.

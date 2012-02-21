@@ -62,7 +62,6 @@ public:
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
-    bool isFontFamilyValue() const { return m_classType == FontFamilyClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
@@ -97,7 +96,6 @@ protected:
         // Primitive class types must appear before PrimitiveClass.
         ImageClass,
         CursorImageClass,
-        FontFamilyClass,
         PrimitiveClass,
 
         // Image generator classes.

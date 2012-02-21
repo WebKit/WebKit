@@ -479,7 +479,6 @@ SET(WebCore_SOURCES
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
     css/CSSWrapShapes.cpp
-    css/FontFamilyValue.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp
     css/MediaFeatureNames.cpp
