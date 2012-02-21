@@ -1,5 +1,18 @@
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Fix GTK+ unit tests after r108278.
+
+        Reviewed by Alejandro G. Castro.
+
+        Now that WebCore is no longer stealing focus, we need to
+        adjust where we grab focus to ensure that it actually succeeds.
+
+        * tests/testcopyandpaste.c:
+        (map_event_cb): No longer grab focus here.
+        (runPasteTestCallback): Grabbing focus here seems to be late enough in the process.
+
+2012-02-20  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Web content oftens steals focus from other widgets
         https://bugs.webkit.org/show_bug.cgi?id=77791
 

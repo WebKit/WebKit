@@ -111,7 +111,6 @@ static void load_status_cb(WebKitWebView* webView, GParamSpec* spec, gpointer da
 
 gboolean map_event_cb(GtkWidget *widget, GdkEvent* event, gpointer data)
 {
-    gtk_widget_grab_focus(widget);
     CopyAndPasteFixture* fixture = (CopyAndPasteFixture*)data;
     webkit_web_view_load_string(fixture->webView, fixture->info->page,
                                 "text/html", "utf-8", "file://");
@@ -137,6 +136,8 @@ static void test_copy_and_paste(CopyAndPasteFixture* fixture, gconstpointer data
 static CopyAndPasteFixture* currentFixture;
 static JSValueRef runPasteTestCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    gtk_widget_grab_focus(GTK_WIDGET(currentFixture->webView));
+
     // Simulate a paste keyboard sequence.
     GdkEvent* event = gdk_event_new(GDK_KEY_PRESS);
     event->key.keyval = gdk_unicode_to_keyval('v');
