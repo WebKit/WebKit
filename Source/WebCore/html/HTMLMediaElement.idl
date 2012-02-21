@@ -117,7 +117,7 @@ module html {
     readonly attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
 
-    attribute [Reflect, TreatNullAs=NullString, TreatReturnedNullStringAsNull] DOMString mediaGroup;
+    attribute [Reflect, TreatNullAs=NullString] DOMString mediaGroup;
     attribute [CustomSetter] MediaController controller;
 };
 }
