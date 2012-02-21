@@ -1,3 +1,80 @@
+2012-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic: Extract logic to generate JSON responses as classes to unit test
+        https://bugs.webkit.org/show_bug.cgi?id=79018
+
+        Rubber-stamped by Adam Birth.
+
+        Extracted DashboardJSONGenerator, ManifestJSONGenerator, and RunsJSONGenerator
+        into json_generators.py from DashboardHandler, ManifestHandler, and RunsHandler
+        and added unit tests for the former three classes.
+
+        Merged the latter three classes into controler.py since they have become too trivial
+        to have their own files.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (ManifestUpdateHandler):
+        (ManifestUpdateHandler.get):
+        (ManifestUpdateHandler.post):
+        (DashboardUpdateHandler):
+        (DashboardUpdateHandler.get):
+        (DashboardUpdateHandler.post):
+        (_get_test_branch_platform_ids):
+        (RunsUpdateHandler):
+        (RunsUpdateHandler.get):
+        (CachedRunsHandler.get):
+        * Websites/webkit-perf.appspot.com/dashboard_handler.py: Removed.
+        * Websites/webkit-perf.appspot.com/json_generators.py: Added.
+        (JSONGeneratorBase):
+        (JSONGeneratorBase.to_json):
+        (DashboardJSONGenerator):
+        (DashboardJSONGenerator.__init__):
+        (DashboardJSONGenerator.value):
+        (ManifestJSONGenerator):
+        (ManifestJSONGenerator.__init__):
+        (ManifestJSONGenerator.value):
+        (RunsJSONGenerator):
+        (RunsJSONGenerator.__init__):
+        (RunsJSONGenerator._generate_runs):
+        (RunsJSONGenerator._entry_from_build_and_result):
+        (RunsJSONGenerator.value):
+        * Websites/webkit-perf.appspot.com/json_generators_unittest.py: Added.
+        (_create_results):
+        (JSONGeneratorBaseTest):
+        (JSONGeneratorBaseTest.test_to_json):
+        (JSONGeneratorBaseTest.test_to_json.AJSONGenerator):
+        (JSONGeneratorBaseTest.test_to_json.AJSONGenerator.value):
+        (DashboardJSONGeneratorTest):
+        (DashboardJSONGeneratorTest.test_value_no_branch):
+        (DashboardJSONGeneratorTest.test_value_no_plaforms):
+        (DashboardJSONGeneratorTest.test_value_single_platform):
+        (DashboardJSONGeneratorTest.test_value_two_platforms):
+        (ManifestJSONGeneratorTest):
+        (ManifestJSONGeneratorTest.test_value_no_branch):
+        (ManifestJSONGeneratorTest.test_value_no_plaforms):
+        (ManifestJSONGeneratorTest._assert_single_test):
+        (ManifestJSONGeneratorTest.test_value_single_platform):
+        (ManifestJSONGeneratorTest.test_value_two_platforms):
+        (ManifestJSONGeneratorTest.test_value_two_tests):
+        (RunsJSONGeneratorTest):
+        (RunsJSONGeneratorTest._create_results):
+        (RunsJSONGeneratorTest.test_generate_runs):
+        (RunsJSONGeneratorTest.test_value_without_results):
+        (RunsJSONGeneratorTest.test_value_with_results):
+        (RunsJSONGeneratorTest._assert_entry):
+        (RunsJSONGeneratorTest.test_run_from_build_and_result):
+        (RunsJSONGeneratorTest.test_run_from_build_and_result.create_build):
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/manifest_handler.py: Removed.
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Test.update_or_insert.execute):
+        (Test):
+        (TestResult.get_or_insert_from_parsed_json):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (TestModelTests.test_update_or_insert_to_update):
+        (TestResultTests.test_get_or_insert_stat_value):
+        * Websites/webkit-perf.appspot.com/runs_handler.py: Removed.
+
 2012-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Turn on requestAnimationFrame for release builds

@@ -31,8 +31,14 @@ import webapp2
 from google.appengine.api import taskqueue
 from google.appengine.ext import db
 
+from json_generators import DashboardJSONGenerator
+from json_generators import ManifestJSONGenerator
+from json_generators import RunsJSONGenerator
+from models import Branch
+from models import Platform
 from models import Test
 from models import PersistentCache
+from models import model_from_numeric_id
 
 
 def cache_manifest(cache):
@@ -41,6 +47,13 @@ def cache_manifest(cache):
 
 def schedule_manifest_update():
     taskqueue.add(url='/api/test/update')
+
+
+class ManifestUpdateHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        cache_manifest(ManifestJSONGenerator().to_json())
+        self.response.out.write('OK')
 
 
 class CachedManifestHandler(webapp2.RequestHandler):
@@ -61,6 +74,13 @@ def schedule_dashboard_update():
     taskqueue.add(url='/api/test/dashboard/update')
 
 
+class DashboardUpdateHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        cache_dashboard(DashboardJSONGenerator().to_json())
+        self.response.out.write('OK')
+
+
 class CachedDashboardHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json'
@@ -79,20 +99,41 @@ def schedule_runs_update(test_id, branch_id, platform_id):
     taskqueue.add(url='/api/test/runs/update', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
 
 
+def _get_test_branch_platform_ids(handler):
+    try:
+        test_id = int(handler.request.get('id', 0))
+        branch_id = int(handler.request.get('branchid', 0))
+        platform_id = int(handler.request.get('platformid', 0))
+        return test_id, branch_id, platform_id
+    except TypeError:
+        # FIXME: Output an error here
+        return 0, 0, 0
+
+
+class RunsUpdateHandler(webapp2.RequestHandler):
+    def get(self):
+        self.post()
+
+    def get(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
+
+        branch = model_from_numeric_id(branch_id, Branch)
+        platform = model_from_numeric_id(platform_id, Platform)
+        test = model_from_numeric_id(test_id, Test)
+        assert branch
+        assert platform
+        assert test
+
+        cache_runs(test_id, branch_id, platform_id, RunsJSONGenerator(branch, platform, test.name).to_json())
+        self.response.out.write('OK')
+
+
 class CachedRunsHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json'
 
-        try:
-            test_id = int(self.request.get('id', 0))
-            branch_id = int(self.request.get('branchid', 0))
-            platform_id = int(self.request.get('platformid', 0))
-        except TypeError:
-            # FIXME: Output an error here
-            test_id = 0
-            branch_id = 0
-            platform_id = 0
-
+        test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
         runs = PersistentCache.get_cache(Test.cache_key(test_id, branch_id, platform_id))
         if runs:
             self.response.out.write(runs)

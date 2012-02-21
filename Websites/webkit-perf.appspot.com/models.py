@@ -160,6 +160,7 @@ class Test(db.Model):
                     test.branches.append(branch.key())
                 if platform.key() not in test.platforms:
                     test.platforms.append(platform.key())
+                test.put()
                 existing_test[0] = test
                 return None
 
@@ -199,20 +200,6 @@ class TestResult(db.Model):
         return cls.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
             valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
             valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))
-
-    @staticmethod
-    def generate_runs(branch, platform, test_name):
-        builds = Build.all()
-        builds.filter('branch =', branch)
-        builds.filter('platform =', platform)
-
-        for build in builds:
-            results = TestResult.all()
-            results.filter('name =', test_name)
-            results.filter('build =', build)
-            for result in results:
-                yield build, result
-        raise StopIteration
 
 
 class ReportLog(db.Model):

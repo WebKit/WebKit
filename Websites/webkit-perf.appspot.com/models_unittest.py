@@ -250,6 +250,10 @@ class TestModelTests(DataStoreTestsBase):
         self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
         self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
 
+        test = models.Test.get(test.key())
+        self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
+        self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
+
 
 class TestResultTests(DataStoreTestsBase):
     def _create_build(self):
@@ -284,29 +288,6 @@ class TestResultTests(DataStoreTestsBase):
         self.assertEqual(result.valueStdev, 3.25)
         self.assertEqual(result.valueMin, 30.5)
         self.assertEqual(result.valueMax, 45)
-
-    def _create_results(self, test_name, values):
-        branch, platform, builder = _create_some_builder()
-        results = []
-        for i, value in enumerate(values):
-            build = models.Build(branch=branch, platform=platform, builder=builder,
-                buildNumber=i, revision=100 + i, timestamp=datetime.now())
-            build.put()
-            result = models.TestResult(name=test_name, build=build, value=value)
-            result.put()
-            results.append(result)
-        return branch, platform, results
-
-    def test_generate_runs(self):
-        branch, platform, results = self._create_results('some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
-        last_i = 0
-        for i, (build, result) in enumerate(models.TestResult.generate_runs(branch, platform, "some-test")):
-            self.assertEqual(build.buildNumber, i)
-            self.assertEqual(build.revision, 100 + i)
-            self.assertEqual(result.name, 'some-test')
-            self.assertEqual(result.value, results[i].value)
-            last_i = i
-        self.assertTrue(last_i + 1, len(results))
 
 
 class ReportLogTests(DataStoreTestsBase):
