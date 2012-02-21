@@ -3,7 +3,7 @@
         perf-o-matic: Extract logic to generate JSON responses as classes to unit test
         https://bugs.webkit.org/show_bug.cgi?id=79018
 
-        Rubber-stamped by Adam Birth.
+        Rubber-stamped by Adam Barth.
 
         Extracted DashboardJSONGenerator, ManifestJSONGenerator, and RunsJSONGenerator
         into json_generators.py from DashboardHandler, ManifestHandler, and RunsHandler
