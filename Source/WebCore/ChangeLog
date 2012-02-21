@@ -1,5 +1,20 @@
 2012-02-20  Kentaro Hara  <haraken@chromium.org>
 
+        [JSGenerateIsReachable=ImplRoot] is not implemented, it should be [JSGenerateIsReachable]
+        https://bugs.webkit.org/show_bug.cgi?id=79061
+
+        Reviewed by Adam Barth.
+
+        CSSStyleDeclaration.idl uses [JSGenerateIsReachable=ImplRoot],
+        but "ImplRoot" is not implemented in CodeGeneratorJS.pm.
+        This patch replaces [JSGenerateIsReachable=ImplRoot] with [JSGenerateIsReachable].
+
+        No tests. No change in behavior.
+
+        * css/CSSStyleDeclaration.idl:
+
+2012-02-20  Kentaro Hara  <haraken@chromium.org>
+
         [EnabledAtRuntime] in HTMLShadowElement.idl should be [V8EnabledAtRuntime]
         https://bugs.webkit.org/show_bug.cgi?id=79058
 

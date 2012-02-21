@@ -23,7 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         JSCustomMarkFunction,
-        JSGenerateIsReachable=ImplRoot,
+        JSGenerateIsReachable,
         CustomNamedSetter,
         NamedGetter,
         IndexedGetter,
