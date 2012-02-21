@@ -283,9 +283,17 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
 void MediaPlayerPrivateGStreamer::load(const String& url)
 {
-    g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
 
-    LOG_VERBOSE(Media, "Load %s", url.utf8().data());
+    KURL kurl(KURL(), url);
+    String cleanUrl(url);
+
+    // Clean out everything after file:// url path.
+    if (kurl.isLocalFile())
+        cleanUrl = cleanUrl.substring(0, kurl.pathEnd());
+
+    g_object_set(m_playBin, "uri", cleanUrl.utf8().data(), NULL);
+
+    LOG_VERBOSE(Media, "Load %s", cleanUrl.utf8().data());
 
     if (m_preload == MediaPlayer::None) {
         LOG_VERBOSE(Media, "Delaying load.");
