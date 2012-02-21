@@ -113,7 +113,6 @@ SOURCES += \
     interpreter/RegisterFile.cpp \
     jit/ExecutableAllocatorFixedVMPool.cpp \
     jit/ExecutableAllocator.cpp \
-    jit/HostCallReturnValue.cpp \
     jit/JITArithmetic.cpp \
     jit/JITArithmetic32_64.cpp \
     jit/JITCall.cpp \

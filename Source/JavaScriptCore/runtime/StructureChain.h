@@ -37,7 +37,6 @@
 
 namespace JSC {
 
-    class LLIntOffsetsExtractor;
     class Structure;
 
     class StructureChain : public JSCell {
@@ -75,8 +74,6 @@ namespace JSC {
         }
 
     private:
-        friend class LLIntOffsetsExtractor;
-        
         StructureChain(JSGlobalData&, Structure*);
         static void destroy(JSCell*);
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;

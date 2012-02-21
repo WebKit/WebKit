@@ -37,6 +37,8 @@
 #include "ThunkGenerators.h"
 #include <wtf/HashMap.h>
 
+#if ENABLE(JIT)
+
 namespace JSC {
 
     struct StructureStubInfo;
@@ -261,8 +263,6 @@ namespace JSC {
 
 #define JITSTACKFRAME_ARGS_INDEX (OBJECT_OFFSETOF(JITStackFrame, args) / sizeof(void*))
 
-#if ENABLE(JIT)
-
 #define STUB_ARGS_DECLARATION void** args
 #define STUB_ARGS (args)
 
@@ -456,8 +456,8 @@ extern "C" {
     void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
 } // extern "C"
 
-#endif // ENABLE(JIT)
-
 } // namespace JSC
+
+#endif // ENABLE(JIT)
 
 #endif // JITStubs_h

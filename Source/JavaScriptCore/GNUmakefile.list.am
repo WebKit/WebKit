@@ -81,7 +81,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
-	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/CallLinkStatus.cpp \
@@ -103,7 +102,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
 	Source/JavaScriptCore/bytecode/JumpTable.h \
-	Source/JavaScriptCore/bytecode/LLIntCallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/LineInfo.h \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.h \
@@ -299,8 +297,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/CompactJITCodeMap.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \
 	Source/JavaScriptCore/jit/ExecutableAllocator.h \
-	Source/JavaScriptCore/jit/HostCallReturnValue.cpp \
-	Source/JavaScriptCore/jit/HostCallReturnValue.h \
 	Source/JavaScriptCore/jit/JITArithmetic32_64.cpp \
 	Source/JavaScriptCore/jit/JITArithmetic.cpp \
 	Source/JavaScriptCore/jit/JITCall32_64.cpp \
@@ -324,7 +320,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
-	Source/JavaScriptCore/llint/LLIntData.h \
 	Source/JavaScriptCore/os-win32/stdbool.h \
 	Source/JavaScriptCore/os-win32/stdint.h \
 	Source/JavaScriptCore/parser/ASTBuilder.h \
@@ -375,7 +370,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
-	Source/JavaScriptCore/runtime/CodeSpecializationKind.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
 	Source/JavaScriptCore/runtime/CommonSlowPaths.h \
@@ -404,7 +398,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ExceptionHelpers.h \
 	Source/JavaScriptCore/runtime/Executable.cpp \
 	Source/JavaScriptCore/runtime/Executable.h \
-	Source/JavaScriptCore/runtime/ExecutionHarness.h \
 	Source/JavaScriptCore/runtime/FunctionConstructor.cpp \
 	Source/JavaScriptCore/runtime/FunctionConstructor.h \
 	Source/JavaScriptCore/runtime/FunctionPrototype.cpp \

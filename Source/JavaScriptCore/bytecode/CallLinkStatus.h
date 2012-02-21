@@ -47,17 +47,15 @@ public:
     
     static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex);
     
-    bool isSet() const { return !!m_callTarget || m_couldTakeSlowPath; }
+    bool isSet() const { return !!m_callTarget; }
     
-    bool operator!() const { return !isSet(); }
+    bool operator!() const { return !m_callTarget; }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
     
     JSFunction* callTarget() const { return m_callTarget; }
     
 private:
-    static CallLinkStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex);
-    
     JSFunction* m_callTarget;
     bool m_couldTakeSlowPath;
 };

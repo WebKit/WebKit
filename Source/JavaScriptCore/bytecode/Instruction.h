@@ -48,7 +48,6 @@ namespace JSC {
     class JSCell;
     class Structure;
     class StructureChain;
-    struct LLIntCallLinkInfo;
     struct ValueProfile;
 
 #if ENABLE(JIT)
@@ -147,11 +146,6 @@ namespace JSC {
 #endif
 
     struct Instruction {
-        Instruction()
-        {
-            u.jsCell.clear();
-        }
-        
         Instruction(Opcode opcode)
         {
 #if !ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
@@ -188,8 +182,6 @@ namespace JSC {
 
         Instruction(PropertySlot::GetValueFunc getterFunc) { u.getterFunc = getterFunc; }
         
-        Instruction(LLIntCallLinkInfo* callLinkInfo) { u.callLinkInfo = callLinkInfo; }
-        
         Instruction(ValueProfile* profile) { u.profile = profile; }
 
         union {
@@ -199,9 +191,7 @@ namespace JSC {
             WriteBarrierBase<StructureChain> structureChain;
             WriteBarrierBase<JSCell> jsCell;
             PropertySlot::GetValueFunc getterFunc;
-            LLIntCallLinkInfo* callLinkInfo;
             ValueProfile* profile;
-            void* pointer;
         } u;
         
     private:

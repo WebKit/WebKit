@@ -1,3 +1,13 @@
+2012-02-21  Adam Roben  <aroben@apple.com>
+
+        Roll out r108309, r108323, and r108326
+
+        They broke the 32-bit Lion build.
+
+        Original bugs is <http://webkit.org/b/75812> <rdar://problem/10079694>.
+
+        * CMakeLists.txt:
+
 2012-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be a triple-tier VM

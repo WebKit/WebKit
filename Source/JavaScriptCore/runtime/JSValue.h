@@ -55,9 +55,6 @@ namespace JSC {
         class SpeculativeJIT;
     }
 #endif
-    namespace LLInt {
-        class Data;
-    }
 
     struct ClassInfo;
     struct Instruction;
@@ -121,7 +118,6 @@ namespace JSC {
         friend class DFG::OSRExitCompiler;
         friend class DFG::SpeculativeJIT;
 #endif
-        friend class LLInt::Data;
 
     public:
         static EncodedJSValue encode(JSValue);

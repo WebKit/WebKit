@@ -49,7 +49,6 @@ namespace JSC {
     class GetterSetter;
     class HashEntry;
     class InternalFunction;
-    class LLIntOffsetsExtractor;
     class MarkedBlock;
     class PropertyDescriptor;
     class PropertyNameArray;
@@ -265,8 +264,6 @@ namespace JSC {
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
 
     private:
-        friend class LLIntOffsetsExtractor;
-        
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
         using JSCell::isAPIValueWrapper;
         using JSCell::isGetterSetter;
@@ -372,8 +369,6 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         }
 
     private:
-        friend class LLIntOffsetsExtractor;
-        
         explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
         {

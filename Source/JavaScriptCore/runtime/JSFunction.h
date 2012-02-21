@@ -33,7 +33,6 @@ namespace JSC {
     class FunctionPrototype;
     class JSActivation;
     class JSGlobalObject;
-    class LLIntOffsetsExtractor;
     class NativeExecutable;
     class SourceCode;
     namespace DFG {
@@ -141,8 +140,6 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
-        friend class LLIntOffsetsExtractor;
-        
         JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);

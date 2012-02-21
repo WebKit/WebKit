@@ -48,21 +48,6 @@ void compileOSRExit(ExecState* exec)
     uint32_t exitIndex = globalData->osrExitIndex;
     OSRExit& exit = codeBlock->osrExit(exitIndex);
     
-    // Make sure all code on our inline stack is JIT compiled. This is necessary since
-    // we may opt to inline a code block even before it had ever been compiled by the
-    // JIT, but our OSR exit infrastructure currently only works if the target of the
-    // OSR exit is JIT code. This could be changed since there is nothing particularly
-    // hard about doing an OSR exit into the interpreter, but for now this seems to make
-    // sense in that if we're OSR exiting from inlined code of a DFG code block, then
-    // probably it's a good sign that the thing we're exiting into is hot. Even more
-    // interestingly, since the code was inlined, it may never otherwise get JIT
-    // compiled since the act of inlining it may ensure that it otherwise never runs.
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        static_cast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())
-            ->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct)
-            ->jitCompile(*globalData);
-    }
-    
     SpeculationRecovery* recovery = 0;
     if (exit.m_recoveryIndex)
         recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);

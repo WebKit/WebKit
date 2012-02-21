@@ -325,8 +325,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_profile_will_call)
         DEFINE_OP(op_push_new_scope)
         DEFINE_OP(op_push_scope)
-        case op_put_by_id_transition_direct:
-        case op_put_by_id_transition_normal:
         DEFINE_OP(op_put_by_id)
         DEFINE_OP(op_put_by_index)
         DEFINE_OP(op_put_by_val)
@@ -488,8 +486,6 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_post_inc)
         DEFINE_SLOWCASE_OP(op_pre_dec)
         DEFINE_SLOWCASE_OP(op_pre_inc)
-        case op_put_by_id_transition_direct:
-        case op_put_by_id_transition_normal:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         DEFINE_SLOWCASE_OP(op_put_by_val)
         DEFINE_SLOWCASE_OP(op_resolve_global)
@@ -529,10 +525,6 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
-#if ENABLE(JIT_VERBOSE_OSR)
-    printf("Compiling JIT code!\n");
-#endif
-    
 #if ENABLE(VALUE_PROFILER)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
 #endif
@@ -701,12 +693,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
-#if ENABLE(DFG_JIT) || ENABLE(LLINT)
-    if (m_canBeOptimized
-#if ENABLE(LLINT)
-        || true
-#endif
-        ) {
+#if ENABLE(DFG_JIT)
+    if (m_canBeOptimized) {
         CompactJITCodeMap::Encoder jitCodeMapEncoder;
         for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
             if (m_labels[bytecodeOffset].isSet())

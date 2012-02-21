@@ -8,7 +8,6 @@ namespace JSC {
 
 class Heap;
 class MarkedSpace;
-class LLIntOffsetsExtractor;
 
 namespace DFG {
 class SpeculativeJIT;
@@ -34,8 +33,6 @@ public:
     void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction);
     
 private:
-    friend class LLIntOffsetsExtractor;
-    
     JS_EXPORT_PRIVATE void* allocateSlowCase();
     void* tryAllocate();
     void* tryAllocateHelper();

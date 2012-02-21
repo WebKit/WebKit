@@ -69,7 +69,7 @@
 #include "JIT.h"
 #endif
 
-#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND ((ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)) && !defined(__llvm__))
+#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) && !defined(__llvm__))
 
 using namespace std;
 
@@ -543,59 +543,34 @@ Interpreter::Interpreter()
 #if !ASSERT_DISABLED
     , m_initialized(false)
 #endif
-    , m_classicEnabled(false)
+    , m_enabled(false)
 {
 }
 
-Interpreter::~Interpreter()
+void Interpreter::initialize(bool canUseJIT)
 {
-#if ENABLE(LLINT)
-    if (m_classicEnabled)
-        delete[] m_opcodeTable;
-#endif
-}
-
-void Interpreter::initialize(LLInt::Data* llintData, bool canUseJIT)
-{
-    UNUSED_PARAM(llintData);
-    UNUSED_PARAM(canUseJIT);
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
-#if !ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
-    // Having LLInt enabled, but not being able to use the JIT, and not having
-    // a computed goto interpreter, is not supported. Not because we cannot
-    // support it, but because I decided to draw the line at the number of
-    // permutations of execution engines that I wanted this code to grok.
-    ASSERT(canUseJIT);
-#endif
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
     if (canUseJIT) {
-#if ENABLE(LLINT)
-        m_opcodeTable = llintData->opcodeMap();
-        for (int i = 0; i < numOpcodeIDs; ++i)
-            m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
-#else
         // If the JIT is present, don't use jump destinations for opcodes.
         
         for (int i = 0; i < numOpcodeIDs; ++i) {
             Opcode opcode = bitwise_cast<void*>(static_cast<uintptr_t>(i));
             m_opcodeTable[i] = opcode;
         }
-#endif
     } else {
-#if ENABLE(LLINT)
-        m_opcodeTable = new Opcode[numOpcodeIDs];
-#endif
         privateExecute(InitializeAndReturn, 0, 0);
         
         for (int i = 0; i < numOpcodeIDs; ++i)
             m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
         
-        m_classicEnabled = true;
+        m_enabled = true;
     }
 #else
+    UNUSED_PARAM(canUseJIT);
 #if ENABLE(CLASSIC_INTERPRETER)
-    m_classicEnabled = true;
+    m_enabled = true;
 #else
-    m_classicEnabled = false;
+    m_enabled = false;
 #endif
 #endif // ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
 #if !ASSERT_DISABLED
@@ -692,11 +667,9 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 
 bool Interpreter::isOpcode(Opcode opcode)
 {
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
-#if !ENABLE(LLINT)
-    if (!m_classicEnabled)
+#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+    if (!m_enabled)
         return opcode >= 0 && static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
-#endif
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && m_opcodeIDTable.contains(opcode);
@@ -753,11 +726,11 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     // have to subtract 1.
 #if ENABLE(JIT) && ENABLE(CLASSIC_INTERPRETER)
     if (callerFrame->globalData().canUseJIT())
-        bytecodeOffset = codeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+        bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnPC());
     else
         bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC()) - 1;
 #elif ENABLE(JIT)
-    bytecodeOffset = codeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+    bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnPC());
 #else
     bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC()) - 1;
 #endif
@@ -884,7 +857,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
             }
         } else
     #endif
-            bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+            bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnPC());
 #endif
     }
 
@@ -1842,7 +1815,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     }
     
     ASSERT(m_initialized);
-    ASSERT(m_classicEnabled);
+    ASSERT(m_enabled);
     
 #if ENABLE(JIT)
 #if ENABLE(CLASSIC_INTERPRETER)
@@ -3493,8 +3466,6 @@ skip_id_custom_self:
 #if USE(GCC_COMPUTED_GOTO_WORKAROUND)
       skip_put_by_id:
 #endif
-    DEFINE_OPCODE(op_put_by_id_transition_direct)
-    DEFINE_OPCODE(op_put_by_id_transition_normal)
     DEFINE_OPCODE(op_put_by_id_transition) {
         /* op_put_by_id_transition base(r) property(id) value(r) oldStructure(sID) newStructure(sID) structureChain(chain) offset(n) direct(b)
          
@@ -5328,10 +5299,10 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
         bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnVPC());
 #if ENABLE(JIT)
     else
-        bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+        bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnPC());
 #endif
 #else
-    bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+    bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnPC());
 #endif
     lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
     sourceID = callerCodeBlock->ownerExecutable()->sourceID();

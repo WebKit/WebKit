@@ -48,7 +48,7 @@ namespace JSC {
         JITCode() { }
 #endif
     public:
-        enum JITType { None, HostCallThunk, InterpreterThunk, BaselineJIT, DFGJIT };
+        enum JITType { HostCallThunk, BaselineJIT, DFGJIT };
         
         static JITType bottomTierJIT()
         {
@@ -66,19 +66,8 @@ namespace JSC {
             return DFGJIT;
         }
         
-        static bool isOptimizingJIT(JITType jitType)
-        {
-            return jitType == DFGJIT;
-        }
-        
-        static bool isBaselineCode(JITType jitType)
-        {
-            return jitType == InterpreterThunk || jitType == BaselineJIT;
-        }
-        
 #if ENABLE(JIT)
         JITCode()
-            : m_jitType(None)
         {
         }
 
@@ -86,7 +75,6 @@ namespace JSC {
             : m_ref(ref)
             , m_jitType(jitType)
         {
-            ASSERT(jitType != None);
         }
         
         bool operator !() const

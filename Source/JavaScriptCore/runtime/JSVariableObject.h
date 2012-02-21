@@ -38,12 +38,10 @@
 
 namespace JSC {
 
-    class LLIntOffsetsExtractor;
     class Register;
 
     class JSVariableObject : public JSNonFinalObject {
         friend class JIT;
-        friend class LLIntOffsetsExtractor;
 
     public:
         typedef JSNonFinalObject Base;

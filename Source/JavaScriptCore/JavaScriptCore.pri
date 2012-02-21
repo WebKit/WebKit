@@ -20,7 +20,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/debugger \
     $$SOURCE_DIR/interpreter \
     $$SOURCE_DIR/jit \
-    $$SOURCE_DIR/llint \
     $$SOURCE_DIR/parser \
     $$SOURCE_DIR/profiler \
     $$SOURCE_DIR/runtime \

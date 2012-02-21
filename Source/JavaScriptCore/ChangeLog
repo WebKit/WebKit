@@ -1,3 +1,121 @@
+2012-02-21  Adam Roben  <aroben@apple.com>
+
+        Roll out r108309, r108323, and r108326
+
+        They broke the 32-bit Lion build.
+
+        Original bugs is <http://webkit.org/b/75812> <rdar://problem/10079694>.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/LinkBuffer.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecode/BytecodeConventions.h: Removed.
+        * bytecode/CallLinkStatus.cpp:
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.cpp:
+        * bytecode/GetByIdStatus.h:
+        * bytecode/Instruction.h:
+        * bytecode/LLIntCallLinkInfo.h: Removed.
+        * bytecode/MethodCallLinkStatus.cpp:
+        * bytecode/Opcode.cpp:
+        * bytecode/Opcode.h:
+        * bytecode/PutByIdStatus.cpp:
+        * bytecode/PutByIdStatus.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        * heap/MarkedAllocator.h:
+        * heap/MarkedSpace.h:
+        * interpreter/CallFrame.cpp:
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+        * interpreter/RegisterFile.h:
+        * jit/ExecutableAllocator.h:
+        * jit/HostCallReturnValue.cpp: Removed.
+        * jit/HostCallReturnValue.h: Removed.
+        * jit/JIT.cpp:
+        * jit/JITCode.h:
+        * jit/JITDriver.h:
+        * jit/JITExceptions.cpp:
+        * jit/JITInlineMethods.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+        * llint/LLIntCommon.h: Removed.
+        * llint/LLIntData.cpp: Removed.
+        * llint/LLIntData.h: Removed.
+        * llint/LLIntEntrypoints.cpp: Removed.
+        * llint/LLIntEntrypoints.h: Removed.
+        * llint/LLIntExceptions.cpp: Removed.
+        * llint/LLIntExceptions.h: Removed.
+        * llint/LLIntOfflineAsmConfig.h: Removed.
+        * llint/LLIntOffsetsExtractor.cpp: Removed.
+        * llint/LLIntSlowPaths.cpp: Removed.
+        * llint/LLIntSlowPaths.h: Removed.
+        * llint/LLIntThunks.cpp: Removed.
+        * llint/LLIntThunks.h: Removed.
+        * llint/LowLevelInterpreter.asm: Removed.
+        * llint/LowLevelInterpreter.cpp: Removed.
+        * llint/LowLevelInterpreter.h: Removed.
+        * offlineasm/armv7.rb: Removed.
+        * offlineasm/asm.rb: Removed.
+        * offlineasm/ast.rb: Removed.
+        * offlineasm/backends.rb: Removed.
+        * offlineasm/generate_offset_extractor.rb: Removed.
+        * offlineasm/instructions.rb: Removed.
+        * offlineasm/offset_extractor_constants.rb: Removed.
+        * offlineasm/offsets.rb: Removed.
+        * offlineasm/opt.rb: Removed.
+        * offlineasm/parser.rb: Removed.
+        * offlineasm/registers.rb: Removed.
+        * offlineasm/self_hash.rb: Removed.
+        * offlineasm/settings.rb: Removed.
+        * offlineasm/transform.rb: Removed.
+        * offlineasm/x86.rb: Removed.
+        * runtime/CodeSpecializationKind.h: Removed.
+        * runtime/CommonSlowPaths.h:
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+        * runtime/ExecutionHarness.h: Removed.
+        * runtime/JSArray.h:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSString.h:
+        * runtime/JSTypeInfo.h:
+        * runtime/JSValue.cpp:
+        * runtime/JSValue.h:
+        * runtime/JSVariableObject.h:
+        * runtime/Options.cpp:
+        * runtime/Options.h:
+        * runtime/ScopeChain.h:
+        * runtime/Structure.cpp:
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+        * wtf/InlineASM.h:
+        * wtf/Platform.h:
+        * wtf/SentinelLinkedList.h:
+        * wtf/text/StringImpl.h:
+
 2012-02-21  Gustavo Noronha Silva  <kov@debian.org> and Bob Tracy  <rct@frus.com>
 
         Does not build on IA64, SPARC and Alpha

@@ -26,10 +26,8 @@
 #ifndef JSInterfaceJIT_h
 #define JSInterfaceJIT_h
 
-#include "BytecodeConventions.h"
 #include "JITCode.h"
 #include "JITStubs.h"
-#include "JSString.h"
 #include "JSValue.h"
 #include "MacroAssembler.h"
 #include "RegisterFile.h"

@@ -52,10 +52,6 @@ unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
 unsigned maximumInliningDepth;
 
-int32_t executionCounterValueForJITAfterWarmUp;
-int32_t executionCounterValueForDontJITAnytimeSoon;
-int32_t executionCounterValueForJITSoon;
-
 int32_t executionCounterValueForOptimizeAfterWarmUp;
 int32_t executionCounterValueForOptimizeAfterLongWarmUp;
 int32_t executionCounterValueForDontOptimizeAnytimeSoon;
@@ -141,10 +137,6 @@ void initializeOptions()
     
     SET(maximumInliningDepth, 5);
 
-    SET(executionCounterValueForJITAfterWarmUp,     -100);
-    SET(executionCounterValueForDontJITAnytimeSoon, std::numeric_limits<int32_t>::min());
-    SET(executionCounterValueForJITSoon,            -100);
-
     SET(executionCounterValueForOptimizeAfterWarmUp,     -1000);
     SET(executionCounterValueForOptimizeAfterLongWarmUp, -5000);
     SET(executionCounterValueForDontOptimizeAnytimeSoon, std::numeric_limits<int32_t>::min());
@@ -192,8 +184,6 @@ void initializeOptions()
     // Be paranoid, it is the OS we're dealing with, after all.
     if (cpusToUse < 1)
         cpusToUse = 1;
-    
-    cpusToUse = 1;
     
     SET(numberOfGCMarkers, cpusToUse);
 
