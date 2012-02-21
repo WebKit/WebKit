@@ -170,9 +170,10 @@ FatFingers::~FatFingers()
 const FatFingersResult FatFingers::findBestPoint()
 {
     ASSERT(m_webPage);
+    ASSERT(m_webPage->m_mainFrame);
 
-    if (!m_webPage->m_mainFrame)
-        return m_contentPos;
+    m_cachedRectHitTestResults.clear();
+
     FatFingersResult result(m_contentPos);
     m_matchingApproach = ClickableByDefault;
 
@@ -216,6 +217,7 @@ const FatFingersResult FatFingers::findBestPoint()
     }
 
     m_matchingApproach = Done;
+    m_cachedRectHitTestResults.clear();
 
     if (!foundOne)
         return result;
@@ -311,16 +313,15 @@ bool FatFingers::findIntersectingRegions(Document* document,
         m_debugFatFingerRect = m_webPage->mapToTransformed(m_webPage->mapFromContentsToViewport(fingerRect));
 #endif
 
-    // Document::nodesFromRect needs viewport coordinates, but FatFinger::nodesFromRect gets contents coordinates
-    // for simplicity instead.
     bool foundOne = false;
-    HitTestResult result = nodesFromRect(document, frameContentPos);
 
     RenderLayer* lowestPositionedEnclosingLayerSoFar = 0;
 
     // Iterate over the list of nodes (and subrects of nodes where possible), for each saving the
     // intersection of the bounding box with the finger rect.
-    ListHashSet<RefPtr<Node> > intersectedNodes = result.rectBasedTestResult();
+    ListHashSet<RefPtr<Node> > intersectedNodes;
+    getNodesFromRect(document, frameContentPos, intersectedNodes);
+
     ListHashSet<RefPtr<Node> >::const_iterator it = intersectedNodes.begin();
     ListHashSet<RefPtr<Node> >::const_iterator end = intersectedNodes.end();
     for ( ; it != end; ++it) {
@@ -461,8 +462,32 @@ void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, u
     left = leftPadding / currentScale;
 }
 
-HitTestResult FatFingers::nodesFromRect(Document* document, const IntPoint& contentPos) const
+FatFingers::CachedResultsStrategy FatFingers::cachingStrategy() const
 {
+    switch (m_matchingApproach) {
+    case ClickableElement:
+        return GetFromRenderTree;
+    case MadeClickableByTheWebpage:
+        return GetFromCache;
+    case Done:
+    default:
+        ASSERT_NOT_REACHED();
+        return GetFromRenderTree;
+    }
+}
+
+void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<WebCore::Node> >& intersectedNodes)
+{
+    FatFingers::CachedResultsStrategy cacheResolvingStrategy = cachingStrategy();
+
+    if (cacheResolvingStrategy == GetFromCache) {
+        ASSERT(m_cachedRectHitTestResults.contains(document));
+        intersectedNodes = m_cachedRectHitTestResults.get(document);
+        return;
+    }
+
+    ASSERT(cacheResolvingStrategy == GetFromRenderTree);
+
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
     getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
 
@@ -470,7 +495,8 @@ HitTestResult FatFingers::nodesFromRect(Document* document, const IntPoint& cont
     HitTestResult result(contentPos, topPadding, rightPadding, bottomPadding, leftPadding, HitTestShadowDOM);
 
     document->renderView()->layer()->hitTest(request, result);
-    return result;
+    intersectedNodes = result.rectBasedTestResult();
+    m_cachedRectHitTestResults.add(document, intersectedNodes);
 }
 
 void FatFingers::getRelevantInfoFromPoint(Document* document, const IntPoint& contentPos, Element*& elementUnderPoint, Element*& clickableElementUnderPoint) const

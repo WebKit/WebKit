@@ -1,3 +1,36 @@
+2012-02-18  Antonio Gomes  <agomes@rim.com>
+
+        Fat fingers - cache the first rect-based hit test so we do not need to do it again
+        https://bugs.webkit.org/show_bug.cgi?id=79115
+
+        Reviewed by Adam Treat.
+
+        Our FatFingers implementation runs currently in two phases:
+        the first checks for the elements intrinsically clickable;
+        the second checks for elements made clickable by the page
+        (for example, a div with a onclick event listener attached to it).
+        For each phase, we perform a rect hittest, which is not needed since
+        the result of each is the same.
+
+        Patch introduces a caching mechanism so we avoid on rect hittest:
+        when the first phase runs, it caches each nodeset per document in
+        a hashmap. This second phase works with the cached results.
+
+        No behavioral change, but performance is better since we
+        avoid one (possibly expensive) rect hittest.
+
+        I measured the performance gain on https://www.kvd.se/, and we
+        save up to 0.04 seconds, by caching and re-using the results.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::dumpHitTestResult):
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::cachingStrategy):
+        (WebKit):
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+        * WebKitSupport/FatFingers.h:
+
 2012-02-20  Antonio Gomes  <agomes@rim.com>
 
         All default video/audio control elements should be rect-hit testable (Part II)

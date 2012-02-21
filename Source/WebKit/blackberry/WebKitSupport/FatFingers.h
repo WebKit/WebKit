@@ -25,6 +25,9 @@
 #include <BlackBerryPlatformIntRectRegion.h>
 
 #include <utility>
+
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -113,6 +116,10 @@ private:
 
     typedef std::pair<WebCore::Node*, Platform::IntRectRegion> IntersectingRegion;
 
+    enum CachedResultsStrategy { GetFromRenderTree = 0, GetFromCache };
+    CachedResultsStrategy cachingStrategy() const;
+    typedef HashMap<RefPtr<WebCore::Document>, ListHashSet<RefPtr<WebCore::Node> > > CachedRectHitTestResults;
+
     bool checkFingerIntersection(const Platform::IntRectRegion&,
                                  const Platform::IntRectRegion& remainingFingerRegion,
                                  WebCore::Node*,
@@ -133,8 +140,7 @@ private:
 
     void setSuccessfulFatFingersResult(FatFingersResult&, WebCore::Node*, const WebCore::IntPoint&);
 
-    // It mimics Document::nodesFromRect, but has a different return value to fit our needs.
-    WebCore::HitTestResult nodesFromRect(WebCore::Document*, const WebCore::IntPoint&) const;
+    void getNodesFromRect(WebCore::Document*, const WebCore::IntPoint&, ListHashSet<RefPtr<WebCore::Node> >&);
 
     // It mimics Document::elementFromPoint, but recursively hit-tests in case an inner frame is found.
     void getRelevantInfoFromPoint(WebCore::Document*,
@@ -151,6 +157,7 @@ private:
     WebCore::IntPoint m_contentPos;
     TargetType m_targetType;
     MatchingApproachForClickable m_matchingApproach;
+    CachedRectHitTestResults m_cachedRectHitTestResults;
 };
 
 }
