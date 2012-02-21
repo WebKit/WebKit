@@ -557,7 +557,7 @@ WebInspector.documentClick = function(event)
 
     function followLink()
     {
-        if (WebInspector._showAnchorLocation(anchor))
+        if (WebInspector.isInEditMode(event) || WebInspector._showAnchorLocation(anchor))
             return;
 
         const profileMatch = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
