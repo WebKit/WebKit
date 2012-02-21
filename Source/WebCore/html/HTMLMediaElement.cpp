@@ -1008,7 +1008,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // cues whose start times are greater than or equal to last time and whose
     // end times are less than or equal to the current playback position.
     // Otherwise, let missed cues be an empty list.
-    if (lastTime >= 0 && m_lastSeekTime <= lastTime) {
+    if (lastTime >= 0 && m_lastSeekTime < movieTime) {
         Vector<CueIntervalTree::IntervalType> potentiallySkippedCues =
             m_cueTree.allOverlaps(m_cueTree.createInterval(lastTime, movieTime));
 
@@ -1016,7 +1016,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
             float cueStartTime = potentiallySkippedCues[i].low();
             float cueEndTime = potentiallySkippedCues[i].high();
 
-            if (cueStartTime > lastTime && cueEndTime < movieTime)
+            // Consider cues that may have been missed since the last seek time.
+            if (cueStartTime > max(m_lastSeekTime, lastTime) && cueEndTime < movieTime)
                 missedCues.append(potentiallySkippedCues[i]);
         }
     }
@@ -1034,17 +1035,20 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     if (m_lastSeekTime <= lastTime)
         scheduleTimeupdateEvent(false);
 
+    // Explicitly cache vector sizes, as their content is constant from here.
+    size_t currentCuesSize = currentCues.size();
+    size_t missedCuesSize = missedCues.size();
+    size_t previousCuesSize = previousCues.size();
+
     // 6 - If all of the cues in current cues have their text track cue active
     // flag set, none of the cues in other cues have their text track cue active
     // flag set, and missed cues is empty, then abort these steps.
-    bool activeSetChanged = missedCues.size();
+    bool activeSetChanged = missedCuesSize;
 
-    size_t previousCuesSize = previousCues.size();
     for (size_t i = 0; !activeSetChanged && i < previousCuesSize; ++i)
         if (!currentCues.contains(previousCues[i]) && previousCues[i].data()->isActive())
             activeSetChanged = true;
 
-    size_t currentCuesSize = currentCues.size();
     for (size_t i = 0; !activeSetChanged && i < currentCuesSize; ++i) {
         if (!currentCues[i].data()->isActive())
             activeSetChanged = true;
@@ -1053,11 +1057,22 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     if (!activeSetChanged)
         return;
 
-    // FIXME(72173): 7 - If the time was reached through the usual monotonic
-    // increase of the current playback position during normal playback, and
-    // there are cues in other cues that have their text track cue pause-on-exit
-    // flag set and that either have their text track cue active flag set or are
-    // also in missed cues, then immediately pause the media element.
+    // 7 - If the time was reached through the usual monotonic increase of the
+    // current playback position during normal playback, and there are cues in
+    // other cues that have their text track cue pause-on-exi flag set and that
+    // either have their text track cue active flag set or are also in missed
+    // cues, then immediately pause the media element.
+    for (size_t i = 0; !m_paused && i < previousCuesSize; ++i) {
+        if (previousCues[i].data()->pauseOnExit()
+            && previousCues[i].data()->isActive()
+            && !currentCues.contains(previousCues[i]))
+            pause();
+    }
+
+    for (size_t i = 0; !m_paused && i < missedCuesSize; ++i) {
+        if (missedCues[i].data()->pauseOnExit())
+            pause();
+    }
 
     // 8 - Let events be a list of tasks, initially empty. Each task in this
     // list will be associated with a text track, a text track cue, and a time,
@@ -1067,7 +1082,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // 8 - Let affected tracks be a list of text tracks, initially empty.
     Vector<TextTrack*> affectedTracks;
 
-    for (size_t i = 0; i < missedCues.size(); ++i) {
+    for (size_t i = 0; i < missedCuesSize; ++i) {
         // 9 - For each text track cue in missed cues, prepare an event named enter
         // for the TextTrackCue object with the text track cue start time.
         eventTasks.append(std::make_pair(missedCues[i].data()->startTime(),
@@ -1080,7 +1095,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
                                          missedCues[i].data()));
     }
 
-    for (size_t i = 0; i < previousCues.size(); ++i) {
+    for (size_t i = 0; i < previousCuesSize; ++i) {
         // 10 - For each text track cue in other cues that has its text
         // track cue active flag set prepare an event named exit for the
         // TextTrackCue object with the text track cue end time.
@@ -1089,7 +1104,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
                                              previousCues[i].data()));
     }
 
-    for (size_t i = 0; i < currentCues.size(); ++i) {
+    for (size_t i = 0; i < currentCuesSize; ++i) {
         // 11 - For each text track cue in current cues that does not have its
         // text track cue active flag set, prepare an event named enter for the
         // TextTrackCue object with the text track cue start time.
@@ -1144,10 +1159,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // 16 - Set the text track cue active flag of all the cues in the current
     // cues, and unset the text track cue active flag of all the cues in the
     // other cues.
-    for (size_t i = 0; i < currentCues.size(); ++i)
+    for (size_t i = 0; i < currentCuesSize; ++i)
         currentCues[i].data()->setIsActive(true);
 
-    for (size_t i = 0; i < previousCues.size(); ++i)
+    for (size_t i = 0; i < previousCuesSize; ++i)
         if (!currentCues.contains(previousCues[i]))
             previousCues[i].data()->setIsActive(false);
 

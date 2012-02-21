@@ -1,3 +1,17 @@
+2012-02-21  Victor Carbune  <vcarbune@adobe.com>
+
+        Added support for pause-on-exit flag on a TextTrackCue.
+        https://bugs.webkit.org/show_bug.cgi?id=72173
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-cues-pause-on-exit.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Implemented
+        support for pausing the video if the pause-on-exit flag is set on
+        a cue that is currently exiting.
+
 2012-02-21  Kentaro Hara  <haraken@chromium.org>
 
         Enable the IDL attribute checker in all build systems
