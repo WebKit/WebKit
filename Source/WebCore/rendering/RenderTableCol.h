@@ -43,7 +43,7 @@ public:
 
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
-    bool isColGroup() { return firstChild(); }
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
