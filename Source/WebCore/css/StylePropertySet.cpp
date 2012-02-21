@@ -22,23 +22,15 @@
 #include "config.h"
 #include "StylePropertySet.h"
 
-#include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
-#include "CSSRule.h"
-#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "Document.h"
-#include "ExceptionCode.h"
-#include "HTMLNames.h"
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StyledElement.h"
-#include "WebKitMutationObserver.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 using namespace std;
 

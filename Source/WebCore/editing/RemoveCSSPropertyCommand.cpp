@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoveCSSPropertyCommand.h"
 
+#include "CSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include <wtf/Assertions.h>
 

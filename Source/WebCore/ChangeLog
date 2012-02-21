@@ -1,3 +1,19 @@
+2012-02-21  Antti Koivisto  <antti@apple.com>
+
+        Clean up StylePropertySet included headers
+        https://bugs.webkit.org/show_bug.cgi?id=79134
+
+        Reviewed by Andreas Kling.
+
+        Remove unneccesary includes.
+
+        * bindings/js/JSDOMBinding.h:
+        * css/StylePropertySet.cpp:
+        * css/StylePropertySet.h:
+        (WebCore):
+        (StylePropertySet):
+        * editing/RemoveCSSPropertyCommand.cpp:
+
 2012-02-21  Lin Wei  <wei.a.lin@intel.com>
 
         Fix bug from r107672.

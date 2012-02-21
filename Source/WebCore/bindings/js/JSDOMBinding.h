@@ -23,6 +23,7 @@
 #define JSDOMBinding_h
 
 #include "CSSImportRule.h"
+#include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"

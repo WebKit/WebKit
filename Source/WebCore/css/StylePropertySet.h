@@ -23,14 +23,15 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
-#include "CSSStyleDeclaration.h"
-#include "KURLHash.h"
-#include "PlatformString.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CSSRule;
+class CSSStyleDeclaration;
+class KURL;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 
@@ -101,8 +102,8 @@ public:
     
     String asText() const;
     
-    void clearParentRule(CSSRule* rule);
-    void clearParentElement(StyledElement* element);
+    void clearParentRule(CSSRule*);
+    void clearParentElement(StyledElement*);
 
     CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
     CSSStyleDeclaration* ensureRuleCSSStyleDeclaration(const CSSRule* parentRule) const;
