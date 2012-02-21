@@ -966,6 +966,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this.element.appendChild(closeBrace);
 
     this._selectorElement.addEventListener("click", this._handleSelectorClick.bind(this), false);
+    this.element.addEventListener("mousedown", this._handleEmptySpaceMouseDown.bind(this), false);
     this.element.addEventListener("click", this._handleEmptySpaceClick.bind(this), false);
 
     this._parentPane = parentPane;
@@ -1195,8 +1196,18 @@ WebInspector.StylePropertiesSection.prototype = {
         return document.createTextNode(origin);
     },
 
+    _handleEmptySpaceMouseDown: function(event)
+    {
+        this._willCauseCancelEditing = this._parentPane._isEditingStyle;
+    },
+
     _handleEmptySpaceClick: function(event)
     {
+        var willCauseCancelEditing = this._willCauseCancelEditing;
+        delete this._willCauseCancelEditing;
+        if (willCauseCancelEditing)
+            return;
+
         if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
             event.stopPropagation();
             return;
@@ -1513,6 +1524,8 @@ WebInspector.StylePropertyTreeElement = function(section, parentPane, styleRule,
 
     // Pass an empty title, the title gets made later in onattach.
     TreeElement.call(this, "", null, shorthand);
+
+    this.selectable = false;
 }
 
 WebInspector.StylePropertyTreeElement.prototype = {
@@ -1927,7 +1940,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         else
             this.listItemElement.removeStyleClass("implicit");
 
-        this.selectable = !this.inherited;
         if (this.inherited)
             this.listItemElement.addStyleClass("inherited");
         else
@@ -2233,7 +2245,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (moveDirection === "forward" && !isEditingName || moveDirection === "backward" && isEditingName) {
             do {
                 moveTo = (moveDirection === "forward" ? moveTo.nextSibling : moveTo.previousSibling);
-            } while(moveTo && !moveTo.selectable);
+            } while(moveTo && moveTo.inherited);
 
             if (moveTo)
                 moveToPropertyName = moveTo.name;
