@@ -489,6 +489,7 @@ SET(WebCore_SOURCES
     css/MediaQueryList.cpp
     css/MediaQueryListListener.cpp
     css/MediaQueryMatcher.cpp
+    css/PropertySetCSSStyleDeclaration.cpp
     css/RGBColor.cpp
     css/SelectorChecker.cpp
     css/ShadowValue.cpp

@@ -35450,6 +35450,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\PropertySetCSSStyleDeclaration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\PropertySetCSSStyleDeclaration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\quirks.css"
 				>
 			</File>

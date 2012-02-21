@@ -1,3 +1,42 @@
+2012-02-21  Antti Koivisto  <antti@apple.com>
+
+        Move PropertySetCSSStyleDeclaration to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=79121
+
+        Rubber-stamped by Andreas Kling.
+
+        This makes StylePropertySet.cpp more readable.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/PropertySetCSSStyleDeclaration.cpp: Copied from Source/WebCore/css/StylePropertySet.cpp.
+        (WebCore::PropertySetCSSStyleDeclaration::ref):
+        (WebCore::PropertySetCSSStyleDeclaration::deref):
+        (WebCore):
+        * css/PropertySetCSSStyleDeclaration.h: Added.
+        (WebCore):
+        (PropertySetCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::PropertySetCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::parentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::clearParentRule):
+        (WebCore::PropertySetCSSStyleDeclaration::clearParentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::contextStyleSheet):
+        (WebCore::PropertySetCSSStyleDeclaration::setNeedsStyleRecalc):
+        (RuleCSSStyleDeclaration):
+        (WebCore::RuleCSSStyleDeclaration::RuleCSSStyleDeclaration):
+        (WebCore::RuleCSSStyleDeclaration::parentRule):
+        (WebCore::RuleCSSStyleDeclaration::clearParentRule):
+        (InlineCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::InlineCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::parentElement):
+        (WebCore::InlineCSSStyleDeclaration::clearParentElement):
+        * css/StylePropertySet.cpp:
+        (WebCore):
+
 2012-02-21  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] WebAudio build is broken

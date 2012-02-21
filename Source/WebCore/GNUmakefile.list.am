@@ -1409,6 +1409,8 @@ webcore_sources += \
 	Source/WebCore/css/MediaQueryMatcher.cpp \
 	Source/WebCore/css/MediaQueryMatcher.h \
 	Source/WebCore/css/Pair.h \
+	Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp \
+	Source/WebCore/css/PropertySetCSSStyleDeclaration.h \
 	Source/WebCore/css/Rect.h \
 	Source/WebCore/css/RGBColor.cpp \
 	Source/WebCore/css/RGBColor.h \

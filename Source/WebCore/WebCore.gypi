@@ -2079,6 +2079,8 @@
             'css/MediaQueryListListener.h',
             'css/MediaQueryMatcher.cpp',
             'css/MediaQueryMatcher.h',
+            'css/PropertySetCSSStyleDeclaration.cpp',
+            'css/PropertySetCSSStyleDeclaration.h',
             'css/RGBColor.cpp',
             'css/RGBColor.h',
             'css/Rect.h',
