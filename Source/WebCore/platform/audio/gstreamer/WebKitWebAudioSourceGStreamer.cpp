@@ -93,7 +93,7 @@ static GstCaps* getGStreamerMonoAudioCaps(float sampleRate)
 
 static GstAudioChannelPosition webKitWebAudioGStreamerChannelPosition(int channelIndex)
 {
-    GstAudioChannelPosition position;
+    GstAudioChannelPosition position = GST_AUDIO_CHANNEL_POSITION_NONE;
 
     switch (channelIndex) {
     case AudioBus::ChannelLeft:

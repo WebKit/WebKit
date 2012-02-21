@@ -1,3 +1,16 @@
+2012-02-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] WebAudio build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=79113
+
+        Reviewed by Martin Robinson.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioGStreamerChannelPosition): Set a default value for
+        the position variable.
+        * platform/audio/gtk/AudioBusGtk.cpp: Include CString.h, needed
+        for sharedResourcesPath().
+
 2012-02-21  Andreas Kling  <awesomekling@apple.com>
 
         Kill FontFamilyValue.

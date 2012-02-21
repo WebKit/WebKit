@@ -23,6 +23,7 @@
 #include "AudioBus.h"
 
 #include "AudioFileReader.h"
+#include "CString.h"
 #include "FileSystem.h"
 #include "GOwnPtr.h"
 
