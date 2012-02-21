@@ -1,5 +1,12 @@
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed windows build fix - avoid return statement after return if USE(ACCELERATED_COMPOSITING) is set.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
         ScrollingCoordinator::coordinatesScrollingForFrameView should be conditional on compositing being active
         https://bugs.webkit.org/show_bug.cgi?id=79126
 

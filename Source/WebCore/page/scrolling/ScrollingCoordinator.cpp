@@ -105,9 +105,9 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     if (!renderView)
         return false;
     return renderView->usesCompositing();
-#endif
-
+#else
     return false;
+#endif
 }
 
 static Region computeNonFastScrollableRegion(FrameView* frameView)
