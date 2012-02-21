@@ -1,0 +1,17 @@
+Tests PeerConnection::removeStream().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.removeStream() threw TypeError: Not enough arguments
+PASS pc.removeStream(undefined) threw Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS pc.removeStream(null) threw Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS pc.removeStream(new Array()) threw TypeError: Type error
+PASS pc.removeStream({}) threwTypeError: Type error
+PASS pc.removeStream(42) threwTypeError: Type error
+PASS pc.removeStream(Infinity) threwTypeError: Type error
+PASS pc.removeStream(-Infinity) threwTypeError: Type error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
