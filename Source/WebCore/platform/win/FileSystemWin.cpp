@@ -37,40 +37,58 @@
 #include <wtf/text/WTFString.h>
 
 #include <windows.h>
-#include <winbase.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 
 namespace WebCore {
 
-static bool statFile(String path, struct _stat64& st)
+static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
+
+static bool getFindData(String path, WIN32_FIND_DATAW& findData)
 {
-    ASSERT_ARG(path, !path.isNull());
-    return !_wstat64(path.charactersWithNullTermination(), &st) && (st.st_mode & _S_IFMT) == _S_IFREG;
+    HANDLE handle = FindFirstFileW(path.charactersWithNullTermination(), &findData);
+    if (handle == INVALID_HANDLE_VALUE)
+        return false;
+    FindClose(handle);
+    return true;
 }
 
 bool getFileSize(const String& path, long long& result)
 {
-    struct _stat64 sb;
-    if (!statFile(path, sb))
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
         return false;
-    result = sb.st_size;
+
+    ULARGE_INTEGER fileSize;
+    fileSize.HighPart = findData.nFileSizeHigh;
+    fileSize.LowPart = findData.nFileSizeLow;
+
+    if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
+        return false;
+
+    result = fileSize.QuadPart;
     return true;
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
 {
-    struct _stat64 st;
-    if (!statFile(path, st))
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
         return false;
-    result = st.st_mtime;
+
+    ULARGE_INTEGER fileSize;
+    fileSize.HighPart = findData.ftLastWriteTime.dwHighDateTime;
+    fileSize.LowPart = findData.ftLastWriteTime.dwLowDateTime;
+
+    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
+    result = fileSize.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
     return true;
 }
 
-bool fileExists(const String& path) 
+bool fileExists(const String& path)
 {
-    struct _stat64 st;
-    return statFile(path, st);
+    WIN32_FIND_DATAW findData;
+    return getFindData(path, findData);
 }
 
 bool deleteFile(const String& path)
