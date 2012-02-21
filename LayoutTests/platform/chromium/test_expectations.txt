@@ -1641,7 +1641,8 @@ BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 
 // rebaseline after skia rev. 2527 lands
 BUGCR101797 CPU : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGCR101797 SLOW CPU DEBUG : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGCR101797 CPU RELEASE : svg/as-background-image/svg-as-background-5.html = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
 
@@ -4194,3 +4195,6 @@ BUGWK79013 LEOPARD RELEASE : http/tests/workers/terminate-during-sync-operation.
 BUGWK79013 SNOWLEOPARD LINUX : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
 
 BUGCR115055 : fast/js/cyclic-prototypes.html = TEXT
+
+BUGCR113063 WIN DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
+BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.html = PASS CRASH
