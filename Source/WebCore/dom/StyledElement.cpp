@@ -61,26 +61,6 @@ StyledElement::~StyledElement()
     destroyInlineStyleDecl();
 }
 
-void StyledElement::insertedIntoDocument()
-{
-    Element::insertedIntoDocument();
-
-    if (StylePropertySet* inlineStyle = inlineStyleDecl())
-        inlineStyle->setContextStyleSheet(document()->elementSheet());
-    if (StylePropertySet* attributeStyle = attributeData() ? attributeData()->attributeStyle() : 0)
-        attributeStyle->setContextStyleSheet(document()->elementSheet());
-}
-
-void StyledElement::removedFromDocument()
-{
-    Element::removedFromDocument();
-
-    if (StylePropertySet* inlineStyle = inlineStyleDecl())
-        inlineStyle->setContextStyleSheet(0);
-    if (StylePropertySet* attributeStyle = attributeData() ? attributeData()->attributeStyle() : 0)
-        attributeStyle->setContextStyleSheet(0);
-}
-
 void StyledElement::attributeChanged(Attribute* attr)
 {
     if (!(attr->name() == styleAttr && isSynchronizingStyleAttribute()))
@@ -123,7 +103,7 @@ void StyledElement::parseAttribute(Attribute* attr)
         if (attr->isNull())
             destroyInlineStyleDecl();
         else if (document()->contentSecurityPolicy()->allowInlineStyle())
-            ensureInlineStyleDecl()->parseDeclaration(attr->value());
+            ensureInlineStyleDecl()->parseDeclaration(attr->value(), document()->elementSheet());
         setIsStyleAttributeValid();
         setNeedsStyleRecalc();
         InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
@@ -139,7 +119,7 @@ void StyledElement::inlineStyleChanged()
     
 bool StyledElement::setInlineStyleProperty(int propertyID, int value, bool important)
 {
-    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, important);
+    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, important, document()->elementSheet());
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -147,7 +127,7 @@ bool StyledElement::setInlineStyleProperty(int propertyID, int value, bool impor
 
 bool StyledElement::setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
-    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, unit, important);
+    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, unit, important, document()->elementSheet());
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -155,7 +135,7 @@ bool StyledElement::setInlineStyleProperty(int propertyID, double value, CSSPrim
 
 bool StyledElement::setInlineStyleProperty(int propertyID, const String& value, bool important)
 {
-    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, important);
+    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, important, document()->elementSheet());
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -172,12 +152,12 @@ bool StyledElement::removeInlineStyleProperty(int propertyID)
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (StylePropertySet* inlineStyle = inlineStyleDecl())
-        inlineStyle->addSubresourceStyleURLs(urls);
+        inlineStyle->addSubresourceStyleURLs(urls, document()->elementSheet());
 }
 
 void StyledElement::updateAttributeStyle()
 {
-    RefPtr<StylePropertySet> style = StylePropertySet::create(document()->elementSheet());
+    RefPtr<StylePropertySet> style = StylePropertySet::create();
     for (unsigned i = 0; i < attributeCount(); ++i) {
         Attribute* attribute = attributeItem(i);
         collectStyleForAttribute(attribute, style.get());

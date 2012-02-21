@@ -55,7 +55,7 @@ void HTMLTableCaptionElement::collectStyleForAttribute(Attribute* attr, StylePro
 {
     if (attr->name() == alignAttr) {
         if (!attr->isEmpty())
-            style->setProperty(CSSPropertyCaptionSide, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyCaptionSide, attr->value());
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
 }

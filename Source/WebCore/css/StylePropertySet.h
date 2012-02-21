@@ -42,13 +42,9 @@ public:
     {
         return adoptRef(new StylePropertySet);
     }
-    static PassRefPtr<StylePropertySet> create(CSSStyleSheet* contextStyleSheet)
+    static PassRefPtr<StylePropertySet> create(const CSSProperty* const* properties, int numProperties, bool useStrictParsing)
     {
-        return adoptRef(new StylePropertySet(contextStyleSheet));
-    }
-    static PassRefPtr<StylePropertySet> create(CSSStyleSheet* contextStyleSheet, const CSSProperty* const* properties, int numProperties)
-    {
-        return adoptRef(new StylePropertySet(contextStyleSheet, properties, numProperties));
+        return adoptRef(new StylePropertySet(properties, numProperties, useStrictParsing));
     }
     static PassRefPtr<StylePropertySet> create(const Vector<CSSProperty>& properties)
     {
@@ -65,15 +61,15 @@ public:
     int getPropertyShorthand(int propertyID) const;
     bool isPropertyImplicit(int propertyID) const;
 
-    bool setProperty(int propertyID, int value, bool important = false);
-    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false);
-    bool setProperty(int propertyID, const String& value, bool important = false);
+    bool setProperty(int propertyID, int value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
+    bool setProperty(int propertyID, const String& value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
     void setProperty(const CSSProperty&, CSSProperty* slot = 0);
     
     bool removeProperty(int propertyID, String* returnText = 0);
 
     // The following parses an entire new style declaration.
-    void parseDeclaration(const String& styleDeclaration);
+    void parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet);
 
     // Besides adding the properties, this also removes any existing properties with these IDs.
     // It does no notification since it's called by the parser.
@@ -90,7 +86,7 @@ public:
     void setStrictParsing(bool b) { m_strictParsing = b; }
     bool useStrictParsing() const { return m_strictParsing; }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, CSSStyleSheet* contextStyleSheet);
 
     PassRefPtr<StylePropertySet> copy() const;
     // Used by StyledElement::copyNonAttributeProperties().
@@ -100,9 +96,6 @@ public:
     void removeEquivalentProperties(const CSSStyleDeclaration*);
 
     PassRefPtr<StylePropertySet> copyPropertiesInSet(const int* set, unsigned length) const;
-
-    CSSStyleSheet* contextStyleSheet() const { return m_contextStyleSheet; }
-    void setContextStyleSheet(CSSStyleSheet* styleSheet) { m_contextStyleSheet = styleSheet; }
     
     String asText() const;
     
@@ -116,8 +109,7 @@ public:
 private:
     StylePropertySet();
     StylePropertySet(const Vector<CSSProperty>&);
-    StylePropertySet(CSSStyleSheet* parentStyleSheet);
-    StylePropertySet(CSSStyleSheet* parentStyleSheet, const CSSProperty* const *, int numProperties);
+    StylePropertySet(const CSSProperty* const *, int numProperties, bool useStrictParsing);
 
     void setNeedsStyleRecalc();
 
@@ -143,8 +135,6 @@ private:
 
     bool m_strictParsing : 1;
     mutable bool m_hasCSSOMWrapper : 1;
-
-    CSSStyleSheet* m_contextStyleSheet;
     
     friend class PropertySetCSSStyleDeclaration;
 };

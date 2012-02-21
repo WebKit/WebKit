@@ -85,7 +85,7 @@ bool HTMLTableCellElement::isPresentationAttribute(Attribute* attr) const
 void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == nowrapAttr) {
-        style->setProperty(CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
+        addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     } else if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();

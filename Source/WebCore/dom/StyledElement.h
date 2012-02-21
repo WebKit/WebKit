@@ -44,7 +44,7 @@ public:
     
     // Unlike StylePropertySet setters, these implement invalidation.
     bool setInlineStyleProperty(int propertyID, int value, bool important = false);
-    bool setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false);
+    bool setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false);
     bool setInlineStyleProperty(int propertyID, const String& value, bool important = false);
     bool removeInlineStyleProperty(int propertyID);
     
@@ -67,15 +67,16 @@ protected:
     virtual bool isPresentationAttribute(Attribute*) const { return false; }
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
 
+    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int value);
+    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, double value, CSSPrimitiveValue::UnitTypes);
+    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, const String& value);
+
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     // classAttributeChanged() exists to share code between
     // parseAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
-    
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
 
 private:
     virtual void updateStyleAttribute() const;
@@ -107,6 +108,21 @@ inline StylePropertySet* StyledElement::attributeStyle()
     if (attributeStyleDirty())
         updateAttributeStyle();
     return attributeData() ? attributeData()->attributeStyle() : 0;
+}
+
+inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, int value)
+{
+    style->setProperty(propertyID, value, false, document()->elementSheet());
+}
+
+inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
+{
+    style->setProperty(propertyID, value, unit, false, document()->elementSheet());
+}
+
+inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, const String& value)
+{
+    style->setProperty(propertyID, value, false, document()->elementSheet());
 }
 
 } //namespace

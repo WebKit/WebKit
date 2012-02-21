@@ -142,11 +142,11 @@ static unsigned parseBorderWidthAttribute(Attribute* attr)
 
 void HTMLElement::applyBorderAttributeToStyle(Attribute* attr, StylePropertySet* style)
 {
-    style->setProperty(CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
-    style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-    style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-    style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-    style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
+    addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
 }
 
 void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StylePropertySet* style)
@@ -154,10 +154,10 @@ void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StyleProper
     ASSERT(attribute && (attribute->name() == langAttr || attribute->name().matches(XMLNames::langAttr)));
     if (!attribute->isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        style->setProperty(CSSPropertyWebkitLocale, quoteCSSString(attribute->value()));
+        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute->value()));
     } else {
         // The empty string means the language is explicitly unknown.
-        style->setProperty(CSSPropertyWebkitLocale, CSSValueAuto);
+        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
     }
 }
 
@@ -172,37 +172,37 @@ void HTMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* st
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle"))
-            style->setProperty(CSSPropertyTextAlign, "center");
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, "center");
         else
-            style->setProperty(CSSPropertyTextAlign, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == contenteditableAttr) {
         if (attr->isEmpty() || equalIgnoringCase(attr->value(), "true")) {
-            style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadWrite);
-            style->setProperty(CSSPropertyWordWrap, CSSValueBreakWord);
-            style->setProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
-            style->setProperty(CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWrite);
+            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
         } else if (equalIgnoringCase(attr->value(), "plaintext-only")) {
-            style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
-            style->setProperty(CSSPropertyWordWrap, CSSValueBreakWord);
-            style->setProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
-            style->setProperty(CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
+            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
         } else if (equalIgnoringCase(attr->value(), "false"))
-            style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadOnly);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadOnly);
     } else if (attr->name() == hiddenAttr) {
-        style->setProperty(CSSPropertyDisplay, CSSValueNone);
+        addPropertyToAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
     } else if (attr->name() == draggableAttr) {
         if (equalIgnoringCase(attr->value(), "true")) {
-            style->setProperty(CSSPropertyWebkitUserDrag, CSSValueElement);
-            style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalIgnoringCase(attr->value(), "false"))
-            style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
+            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (attr->name() == dirAttr) {
         if (equalIgnoringCase(attr->value(), "auto"))
-            style->setProperty(CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
+            addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
         else {
-            style->setProperty(CSSPropertyDirection, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyDirection, attr->value());
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
+                addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
         }
     } else if (attr->name().matches(XMLNames::langAttr)) {
         mapLanguageAttributeToLocale(attr, style);
@@ -711,10 +711,10 @@ void HTMLElement::applyAlignmentAttributeToStyle(Attribute* attr, StylePropertyS
         verticalAlignValue = CSSValueTextTop;
 
     if (floatValue != CSSValueInvalid)
-        style->setProperty(CSSPropertyFloat, floatValue);
+        addPropertyToAttributeStyle(style, CSSPropertyFloat, floatValue);
 
     if (verticalAlignValue != CSSValueInvalid)
-        style->setProperty(CSSPropertyVerticalAlign, verticalAlignValue);
+        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
 }
 
 bool HTMLElement::supportsFocus() const
@@ -1095,12 +1095,12 @@ void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, int propertyID, 
         }
 
         if (l != v->length()) {
-            style->setProperty(propertyID, v->substring(0, l));
+            addPropertyToAttributeStyle(style, propertyID, v->substring(0, l));
             return;
         }
     }
 
-    style->setProperty(propertyID, value);
+    addPropertyToAttributeStyle(style, propertyID, value);
 }
 
 static String parseColorStringWithCrazyLegacyRules(const String& colorString)
@@ -1171,11 +1171,11 @@ void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, int propertyID, c
     // If the string is a named CSS color or a 3/6-digit hex color, use that.
     Color parsedColor(colorString);
     if (parsedColor.isValid()) {
-        style->setProperty(propertyID, colorString);
+        addPropertyToAttributeStyle(style, propertyID, colorString);
         return;
     }
 
-    style->setProperty(propertyID, parseColorStringWithCrazyLegacyRules(colorString));
+    addPropertyToAttributeStyle(style, propertyID, parseColorStringWithCrazyLegacyRules(colorString));
 }
 
 void StyledElement::copyNonAttributeProperties(const Element* sourceElement)

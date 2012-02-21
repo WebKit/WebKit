@@ -243,9 +243,9 @@ void SVGTextContentElement::collectStyleForAttribute(Attribute* attr, StylePrope
         DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
 
         if (attr->value() == preserveString)
-            style->setProperty(CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
         else
-            style->setProperty(CSSPropertyWhiteSpace, CSSValueNowrap);
+            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
     }
 }
 

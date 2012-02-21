@@ -103,9 +103,9 @@ void SVGImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
     if (!isSupportedAttribute(attr->name()))
         SVGStyledTransformableElement::collectStyleForAttribute(attr, style);
     else if (attr->name() == SVGNames::widthAttr)
-        style->setProperty(CSSPropertyWidth, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyWidth, attr->value());
     else if (attr->name() == SVGNames::heightAttr)
-        style->setProperty(CSSPropertyHeight, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyHeight, attr->value());
 }
 
 void SVGImageElement::parseAttribute(Attribute* attr)

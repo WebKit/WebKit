@@ -57,7 +57,7 @@ bool HTMLUListElement::isPresentationAttribute(Attribute* attr) const
 void HTMLUListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == typeAttr)
-        style->setProperty(CSSPropertyListStyleType, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyListStyleType, attr->value());
     else
         HTMLElement::collectStyleForAttribute(attr, style);
 }

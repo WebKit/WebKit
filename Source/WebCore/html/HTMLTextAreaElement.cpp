@@ -136,11 +136,11 @@ void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropert
 {
     if (attr->name() == wrapAttr) {
         if (shouldWrapText()) {
-            style->setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
-            style->setProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
+            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
         } else {
-            style->setProperty(CSSPropertyWhiteSpace, CSSValuePre);
-            style->setProperty(CSSPropertyWordWrap, CSSValueNormal);
+            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueNormal);
         }
     } else
         HTMLTextFormControlElement::collectStyleForAttribute(attr, style);

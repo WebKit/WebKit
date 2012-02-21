@@ -170,11 +170,11 @@ void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
     if (attr->name() == sizeAttr) {
         int size = 0;
         if (cssValueFromFontSizeNumber(attr->value(), size))
-            style->setProperty(CSSPropertyFontSize, size);
+            addPropertyToAttributeStyle(style, CSSPropertyFontSize, size);
     } else if (attr->name() == colorAttr)
         addHTMLColorToStyle(style, CSSPropertyColor, attr->value());
     else if (attr->name() == faceAttr)
-        style->setProperty(CSSPropertyFontFamily, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyFontFamily, attr->value());
     else
         HTMLElement::collectStyleForAttribute(attr, style);
 }

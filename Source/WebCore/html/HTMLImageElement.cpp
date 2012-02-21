@@ -102,7 +102,7 @@ void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
     } else if (attr->name() == alignAttr)
         applyAlignmentAttributeToStyle(attr, style);
     else if (attr->name() == valignAttr)
-        style->setProperty(CSSPropertyVerticalAlign, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
     else
         HTMLElement::collectStyleForAttribute(attr, style);
 }

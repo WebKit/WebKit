@@ -60,6 +60,7 @@ public:
     virtual StyledElement* parentElement() const { return 0; }
     virtual void clearParentRule() { ASSERT_NOT_REACHED(); }
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
+    virtual CSSStyleSheet* contextStyleSheet() const { return 0; }
 
 private:
     virtual void ref() OVERRIDE { m_propertySet->ref(); }
@@ -85,7 +86,7 @@ private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
-    virtual void setNeedsStyleRecalc() { };
+    virtual void setNeedsStyleRecalc() { }    
 
 protected:
     StylePropertySet* m_propertySet;
@@ -104,6 +105,7 @@ private:
     virtual CSSRule* parentRule() const { return m_parentRule; };
     virtual void clearParentRule() { m_parentRule = 0; }
     virtual void setNeedsStyleRecalc();
+    virtual CSSStyleSheet* contextStyleSheet() const;
     
     CSSRule* m_parentRule;
 };
@@ -121,6 +123,7 @@ private:
     virtual StyledElement* parentElement() const { return m_parentElement; }
     virtual void clearParentElement() { m_parentElement = 0; }
     virtual void setNeedsStyleRecalc();
+    virtual CSSStyleSheet* contextStyleSheet() const;
 
     StyledElement* m_parentElement;
 };
@@ -213,7 +216,6 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 StylePropertySet::StylePropertySet()
     : m_strictParsing(false)
     , m_hasCSSOMWrapper(false)
-    , m_contextStyleSheet(0)
 {
 }
 
@@ -221,22 +223,13 @@ StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
     : m_properties(properties)
     , m_strictParsing(true)
     , m_hasCSSOMWrapper(false)
-    , m_contextStyleSheet(0)
 {
     m_properties.shrinkToFit();
 }
 
-StylePropertySet::StylePropertySet(CSSStyleSheet* contextStyleSheet)
-    : m_strictParsing(!contextStyleSheet || contextStyleSheet->useStrictParsing())
+StylePropertySet::StylePropertySet(const CSSProperty* const * properties, int numProperties, bool useStrictParsing)
+    : m_strictParsing(useStrictParsing)
     , m_hasCSSOMWrapper(false)
-    , m_contextStyleSheet(contextStyleSheet)
-{
-}
-
-StylePropertySet::StylePropertySet(CSSStyleSheet* contextStyleSheet, const CSSProperty* const * properties, int numProperties)
-    : m_strictParsing(!contextStyleSheet || contextStyleSheet->useStrictParsing())
-    , m_hasCSSOMWrapper(false)
-    , m_contextStyleSheet(contextStyleSheet)
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
@@ -745,7 +738,7 @@ bool StylePropertySet::isPropertyImplicit(int propertyID) const
     return property ? property->isImplicit() : false;
 }
 
-bool StylePropertySet::setProperty(int propertyID, const String& value, bool important)
+bool StylePropertySet::setProperty(int propertyID, const String& value, bool important, CSSStyleSheet* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -756,7 +749,7 @@ bool StylePropertySet::setProperty(int propertyID, const String& value, bool imp
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(this, propertyID, value, important, useStrictParsing());
+    return CSSParser::parseValue(this, propertyID, value, important, useStrictParsing(), contextStyleSheet);
 }
 
 void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slot)
@@ -771,10 +764,10 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
     m_properties.append(property);
 }
 
-bool StylePropertySet::setProperty(int propertyID, int identifier, bool important)
+bool StylePropertySet::setProperty(int propertyID, int identifier, bool important, CSSStyleSheet* contextStyleSheet)
 {
     RefPtr<CSSPrimitiveValue> value;    
-    if (Document* document = m_contextStyleSheet ? m_contextStyleSheet->findDocument() : 0)
+    if (Document* document = contextStyleSheet ? contextStyleSheet->findDocument() : 0)
         value = document->cssValuePool()->createIdentifierValue(identifier);
     else
         value = CSSPrimitiveValue::createIdentifier(identifier);
@@ -783,18 +776,22 @@ bool StylePropertySet::setProperty(int propertyID, int identifier, bool importan
     return true;
 }
 
-bool StylePropertySet::setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
+bool StylePropertySet::setProperty(int propertyID, double number, CSSPrimitiveValue::UnitTypes unit, bool important, CSSStyleSheet* contextStyleSheet)
 {
-    CSSProperty property(propertyID, CSSPrimitiveValue::create(value, unit), important);
-    setProperty(property);
+    RefPtr<CSSPrimitiveValue> value;    
+    if (Document* document = contextStyleSheet ? contextStyleSheet->findDocument() : 0)
+        value = document->cssValuePool()->createValue(number, unit);
+    else
+        value = CSSPrimitiveValue::create(number, unit);
+    setProperty(CSSProperty(propertyID, value, important));
     return true;
 }
 
-void StylePropertySet::parseDeclaration(const String& styleDeclaration)
+void StylePropertySet::parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet)
 {
     m_properties.clear();
     CSSParser parser(useStrictParsing());
-    parser.parseDeclaration(this, styleDeclaration);
+    parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 
 void StylePropertySet::addParsedProperties(const CSSProperty* const* properties, int numProperties)
@@ -890,12 +887,11 @@ void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnC
     }
 }
 
-void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet* contextStyleSheet)
 {
-    CSSStyleSheet* sheet = contextStyleSheet();
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i)
-        m_properties[i].value()->addSubresourceStyleURLs(urls, sheet);
+        m_properties[i].value()->addSubresourceStyleURLs(urls, contextStyleSheet);
 }
 
 // This is the list of properties we want to copy in the copyBlockProperties() function.
@@ -1073,7 +1069,6 @@ CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const Sty
 
 void StylePropertySet::clearParentRule(CSSRule* rule)
 {
-    m_contextStyleSheet = 0;
     if (!m_hasCSSOMWrapper)
         return;
     ASSERT_UNUSED(rule, static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule() == rule);
@@ -1082,7 +1077,6 @@ void StylePropertySet::clearParentRule(CSSRule* rule)
 
 void StylePropertySet::clearParentElement(StyledElement* element)
 {
-    m_contextStyleSheet = 0;
     if (!m_hasCSSOMWrapper)
         return;
     ASSERT_UNUSED(element, propertySetCSSOMWrapperMap().get(this)->parentElement() == element);
@@ -1113,7 +1107,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
 #endif
     ec = 0;
     // FIXME: Detect syntax errors and set ec.
-    m_propertySet->parseDeclaration(text);
+    m_propertySet->parseDeclaration(text, contextStyleSheet());
 
     setNeedsStyleRecalc();
 #if ENABLE(MUTATION_OBSERVERS)
@@ -1174,7 +1168,7 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
         return;
     bool important = priority.find("important", 0, false) != notFound;
     ec = 0;
-    bool changed = m_propertySet->setProperty(propertyID, value, important);
+    bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
     if (changed) {
         // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
@@ -1221,7 +1215,7 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
     StyleAttributeMutationScope mutationScope(this);
 #endif
     ec = 0;
-    bool changed = m_propertySet->setProperty(propertyID, value, important);
+    bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
     if (changed) {
         setNeedsStyleRecalc();
 #if ENABLE(MUTATION_OBSERVERS)
@@ -1232,7 +1226,7 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
 
 CSSStyleSheet* PropertySetCSSStyleDeclaration::parentStyleSheet() const
 { 
-    return m_propertySet->contextStyleSheet(); 
+    return contextStyleSheet(); 
 }
 
 PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::copy() const
@@ -1252,10 +1246,15 @@ bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const CSSProperty* prope
 
 void RuleCSSStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (CSSStyleSheet* styleSheet = m_propertySet->contextStyleSheet()) {
+    if (CSSStyleSheet* styleSheet = contextStyleSheet()) {
         if (Document* document = styleSheet->findDocument())
             document->styleSelectorChanged(DeferRecalcStyle);
     }
+}
+    
+CSSStyleSheet* RuleCSSStyleDeclaration::contextStyleSheet() const
+{
+    return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
 void InlineCSSStyleDeclaration::setNeedsStyleRecalc()
@@ -1268,10 +1267,14 @@ void InlineCSSStyleDeclaration::setNeedsStyleRecalc()
     return;
 }
 
+CSSStyleSheet* InlineCSSStyleDeclaration::contextStyleSheet() const
+{
+    return m_parentElement ? m_parentElement->document()->elementSheet() : 0;
+}
+
 class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
     Vector<CSSProperty, 4> properties;
     unsigned bitfield;
-    void* parent;
 };
 COMPILE_ASSERT(sizeof(StylePropertySet) == sizeof(SameSizeAsStylePropertySet), style_property_set_should_stay_small);
 

@@ -59,14 +59,14 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "left")) {
-            style->setProperty(CSSPropertyMarginLeft, "0"); // FIXME: Pass as integer.
-            style->setProperty(CSSPropertyMarginRight, CSSValueAuto);
+            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalIgnoringCase(attr->value(), "right")) {
-            style->setProperty(CSSPropertyMarginLeft, CSSValueAuto);
-            style->setProperty(CSSPropertyMarginRight, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
+            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, "0"); // FIXME: Pass as integer.
         } else {
-            style->setProperty(CSSPropertyMarginLeft, CSSValueAuto);
-            style->setProperty(CSSPropertyMarginRight, CSSValueAuto);
+            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
+            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         }
     } else if (attr->name() == widthAttr) {
         bool ok;
@@ -76,24 +76,24 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
     } else if (attr->name() == colorAttr) {
-        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
         addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == noshadeAttr) {
-        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
         addHTMLColorToStyle(style, CSSPropertyBorderColor, String("grey")); // FIXME: Pass as rgb() value.
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, String("grey")); // FIXME: Pass as rgb() value.
     } else if (attr->name() == sizeAttr) {
         StringImpl* si = attr->value().impl();
         int size = si->toInt();
         if (size <= 1)
-            style->setProperty(CSSPropertyBorderBottomWidth, String("0")); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, String("0")); // FIXME: Pass as integer.
         else
             addHTMLLengthToStyle(style, CSSPropertyHeight, String::number(size - 2)); // FIXME: Pass as integer.
     } else

@@ -58,26 +58,26 @@ bool MathMLElement::isPresentationAttribute(Attribute* attr) const
 void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
 {
     if (attr->name() == mathbackgroundAttr)
-        style->setProperty(CSSPropertyBackgroundColor, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == mathsizeAttr) {
         // The following three values of mathsize are handled in WebCore/css/mathml.css
         if (attr->value() != "normal" && attr->value() != "small" && attr->value() != "big")
-            style->setProperty(CSSPropertyFontSize, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyFontSize, attr->value());
     } else if (attr->name() == mathcolorAttr)
-        style->setProperty(CSSPropertyColor, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyColor, attr->value());
     // FIXME: deprecated attributes that should loose in a conflict with a non deprecated attribute
     else if (attr->name() == fontsizeAttr)
-        style->setProperty(CSSPropertyFontSize, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyFontSize, attr->value());
     else if (attr->name() == backgroundAttr)
-        style->setProperty(CSSPropertyBackgroundColor, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == colorAttr)
-        style->setProperty(CSSPropertyColor, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyColor, attr->value());
     else if (attr->name() == fontstyleAttr)
-        style->setProperty(CSSPropertyFontStyle, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyFontStyle, attr->value());
     else if (attr->name() == fontweightAttr)
-        style->setProperty(CSSPropertyFontWeight, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyFontWeight, attr->value());
     else if (attr->name() == fontfamilyAttr)
-        style->setProperty(CSSPropertyFontFamily, attr->value());
+        addPropertyToAttributeStyle(style, CSSPropertyFontFamily, attr->value());
     else {
         ASSERT(!isPresentationAttribute(attr));
         StyledElement::collectStyleForAttribute(attr, style);

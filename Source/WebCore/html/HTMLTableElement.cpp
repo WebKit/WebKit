@@ -313,7 +313,7 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
     } else if (attr->name() == valignAttr) {
         if (!attr->isEmpty())
-            style->setProperty(CSSPropertyVerticalAlign, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attr->value());
@@ -326,29 +326,29 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
     } else if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty()) {
             if (equalIgnoringCase(attr->value(), "center")) {
-                style->setProperty(CSSPropertyWebkitMarginStart, CSSValueAuto);
-                style->setProperty(CSSPropertyWebkitMarginEnd, CSSValueAuto);
+                addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
+                addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
-                style->setProperty(CSSPropertyFloat, attr->value());
+                addPropertyToAttributeStyle(style, CSSPropertyFloat, attr->value());
         }
     } else if (attr->name() == rulesAttr) {
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
-            style->setProperty(CSSPropertyBorderCollapse, CSSValueCollapse);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
     } else if (attr->name() == frameAttr) {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
         if (getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft)) {
-            style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
-            style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
-            style->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin);
-            style->setProperty(CSSPropertyBorderRightWidth, CSSValueThin);
-            style->setProperty(CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
-            style->setProperty(CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
-            style->setProperty(CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
-            style->setProperty(CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderTopWidth, CSSValueThin);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, CSSValueThin);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftWidth, CSSValueThin);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderRightWidth, CSSValueThin);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
     } else
         HTMLElement::collectStyleForAttribute(attr, style);

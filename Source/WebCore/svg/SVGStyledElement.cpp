@@ -303,7 +303,7 @@ void SVGStyledElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
 {
     int propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
     if (propertyID > 0)
-        style->setProperty(propertyID, attr->value());
+        addPropertyToAttributeStyle(style, propertyID, attr->value());
 }
 
 void SVGStyledElement::parseAttribute(Attribute* attr)

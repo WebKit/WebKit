@@ -1,3 +1,126 @@
+2012-02-21  Antti Koivisto  <antti@apple.com>
+
+        Remove stylesheet pointer from StylePropertySet
+        https://bugs.webkit.org/show_bug.cgi?id=79092
+
+        Reviewed by Andreas Kling.
+
+        The context should be passed as an argument for CSS parser invoking setters that actually need it.
+        
+        - Remove the context stylesheet pointer.
+        - Add context stylesheet argument to setters.
+        - Drop an unnecessary StylePropertySet constructor, pass strict parsing flag directly.
+        - Adapt to changes by passing in the context stylesheet where needed.
+        - Add StyledElement::applyPresentationAttributeToStyle helpers for building up the attribute style.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::addSubresourceStyleURLs):
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/CSSParser.h:
+        (CSSParser):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::addSubresourceStyleURLs):
+        * css/StylePropertySet.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::contextStyleSheet):
+        (WebCore::PropertySetCSSStyleDeclaration::setNeedsStyleRecalc):
+        (RuleCSSStyleDeclaration):
+        (InlineCSSStyleDeclaration):
+        (WebCore):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::parseDeclaration):
+        (WebCore::StylePropertySet::addSubresourceStyleURLs):
+        (WebCore::StylePropertySet::clearParentRule):
+        (WebCore::StylePropertySet::clearParentElement):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::parentStyleSheet):
+        (WebCore::RuleCSSStyleDeclaration::setNeedsStyleRecalc):
+        (WebCore::RuleCSSStyleDeclaration::contextStyleSheet):
+        (WebCore::InlineCSSStyleDeclaration::contextStyleSheet):
+        (SameSizeAsStylePropertySet):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::create):
+        (StylePropertySet):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ensureInlineStyleDecl):
+        * dom/StyledElement.cpp:
+        (WebCore):
+        (WebCore::StyledElement::parseAttribute):
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        (WebCore::StyledElement::updateAttributeStyle):
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::applyPresentationAttributeToStyle):
+        (WebCore):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::collectStyleForAttribute):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForAttribute):
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::collectStyleForAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::collectStyleForAttribute):
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle):
+        (WebCore::HTMLElement::addHTMLLengthToStyle):
+        (WebCore::HTMLElement::addHTMLColorToStyle):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::collectStyleForAttribute):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectStyleForAttribute):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::collectStyleForAttribute):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::collectStyleForAttribute):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::collectStyleForAttribute):
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::collectStyleForAttribute):
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::collectStyleForAttribute):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::collectStyleForAttribute):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForAttribute):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::collectStyleForAttribute):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::collectStyleForAttribute):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::collectStyleForAttribute):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedIntoDocument):
+        (WebCore::SVGFontFaceElement::removedFromDocument):
+        (WebCore::SVGFontFaceElement::removeFromMappedElementSheet):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::collectStyleForAttribute):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::collectStyleForAttribute):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::collectStyleForAttribute):
+
 2012-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         [V8] Web Inspector: set breakpoint/pause doesn't work when worker is in a tight loop

@@ -45,7 +45,7 @@ StylePropertySet* ElementAttributeData::ensureInlineStyleDecl(StyledElement* ele
 {
     if (!m_inlineStyleDecl) {
         ASSERT(element->isStyledElement());
-        m_inlineStyleDecl = StylePropertySet::create(element->document()->elementSheet());
+        m_inlineStyleDecl = StylePropertySet::create();
         m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
     }
     return m_inlineStyleDecl.get();

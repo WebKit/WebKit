@@ -133,7 +133,7 @@ String CSSStyleRule::cssText() const
 void CSSStyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
 {
     if (m_style)
-        m_style->addSubresourceStyleURLs(urls);
+        m_style->addSubresourceStyleURLs(urls, parentStyleSheet());
 }
 
 } // namespace WebCore

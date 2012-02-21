@@ -56,25 +56,25 @@ void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StyleProper
     } else if (attr->name() == bordercolorAttr) {
         if (!attr->value().isEmpty()) {
             addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
-            style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-            style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-            style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
-            style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
         }
     } else if (attr->name() == valignAttr) {
         if (!attr->value().isEmpty())
-            style->setProperty(CSSPropertyVerticalAlign, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
     } else if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitCenter);
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(attr->value(), "absmiddle"))
-            style->setProperty(CSSPropertyTextAlign, CSSValueCenter);
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else if (equalIgnoringCase(attr->value(), "left"))
-            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitLeft);
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalIgnoringCase(attr->value(), "right"))
-            style->setProperty(CSSPropertyTextAlign, CSSValueWebkitRight);
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            style->setProperty(CSSPropertyTextAlign, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());

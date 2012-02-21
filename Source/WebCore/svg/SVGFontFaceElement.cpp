@@ -321,7 +321,6 @@ void SVGFontFaceElement::insertedIntoDocument()
     SVGElement::insertedIntoDocument();
     document()->mappedElementSheet()->append(m_fontFaceRule);
     m_fontFaceRule->setParentStyleSheet(document()->mappedElementSheet());
-    m_fontFaceRule->declaration()->setContextStyleSheet(document()->mappedElementSheet());
     rebuildFontFace();
 }
 
@@ -329,7 +328,7 @@ void SVGFontFaceElement::removedFromDocument()
 {
     removeFromMappedElementSheet();
     SVGElement::removedFromDocument();
-    m_fontFaceRule->declaration()->parseDeclaration(emptyString());
+    m_fontFaceRule->declaration()->parseDeclaration(emptyString(), 0);
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -350,7 +349,6 @@ void SVGFontFaceElement::removeFromMappedElementSheet()
             break;
         }
     }
-    m_fontFaceRule->declaration()->setContextStyleSheet(0);
     document()->styleSelectorChanged(DeferRecalcStyle);
 }
 

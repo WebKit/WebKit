@@ -326,7 +326,7 @@ static inline bool isColorPropertyID(int propertyId)
     }
 }
 
-static bool parseColorValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet = 0)
+static bool parseColorValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
 {
     if (!string.length())
         return false;
@@ -346,22 +346,17 @@ static bool parseColorValue(StylePropertySet* declaration, int propertyId, const
         validPrimitive = true;
     }
 
-    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->contextStyleSheet();
-    if (!styleSheet)
-        return false;
-    Document* document = styleSheet->findDocument();
-    if (!document)
-        return false;
+    Document* document = contextStyleSheet->findDocument();
     if (validPrimitive) {
-        CSSProperty property(propertyId, document->cssValuePool()->createIdentifierValue(valueID), important);
-        declaration->addParsedProperty(property);
+        RefPtr<CSSValue> value = document ? document->cssValuePool()->createIdentifierValue(valueID) : CSSPrimitiveValue::createIdentifier(valueID);
+        declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
         return true;
     }
     RGBA32 color;
     if (!CSSParser::fastParseColor(color, string, strict && string[0] != '#'))
         return false;
-    CSSProperty property(propertyId, document->cssValuePool()->createColorValue(color), important);
-    declaration->addParsedProperty(property);
+    RefPtr<CSSValue> value = document ? document->cssValuePool()->createColorValue(color) : CSSPrimitiveValue::createColor(color);
+    declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
     return true;
 }
 
@@ -409,7 +404,7 @@ static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativ
     }
 }
 
-static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict)
+static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
 {
     bool acceptsNegativeNumbers;
     unsigned length = string.length();
@@ -473,33 +468,25 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
 
-    CSSStyleSheet* styleSheet = declaration->contextStyleSheet();
-    if (!styleSheet)
-        return false;
-    Document* document = styleSheet->findDocument();
-    if (!document)
-        return false;
-    CSSProperty property(propertyId, document->cssValuePool()->createValue(number, unit), important);
-    declaration->addParsedProperty(property);
+    Document* document = contextStyleSheet->findDocument();
+    RefPtr<CSSValue> value = document ? document->cssValuePool()->createValue(number, unit) : CSSPrimitiveValue::create(number, unit);
+    declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
     return true;
 }
 
-bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict)
+bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
 {
-    if (parseSimpleLengthValue(declaration, propertyId, string, important, strict))
+    if (parseSimpleLengthValue(declaration, propertyId, string, important, strict, contextStyleSheet))
         return true;
-    if (parseColorValue(declaration, propertyId, string, important, strict))
+    if (parseColorValue(declaration, propertyId, string, important, strict, contextStyleSheet))
         return true;
     CSSParser parser(strict);
-    return parser.parseValue(declaration, propertyId, string, important);
+    return parser.parseValue(declaration, propertyId, string, important, contextStyleSheet);
 }
 
 bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, CSSStyleSheet* contextStyleSheet)
 {
-    if (contextStyleSheet)
-        setStyleSheet(contextStyleSheet);
-    else
-        setStyleSheet(declaration->contextStyleSheet());
+    setStyleSheet(contextStyleSheet);
 
     setupParser("@-webkit-value{", string, "} ");
 
@@ -599,10 +586,8 @@ bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& st
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
 
-    if (contextStyleSheet)
-        setStyleSheet(contextStyleSheet);
-    else
-        setStyleSheet(declaration->contextStyleSheet());
+    setStyleSheet(contextStyleSheet);
+
     if (styleSourceData) {
         m_currentRuleData = CSSRuleSourceData::create();
         m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
@@ -8821,7 +8806,7 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
+        rule->setDeclaration(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -8860,7 +8845,7 @@ CSSRule* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<CSSFontFaceRule> rule = CSSFontFaceRule::create(m_styleSheet);
-    rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
+    rule->setDeclaration(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
     clearProperties();
     CSSFontFaceRule* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -8931,7 +8916,7 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->adoptSelectorVector(selectorVector);
-        rule->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
+        rule->setDeclaration(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9015,7 +9000,7 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
 
     RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create(m_styleSheet);
     keyframe->setKeyText(keyString);
-    keyframe->setDeclaration(StylePropertySet::create(m_styleSheet, m_parsedProperties, m_numParsedProperties));
+    keyframe->setDeclaration(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
 
     clearProperties();
 

@@ -1920,7 +1920,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     String declarationText("font: ");
     declarationText += newFont;
-    parser.parseDeclaration(tempDecl.get(), declarationText);
+    parser.parseDeclaration(tempDecl.get(), declarationText, 0, 0);
     if (tempDecl->isEmpty())
         return;
 

@@ -62,9 +62,9 @@ void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
         if (!attr->isEmpty()) {
             if (equalIgnoringCase(attr->value(), "all"))
-                style->setProperty(CSSPropertyClear, "both");
+                addPropertyToAttributeStyle(style, CSSPropertyClear, "both");
             else
-                style->setProperty(CSSPropertyClear, attr->value());
+                addPropertyToAttributeStyle(style, CSSPropertyClear, attr->value());
         }
     } else
         HTMLElement::collectStyleForAttribute(attr, style);

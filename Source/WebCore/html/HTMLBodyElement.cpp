@@ -86,7 +86,7 @@ void HTMLBodyElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
         addHTMLColorToStyle(style, CSSPropertyColor, attr->value());
     } else if (attr->name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attr->value(), "fixed"))
-           style->setProperty(CSSPropertyBackgroundAttachment, CSSValueFixed);
+           addPropertyToAttributeStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
 }
