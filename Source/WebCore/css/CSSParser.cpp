@@ -469,7 +469,11 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId
         return false;
 
     Document* document = contextStyleSheet->findDocument();
-    RefPtr<CSSValue> value = document ? document->cssValuePool()->createValue(number, unit) : CSSPrimitiveValue::create(number, unit);
+    RefPtr<CSSValue> value;
+    if (document)
+        value = document->cssValuePool()->createValue(number, unit);
+    else
+        value = CSSPrimitiveValue::create(number, unit);
     declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
     return true;
 }

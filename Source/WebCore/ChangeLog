@@ -1,3 +1,16 @@
+2012-02-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove stylesheet pointer from StylePropertySet
+        https://bugs.webkit.org/show_bug.cgi?id=79092
+
+        Reviewed by Antti Koivisto.
+
+        Qt buildfix after r108345. We need this workaround because of buggy gcc (4.4.5), which
+        reported a false warning: 'value$m_ptr' may be used uninitialized in this function
+
+        * css/CSSParser.cpp:
+        (WebCore::parseSimpleLengthValue):
+
 2012-02-21  Andreas Kling  <awesomekling@apple.com>
 
         Shrink attribute style property sets after populating them.
