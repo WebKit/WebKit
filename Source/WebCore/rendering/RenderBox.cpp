@@ -2037,7 +2037,6 @@ void RenderBox::computeLogicalHeight()
         LayoutUnit heightResult;
         if (checkMinMaxHeight) {
             heightResult = computeLogicalHeightUsing(styleToUse->logicalHeight());
-            // FIXME: Use < 0 or roughlyEquals when we move to float, see https://bugs.webkit.org/show_bug.cgi?id=66148
             if (heightResult == -1)
                 heightResult = logicalHeight();
             LayoutUnit minH = computeLogicalHeightUsing(styleToUse->logicalMinHeight()); // Leave as -1 if unset.
@@ -2096,7 +2095,6 @@ LayoutUnit RenderBox::computeLogicalHeightUsing(const Length& h)
             logicalHeight = h.value();
         else if (h.isPercent())
             logicalHeight = computePercentageLogicalHeight(h);
-        // FIXME: Use < 0 or roughlyEquals when we move to float, see https://bugs.webkit.org/show_bug.cgi?id=66148
         if (logicalHeight != -1) {
             logicalHeight = computeBorderBoxLogicalHeight(logicalHeight);
             return logicalHeight;
@@ -2163,7 +2161,6 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
     else if (cbstyle->logicalHeight().isPercent() && !isPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
         result = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
-        // FIXME: Use < 0 or roughlyEquals when we move to float, see https://bugs.webkit.org/show_bug.cgi?id=66148
         if (result != -1)
             result = cb->computeContentBoxLogicalHeight(result);
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isPositionedWithSpecifiedHeight) {
@@ -2178,7 +2175,6 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
         // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
         result = cb->computeContentBoxLogicalHeight(cb->availableLogicalHeight());
 
-    // FIXME: Use < 0 or roughlyEquals when we move to float, see https://bugs.webkit.org/show_bug.cgi?id=66148
     if (result != -1) {
         result = height.calcValue(result);
         if (includeBorderPadding) {

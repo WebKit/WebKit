@@ -1,3 +1,28 @@
+2012-02-21  Emil A Eklund  <eae@chromium.org>
+
+        Remove obsolete float comparison FIXMEs
+        https://bugs.webkit.org/show_bug.cgi?id=79127
+
+        Reviewed by Eric Seidel.
+
+        Remove obsolete FIXME comments added back when we were planning to use
+        floating point units for layout.
+
+        No new tests, no code changes.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+
 2012-02-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: it is nearly impossible to select and copy text on the Elements panel.
