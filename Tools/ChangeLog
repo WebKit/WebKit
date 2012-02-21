@@ -1,3 +1,15 @@
+2012-02-21  Sam Weinig  <sam@webkit.org>
+
+        Use libc++ when building with Clang on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=78981
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2012-02-21  Adam Roben  <aroben@apple.com>
 
         Roll out r108309, r108323, and r108326
