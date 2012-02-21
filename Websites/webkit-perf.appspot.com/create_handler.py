@@ -85,33 +85,9 @@ class CreateHandler(webapp2.RequestHandler):
     def _create_branch(self, key, name):
         if not key or not name:
             return 'Invalid key or name'
-
-        error = [None]
-
-        def execute(id):
-            if Branch.get_by_key_name(key):
-                error[0] = 'Branch "%s" already exists' % key
-                return
-            branch = Branch(id=id, name=name, key_name=key)
-            branch.put()
-            return branch
-
-        create_in_transaction_with_numeric_id_holder(execute)
-        return error[0]
+        return None if Branch.create_if_possible(key, name) else 'Branch "%s" already exists' % key
 
     def _create_platform(self, key, name):
         if not key or not name:
             return 'Invalid key name'
-
-        error = [None]
-
-        def execute(id):
-            if Platform.get_by_key_name(key):
-                error[0] = 'Platform "%s" already exists' % key
-                return
-            platform = Platform(id=id, name=name, key_name=key)
-            platform.put()
-            return platform
-
-        create_in_transaction_with_numeric_id_holder(execute)
-        return error[0]
+        return None if Platform.create_if_possible(key, name) else 'Platform "%s" already exists' % key

@@ -39,7 +39,6 @@ from models import Build
 from models import ReportLog
 from models import Test
 from models import TestResult
-from models import create_in_transaction_with_numeric_id_holder
 
 
 class ReportProcessHandler(webapp2.RequestHandler):
@@ -55,11 +54,11 @@ class ReportProcessHandler(webapp2.RequestHandler):
 
         branch = log.branch()
         platform = log.platform()
-        build = self._create_build_if_possible(log, branch, platform)
+        build = Build.get_or_insert_from_log(log)
 
         for test_name, result in log.results().iteritems():
-            test = self._add_test_if_needed(test_name, branch, platform)
-            self._add_test_result_if_needed(test_name, build, result)
+            test = Test.update_or_insert(test_name, branch, platform)
+            TestResult.get_or_insert_from_parsed_json(test_name, build, result)
             schedule_runs_update(test.id, branch.id, platform.id)
 
         log = ReportLog.get(log.key())
@@ -70,42 +69,3 @@ class ReportProcessHandler(webapp2.RequestHandler):
         schedule_manifest_update()
 
         self.response.out.write('OK')
-
-    def _create_build_if_possible(self, log, branch, platform):
-        builder = log.builder()
-        key_name = builder.name + ':' + str(int(time.mktime(log.timestamp().timetuple())))
-
-        return Build.get_or_insert(key_name, branch=branch, platform=platform, builder=builder, buildNumber=log.build_number(),
-            timestamp=log.timestamp(), revision=log.webkit_revision(), chromiumRevision=log.chromium_revision())
-
-    def _add_test_if_needed(self, test_name, branch, platform):
-
-        def execute(id):
-            test = Test.get_by_key_name(test_name)
-            returnValue = None
-            if not test:
-                test = Test(id=id, name=test_name, key_name=test_name)
-                returnValue = test
-            if branch.key() not in test.branches:
-                test.branches.append(branch.key())
-            if platform.key() not in test.platforms:
-                test.platforms.append(platform.key())
-            test.put()
-            return returnValue
-        return create_in_transaction_with_numeric_id_holder(execute) or Test.get_by_key_name(test_name)
-
-    def _add_test_result_if_needed(self, test_name, build, result):
-        key_name = TestResult.key_name(build, test_name)
-
-        def _float_or_none(dictionary, key):
-            value = dictionary.get(key)
-            if value:
-                return float(value)
-            return None
-
-        if not isinstance(result, dict):
-            return TestResult.get_or_insert(key_name, name=test_name, build=build, value=float(result))
-
-        return TestResult.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
-            valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
-            valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))

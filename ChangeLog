@@ -1,3 +1,72 @@
+2012-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move more logic from handler classes to model classes and add unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=78989
+
+        Reviewed by Hajime Morita.
+
+        Extracted various functions from CreateHandler, ReportHanlder, and RunsHanlder to model classes
+        in order to unit-test them, added DataStoreTestsBase to reduce the code duplication in tests,
+        and added a whole bunch of unit tests in models_unittest.py.
+
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler._create_branch):
+        (CreateHandler._create_platform):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (_create_if_possible):
+        (_create_if_possible.execute):
+        (Branch):
+        (Branch.create_if_possible):
+        (Platform):
+        (Platform.create_if_possible):
+        (Build):
+        (Build.get_or_insert_from_log):
+        (Test):
+        (Test.update_or_insert):
+        (Test.update_or_insert.execute):
+        (TestResult):
+        (TestResult.get_or_insert_from_parsed_json):
+        (TestResult.get_or_insert_from_parsed_json._float_or_none):
+        (TestResult.generate_runs):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (DataStoreTestsBase):
+        (DataStoreTestsBase.assertThereIsNoInstanceOf):
+        (DataStoreTestsBase.assertOnlyInstance):
+        (DataStoreTestsBase.assertEqualUnorderedList):
+        (HelperTests):
+        (HelperTests.test_create_in_transaction_with_numeric_id_holder):
+        (HelperTests.test_failing_in_create_in_transaction_with_numeric_id_holder):
+        (HelperTests.test_raising_in_create_in_transaction_with_numeric_id_holder):
+        (HelperTests.test_delete_model_with_numeric_id_holder):
+        (BranchTests):
+        (BranchTests.test_create_if_possible):
+        (PlatformTests):
+        (PlatformTests.test_create_if_possible):
+        (BuilderTests):
+        (_create_some_builder):
+        (BuildTests):
+        (BuildTests.test_get_or_insert_from_log):
+        (TestModelTests):
+        (TestModelTests.test_update_or_insert):
+        (TestModelTests.test_update_or_insert_to_update):
+        (TestResultTests):
+        (TestResultTests._create_build):
+        (TestResultTests.test_get_or_insert_value):
+        (TestResultTests.test_get_or_insert_stat_value):
+        (TestResultTests._create_results):
+        (TestResultTests.test_generate_runs):
+        (ReportLogTests):
+        (ReportLogTests.test_branch):
+        (ReportLogTests.test_platform):
+        (PersistentCacheTests):
+        (PersistentCacheTests.setUp):
+        (PersistentCacheTests.test_set):
+        * Websites/webkit-perf.appspot.com/report_process_handler.py:
+        (ReportProcessHandler.post):
+        * Websites/webkit-perf.appspot.com/runs_handler.py:
+        (RunsHandler.get):
+        (RunsHandler.post):
+
 2012-02-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Fix PLATFORM() define for Windows.

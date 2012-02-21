@@ -34,6 +34,7 @@ import re
 from datetime import datetime
 from google.appengine.ext import db
 from google.appengine.api import memcache
+from time import mktime
 
 
 class NumericIdHolder(db.Model):
@@ -68,14 +69,34 @@ def model_from_numeric_id(id, expected_kind):
     return id_holder.owner if id_holder and id_holder.owner and isinstance(id_holder.owner, expected_kind) else None
 
 
+def _create_if_possible(model, key, name):
+
+    def execute(id):
+        if model.get_by_key_name(key):
+            return None
+        branch = model(id=id, name=name, key_name=key)
+        branch.put()
+        return branch
+
+    return create_in_transaction_with_numeric_id_holder(execute)
+
+
 class Branch(db.Model):
     id = db.IntegerProperty(required=True)
     name = db.StringProperty(required=True)
+
+    @staticmethod
+    def create_if_possible(key, name):
+        return _create_if_possible(Branch, key, name)
 
 
 class Platform(db.Model):
     id = db.IntegerProperty(required=True)
     name = db.StringProperty(required=True)
+
+    @staticmethod
+    def create_if_possible(key, name):
+        return _create_if_possible(Platform, key, name)
 
 
 class Builder(db.Model):
@@ -107,6 +128,15 @@ class Build(db.Model):
     chromiumRevision = db.IntegerProperty()
     timestamp = db.DateTimeProperty(required=True)
 
+    @staticmethod
+    def get_or_insert_from_log(log):
+        builder = log.builder()
+        key_name = builder.name + ':' + str(int(mktime(log.timestamp().timetuple())))
+
+        return Build.get_or_insert(key_name, branch=log.branch(), platform=log.platform(), builder=builder,
+            buildNumber=log.build_number(), timestamp=log.timestamp(),
+            revision=log.webkit_revision(), chromiumRevision=log.chromium_revision())
+
 
 # Used to generate TestMap in the manifest efficiently
 class Test(db.Model):
@@ -118,6 +148,26 @@ class Test(db.Model):
     @staticmethod
     def cache_key(test_id, branch_id, platform_id):
         return 'runs:%d,%d,%d' % (test_id, branch_id, platform_id)
+
+    @staticmethod
+    def update_or_insert(test_name, branch, platform):
+        existing_test = [None]
+
+        def execute(id):
+            test = Test.get_by_key_name(test_name)
+            if test:
+                if branch.key() not in test.branches:
+                    test.branches.append(branch.key())
+                if platform.key() not in test.platforms:
+                    test.platforms.append(platform.key())
+                existing_test[0] = test
+                return None
+
+            test = Test(id=id, name=test_name, key_name=test_name, branches=[branch.key()], platforms=[platform.key()])
+            test.put()
+            return test
+
+        return create_in_transaction_with_numeric_id_holder(execute) or existing_test[0]
 
 
 class TestResult(db.Model):
@@ -132,6 +182,37 @@ class TestResult(db.Model):
     @staticmethod
     def key_name(build, test_name):
         return build.key().name() + ':' + test_name
+
+    @classmethod
+    def get_or_insert_from_parsed_json(cls, test_name, build, result):
+        key_name = cls.key_name(build, test_name)
+
+        def _float_or_none(dictionary, key):
+            value = dictionary.get(key)
+            if value:
+                return float(value)
+            return None
+
+        if not isinstance(result, dict):
+            return cls.get_or_insert(key_name, name=test_name, build=build, value=float(result))
+
+        return cls.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
+            valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
+            valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))
+
+    @staticmethod
+    def generate_runs(branch, platform, test_name):
+        builds = Build.all()
+        builds.filter('branch =', branch)
+        builds.filter('platform =', platform)
+
+        for build in builds:
+            results = TestResult.all()
+            results.filter('name =', test_name)
+            results.filter('build =', build)
+            for result in results:
+                yield build, result
+        raise StopIteration
 
 
 class ReportLog(db.Model):

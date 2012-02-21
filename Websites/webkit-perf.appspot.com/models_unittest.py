@@ -33,9 +33,10 @@ import unittest
 from datetime import datetime
 from google.appengine.api import memcache
 from google.appengine.ext import testbed
+from time import mktime
 
 
-class HelperTests(unittest.TestCase):
+class DataStoreTestsBase(unittest.TestCase):
     def setUp(self):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
@@ -44,6 +45,18 @@ class HelperTests(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
+    def assertThereIsNoInstanceOf(self, model):
+        self.assertEqual(len(model.all().fetch(5)), 0)
+
+    def assertOnlyInstance(self, only_instasnce):
+        self.assertEqual(len(only_instasnce.__class__.all().fetch(5)), 1)
+        self.assertTrue(only_instasnce.__class__.get(only_instasnce.key()))
+
+    def assertEqualUnorderedList(self, list1, list2):
+        self.assertEqual(set(list1), set(list2))
+
+
+class HelperTests(DataStoreTestsBase):
     def _assert_there_is_exactly_one_id_holder_and_matches(self, id):
         id_holders = models.NumericIdHolder.all().fetch(5)
         self.assertEqual(len(id_holders), 1)
@@ -55,8 +68,8 @@ class HelperTests(unittest.TestCase):
         def execute(id):
             return models.Branch(id=id, name='some branch', key_name='some-branch').put()
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
         self.assertTrue(models.create_in_transaction_with_numeric_id_holder(execute))
 
@@ -72,13 +85,13 @@ class HelperTests(unittest.TestCase):
         def execute(id):
             return None
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
         self.assertFalse(models.create_in_transaction_with_numeric_id_holder(execute))
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
     def test_raising_in_create_in_transaction_with_numeric_id_holder(self):
 
@@ -86,13 +99,13 @@ class HelperTests(unittest.TestCase):
             raise TypeError
             return None
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
         self.assertRaises(TypeError, models.create_in_transaction_with_numeric_id_holder, (execute))
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
     def test_delete_model_with_numeric_id_holder(self):
 
@@ -100,12 +113,12 @@ class HelperTests(unittest.TestCase):
             return models.Branch(id=id, name='some branch', key_name='some-branch').put()
 
         branch = models.Branch.get(models.create_in_transaction_with_numeric_id_holder(execute))
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 1)
+        self.assertOnlyInstance(branch)
 
         models.delete_model_with_numeric_id_holder(branch)
 
-        self.assertEqual(len(models.Branch.all().fetch(5)), 0)
-        self.assertEqual(len(models.NumericIdHolder.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.Branch)
+        self.assertThereIsNoInstanceOf(models.NumericIdHolder)
 
     def test_model_from_numeric_id(self):
 
@@ -120,15 +133,37 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(models.model_from_numeric_id(branch.id, models.Branch), None)
 
 
-class BuilderTests(unittest.TestCase):
-    def setUp(self):
-        self.testbed = testbed.Testbed()
-        self.testbed.activate()
-        self.testbed.init_datastore_v3_stub()
+class BranchTests(DataStoreTestsBase):
+    def test_create_if_possible(self):
+        self.assertThereIsNoInstanceOf(models.Branch)
 
-    def tearDown(self):
-        self.testbed.deactivate()
+        branch = models.Branch.create_if_possible('some-branch', 'some branch')
+        self.assertTrue(branch)
+        self.assertTrue(branch.key().name(), 'some-branch')
+        self.assertTrue(branch.name, 'some branch')
+        self.assertOnlyInstance(branch)
 
+        self.assertFalse(models.Branch.create_if_possible('some-branch', 'some other branch'))
+        self.assertTrue(branch.name, 'some branch')
+        self.assertOnlyInstance(branch)
+
+
+class PlatformTests(DataStoreTestsBase):
+    def test_create_if_possible(self):
+        self.assertThereIsNoInstanceOf(models.Platform)
+
+        platform = models.Platform.create_if_possible('some-platform', 'some platform')
+        self.assertTrue(platform)
+        self.assertTrue(platform.key().name(), 'some-platform')
+        self.assertTrue(platform.name, 'some platform')
+        self.assertOnlyInstance(platform)
+
+        self.assertFalse(models.Platform.create_if_possible('some-platform', 'some other platform'))
+        self.assertTrue(platform.name, 'some platform')
+        self.assertOnlyInstance(platform)
+
+
+class BuilderTests(DataStoreTestsBase):
     def test_create(self):
         builder_key = models.Builder.create('some builder', 'some password')
         self.assertTrue(builder_key)
@@ -158,15 +193,123 @@ class BuilderTests(unittest.TestCase):
         self.assertFalse(builder.authenticate('bad password'))
 
 
-class ReportLog(unittest.TestCase):
-    def setUp(self):
-        self.testbed = testbed.Testbed()
-        self.testbed.activate()
-        self.testbed.init_datastore_v3_stub()
+def _create_some_builder():
+    branch = models.Branch.create_if_possible('some-branch', 'Some Branch')
+    platform = models.Platform.create_if_possible('some-platform', 'Some Platform')
+    builder_key = models.Builder.create('some-builder', 'Some Builder')
+    return branch, platform, models.Builder.get(builder_key)
 
-    def tearDown(self):
-        self.testbed.deactivate()
 
+class BuildTests(DataStoreTestsBase):
+    def test_get_or_insert_from_log(self):
+        branch, platform, builder = _create_some_builder()
+
+        timestamp = datetime.now().replace(microsecond=0)
+        log = models.ReportLog(timestamp=timestamp, headers='some headers',
+            payload='{"branch": "some-branch", "platform": "some-platform", "builder-name": "some-builder",' +
+                '"build-number": 123, "webkit-revision": 456, "timestamp": %d}' % int(mktime(timestamp.timetuple())))
+
+        self.assertThereIsNoInstanceOf(models.Build)
+
+        build = models.Build.get_or_insert_from_log(log)
+        self.assertTrue(build)
+        self.assertEqual(build.branch.key(), branch.key())
+        self.assertEqual(build.platform.key(), platform.key())
+        self.assertEqual(build.builder.key(), builder.key())
+        self.assertEqual(build.buildNumber, 123)
+        self.assertEqual(build.revision, 456)
+        self.assertEqual(build.chromiumRevision, None)
+        self.assertEqual(build.timestamp, timestamp)
+
+        self.assertOnlyInstance(build)
+
+
+class TestModelTests(DataStoreTestsBase):
+    def test_update_or_insert(self):
+        branch = models.Branch.create_if_possible('some-branch', 'Some Branch')
+        platform = models.Platform.create_if_possible('some-platform', 'Some Platform')
+
+        self.assertThereIsNoInstanceOf(models.Test)
+
+        test = models.Test.update_or_insert('some-test', branch, platform)
+        self.assertTrue(test)
+        self.assertEqual(test.branches, [branch.key()])
+        self.assertEqual(test.platforms, [platform.key()])
+        self.assertOnlyInstance(test)
+
+    def test_update_or_insert_to_update(self):
+        branch = models.Branch.create_if_possible('some-branch', 'Some Branch')
+        platform = models.Platform.create_if_possible('some-platform', 'Some Platform')
+        test = models.Test.update_or_insert('some-test', branch, platform)
+        self.assertOnlyInstance(test)
+
+        other_branch = models.Branch.create_if_possible('other-branch', 'Other Branch')
+        other_platform = models.Platform.create_if_possible('other-platform', 'Other Platform')
+        test = models.Test.update_or_insert('some-test', other_branch, other_platform)
+        self.assertOnlyInstance(test)
+        self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
+        self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
+
+
+class TestResultTests(DataStoreTestsBase):
+    def _create_build(self):
+        branch, platform, builder = _create_some_builder()
+        build_key = models.Build(key_name='some-build', branch=branch, platform=platform, builder=builder,
+            buildNumber=1, revision=100, timestamp=datetime.now()).put()
+        return models.Build.get(build_key)
+
+    def test_get_or_insert_value(self):
+        build = self._create_build()
+        self.assertThereIsNoInstanceOf(models.TestResult)
+        result = models.TestResult.get_or_insert_from_parsed_json('some-test', build, 50)
+        self.assertOnlyInstance(result)
+        self.assertEqual(result.name, 'some-test')
+        self.assertEqual(result.build.key(), build.key())
+        self.assertEqual(result.value, 50.0)
+        self.assertEqual(result.valueMedian, None)
+        self.assertEqual(result.valueStdev, None)
+        self.assertEqual(result.valueMin, None)
+        self.assertEqual(result.valueMax, None)
+
+    def test_get_or_insert_stat_value(self):
+        build = self._create_build()
+        self.assertThereIsNoInstanceOf(models.TestResult)
+        result = models.TestResult.get_or_insert_from_parsed_json('some-test', build,
+            {"avg": 40, "median": "40.1", "stdev": 3.25, "min": 30.5, "max": 45})
+        self.assertOnlyInstance(result)
+        self.assertEqual(result.name, 'some-test')
+        self.assertEqual(result.build.key(), build.key())
+        self.assertEqual(result.value, 40.0)
+        self.assertEqual(result.valueMedian, 40.1)
+        self.assertEqual(result.valueStdev, 3.25)
+        self.assertEqual(result.valueMin, 30.5)
+        self.assertEqual(result.valueMax, 45)
+
+    def _create_results(self, test_name, values):
+        branch, platform, builder = _create_some_builder()
+        results = []
+        for i, value in enumerate(values):
+            build = models.Build(branch=branch, platform=platform, builder=builder,
+                buildNumber=i, revision=100 + i, timestamp=datetime.now())
+            build.put()
+            result = models.TestResult(name=test_name, build=build, value=value)
+            result.put()
+            results.append(result)
+        return branch, platform, results
+
+    def test_generate_runs(self):
+        branch, platform, results = self._create_results('some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+        last_i = 0
+        for i, (build, result) in enumerate(models.TestResult.generate_runs(branch, platform, "some-test")):
+            self.assertEqual(build.buildNumber, i)
+            self.assertEqual(build.revision, 100 + i)
+            self.assertEqual(result.name, 'some-test')
+            self.assertEqual(result.value, results[i].value)
+            last_i = i
+        self.assertTrue(last_i + 1, len(results))
+
+
+class ReportLogTests(DataStoreTestsBase):
     def _create_log_with_payload(self, payload):
         return models.ReportLog(timestamp=datetime.now(), headers='some headers', payload=payload)
 
@@ -206,7 +349,27 @@ class ReportLog(unittest.TestCase):
         log = self._create_log_with_payload('{"builder-name": "%s"}' % builder_name)
         self.assertEqual(log.builder().key(), builder_key)
 
-    # FIXME test_branch and test_platform
+    def test_branch(self):
+        log = self._create_log_with_payload('{"key": "value"}')
+        self.assertEqual(log.branch(), None)
+
+        log = self._create_log_with_payload('{"branch": "some-branch"}')
+        self.assertEqual(log.branch(), None)
+
+        branch = models.Branch.create_if_possible("some-branch", "Some Branch")
+        log = self._create_log_with_payload('{"branch": "some-branch"}')
+        self.assertEqual(log.branch().key(), branch.key())
+
+    def test_platform(self):
+        log = self._create_log_with_payload('{"key": "value"}')
+        self.assertEqual(log.platform(), None)
+
+        log = self._create_log_with_payload('{"platform": "some-platform"}')
+        self.assertEqual(log.platform(), None)
+
+        platform = models.Platform.create_if_possible("some-platform", "Some Platform")
+        log = self._create_log_with_payload('{"platform": "some-platform"}')
+        self.assertEqual(log.platform().key(), platform.key())
 
     def test_build_number(self):
         log = self._create_log_with_payload('{"build-number": 123}')
@@ -230,22 +393,19 @@ class ReportLog(unittest.TestCase):
         self.assertEqual(log.webkit_revision(), None)
 
 
-class PersistentCacheTests(unittest.TestCase):
+class PersistentCacheTests(DataStoreTestsBase):
     def setUp(self):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
-    def tearDown(self):
-        self.testbed.deactivate()
-
     def _assert_persistent_cache(self, name, value):
         self.assertEqual(models.PersistentCache.get_by_key_name(name).value, value)
         self.assertEqual(memcache.get(name), value)
 
     def test_set(self):
-        self.assertEqual(len(models.PersistentCache.all().fetch(5)), 0)
+        self.assertThereIsNoInstanceOf(models.PersistentCache)
 
         models.PersistentCache.set_cache('some-cache', 'some data')
         self._assert_persistent_cache('some-cache', 'some data')
