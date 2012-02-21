@@ -1,3 +1,13 @@
+2012-02-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] tst_QWebPage::infiniteLoopJS() timeouts with DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=79040
+
+        Reviewed by Simon Hausmann.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage): Disable tst_QWebPage::infiniteLoopJS() until proper fix.
+
 2012-02-21  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Print warning when importing experimental WK2 APIs in QML
