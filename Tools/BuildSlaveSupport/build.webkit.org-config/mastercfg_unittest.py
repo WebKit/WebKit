@@ -28,7 +28,7 @@ class BuildBotConfigLoader(object):
 
     def _add_dependant_modules_to_sys_modules(self):
         from webkitpy.thirdparty.autoinstalled import buildbot
-        from webkitpy.thirdparty import simplejson
+        import json as simplejson
 
         sys.modules['buildbot'] = buildbot
         sys.modules['simplejson'] = simplejson

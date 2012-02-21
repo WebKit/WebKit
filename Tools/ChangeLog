@@ -1,3 +1,17 @@
+2012-02-20  Adam Barth  <abarth@webkit.org>
+
+        mastercfg_unittest.py fails without simplejson
+        https://bugs.webkit.org/show_bug.cgi?id=79070
+
+        Reviewed by Csaba Osztrogonác.
+
+        Now that we require Python 2.6 (and higher) we can import json rather
+        than simplejson.  We still need to use the simplejson name because
+        that's what the master.cfg script expects.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (BuildBotConfigLoader._add_dependant_modules_to_sys_modules):
+
 2012-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be a triple-tier VM
