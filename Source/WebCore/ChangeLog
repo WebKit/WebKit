@@ -1,5 +1,12 @@
 2012-02-21  'Pavel Feldman'  <pfeldman@google.com>
 
+        Not reviewed: fixing Mac build (take 2).
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setShowPaintRects):
+
+2012-02-21  'Pavel Feldman'  <pfeldman@google.com>
+
         Not reviewed: fixing Mac build.
 
         * inspector/DOMNodeHighlighter.cpp:

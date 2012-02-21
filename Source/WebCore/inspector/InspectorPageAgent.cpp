@@ -628,7 +628,7 @@ void InspectorPageAgent::setScreenSizeOverride(ErrorString* errorString, const i
     updateFrameViewFixedLayout(width, height);
 }
 
-void InspectorPageAgent::setShowPaintRects(ErrorString* errorString, bool show)
+void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
 {
     m_state->setBoolean(PageAgentState::showPaintRects, show);
     if (!show)
