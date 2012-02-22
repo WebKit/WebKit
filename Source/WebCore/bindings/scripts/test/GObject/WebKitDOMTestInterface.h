@@ -100,6 +100,27 @@ webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
 WEBKIT_API void
 webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, const gchar* value);
 
+/**
+ * webkit_dom_test_interface_get_supplemental_node:
+ * @self: A #WebKitDOMTestInterface
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMNode*
+webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self);
+
+/**
+ * webkit_dom_test_interface_set_supplemental_node:
+ * @self: A #WebKitDOMTestInterface
+ * @value: A #WebKitDOMNode
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* self, WebKitDOMNode* value);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestInterface_h */

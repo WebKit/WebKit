@@ -35,8 +35,13 @@
 #include <wtf/GetPtr.h>
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+#include "JSNode.h"
 #include "KURL.h"
 #include <runtime/JSString.h>
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+#include "Node.h"
 #endif
 
 using namespace JSC;
@@ -57,11 +62,14 @@ static const HashTableValue JSTestInterfaceTableValues[] =
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStr3", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t)setJSTestInterfaceSupplementalStr3, NoIntrinsic },
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalNode", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t)setJSTestInterfaceSupplementalNode, NoIntrinsic },
+#endif
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t)0, NoIntrinsic },
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestInterfaceTable = { 9, 7, JSTestInterfaceTableValues, 0 };
+static const HashTable JSTestInterfaceTable = { 16, 15, JSTestInterfaceTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
@@ -257,6 +265,18 @@ JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const
 
 #endif
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(impl)));
+    return result;
+}
+
+#endif
+
 JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestInterface* domObject = static_cast<JSTestInterface*>(asObject(slotBase));
@@ -286,6 +306,16 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     static_cast<JSTestInterface*>(thisObject)->setSupplementalStr3(exec, value);
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    TestSupplemental::setSupplementalNode(impl, toNode(value));
 }
 
 #endif

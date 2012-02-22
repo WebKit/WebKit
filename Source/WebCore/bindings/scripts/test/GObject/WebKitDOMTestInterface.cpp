@@ -28,11 +28,14 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
+#include "Node.h"
 #include "TestInterface.h"
 #include "TestObj.h"
 #include "TestSupplemental.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "webkit/WebKitDOMNode.h"
+#include "webkit/WebKitDOMNodePrivate.h"
 #include "webkit/WebKitDOMTestInterface.h"
 #include "webkit/WebKitDOMTestInterfacePrivate.h"
 #include "webkit/WebKitDOMTestObj.h"
@@ -135,6 +138,38 @@ webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, co
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 }
 
+WebKitDOMNode*
+webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestInterface * item = WebKit::core(self);
+    PassRefPtr<WebCore::Node> g_res = WTF::getPtr(TestSupplemental::supplementalNode(item));
+    WebKitDOMNode* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    return NULL;
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+}
+
+void
+webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* self, WebKitDOMNode* value)
+{
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestInterface * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::Node * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    TestSupplemental::setSupplementalNode(item, converted_value);
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+}
+
 
 G_DEFINE_TYPE(WebKitDOMTestInterface, webkit_dom_test_interface, WEBKIT_TYPE_DOM_OBJECT)
 
@@ -158,6 +193,9 @@ enum {
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 #if ENABLE(Condition11) || ENABLE(Condition12)
     PROP_SUPPLEMENTAL_STR2,
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    PROP_SUPPLEMENTAL_NODE,
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 };
 
@@ -218,6 +256,14 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint prop_i
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    case PROP_SUPPLEMENTAL_NODE:
+    {
+        RefPtr<WebCore::Node> ptr = TestSupplemental::supplementalNode(coreSelf);
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -256,6 +302,15 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
                                                            "test_interface_supplemental-str2", /* short description */
                                                            "read-write  gchar* TestInterface.supplemental-str2", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_object_class_install_property(gobjectClass,
+                                    PROP_SUPPLEMENTAL_NODE,
+                                    g_param_spec_object("supplemental-node", /* name */
+                                                           "test_interface_supplemental-node", /* short description */
+                                                           "read-write  WebKitDOMNode* TestInterface.supplemental-node", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_NODE, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 

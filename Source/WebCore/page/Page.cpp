@@ -200,7 +200,7 @@ Page::~Page()
     allPages->remove(this);
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->pageDestroyed();
+        frame->detachFromPage();
 
     m_editorClient->pageDestroyed();
 

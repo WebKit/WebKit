@@ -25,8 +25,10 @@
 #include "WebDOMTestInterface.h"
 
 #include "KURL.h"
+#include "Node.h"
 #include "TestInterface.h"
 #include "TestSupplemental.h"
+#include "WebDOMNode.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
@@ -103,6 +105,24 @@ void WebDOMTestInterface::setSupplementalStr2(const WebDOMString& newSupplementa
         return;
 
     TestSupplemental::setSupplementalStr2(impl(), newSupplementalStr2);
+}
+
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+WebDOMNode WebDOMTestInterface::supplementalNode() const
+{
+    if (!impl())
+        return WebDOMNode();
+
+    return toWebKit(WTF::getPtr(TestSupplemental::supplementalNode(impl())));
+}
+
+void WebDOMTestInterface::setSupplementalNode(const WebDOMNode& newSupplementalNode)
+{
+    if (!impl())
+        return;
+
+    TestSupplemental::setSupplementalNode(impl(), toWebCore(newSupplementalNode));
 }
 
 #endif

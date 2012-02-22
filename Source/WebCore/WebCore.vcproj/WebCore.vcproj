@@ -24051,6 +24051,22 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="Modules"
+			>
+			<Filter
+				Name="geolocation"
+				>
+				<File
+					RelativePath="..\Modules\geolocation\NavigatorGeolocation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\geolocation\NavigatorGeolocation.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
 			Name="accessibility"
 			>
 			<File

@@ -67,12 +67,6 @@ NavigatorSupplement* Navigator::requireSupplement(const AtomicString& name)
     return m_suppliments.get(name.impl());
 }
 
-void Navigator::resetGeolocation()
-{
-    if (m_geolocation)
-        m_geolocation->reset();
-}
-
 // If this function returns true, we need to hide the substring "4." that would otherwise
 // appear in the appVersion string. This is to avoid problems with old versions of a
 // library called OpenCube QuickMenu, which as of this writing is still being used on
@@ -149,13 +143,6 @@ bool Navigator::javaEnabled() const
         return false;
 
     return m_frame->settings()->isJavaEnabled();
-}
-
-Geolocation* Navigator::geolocation() const
-{
-    if (!m_geolocation)
-        m_geolocation = Geolocation::create(m_frame);
-    return m_geolocation.get();
 }
 
 #if ENABLE(POINTER_LOCK)

@@ -3325,6 +3325,8 @@
 		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		970B728A144FFAC600F00A37 /* EventInterfaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 970B7289144FFAC600F00A37 /* EventInterfaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		970B72A6145008EB00F00A37 /* EventHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 970B72A5145008EB00F00A37 /* EventHeaders.h */; };
+		9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9711460014EF009A00674FD9 /* NavigatorGeolocation.cpp */; };
+		9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9711460114EF009A00674FD9 /* NavigatorGeolocation.h */; };
 		97205AAF123928CA00B17380 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */; };
 		97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */; };
 		97205AB51239291000B17380 /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB11239291000B17380 /* ImageDocument.cpp */; };
@@ -10188,6 +10190,9 @@
 		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
 		970B7289144FFAC600F00A37 /* EventInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInterfaces.h; sourceTree = "<group>"; };
 		970B72A5145008EB00F00A37 /* EventHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHeaders.h; sourceTree = "<group>"; };
+		9711460014EF009A00674FD9 /* NavigatorGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NavigatorGeolocation.cpp; path = Modules/geolocation/NavigatorGeolocation.cpp; sourceTree = "<group>"; };
+		9711460114EF009A00674FD9 /* NavigatorGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigatorGeolocation.h; path = Modules/geolocation/NavigatorGeolocation.h; sourceTree = "<group>"; };
+		9711460214EF009A00674FD9 /* NavigatorGeolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NavigatorGeolocation.idl; path = Modules/geolocation/NavigatorGeolocation.idl; sourceTree = "<group>"; };
 		97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryDocument.cpp; sourceTree = "<group>"; };
 		97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryDocument.h; sourceTree = "<group>"; };
 		97205AB11239291000B17380 /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
@@ -13462,6 +13467,7 @@
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
 				93F19B1908245E59001E9ABC /* Info.plist */,
+				971145FE14EF006E00674FD9 /* Modules */,
 				29A812040FBB9B4100510293 /* accessibility */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				1A569CC40D7E2B60007C3983 /* bridge */,
@@ -17079,6 +17085,24 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		971145FE14EF006E00674FD9 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				971145FF14EF007900674FD9 /* geolocation */,
+			);
+			name = Modules;
+			sourceTree = "<group>";
+		};
+		971145FF14EF007900674FD9 /* geolocation */ = {
+			isa = PBXGroup;
+			children = (
+				9711460014EF009A00674FD9 /* NavigatorGeolocation.cpp */,
+				9711460114EF009A00674FD9 /* NavigatorGeolocation.h */,
+				9711460214EF009A00674FD9 /* NavigatorGeolocation.idl */,
+			);
+			name = geolocation;
+			sourceTree = "<group>";
 		};
 		976D6C57122B8A18001FD1F7 /* fileapi */ = {
 			isa = PBXGroup;
@@ -23288,6 +23312,7 @@
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
+				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				97CC3AE314E8E4A200894988 /* NavigatorSupplement.h in Headers */,
 				8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */,
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
@@ -26443,6 +26468,7 @@
 				979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */,
 				A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */,
 				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
+				9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */,
 				97CC3AE214E8E4A200894988 /* NavigatorSupplement.cpp in Sources */,
 				5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */,
 				59C27F05138D28C10079B7E2 /* NetworkResourcesData.cpp in Sources */,

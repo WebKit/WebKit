@@ -52,6 +52,7 @@
       '../',
       '../..',
       '../Modules/gamepad',
+      '../Modules/geolocation',
       '../Modules/intents',
       '../Modules/indexeddb',
       '../accessibility',

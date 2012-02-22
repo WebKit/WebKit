@@ -480,6 +480,21 @@ void DOMWindow::frameDestroyed()
     clear();
 }
 
+void DOMWindow::willDetachPage()
+{
+    InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
+
+#if ENABLE(NOTIFICATIONS)
+    // Clearing Notifications requests involves accessing the client so it must be done
+    // before the frame is detached.
+    resetNotifications();
+#endif
+
+    HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
+    for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
+        (*it)->willDetachPage();
+}
+
 void DOMWindow::registerProperty(DOMWindowProperty* property)
 {
     m_properties.add(property);
@@ -730,23 +745,6 @@ void DOMWindow::resetNotifications()
     m_notifications = 0;
 }
 #endif
-
-void DOMWindow::pageDestroyed()
-{
-    InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
-#if ENABLE(NOTIFICATIONS)
-    // Clearing Notifications requests involves accessing the client so it must be done
-    // before the frame is detached.
-    resetNotifications();
-#endif
-}
-
-void DOMWindow::resetGeolocation()
-{
-    // Geolocation should cancel activities and permission requests when the page is detached.
-    if (m_navigator)
-        m_navigator->resetGeolocation();
-}
 
 #if ENABLE(INDEXED_DATABASE)
 void DOMWindow::setIDBFactory(PassRefPtr<IDBFactory> idbFactory)

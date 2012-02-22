@@ -34,7 +34,6 @@ namespace WebCore {
 class DOMMimeTypeArray;
 class DOMPluginArray;
 class Frame;
-class Geolocation;
 class PointerLock;
 class PluginData;
 
@@ -45,8 +44,6 @@ public:
     static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
     virtual ~Navigator();
 
-    void resetGeolocation();
-
     String appVersion() const;
     String language() const;
     DOMPluginArray* plugins() const;
@@ -55,8 +52,6 @@ public:
     bool javaEnabled() const;
 
     virtual String userAgent() const;
-
-    Geolocation* geolocation() const;
 
 #if ENABLE(POINTER_LOCK)
     PointerLock* webkitPointer() const;
@@ -80,7 +75,6 @@ private:
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
-    mutable RefPtr<Geolocation> m_geolocation;
 #if ENABLE(POINTER_LOCK)
     mutable RefPtr<PointerLock> m_pointer;
 #endif

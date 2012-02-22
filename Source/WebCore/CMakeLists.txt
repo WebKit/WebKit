@@ -1,5 +1,6 @@
 SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/generic"
@@ -87,6 +88,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 )
 
 SET(WebCore_IDL_INCLUDES
+    Modules/geolocation
     bindings/generic
     css
     dom
@@ -105,6 +107,8 @@ SET(WebCore_IDL_INCLUDES
 )
 
 SET(WebCore_IDL_FILES
+    Modules/geolocation/NavigatorGeolocation.idl
+
     css/Counter.idl
     css/CSSCharsetRule.idl
     css/CSSFontFaceRule.idl
@@ -400,6 +404,8 @@ SET(WebCore_IDL_FILES
 )
 
 SET(WebCore_SOURCES
+    Modules/geolocation/NavigatorGeolocation.cpp
+
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
     accessibility/AccessibilityARIAGridCell.cpp

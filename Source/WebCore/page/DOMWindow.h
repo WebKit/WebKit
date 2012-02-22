@@ -92,8 +92,6 @@ namespace WebCore {
 
         virtual DOMWindow* toDOMWindow();
 
-        virtual void frameDestroyed() OVERRIDE;
-
         void registerProperty(DOMWindowProperty*);
         void unregisterProperty(DOMWindowProperty*);
 
@@ -230,9 +228,6 @@ namespace WebCore {
 
         void printErrorMessage(const String&);
         String crossDomainAccessErrorMessage(DOMWindow* activeWindow);
-
-        void pageDestroyed();
-        void resetGeolocation();
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
@@ -418,6 +413,9 @@ namespace WebCore {
 
     private:
         explicit DOMWindow(Frame*);
+
+        virtual void frameDestroyed() OVERRIDE;
+        virtual void willDetachPage() OVERRIDE;
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }

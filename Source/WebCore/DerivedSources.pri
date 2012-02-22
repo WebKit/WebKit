@@ -86,6 +86,7 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mobileThemeQt.css
 
 IDL_BINDINGS += \
+    $$PWD/Modules/geolocation/NavigatorGeolocation.idl \
     $$PWD/css/Counter.idl \
     $$PWD/css/CSSCharsetRule.idl \
     $$PWD/css/CSSFontFaceRule.idl \
@@ -684,6 +685,7 @@ else: generator = JS
 generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.script \
                             --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                             --generator $$generator \
+                            --include $$PWD/Modules/geolocation \
                             --include $$PWD/dom \
                             --include $$PWD/fileapi \
                             --include $$PWD/html \

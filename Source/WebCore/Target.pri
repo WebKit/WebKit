@@ -34,6 +34,8 @@ include_webinspector {
 }
 
 SOURCES += \
+    Modules/geolocation/NavigatorGeolocation.cpp \
+    \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \
     accessibility/AccessibilityMenuList.cpp \

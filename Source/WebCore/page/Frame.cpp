@@ -660,21 +660,19 @@ DOMWindow* Frame::domWindow() const
     return m_domWindow.get();
 }
 
-void Frame::pageDestroyed()
+void Frame::willDetachPage()
 {
-    // FIXME: Rename this function, since it's called not only from Page destructor, but in several other cases.
-    // This cleanup is needed whenever we remove a frame from page.
-
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
-    if (m_domWindow) {
-        m_domWindow->resetGeolocation();
 #if ENABLE(NOTIFICATIONS)
+    if (m_domWindow)
         m_domWindow->resetNotifications();
 #endif
-        m_domWindow->pageDestroyed();
-    }
+
+    HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
+    for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
+        (*it)->willDetachPage();
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
@@ -683,8 +681,6 @@ void Frame::pageDestroyed()
 
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();
-
-    detachFromPage();
 }
 
 void Frame::disconnectOwnerElement()
@@ -718,16 +714,15 @@ void Frame::transferChildFrameToNewDocument()
              m_page->decrementFrameCount();
         }
 
-        // FIXME: We should ideally allow existing Geolocation activities to continue
-        // when the Geolocation's iframe is reparented.
-        // See https://bugs.webkit.org/show_bug.cgi?id=55577
-        // and https://bugs.webkit.org/show_bug.cgi?id=52877
         if (m_domWindow) {
-            m_domWindow->resetGeolocation();
 #if ENABLE(NOTIFICATIONS)
             m_domWindow->resetNotifications();
 #endif
         }
+
+        HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
+        for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
+            (*it)->willDetachPage();
 
         m_page = newPage;
 

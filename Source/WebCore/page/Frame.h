@@ -89,8 +89,8 @@ namespace WebCore {
         void addDestructionObserver(FrameDestructionObserver*);
         void removeDestructionObserver(FrameDestructionObserver*);
 
+        void willDetachPage();
         void detachFromPage();
-        void pageDestroyed();
         void disconnectOwnerElement();
 
         Page* page() const;
@@ -348,6 +348,7 @@ namespace WebCore {
 
     inline void Frame::detachFromPage()
     {
+        willDetachPage();
         m_page = 0;
     }
 

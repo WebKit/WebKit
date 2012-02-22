@@ -1,3 +1,54 @@
+2012-02-21  Adam Barth  <abarth@webkit.org>
+
+        Frame and Navigator shouldn't need to worry about Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=78860
+
+        Reviewed by Eric Seidel.
+
+        This patch removes some Geolocation-specific code from Frame and
+        Navigator in favor of our new supplemental module mechanism.  We're
+        still refining the module system, but we seem to be converging on a
+        simple Observer/Supplement design.
+
+        In a future patch, I'll move the remaining Geolocation-related files in
+        WebCore into Modules/geolocation.  This patch appears to be the first
+        patch that introduces a module used by all the various build systems,
+        which is why there's a bit more build system overhead than usual.
+
+        * Modules/geolocation: Added.
+        * Modules/geolocation/NavigatorGeolocation.cpp: Added.
+        (WebCore):
+        (WebCore::NavigatorGeolocation::NavigatorGeolocation):
+        (WebCore::NavigatorGeolocation::~NavigatorGeolocation):
+        (WebCore::NavigatorGeolocation::pageDestroyed):
+        (WebCore::NavigatorGeolocation::from):
+        (WebCore::NavigatorGeolocation::geolocation):
+        * Modules/geolocation/NavigatorGeolocation.h: Added.
+        (WebCore):
+        (NavigatorGeolocation):
+        * Modules/geolocation/NavigatorGeolocation.idl: Added.
+            - I've temporarily disabled this API for GObject because it generates
+              a strange compile error.  Once I land this patch, I'll spend some
+              more time fixing the compile error.
+        * page/DOMWindow.cpp:
+        (WebCore):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/FrameDestructionObserver.cpp:
+        (WebCore::FrameDestructionObserver::pageDestroyed):
+        (WebCore):
+        * page/FrameDestructionObserver.h:
+        (FrameDestructionObserver):
+        * page/Navigator.cpp:
+        (WebCore):
+        * page/Navigator.h:
+        (WebCore):
+        (Navigator):
+        * page/Navigator.idl:
+
 2012-02-21  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor CCLayerTreeHostCommon: merge scattered setTargetRenderSurface logic

@@ -2439,8 +2439,7 @@ void FrameLoader::closeAndRemoveChild(Frame* child)
     child->setView(0);
     if (child->ownerElement() && child->page())
         child->page()->decrementFrameCount();
-    // FIXME: The page isn't being destroyed, so it's not right to call a function named pageDestroyed().
-    child->pageDestroyed();
+    child->detachFromPage();
 
     m_frame->tree()->removeChild(child);
 }
@@ -2518,8 +2517,7 @@ void FrameLoader::detachFromParent()
         parent->loader()->scheduleCheckCompleted();
     } else {
         m_frame->setView(0);
-        // FIXME: The page isn't being destroyed, so it's not right to call a function named pageDestroyed().
-        m_frame->pageDestroyed();
+        m_frame->detachFromPage();
     }
 }
 

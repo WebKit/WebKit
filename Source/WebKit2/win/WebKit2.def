@@ -201,3 +201,4 @@ EXPORTS
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
+        ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ

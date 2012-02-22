@@ -33,7 +33,10 @@ class Frame;
 class FrameDestructionObserver {
 public:
     explicit FrameDestructionObserver(Frame*);
+
     virtual void frameDestroyed();
+    virtual void willDetachPage();
+
     Frame* frame() const { return m_frame; }
 
 protected:

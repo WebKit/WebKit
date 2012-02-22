@@ -11,6 +11,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/WebCore \
+	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/accessibility \
 	-I$(srcdir)/Source/WebCore/bindings \
 	-I$(srcdir)/Source/WebCore/bindings/generic \
@@ -758,6 +759,7 @@ DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glsla
 DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 
 IDL_PATH := \
+    $(WebCore)/Modules/geolocation \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \

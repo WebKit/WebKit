@@ -43,6 +43,7 @@
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
+#import "Node.h"
 #import "TestInterface.h"
 #import "TestObj.h"
 #import "TestSupplemental.h"
@@ -105,6 +106,22 @@
 {
     WebCore::JSMainThreadNullState state;
     TestSupplemental::setSupplementalStr3(IMPL, newSupplementalStr3);
+}
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (DOMNode *)supplementalNode
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(TestSupplemental::supplementalNode(IMPL)));
+}
+
+- (void)setSupplementalNode:(DOMNode *)newSupplementalNode
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newSupplementalNode);
+
+    TestSupplemental::setSupplementalNode(IMPL, core(newSupplementalNode));
 }
 #endif
 

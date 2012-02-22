@@ -418,7 +418,7 @@ sub GenerateProperty {
         push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterFunctionName}(" . join(", ", @getterArguments) . ")));\n");
         $done = 1;
     } elsif ($gtype eq "object") {
-        push(@txtGetProps, "        RefPtr<WebCore::${propType}> ptr = coreSelf->${getPropNameFunction}(" . (@{$attribute->getterExceptions} ? "ec" : "") . ");\n");
+        push(@txtGetProps, "        RefPtr<WebCore::${propType}> ptr = ${getterFunctionName}(" . join(", ", @getterArguments) . ");\n");
         push(@txtGetProps, "        g_value_set_object(value, WebKit::kit(ptr.get()));\n");
         $done = 1;
     }
