@@ -1,3 +1,31 @@
+2012-02-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Audit rules to recommend unprefixing supported CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=78985
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AuditCategories.js:
+        (WebInspector.AuditCategories.PagePerformance.prototype.initialize):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.CSSRuleBase):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.doRun.sheetsCallback):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.doRun):
+        (WebInspector.AuditRules.CSSRuleBase.prototype._visitStyleSheet.sheetCallback):
+        (WebInspector.AuditRules.CSSRuleBase.prototype._visitStyleSheet):
+        (WebInspector.AuditRules.CSSRuleBase.prototype._visitRule):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.visitStyleSheet):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.didVisitStyleSheet):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.visitRule):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.didVisitRule):
+        (WebInspector.AuditRules.CSSRuleBase.prototype.visitProperty):
+        (WebInspector.AuditRules.VendorPrefixedCSSProperties):
+        (WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype.didVisitStyleSheet):
+        (WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype.visitRule):
+        (WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype.didVisitRule):
+        (WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype.visitProperty):
+        * inspector/front-end/ResourceUtils.js:
+
 2012-02-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         Node::attach() should be after attaching children in Element::attach().

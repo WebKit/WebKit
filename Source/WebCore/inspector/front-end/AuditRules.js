@@ -974,6 +974,167 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype.__proto__ = WebInspecto
  * @constructor
  * @extends {WebInspector.AuditRule}
  */
+WebInspector.AuditRules.CSSRuleBase = function(id, name)
+{
+    WebInspector.AuditRule.call(this, id, name);
+}
+
+WebInspector.AuditRules.CSSRuleBase.prototype = {
+    doRun: function(resources, result, callback, progressMonitor)
+    {
+        CSSAgent.getAllStyleSheets(sheetsCallback.bind(this));
+
+        function sheetsCallback(error, headers)
+        {
+            if (error)
+                return callback(null);
+
+            for (var i = 0; i < headers.length; ++i) {
+                var header = headers[i];
+                if (header.disabled)
+                    continue; // Do not check disabled stylesheets.
+
+                this._visitStyleSheet(header.styleSheetId, i === headers.length - 1 ? finishedCallback : null, result, progressMonitor);
+            }
+        }
+
+        function finishedCallback()
+        {
+            callback(result);
+        }
+    },
+
+    _visitStyleSheet: function(styleSheetId, callback, result, progressMonitor)
+    {
+        WebInspector.CSSStyleSheet.createForId(styleSheetId, sheetCallback.bind(this));
+
+        function sheetCallback(styleSheet)
+        {
+            if (progressMonitor.canceled)
+                return;
+
+            if (!styleSheet) {
+                if (callback)
+                    callback();
+                return;
+            }
+
+            this.visitStyleSheet(styleSheet, result);
+
+            for (var i = 0; i < styleSheet.rules.length; ++i)
+                this._visitRule(styleSheet, styleSheet.rules[i], result);
+
+            this.didVisitStyleSheet(styleSheet, result);
+
+            if (callback)
+                callback();
+        }
+    },
+
+    _visitRule: function(styleSheet, rule, result)
+    {
+        this.visitRule(styleSheet, rule, result);
+        var allProperties = rule.style.allProperties;
+        for (var i = 0; i < allProperties.length; ++i)
+            this.visitProperty(styleSheet, allProperties[i], result);
+        this.didVisitRule(styleSheet, rule, result);
+    },
+
+    visitStyleSheet: function(styleSheet, result)
+    {
+        // Subclasses can implement.
+    },
+
+    didVisitStyleSheet: function(styleSheet, result)
+    {
+        // Subclasses can implement.
+    },
+    
+    visitRule: function(styleSheet, rule, result)
+    {
+        // Subclasses can implement.
+    },
+
+    didVisitRule: function(styleSheet, rule, result)
+    {
+        // Subclasses can implement.
+    },
+    
+    visitProperty: function(styleSheet, property, result)
+    {
+        // Subclasses can implement.
+    }
+}
+
+WebInspector.AuditRules.CSSRuleBase.prototype.__proto__ = WebInspector.AuditRule.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRules.CSSRuleBase}
+ */
+WebInspector.AuditRules.VendorPrefixedCSSProperties = function()
+{
+    WebInspector.AuditRules.CSSRuleBase.call(this, "page-vendorprefixedcss", "Use normal CSS property names instead of vendor-prefixed ones");
+    this._webkitPrefix = "-webkit-";
+}
+
+WebInspector.AuditRules.VendorPrefixedCSSProperties.supportedProperties = [
+    "background-clip", "background-origin", "background-size",
+    "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-top-left-radius", "border-top-right-radius",
+    "box-shadow", "box-sizing", "opacity", "text-shadow"
+].keySet();
+
+WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype = {
+    didVisitStyleSheet: function(styleSheet)
+    {
+        delete this._styleSheetResult;
+    },
+
+    visitRule: function(rule)
+    {
+        this._mentionedProperties = {};
+    },
+
+    didVisitRule: function()
+    {
+        delete this._ruleResult;
+        delete this._mentionedProperties;
+    },
+
+    visitProperty: function(styleSheet, property, result)
+    {
+        if (property.name.indexOf(this._webkitPrefix) !== 0)
+            return;
+
+        var normalPropertyName = property.name.substring(this._webkitPrefix.length).toLowerCase(); // Start just after the "-webkit-" prefix.
+        if (WebInspector.AuditRules.VendorPrefixedCSSProperties.supportedProperties[normalPropertyName] && !this._mentionedProperties[normalPropertyName]) {
+            var style = property.ownerStyle;
+            var liveProperty = style.getLiveProperty(normalPropertyName);
+            if (liveProperty && !liveProperty.styleBased)
+                return; // WebCore can provide normal versions of prefixed properties automatically, so be careful to skip only normal source-based properties.
+
+            var rule = style.parentRule;
+            this._mentionedProperties[normalPropertyName] = true;
+            if (!this._styleSheetResult)
+                this._styleSheetResult = result.addChild(rule.sourceURL ? WebInspector.linkifyResourceAsNode(rule.sourceURL) : "<unknown>");
+            if (!this._ruleResult) {
+                var anchor = WebInspector.linkifyURLAsNode(rule.sourceURL, rule.selectorText);
+                anchor.preferredPanel = "resources";
+                anchor.lineNumber = rule.sourceLine;
+                this._ruleResult = this._styleSheetResult.addChild(anchor);
+            }
+            ++result.violationCount;
+            this._ruleResult.addSnippet(String.sprintf("\"" + this._webkitPrefix + "%s\" is used, but \"%s\" is supported.", normalPropertyName, normalPropertyName));
+        }
+    }
+}
+
+WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype.__proto__ = WebInspector.AuditRules.CSSRuleBase.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.AuditRule}
+ */
 WebInspector.AuditRules.CookieRuleBase = function(id, name)
 {
     WebInspector.AuditRule.call(this, id, name);

@@ -190,7 +190,7 @@ WebInspector.formatLinkText = function(url, lineNumber)
 
 /**
  * @param {string} url
- * @param {number} lineNumber
+ * @param {number=} lineNumber
  * @param {string=} classes
  * @param {string=} tooltipText
  * @return {Element}
