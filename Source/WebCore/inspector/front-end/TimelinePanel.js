@@ -998,8 +998,7 @@ WebInspector.TimelineStartAtZeroCalculator.prototype = {
         return {
             start: record._initiatorOffset * scale,
             end: (record._initiatorOffset + record.endTime - record.startTime) * scale,
-            endWithChildren: (record._initiatorOffset + record._lastChildEndTime - record.startTime) * scale,
-            cpuWidth: record._cpuTime * scale
+            endWithChildren: (record._initiatorOffset + record._lastChildEndTime - record.startTime) * scale
         };
     },
 
@@ -1012,11 +1011,10 @@ WebInspector.TimelineStartAtZeroCalculator.prototype = {
         var left = percentages.start / 100 * workingArea;
         var width = (percentages.end - percentages.start) / 100 * workingArea + minWidth;
         var widthWithChildren =  (percentages.endWithChildren - percentages.start) / 100 * workingArea;
-        var cpuWidth = percentages.cpuWidth / 100 * workingArea + minWidth;
         if (percentages.endWithChildren > percentages.end)
             widthWithChildren += borderWidth + minWidth;
 
-        return {left: left, width: width, widthWithChildren: widthWithChildren, cpuWidth: cpuWidth};
+        return {left: left, width: width, widthWithChildren: widthWithChildren};
     },
 
     calculateWindow: function()

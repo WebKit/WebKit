@@ -559,23 +559,25 @@
     overflow: hidden;
 }
 
-.timeline-marker {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    border-left: 1px solid #AAA;
-}
-
 .memory-counter-sidebar-info {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
+    font-size: 11px;
 }
 
 .memory-counter-sidebar-info.bottom-border-visible {
     border-bottom: 1px solid #AAA;
+}
+
+.memory-counter-sidebar-info .title {
+    margin: 4px;
+    font-weight: bold;
+}
+
+.memory-counter-sidebar-info .counter-value {
+    margin: 4px;
 }
 
 .timeline-overview-start-at-zero {

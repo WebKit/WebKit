@@ -48,16 +48,20 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
     this._canvasContainer = this._memorySplitView.mainElement;
     this._canvas = this._canvasContainer.createChild("canvas", "fill");
     this._canvas.id = "memory-counters-graph";
-    this._memoryMarker = this._canvasContainer.createChild("div", "timeline-marker");
+    this._lastMarkerXPosition = 0;
 
     this._canvasContainer.addEventListener("mouseover", this._onMouseOver.bind(this), true);
-    this._canvasContainer.addEventListener("mousemove", this._onMouseOver.bind(this), true);
+    this._canvasContainer.addEventListener("mousemove", this._onMouseMove.bind(this), true);
+    this._canvasContainer.addEventListener("mouseout", this._onMouseOut.bind(this), true);
 
     // Populate sidebar
     this._counterSidebarElements = [];
-    this._documents = this._createCounterSidebarElement(WebInspector.UIString("Document count:"), true);
-    this._domNodes = this._createCounterSidebarElement(WebInspector.UIString("DOM node count:"), true);
-    this._listeners = this._createCounterSidebarElement(WebInspector.UIString("Event listener count:"), false);
+    this._documents = this._createCounterSidebarElement(WebInspector.UIString("Document count"), true);
+    this._domNodes = this._createCounterSidebarElement(WebInspector.UIString("DOM node count"), true);
+    this._listeners = this._createCounterSidebarElement(WebInspector.UIString("Event listener count"), false);
+
+    this._savedImageData = [];
+    this._graphColors = ["rgba(100,0,0,0.8)", "rgba(0,100,0,0.8)", "rgba(0,0,100,0.8)"];
 
     TimelineAgent.setIncludeMemoryDetails(true);
 }
@@ -111,9 +115,20 @@ WebInspector.MemoryStatistics.prototype = {
     _createCounterSidebarElement: function(title, showBottomBorder)
     {
         var container = this._memorySplitView.sidebarElement.createChild("div", "memory-counter-sidebar-info");
-        var value = container.createChild("p");
-        value.textContent = title;
-        container._value = value.createChild("span");
+        container.createChild("div", "title").textContent = title;
+
+        var currentValue = container.createChild("div", "counter-value");
+        currentValue.createChild("span").textContent = WebInspector.UIString("Current: ");
+        container._value = currentValue.createChild("span");
+
+        var minValue = container.createChild("div", "counter-value");
+        minValue.createChild("span").textContent = WebInspector.UIString("Min: ");
+        container._minValue = minValue.createChild("span");
+
+        var maxValue = container.createChild("div", "counter-value");
+        maxValue.createChild("span").textContent = WebInspector.UIString("Max: ");
+        container._maxValue = maxValue.createChild("span");
+
         if (showBottomBorder)
             container.addStyleClass("bottom-border-visible");
         this._counterSidebarElements.push(container);
@@ -124,7 +139,7 @@ WebInspector.MemoryStatistics.prototype = {
     {
         var counters = event.data["counters"];
         this._counters.push({
-            time: event.data.endTime,
+            time: event.data.endTime || event.data.startTime,
             documentCount: counters["documents"],
             nodeCount: counters["nodes"],
             listenerCount: counters["jsEventListeners"]
@@ -143,16 +158,15 @@ WebInspector.MemoryStatistics.prototype = {
             return entry.documentCount;
         }
         this._setVerticalClip(0 * graphHeight + 2, graphHeight - 4);
-        this._drawPolyline(getDocumentCount, "rgba(100,0,0,0.8)");
+        this._drawPolyline(getDocumentCount, this._graphColors[0], this._documents);
         this._drawBottomBound("rgba(20,20,20,0.8)");
-
 
         function getNodeCount(entry)
         {
             return entry.nodeCount;
         }
         this._setVerticalClip(1 * graphHeight + 2, graphHeight - 4);
-        this._drawPolyline(getNodeCount, "rgba(0,100,0,0.8)");
+        this._drawPolyline(getNodeCount, this._graphColors[1], this._domNodes);
         this._drawBottomBound("rgba(20,20,20,0.8)");
 
         function getListenerCount(entry)
@@ -160,7 +174,7 @@ WebInspector.MemoryStatistics.prototype = {
             return entry.listenerCount;
         }
         this._setVerticalClip(2 * graphHeight + 2, graphHeight - 4);
-        this._drawPolyline(getListenerCount, "rgba(0,0,100,0.8)");
+        this._drawPolyline(getListenerCount, this._graphColors[2], this._listeners);
     },
 
     _calculateVisibleIndexes: function()
@@ -191,17 +205,45 @@ WebInspector.MemoryStatistics.prototype = {
         this._maxTime = end;
     },
 
-    _onMouseOver: function(event)
+    _onMouseOut: function(event)
     {
-        var x = event.x - event.target.offsetParent.offsetLeft
-        this._memoryMarker.style.left = x + "px";
-        this._refreshCurrentValues(x);
+        this._clearMarkers();
+        delete this._markerXPosition;
+
+        this._documents._value.textContent = "";
+        this._domNodes._value.textContent = "";
+        this._listeners._value.textContent = "";
     },
 
-    _refreshCurrentValues: function(x)
+    _onMouseOver: function(event)
+    {
+        this._onMouseMove(event);
+    },
+
+    _onMouseMove: function(event)
+    {
+        var x = event.x - event.target.offsetParent.offsetLeft
+        this._markerXPosition = x;
+        this._refreshCurrentValues();
+    },
+
+    _refreshCurrentValues: function()
     {
         if (!this._counters.length)
             return;
+        if (this._markerXPosition === undefined)
+            return;
+        var i = this._recordIndexAt(this._markerXPosition);
+
+        this._documents._value.textContent = this._counters[i].documentCount;
+        this._domNodes._value.textContent = this._counters[i].nodeCount;
+        this._listeners._value.textContent = this._counters[i].listenerCount;
+
+        this._highlightCurrentPositionOnGraphs(this._markerXPosition, i);
+    },
+
+    _recordIndexAt: function(x)
+    {
         var i;
         for (i = this._minimumIndex + 1; i <= this._maximumIndex; i++) {
             var statX = this._counters[i].x;
@@ -209,9 +251,47 @@ WebInspector.MemoryStatistics.prototype = {
                 break;
         }
         i--;
-        this._documents._value.textContent = this._counters[i].documentCount;
-        this._domNodes._value.textContent = this._counters[i].nodeCount;
-        this._listeners._value.textContent = this._counters[i].listenerCount;
+        return i;
+    },
+
+    _highlightCurrentPositionOnGraphs: function(x, index)
+    {
+        var ctx = this._canvas.getContext("2d");
+        this._clearMarkers();
+        var yValues = this._counters[index].yValues;
+        for (var i = 0; i < yValues.length; i++) {
+            var y = yValues[i];
+            ctx.beginPath();
+            const radius = 2;
+            this._saveImageUnderMarker(ctx, x, y, radius);
+            ctx.arc(x, y, radius, 0, Math.PI*2, true);
+            ctx.lineWidth = 1;
+            ctx.fillStyle = this._graphColors[i];
+            ctx.strokeStyle = this._graphColors[i];
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+        }
+    },
+
+    _clearMarkers: function()
+    {
+        var ctx = this._canvas.getContext("2d");
+        for (var i = 0; i < this._savedImageData.length; i++) {
+            var entry = this._savedImageData[i];
+            ctx.putImageData(entry.imageData, entry.x, entry.y);
+        }
+        this._savedImageData = [];
+    },
+
+    _saveImageUnderMarker: function(ctx, x, y, radius)
+    {
+        const w = radius + 1;
+        var imageData = ctx.getImageData(x - w, y - w, 2 * w, 2 * w);
+        this._savedImageData.push({
+            x: x - w,
+            y: y - w,
+            imageData: imageData });
     },
 
     visible: function()
@@ -231,7 +311,7 @@ WebInspector.MemoryStatistics.prototype = {
     {
         this._updateSize();
         this._draw();
-        this._refreshCurrentValues(this._memoryMarker.offsetLeft);
+        this._refreshCurrentValues();
     },
 
     hide: function()
@@ -259,7 +339,7 @@ WebInspector.MemoryStatistics.prototype = {
         this._counters[this._maximumIndex].x = width;
     },
 
-    _drawPolyline: function(valueGetter, color)
+    _drawPolyline: function(valueGetter, color, section)
     {
         var canvas = this._canvas;
         var ctx = canvas.getContext("2d");
@@ -289,6 +369,9 @@ WebInspector.MemoryStatistics.prototype = {
                 maxValue = value;
         }
 
+        section._minValue.textContent = minValue;
+        section._maxValue.textContent = maxValue;
+
         var originalValue = valueGetter(this._counters[this._minimumIndex]);
 
         var maxYRange = Math.max(maxValue - originalValue, originalValue - minValue);
@@ -302,6 +385,8 @@ WebInspector.MemoryStatistics.prototype = {
              ctx.lineTo(x, currentY);
              currentY = originY + (height / 2 - (valueGetter(this._counters[i])- originalValue) * yFactor);
              ctx.lineTo(x, currentY);
+
+             this._counters[i].yValues.push(currentY);
         }
         ctx.lineTo(width, currentY);
         ctx.lineWidth = 1;
@@ -328,9 +413,10 @@ WebInspector.MemoryStatistics.prototype = {
 
     _clear: function() {
         var ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.fill();
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        for (var i = this._minimumIndex; i <= this._maximumIndex; i++)
+             this._counters[i].yValues = [];
+        this._savedImageData = [];
     }
 }
 
