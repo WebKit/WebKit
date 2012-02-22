@@ -25,16 +25,13 @@
 
 #import "WebNotificationClient.h"
 
-#import "WebNotificationInternal.h"
-#import "WebViewInternal.h"
-#import <WebCore/NotImplemented.h>
-#import <WebCore/Notification.h>
-
 #if ENABLE(NOTIFICATIONS)
 #import "WebDelegateImplementationCaching.h"
+#import "WebNotificationInternal.h"
 #import "WebPreferencesPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptExecutionContext.h>

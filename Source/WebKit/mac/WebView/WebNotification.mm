@@ -28,6 +28,8 @@
 
 #import "WebNotification.h"
 
+#if ENABLE(NOTIFICATIONS)
+
 #import "WebNotificationInternal.h"
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/Notification.h>
@@ -42,7 +44,7 @@ OBJC_CLASS WebNotificationInternal;
 @interface WebNotificationPrivate : NSObject
 {
 @public
-    WebNotificationInternal *_internal;
+    RefPtr<Notification> _internal;
     uint64_t _notificationID;
 }
 @end
@@ -50,41 +52,29 @@ OBJC_CLASS WebNotificationInternal;
 @implementation WebNotificationPrivate
 @end
 
-#if ENABLE(NOTIFICATIONS)
 @implementation WebNotification (WebNotificationInternal)
 Notification* core(WebNotification *notification)
 {
     if (!notification->_private)
         return 0;
-    return reinterpret_cast<Notification*>(notification->_private->_internal);
+    return notification->_private->_internal.get();
 }
 
 - (id)initWithCoreNotification:(Notification*)coreNotification notificationID:(uint64_t)notificationID
 {
     if (!(self = [super init]))
         return nil;
-    coreNotification->ref();
     _private = [[WebNotificationPrivate alloc] init];
-    _private->_internal = reinterpret_cast<WebNotificationInternal*>(coreNotification);
+    _private->_internal = coreNotification;
     _private->_notificationID = notificationID;
     return self;
 }
 @end
-#endif
 
 @implementation WebNotification
 - (id)init
 {
     return nil;
-}
-
-- (void)dealloc
-{
-    Notification* notification = core(self);
-    if (notification)
-        notification->deref();
-
-    [super dealloc];
 }
 
 - (NSString *)title
@@ -136,3 +126,11 @@ Notification* core(WebNotification *notification)
 }
 
 @end
+
+#else
+
+@implementation WebNotification
+@end
+
+#endif // ENABLE(NOTIFICATIONS)
+

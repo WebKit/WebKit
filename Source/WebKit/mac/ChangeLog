@@ -1,5 +1,18 @@
 2012-02-21  Jon Lee  <jonlee@apple.com>
 
+        Build fix for r108409.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        (WebCore):
+        * WebCoreSupport/WebNotificationClient.mm:
+        * WebView/WebNotification.h:
+        (WebSecurityOrigin):
+        * WebView/WebNotification.mm:
+        (core):
+        (-[WebNotification initWithCoreNotification:notificationID:]):
+
+2012-02-21  Jon Lee  <jonlee@apple.com>
+
         Bring notifications support to WK1 mac: permission requests
         https://bugs.webkit.org/show_bug.cgi?id=78783
         <rdar://problem/10610578>

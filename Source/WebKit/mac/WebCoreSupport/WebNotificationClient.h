@@ -25,12 +25,15 @@
 
 #import <WebCore/NotificationPresenter.h>
 
+#if ENABLE(NOTIFICATIONS)
 #import <WebCore/Notification.h>
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#endif
 
 namespace WebCore {
+class Notification;
 class ScriptExecutionContext;
 class VoidCallback;
 }
@@ -54,10 +57,11 @@ private:
     virtual WebCore::NotificationPresenter::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
 
     WebView *m_webView;
+#if ENABLE(NOTIFICATIONS)
     HashMap<uint64_t, RetainPtr<WebNotification> > m_notificationIDMap;
     HashMap<RefPtr<WebCore::Notification>, uint64_t> m_notificationMap;
     
     typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<uint64_t> > NotificationContextMap;
     NotificationContextMap m_notificationContextMap;
-
+#endif
 };
