@@ -37,5 +37,6 @@ DEFINES += USE_SYSTEM_MALLOC=1
 
 PREFIX_HEADER = WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
+*-clang*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
 RESOURCES = qt/WebKitTestRunner.qrc
