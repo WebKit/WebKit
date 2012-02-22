@@ -1,3 +1,16 @@
+2012-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Crash when marking cached pages for full style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=79276
+        <rdar://problem/10884036>
+
+        Reviewed by Beth Dakin.
+
+        Guard against a null history item.
+
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::markPagesForFullStyleRecalc):
+
 2012-02-22  Ken Buchanan  <kenrb@chromium.org>
 
         Crash from empty anonymous block preceding :before content
