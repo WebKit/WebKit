@@ -1,3 +1,22 @@
+2012-02-22  Abhishek Arya  <inferno@chromium.org>
+
+        Cloning and linebox issues in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=78273
+
+        Reviewed by Eric Seidel.
+
+        Tests: fast/multicol/span/clone-flexbox.html
+               fast/multicol/span/clone-summary.html
+               fast/multicol/span/textbox-not-removed-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone): Fix cloning algorithm to take
+        care of cloning descendant classes of RenderBlock.
+        (WebCore::RenderBlock::splitBlocks): When we move our inline children
+        to cloneBlock, we need to clear our entire line box tree. Any descendant
+        child in the hierarchy could be a part of our line box tree and will
+        never get cleared since the child has moved to new parent cloneBlock.
+
 2012-02-22  Tim Dresser  <tdresser@chromium.org>
 
         CCLayerTreeHostImpl calls didDraw more frequently than willDraw

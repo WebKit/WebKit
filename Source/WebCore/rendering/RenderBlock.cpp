@@ -462,7 +462,8 @@ RenderBlock* RenderBlock::clone() const
         cloneBlock->setChildrenInline(childrenInline());
     }
     else {
-        cloneBlock = new (renderArena()) RenderBlock(node());
+        RenderObject* cloneRenderer = node()->createRenderer(renderArena(), style());
+        cloneBlock = toRenderBlock(cloneRenderer);
         cloneBlock->setStyle(style());
 
         // This takes care of setting the right value of childrenInline in case
@@ -482,10 +483,16 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     if (!isAnonymousBlock())
         cloneBlock->setContinuation(oldCont);
 
-    // Now take all of the children from beforeChild to the end and remove
-    // them from |this| and place them in the clone.
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
+
+    // If we are moving inline children from |this| to cloneBlock, then we need
+    // to clear our line box tree.
+    if (beforeChild && childrenInline())
+        deleteLineBoxTree();
+
+    // Now take all of the children from beforeChild to the end and remove
+    // them from |this| and place them in the clone.
     moveChildrenTo(cloneBlock, beforeChild, 0, true);
     
     // Hook |clone| up as the continuation of the middle block.
