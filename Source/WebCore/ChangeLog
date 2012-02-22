@@ -1,5 +1,22 @@
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
+        Node::isContentEditable should only update styles, not layout
+        https://bugs.webkit.org/show_bug.cgi?id=78637
+
+        Reviewed by Ryosuke Niwa.
+
+        isContentEditable depends on knowing the node's current computed style, so it has to update styles if they are
+        out of date.  It does not depend on knowing any layout-derived properties, however, so updating layout is just a
+        waste of time.
+
+        Behavior is covered by existing layout tests, primarily in editing/
+
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::isContentRichlyEditable):
+
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
         Partially revert r108418 - move allowEventDispatch() call back to where it used to be.
 
         Rubber-stamped by Ryosuke Niwa.

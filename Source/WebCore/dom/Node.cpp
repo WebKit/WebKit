@@ -695,13 +695,13 @@ const AtomicString& Node::virtualNamespaceURI() const
 
 bool Node::isContentEditable()
 {
-    document()->updateLayoutIgnorePendingStylesheets();
+    document()->updateStyleIfNeeded();
     return rendererIsEditable(Editable);
 }
 
 bool Node::isContentRichlyEditable()
 {
-    document()->updateLayoutIgnorePendingStylesheets();
+    document()->updateStyleIfNeeded();
     return rendererIsEditable(RichlyEditable);
 }
 
