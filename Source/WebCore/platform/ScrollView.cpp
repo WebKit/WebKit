@@ -302,6 +302,7 @@ void ScrollView::setContentsSize(const IntSize& newSize)
         platformSetContentsSize();
     else
         updateScrollbars(scrollOffset());
+    updateOverhangAreas();
 }
 
 IntPoint ScrollView::maximumScrollPosition() const
@@ -655,21 +656,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     }
 
     // Invalidate the overhang areas if they are visible.
-    IntRect horizontalOverhangRect;
-    IntRect verticalOverhangRect;
-    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
-    if (GraphicsLayer* overhangLayer = layerForOverhangAreas()) {
-        bool hasOverhangArea = !horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty();
-        overhangLayer->setDrawsContent(hasOverhangArea);
-        if (hasOverhangArea)
-            overhangLayer->setNeedsDisplay();
-    }
-#endif
-    if (!horizontalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndRootView(horizontalOverhangRect, false /*immediate*/);
-    if (!verticalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndRootView(verticalOverhangRect, false /*immediate*/);
+    updateOverhangAreas();
 
     // This call will move children with native widgets (plugins) and invalidate them as well.
     frameRectsChanged();
@@ -1118,6 +1105,28 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
         else
             verticalOverhangRect.setY(frameRect().y());
     }
+}
+
+void ScrollView::updateOverhangAreas()
+{
+    if (!hostWindow())
+        return;
+
+    IntRect horizontalOverhangRect;
+    IntRect verticalOverhangRect;
+    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    if (GraphicsLayer* overhangLayer = layerForOverhangAreas()) {
+        bool hasOverhangArea = !horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty();
+        overhangLayer->setDrawsContent(hasOverhangArea);
+        if (hasOverhangArea)
+            overhangLayer->setNeedsDisplay();
+    }
+#endif
+    if (!horizontalOverhangRect.isEmpty())
+        hostWindow()->invalidateContentsAndRootView(horizontalOverhangRect, false /*immediate*/);
+    if (!verticalOverhangRect.isEmpty())
+        hostWindow()->invalidateContentsAndRootView(verticalOverhangRect, false /*immediate*/);
 }
 
 void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)

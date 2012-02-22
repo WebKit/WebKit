@@ -1,3 +1,29 @@
+2012-02-22  Alexei Svitkine  <asvitkine@chromium.org>
+
+        [chromium] Fix remaining compositing/rubberbanding test failures
+        https://bugs.webkit.org/show_bug.cgi?id=78008
+
+        These were happening due to the fact that ScrollView wasn't updating
+        the overhang layer when the contentsSize was updated. This is necessary
+        because calculateOverhangAreasForPainting() takes the contentsSize into
+        account when determining whether the overhang areas are visible.
+
+        Reviewed by James Robinson.
+
+        Re-enabled the following tests with updated baselines:
+        * platform/chromium/compositing/rubberbanding/transform-overhang-e-expected.png:
+        * platform/chromium/compositing/rubberbanding/transform-overhang-s-expected.png:
+        * platform/chromium/compositing/rubberbanding/transform-overhang-se-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setContentsSize):
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::updateOverhangAreas):
+        (WebCore):
+        * platform/ScrollView.h:
+        (ScrollView):
+
 2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] network worker tests crash on qt.

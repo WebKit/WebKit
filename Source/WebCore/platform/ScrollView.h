@@ -289,7 +289,6 @@ protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
 
-    void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
     virtual void visibleContentsResized() = 0;
@@ -384,6 +383,9 @@ private:
     void platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle);
    
     void platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously);
+
+    void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
+    void updateOverhangAreas();
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:
