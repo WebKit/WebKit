@@ -2078,6 +2078,7 @@ __ZN7WebCore12NotificationD1Ev
 __ZN7WebCore12Notification17dispatchShowEventEv
 __ZN7WebCore12Notification18dispatchClickEventEv
 __ZN7WebCore12Notification18dispatchCloseEventEv
+__ZN7WebCore12Notification18dispatchErrorEventEv
 #endif
 
 #if ENABLE(THREADED_SCROLLING)

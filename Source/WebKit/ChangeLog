@@ -1,3 +1,13 @@
+2012-02-21  Jon Lee  <jonlee@apple.com>
+
+        Bring notifications support to WK1 mac: showing, canceling, removing notifications
+        https://bugs.webkit.org/show_bug.cgi?id=78783
+        <rdar://problem/10610578>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files.
+
 2012-02-21  Adam Roben  <aroben@apple.com>
 
         Roll out r108309, r108323, and r108326

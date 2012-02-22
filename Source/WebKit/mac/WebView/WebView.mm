@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2012 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Igalia S.L
  *
@@ -6409,6 +6409,43 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 #endif
 }
 
+@end
+
+@implementation WebView (WebViewNotification)
+- (void)_setNotificationProvider:(id<WebNotificationProvider>)notificationProvider
+{
+    if (_private) {
+        _private->_notificationProvider = notificationProvider;
+        [_private->_notificationProvider registerWebView:self];
+    }
+}
+
+- (void)_notificationControllerDestroyed
+{
+    [[self _notificationProvider] unregisterWebView:self];
+}
+
+- (id<WebNotificationProvider>)_notificationProvider
+{
+    if (_private)
+        return _private->_notificationProvider;
+    return nil;
+}
+
+- (void)_notificationDidShow:(uint64_t)notificationID
+{
+    [[self _notificationProvider] webView:self didShowNotification:notificationID];
+}
+
+- (void)_notificationDidClick:(uint64_t)notificationID
+{
+    [[self _notificationProvider] webView:self didClickNotification:notificationID];
+}
+
+- (void)_notificationsDidClose:(NSArray *)notificationIDs
+{
+    [[self _notificationProvider] webView:self didCloseNotifications:notificationIDs];
+}
 @end
 
 @implementation WebView (WebViewPrivateStyleInfo)

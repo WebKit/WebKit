@@ -1,3 +1,15 @@
+2012-02-21  Jon Lee  <jonlee@apple.com>
+
+        Bring notifications support to WK1 mac
+        https://bugs.webkit.org/show_bug.cgi?id=78783
+        <rdar://problem/10610578>
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/UIDelegate.mm: Refactor WebGeolocationPolicyListener to WebAllowDenyPolicyListener.
+        (-[UIDelegate webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:]):
+        (-[UIDelegate timerFired]):
+
 2012-02-21  Kentaro Hara  <haraken@chromium.org>
 
         Enable the IDL attribute checker in run-bindings-tests

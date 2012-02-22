@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,7 @@ namespace WebCore {
 @protocol WebFormDelegate;
 @protocol WebDeviceOrientationProvider;
 @protocol WebGeolocationProvider;
+@protocol WebNotificationProvider;
 #if ENABLE(VIDEO)
 @class WebVideoFullscreenController;
 #endif
@@ -191,6 +192,7 @@ private:
 #endif
     id<WebGeolocationProvider> _geolocationProvider;
     id<WebDeviceOrientationProvider> m_deviceOrientationProvider;
+    id<WebNotificationProvider> _notificationProvider;
 
     RefPtr<WebCore::HistoryItem> _globalHistoryItem;
 

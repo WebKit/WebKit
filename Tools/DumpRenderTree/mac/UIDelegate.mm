@@ -195,7 +195,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
 }
 
-- (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebGeolocationPolicyListener>)listener
+- (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebAllowDenyPolicyListener>)listener
 {
     if (!gLayoutTestController->isGeolocationPermissionSet()) {
         if (!m_pendingGeolocationPermissionListeners)
@@ -230,7 +230,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     ASSERT(gLayoutTestController->isGeolocationPermissionSet());
     m_timer = 0;
     NSEnumerator* enumerator = [m_pendingGeolocationPermissionListeners objectEnumerator];
-    id<WebGeolocationPolicyListener> listener;
+    id<WebAllowDenyPolicyListener> listener;
     while ((listener = [enumerator nextObject])) {
         if (gLayoutTestController->geolocationPermission())
             [listener allow];

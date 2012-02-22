@@ -289,4 +289,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setShouldDisplayTextDescriptions:(BOOL)flag;
 - (BOOL)shouldDisplayTextDescriptions;
 
+- (void)setNotificationsEnabled:(BOOL)flag;
+- (BOOL)notificationsEnabled;
+
 @end

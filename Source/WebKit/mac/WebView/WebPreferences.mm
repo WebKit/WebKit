@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2011, 2012 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -394,6 +394,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1640,6 +1641,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)shouldDisplayTextDescriptions
 {
     return [self _boolValueForKey:WebKitShouldDisplayTextDescriptionsPreferenceKey];
+}
+
+- (void)setNotificationsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitNotificationsEnabledKey];
+}
+
+- (BOOL)notificationsEnabled
+{
+    return [self _boolValueForKey:WebKitNotificationsEnabledKey];
 }
 
 @end

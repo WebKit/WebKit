@@ -1,3 +1,99 @@
+2012-02-21  Jon Lee  <jonlee@apple.com>
+
+        Bring notifications support to WK1 mac: permission requests
+        https://bugs.webkit.org/show_bug.cgi?id=78783
+        <rdar://problem/10610578>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm: Create policy listener, which conforms to the
+        WebAllowDenyPolicyListener protocol, similar to geolocation.
+        (WebNotificationClient::requestPermission):
+        (WebNotificationClient::checkPermission):
+        (-[WebNotificationPolicyListener initWithCallback:]):
+        (-[WebNotificationPolicyListener allow]): Call the callback.
+        (-[WebNotificationPolicyListener deny]): Call the callback.
+        * WebView/WebUIDelegatePrivate.h: Define new UI delegate method to ask the user to decide a
+        policy for navigations.
+
+        ====
+        Bring notifications support to WK1 mac: showing, canceling, removing notifications
+
+        Create a WebKit wrapper object for WebCore::Notification, which also keeps track of an assigned
+        ID.
+        * WebView/WebNotification.h: Added.
+        (WebSecurityOrigin):
+        * WebView/WebNotification.mm: Added.
+        (core):
+        (-[WebNotification initWithCoreNotification:notificationID:]):
+        (-[WebNotification init]):
+        (-[WebNotification dealloc]):
+        (-[WebNotification title]):
+        (-[WebNotification body]):
+        (-[WebNotification origin]):
+        (-[WebNotification notificationID]):
+        (-[WebNotification dispatchShowEvent]):
+        (-[WebNotification dispatchCloseEvent]):
+        (-[WebNotification dispatchClickEvent]):
+        (-[WebNotification dispatchErrorEvent]):
+        * WebView/WebNotificationInternal.h: Added.
+        (WebCore): Internal category to allow creating instances with WebCore objects.
+
+        Extend WebView to include a WebNotificationProvider, which clients implement.
+        * WebView/WebViewData.h: Add a private member for the provider.
+        * WebView/WebViewPrivate.h:
+            * Define an enum WebNotificationPermission that mirrors WebCore::NotificationPresenter::Permission
+            that client which implement the provider can use to return policy decisions.
+            * Define WebNotificationProvider.
+            * Category WebViewNotification extends WebView with methods that set and manager the
+            notification provider, and handle events from the platform notifications.
+        * WebView/WebView.mm:
+        (-[WebView _setNotificationProvider:]): Sets the provider when initializing the WebView.
+        (-[WebView _notificationControllerDestroyed]):
+        (-[WebView _notificationProvider]):
+        (-[WebView _notificationDidShow:]):
+        (-[WebView _notificationDidClick:]):
+        (-[WebView _notificationsDidClose:]):
+
+        * WebCoreSupport/WebNotificationClient.h: Add variables that map between WebCore::Notification
+        instances, their assigned IDs, their contexts, and corresponding WebKit wrapper objects.
+        * WebCoreSupport/WebNotificationClient.mm:
+        (generateNotificationID): Created unique IDs for each shown notification.
+        (WebNotificationClient::show): Create wrapper object for notification, assign ID, cache the
+        mappings between the objects, and forward it to the provider.
+        (WebNotificationClient::cancel):
+        (WebNotificationClient::clearNotifications): Clear all notifications associated with the
+        provided context.
+        (WebNotificationClient::notificationObjectDestroyed): Remove the notification from the maps.
+        (WebNotificationClient::notificationControllerDestroyed): If the controller is destroyed, tell
+        the provider to clear of the notifications related to this web view.
+
+        ====
+        (Prep work for) Bring notifications support to WK1 mac
+
+        Rename WebGeolocationPolicyListener. The interface is generic enough to be reused for
+        notification requests. To avoid having to create a new listener type, instead rename it
+        to WebAllowDenyPolicyListener.
+        * WebView/WebUIDelegatePrivate.h: Rename the protocol.
+        * WebCoreSupport/WebGeolocationClient.mm: Refactor geolocation request listener to use
+        new name.
+
+        Add preference to keep track of whether notifications are enabled in general.
+        * WebView/WebPreferenceKeysPrivate.h: Add WebNotificationsEnabledKey for storing the
+        preference.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): By default have them enabled.
+        (-[WebPreferences setNotificationsEnabled:]):
+        (-[WebPreferences notificationsEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+
+        Add a stringValue method that exposes WebCore::SecurityOrigin::toString() for storing the
+        notification policy for a given origin.
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin stringValue]):
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+
 2012-02-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the Snow Leopard build.

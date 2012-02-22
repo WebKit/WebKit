@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2010, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,37 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebSecurityOriginPrivate;
-@protocol WebQuotaManager;
+#import "WebNotification.h"
 
-@interface WebSecurityOrigin : NSObject {
-    WebSecurityOriginPrivate *_private;
-    id<WebQuotaManager> _applicationCacheQuotaManager;
-    id<WebQuotaManager> _databaseQuotaManager;
+#if ENABLE(NOTIFICATIONS)
+
+namespace WebCore {
+class Notification;
 }
 
-- (id)initWithURL:(NSURL *)url;
+WebCore::Notification* core(WebNotification *);
 
-- (NSString *)protocol;
-- (NSString *)host;
-
-- (NSString *)databaseIdentifier;
-- (NSString *)stringValue;
-
-// Returns zero if the port is the default port for the protocol, non-zero otherwise.
-- (unsigned short)port;
-
+@interface WebNotification (WebNotificationInternal)
+- (id)initWithCoreNotification:(WebCore::Notification*)coreNotification notificationID:(uint64_t)notificationID;
 @end
 
-@interface WebSecurityOrigin (WebQuotaManagers)
-- (id<WebQuotaManager>)applicationCacheQuotaManager;
-- (id<WebQuotaManager>)databaseQuotaManager;
-@end
-
-// FIXME: The following methods are deprecated and should removed later.
-// Clients should instead get a WebQuotaManager, and query / set the quota via the Manager.
-@interface WebSecurityOrigin (Deprecated)
-- (unsigned long long)usage;
-- (unsigned long long)quota;
-- (void)setQuota:(unsigned long long)quota;
-@end
+#endif
