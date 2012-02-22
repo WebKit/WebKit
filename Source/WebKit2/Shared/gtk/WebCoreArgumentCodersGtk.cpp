@@ -170,6 +170,11 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceR
 
 void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
+    bool errorIsNull = resourceError.isNull();
+    encoder->encode(errorIsNull);
+    if (errorIsNull)
+        return;
+
     encoder->encode(resourceError.domain());
     encoder->encode(resourceError.errorCode());
     encoder->encode(resourceError.failingURL()); 
@@ -178,6 +183,14 @@ void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const Resour
 
 bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
+    bool errorIsNull;
+    if (!decoder->decode(errorIsNull))
+        return false;
+    if (errorIsNull) {
+        resourceError = ResourceError();
+        return true;
+    }
+
     String domain;
     if (!decoder->decode(domain))
         return false;
