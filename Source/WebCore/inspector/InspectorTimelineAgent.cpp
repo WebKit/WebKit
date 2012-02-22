@@ -85,9 +85,9 @@ static const char XHRLoad[] = "XHRLoad";
 static const char FunctionCall[] = "FunctionCall";
 static const char GCEvent[] = "GCEvent";
 
-static const char RegisterAnimationFrameCallback[] = "RegisterAnimationFrameCallback";
-static const char CancelAnimationFrameCallback[] = "CancelAnimationFrameCallback";
-static const char FireAnimationFrameEvent[] = "FireAnimationFrameEvent";
+static const char RequestAnimationFrame[] = "RequestAnimationFrame";
+static const char CancelAnimationFrame[] = "CancelAnimationFrame";
+static const char FireAnimationFrame[] = "FireAnimationFrame";
 }
 
 void InspectorTimelineAgent::pushGCEventRecords()
@@ -347,24 +347,24 @@ void InspectorTimelineAgent::didCommitLoad()
     clearRecordStack();
 }
 
-void InspectorTimelineAgent::didRegisterAnimationFrameCallback(int callbackId)
+void InspectorTimelineAgent::didRequestAnimationFrame(int callbackId)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::RegisterAnimationFrameCallback, true);
+    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::RequestAnimationFrame, true);
 }
 
-void InspectorTimelineAgent::didCancelAnimationFrameCallback(int callbackId)
+void InspectorTimelineAgent::didCancelAnimationFrame(int callbackId)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::CancelAnimationFrameCallback, true);
+    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::CancelAnimationFrame, true);
 }
 
-void InspectorTimelineAgent::willFireAnimationFrameEvent(int callbackId)
+void InspectorTimelineAgent::willFireAnimationFrame(int callbackId)
 {
-    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::FireAnimationFrameEvent, false);
+    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::FireAnimationFrame, false);
 }
 
-void InspectorTimelineAgent::didFireAnimationFrameEvent()
+void InspectorTimelineAgent::didFireAnimationFrame()
 {
-    didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrameEvent);
+    didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)

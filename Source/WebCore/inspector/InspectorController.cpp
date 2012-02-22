@@ -69,6 +69,7 @@
 #include "ScriptObject.h"
 #include "Settings.h"
 #include <wtf/UnusedParam.h>
+#include "base/debug/stack_trace.h"
 
 namespace WebCore {
 
@@ -367,6 +368,12 @@ void InspectorController::resume()
 void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
 {
     m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
+}
+
+void InspectorController::dumpStackTrace()
+{
+    base::debug::StackTrace st;
+    st.PrintBacktrace();
 }
 
 } // namespace WebCore

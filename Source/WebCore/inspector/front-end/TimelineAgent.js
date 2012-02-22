@@ -66,7 +66,7 @@ WebInspector.TimelineAgent.RecordType = {
     FunctionCall: "FunctionCall",
     GCEvent: "GCEvent",
 
-    RegisterAnimationFrameCallback: "RegisterAnimationFrameCallback",
-    CancelAnimationFrameCallback: "CancelAnimationFrameCallback",
-    FireAnimationFrameEvent: "FireAnimationFrameEvent"
+    RequestAnimationFrame: "RequestAnimationFrame",
+    CancelAnimationFrame: "CancelAnimationFrame",
+    FireAnimationFrame: "FireAnimationFrame"
 }

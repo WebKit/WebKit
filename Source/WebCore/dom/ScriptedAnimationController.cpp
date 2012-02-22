@@ -85,7 +85,7 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     callback->m_element = animationElement;
     m_callbacks.append(callback);
 
-    InspectorInstrumentation::didRegisterAnimationFrameCallback(m_document, id);
+    InspectorInstrumentation::didRequestAnimationFrame(m_document, id);
 
     if (!m_suspendCount)
         scheduleAnimation();
@@ -97,7 +97,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     for (size_t i = 0; i < m_callbacks.size(); ++i) {
         if (m_callbacks[i]->m_id == id) {
             m_callbacks[i]->m_firedOrCancelled = true;
-            InspectorInstrumentation::didCancelAnimationFrameCallback(m_document, id);
+            InspectorInstrumentation::didCancelAnimationFrame(m_document, id);
             m_callbacks.remove(i);
             return;
         }
@@ -141,9 +141,9 @@ void ScriptedAnimationController::serviceScriptedAnimations(DOMTimeStamp time)
             RequestAnimationFrameCallback* callback = callbacks[i].get();
             if (!callback->m_firedOrCancelled && (!callback->m_element || callback->m_element->renderer())) {
                 callback->m_firedOrCancelled = true;
-                InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrameEvent(m_document, callback->m_id);
+                InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(m_document, callback->m_id);
                 callback->handleEvent(time);
-                InspectorInstrumentation::didFireAnimationFrameEvent(cookie);
+                InspectorInstrumentation::didFireAnimationFrame(cookie);
                 firedCallback = true;
                 callbacks.remove(i);
                 break;

@@ -69,7 +69,7 @@ public:
     ~InspectorController();
 
     static PassOwnPtr<InspectorController> create(Page*, InspectorClient*);
-
+    static void dumpStackTrace();
     void inspectedPageDestroyed();
 
     bool enabled() const;

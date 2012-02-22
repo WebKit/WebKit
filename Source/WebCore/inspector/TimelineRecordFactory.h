@@ -79,7 +79,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createParseHTMLData(unsigned int length, unsigned int startLine);
 
-        static PassRefPtr<InspectorObject> createAnimationFrameCallbackData(int callbackId);
+        static PassRefPtr<InspectorObject> createAnimationFrameData(int callbackId);
 
     private:
         TimelineRecordFactory() { }

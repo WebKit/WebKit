@@ -1,3 +1,43 @@
+2012-02-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not filter out requestAnimationFrame from timeline, implement stop on animation events.
+        https://bugs.webkit.org/show_bug.cgi?id=79116
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameCallbackImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameCallbackImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameCallback):
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        (WebCore::InspectorTimelineAgent::didRequestAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::didCancelAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::willFireAnimationFrameEvent):
+        (WebCore::InspectorTimelineAgent::didFireAnimationFrameEvent):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._onRecordsCleared):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2012-02-22  Changhun Kang  <temoochin@company100.net>
 
         Remove unused class declaration in WebCore/page/scrolling/ScrollingCoordinator.h

@@ -121,10 +121,10 @@ public:
     void willReceiveResourceData(unsigned long identifier);
     void didReceiveResourceData();
 
-    void didRegisterAnimationFrameCallback(int callbackId);
-    void didCancelAnimationFrameCallback(int callbackId);
-    void willFireAnimationFrameEvent(int callbackId);
-    void didFireAnimationFrameEvent();
+    void didRequestAnimationFrame(int callbackId);
+    void didCancelAnimationFrame(int callbackId);
+    void willFireAnimationFrame(int callbackId);
+    void didFireAnimationFrame();
 
     virtual void didGC(double, double, size_t);
 

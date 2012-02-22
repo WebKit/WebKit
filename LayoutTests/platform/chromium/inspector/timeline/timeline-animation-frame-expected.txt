@@ -1,17 +1,17 @@
 Tests the Timeline events for Animation Frame feature
 
-RegisterAnimationFrameCallback Properties:
+RequestAnimationFrame Properties:
 {
     startTime : <number>
     stackTrace : <object>
     data : {
         id : <number>
     }
-    type : "RegisterAnimationFrameCallback"
+    type : "RequestAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-FireAnimationFrameEvent Properties:
+FireAnimationFrame Properties:
 {
     startTime : <number>
     data : {
@@ -19,18 +19,18 @@ FireAnimationFrameEvent Properties:
     }
     children : <object>
     endTime : <number>
-    type : "FireAnimationFrameEvent"
+    type : "FireAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-CancelAnimationFrameCallback Properties:
+CancelAnimationFrame Properties:
 {
     startTime : <number>
     stackTrace : <object>
     data : {
         id : <number>
     }
-    type : "CancelAnimationFrameCallback"
+    type : "CancelAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

@@ -102,7 +102,7 @@ WebInspector.TimelinePanel = function()
     this._sendRequestRecords = {};
     this._scheduledResourceRequests = {};
     this._timerRecords = {};
-    this._registeredAnimationCallbackRecords = {};
+    this._requestAnimationFrameRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
     var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold);
@@ -239,9 +239,9 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.MarkDOMContent] = { title: WebInspector.UIString("DOMContent event"), category: categories["scripting"] };
             recordStyles[recordTypes.MarkLoad] = { title: WebInspector.UIString("Load event"), category: categories["scripting"] };
             recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: categories["loading"] };
-            recordStyles[recordTypes.RegisterAnimationFrameCallback] = { title: WebInspector.UIString("Register Animation Callback"), category: categories["scripting"] };
-            recordStyles[recordTypes.CancelAnimationFrameCallback] = { title: WebInspector.UIString("Cancel Animation Callback"), category: categories["scripting"] };
-            recordStyles[recordTypes.FireAnimationFrameEvent] = { title: WebInspector.UIString("Animation Frame Event"), category: categories["scripting"] };
+            recordStyles[recordTypes.RequestAnimationFrame] = { title: WebInspector.UIString("Request Animation Frame"), category: categories["scripting"] };
+            recordStyles[recordTypes.CancelAnimationFrame] = { title: WebInspector.UIString("Cancel Animation Frame"), category: categories["scripting"] };
+            recordStyles[recordTypes.FireAnimationFrame] = { title: WebInspector.UIString("Animation Frame Fired"), category: categories["scripting"] };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -467,6 +467,8 @@ WebInspector.TimelinePanel.prototype = {
             parentRecord = this._timerRecords[record.data["timerId"]];
         else if (record.type === recordTypes.ResourceSendRequest)
             parentRecord = this._scheduledResourceRequests[record.data["url"]];
+        else if (record.type === recordTypes.FireAnimationFrame)
+            parentRecord = this._requestAnimationFrameRecords[record.data["id"]];
         return parentRecord;
     },
 
@@ -474,11 +476,6 @@ WebInspector.TimelinePanel.prototype = {
     {
         var connectedToOldRecord = false;
         var recordTypes = WebInspector.TimelineAgent.RecordType;
-
-        if (record.type === recordTypes.RegisterAnimationFrameCallback) {
-            this._registeredAnimationCallbackRecords[record.data["id"]] = record;
-            return;
-        }
 
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
             parentRecord = null; // No bar entry for load events.
@@ -502,7 +499,7 @@ WebInspector.TimelinePanel.prototype = {
             }
         };
 
-        if ((record.type === recordTypes.TimerFire || record.type === recordTypes.FireAnimationFrameEvent) && children && children.length) {
+        if ((record.type === recordTypes.TimerFire || record.type === recordTypes.FireAnimationFrame) && children && children.length) {
             var childRecord = children[0];
             if (childRecord.type === recordTypes.FunctionCall) {
                 scriptDetails = {
@@ -589,7 +586,7 @@ WebInspector.TimelinePanel.prototype = {
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
-        this._registeredAnimationCallbackRecords = {};
+        this._requestAnimationFrameRecords = {};
         this._rootRecord = this._createRootRecord();
         this._boundariesAreValid = false;
         this._overviewPane.reset();
@@ -1106,10 +1103,12 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
             this.timeout = timerInstalledRecord.timeout;
             this.singleShot = timerInstalledRecord.singleShot;
         }
-    } else if (record.type === recordTypes.FireAnimationFrameEvent) {
-        var registerCallbackRecord = panel._registeredAnimationCallbackRecords[record.data["id"]];
-        if (registerCallbackRecord)
-            this.callSiteStackTrace = registerCallbackRecord.stackTrace;
+    } else if (record.type === recordTypes.RequestAnimationFrame) {
+        panel._requestAnimationFrameRecords[record.data["id"]] = this;
+    } else if (record.type === recordTypes.FireAnimationFrame) {
+        var requestAnimationRecord = panel._requestAnimationFrameRecords[record.data["id"]];
+        if (requestAnimationRecord)
+            this.callSiteStackTrace = requestAnimationRecord.stackTrace;
     }
     this._refreshDetails();
 }
@@ -1169,7 +1168,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Repeats"), !this.singleShot);
                 }
                 break;
-            case recordTypes.FireAnimationFrameEvent:
+            case recordTypes.FireAnimationFrame:
                 contentHelper._appendTextRow(WebInspector.UIString("Callback ID"), this.data["id"]);
                 break;
             case recordTypes.FunctionCall:
@@ -1232,7 +1231,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data["timerId"];
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
                 return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : null;
-            case WebInspector.TimelineAgent.RecordType.FireAnimationFrameEvent:
+            case WebInspector.TimelineAgent.RecordType.FireAnimationFrame:
                 return this.scriptName ? this._panel._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data["id"];
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return this.data ? this.data["type"] : null;
@@ -1241,8 +1240,8 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
                 return this.stackTrace ? this._panel._linkifyCallFrame(this.stackTrace[0]) : this.data["timerId"];
-            case WebInspector.TimelineAgent.RecordType.RegisterAnimationFrameCallback:
-            case WebInspector.TimelineAgent.RecordType.CancelAnimationFrameCallback:
+            case WebInspector.TimelineAgent.RecordType.RequestAnimationFrame:
+            case WebInspector.TimelineAgent.RecordType.CancelAnimationFrame:
                 return this.stackTrace ? this._panel._linkifyCallFrame(this.stackTrace[0]) : this.data["id"];
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:

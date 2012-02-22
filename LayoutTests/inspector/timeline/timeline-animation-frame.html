@@ -23,13 +23,13 @@ function test()
         InspectorTest.evaluateInPage("performActions()");
     });
 
-    InspectorTest.waitForRecordType("CancelAnimationFrameCallback", finish);
+    InspectorTest.waitForRecordType("CancelAnimationFrame", finish);
 
     function finish()
     {
-        InspectorTest.printTimelineRecords("RegisterAnimationFrameCallback");
-        InspectorTest.printTimelineRecords("FireAnimationFrameEvent");
-        InspectorTest.printTimelineRecords("CancelAnimationFrameCallback");
+        InspectorTest.printTimelineRecords("RequestAnimationFrame");
+        InspectorTest.printTimelineRecords("FireAnimationFrame");
+        InspectorTest.printTimelineRecords("CancelAnimationFrame");
         InspectorTest.completeTest();
     }
 }

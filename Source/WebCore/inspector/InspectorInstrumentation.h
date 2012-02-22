@@ -174,10 +174,10 @@ public:
     static void stopConsoleTiming(Page*, const String& title, PassRefPtr<ScriptCallStack>);
     static void consoleTimeStamp(Page*, PassRefPtr<ScriptArguments>);
 
-    static void didRegisterAnimationFrameCallback(Document*, int callbackId);
-    static void didCancelAnimationFrameCallback(Document*, int callbackId);
-    static InspectorInstrumentationCookie willFireAnimationFrameEvent(Document*, int callbackId);
-    static void didFireAnimationFrameEvent(const InspectorInstrumentationCookie&);
+    static void didRequestAnimationFrame(Document*, int callbackId);
+    static void didCancelAnimationFrame(Document*, int callbackId);
+    static InspectorInstrumentationCookie willFireAnimationFrame(Document*, int callbackId);
+    static void didFireAnimationFrame(const InspectorInstrumentationCookie&);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
@@ -321,10 +321,10 @@ private:
     static void stopConsoleTimingImpl(InstrumentingAgents*, const String& title, PassRefPtr<ScriptCallStack>);
     static void consoleTimeStampImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>);
 
-    static void didRegisterAnimationFrameCallbackImpl(InstrumentingAgents*, int callbackId);
-    static void didCancelAnimationFrameCallbackImpl(InstrumentingAgents*, int callbackId);
-    static InspectorInstrumentationCookie willFireAnimationFrameEventImpl(InstrumentingAgents*, int callbackId);
-    static void didFireAnimationFrameEventImpl(const InspectorInstrumentationCookie&);
+    static void didRequestAnimationFrameImpl(InstrumentingAgents*, int callbackId);
+    static void didCancelAnimationFrameImpl(InstrumentingAgents*, int callbackId);
+    static InspectorInstrumentationCookie willFireAnimationFrameImpl(InstrumentingAgents*, int callbackId);
+    static void didFireAnimationFrameImpl(const InspectorInstrumentationCookie&);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InstrumentingAgents*, const String& title, unsigned lineNumber, const String& sourceURL);
@@ -1173,37 +1173,37 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 #endif
 }
 
-inline void InspectorInstrumentation::didRegisterAnimationFrameCallback(Document* document, int callbackId)
+inline void InspectorInstrumentation::didRequestAnimationFrame(Document* document, int callbackId)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didRegisterAnimationFrameCallbackImpl(instrumentingAgents, callbackId);
+        didRequestAnimationFrameImpl(instrumentingAgents, callbackId);
 #endif
 }
 
-inline void InspectorInstrumentation::didCancelAnimationFrameCallback(Document* document, int callbackId)
+inline void InspectorInstrumentation::didCancelAnimationFrame(Document* document, int callbackId)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didCancelAnimationFrameCallbackImpl(instrumentingAgents, callbackId);
+        didCancelAnimationFrameImpl(instrumentingAgents, callbackId);
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameEvent(Document* document, int callbackId)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrame(Document* document, int callbackId)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willFireAnimationFrameEventImpl(instrumentingAgents, callbackId);
+        return willFireAnimationFrameImpl(instrumentingAgents, callbackId);
 #endif
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didFireAnimationFrameEvent(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
-        didFireAnimationFrameEventImpl(cookie);
+        didFireAnimationFrameImpl(cookie);
 #endif
 }
 
