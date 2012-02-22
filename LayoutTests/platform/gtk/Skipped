@@ -1609,3 +1609,4 @@ editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
 # https://bugs.webkit.org/show_bug.cgi?id=79203
 fast/dom/MediaStream/argument-types.html
 fast/mediastream/peerconnection-Attributes.html
+fast/mediastream/peerconnection-argument-types.html
