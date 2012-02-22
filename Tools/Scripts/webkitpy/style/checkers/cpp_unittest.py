@@ -783,7 +783,7 @@ class CppStyleTest(CppStyleTestBase):
     #   self.assert_lint('void Method(char* /*x*/);', message)
     #   self.assert_lint('typedef void (*Method)(int32);', message)
     #   self.assert_lint('static void operator delete[](void*) throw();', message)
-    # 
+    #
     #   self.assert_lint('virtual void D(int* p);', '')
     #   self.assert_lint('void operator delete(void* x) throw();', '')
     #   self.assert_lint('void Method(char* x)\n{', '')
@@ -792,7 +792,7 @@ class CppStyleTest(CppStyleTestBase):
     #   self.assert_lint('typedef void (*Method)(int32 x);', '')
     #   self.assert_lint('static void operator delete[](void* x) throw();', '')
     #   self.assert_lint('static void operator delete[](void* /*x*/) throw();', '')
-    # 
+    #
     #   # This one should technically warn, but doesn't because the function
     #   # pointer is confusing.
     #   self.assert_lint('virtual void E(void (*fn)(int* p));', '')
@@ -3072,7 +3072,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
 
     def test_function_length_check_definition_huge_lines(self):
         # 5 is the limit
-        self.assert_function_length_check_definition(self.trigger_lines(10), 5)
+        self.assert_function_length_check_definition(self.trigger_lines(6), 5)
 
     def test_function_length_not_determinable(self):
         # Macro invocation without terminating semicolon.

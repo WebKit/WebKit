@@ -1,5 +1,21 @@
 2012-02-22  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: test_function_length_check_definition_huge_lines is slow
+        https://bugs.webkit.org/show_bug.cgi?id=79185
+
+        Reviewed by Adam Barth.
+
+        This test takes ~3 seconds to run, apparently because we're
+        running a test on a 10,000 line function :). Dropping the
+        function length to 640 still exercises the code path and
+        provides a 10x speedup.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        (CheckForFunctionLengthsTest.test_function_length_check_definition_huge_lines):
+
+2012-02-22  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: speed up FileLockTest.test_lock_lifecycle
         https://bugs.webkit.org/show_bug.cgi?id=79189
 
