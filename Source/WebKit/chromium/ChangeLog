@@ -1,3 +1,26 @@
+2012-02-22  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] New CCOcclusionTracker class with tests
+        https://bugs.webkit.org/show_bug.cgi?id=78549
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore):
+        * tests/CCOcclusionTrackerTest.cpp: Added.
+        (WebCore):
+        (WebCore::setLayerPropertiesForTesting):
+        (LayerChromiumWithForcedDrawsContent):
+        (WebCore::LayerChromiumWithForcedDrawsContent::LayerChromiumWithForcedDrawsContent):
+        (WebCore::LayerChromiumWithForcedDrawsContent::drawsContent):
+        (TestCCOcclusionTracker):
+        (WebCore::TestCCOcclusionTracker::occlusionInScreenSpace):
+        (WebCore::TestCCOcclusionTracker::occlusionInTargetSurface):
+        (WebCore::TestCCOcclusionTracker::setOcclusionInScreenSpace):
+        (WebCore::TestCCOcclusionTracker::setOcclusionInTargetSurface):
+        (WebCore::TEST):
+
 2012-02-22  Hao Zheng  <zhenghao@chromium.org>
 
         [chromium] Build WebKit with MEDIA_STREAM disabled.
