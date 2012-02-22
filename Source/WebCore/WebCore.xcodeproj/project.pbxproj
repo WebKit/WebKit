@@ -1367,6 +1367,8 @@
 		4A1E719614E101F900626F9D /* JSHTMLShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1E719414E101F900626F9D /* JSHTMLShadowElement.h */; };
 		4A1E71A514E106AC00626F9D /* JSShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E71A314E106AC00626F9D /* JSShadowRoot.cpp */; };
 		4A1E71A614E106AC00626F9D /* JSShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1E71A414E106AC00626F9D /* JSShadowRoot.h */; };
+		4A29222B14F468BA0021F77E /* WebSocketDeflateFramer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A29222914F468BA0021F77E /* WebSocketDeflateFramer.cpp */; };
+		4A29222C14F468BA0021F77E /* WebSocketDeflateFramer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A29222A14F468BA0021F77E /* WebSocketDeflateFramer.h */; };
 		4A4A234614F1E1440046FBF1 /* WebSocketFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4A234514F1E1440046FBF1 /* WebSocketFrame.h */; };
 		4A6E9FC313C17D1D0046A7F8 /* FontFeatureValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */; };
 		4A6E9FC413C17D1D0046A7F8 /* FontFeatureValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8231,6 +8233,8 @@
 		4A1E719414E101F900626F9D /* JSHTMLShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLShadowElement.h; sourceTree = "<group>"; };
 		4A1E71A314E106AC00626F9D /* JSShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRoot.cpp; sourceTree = "<group>"; };
 		4A1E71A414E106AC00626F9D /* JSShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRoot.h; sourceTree = "<group>"; };
+		4A29222914F468BA0021F77E /* WebSocketDeflateFramer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketDeflateFramer.cpp; sourceTree = "<group>"; };
+		4A29222A14F468BA0021F77E /* WebSocketDeflateFramer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketDeflateFramer.h; sourceTree = "<group>"; };
 		4A4A234514F1E1440046FBF1 /* WebSocketFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketFrame.h; sourceTree = "<group>"; };
 		4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFeatureValue.cpp; sourceTree = "<group>"; };
 		4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFeatureValue.h; sourceTree = "<group>"; };
@@ -14854,6 +14858,8 @@
 				510D4A47103177A20049EA54 /* WebSocketChannel.cpp */,
 				510D4A48103177A20049EA54 /* WebSocketChannel.h */,
 				510D4A49103177A20049EA54 /* WebSocketChannelClient.h */,
+				4A29222914F468BA0021F77E /* WebSocketDeflateFramer.cpp */,
+				4A29222A14F468BA0021F77E /* WebSocketDeflateFramer.h */,
 				4AE02ABB14E8A9D200BC3BA7 /* WebSocketDeflater.cpp */,
 				4AE02ABC14E8A9D200BC3BA7 /* WebSocketDeflater.h */,
 				4A957F0314E241100049DBFB /* WebSocketExtensionDispatcher.cpp */,
@@ -24244,6 +24250,7 @@
 				518A34C21026C831001B6896 /* WebSocket.h in Headers */,
 				510D4A4F103177A20049EA54 /* WebSocketChannel.h in Headers */,
 				510D4A50103177A20049EA54 /* WebSocketChannelClient.h in Headers */,
+				4A29222C14F468BA0021F77E /* WebSocketDeflateFramer.h in Headers */,
 				4AE02ABE14E8A9D200BC3BA7 /* WebSocketDeflater.h in Headers */,
 				4A957F0714E241300049DBFB /* WebSocketExtensionDispatcher.h in Headers */,
 				4ADE25FA14E3BB4C004C2213 /* WebSocketExtensionProcessor.h in Headers */,
@@ -27203,6 +27210,7 @@
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
 				518A34C11026C831001B6896 /* WebSocket.cpp in Sources */,
 				510D4A4E103177A20049EA54 /* WebSocketChannel.cpp in Sources */,
+				4A29222B14F468BA0021F77E /* WebSocketDeflateFramer.cpp in Sources */,
 				4AE02ABD14E8A9D200BC3BA7 /* WebSocketDeflater.cpp in Sources */,
 				4A957F0614E2412A0049DBFB /* WebSocketExtensionDispatcher.cpp in Sources */,
 				51ABAE441043AB4A008C5260 /* WebSocketHandshake.cpp in Sources */,

@@ -1,3 +1,68 @@
+2012-02-22  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Adding WebSocket per-frame DEFLATE extension
+        https://bugs.webkit.org/show_bug.cgi?id=77522
+
+        Add WebSocketDeflateFramer class which handles deflate-frame extension.
+        This class encapsulates WebSocketDeflater and WebSocketInflater classes,
+        which depend on zlib, so that WebSocketChannel is not necessary to aware
+        zlib dependency.
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hybi/compressed-control-frame.html
+               http/tests/websocket/tests/hybi/deflate-frame-comp-bit-onoff.html
+               http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html
+               http/tests/websocket/tests/hybi/deflate-frame-parameter.html
+
+        * CMakeLists.txt: Added WebSocketDeflateFramer.(cpp|h)
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didConnect): Set m_extensions.
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect): Add deflate-frame extension processor to WebSocketHanshake if deflate can use.
+        (WebCore::WebSocketChannel::fail): Call m_deflateFramer.didFail().
+        (WebCore::WebSocketChannel::processFrame): Decompress frames if needed.
+        (WebCore::WebSocketChannel::sendFrame): Compress frames if possible.
+        * websockets/WebSocketChannel.h:
+        * websockets/WebSocketDeflateFramer.cpp: Added.
+        (WebCore):
+        (WebSocketExtensionDeflateFrame):
+        (WebCore::WebSocketExtensionDeflateFrame::create):
+        (WebCore::WebSocketExtensionDeflateFrame::~WebSocketExtensionDeflateFrame):
+        (WebCore::WebSocketExtensionDeflateFrame::WebSocketExtensionDeflateFrame):
+        (WebCore::WebSocketExtensionDeflateFrame::handshakeString):
+        (WebCore::WebSocketExtensionDeflateFrame::processResponse):
+        (WebCore::DeflateResultHolder::DeflateResultHolder):
+        (WebCore::DeflateResultHolder::~DeflateResultHolder):
+        (WebCore::DeflateResultHolder::fail):
+        (WebCore::InflateResultHolder::InflateResultHolder):
+        (WebCore::InflateResultHolder::~InflateResultHolder):
+        (WebCore::InflateResultHolder::fail):
+        (WebCore::WebSocketDeflateFramer::WebSocketDeflateFramer):
+        (WebCore::WebSocketDeflateFramer::createExtensionProcessor):
+        (WebCore::WebSocketDeflateFramer::canDeflate):
+        (WebCore::WebSocketDeflateFramer::enableDeflate):
+        (WebCore::WebSocketDeflateFramer::deflate):
+        (WebCore::WebSocketDeflateFramer::resetDeflateContext):
+        (WebCore::WebSocketDeflateFramer::inflate):
+        (WebCore::WebSocketDeflateFramer::resetInflateContext):
+        (WebCore::WebSocketDeflateFramer::didFail):
+        * websockets/WebSocketDeflateFramer.h: Added.
+        (WebCore):
+        (DeflateResultHolder):
+        (WebCore::DeflateResultHolder::succeeded):
+        (WebCore::DeflateResultHolder::failureReason):
+        (InflateResultHolder):
+        (WebCore::InflateResultHolder::succeeded):
+        (WebCore::InflateResultHolder::failureReason):
+        (WebSocketDeflateFramer):
+        (WebCore::WebSocketDeflateFramer::enabled):
+
 2012-02-22  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r108453.

@@ -1,3 +1,14 @@
+2012-02-22  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Adding WebSocket per-frame DEFLATE extension
+        https://bugs.webkit.org/show_bug.cgi?id=77522
+
+        Added USE(ZLIB) flag.
+
+        Reviewed by Kent Tamura.
+
+        * wtf/Platform.h:
+
 2012-02-22  Hojong Han  <hojong.han@samsung.com>
 
         Short circuit fixed for a 16 bt pattern character and an 8 bit string.
