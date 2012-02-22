@@ -1,3 +1,16 @@
+2012-02-22  Levi Weintraub  <leviw@chromium.org>
+
+        ScrollbarThemeComposite::thumbPosition uses the result of a divide by zero
+        https://bugs.webkit.org/show_bug.cgi?id=78910
+
+        Reviewed by Eric Seidel.
+
+        Adding a check to avoid doing a floating point divide by zero and assigning NaN to an integer.
+        This causes problems with our conversion to subpixel layout, which asserts when we overflow.
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::thumbPosition):
+
 2012-02-22  Raymond Liu  <raymond.liu@intel.com>
 
         Have the DynamicsCompressorNode support multi-channel data

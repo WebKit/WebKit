@@ -226,7 +226,11 @@ static float usedTotalSize(Scrollbar* scrollbar)
 int ScrollbarThemeComposite::thumbPosition(Scrollbar* scrollbar)
 {
     if (scrollbar->enabled()) {
-        float pos = max(0.0f, scrollbar->currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / (usedTotalSize(scrollbar) - scrollbar->visibleSize());
+        float size = usedTotalSize(scrollbar) - scrollbar->visibleSize();
+        // Avoid doing a floating point divide by zero and return 1 when usedTotalSize == visibleSize.
+        if (!size)
+            return 1;
+        float pos = max(0.0f, scrollbar->currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / size;
         return (pos < 1 && pos > 0) ? 1 : pos;
     }
     return 0;
