@@ -28,7 +28,7 @@
 
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
-#include <wtf/InlineAsm.h>
+#include <wtf/InlineASM.h>
 #include <wtf/Platform.h>
 
 #if CPU(X86)

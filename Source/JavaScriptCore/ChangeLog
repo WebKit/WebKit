@@ -1,5 +1,11 @@
 2012-02-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Build fix for systems with case sensitive disks.
+
+        * llint/LLIntOfflineAsmConfig.h:
+
+2012-02-21  Filip Pizlo  <fpizlo@apple.com>
+
         JSC should be a triple-tier VM
         https://bugs.webkit.org/show_bug.cgi?id=75812
         <rdar://problem/10079694>
