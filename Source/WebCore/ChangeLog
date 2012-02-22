@@ -1,3 +1,11 @@
+2012-02-22  'Pavel Feldman'  <pfeldman@google.com>
+
+        Not reviewed: build fix.
+
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        (InspectorController):
+
 2012-02-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not filter out requestAnimationFrame from timeline, implement stop on animation events.

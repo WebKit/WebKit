@@ -80,7 +80,6 @@ CCHeadsUpDisplay::~CCHeadsUpDisplay()
 
 void CCHeadsUpDisplay::onFrameBegin(double timestamp)
 {
-    InspectorController::dumpStackTrace();
     m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
 }
 
