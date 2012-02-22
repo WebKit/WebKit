@@ -31,6 +31,8 @@
 #ifndef WebUserMediaClientMock_h
 #define WebUserMediaClientMock_h
 
+#if ENABLE(MEDIA_STREAM)
+
 #include "WebUserMediaClient.h"
 #include "platform/WebCommon.h"
 #include "platform/WebString.h"
@@ -56,5 +58,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(MEDIA_STREAM)
 
 #endif // WebUserMediaClientMock_h

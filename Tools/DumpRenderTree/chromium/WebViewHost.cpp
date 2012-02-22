@@ -712,6 +712,7 @@ WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
     return deviceOrientationClientMock();
 }
 
+#if ENABLE(MEDIA_STREAM)
 WebUserMediaClient* WebViewHost::userMediaClient()
 {
     return userMediaClientMock();
@@ -723,6 +724,7 @@ WebUserMediaClientMock* WebViewHost::userMediaClientMock()
         m_userMediaClientMock = WebUserMediaClientMock::create();
     return m_userMediaClientMock.get();
 }
+#endif
 
 // WebWidgetClient -----------------------------------------------------------
 
@@ -936,7 +938,11 @@ WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& par
 
 WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, WebMediaPlayerClient* client)
 {
+#if ENABLE(MEDIA_STREAM)
     return webkit_support::CreateMediaPlayer(frame, client, testMediaStreamClient());
+#else
+    return webkit_support::CreateMediaPlayer(frame, client);
+#endif
 }
 
 WebApplicationCacheHost* WebViewHost::createApplicationCacheHost(WebFrame* frame, WebApplicationCacheHostClient* client)
@@ -1649,6 +1655,7 @@ void WebViewHost::exitFullScreenNow()
     webView()->didExitFullScreen();
 }
 
+#if ENABLE(MEDIA_STREAM)
 webkit_support::MediaStreamUtil* WebViewHost::mediaStreamUtil()
 {
     return userMediaClientMock();
@@ -1660,6 +1667,7 @@ webkit_support::TestMediaStreamClient* WebViewHost::testMediaStreamClient()
         m_testMediaStreamClient = adoptPtr(new webkit_support::TestMediaStreamClient(mediaStreamUtil()));
     return m_testMediaStreamClient.get();
 }
+#endif
 
 // Painting functions ---------------------------------------------------------
 

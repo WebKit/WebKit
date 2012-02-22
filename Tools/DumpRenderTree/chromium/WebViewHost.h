@@ -163,7 +163,9 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebGeolocationClient* geolocationClient();
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
+#if ENABLE(MEDIA_STREAM)
     virtual WebKit::WebUserMediaClient* userMediaClient();
+#endif
     virtual void printPage(WebKit::WebFrame*);
 
     // WebKit::WebWidgetClient
@@ -305,9 +307,11 @@ private:
     void didNotAcquirePointerLock();
 #endif
 
+#if ENABLE(MEDIA_STREAM)
     WebKit::WebUserMediaClientMock* userMediaClientMock();
     webkit_support::MediaStreamUtil* mediaStreamUtil();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
+#endif
 
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
@@ -385,8 +389,10 @@ private:
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
     OwnPtr<MockWebSpeechInputController> m_speechInputControllerMock;
 
+#if ENABLE(MEDIA_STREAM)
     OwnPtr<WebKit::WebUserMediaClientMock> m_userMediaClientMock;
     OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
+#endif
 
     OwnPtr<TestNavigationController> m_navigationController;
 

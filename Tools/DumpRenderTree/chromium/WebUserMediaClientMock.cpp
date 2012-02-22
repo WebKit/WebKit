@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+#if ENABLE(MEDIA_STREAM)
+
 #include "WebUserMediaClientMock.h"
 
 #include "WebMediaStreamRegistry.h"
@@ -81,3 +83,5 @@ void WebUserMediaClientMock::cancelUserMediaRequest(const WebUserMediaRequest&)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(MEDIA_STREAM)
