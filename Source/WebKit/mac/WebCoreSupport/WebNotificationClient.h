@@ -58,10 +58,9 @@ private:
 
     WebView *m_webView;
 #if ENABLE(NOTIFICATIONS)
-    HashMap<uint64_t, RetainPtr<WebNotification> > m_notificationIDMap;
-    HashMap<RefPtr<WebCore::Notification>, uint64_t> m_notificationMap;
+    HashMap<RefPtr<WebCore::Notification>, RetainPtr<WebNotification> > m_notificationMap;
     
-    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<uint64_t> > NotificationContextMap;
+    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<RetainPtr<WebNotification> > > NotificationContextMap;
     NotificationContextMap m_notificationContextMap;
 #endif
 };

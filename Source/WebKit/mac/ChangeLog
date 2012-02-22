@@ -1,3 +1,16 @@
+2012-02-22  Jon Lee  <jonlee@apple.com>
+
+        Part of r108409 was incorrect, and incorporated an older version of a sub-patch.
+        This is the actual sub-patch that should have been submitted.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::show):
+        (WebNotificationClient::cancel):
+        (WebNotificationClient::clearNotifications):
+        (WebNotificationClient::notificationObjectDestroyed):
+        (WebNotificationClient::notificationControllerDestroyed):
+
 2012-02-21  Jon Lee  <jonlee@apple.com>
 
         Build fix. Push ENABLE_NOTIFICATIONS into .mm file.

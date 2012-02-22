@@ -69,15 +69,10 @@ bool WebNotificationClient::show(Notification* notification)
 
     uint64_t notificationID = generateNotificationID();
     RetainPtr<WebNotification> webNotification = adoptNS([[WebNotification alloc] initWithCoreNotification:notification notificationID:notificationID]);
-    m_notificationMap.set(notification, notificationID);
-    m_notificationIDMap.set(notificationID, webNotification);
+    m_notificationMap.set(notification, webNotification);
 
-    NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
-    if (it == m_notificationContextMap.end()) {
-        pair<NotificationContextMap::iterator, bool> addedPair = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>());
-        it = addedPair.first;
-    }
-    it->second.append(notificationID);
+    NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification> >()).first;
+    it->second.append(webNotification);
 
     [[m_webView _notificationProvider] showNotification:webNotification.get() fromWebView:m_webView];
     return true;
@@ -90,12 +85,10 @@ bool WebNotificationClient::show(Notification* notification)
 void WebNotificationClient::cancel(Notification* notification)
 {
 #if ENABLE(NOTIFICATIONS)
-    uint64_t notificationID = m_notificationMap.get(notification);
-    if (!notificationID)
+    WebNotification *webNotification = m_notificationMap.get(notification).get();
+    if (!webNotification)
         return;
-    
-    WebNotification *webNotification = m_notificationIDMap.get(notificationID).get();
-    ASSERT(webNotification);
+
     [[m_webView _notificationProvider] cancelNotification:webNotification];
 #else
     UNUSED_PARAM(notification);
@@ -109,20 +102,16 @@ void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
     if (it == m_notificationContextMap.end())
         return;
     
-    Vector<uint64_t>& notificationIDs = it->second;
+    Vector<RetainPtr<WebNotification> >& webNotifications = it->second;
     NSMutableArray *nsIDs = [NSMutableArray array];
-    size_t count = notificationIDs.size();
-    for (size_t i = 0; i < count; ++i)
-        [nsIDs addObject:[NSNumber numberWithUnsignedLongLong:notificationIDs[i]]];
-    [[m_webView _notificationProvider] clearNotifications:nsIDs];
-
+    size_t count = webNotifications.size();
     for (size_t i = 0; i < count; ++i) {
-        RetainPtr<WebNotification> webNotification = m_notificationIDMap.take(notificationIDs[i]);
-        if (!webNotification)
-            continue;
-        m_notificationMap.remove(core(webNotification.get()));
+        WebNotification *webNotification = webNotifications[i].get();
+        [nsIDs addObject:[NSNumber numberWithUnsignedLongLong:[webNotification notificationID]]];
+        m_notificationMap.remove(core(webNotification));
     }
-    
+
+    [[m_webView _notificationProvider] clearNotifications:nsIDs];
     m_notificationContextMap.remove(it);
 #else
     UNUSED_PARAM(context);
@@ -132,16 +121,13 @@ void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
 void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
 {
 #if ENABLE(NOTIFICATIONS)
-    uint64_t notificationID = m_notificationMap.take(notification);
-    if (!notificationID)
+    RetainPtr<WebNotification> webNotification = m_notificationMap.take(notification);
+    if (!webNotification)
         return;
-
-    RetainPtr<WebNotification> webNotification = m_notificationIDMap.take(notificationID);
-    ASSERT(webNotification.get());
 
     NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
     ASSERT(it != m_notificationContextMap.end());
-    size_t index = it->second.find(notificationID);
+    size_t index = it->second.find(webNotification);
     ASSERT(index != notFound);
     it->second.remove(index);
     if (it->second.isEmpty())
@@ -156,11 +142,6 @@ void WebNotificationClient::notificationObjectDestroyed(Notification* notificati
 void WebNotificationClient::notificationControllerDestroyed()
 {
 #if ENABLE(NOTIFICATIONS)
-    NSMutableArray *notificationIDs = [NSMutableArray array];
-    HashMap<uint64_t, RetainPtr<WebNotification> >::iterator itEnd = m_notificationIDMap.end();
-    for (HashMap<uint64_t, RetainPtr<WebNotification> >::iterator it = m_notificationIDMap.begin(); it != itEnd; ++it)
-        [notificationIDs addObject:[NSNumber numberWithUnsignedLongLong:it->first]];
-    [[m_webView _notificationProvider] clearNotifications:notificationIDs];
     [m_webView _notificationControllerDestroyed];
 #endif
     delete this;
