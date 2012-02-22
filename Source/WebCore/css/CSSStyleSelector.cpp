@@ -3292,9 +3292,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
 
     // CSS3 Properties
-    case CSSPropertyWebkitAppearance:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
-        return;
     case CSSPropertyImageRendering:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(imageRendering, ImageRendering);
         return;
@@ -3367,42 +3364,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // Clamp opacity to the range 0-1
         m_style->setOpacity(clampTo<float>(primitiveValue->getDoubleValue(), 0, 1));
         return;
-    case CSSPropertyWebkitBoxAlign:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxAlign, BoxAlign)
-        return;
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSSPropertyWebkitBackfaceVisibility:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(backfaceVisibility, BackfaceVisibility)
-        return;
-    case CSSPropertyWebkitBoxDirection:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxDirection, BoxDirection)
-        return;
-    case CSSPropertyWebkitBoxLines:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxLines, BoxLines)
-        return;
-    case CSSPropertyWebkitBoxOrient:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxOrient, BoxOrient)
-        return;
-    case CSSPropertyWebkitBoxPack:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxPack, BoxPack)
-        return;
-    case CSSPropertyWebkitBoxFlex:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxFlex, BoxFlex)
-        return;
-    case CSSPropertyWebkitBoxFlexGroup:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxFlexGroup, BoxFlexGroup)
-        return;
-    case CSSPropertyWebkitBoxOrdinalGroup:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxOrdinalGroup, BoxOrdinalGroup)
-        return;
     case CSSPropertyBoxSizing:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
-        return;
-    case CSSPropertyWebkitColumnSpan:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(columnSpan, ColumnSpan)
         return;
     case CSSPropertyWebkitColumnRuleStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
@@ -3499,25 +3466,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSSPropertyWebkitMarqueeStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeBehavior, MarqueeBehavior)
-        return;
-    case CSSPropertyWebkitRegionOverflow:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
-        return;
-    case CSSPropertyWebkitMarqueeDirection:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
-        return;
-    case CSSPropertyWebkitUserDrag:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userDrag, UserDrag)
-        return;
-    case CSSPropertyWebkitUserModify:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userModify, UserModify)
-        return;
-    case CSSPropertyWebkitUserSelect:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userSelect, UserSelect)
-        return;
-
     case CSSPropertyTextOverflow: {
         // This property is supported by WinIE, and so we leave off the "-webkit-" in order to
         // work with WinIE-specific pages that use the property.
@@ -3558,10 +3506,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         setTextSizeAdjust(primitiveValue->getIdent() == CSSValueAuto);
         return;
     }
-    case CSSPropertyWebkitTextSecurity:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textSecurity, TextSecurity)
-        return;
-
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
@@ -3595,9 +3539,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 #endif
-    case CSSPropertyWebkitRtlOrdering:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(rtlOrdering, RTLOrdering)
-        return;
     case CSSPropertyWebkitTextStrokeWidth: {
         HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)
         float width = 0;
@@ -3627,12 +3568,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTransform(operations);
         return;
     }
-    case CSSPropertyWebkitTransformStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(transformStyle3D, TransformStyle3D)
-        return;
-    case CSSPropertyWebkitPrintColorAdjust:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(printColorAdjust, PrintColorAdjust);
-        return;
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
@@ -3989,7 +3924,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAnimationName:
     case CSSPropertyWebkitAnimationPlayState:
     case CSSPropertyWebkitAnimationTimingFunction:
+    case CSSPropertyWebkitAppearance:
     case CSSPropertyWebkitAspectRatio:
+    case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitBackgroundOrigin:
@@ -3998,11 +3935,20 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitBorderVerticalSpacing:
+    case CSSPropertyWebkitBoxAlign:
+    case CSSPropertyWebkitBoxDirection:
+    case CSSPropertyWebkitBoxFlex:
+    case CSSPropertyWebkitBoxFlexGroup:
+    case CSSPropertyWebkitBoxLines:
+    case CSSPropertyWebkitBoxOrdinalGroup:
+    case CSSPropertyWebkitBoxOrient:
+    case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnRuleColor:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyWebkitColumns:
+    case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexDirection:
@@ -4025,6 +3971,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitLineBreak:
     case CSSPropertyWebkitLineGrid:
     case CSSPropertyWebkitLineSnap:
+    case CSSPropertyWebkitMarqueeDirection:
+    case CSSPropertyWebkitMarqueeStyle:
     case CSSPropertyWebkitMaskAttachment:
     case CSSPropertyWebkitMaskBoxImage:
     case CSSPropertyWebkitMaskBoxImageOutset:
@@ -4048,21 +3996,29 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
+    case CSSPropertyWebkitPrintColorAdjust:
+    case CSSPropertyWebkitRegionOverflow:
+    case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextOrientation:
+    case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextStrokeColor:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransformOriginX:
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitTransformOriginZ:
+    case CSSPropertyWebkitTransformStyle:
     case CSSPropertyWebkitTransitionDelay:
     case CSSPropertyWebkitTransitionDuration:
     case CSSPropertyWebkitTransitionProperty:
     case CSSPropertyWebkitTransitionTimingFunction:
+    case CSSPropertyWebkitUserDrag:
+    case CSSPropertyWebkitUserModify:
+    case CSSPropertyWebkitUserSelect:
     case CSSPropertyWebkitWrap:
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapMargin:
