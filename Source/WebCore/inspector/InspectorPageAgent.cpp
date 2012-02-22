@@ -144,7 +144,8 @@ PassRefPtr<TextResourceDecoder> InspectorPageAgent::createDecoder(const String& 
     else if (DOMImplementation::isXMLMIMEType(mimeType)) {
         decoder = TextResourceDecoder::create("application/xml");
         decoder->useLenientXMLDecoding();
-    }
+    } else
+        decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     return decoder;
 }
 
@@ -181,6 +182,8 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             return true;
         case CachedResource::RawResource: {
             SharedBuffer* buffer = cachedResource->data();
+            if (!buffer)
+                return false;
             RefPtr<TextResourceDecoder> decoder = InspectorPageAgent::createDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
             String content = decoder->decode(buffer->data(), buffer->size());
             content += decoder->flush();
