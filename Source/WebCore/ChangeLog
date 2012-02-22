@@ -1,3 +1,17 @@
+2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Console xhr logging is broken for async xhrs since r107672.
+        https://bugs.webkit.org/show_bug.cgi?id=79229
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/console-xhr-logging-async.html
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2012-02-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: fix memory counters and start-at-zero modes of timeline panels to co-exist nicely
