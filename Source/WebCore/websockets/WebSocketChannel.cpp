@@ -127,8 +127,6 @@ void WebSocketChannel::connect(const KURL& url, const String& protocol)
     ASSERT(!m_suspended);
     m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_document, m_useHixie76Protocol));
     m_handshake->reset();
-    if (!m_useHixie76Protocol && m_deflateFramer.canDeflate())
-        m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url());
     ref();
@@ -230,7 +228,6 @@ void WebSocketChannel::fail(const String& reason)
         m_shouldDiscardReceivedData = true;
         if (m_buffer)
             skipBuffer(m_bufferSize); // Save memory.
-        m_deflateFramer.didFail();
         m_hasContinuousFrame = false;
         m_continuousFrameData.clear();
     }
@@ -620,12 +617,6 @@ bool WebSocketChannel::processFrame()
 
     ASSERT(m_buffer < frameEnd);
     ASSERT(frameEnd <= m_buffer + m_bufferSize);
-
-    InflateResultHolder inflateResult = m_deflateFramer.inflate(frame);
-    if (!inflateResult.succeeded()) {
-        fail(inflateResult.failureReason());
-        return false;
-    }
 
     // Validate the frame data.
     if (WebSocketFrame::isReservedOpCode(frame.opCode)) {
@@ -1020,13 +1011,6 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
 
     ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
     WebSocketFrame frame(opCode, true, false, true, data, dataLength);
-
-    DeflateResultHolder deflateResult = m_deflateFramer.deflate(frame);
-    if (!deflateResult.succeeded()) {
-        fail(deflateResult.failureReason());
-        return false;
-    }
-
     Vector<char> frameData;
     makeFrameData(frame, frameData);
 
