@@ -16,6 +16,9 @@ PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newP
 PASS Object.preventExtensions(Math); Math.sqrt(4) is 2
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
+PASS obj.foo is 1
+PASS array[0] is 0
+PASS args[0] is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

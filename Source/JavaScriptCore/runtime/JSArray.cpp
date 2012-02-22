@@ -223,10 +223,17 @@ inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(J
 
 inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value)
 {
-    // If the array is not extensible, we shouldn't get here!
-    ASSERT(array->isExtensible());
+    std::pair<SparseArrayValueMap::iterator, bool> result = add(array, i);
+    SparseArrayEntry& entry = result.first->second;
 
-    SparseArrayEntry& entry = add(array, i).first->second;
+    // To save a separate find & add, we first always add to the sparse map.
+    // In the uncommon case that this is a new property, and the array is not
+    // extensible, this is not the right thing to have done - so remove again.
+    if (result.second && !array->isExtensible()) {
+        remove(result.first);
+        // FIXME: should throw in strict mode.
+        return;
+    }
 
     if (!(entry.attributes & Accessor)) {
         if (entry.attributes & ReadOnly) {

@@ -78,3 +78,21 @@ shouldBe('Object.preventExtensions(Math); Math.sqrt(4)', '2');
 // Should not be able to add properties to a preventExtensions array.
 shouldBeUndefined('var arr = Object.preventExtensions([]); arr[0] = 42; arr[0]');
 shouldBe('var arr = Object.preventExtensions([]); arr[0] = 42; arr.length', '0');
+
+// A read-only property on the prototype should prevent a [[Put]] .
+function Constructor() {}
+Constructor.prototype.foo = 1;
+Object.freeze(Constructor.prototype);
+var obj = new Constructor();
+obj.foo = 2;
+shouldBe('obj.foo', '1');
+
+// Check that freezing array objects works correctly.
+var array = freeze([0,1,2]);
+array[0] = 3;
+shouldBe('array[0]', '0');
+
+// Check that freezing arguments objects works correctly.
+var args = freeze((function(){ return arguments; })(0,1,2));
+args[0] = 3;
+shouldBe('args[0]', '0');

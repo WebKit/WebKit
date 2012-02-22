@@ -359,19 +359,77 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 {
+    // 1. If Type(O) is not Object throw a TypeError exception.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.seal can only be called on Objects."));
-    asObject(obj)->seal(exec->globalData());
+    JSObject* object = asObject(obj);
+
+    if (isJSFinalObject(obj))
+        object->seal(exec->globalData());
+    else {
+        // 2. For each named own property name P of O,
+        PropertyNameArray properties(exec);
+        object->methodTable()->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+        PropertyNameArray::const_iterator end = properties.end();
+        for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
+            // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
+            PropertyDescriptor desc;
+            if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, *iter, desc))
+                continue;
+            // b. If desc.[[Configurable]] is true, set desc.[[Configurable]] to false.
+            desc.setConfigurable(false);
+            // c. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
+            object->methodTable()->defineOwnProperty(object, exec, *iter, desc, true);
+            if (exec->hadException())
+                return JSValue::encode(obj);
+        }
+
+        // 3. Set the [[Extensible]] internal property of O to false.
+        object->preventExtensions(exec->globalData());
+    }
+
+    // 4. Return O.
     return JSValue::encode(obj);
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
 {
+    // 1. If Type(O) is not Object throw a TypeError exception.
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.freeze can only be called on Objects."));
-    asObject(obj)->freeze(exec->globalData());
+    JSObject* object = asObject(obj);
+
+    if (isJSFinalObject(obj))
+        object->freeze(exec->globalData());
+    else {
+        // 2. For each named own property name P of O,
+        PropertyNameArray properties(exec);
+        object->methodTable()->getOwnPropertyNames(object, exec, properties, IncludeDontEnumProperties);
+        PropertyNameArray::const_iterator end = properties.end();
+        for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
+            // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
+            PropertyDescriptor desc;
+            if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, *iter, desc))
+                continue;
+            // b. If IsDataDescriptor(desc) is true, then
+            // i. If desc.[[Writable]] is true, set desc.[[Writable]] to false.
+            if (desc.isDataDescriptor())
+                desc.setWritable(false);
+            // c. If desc.[[Configurable]] is true, set desc.[[Configurable]] to false.
+            desc.setConfigurable(false);
+            // d. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
+            object->methodTable()->defineOwnProperty(object, exec, *iter, desc, true);
+            if (exec->hadException())
+                return JSValue::encode(obj);
+        }
+
+        // 3. Set the [[Extensible]] internal property of O to false.
+        object->preventExtensions(exec->globalData());
+    }
+
+    // 4. Return O.
     return JSValue::encode(obj);
 }
 
