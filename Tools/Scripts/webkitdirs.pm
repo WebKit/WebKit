@@ -326,7 +326,9 @@ sub determineArchitecture
 sub determineNumberOfCPUs
 {
     return if defined $numberOfCPUs;
-    if (isLinux()) {
+    if (defined($ENV{NUMBER_OF_PROCESSORS})) {
+        $numberOfCPUs = $ENV{NUMBER_OF_PROCESSORS};
+    } elsif (isLinux()) {
         # First try the nproc utility, if it exists. If we get no
         # results fall back to just interpretting /proc directly.
         chomp($numberOfCPUs = `nproc 2> /dev/null`);
@@ -334,12 +336,8 @@ sub determineNumberOfCPUs
             $numberOfCPUs = (grep /processor/, `cat /proc/cpuinfo`);
         }
     } elsif (isWindows() || isCygwin()) {
-        if (defined($ENV{NUMBER_OF_PROCESSORS})) {
-            $numberOfCPUs = $ENV{NUMBER_OF_PROCESSORS};
-        } else {
-            # Assumes cygwin
-            $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
-        }
+        # Assumes cygwin
+        $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
     } elsif (isDarwin()) {
         chomp($numberOfCPUs = `sysctl -n hw.ncpu`);
     }
