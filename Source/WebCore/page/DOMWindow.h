@@ -46,10 +46,7 @@ namespace WebCore {
     class DatabaseCallback;
     class Document;
     class Element;
-    class EntryCallback;
-    class ErrorCallback;
     class EventListener;
-    class FileSystemCallback;
     class FloatRect;
     class Frame;
     class History;
@@ -358,12 +355,11 @@ namespace WebCore {
 #if ENABLE(FILE_SYSTEM)
         // They are placed here and in all capital letters so they can be checked against the constants in the
         // IDL at compile time.
+        // FIXME: Move these constants to DOMWindowFileSystem.
         enum FileSystemType {
             TEMPORARY,
             PERSISTENT,
         };
-        void webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
-        void webkitResolveLocalFileSystemURL(const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
 #endif
 
 #if ENABLE(NOTIFICATIONS)

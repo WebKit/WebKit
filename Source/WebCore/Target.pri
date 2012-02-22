@@ -656,6 +656,7 @@ SOURCES += \
     fileapi/DOMFileSystem.cpp \
     fileapi/DOMFileSystemBase.cpp \
     fileapi/DOMFileSystemSync.cpp \
+    fileapi/DOMWindowFileSystem.cpp \
     fileapi/DirectoryEntry.cpp \
     fileapi/DirectoryEntrySync.cpp \
     fileapi/DirectoryReader.cpp \

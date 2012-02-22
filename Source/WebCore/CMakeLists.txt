@@ -1601,6 +1601,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/DOMFileSystem.cpp
         fileapi/DOMFileSystemBase.cpp
         fileapi/DOMFileSystemSync.cpp
+        fileapi/DOMWindowFileSystem.cpp
         fileapi/Entry.cpp
         fileapi/EntryArray.cpp
         fileapi/EntryArraySync.cpp
@@ -1622,6 +1623,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/DirectoryReaderSync.idl
         fileapi/DOMFileSystem.idl
         fileapi/DOMFileSystemSync.idl
+        fileapi/DOMWindowFileSystem.idl
         fileapi/EntriesCallback.idl
         fileapi/Entry.idl
         fileapi/EntrySync.idl

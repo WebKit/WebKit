@@ -102,17 +102,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(FILE_SYSTEM)
-#include "AsyncFileSystem.h"
-#include "DOMFileSystem.h"
-#include "EntryCallback.h"
-#include "ErrorCallback.h"
-#include "FileError.h"
-#include "FileSystemCallback.h"
-#include "FileSystemCallbacks.h"
-#include "LocalFileSystem.h"
-#endif
-
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "RequestAnimationFrameCallback.h"
 #endif
@@ -751,61 +740,6 @@ void DOMWindow::setIDBFactory(PassRefPtr<IDBFactory> idbFactory)
 {
     m_idbFactory = idbFactory;
 }
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-void DOMWindow::webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    if (!isCurrentlyDisplayedInFrame())
-        return;
-
-    Document* document = this->document();
-    if (!document)
-        return;
-
-    if (!AsyncFileSystem::isAvailable() || !document->securityOrigin()->canAccessFileSystem()) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SECURITY_ERR));
-        return;
-    }
-
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), false);
-}
-
-void DOMWindow::webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    if (!isCurrentlyDisplayedInFrame())
-        return;
-
-    Document* document = this->document();
-    if (!document)
-        return;
-
-    SecurityOrigin* securityOrigin = document->securityOrigin();
-    KURL completedURL = document->completeURL(url);
-    if (!AsyncFileSystem::isAvailable() || !securityOrigin->canAccessFileSystem() || !securityOrigin->canRequest(completedURL)) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SECURITY_ERR));
-        return;
-    }
-
-    AsyncFileSystem::Type type;
-    String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::ENCODING_ERR));
-        return;
-    }
-
-    LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
-}
-
-COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(DOMWindow::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
-
 #endif
 
 void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)

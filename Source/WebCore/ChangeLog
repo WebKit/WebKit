@@ -1,3 +1,41 @@
+2012-02-22  Adam Barth  <abarth@webkit.org>
+
+        Move FILE_SYSTEM code out of DOMWindow and into the fileapi folder
+        https://bugs.webkit.org/show_bug.cgi?id=79259
+
+        Reviewed by Eric Seidel.
+
+        This patch is part of our ongoing effort to remove ifdefs from code
+        classes.  The FILE_SYSTEM code in DOMWindow doesn't really have any
+        necessary connection to DOMWindow.  DOMWindow is just the context
+        object that the API hangs off of.
+
+        This patch moves the FILE_SYSTEM code into the fileapi folder using
+        [Supplemental].
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * fileapi/DOMWindowFileSystem.cpp: Added.
+        (WebCore):
+        (WebCore::DOMWindowFileSystem::DOMWindowFileSystem):
+        (WebCore::DOMWindowFileSystem::~DOMWindowFileSystem):
+        (WebCore::DOMWindowFileSystem::webkitRequestFileSystem):
+        (WebCore::DOMWindowFileSystem::webkitResolveLocalFileSystemURL):
+        * fileapi/DOMWindowFileSystem.h: Added.
+        (WebCore):
+        (DOMWindowFileSystem):
+        * fileapi/DOMWindowFileSystem.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore):
+        * page/DOMWindow.h:
+        (WebCore):
+        (DOMWindow):
+        * page/DOMWindow.idl:
+
 2012-02-22  Luke Macpherson   <macpherson@chromium.org>
 
         Re-implement many more HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macros in CSSStyleApplyProperty.

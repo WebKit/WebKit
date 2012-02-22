@@ -1873,6 +1873,8 @@ webcore_sources += \
 	Source/WebCore/fileapi/DOMFileSystemBase.h \
 	Source/WebCore/fileapi/DOMFileSystemSync.cpp \
 	Source/WebCore/fileapi/DOMFileSystemSync.h \
+	Source/WebCore/fileapi/DOMWindowFileSystem.cpp \
+	Source/WebCore/fileapi/DOMWindowFileSystem.h \
 	Source/WebCore/fileapi/EntriesCallback.h \
 	Source/WebCore/fileapi/Entry.cpp \
 	Source/WebCore/fileapi/Entry.h \
@@ -4833,6 +4835,7 @@ webcore_built_sources += \
 dom_binding_idls += \
 	$(WebCore)/fileapi/DOMFileSystem.idl \
 	$(WebCore)/fileapi/DOMFileSystemSync.idl \
+	$(WebCore)/fileapi/DOMWindowFileSystem.idl \
 	$(WebCore)/fileapi/DirectoryEntry.idl \
 	$(WebCore)/fileapi/DirectoryEntrySync.idl \
 	$(WebCore)/fileapi/DirectoryReader.idl \
