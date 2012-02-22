@@ -87,6 +87,7 @@
 #include "RenderStyleConstants.h"
 #include "RenderTheme.h"
 #include "RotateTransformOperation.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScaleTransformOperation.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -445,6 +446,9 @@ void CSSStyleSelector::collectFeatures()
 const Element* CSSStyleSelector::determineScopingElement(const CSSStyleSheet* sheet)
 {
     ASSERT(sheet);
+
+    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+        return 0;
 
     Node* ownerNode = sheet->findStyleSheetOwnerNode();
     if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))

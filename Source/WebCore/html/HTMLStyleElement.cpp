@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
 
@@ -87,44 +88,50 @@ void HTMLStyleElement::registerWithScopingNode()
     // Therefore we cannot rely on scoped()!
     ASSERT(!m_isRegisteredWithScopingNode);
     ASSERT(inDocument());
-    if (!m_isRegisteredWithScopingNode) {
-        ContainerNode* scope = parentNode();
-        if (!scope)
-            return;
-        if (!scope->isElementNode() && !scope->isShadowRoot()) {
-            // DocumentFragment nodes should never be inDocument,
-            // <style> should not be a child of Document, PI or some such.
-            ASSERT_NOT_REACHED();
-            return;
-        }
+    if (m_isRegisteredWithScopingNode)
+        return;
+    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+        return;
 
-        scope->registerScopedHTMLStyleChild();
-        scope->setNeedsStyleRecalc();
-        if (inDocument() && !document()->parsing() && document()->renderer())
-            document()->styleSelectorChanged(DeferRecalcStyle);
-
-        m_isRegisteredWithScopingNode = true;
+    ContainerNode* scope = parentNode();
+    if (!scope)
+        return;
+    if (!scope->isElementNode() && !scope->isShadowRoot()) {
+        // DocumentFragment nodes should never be inDocument,
+        // <style> should not be a child of Document, PI or some such.
+        ASSERT_NOT_REACHED();
+        return;
     }
+
+    scope->registerScopedHTMLStyleChild();
+    scope->setNeedsStyleRecalc();
+    if (inDocument() && !document()->parsing() && document()->renderer())
+        document()->styleSelectorChanged(DeferRecalcStyle);
+
+    m_isRegisteredWithScopingNode = true;
 }
 
 void HTMLStyleElement::unregisterWithScopingNode()
 {
     // Note: We cannot rely on the 'scoped' element still being present when this method is invoked.
     // Therefore we cannot rely on scoped()!
-    ASSERT(m_isRegisteredWithScopingNode);
-    if (m_isRegisteredWithScopingNode) {
-        ContainerNode* scope = parentNode();
-        ASSERT(scope);
-        if (scope) {
-            ASSERT(scope->hasScopedHTMLStyleChild());
-            scope->unregisterScopedHTMLStyleChild();
-            scope->setNeedsStyleRecalc();
-        }
-        if (inDocument() && !document()->parsing() && document()->renderer())
-            document()->styleSelectorChanged(DeferRecalcStyle);
+    ASSERT(m_isRegisteredWithScopingNode || !RuntimeEnabledFeatures::styleScopedEnabled());
+    if (!m_isRegisteredWithScopingNode)
+        return;
+    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+        return;
 
-        m_isRegisteredWithScopingNode = false;
+    ContainerNode* scope = parentNode();
+    ASSERT(scope);
+    if (scope) {
+        ASSERT(scope->hasScopedHTMLStyleChild());
+        scope->unregisterScopedHTMLStyleChild();
+        scope->setNeedsStyleRecalc();
     }
+    if (inDocument() && !document()->parsing() && document()->renderer())
+        document()->styleSelectorChanged(DeferRecalcStyle);
+
+    m_isRegisteredWithScopingNode = false;
 }
 #endif
 

@@ -185,4 +185,7 @@ bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
 bool RuntimeEnabledFeatures::isMultipleShadowSubtreesEnabled = false;
 #endif
 
+#if ENABLE(STYLE_SCOPED)
+bool RuntimeEnabledFeatures::isStyleScopedEnabled = false;
+#endif
 } // namespace WebCore

@@ -124,6 +124,9 @@ public:
     WEBKIT_EXPORT static void enableShadowDOM(bool);
     WEBKIT_EXPORT static bool isShadowDOMEnabled();
 
+    WEBKIT_EXPORT static void enableStyleScoped(bool);
+    WEBKIT_EXPORT static bool isStyleScopedEnabled();
+
 private:
     WebRuntimeFeatures();
 };

@@ -1,3 +1,21 @@
+2012-02-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Add runtime-flag
+        https://bugs.webkit.org/show_bug.cgi?id=79074
+
+        Added a runtime-flag.
+        Enable default STYLE_SCOPED compile-time flag for Chromium.
+
+        Reviewed by Dimitri Glazkov.
+
+        * features.gypi: enable STYLE_SCOPED
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableStyleScoped):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isStyleScopedEnabled):
+
 2012-02-22  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r108453.

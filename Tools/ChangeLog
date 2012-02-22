@@ -1,3 +1,15 @@
+2012-02-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Add runtime-flag
+        https://bugs.webkit.org/show_bug.cgi?id=79074
+
+        Enable the runtime-flag for DRT. 
+
+        Reviewed by Dimitri Glazkov.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2012-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r107351.
