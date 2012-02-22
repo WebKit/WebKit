@@ -160,6 +160,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #if ENABLE(GC_VALIDATION)
     , m_isInitializingObject(false)
 #endif
+    , m_inDefineOwnProperty(false)
 {
     interpreter = new Interpreter;
 

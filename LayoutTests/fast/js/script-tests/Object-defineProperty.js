@@ -44,7 +44,7 @@ shouldThrow("Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo
 shouldThrow("Object.defineProperty(createUnconfigurableProperty({}, 'foo', false, true), 'foo', {enumerable: false}), 'foo'");
 
 shouldBe("JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty(createUnconfigurableProperty({}, 'foo', true), 'foo', {writable: false}), 'foo'))",
-         "JSON.stringify({value: 1, writable: true, enumerable: false, configurable: false})");
+         "JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})");
 
 shouldThrow("Object.defineProperty({}, 'foo', {value:1, get: function(){}})");
 shouldThrow("Object.defineProperty({}, 'foo', {value:1, set: function(){}})");

@@ -1,3 +1,30 @@
+2012-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Should be able to reconfigure a non-configurable property as read-only
+        https://bugs.webkit.org/show_bug.cgi?id=79170
+
+        Reviewed by Sam Weinig.
+
+        See ES5.1 8.12.9 10.a.i - the spec prohibits making a read-only property writable,
+        but does not inhibit making a writable property read-only.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::setInDefineOwnProperty):
+        (JSGlobalData):
+        (JSC::JSGlobalData::isInDefineOwnProperty):
+            - Added flag, tracking whether we are in JSObject::defineOwnProperty.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (DefineOwnPropertyScope):
+            - Always allow properties to be deleted by DefineOwnProperty - assume it knows what it is doing!
+        (JSC::DefineOwnPropertyScope::DefineOwnPropertyScope):
+        (JSC::DefineOwnPropertyScope::~DefineOwnPropertyScope):
+            - Added RAII helper.
+        (JSC::JSObject::defineOwnProperty):
+            - Track on the globalData when we are in this method.
+
 2012-02-21  Oliver Hunt  <oliver@apple.com>
 
         Make TypedArrays be available in commandline jsc

@@ -268,7 +268,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& p
     unsigned attributes;
     JSCell* specificValue;
     if (thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
-        if ((attributes & DontDelete))
+        if (attributes & DontDelete && !exec->globalData().isInDefineOwnProperty())
             return false;
         thisObject->removeDirect(exec->globalData(), propertyName);
         return true;
@@ -276,7 +276,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& p
 
     // Look in the static hashtable of properties
     const HashEntry* entry = thisObject->findPropertyHashEntry(exec, propertyName);
-    if (entry && entry->attributes() & DontDelete)
+    if (entry && entry->attributes() & DontDelete && !exec->globalData().isInDefineOwnProperty())
         return false; // this builtin property can't be deleted
 
     // FIXME: Should the code here actually do some deletion?
@@ -644,8 +644,31 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
     return true;
 }
 
+class DefineOwnPropertyScope {
+public:
+    DefineOwnPropertyScope(ExecState* exec)
+        : m_globalData(exec->globalData())
+    {
+        m_globalData.setInDefineOwnProperty(true);
+    }
+
+    ~DefineOwnPropertyScope()
+    {
+        m_globalData.setInDefineOwnProperty(false);
+    }
+
+private:
+    JSGlobalData& m_globalData;
+};
+
 bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
+    // Track on the globaldata that we're in define property.
+    // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
+    // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
+    // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
+    DefineOwnPropertyScope scope(exec);
+
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
     if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, current)) {

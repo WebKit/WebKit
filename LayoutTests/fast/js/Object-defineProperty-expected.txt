@@ -28,7 +28,7 @@ PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {conf
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {writable: true}) threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {enumerable: true}) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo', false, true), 'foo', {enumerable: false}), 'foo' threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
-PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty(createUnconfigurableProperty({}, 'foo', true), 'foo', {writable: false}), 'foo')) is JSON.stringify({value: 1, writable: true, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty(createUnconfigurableProperty({}, 'foo', true), 'foo', {writable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
 PASS Object.defineProperty({}, 'foo', {value:1, get: function(){}}) threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
 PASS Object.defineProperty({}, 'foo', {value:1, set: function(){}}) threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
 PASS Object.defineProperty({}, 'foo', {writable:true, get: function(){}}) threw exception TypeError: Invalid property.  'writable' present on property with getter or setter..

@@ -211,6 +211,16 @@ namespace JSC {
             codeBlocksBeingCompiled.removeLast();
         }
 
+        void setInDefineOwnProperty(bool inDefineOwnProperty)
+        {
+            m_inDefineOwnProperty = inDefineOwnProperty;
+        }
+
+        bool isInDefineOwnProperty()
+        {
+            return m_inDefineOwnProperty;
+        }
+
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
 #endif
@@ -355,6 +365,8 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         bool m_isInitializingObject;
 #endif
+        bool m_inDefineOwnProperty;
+
         TypedArrayDescriptor m_int8ArrayDescriptor;
         TypedArrayDescriptor m_int16ArrayDescriptor;
         TypedArrayDescriptor m_int32ArrayDescriptor;
