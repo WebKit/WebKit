@@ -5048,6 +5048,7 @@
             'dom/EventListenerMap.cpp',
             'dom/EventNames.cpp',
             'dom/EventQueue.h',
+            'dom/EventSender.h',
             'dom/EventTarget.cpp',
             'dom/ExceptionBase.cpp',
             'dom/ExceptionBase.h',

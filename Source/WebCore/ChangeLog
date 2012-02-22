@@ -1,3 +1,38 @@
+2012-02-22  Daniel Bates  <dbates@webkit.org>
+
+        Abstract ImageEventSender into a general purpose EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=78840
+
+        Reviewed by Adam Barth.
+
+        Abstract the functionality in ImageEventSender so that it can be used again.
+        This functionality may be useful in fixing WebKit Bug #38995.
+
+        No functionality was changed; no new tests.
+
+        * GNUmakefile.list.am: Added EventSender.h.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/EventSender.h: Added.
+        (WebCore):
+        (EventSender):
+        (WebCore::EventSender::eventType):
+        (WebCore::EventSender::hasPendingEvents):
+        (WebCore::EventSender::timerFired):
+        (WebCore::::EventSender):
+        (WebCore::::dispatchEventSoon):
+        (WebCore::::cancelEvent):
+        (WebCore::::dispatchPendingEvents):
+        * loader/ImageLoader.cpp: Modified to use EventSender.
+        (WebCore):
+        (WebCore::ImageLoader::dispatchPendingEvent): Added; called by EventSender when the ImageLoader
+        should dispatch a pending BeforeLoad or Load event.
+        * loader/ImageLoader.h:
+        (WebCore):
+        (ImageLoader):
+
 2012-02-22  Max Vujovic  <mvujovic@adobe.com>
 
         Paddings and borders on root SVG element with viewbox causes child SVG elements to be rendered with the incorrect size

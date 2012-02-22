@@ -48770,6 +48770,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\EventSender.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\EventTarget.cpp"
 				>
 				<FileConfiguration

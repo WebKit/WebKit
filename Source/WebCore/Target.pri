@@ -1647,6 +1647,7 @@ HEADERS += \
     dom/EventListenerMap.h \
     dom/EventNames.h \
     dom/EventQueue.h \
+    dom/EventSender.h \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \

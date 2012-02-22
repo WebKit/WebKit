@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
+#include "EventSender.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
@@ -61,32 +62,6 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 #endif
 
 namespace WebCore {
-
-class ImageEventSender {
-    WTF_MAKE_NONCOPYABLE(ImageEventSender); WTF_MAKE_FAST_ALLOCATED;
-public:
-    ImageEventSender(const AtomicString& eventType);
-
-    void dispatchEventSoon(ImageLoader*);
-    void cancelEvent(ImageLoader*);
-
-    void dispatchPendingEvents();
-
-#ifndef NDEBUG
-    bool hasPendingEvents(ImageLoader* loader) const
-    {
-        return m_dispatchSoonList.find(loader) != notFound || m_dispatchingList.find(loader) != notFound;
-    }
-#endif
-
-private:
-    void timerFired(Timer<ImageEventSender>*);
-
-    AtomicString m_eventType;
-    Timer<ImageEventSender> m_timer;
-    Vector<ImageLoader*> m_dispatchSoonList;
-    Vector<ImageLoader*> m_dispatchingList;
-};
 
 static ImageEventSender& beforeLoadEventSender()
 {
@@ -302,6 +277,16 @@ void ImageLoader::updateRenderer()
         imageResource->setCachedImage(m_image.get());
 }
 
+void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
+{
+    ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender());
+    const AtomicString& eventType = eventSender->eventType();
+    if (eventType == eventNames().beforeloadEvent)
+        dispatchPendingBeforeLoadEvent();
+    if (eventType == eventNames().loadEvent)
+        dispatchPendingLoadEvent();
+}
+
 void ImageLoader::dispatchPendingBeforeLoadEvent()
 {
     if (m_firedBeforeLoad)
@@ -352,68 +337,6 @@ void ImageLoader::dispatchPendingLoadEvents()
 void ImageLoader::elementDidMoveToNewDocument()
 {
     setImage(0);
-}
-
-ImageEventSender::ImageEventSender(const AtomicString& eventType)
-    : m_eventType(eventType)
-    , m_timer(this, &ImageEventSender::timerFired)
-{
-}
-
-void ImageEventSender::dispatchEventSoon(ImageLoader* loader)
-{
-    m_dispatchSoonList.append(loader);
-    if (!m_timer.isActive())
-        m_timer.startOneShot(0);
-}
-
-void ImageEventSender::cancelEvent(ImageLoader* loader)
-{
-    // Remove instances of this loader from both lists.
-    // Use loops because we allow multiple instances to get into the lists.
-    size_t size = m_dispatchSoonList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_dispatchSoonList[i] == loader)
-            m_dispatchSoonList[i] = 0;
-    }
-    size = m_dispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_dispatchingList[i] == loader)
-            m_dispatchingList[i] = 0;
-    }
-    if (m_dispatchSoonList.isEmpty())
-        m_timer.stop();
-}
-
-void ImageEventSender::dispatchPendingEvents()
-{
-    // Need to avoid re-entering this function; if new dispatches are
-    // scheduled before the parent finishes processing the list, they
-    // will set a timer and eventually be processed.
-    if (!m_dispatchingList.isEmpty())
-        return;
-
-    m_timer.stop();
-
-    m_dispatchSoonList.checkConsistency();
-
-    m_dispatchingList.swap(m_dispatchSoonList);
-    size_t size = m_dispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (ImageLoader* loader = m_dispatchingList[i]) {
-            m_dispatchingList[i] = 0;
-            if (m_eventType == eventNames().beforeloadEvent)
-                loader->dispatchPendingBeforeLoadEvent();
-            else
-                loader->dispatchPendingLoadEvent();
-        }
-    }
-    m_dispatchingList.clear();
-}
-
-void ImageEventSender::timerFired(Timer<ImageEventSender>*)
-{
-    dispatchPendingEvents();
 }
 
 }

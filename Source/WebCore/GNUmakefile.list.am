@@ -1578,6 +1578,7 @@ webcore_sources += \
 	Source/WebCore/dom/EventTarget.cpp \
 	Source/WebCore/dom/EventTarget.h \
 	Source/WebCore/dom/EventQueue.h \
+	Source/WebCore/dom/EventSender.h \
 	Source/WebCore/dom/ExceptionBase.cpp \
 	Source/WebCore/dom/ExceptionBase.h \
 	Source/WebCore/dom/ExceptionCode.h \
