@@ -1,3 +1,25 @@
+2012-02-21  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Painting a layer clears opaque rect in untouched tiles
+        https://bugs.webkit.org/show_bug.cgi?id=79157
+
+        Reviewed by James Robinson.
+
+        When painting a tiled layer, we would throw away the saved opaque rect
+        for any tiles that were not part of the paint. So now we check
+        if we are able to save the existing saved opaque rect in a more
+        proper way:
+        1. If any pixels of the saved rect are painted non-opaque, we replace
+        the saved rect.
+        2. If an opaque rect is drawn outside of the saved rect, we replace
+        the saved rect.
+
+        Unit test: TiledLayerChromiumTest.cpp
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        (WebCore::TiledLayerChromium::addSelfToOccludedScreenSpace):
+
 2012-02-21  Raymond Toy  <rtoy@google.com>
 
         Small typo in AudioPannerNode.cpp

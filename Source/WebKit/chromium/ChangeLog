@@ -1,3 +1,13 @@
+2012-02-21  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Painting a layer clears opaque rect in untouched tiles
+        https://bugs.webkit.org/show_bug.cgi?id=79157
+
+        Reviewed by James Robinson.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         Enable ScrollingCoordinator in chromium whenever compositing is enabled

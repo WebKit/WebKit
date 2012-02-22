@@ -584,7 +584,7 @@ TEST(TiledLayerChromiumTest, layerAddsSelfToOccludedRegion)
     occluded = Region();
     layer->addSelfToOccludedScreenSpace(occluded);
     EXPECT_EQ_RECT(IntRect(), occluded.bounds());
-    EXPECT_EQ(1u, occluded.rects().size());
+    EXPECT_EQ(0u, occluded.rects().size());
 
     // If the layer paints opaque content, then the occluded region should match the visible opaque content.
     IntRect opaquePaintRect = IntRect(10, 10, 90, 190);
@@ -606,6 +606,28 @@ TEST(TiledLayerChromiumTest, layerAddsSelfToOccludedRegion)
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), occluded.bounds());
     EXPECT_EQ(1u, occluded.rects().size());
 
+    // If we repaint a non-opaque part of the tile, then it shouldn't lose its opaque-ness. And other tiles should
+    // not be affected.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(IntRect(0, 0, 1, 1));
+    layer->prepareToUpdate(contentBounds);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+
+    // If we repaint an opaque part of the tile, then it should lose its opaque-ness. But other tiles should still
+    // not be affected.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(IntRect(10, 10, 1, 1));
+    layer->prepareToUpdate(contentBounds);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+
     // If the layer is transformed then the resulting occluded area needs to be transformed to its target space.
     TransformationMatrix transform;
     transform.translate(contentBounds.width() / 2.0, contentBounds.height() / 2.0);
@@ -616,6 +638,8 @@ TEST(TiledLayerChromiumTest, layerAddsSelfToOccludedRegion)
     screenSpaceTransform *= transform;
     screenSpaceTransform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
     layer->setScreenSpaceTransform(screenSpaceTransform);
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
+    layer->invalidateRect(opaquePaintRect);
     layer->prepareToUpdate(contentBounds);
 
     occluded = Region();

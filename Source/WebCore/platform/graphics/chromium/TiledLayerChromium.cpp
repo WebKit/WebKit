@@ -474,12 +474,18 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 
             IntRect tileRect = m_tiler->tileBounds(i, j);
 
-            // Save what was painted opaque in the tile. If everything painted in the tile was opaque, and the area is a subset of an
-            // already opaque area, keep the old area.
+            // Save what was painted opaque in the tile. Keep the old area if the paint didn't touch it, and didn't paint some
+            // other part of the tile opaque.
             IntRect tilePaintedRect = intersection(tileRect, m_paintRect);
             IntRect tilePaintedOpaqueRect = intersection(tileRect, paintedOpaqueRect);
-            if (tilePaintedOpaqueRect != tilePaintedRect || !tile->m_opaqueRect.contains(tilePaintedOpaqueRect))
-                tile->m_opaqueRect = tilePaintedOpaqueRect;
+            if (!tilePaintedRect.isEmpty()) {
+                IntRect paintInsideTileOpaqueRect = intersection(tile->m_opaqueRect, tilePaintedRect);
+                bool paintInsideTileOpaqueRectIsNonOpaque = !tilePaintedOpaqueRect.contains(paintInsideTileOpaqueRect);
+                bool opaquePaintNotInsideTileOpaqueRect = !tilePaintedOpaqueRect.isEmpty() && !tile->m_opaqueRect.contains(tilePaintedOpaqueRect);
+
+                if (paintInsideTileOpaqueRectIsNonOpaque || opaquePaintNotInsideTileOpaqueRect)
+                    tile->m_opaqueRect = tilePaintedOpaqueRect;
+            }
 
             // Use m_updateRect as copyAndClearDirty above moved the existing dirty rect to m_updateRect.
             const IntRect& dirtyRect = tile->m_updateRect;
@@ -552,7 +558,9 @@ void TiledLayerChromium::addSelfToOccludedScreenSpace(Region& occludedScreenSpac
             if (tile) {
                 IntRect visibleTileOpaqueRect = intersection(visibleRect, tile->m_opaqueRect);
                 FloatRect screenRect = contentTransform.mapRect(FloatRect(visibleTileOpaqueRect));
-                occludedScreenSpace.unite(enclosedIntRect(screenRect));
+                IntRect screenIntRect = enclosedIntRect(screenRect);
+                if (!screenIntRect.isEmpty())
+                    occludedScreenSpace.unite(screenIntRect);
             }
         }
     }
