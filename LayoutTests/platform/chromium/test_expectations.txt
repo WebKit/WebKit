@@ -1059,6 +1059,7 @@ BUGCR10322 SKIP : accessibility/aria-controls-with-tabs.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-fallback-roles.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-hidden-update.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-hidden-with-elements.html = TEXT
+BUGCR10322 SKIP : accessibility/aria-invalid.html = TIMEOUT PASS
 BUGCR10322 SKIP : accessibility/aria-labelledby-overrides-label.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-link-supports-press.html = TEXT
 BUGCR10322 SKIP : accessibility/aria-list-and-listitem.html = TEXT
