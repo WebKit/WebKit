@@ -907,7 +907,7 @@ WebCore::IntRect InputHandler::rectForCaret(int index)
 
     ASSERT(m_currentFocusElement->document() && m_currentFocusElement->document()->frame());
 
-    if (index < 0 || index > elementText().length()) {
+    if (index < 0 || index > static_cast<int>(elementText().length())) {
         // Invalid request.
         return WebCore::IntRect();
     }

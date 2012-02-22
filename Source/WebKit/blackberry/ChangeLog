@@ -1,3 +1,15 @@
+2012-02-22  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] InputHandler has signed vs unsigned comparison.
+        https://bugs.webkit.org/show_bug.cgi?id=79261
+
+        Fix warning by casting the unsigned int to an int.
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::rectForCaret):
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
