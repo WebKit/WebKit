@@ -1,4 +1,13 @@
-2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+2012-02-22  Daniel Bates  <dbates@webkit.org>
+
+        Update change log entry for r108561 to reflect removal of "if (m_dispatchSoonList.isEmpty())".
+        https://bugs.webkit.org/show_bug.cgi?id=78840
+
+        Mention removal of unnecessary check for empty list m_dispatchSoonList in EventSender::cancelEvent().
+
+        Also, fix the date in the change log entry for changeset r108562 since it landed today (02/22/2012).
+
+2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
         https://bugs.webkit.org/show_bug.cgi?id=78939
@@ -61,7 +70,12 @@
         (WebCore::EventSender::timerFired):
         (WebCore::::EventSender):
         (WebCore::::dispatchEventSoon):
-        (WebCore::::cancelEvent):
+        (WebCore::::cancelEvent): Removed unnecessary check for empty list m_dispatchSoonList;
+        As far as I can tell this is an artifact of using a
+        QPtrList data structure for this functionality when it was originally in
+        DocumentImpl::removeImage() (see <http://trac.webkit.org/browser/trunk/WebCore/khtml/xml/DocumentImpl.cpp?rev=12515#L2302>),
+        which actually removed items from a list (as opposed to zeroing them out as we do
+        now).
         (WebCore::::dispatchPendingEvents):
         * loader/ImageLoader.cpp: Modified to use EventSender.
         (WebCore):
