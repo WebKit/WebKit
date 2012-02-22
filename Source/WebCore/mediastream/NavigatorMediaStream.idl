@@ -22,7 +22,7 @@ module window {
     interface [
         Conditional=MEDIA_STREAM,
         Supplemental=Navigator
-    ] NavigatorGamepad {
+    ] NavigatorMediaStream {
         [V8EnabledAtRuntime] void webkitGetUserMedia(in DOMString options,
                                                      in [Callback] NavigatorUserMediaSuccessCallback successCallback,
                                                      in [Callback, Optional] NavigatorUserMediaErrorCallback errorCallback)

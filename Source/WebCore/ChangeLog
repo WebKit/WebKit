@@ -1,3 +1,25 @@
+2012-02-21  Kentaro Hara  <haraken@chromium.org>
+
+        NavigatorMediaStream.idl defines an interface for NavigatorGamepad
+        https://bugs.webkit.org/show_bug.cgi?id=79152
+
+        Reviewed by Adam Barth.
+
+        Fixed a typo: NavigatorGamepad => NavigatorMediaStream
+
+        This typo fix just changes the name of generated files:
+
+        - V8NavigatorGamepad.h => V8NavigatorMediaStream.h
+        - V8NavigatorGamepad.cpp => V8NavigatorMediaStream.cpp
+
+        The reason why the typo has not caused any serious build issues is that
+        the generate files for supplemental interfaces are "empty" and not important.
+        They just exist to control makefile dependencies.
+
+        No tests. No change in behavior.
+
+        * mediastream/NavigatorMediaStream.idl:
+
 2012-02-21  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Fix compositor setting color uniforms incorrectly for solid color quads.
