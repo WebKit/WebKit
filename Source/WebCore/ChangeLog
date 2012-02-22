@@ -1,3 +1,97 @@
+2012-02-22  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Integrate with about:tracing
+        https://bugs.webkit.org/show_bug.cgi?id=78831
+
+        Annotate interesting IDB functions so they show up in the
+        tracing utility included in the Chromium port.
+
+        Reviewed by Tony Chang.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath):
+        (WebCore::injectIDBKeyIntoSerializedValue):
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::direction):
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::deleteFunction):
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::direction):
+        (WebCore::IDBCursorBackendImpl::key):
+        (WebCore::IDBCursorBackendImpl::primaryKey):
+        (WebCore::IDBCursorBackendImpl::value):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        (WebCore::IDBCursorBackendImpl::prefetchContinue):
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal):
+        (WebCore::IDBCursorBackendImpl::prefetchReset):
+        (WebCore::IDBCursorBackendImpl::close):
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::dispatchEvent):
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::countInternal):
+        (WebCore::IDBIndexBackendImpl::count):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::name):
+        (WebCore::IDBObjectStore::keyPath):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::transaction):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::count):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::fetchKeyFromKeyPath):
+        (WebCore::injectKeyIntoKeyPath):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        (WebCore::IDBObjectStoreBackendImpl::count):
+        (WebCore::IDBObjectStoreBackendImpl::countInternal):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessWithContinuation):
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBTracing.h: Added.
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::dispatchEvent):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        (WebCore::IDBTransactionBackendImpl::taskEventTimerFired):
+
 2012-02-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Push CCLayerIteratorPosition struct into CCLayerIterator class.

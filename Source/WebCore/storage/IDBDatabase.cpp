@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IDBDatabase.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "EventQueue.h"
 #include "ExceptionCode.h"
 #include "EventQueue.h"
@@ -38,13 +40,12 @@
 #include "IDBIndex.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
+#include "IDBTracing.h"
+#include "IDBTransaction.h"
 #include "IDBVersionChangeEvent.h"
 #include "IDBVersionChangeRequest.h"
-#include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 #include <limits>
-
-#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -221,6 +222,7 @@ void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 
 bool IDBDatabase::dispatchEvent(PassRefPtr<Event> event)
 {
+    IDB_TRACE("IDBDatabase::dispatchEvent");
     ASSERT(event->type() == eventNames().versionchangeEvent);
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
         if (m_enqueuedEvents[i].get() == event.get())

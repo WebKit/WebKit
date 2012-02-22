@@ -37,6 +37,7 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
+#include "IDBTracing.h"
 
 namespace WebCore {
 
@@ -72,6 +73,7 @@ IDBIndexBackendImpl::~IDBIndexBackendImpl()
 
 void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
+    IDB_TRACE("IDBIndexBackendImpl::openCursorInternal");
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(untypedDirection);
 
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
@@ -104,6 +106,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
 
 void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBIndexBackendImpl::openCursor");
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
@@ -114,6 +117,7 @@ void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsign
 
 void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBIndexBackendImpl::openKeyCursor");
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
@@ -124,6 +128,7 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, uns
 
 void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
+    IDB_TRACE("IDBIndexBackendImpl::countInternal");
     uint32_t count = 0;
 
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), IDBCursor::NEXT);
@@ -141,12 +146,14 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
 
 void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBIndexBackendImpl::count");
     if (!transaction->scheduleTask(createCallbackTask(&countInternal, this, range, callbacks, transaction)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, bool getObject, PassRefPtr<IDBCallbacks> callbacks)
 {
+    IDB_TRACE("IDBIndexBackendImpl::getInternal");
     // FIXME: Split getInternal into two functions, getting rid off |getObject|.
     if (getObject) {
         String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
@@ -167,6 +174,7 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
 
 void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBIndexBackendImpl::get");
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
@@ -176,6 +184,7 @@ void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks
 
 void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBIndexBackendImpl::getKey");
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;

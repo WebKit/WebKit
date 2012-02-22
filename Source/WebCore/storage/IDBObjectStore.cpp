@@ -35,6 +35,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
+#include "IDBTracing.h"
 #include "IDBTransaction.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
@@ -55,26 +56,31 @@ IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObj
 
 String IDBObjectStore::name() const
 {
+    IDB_TRACE("IDBObjectStore::name");
     return m_backend->name();
 }
 
 String IDBObjectStore::keyPath() const
 {
+    IDB_TRACE("IDBObjectStore::keyPath");
     return m_backend->keyPath();
 }
 
 PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 {
+    IDB_TRACE("IDBObjectStore::indexNames");
     return m_backend->indexNames();
 }
 
 IDBTransaction* IDBObjectStore::transaction() const
 {
+    IDB_TRACE("IDBObjectStore::transaction");
     return m_transaction.get();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::get");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -91,6 +97,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::add");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -107,6 +114,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::put");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -139,6 +147,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::delete");
     if (!key || !key->valid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -155,6 +164,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 
 PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::clear");
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->clear(request, m_transaction->backend(), ec);
     if (ec) {
@@ -166,6 +176,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const OptionsObject& options, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::createIndex");
     if (!IDBIsValidKeyPath(keyPath)) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
@@ -190,6 +201,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::index");
     if (m_transaction->finished()) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
@@ -216,6 +228,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::openCursor");
     if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
         ec = IDBDatabaseException::CONSTRAINT_ERR;
@@ -234,6 +247,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 
 PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::count");
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->count(range, request, m_transaction->backend(), ec);
     if (ec) {

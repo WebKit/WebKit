@@ -33,6 +33,7 @@
 #include "IDBCursorBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBRequest.h"
+#include "IDBTracing.h"
 #include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
@@ -62,21 +63,25 @@ IDBCursor::~IDBCursor()
 
 unsigned short IDBCursor::direction() const
 {
+    IDB_TRACE("IDBCursor::direction");
     return m_backend->direction();
 }
 
 PassRefPtr<IDBKey> IDBCursor::key() const
 {
+    IDB_TRACE("IDBCursor::key");
     return m_backend->key();
 }
 
 PassRefPtr<IDBKey> IDBCursor::primaryKey() const
 {
+    IDB_TRACE("IDBCursor::primaryKey");
     return m_backend->primaryKey();
 }
 
 PassRefPtr<IDBAny> IDBCursor::value() const
 {
+    IDB_TRACE("IDBCursor::value");
     return IDBAny::create(m_backend->value());
 }
 
@@ -87,6 +92,7 @@ IDBAny* IDBCursor::source() const
 
 PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursor::update");
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->update(value, request, ec);
     if (ec) {
@@ -98,6 +104,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
 
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursor::continue");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
@@ -114,6 +121,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursor::delete");
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->deleteFunction(request, ec);
     if (ec) {

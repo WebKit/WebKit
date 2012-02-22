@@ -32,6 +32,7 @@
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBTracing.h"
 #include "IDBTransactionCoordinator.h"
 
 namespace WebCore {
@@ -104,6 +105,7 @@ bool IDBTransactionBackendImpl::scheduleTask(PassOwnPtr<ScriptExecutionContext::
 
 void IDBTransactionBackendImpl::abort()
 {
+    IDB_TRACE("IDBTransactionBackendImpl::abort");
     if (m_state == Finished)
         return;
 
@@ -185,6 +187,7 @@ void IDBTransactionBackendImpl::start()
 
 void IDBTransactionBackendImpl::commit()
 {
+    IDB_TRACE("IDBTransactionBackendImpl::commit");
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
@@ -203,6 +206,7 @@ void IDBTransactionBackendImpl::commit()
 
 void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*)
 {
+    IDB_TRACE("IDBTransactionBackendImpl::taskTimerFired");
     ASSERT(!m_taskQueue.isEmpty());
 
     if (m_state == StartPending) {
@@ -223,6 +227,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
 
 void IDBTransactionBackendImpl::taskEventTimerFired(Timer<IDBTransactionBackendImpl>*)
 {
+    IDB_TRACE("IDBTransactionBackendImpl::taskEventTimerFired");
     ASSERT(m_state == Running);
 
     if (!m_pendingEvents && m_taskQueue.isEmpty()) {

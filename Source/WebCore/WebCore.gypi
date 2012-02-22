@@ -4657,6 +4657,7 @@
             'storage/IDBPendingTransactionMonitor.h',
             'storage/IDBRequest.cpp',
             'storage/IDBRequest.h',
+            'storage/IDBTracing.h',
             'storage/IDBTransaction.cpp',
             'storage/IDBTransaction.h',
             'storage/IDBTransactionBackendImpl.cpp',

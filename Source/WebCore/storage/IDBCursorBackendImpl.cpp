@@ -36,6 +36,7 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
+#include "IDBTracing.h"
 #include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
 
@@ -64,21 +65,25 @@ IDBCursorBackendImpl::~IDBCursorBackendImpl()
 
 unsigned short IDBCursorBackendImpl::direction() const
 {
+    IDB_TRACE("IDBCursorBackendImpl::direction");
     return m_direction;
 }
 
 PassRefPtr<IDBKey> IDBCursorBackendImpl::key() const
 {
+    IDB_TRACE("IDBCursorBackendImpl::key");
     return m_cursor->key();
 }
 
 PassRefPtr<IDBKey> IDBCursorBackendImpl::primaryKey() const
 {
+    IDB_TRACE("IDBCursorBackendImpl::primaryKey");
     return m_cursor->primaryKey();
 }
 
 PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
 {
+    IDB_TRACE("IDBCursorBackendImpl::value");
     if (m_cursorType == IndexKeyCursor)
       return SerializedScriptValue::nullValue();
     return SerializedScriptValue::createFromWire(m_cursor->value());
@@ -86,6 +91,7 @@ PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
 
 void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursorBackendImpl::update");
     if (!m_cursor || m_cursorType == IndexKeyCursor) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
@@ -96,6 +102,7 @@ void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassR
 
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursorBackendImpl::continue");
     RefPtr<IDBKey> key = prpKey;
 
     if (m_cursor && key) {
@@ -121,6 +128,7 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
 //            IDBRequest::hasPendingActivity() will need to be modified to handle this!!!
 void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> callbacks)
 {
+    IDB_TRACE("IDBCursorBackendImpl::continueInternal");
     RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
     RefPtr<IDBKey> key = prpKey;
 
@@ -135,6 +143,7 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
 
 void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursorBackendImpl::delete");
     if (!m_cursor || m_cursorType == IndexKeyCursor) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
@@ -145,12 +154,14 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
 
 void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBCursorBackendImpl::prefetchContinue");
     if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
 {
+    IDB_TRACE("IDBCursorBackendImpl::prefetchContinueInternal");
     RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
 
     Vector<RefPtr<IDBKey> > foundKeys;
@@ -197,6 +208,7 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
 
 void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetches)
 {
+    IDB_TRACE("IDBCursorBackendImpl::prefetchReset");
     m_transaction->addPendingEvents(-unusedPrefetches);
     m_cursor = m_savedCursor;
     m_savedCursor = 0;
@@ -213,6 +225,7 @@ void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetche
 
 void IDBCursorBackendImpl::close()
 {
+    IDB_TRACE("IDBCursorBackendImpl::close");
     m_closed = true;
     if (m_cursor)
         m_cursor->close();

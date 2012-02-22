@@ -39,6 +39,7 @@
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTracing.h"
 #include "IDBTransaction.h"
 
 namespace WebCore {
@@ -197,6 +198,7 @@ static PassRefPtr<Event> createSuccessEvent()
 
 void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
 {
+    IDB_TRACE("IDBRequest::onSuccess(DOMStringList)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     m_result = IDBAny::create(domStringList);
     enqueueEvent(createSuccessEvent());
@@ -204,6 +206,7 @@ void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 {
+    IDB_TRACE("IDBRequest::onSuccess(IDBCursor)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     RefPtr<IDBCursor> cursor;
@@ -219,6 +222,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
+    IDB_TRACE("IDBRequest::onSuccess(IDBDatabase)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     if (m_contextStopped || !scriptExecutionContext())
         return;
@@ -232,6 +236,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
+    IDB_TRACE("IDBRequest::onSuccess(IDBKey)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     if (idbKey && idbKey->valid())
         m_result = IDBAny::create(idbKey);
@@ -242,6 +247,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend)
 {
+    IDB_TRACE("IDBRequest::onSuccess(IDBTransaction)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     RefPtr<IDBTransactionBackendInterface> backend = prpBackend;
 
@@ -266,6 +272,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
 
 void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
+    IDB_TRACE("IDBRequest::onSuccess(SerializedScriptValue)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     m_result = IDBAny::create(serializedScriptValue);
     m_cursor.clear();
@@ -274,6 +281,7 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
 
 void IDBRequest::onSuccessWithContinuation()
 {
+    IDB_TRACE("IDBRequest::onSuccessWithContinuation");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     ASSERT(m_cursor);
     setResultCursor(m_cursor, m_cursorType);
@@ -317,6 +325,7 @@ ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 
 bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
+    IDB_TRACE("IDBRequest::dispatchEvent");
     ASSERT(!m_requestFinished);
     ASSERT(!m_contextStopped);
     ASSERT(m_enqueuedEvents.size());

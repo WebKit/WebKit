@@ -37,6 +37,7 @@
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTracing.h"
 
 namespace WebCore {
 
@@ -186,6 +187,7 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 
 bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
+    IDB_TRACE("IDBTransaction::dispatchEvent");
     ASSERT(!m_transactionFinished);
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
