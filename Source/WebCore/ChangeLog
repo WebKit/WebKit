@@ -1,3 +1,17 @@
+2012-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Background jitters on pages with background-attachment: fixed
+        https://bugs.webkit.org/show_bug.cgi?id=79182
+
+        Reviewed by Dan Bernstein.
+
+        Make sure to update the main frame scroll position before updating the scrolling layer.
+        This also fixes a (purely theoretical) bug where we wouldn't be updating the main frame
+        position if the main frame didn't have a scroll layer.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition):
+
 2012-02-21  Dana Jansens  <danakj@chromium.org>
 
         Early-out in Region::unite() for adding an empty region.

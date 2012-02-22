@@ -266,15 +266,16 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(c
 {
 #if USE(ACCELERATED_COMPOSITING)
     FrameView* frameView = m_page->mainFrame()->view();
-    GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView);
-    if (!scrollLayer)
-        return;
-    scrollLayer->setPosition(-frameView->scrollPosition());
 
+    // Make sure to update the main frame scroll position before changing the scroll layer position,
+    // otherwise we'll introduce jittering on pages with slow repaint objects (like background-attachment: fixed).
     frameView->updateCompositingLayers();
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
+
+    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView))
+        scrollLayer->setPosition(-frameView->scrollPosition());
 #endif
 }
 
