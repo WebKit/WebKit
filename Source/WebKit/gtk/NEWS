@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 1.7.90
+=================
+
+What's new in WebKitGTK+ 1.7.90?
+
+  - Geolocation support is built by default now. Use
+    --disable-geolocation during build to disable it.
+  - requestAnimationFrame support is built by default now. Use
+    --disable-request-animation-frame during build to disable it.
+  - Remove defunct WebInspector GSettings mapping.
+  - Lots of build fixes for Windows, GNU Hurd, A64, SPARC and Alpha.
+  - WebKit will try to use the default libsoup proxy resolver automatically.
+  - Now interpret plugin metadata as UTF-8.
+  - Web content (except plugins) should no longer steal focus from other GTK+ widgets.
+
+=================
 WebKitGTK+ 1.7.5
 =================
 

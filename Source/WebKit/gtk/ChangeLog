@@ -1,3 +1,11 @@
+2012-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the NEWS file in preparation for the 1.7.90 release.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * NEWS: Update NEWS.
+
 2012-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r107351.
