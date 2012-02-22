@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <string.h>
 
-#if defined(ANDROID)
+#if defined(XP_UNIX) || defined(ANDROID)
 #include <unistd.h>
 #endif
 

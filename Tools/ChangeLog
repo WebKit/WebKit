@@ -1,3 +1,19 @@
+2012-02-22  Kalev Lember  <kalevlember@gmail.com>
+
+        Explicitly include unistd.h in TestNetscapePlugIn for GCC 4.7
+        https://bugs.webkit.org/show_bug.cgi?id=77759
+
+        Reviewed by Tony Chang.
+
+        Fixes build with gcc 4.7.
+
+        r100432 added the include only for ANDROID; this changes the ifdef to
+        also cover other unix platforms. On Fedora 17 the gcc 4.7 compiler no
+        longer implicitly includes unistd.h from standard headers and other
+        unix platforms are likely to get gcc 4.7 as well in the future.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+
 2012-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r108522.
