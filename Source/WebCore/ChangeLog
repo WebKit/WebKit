@@ -1,3 +1,20 @@
+2012-02-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Get rid of GeolocationServiceEfl
+        https://bugs.webkit.org/show_bug.cgi?id=79270
+
+        Reviewed by Adam Barth.
+
+        These were just a bunch of dummy files with no real functionality, and
+        removing them helps the preparation of bug 78853, which will make
+        client-based geolocation the default.
+
+        No new tests, this functionality was not used.
+
+        * PlatformEfl.cmake:
+        * platform/efl/GeolocationServiceEfl.cpp: Removed.
+        * platform/efl/GeolocationServiceEfl.h: Removed.
+
 2012-02-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Clean-up RenderTableSection::calcRowLogicalHeight
