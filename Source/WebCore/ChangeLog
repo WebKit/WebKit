@@ -1,3 +1,11 @@
+2012-02-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix.
+
+        No new tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+
 2012-02-21  Adam Klein  <adamk@chromium.org>
 
         ContainerNode::childrenChanged must be called immediately after removing children
