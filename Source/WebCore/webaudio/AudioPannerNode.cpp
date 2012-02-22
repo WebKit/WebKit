@@ -222,7 +222,7 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
 
     // Elevation
     double elevation = 90.0 - 180.0 * acos(sourceListener.dot(up)) / piDouble;
-    fixNANs(azimuth); // avoid illegal values
+    fixNANs(elevation); // avoid illegal values
 
     if (elevation > 90.0)
         elevation = 180.0 - elevation;

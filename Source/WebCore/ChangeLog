@@ -1,3 +1,17 @@
+2012-02-21  Raymond Toy  <rtoy@google.com>
+
+        Small typo in AudioPannerNode.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=75890
+
+        Change to check elevation as intended instead of azimuth.
+        
+        Reviewed by Chris Rogers.
+
+        No new tests for correction of typo.
+
+        * webaudio/AudioPannerNode.cpp:
+        (WebCore::AudioPannerNode::getAzimuthElevation):
+
 2012-02-21  Adam Barth  <abarth@webkit.org>
 
         Frame and Navigator shouldn't need to worry about Geolocation
