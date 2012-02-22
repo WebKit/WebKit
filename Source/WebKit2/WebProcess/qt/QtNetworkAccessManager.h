@@ -29,6 +29,7 @@
 
 #include <QMultiHash>
 #include <QNetworkAccessManager>
+#include <QNetworkProxy>
 #include <QString>
 
 namespace WebKit {
@@ -47,7 +48,7 @@ protected:
 
 private Q_SLOTS:
     void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
-    void onProxyAuthenticationRequired(QNetworkReply *, QAuthenticator *);
+    void onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator *);
     void onSslErrors(QNetworkReply*, const QList<QSslError>&);
 
 private:

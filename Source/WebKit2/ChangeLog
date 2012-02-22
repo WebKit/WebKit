@@ -1,3 +1,21 @@
+2012-02-22  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Implement proxy authentication handling.
+        https://bugs.webkit.org/show_bug.cgi?id=78792
+
+        Reviewed by Simon Hausmann.
+
+        This patch corrects two bugs with the previous implementation:
+        1. The signal proxyAuthenticationRequired was not connected to a
+           slot.
+        2. The slot onProxyAuthenticationRequired had the wrong parameters. 
+
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::QtNetworkAccessManager):
+        (WebKit::QtNetworkAccessManager::onProxyAuthenticationRequired):
+        * WebProcess/qt/QtNetworkAccessManager.h: Added include.
+        (QtNetworkAccessManager):
+
 2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Merge setVisibleRectTrajectoryVector and adjustVisibleRect to

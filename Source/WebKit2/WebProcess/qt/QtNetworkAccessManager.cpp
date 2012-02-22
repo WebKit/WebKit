@@ -44,6 +44,7 @@ QtNetworkAccessManager::QtNetworkAccessManager(WebProcess* webProcess)
     , m_webProcess(webProcess)
 {
     connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)), SLOT(onAuthenticationRequired(QNetworkReply*, QAuthenticator*)));
+    connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)), SLOT(onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
     connect(this, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 }
 
@@ -74,12 +75,16 @@ void QtNetworkAccessManager::registerApplicationScheme(const WebPage* page, cons
     m_applicationSchemes.insert(page, scheme.toLower());
 }
 
-void QtNetworkAccessManager::onProxyAuthenticationRequired(QNetworkReply* reply, QAuthenticator* authenticator)
+void QtNetworkAccessManager::onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator* authenticator)
 {
-    WebPage* webPage = obtainOriginatingWebPage(reply->request());
+    // FIXME: Check if there is a better way to get a reference to the page.
+    WebPage* webPage = m_webProcess->focusedWebPage();
 
-    String hostname = proxy().hostName();
-    uint16_t port = static_cast<uint16_t>(proxy().port());
+    if (!webPage)
+        return;
+
+    String hostname = proxy.hostName();
+    uint16_t port = static_cast<uint16_t>(proxy.port());
     String prefilledUsername = authenticator->user();
     String username;
     String password;
