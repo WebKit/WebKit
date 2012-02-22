@@ -1,3 +1,18 @@
+2012-02-21  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix image drag out on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=79158
+
+        Reviewed by Tony Chang.
+
+        We constructed the WebDragData::Item for dragging out an image but never added it to the
+        item list. This is normally covered by the fast/events/drag-image-filename.html layout test,
+        but the bug wasn't caught in the original patch since the implementations in Chrome and DRT
+        had diverged.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+
 2012-02-21  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: webFrame isn't threadsafe, don't use it from a worker thread

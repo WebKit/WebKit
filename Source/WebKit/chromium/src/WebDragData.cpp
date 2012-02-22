@@ -117,6 +117,7 @@ WebVector<WebDragData::Item> WebDragData::items() const
         item.storageType = Item::StorageTypeBinaryData;
         item.binaryData = m_private->fileContent();
         item.title = m_private->fileContentFilename();
+        itemList.append(item);
     }
     // We don't handle filenames here, since they are never used for dragging out.
     return itemList;

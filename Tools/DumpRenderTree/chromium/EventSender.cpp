@@ -354,7 +354,15 @@ void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask 
 
 void EventSender::dumpFilenameBeingDragged(const CppArgumentList&, CppVariant*)
 {
-    printf("Filename being dragged: %s\n", currentDragData.fileContentFilename().utf8().data());
+    WebString filename;
+    WebVector<WebDragData::Item> items = currentDragData.items();
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (items[i].storageType == WebDragData::Item::StorageTypeBinaryData) {
+            filename = items[i].title;
+            break;
+        }
+    }
+    printf("Filename being dragged: %s\n", filename.utf8().data());
 }
 
 WebMouseEvent::Button EventSender::getButtonTypeFromButtonNumber(int buttonCode)
@@ -869,8 +877,12 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
 {
     currentDragData.initialize();
     Vector<string> files = arguments[0].toStringVector();
-    for (size_t i = 0; i < files.size(); ++i)
-        currentDragData.appendToFilenames(webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]));
+    for (size_t i = 0; i < files.size(); ++i) {
+        WebDragData::Item item;
+        item.storageType = WebDragData::Item::StorageTypeFilename;
+        item.filenameData = webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]);
+        currentDragData.addItem(item);
+    }
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.

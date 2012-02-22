@@ -137,7 +137,10 @@ static string descriptionSuitableForTestResult(const string& url)
 // dragging a file.
 static void addDRTFakeFileToDataObject(WebDragData* dragData)
 {
-    dragData->appendToFilenames(WebString::fromUTF8("DRTFakeFile"));
+    WebDragData::Item item;
+    item.storageType = WebDragData::Item::StorageTypeFilename;
+    item.filenameData = WebString::fromUTF8("DRTFakeFile");
+    dragData->addItem(item);
 }
 
 // Get a debugging string from a WebNavigationType.
