@@ -3280,6 +3280,8 @@
             'platform/graphics/chromium/cc/CCLayerTreeHost.h',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.h',
+            'platform/graphics/chromium/cc/CCOcclusionTracker.cpp',
+            'platform/graphics/chromium/cc/CCOcclusionTracker.h',
             'platform/graphics/chromium/cc/CCPageScaleAnimation.cpp',
             'platform/graphics/chromium/cc/CCPageScaleAnimation.h',
             'platform/graphics/chromium/cc/CCPluginDrawQuad.cpp',
