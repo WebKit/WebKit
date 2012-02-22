@@ -79,13 +79,13 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             return;
         }
 
-        if (parent->isContentElement()) {
-            HTMLContentElement* shadowContentElement = toHTMLContentElement(parent);
-            if (!shadowContentElement->hasSelection()) {
-                m_phase = AttachingFallback;
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
-                return;
-            }
+        if (isInsertionPoint(parent)) {
+            if (toInsertionPoint(parent)->hasSelection())
+                m_phase = AttachingNotFallbacked;
+            else
+                m_phase = AttachingFallbacked;
+            m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
+            return;
         }
     }
 
@@ -149,22 +149,30 @@ static RenderObject* previousRendererOf(InsertionPoint* parent, Node* current)
 
 static RenderObject* firstRendererOf(InsertionPoint* parent)
 {
-    for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
-        if (RenderObject* renderer = selection->node()->renderer())
-            return renderer;
+    if (parent->hasSelection()) {
+        for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
+            if (RenderObject* renderer = selection->node()->renderer())
+                return renderer;
+        }
+
+        return 0;
     }
 
-    return 0;
+    return NodeRenderingContext(parent).nextRenderer();
 }
 
 static RenderObject* lastRendererOf(InsertionPoint* parent)
 {
-    for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
-        if (RenderObject* renderer = selection->node()->renderer())
-            return renderer;
+    if (parent->hasSelection()) {
+        for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
+            if (RenderObject* renderer = selection->node()->renderer())
+                return renderer;
+        }
+
+        return 0;
     }
 
-    return 0;
+    return NodeRenderingContext(parent).previousRenderer();
 }
 
 RenderObject* NodeRenderingContext::nextRenderer() const
@@ -182,9 +190,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return NodeRenderingContext(m_insertionPoint).nextRenderer();
     }
 
-    // Avoid an O(n^2) problem with this function by not checking for
+    // Avoid an O(N^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
-    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached() && m_phase != AttachingFallback)
+    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached())
         return 0;
 
     for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
@@ -194,14 +202,12 @@ RenderObject* NodeRenderingContext::nextRenderer() const
                 continue;
             return node->renderer();
         }
-        if (node->isContentElement()) {
-            if (RenderObject* first = firstRendererOf(toHTMLContentElement(node)))
+
+        if (isInsertionPoint(node)) {
+            if (RenderObject* first = firstRendererOf(toInsertionPoint(node)))
                 return first;
         }
     }
-
-    if (m_phase == AttachingFallback)
-        return NodeRenderingContext(m_node->parentNode()).nextRenderer();
 
     return 0;
 }
@@ -231,14 +237,11 @@ RenderObject* NodeRenderingContext::previousRenderer() const
                 continue;
             return node->renderer();
         }
-        if (node->isContentElement()) {
-            if (RenderObject* last = lastRendererOf(toHTMLContentElement(node)))
+        if (isInsertionPoint(node)) {
+            if (RenderObject* last = lastRendererOf(toInsertionPoint(node)))
                 return last;
         }
     }
-
-    if (m_phase == AttachingFallback)
-        return NodeRenderingContext(m_node->parentNode()).previousRenderer();
 
     return 0;
 }
@@ -268,7 +271,7 @@ bool NodeRenderingContext::shouldCreateRenderer() const
     ASSERT(m_phase != Calculating);
     ASSERT(parentNodeForRenderingAndStyle());
 
-    if (m_phase == AttachingNotInTree || m_phase == AttachingNotDistributed)
+    if (m_phase == AttachingNotInTree || m_phase == AttachingNotDistributed || m_phase == AttachingNotFallbacked)
         return false;
 
     RenderObject* parentRenderer = this->parentRenderer();

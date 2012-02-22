@@ -1,3 +1,33 @@
+2012-02-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        firstRendererOf() should also return a fallback element renderer in NodeRenderingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=79180
+
+        Reviewed by Hajime Morita.
+
+        Currently we have handled AttachingFallback in some special mannger, however if firstRendererOf
+        and lastRendererOf return a fallback element renderer, we don't need to handle it in such a manner.
+
+        We have introduced new attaching phase: AttachingFallbacked, and AttachingNotFallbacked.
+        They are used for fallback elements.
+
+        Added new test cases in:
+          fast/dom/shadow/shadow-contents-fallback.html
+          fast/dom/shadow/shadow-contents-fallback-dynamic.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        * html/shadow/InsertionPoint.h:
+        (WebCore::isInsertionPoint):
+        (WebCore):
+        (WebCore::toInsertionPoint):
+
 2012-02-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r108464.

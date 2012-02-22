@@ -22,5 +22,11 @@ testComplexRemove
 PASS
 testComplexReplace
 PASS
+testContentInContent
+PASS
+testContentInContentFallback
+PASS
+testContentInContentFallbackDirect
+PASS
 TEST COMPLETED
 

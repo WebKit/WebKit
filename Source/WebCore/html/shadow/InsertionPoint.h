@@ -48,6 +48,22 @@ protected:
     HTMLContentSelectionList m_selections;
 };
 
+inline bool isInsertionPoint(Node* node)
+{
+    // FIXME: <shadow> should also be InsertionPoint.
+    // https://bugs.webkit.org/show_bug.cgi?id=78596
+    if (!node || node->isContentElement())
+        return true;
+
+    return false;
+}
+
+inline InsertionPoint* toInsertionPoint(Node* node)
+{
+    ASSERT(isInsertionPoint(node));
+    return static_cast<InsertionPoint*>(node);
+}
+
 } // namespace WebCore
 
 #endif // InsertionPoint_h

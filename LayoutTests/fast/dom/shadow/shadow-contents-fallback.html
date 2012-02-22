@@ -214,6 +214,132 @@ function testComplexFallbackDeepAgain() {
         "<div>{SHADOW: <span>{INNER: <span>{SHADOW: <span>{INNER: <span>FALLBACK</span>}</span>}</span>}</span>}</span></div>";
 }
 
+function testContentkWithDisplayNone() {
+    var target = document.createElement('div');
+
+    var span1 = createSpanWithText('NOT RENDERED');
+    span1.style.display = 'none';
+    var span2 = createSpanWithText('NOT RENDERED');
+    span2.style.display = 'none';
+    var span3 = createSpanWithText('NOT RENDERED');
+    span3.style.display = 'none';
+
+    target.appendChild(span1);
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(span2);
+    target.appendChild(createSpanWithText('S2'));
+    target.appendChild(span3);
+
+    var root = internals.ensureShadowRoot(target);
+    var content = internals.createContentElement(document);
+    content.setAttribute('select', 'span');
+    content.appendChild(createSpanWithText('FALLBACK'));
+
+    var s = createSpanWithText('NOT RENDERED');
+    s.style.display = 'none';
+    root.appendChild(s);
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>S1</span><span>S2</span>}</div>";
+}
+
+function testContentInContent() {
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content2 = internals.createContentElement(document);
+    content2.setAttribute('select', 'span');
+    content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+    content1.appendChild(content2);
+
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content1);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>S1</span><span>S2</span>}</div>";
+}
+
+function testContentInContentFallback() {
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content2 = internals.createContentElement(document);
+    content2.setAttribute('select', 'div');
+    content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+    content1.appendChild(content2);
+
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content1);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+}
+
+function testContentInContentFallbackWithDisplayNone() {
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content2 = internals.createContentElement(document);
+    content2.setAttribute('select', 'div');
+    content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+    content1.appendChild(content2);
+
+    var s = createSpanWithText('NOT RENDERED');
+    s.style.display = 'none';
+    root.appendChild(s);
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content1);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+}
+
+function testContentInContentFallbackDirect() {
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content2 = internals.createContentElement(document);
+    content2.setAttribute('select', 'div');
+    content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+    content1.appendChild(content2);
+
+    root.appendChild(content1);
+
+    document.getElementById('actual-container').appendChild(target);
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>CONTENT 2 FALLBACK</span></div>";
+}
+
 var testFuncs = [
     testFallback,
     testFallbackDeep,
@@ -222,8 +348,13 @@ var testFuncs = [
     testComplexFallback,
     testComplexFallbackDeep,
     testComplexFallbackAgain,
-    testComplexFallbackDeepAgain
-]
+    testComplexFallbackDeepAgain,
+    testContentkWithDisplayNone,
+    testContentInContent,
+    testContentInContentFallback,
+    testContentInContentFallbackWithDisplayNone,
+    testContentInContentFallbackDirect
+];
 
 function doTest() {
     layoutTestController.dumpAsText();

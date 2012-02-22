@@ -71,10 +71,11 @@ private:
         Calculating,
         AttachingStraight,
         AttachingNotInTree,
-        AttachingNotDistributed,
         AttachingDistributed,
+        AttachingNotDistributed,
+        AttachingFallbacked,
+        AttachingNotFallbacked,
         AttachingShadowChild,
-        AttachingFallback,
     };
 
     AttachingPhase m_phase;

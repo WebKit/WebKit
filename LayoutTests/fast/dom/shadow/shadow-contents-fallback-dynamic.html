@@ -319,8 +319,6 @@ function testComplexReplace(callIfDone) {
 
     var selectContent = document.createElement('span');
     selectContent.setAttribute('id', 'complex-3');
-    {
-    }
     appendShadow(selectContent, 'span');
 
     target.appendChild(document.createTextNode('[WONT SELECTED]'));
@@ -342,6 +340,96 @@ function testComplexReplace(callIfDone) {
     setTimeout(f, 0);
 }
 
+function testContentInContent(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>S1</span><span>S2</span>}</div>";
+
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content1);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+
+    var f = (function(target, content1, callIfDone) {
+        return function() {
+            var content2 = internals.createContentElement(document);
+            content2.setAttribute('select', 'span');
+            content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+            content1.appendChild(content2);
+            callIfDone();
+        };
+    })(target, content1, callIfDone);
+
+    setTimeout(f, 0);
+}
+
+function testContentInContentFallback(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div>{SHADOW: <span>CONTENT 2 FALLBACK</span>}</div>";
+
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+
+    root.appendChild(document.createTextNode("{SHADOW: "));
+    root.appendChild(content1);
+    root.appendChild(document.createTextNode("}"));
+
+    document.getElementById('actual-container').appendChild(target);
+
+    var f = (function(target, content1, callIfDone) {
+        return function() {
+            var content2 = internals.createContentElement(document);
+            content2.setAttribute('select', 'div');
+            content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+            content1.appendChild(content2);
+            callIfDone();
+        };
+    })(target, content1, callIfDone);
+
+    setTimeout(f, 0);
+}
+
+function testContentInContentFallbackDirect(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>CONTENT 2 FALLBACK</span></div>";
+
+    var target = document.createElement('div');
+    target.appendChild(createSpanWithText('S1'));
+    target.appendChild(createSpanWithText('S2'));
+
+    var root = internals.ensureShadowRoot(target);
+    var content1 = internals.createContentElement(document);
+    content1.setAttribute('select', 'div');
+    root.appendChild(content1);
+
+    document.getElementById('actual-container').appendChild(target);
+
+    var f = (function(target, content1, callIfDone) {
+        return function() {
+            var content2 = internals.createContentElement(document);
+            content2.setAttribute('select', 'div');
+            content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
+            content1.appendChild(content2);
+            callIfDone();
+        };
+    })(target, content1, callIfDone);
+
+    setTimeout(f, 0);
+}
+
 var testFuncs = [
     testAppendFallback,
     testAppendFallbackDeep,
@@ -355,7 +443,9 @@ var testFuncs = [
     testComplexAppend,
     testComplexRemove,
     testComplexReplace,
-
+    testContentInContent,
+    testContentInContentFallback,
+    testContentInContentFallbackDirect
 ];
 
 function doTestIfLeft() {
