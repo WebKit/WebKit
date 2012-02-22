@@ -1540,8 +1540,8 @@ public:
     static Length initialPadding() { return Length(Fixed); }
     static Length initialTextIndent() { return Length(Fixed); }
     static EVerticalAlign initialVerticalAlign() { return BASELINE; }
-    static int initialWidows() { return 2; }
-    static int initialOrphans() { return 2; }
+    static short initialWidows() { return 2; }
+    static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0, Percent); }
     static ETextAlign initialTextAlign() { return TAAUTO; }
     static ETextDecoration initialTextDecoration() { return TDNONE; }

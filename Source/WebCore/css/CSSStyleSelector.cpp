@@ -2987,72 +2987,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
     switch (property) {
-// ident only properties
-    case CSSPropertyBorderCollapse:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(borderCollapse, BorderCollapse)
-        return;
-    case CSSPropertyCaptionSide:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(captionSide, CaptionSide)
-        return;
-    case CSSPropertyClear:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(clear, Clear)
-        return;
-    case CSSPropertyEmptyCells:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(emptyCells, EmptyCells)
-        return;
-    case CSSPropertyFloat:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(floating, Floating)
-        return;
-    case CSSPropertyPageBreakBefore:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
-        return;
-    case CSSPropertyPageBreakAfter:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakAfter, PageBreakAfter, PageBreak)
-        return;
-    case CSSPropertyPageBreakInside:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakInside, PageBreakInside, PageBreak)
-        return;
-    case CSSPropertyPosition:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(position, Position)
-        return;
-    case CSSPropertyTableLayout:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(tableLayout, TableLayout)
-        return;
-    case CSSPropertyUnicodeBidi:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(unicodeBidi, UnicodeBidi)
-        return;
-    case CSSPropertyTextTransform:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textTransform, TextTransform)
-        return;
-    case CSSPropertyVisibility:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(visibility, Visibility)
-        return;
-    case CSSPropertyWhiteSpace:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
-        return;
-// uri || inherit
-    case CSSPropertyWordBreak:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordBreak, WordBreak)
-        return;
-    case CSSPropertyWordWrap:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordWrap, WordWrap)
-        return;
-    case CSSPropertyWebkitNbspMode:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(nbspMode, NBSPMode)
-        return;
-    case CSSPropertyWebkitLineBreak:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(khtmlLineBreak, KHTMLLineBreak)
-        return;
-    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
-        return;
-    case CSSPropertyWidows:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(widows, Widows)
-        return;
-    case CSSPropertyOrphans:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(orphans, Orphans)
-        return;
-
 // lists
     case CSSPropertyContent:
         // list of string, uri, counter, attr, i
@@ -3934,150 +3868,115 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #endif
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
-    case CSSPropertyColor:
-    case CSSPropertyDirection:
-    case CSSPropertyDisplay:
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
-    case CSSPropertyWebkitBackgroundClip:
-    case CSSPropertyWebkitBackgroundComposite:
-    case CSSPropertyBackgroundOrigin:
-    case CSSPropertyWebkitBackgroundOrigin:
-    case CSSPropertyBackgroundImage:
-    case CSSPropertyWebkitAspectRatio:
-    case CSSPropertyBackgroundSize:
-    case CSSPropertyWebkitBackgroundSize:
-    case CSSPropertyWebkitMaskAttachment:
-    case CSSPropertyWebkitMaskClip:
-    case CSSPropertyWebkitMaskComposite:
-    case CSSPropertyWebkitMaskOrigin:
-    case CSSPropertyWebkitMaskImage:
-    case CSSPropertyWebkitMaskSize:
     case CSSPropertyBackgroundColor:
-    case CSSPropertyBorderBottomColor:
-    case CSSPropertyBorderLeftColor:
-    case CSSPropertyBorderRightColor:
-    case CSSPropertyBorderTopColor:
-    case CSSPropertyBorderTopStyle:
-    case CSSPropertyBorderRightStyle:
-    case CSSPropertyBorderBottomStyle:
-    case CSSPropertyBorderLeftStyle:
-    case CSSPropertyBorderTopWidth:
-    case CSSPropertyBorderRightWidth:
-    case CSSPropertyBorderBottomWidth:
-    case CSSPropertyBorderLeftWidth:
-    case CSSPropertyBorder:
-    case CSSPropertyBorderStyle:
-    case CSSPropertyBorderWidth:
-    case CSSPropertyBorderColor:
-    case CSSPropertyBorderImage:
-    case CSSPropertyWebkitBorderImage:
-    case CSSPropertyWebkitMaskBoxImage:
-    case CSSPropertyBorderImageOutset:
-    case CSSPropertyWebkitMaskBoxImageOutset:
-    case CSSPropertyBorderImageRepeat:
-    case CSSPropertyWebkitMaskBoxImageRepeat:
-    case CSSPropertyBorderImageSlice:
-    case CSSPropertyWebkitMaskBoxImageSlice:
-    case CSSPropertyBorderImageWidth:
-    case CSSPropertyWebkitMaskBoxImageWidth:
-    case CSSPropertyBorderImageSource:
-    case CSSPropertyWebkitMaskBoxImageSource:
-    case CSSPropertyBorderTop:
-    case CSSPropertyBorderRight:
-    case CSSPropertyBorderBottom:
-    case CSSPropertyBorderLeft:
-    case CSSPropertyBorderRadius:
-    case CSSPropertyWebkitBorderRadius:
-    case CSSPropertyBorderTopLeftRadius:
-    case CSSPropertyBorderTopRightRadius:
-    case CSSPropertyBorderBottomLeftRadius:
-    case CSSPropertyBorderBottomRightRadius:
-    case CSSPropertyBorderSpacing:
-    case CSSPropertyWebkitBorderHorizontalSpacing:
-    case CSSPropertyWebkitBorderVerticalSpacing:
-    case CSSPropertyClip:
-    case CSSPropertyCounterIncrement:
-    case CSSPropertyCounterReset:
-    case CSSPropertyLetterSpacing:
-    case CSSPropertyWordSpacing:
-    case CSSPropertyWebkitFlexOrder:
-    case CSSPropertyWebkitFlexPack:
-    case CSSPropertyWebkitFlexAlign:
-    case CSSPropertyWebkitFlexItemAlign:
-    case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexFlow:
-    case CSSPropertyWebkitFlexWrap:
-    case CSSPropertyFontSize:
-    case CSSPropertyFontStyle:
-    case CSSPropertyFontVariant:
-    case CSSPropertyTextRendering:
-    case CSSPropertyWebkitTextOrientation:
-    case CSSPropertyWebkitFontSmoothing:
-    case CSSPropertyFontWeight:
-    case CSSPropertyOutline:
-    case CSSPropertyOutlineStyle:
-    case CSSPropertyOutlineWidth:
-    case CSSPropertyOutlineOffset:
-    case CSSPropertyWebkitColumnRuleWidth:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyWebkitColumnRuleColor:
-    case CSSPropertyWebkitTextEmphasisColor:
-    case CSSPropertyWebkitTextFillColor:
-    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyBackgroundImage:
+    case CSSPropertyBackgroundOrigin:
     case CSSPropertyBackgroundPosition:
     case CSSPropertyBackgroundPositionX:
     case CSSPropertyBackgroundPositionY:
-    case CSSPropertyWebkitMaskPosition:
-    case CSSPropertyWebkitMaskPositionX:
-    case CSSPropertyWebkitMaskPositionY:
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyBackgroundRepeatX:
     case CSSPropertyBackgroundRepeatY:
-    case CSSPropertyWebkitMaskRepeat:
-    case CSSPropertyWebkitMaskRepeatX:
-    case CSSPropertyWebkitMaskRepeatY:
-    case CSSPropertyOverflow:
-    case CSSPropertyOverflowX:
-    case CSSPropertyOverflowY:
-    case CSSPropertyMaxWidth:
-    case CSSPropertyTop:
-    case CSSPropertyLeft:
-    case CSSPropertyRight:
+    case CSSPropertyBackgroundSize:
+    case CSSPropertyBorder:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyBorderBottomLeftRadius:
+    case CSSPropertyBorderBottomRightRadius:
+    case CSSPropertyBorderBottomStyle:
+    case CSSPropertyBorderBottomWidth:
+    case CSSPropertyBorderCollapse:
+    case CSSPropertyBorderColor:
+    case CSSPropertyBorderImage:
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyBorderImageRepeat:
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyBorderImageSource:
+    case CSSPropertyBorderImageWidth:
+    case CSSPropertyBorderLeft:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderLeftStyle:
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyBorderRadius:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderRightStyle:
+    case CSSPropertyBorderRightWidth:
+    case CSSPropertyBorderSpacing:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyBorderTop:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderTopLeftRadius:
+    case CSSPropertyBorderTopRightRadius:
+    case CSSPropertyBorderTopStyle:
+    case CSSPropertyBorderTopWidth:
+    case CSSPropertyBorderWidth:
     case CSSPropertyBottom:
-    case CSSPropertyWidth:
-    case CSSPropertyMinWidth:
+    case CSSPropertyCaptionSide:
+    case CSSPropertyClear:
+    case CSSPropertyClip:
+    case CSSPropertyColor:
+    case CSSPropertyCounterIncrement:
+    case CSSPropertyCounterReset:
+    case CSSPropertyCursor:
+    case CSSPropertyDirection:
+    case CSSPropertyDisplay:
+    case CSSPropertyEmptyCells:
+    case CSSPropertyFloat:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariant:
+    case CSSPropertyFontWeight:
+    case CSSPropertyHeight:
+    case CSSPropertyLeft:
+    case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:
     case CSSPropertyListStyle:
     case CSSPropertyListStyleImage:
     case CSSPropertyListStylePosition:
     case CSSPropertyListStyleType:
-    case CSSPropertyMarginTop:
-    case CSSPropertyMarginRight:
+    case CSSPropertyMargin:
     case CSSPropertyMarginBottom:
     case CSSPropertyMarginLeft:
-    case CSSPropertyMargin:
-    case CSSPropertyPaddingTop:
-    case CSSPropertyPaddingRight:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMinWidth:
+    case CSSPropertyOrphans:
+    case CSSPropertyOutline:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyOutlineOffset:
+    case CSSPropertyOutlineStyle:
+    case CSSPropertyOutlineWidth:
+    case CSSPropertyOverflow:
+    case CSSPropertyOverflowX:
+    case CSSPropertyOverflowY:
+    case CSSPropertyPadding:
     case CSSPropertyPaddingBottom:
     case CSSPropertyPaddingLeft:
-    case CSSPropertyPadding:
+    case CSSPropertyPaddingRight:
+    case CSSPropertyPaddingTop:
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyPosition:
     case CSSPropertyResize:
+    case CSSPropertyRight:
     case CSSPropertySize:
+    case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
     case CSSPropertyTextDecoration:
     case CSSPropertyTextIndent:
-    case CSSPropertyMaxHeight:
-    case CSSPropertyHeight:
-    case CSSPropertyMinHeight:
+    case CSSPropertyTextRendering:
+    case CSSPropertyTextTransform:
+    case CSSPropertyTop:
+    case CSSPropertyUnicodeBidi:
     case CSSPropertyVerticalAlign:
-    case CSSPropertyWebkitTransformOriginX:
-    case CSSPropertyWebkitTransformOriginY:
-    case CSSPropertyWebkitTransformOriginZ:
-    case CSSPropertyWebkitTransformOrigin:
-    case CSSPropertyWebkitPerspectiveOriginX:
-    case CSSPropertyWebkitPerspectiveOriginY:
-    case CSSPropertyWebkitPerspectiveOrigin:
+    case CSSPropertyVisibility:
     case CSSPropertyWebkitAnimationDelay:
     case CSSPropertyWebkitAnimationDirection:
     case CSSPropertyWebkitAnimationDuration:
@@ -4086,18 +3985,32 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAnimationName:
     case CSSPropertyWebkitAnimationPlayState:
     case CSSPropertyWebkitAnimationTimingFunction:
-    case CSSPropertyWebkitTransitionDelay:
-    case CSSPropertyWebkitTransitionDuration:
-    case CSSPropertyWebkitTransitionProperty:
-    case CSSPropertyWebkitTransitionTimingFunction:
-    case CSSPropertyCursor:
-    case CSSPropertyWebkitColumns:
+    case CSSPropertyWebkitAspectRatio:
+    case CSSPropertyWebkitBackgroundClip:
+    case CSSPropertyWebkitBackgroundComposite:
+    case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitBorderHorizontalSpacing:
+    case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitBorderRadius:
+    case CSSPropertyWebkitBorderVerticalSpacing:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
+    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitColumnRuleWidth:
+    case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnWidth:
-    case CSSPropertyWebkitFlowInto:
+    case CSSPropertyWebkitFlexAlign:
+    case CSSPropertyWebkitFlexDirection:
+    case CSSPropertyWebkitFlexFlow:
+    case CSSPropertyWebkitFlexItemAlign:
+    case CSSPropertyWebkitFlexOrder:
+    case CSSPropertyWebkitFlexPack:
+    case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitFlowFrom:
+    case CSSPropertyWebkitFlowInto:
     case CSSPropertyWebkitFontKerning:
+    case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitFontVariantLigatures:
     case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
@@ -4105,16 +4018,58 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitLines:
     case CSSPropertyWebkitLineAlign:
+    case CSSPropertyWebkitLineBreak:
     case CSSPropertyWebkitLineGrid:
     case CSSPropertyWebkitLineSnap:
+    case CSSPropertyWebkitMaskAttachment:
+    case CSSPropertyWebkitMaskBoxImage:
+    case CSSPropertyWebkitMaskBoxImageOutset:
+    case CSSPropertyWebkitMaskBoxImageRepeat:
+    case CSSPropertyWebkitMaskBoxImageSlice:
+    case CSSPropertyWebkitMaskBoxImageSource:
+    case CSSPropertyWebkitMaskBoxImageWidth:
+    case CSSPropertyWebkitMaskClip:
+    case CSSPropertyWebkitMaskComposite:
+    case CSSPropertyWebkitMaskImage:
+    case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyWebkitMaskPosition:
+    case CSSPropertyWebkitMaskPositionX:
+    case CSSPropertyWebkitMaskPositionY:
+    case CSSPropertyWebkitMaskRepeat:
+    case CSSPropertyWebkitMaskRepeatX:
+    case CSSPropertyWebkitMaskRepeatY:
+    case CSSPropertyWebkitMaskSize:
+    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
+    case CSSPropertyWebkitNbspMode:
+    case CSSPropertyWebkitPerspectiveOrigin:
+    case CSSPropertyWebkitPerspectiveOriginX:
+    case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitTextCombine:
+    case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextOrientation:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyWebkitTransformOrigin:
+    case CSSPropertyWebkitTransformOriginX:
+    case CSSPropertyWebkitTransformOriginY:
+    case CSSPropertyWebkitTransformOriginZ:
+    case CSSPropertyWebkitTransitionDelay:
+    case CSSPropertyWebkitTransitionDuration:
+    case CSSPropertyWebkitTransitionProperty:
+    case CSSPropertyWebkitTransitionTimingFunction:
+    case CSSPropertyWebkitWrap:
+    case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
-    case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapThrough:
-    case CSSPropertyWebkitWrap:
+    case CSSPropertyWhiteSpace:
+    case CSSPropertyWidows:
+    case CSSPropertyWidth:
+    case CSSPropertyWordBreak:
+    case CSSPropertyWordSpacing:
+    case CSSPropertyWordWrap:
     case CSSPropertyZIndex:
     case CSSPropertyZoom:
         ASSERT_NOT_REACHED();

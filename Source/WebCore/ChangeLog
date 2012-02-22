@@ -1,3 +1,18 @@
+2012-02-21  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement many instances of HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=79067
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * rendering/style/RenderStyle.h:
+
 2012-02-21  Jon Lee  <jonlee@apple.com>
 
         Bring notifications support to WK1 mac
