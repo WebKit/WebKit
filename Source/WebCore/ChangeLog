@@ -1,3 +1,9 @@
+2012-02-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r108464.
+
+        * Target.pri:
+
 2012-02-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108468.

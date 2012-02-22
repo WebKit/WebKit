@@ -1515,6 +1515,16 @@ v8 {
 }
 
 HEADERS += \
+    Modules/geolocation/Geolocation.h \
+    Modules/geolocation/GeolocationController.h \
+    Modules/geolocation/GeolocationError.h \
+    Modules/geolocation/GeolocationPosition.h \
+    Modules/geolocation/Geoposition.h \
+    Modules/geolocation/PositionCallback.h \
+    Modules/geolocation/PositionError.h \
+    Modules/geolocation/PositionErrorCallback.h \
+    Modules/geolocation/PositionOptions.h \
+    \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
     css/CSSBorderImage.h \
@@ -2059,8 +2069,6 @@ HEADERS += \
     page/Frame.h \
     page/FrameTree.h \
     page/FrameView.h \
-    page/Geolocation.h \
-    page/Geoposition.h \
     page/GestureTapHighlighter.h\
     page/GroupSettings.h \
     page/History.h \
