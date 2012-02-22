@@ -1,3 +1,29 @@
+2012-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] FullScreen signals
+        https://bugs.webkit.org/show_bug.cgi?id=76181
+
+        Reviewed by Martin Robinson.
+
+        Added entering-fullscreen and leaving-fullscreen signals, meant to
+        be used by the user agent to be notified when an element requests
+        full screen display and when the full screen display is to be
+        disabled.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullScreenForElement):
+        (WebKit::onFullscreenGtkKeyPressEvent):
+        (WebKit::ChromeClient::cancelFullScreen):
+        (WebKit::ChromeClient::enterFullScreenForElement):
+        (WebKit::ChromeClient::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+        * tests/testwebview.c:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_real_entering_fullscreen):
+        (webkit_web_view_real_leaving_fullscreen):
+        (webkit_web_view_class_init):
+        * webkit/webkitwebview.h:
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor

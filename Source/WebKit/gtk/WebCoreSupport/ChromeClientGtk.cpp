@@ -51,6 +51,8 @@
 #include "RefPtrCairo.h"
 #include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
+#include "WebKitDOMBinding.h"
+#include "WebKitDOMHTMLElementPrivate.h"
 #include "WindowFeatures.h"
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitgeolocationpolicydecisionprivate.h"
@@ -61,6 +63,8 @@
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include "webkitwebwindowfeaturesprivate.h"
+#include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
@@ -921,29 +925,69 @@ void ChromeClient::exitFullscreenForNode(Node* node)
 #if ENABLE(FULLSCREEN_API)
 bool ChromeClient::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
 {
-    return true;
+    return !withKeyboard;
+}
+
+static gboolean onFullscreenGtkKeyPressEvent(GtkWidget* widget, GdkEventKey* event, ChromeClient* chromeClient)
+{
+    switch (event->keyval) {
+    case GDK_KEY_Escape:
+    case GDK_KEY_f:
+    case GDK_KEY_F:
+        chromeClient->cancelFullScreen();
+        return TRUE;
+    default:
+        break;
+    }
+
+    return FALSE;
+}
+
+void ChromeClient::cancelFullScreen()
+{
+    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->document()->webkitCancelFullScreen();
 }
 
 void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
 {
+    gboolean returnValue;
+    GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(reinterpret_cast<HTMLElement*>(element))));
+    g_signal_emit_by_name(m_webView, "entering-fullscreen", kitElement.get(), &returnValue);
+    if (returnValue)
+        return;
+
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    if (!widgetIsOnscreenToplevelWindow(window))
+        return;
+
+    g_signal_connect(window, "key-press-event", G_CALLBACK(onFullscreenGtkKeyPressEvent), this);
+
+    m_fullScreenElement = adoptRef(element);
+
     element->document()->webkitWillEnterFullScreenForElement(element);
     m_adjustmentWatcher.disableAllScrollbars();
-#if ENABLE(VIDEO)
-    if (element->tagName() == "VIDEO")
-        enterFullscreenForNode(static_cast<Node*>(element));
-#endif
+    gtk_window_fullscreen(GTK_WINDOW(window));
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
 void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 {
+    gboolean returnValue;
+    GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(reinterpret_cast<HTMLElement*>(element))));
+    g_signal_emit_by_name(m_webView, "leaving-fullscreen", kitElement.get(), &returnValue);
+    if (returnValue)
+        return;
+
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    ASSERT(widgetIsOnscreenToplevelWindow(window));
+    g_signal_handlers_disconnect_by_func(window, reinterpret_cast<void*>(onFullscreenGtkKeyPressEvent), this);
+
     element->document()->webkitWillExitFullScreenForElement(element);
+    gtk_window_unfullscreen(GTK_WINDOW(window));
     m_adjustmentWatcher.enableAllScrollbars();
-#if ENABLE(VIDEO)
-    if (element->tagName() == "VIDEO")
-        webViewExitFullscreen(m_webView);
-#endif
     element->document()->webkitDidExitFullScreenForElement(element);
+    m_fullScreenElement.clear();
 }
 #endif
 

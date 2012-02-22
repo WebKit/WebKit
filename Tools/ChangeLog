@@ -1,3 +1,24 @@
+2012-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] FullScreen signals
+        https://bugs.webkit.org/show_bug.cgi?id=76181
+
+        Reviewed by Martin Robinson.
+
+        Use the two new entering/leaving fullscreen signals to hide/show
+        the tool bar, the status bar and ask the user's permission before
+        entering fullscreen.
+
+        * GtkLauncher/main.c:
+        (webViewFullscreenMessageWindowClose):
+        (webViewWindowStateEvent):
+        (hide_widget):
+        (show_widget):
+        (webViewEnteringFullScreen):
+        (webViewLeavingFullScreen):
+        (createBrowser):
+        (createWindow):
+
 2012-02-22  Rob Flack  <flackr@chromium.org>
 
         Update Linux ChromiumOS builders in flakiness dashboard.
