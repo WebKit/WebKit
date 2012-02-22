@@ -1,3 +1,15 @@
+2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the remaining uses of CSSStyleDeclaration in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=78939
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::shouldApplyStyle):
+        * WebCoreSupport/EditorClientEfl.h:
+        (EditorClientEfl):
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor

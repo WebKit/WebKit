@@ -1,3 +1,15 @@
+2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the remaining uses of CSSStyleDeclaration in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=78939
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldApplyStyle):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient):
+
 2012-02-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Clean build is broken when using make -j
