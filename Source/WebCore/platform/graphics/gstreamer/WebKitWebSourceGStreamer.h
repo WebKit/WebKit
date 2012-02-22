@@ -20,7 +20,7 @@
 #define WebKitWebSourceGStreamer_h
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "Frame.h"
+#include "MediaPlayer.h"
 #include <gst/gst.h>
 
 G_BEGIN_DECLS
@@ -46,7 +46,7 @@ struct _WebKitWebSrcClass {
 };
 
 GType webkit_web_src_get_type(void);
-void  webKitWebSrcSetFrame(WebKitWebSrc* src, WebCore::Frame* frame);
+void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*);
 
 G_END_DECLS
 

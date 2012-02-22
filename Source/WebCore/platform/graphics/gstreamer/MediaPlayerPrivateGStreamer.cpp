@@ -1034,15 +1034,8 @@ void MediaPlayerPrivateGStreamer::sourceChanged()
     gst_object_replace(reinterpret_cast<GstObject**>(&m_source),
                        reinterpret_cast<GstObject*>(element.get()));
 
-    if (WEBKIT_IS_WEB_SRC(element.get())) {
-        Frame* frame = 0;
-        Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument();
-        if (document)
-            frame = document->frame();
-
-        if (frame)
-            webKitWebSrcSetFrame(WEBKIT_WEB_SRC(element.get()), frame);
-    }
+    if (WEBKIT_IS_WEB_SRC(element.get()))
+        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(element.get()), m_player);
 }
 
 void MediaPlayerPrivateGStreamer::cancelLoad()
