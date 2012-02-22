@@ -310,22 +310,44 @@ WebInspector.ConsoleMessageImpl.prototype = {
             return;
 
         var elements = [];
+        var length = 0;
         for (var i = 0; i < properties.length; ++i) {
-            var name = properties[i].name;
+            var property = properties[i];
+            var name = property.name;
+            if (name === "length")
+                length = parseInt(property.value.description, 10);
             if (name == parseInt(name, 10))
-                elements[name] = this._formatAsArrayEntry(properties[i].value);
+                elements[name] = this._formatAsArrayEntry(property.value);
         }
 
         elem.appendChild(document.createTextNode("["));
-        for (var i = 0; i < elements.length; ++i) {
-            var element = elements[i];
-            if (element)
-                elem.appendChild(element);
-            else
-                elem.appendChild(document.createTextNode("undefined"))
-            if (i < elements.length - 1)
-                elem.appendChild(document.createTextNode(", "));
+        var lastNonEmptyIndex = -1;
+
+        function appendUndefined(elem, index)
+        {
+            if (index - lastNonEmptyIndex <= 1)
+                return;
+            var span = elem.createChild(span, "console-formatted-undefined");
+            span.textContent = WebInspector.UIString("undefined × %d", index - lastNonEmptyIndex - 1);
         }
+
+        for (var i = 0; i < length; ++i) {
+            var element = elements[i];
+            if (!element)
+                continue;
+
+            if (i - lastNonEmptyIndex > 1) {
+                appendUndefined(elem, i);
+                elem.appendChild(document.createTextNode(", "));
+            }
+
+            elem.appendChild(element);
+            lastNonEmptyIndex = i;
+            if (i < length - 1)
+                elem.appendChild(document.createTextNode(", "));
+        }       
+        appendUndefined(elem, length);
+
         elem.appendChild(document.createTextNode("]"));
     },
 
