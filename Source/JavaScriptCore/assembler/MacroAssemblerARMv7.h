@@ -796,14 +796,16 @@ public:
     void storeDouble(FPRegisterID src, BaseIndex address)
     {
         move(address.index, addressTempRegister);
-        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        mul32(TrustedImm32(1 << address.scale), addressTempRegister, addressTempRegister);
+        add32(address.base, addressTempRegister);
         storeDouble(src, Address(addressTempRegister, address.offset));
     }
     
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
         move(address.index, addressTempRegister);
-        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        mul32(TrustedImm32(1 << address.scale), addressTempRegister, addressTempRegister);
+        add32(address.base, addressTempRegister);
         storeDouble(src, Address(addressTempRegister, address.offset));
     }
 

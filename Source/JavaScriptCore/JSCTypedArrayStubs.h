@@ -65,8 +65,8 @@ public: \
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\
 \
-    static const JSC::TypedArrayType TypedArrayStorageType = JSC::TypedArrayNone;\
-    intptr_t m_storageLength;\
+    static const JSC::TypedArrayType TypedArrayStorageType = JSC::TypedArray##name;\
+    uint32_t m_storageLength;\
     type* m_storage;\
     RefPtr<name##Array> m_impl;\
 protected:\

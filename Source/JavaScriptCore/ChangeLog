@@ -1,3 +1,18 @@
+2012-02-21  Oliver Hunt  <oliver@apple.com>
+
+        Unbreak double-typed arrays on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=79177
+
+        Reviewed by Gavin Barraclough.
+
+        The existing code had completely broken address arithmetic.
+
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+
 2012-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Should be able to reconfigure a non-configurable property as read-only
