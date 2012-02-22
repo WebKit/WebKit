@@ -34,6 +34,8 @@ include_webinspector {
 }
 
 SOURCES += \
+    Modules/geolocation/Geolocation.cpp \
+    Modules/geolocation/GeolocationController.cpp \
     Modules/geolocation/NavigatorGeolocation.cpp \
     \
     accessibility/AccessibilityImageMapLink.cpp \
@@ -991,8 +993,6 @@ SOURCES += \
     page/FrameDestructionObserver.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
-    page/Geolocation.cpp \
-    page/GeolocationController.cpp \
     page/GestureTapHighlighter.cpp \
     page/GroupSettings.cpp \
     page/History.cpp \

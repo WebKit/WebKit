@@ -650,7 +650,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XPathGrammar.h
 
 dom_binding_idls += \
+	$(WebCore)/Modules/geolocation/Geolocation.idl \
+	$(WebCore)/Modules/geolocation/Geoposition.idl \
 	$(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
+	$(WebCore)/Modules/geolocation/PositionCallback.idl \
+	$(WebCore)/Modules/geolocation/PositionError.idl \
+	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
 	$(WebCore)/css/CSSFontFaceRule.idl \
 	$(WebCore)/css/CSSImportRule.idl \
@@ -898,8 +903,6 @@ dom_binding_idls += \
 	$(WebCore)/page/DOMSelection.idl \
 	$(WebCore)/page/DOMWindow.idl \
 	$(WebCore)/page/EventSource.idl \
-	$(WebCore)/page/Geolocation.idl \
-	$(WebCore)/page/Geoposition.idl \
 	$(WebCore)/page/History.idl \
 	$(WebCore)/page/Location.idl \
 	$(WebCore)/page/MemoryInfo.idl \
@@ -907,9 +910,6 @@ dom_binding_idls += \
 	$(WebCore)/page/Performance.idl \
 	$(WebCore)/page/PerformanceNavigation.idl \
 	$(WebCore)/page/PerformanceTiming.idl \
-	$(WebCore)/page/PositionCallback.idl \
-	$(WebCore)/page/PositionError.idl \
-	$(WebCore)/page/PositionErrorCallback.idl \
 	$(WebCore)/page/Screen.idl \
 	$(WebCore)/page/SpeechInputEvent.idl \
 	$(WebCore)/page/SpeechInputResult.idl \
@@ -952,8 +952,19 @@ dom_binding_idls += \
 	$(WebCore)/xml/XSLTProcessor.idl
 
 webcore_sources += \
+	Source/WebCore/Modules/geolocation/Geolocation.cpp \
+	Source/WebCore/Modules/geolocation/Geolocation.h \
+	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
+	Source/WebCore/Modules/geolocation/GeolocationController.h \
+	Source/WebCore/Modules/geolocation/GeolocationError.h \
+	Source/WebCore/Modules/geolocation/GeolocationPosition.h \
+	Source/WebCore/Modules/geolocation/Geoposition.h \
 	Source/WebCore/Modules/geolocation/NavigatorGeolocation.cpp \
 	Source/WebCore/Modules/geolocation/NavigatorGeolocation.h \
+	Source/WebCore/Modules/geolocation/PositionCallback.h \
+	Source/WebCore/Modules/geolocation/PositionError.h \
+	Source/WebCore/Modules/geolocation/PositionErrorCallback.h \
+	Source/WebCore/Modules/geolocation/PositionOptions.h \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.h \
 	Source/WebCore/accessibility/AccessibilityARIAGrid.cpp \
@@ -2715,14 +2726,7 @@ webcore_sources += \
 	Source/WebCore/page/FrameTree.h \
 	Source/WebCore/page/FrameView.cpp \
 	Source/WebCore/page/FrameView.h \
-	Source/WebCore/page/Geolocation.cpp \
-	Source/WebCore/page/Geolocation.h \
 	Source/WebCore/page/GeolocationClient.h \
-	Source/WebCore/page/GeolocationController.cpp \
-	Source/WebCore/page/GeolocationController.h \
-	Source/WebCore/page/GeolocationError.h \
-	Source/WebCore/page/GeolocationPosition.h \
-	Source/WebCore/page/Geoposition.h \
 	Source/WebCore/page/GestureTapHighlighter.cpp \
 	Source/WebCore/page/GestureTapHighlighter.h \
 	Source/WebCore/page/GroupSettings.cpp \
@@ -2767,10 +2771,6 @@ webcore_sources += \
 	Source/WebCore/page/PointerLock.h \
 	Source/WebCore/page/PointerLockController.cpp \
 	Source/WebCore/page/PointerLockController.h \
-	Source/WebCore/page/PositionCallback.h \
-	Source/WebCore/page/PositionError.h \
-	Source/WebCore/page/PositionErrorCallback.h \
-	Source/WebCore/page/PositionOptions.h \
 	Source/WebCore/page/PrintContext.cpp \
 	Source/WebCore/page/PrintContext.h \
 	Source/WebCore/page/Screen.cpp \

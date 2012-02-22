@@ -1,3 +1,54 @@
+2012-02-22  Adam Barth  <abarth@webkit.org>
+
+        Move Geolocation code into Modules/geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=79204
+
+        Reviewed by Hajime Morita.
+
+        There are still some dangling references into the Geolocation module,
+        which I will clean up in a followup patch.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/geolocation/Geolocation.cpp: Copied from Source/WebCore/page/Geolocation.cpp.
+        * Modules/geolocation/Geolocation.h: Copied from Source/WebCore/page/Geolocation.h.
+        * Modules/geolocation/Geolocation.idl: Copied from Source/WebCore/page/Geolocation.idl.
+        * Modules/geolocation/GeolocationController.cpp: Copied from Source/WebCore/page/GeolocationController.cpp.
+        * Modules/geolocation/GeolocationController.h: Copied from Source/WebCore/page/GeolocationController.h.
+        * Modules/geolocation/GeolocationError.h: Copied from Source/WebCore/page/GeolocationError.h.
+        * Modules/geolocation/GeolocationPosition.h: Copied from Source/WebCore/page/GeolocationPosition.h.
+        * Modules/geolocation/Geoposition.h: Copied from Source/WebCore/page/Geoposition.h.
+        * Modules/geolocation/Geoposition.idl: Copied from Source/WebCore/page/Geoposition.idl.
+        * Modules/geolocation/PositionCallback.h: Copied from Source/WebCore/page/PositionCallback.h.
+        * Modules/geolocation/PositionCallback.idl: Copied from Source/WebCore/page/PositionCallback.idl.
+        * Modules/geolocation/PositionError.h: Copied from Source/WebCore/page/PositionError.h.
+        * Modules/geolocation/PositionError.idl: Copied from Source/WebCore/page/PositionError.idl.
+        * Modules/geolocation/PositionErrorCallback.h: Copied from Source/WebCore/page/PositionErrorCallback.h.
+        * Modules/geolocation/PositionErrorCallback.idl: Copied from Source/WebCore/page/PositionErrorCallback.idl.
+        * Modules/geolocation/PositionOptions.h: Copied from Source/WebCore/page/PositionOptions.h.
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Geolocation.cpp: Removed.
+        * page/Geolocation.h: Removed.
+        * page/Geolocation.idl: Removed.
+        * page/GeolocationController.cpp: Removed.
+        * page/GeolocationController.h: Removed.
+        * page/GeolocationError.h: Removed.
+        * page/GeolocationPosition.h: Removed.
+        * page/Geoposition.h: Removed.
+        * page/Geoposition.idl: Removed.
+        * page/PositionCallback.h: Removed.
+        * page/PositionCallback.idl: Removed.
+        * page/PositionError.h: Removed.
+        * page/PositionError.idl: Removed.
+        * page/PositionErrorCallback.h: Removed.
+        * page/PositionErrorCallback.idl: Removed.
+        * page/PositionOptions.h: Removed.
+
 2012-02-22  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
 
         [gtk] Accessibility: use find funtion in vector instead of for.

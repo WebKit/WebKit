@@ -54,7 +54,12 @@ VPATH = \
 #
 
 BINDING_IDLS = \
+    $(WebCore)/Modules/geolocation/Geolocation.idl \
+    $(WebCore)/Modules/geolocation/Geoposition.idl \
     $(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
+    $(WebCore)/Modules/geolocation/PositionCallback.idl \
+    $(WebCore)/Modules/geolocation/PositionError.idl \
+    $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
@@ -319,8 +324,6 @@ BINDING_IDLS = \
     $(WebCore)/page/DOMSelection.idl \
     $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \
-    $(WebCore)/page/Geolocation.idl \
-    $(WebCore)/page/Geoposition.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/MemoryInfo.idl \
@@ -328,9 +331,6 @@ BINDING_IDLS = \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceNavigation.idl \
     $(WebCore)/page/PerformanceTiming.idl \
-    $(WebCore)/page/PositionCallback.idl \
-    $(WebCore)/page/PositionError.idl \
-    $(WebCore)/page/PositionErrorCallback.idl \
     $(WebCore)/page/Screen.idl \
     $(WebCore)/page/SpeechInputEvent.idl \
     $(WebCore)/page/SpeechInputResult.idl \

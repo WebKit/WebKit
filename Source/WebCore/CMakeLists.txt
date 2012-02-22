@@ -108,7 +108,12 @@ SET(WebCore_IDL_INCLUDES
 )
 
 SET(WebCore_IDL_FILES
+    Modules/geolocation/Geolocation.idl
+    Modules/geolocation/Geoposition.idl
     Modules/geolocation/NavigatorGeolocation.idl
+    Modules/geolocation/PositionCallback.idl
+    Modules/geolocation/PositionError.idl
+    Modules/geolocation/PositionErrorCallback.idl
 
     css/Counter.idl
     css/CSSCharsetRule.idl
@@ -333,8 +338,6 @@ SET(WebCore_IDL_FILES
     page/DOMSelection.idl
     page/DOMWindow.idl
     page/EventSource.idl
-    page/Geolocation.idl
-    page/Geoposition.idl
     page/History.idl
     page/Location.idl
     page/MemoryInfo.idl
@@ -342,9 +345,6 @@ SET(WebCore_IDL_FILES
     page/Performance.idl
     page/PerformanceNavigation.idl
     page/PerformanceTiming.idl
-    page/PositionCallback.idl
-    page/PositionError.idl
-    page/PositionErrorCallback.idl
     page/Screen.idl
     page/SpeechInputEvent.idl
     page/SpeechInputResult.idl
@@ -405,6 +405,8 @@ SET(WebCore_IDL_FILES
 )
 
 SET(WebCore_SOURCES
+    Modules/geolocation/Geolocation.cpp
+    Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp
 
     accessibility/AXObjectCache.cpp
@@ -1021,8 +1023,6 @@ SET(WebCore_SOURCES
     page/FrameDestructionObserver.cpp
     page/FrameTree.cpp
     page/FrameView.cpp
-    page/Geolocation.cpp
-    page/GeolocationController.cpp
     page/GroupSettings.cpp
     page/History.cpp
     page/Location.cpp

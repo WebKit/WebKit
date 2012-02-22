@@ -86,7 +86,12 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mobileThemeQt.css
 
 IDL_BINDINGS += \
+    $$PWD/Modules/geolocation/Geolocation.idl \
+    $$PWD/Modules/geolocation/Geoposition.idl \
     $$PWD/Modules/geolocation/NavigatorGeolocation.idl \
+    $$PWD/Modules/geolocation/PositionCallback.idl \
+    $$PWD/Modules/geolocation/PositionError.idl \
+    $$PWD/Modules/geolocation/PositionErrorCallback.idl \
     $$PWD/css/Counter.idl \
     $$PWD/css/CSSCharsetRule.idl \
     $$PWD/css/CSSFontFaceRule.idl \
@@ -343,8 +348,6 @@ IDL_BINDINGS += \
     $$PWD/page/DOMSelection.idl \
     $$PWD/page/DOMWindow.idl \
     $$PWD/page/EventSource.idl \
-    $$PWD/page/Geolocation.idl \
-    $$PWD/page/Geoposition.idl \
     $$PWD/page/History.idl \
     $$PWD/page/Location.idl \
     $$PWD/page/MemoryInfo.idl \
@@ -352,9 +355,6 @@ IDL_BINDINGS += \
     $$PWD/page/Performance.idl \
     $$PWD/page/PerformanceNavigation.idl \
     $$PWD/page/PerformanceTiming.idl \
-    $$PWD/page/PositionCallback.idl \
-    $$PWD/page/PositionError.idl \
-    $$PWD/page/PositionErrorCallback.idl \
     $$PWD/page/Screen.idl \
     $$PWD/page/SpeechInputEvent.idl \
     $$PWD/page/SpeechInputResult.idl \
