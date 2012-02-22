@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class Page;
+
 class UserMediaClient {
 public:
     virtual void pageDestroyed() = 0;
@@ -48,6 +50,8 @@ public:
 protected:
     virtual ~UserMediaClient() { }
 };
+
+void provideUserMediaTo(Page*, UserMediaClient*);
 
 } // namespace WebCore
 

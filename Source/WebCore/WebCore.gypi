@@ -2589,6 +2589,8 @@
             'mediastream/PeerConnection.h',
             'mediastream/SignalingCallback.h',
             'mediastream/UserMediaClient.h',
+            'mediastream/UserMediaController.h',
+            'mediastream/UserMediaController.cpp',
             'mediastream/UserMediaRequest.cpp',
             'mediastream/UserMediaRequest.h',
             'notifications/Notification.cpp',

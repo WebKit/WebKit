@@ -44,11 +44,11 @@
 
 namespace WebCore {
 
-class UserMediaClient;
+class UserMediaController;
 
 class UserMediaRequest : public MediaStreamSourcesQueryClient, public ContextDestructionObserver {
 public:
-    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaClient*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
     ~UserMediaRequest();
 
     NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
@@ -70,7 +70,7 @@ public:
     virtual void contextDestroyed();
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaClient*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
 
     void parseOptions(const String& options);
 
@@ -80,7 +80,7 @@ private:
     bool m_cameraPreferenceUser;
     bool m_cameraPreferenceEnvironment;
 
-    UserMediaClient* m_client;
+    UserMediaController* m_controller;
 
     RefPtr<NavigatorUserMediaSuccessCallback> m_successCallback;
     RefPtr<NavigatorUserMediaErrorCallback> m_errorCallback;

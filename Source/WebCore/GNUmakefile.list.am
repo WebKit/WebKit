@@ -2642,6 +2642,8 @@ webcore_sources += \
 	Source/WebCore/mediastream/PeerConnection.h \
 	Source/WebCore/mediastream/SignalingCallback.h \
 	Source/WebCore/mediastream/UserMediaClient.h \
+	Source/WebCore/mediastream/UserMediaController.h \
+	Source/WebCore/mediastream/UserMediaController.cpp \
 	Source/WebCore/mediastream/UserMediaRequest.cpp \
 	Source/WebCore/mediastream/UserMediaRequest.h \
 	Source/WebCore/notifications/NotificationCenter.cpp \

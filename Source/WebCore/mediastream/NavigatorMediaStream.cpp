@@ -35,6 +35,7 @@
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
+#include "UserMediaController.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {
@@ -52,15 +53,13 @@ void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const String
     if (!successCallback)
         return;
 
-    Frame* frame = navigator->frame();
-    if (!frame)
+    UserMediaController* userMedia = UserMediaController::from(navigator->frame());
+    if (!userMedia) {
+        ec = NOT_SUPPORTED_ERR;
         return;
+    }
 
-    Page* page = frame->page();
-    if (!page)
-        return;
-
-    RefPtr<UserMediaRequest> request = UserMediaRequest::create(frame->document(), page->userMediaClient(), options, successCallback, errorCallback);
+    RefPtr<UserMediaRequest> request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, successCallback, errorCallback);
     if (!request) {
         ec = NOT_SUPPORTED_ERR;
         return;

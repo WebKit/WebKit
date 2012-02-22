@@ -85,7 +85,6 @@ namespace WebCore {
     class Settings;
     class SpeechInput;
     class SpeechInputClient;
-    class UserMediaClient;
     class StorageNamespace;
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
@@ -119,7 +118,6 @@ namespace WebCore {
             RefPtr<BackForwardList> backForwardClient;
             SpeechInputClient* speechInputClient;
             NotificationPresenter* notificationClient;
-            UserMediaClient* userMediaClient;
         };
 
         Page(PageClients&);
@@ -188,9 +186,6 @@ namespace WebCore {
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInput* speechInput();
-#endif
-#if ENABLE(MEDIA_STREAM)
-        UserMediaClient* userMediaClient() const { return m_userMediaClient; }
 #endif
         ScrollingCoordinator* scrollingCoordinator();
 
@@ -388,9 +383,6 @@ namespace WebCore {
 #if ENABLE(INPUT_SPEECH)
         SpeechInputClient* m_speechInputClient;
         OwnPtr<SpeechInput> m_speechInput;
-#endif
-#if ENABLE(MEDIA_STREAM)
-        UserMediaClient* m_userMediaClient;
 #endif
         RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 

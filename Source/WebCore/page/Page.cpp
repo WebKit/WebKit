@@ -82,10 +82,6 @@
 #include "GeolocationController.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "UserMediaClient.h"
-#endif
-
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -143,9 +139,6 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)
-#endif
-#if ENABLE(MEDIA_STREAM)
-    , m_userMediaClient(pageClients.userMediaClient)
 #endif
     , m_settings(Settings::create(this))
     , m_progress(ProgressTracker::create())
@@ -206,11 +199,6 @@ Page::~Page()
 
 #if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-    if (m_userMediaClient)
-        m_userMediaClient->pageDestroyed();
 #endif
 
     if (m_scrollingCoordinator)
@@ -1098,7 +1086,6 @@ Page::PageClients::PageClients()
     , geolocationClient(0)
     , speechInputClient(0)
     , notificationClient(0)
-    , userMediaClient(0)
 {
 }
 

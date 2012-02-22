@@ -36,26 +36,26 @@
 
 #include "LocalMediaStream.h"
 #include "SpaceSplitString.h"
-#include "UserMediaClient.h"
+#include "UserMediaController.h"
 
 namespace WebCore {
 
-PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaClient* client, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
 {
-    RefPtr<UserMediaRequest> request = adoptRef(new UserMediaRequest(context, client, options, successCallback, errorCallback));
+    RefPtr<UserMediaRequest> request = adoptRef(new UserMediaRequest(context, controller, options, successCallback, errorCallback));
     if (!request->audio() && !request->video())
         return 0;
 
     return request.release();
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaClient* client, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
     : ContextDestructionObserver(context)
     , m_audio(false)
     , m_video(false)
     , m_cameraPreferenceUser(false)
     , m_cameraPreferenceEnvironment(false)
-    , m_client(client)
+    , m_controller(controller)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
 {
@@ -73,8 +73,8 @@ void UserMediaRequest::start()
 
 void UserMediaRequest::didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
-    if (m_client)
-        m_client->requestUserMedia(this, audioSources, videoSources);
+    if (m_controller)
+        m_controller->requestUserMedia(this, audioSources, videoSources);
 }
 
 void UserMediaRequest::succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
@@ -99,9 +99,9 @@ void UserMediaRequest::fail()
 
 void UserMediaRequest::contextDestroyed()
 {
-    if (m_client) {
-        m_client->cancelUserMediaRequest(this);
-        m_client = 0;
+    if (m_controller) {
+        m_controller->cancelUserMediaRequest(this);
+        m_controller = 0;
     }
 
     ContextDestructionObserver::contextDestroyed();

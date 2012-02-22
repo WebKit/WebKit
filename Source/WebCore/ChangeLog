@@ -1,3 +1,54 @@
+2012-02-20  MORITA Hajime  <morrita@google.com>
+
+        MEDIA_STREAM should be implemented as a PageSupplement.
+        https://bugs.webkit.org/show_bug.cgi?id=79050
+
+        Reviewed by Adam Barth.
+
+        Added UserMediaController which implements PageSupplement. This
+        controller mediates WebCore-to-client communication and lifecycle
+        management. Then pushed UserMediaController out as a
+        PageSupplement module.
+
+        No new tests. No behavior change.
+
+        * WebCore.gypi:
+        * GNUmakefile.list.am:
+        * mediastream/NavigatorMediaStream.cpp:
+        (WebCore::NavigatorMediaStream::webkitGetUserMedia):
+        * mediastream/UserMediaClient.h:
+        (WebCore):
+        * mediastream/UserMediaController.cpp: Added.
+        (WebCore):
+        (WebCore::UserMediaController::supplementName):
+        (WebCore::UserMediaController::UserMediaController):
+        (WebCore::UserMediaController::~UserMediaController):
+        (WebCore::UserMediaController::create):
+        (WebCore::provideUserMediaTo):
+        * mediastream/UserMediaController.h: Added.
+        (WebCore):
+        (UserMediaController):
+        (WebCore::UserMediaController::client):
+        (WebCore::UserMediaController::from):
+        (WebCore::UserMediaController::requestUserMedia):
+        (WebCore::UserMediaController::cancelUserMediaRequest):
+        * mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::create):
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        (WebCore::UserMediaRequest::didCompleteQuery):
+        (WebCore::UserMediaRequest::contextDestroyed):
+        * mediastream/UserMediaRequest.h:
+        (WebCore):
+        (UserMediaRequest):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+        (WebCore):
+        (PageClients):
+        (Page):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         Node::isContentEditable should only update styles, not layout
