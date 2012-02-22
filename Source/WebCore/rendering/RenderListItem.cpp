@@ -247,6 +247,9 @@ void RenderListItem::updateMarkerLocation()
             LayoutStateDisabler layoutStateDisabler(view());
             updateFirstLetter();
             m_marker->remove();
+            // If markerPar is an anonymous block that will lose all its children, destroy it
+            if (markerPar && (markerPar != lineBoxParent) && markerPar->isAnonymousBlock() && !(toRenderBlock(markerPar)->firstChild()))
+                markerPar->destroy();
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, firstNonMarkerChild(lineBoxParent));

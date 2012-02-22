@@ -1,3 +1,20 @@
+2012-02-22  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from empty anonymous block preceding :before content
+        https://bugs.webkit.org/show_bug.cgi?id=78250
+
+        Reviewed by David Hyatt.
+
+        RenderListMarkers getting removed from the tree in updateMarkerLocation()
+        can leave parent anonymous blocks behind with no children. This was
+        confusing updateBeforeAfterContent() because it does not expect
+        an empty block to precede :before content renderers.
+
+        Fix is to remove the anonymous block if it will lose all of its children.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+
 2012-02-22  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to accessing removed parent lineboxes when clearing view selection.
