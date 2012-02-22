@@ -1,3 +1,19 @@
+2012-02-21  Kentaro Hara  <haraken@chromium.org>
+
+        Remove FIXME from resolve-supplemental.pl
+        https://bugs.webkit.org/show_bug.cgi?id=79160
+
+        Reviewed by Adam Barth.
+
+        The IDL attribute checker has been enabled in all build systems.
+        This patch removes FIXME in resolve-supplemental.pl.
+        Also, this patch improves a comment in IDLAttributes.txt.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/resolve-supplemental.pl:
+
 2012-02-21  Emil A Eklund  <eae@chromium.org>
 
         Add FractionalLayoutRect for sub-pixel layout

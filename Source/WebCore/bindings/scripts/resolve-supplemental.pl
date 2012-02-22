@@ -63,14 +63,10 @@ foreach my $idlFile (@idlFiles) {
     $interfaceNameToIdlFile{fileparse(basename($idlFile), ".idl")} = $fullPath;
 }
 
-# FIXME: After enabling the IDL attribute checker on all build systems
-# we can remove the if statement.
-if ($idlAttributesFile) {
-    # Runs the IDL attribute checker.
-    my $idlAttributes = loadIDLAttributes($idlAttributesFile);
-    foreach my $idlFile (keys %documents) {
-        checkIDLAttributes($idlAttributes, $documents{$idlFile}, basename($idlFile));
-    }
+# Runs the IDL attribute checker.
+my $idlAttributes = loadIDLAttributes($idlAttributesFile);
+foreach my $idlFile (keys %documents) {
+    checkIDLAttributes($idlAttributes, $documents{$idlFile}, basename($idlFile));
 }
 
 # Resolves [Supplemental=XXX] dependencies.
