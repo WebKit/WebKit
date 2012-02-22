@@ -1,3 +1,47 @@
+2012-02-22  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r108518.
+        http://trac.webkit.org/changeset/108518
+        https://bugs.webkit.org/show_bug.cgi?id=75864
+
+        Breaks surfaceOcclusionWithOverlappingSiblingSurfaces unit test.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCLayerIterator.cpp:
+        (WebCore):
+        (WebCore::CCLayerIteratorActions::BackToFront::begin):
+        (WebCore::CCLayerIteratorActions::BackToFront::end):
+        (WebCore::CCLayerIteratorActions::BackToFront::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::begin):
+        (WebCore::CCLayerIteratorActions::FrontToBack::end):
+        (WebCore::CCLayerIteratorActions::FrontToBack::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::goToHighestInSubtree):
+        * platform/graphics/chromium/cc/CCLayerIterator.h:
+        (WebCore):
+        (WebCore::CCLayerIterator::CCLayerIterator):
+        (WebCore::CCLayerIterator::operator++):
+        (WebCore::CCLayerIterator::operator==):
+        (WebCore::CCLayerIterator::operator->):
+        (WebCore::CCLayerIterator::operator*):
+        (WebCore::CCLayerIterator::representsTargetRenderSurface):
+        (WebCore::CCLayerIterator::representsContributingRenderSurface):
+        (WebCore::CCLayerIterator::targetRenderSurfaceLayer):
+        (CCLayerIterator):
+        (BackToFront):
+        (FrontToBack):
+        * platform/graphics/chromium/cc/CCLayerIteratorPosition.h: Added.
+        (WebCore):
+        (CCLayerIteratorPositionValue):
+        (WebCore::CCLayerIteratorPosition::CCLayerIteratorPosition):
+        (CCLayerIteratorPosition):
+        (WebCore::CCLayerIteratorPosition::currentLayer):
+        (WebCore::CCLayerIteratorPosition::currentLayerRepresentsContributingRenderSurface):
+        (WebCore::CCLayerIteratorPosition::currentLayerRepresentsTargetRenderSurface):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurfaceLayer):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurface):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurfaceChildren):
+        (WebCore::CCLayerIteratorPosition::operator==):
+
 2012-02-22  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r62632): page-break-inside: avoid is ignored
