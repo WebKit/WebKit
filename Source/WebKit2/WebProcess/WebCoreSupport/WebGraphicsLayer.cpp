@@ -482,7 +482,7 @@ void WebGraphicsLayer::setRootLayer(bool isRoot)
 void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     if (m_mainBackingStore)
-        m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
+        m_mainBackingStore->coverWithTilesIfNeeded(trajectoryVector);
 }
 
 void WebGraphicsLayer::setContentsScale(float scale)
@@ -628,7 +628,7 @@ void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*
 void WebGraphicsLayer::adjustVisibleRect()
 {
     if (m_mainBackingStore)
-        m_mainBackingStore->adjustVisibleRect();
+        m_mainBackingStore->coverWithTilesIfNeeded();
 }
 
 void WebGraphicsLayer::computeTransformedVisibleRect()
@@ -641,9 +641,9 @@ void WebGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.setFlattening(!preserves3D());
     m_layerTransform.setChildrenTransform(childrenTransform());
     m_layerTransform.combineTransforms(parent() ? toWebGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
+
     // The combined transform will be used in tiledBackingStoreVisibleRect.
-    if (m_mainBackingStore)
-        m_mainBackingStore->adjustVisibleRect();
+    adjustVisibleRect();
 }
 #endif
 

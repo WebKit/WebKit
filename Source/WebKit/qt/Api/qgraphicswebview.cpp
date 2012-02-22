@@ -288,13 +288,13 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 #if USE(TILED_BACKING_STORE)
     if (WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore()) {
         // FIXME: We should set the backing store viewport earlier than in paint
-        backingStore->adjustVisibleRect();
+        backingStore->coverWithTilesIfNeeded();
         // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
-        WebCore::GraphicsContext context(painter); 
+        WebCore::GraphicsContext context(painter);
         page()->mainFrame()->d->renderFromTiledBackingStore(&context, option->exposedRect.toAlignedRect());
         painter->setRenderHints(oldHints);
         return;
-    } 
+    }
 #endif
 #if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
     page()->mainFrame()->render(painter, d->overlay() ? QWebFrame::ContentsLayer : QWebFrame::AllLayers, option->exposedRect.toAlignedRect());

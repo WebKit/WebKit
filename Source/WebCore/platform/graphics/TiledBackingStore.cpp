@@ -68,12 +68,15 @@ void TiledBackingStore::setTileCreationDelay(double delay)
     m_tileCreationDelay = delay;
 }
 
-void TiledBackingStore::setVisibleRectTrajectoryVector(const FloatPoint& vector)
+void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& panningTrajectoryVector)
 {
-    if (m_visibleRectTrajectoryVector == vector)
+    IntRect visibleRect = visibleContentsRect();
+    if (m_visibleRectTrajectoryVector == panningTrajectoryVector && m_previousVisibleRect == visibleRect)
         return;
 
-    m_visibleRectTrajectoryVector = vector;
+    m_visibleRectTrajectoryVector = panningTrajectoryVector;
+    m_previousVisibleRect = visibleRect;
+
     startTileCreationTimer();
 }
 
@@ -159,16 +162,6 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
         }
     }
     context->restore();
-}
-
-void TiledBackingStore::adjustVisibleRect()
-{
-    IntRect visibleRect = visibleContentsRect();
-    if (m_previousVisibleRect == visibleRect)
-        return;
-    m_previousVisibleRect = visibleRect;
-
-    startTileCreationTimer();
 }
 
 IntRect TiledBackingStore::visibleContentsRect()

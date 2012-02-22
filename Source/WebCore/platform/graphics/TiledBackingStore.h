@@ -44,12 +44,13 @@ public:
     TiledBackingStore(TiledBackingStoreClient*, PassOwnPtr<TiledBackingStoreBackend> = TiledBackingStoreBackend::create());
     ~TiledBackingStore();
 
-    void adjustVisibleRect();
-    
     TiledBackingStoreClient* client() { return m_client; }
+
+    void coverWithTilesIfNeeded(const FloatPoint& panningTrajectoryVector = FloatPoint());
+
     float contentsScale() { return m_contentsScale; }
     void setContentsScale(float);
-    
+
     bool contentsFrozen() const { return m_contentsFrozen; }
     void setContentsFrozen(bool);
     void updateTileBuffers();
@@ -59,11 +60,9 @@ public:
 
     IntSize tileSize() { return m_tileSize; }
     void setTileSize(const IntSize&);
-    
+
     double tileCreationDelay() const { return m_tileCreationDelay; }
     void setTileCreationDelay(double delay);
-    
-    void setVisibleRectTrajectoryVector(const FloatPoint&);
 
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;

@@ -1,3 +1,18 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Merge setVisibleRectTrajectoryVector and adjustVisibleRect to
+        the more descriptive coverWithTilesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=79230
+
+        Reviewed by Simon Hausmann.
+
+        Replace use by coverWithTilesIfNeeded().
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setVisibleContentRectTrajectoryVector):
+        (WebCore::WebGraphicsLayer::adjustVisibleRect):
+        (WebCore::WebGraphicsLayer::computeTransformedVisibleRect):
+
 2012-02-22  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Add frame flattening setting to QWebPreferences.

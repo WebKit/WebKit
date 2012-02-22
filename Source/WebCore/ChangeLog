@@ -1,3 +1,20 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Merge setVisibleRectTrajectoryVector and adjustVisibleRect to
+        the more descriptive coverWithTilesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=79230
+
+        Reviewed by Simon Hausmann.
+
+        Both setVisibleRectTrajectoryVector and the adjustVisibleRect are
+        used for initiating re-tiling, so make that more obvious and merge
+        the two.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::coverWithTilesIfNeeded):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+
 2012-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION: unbalanced transparency layers for clipPath

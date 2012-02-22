@@ -1,3 +1,16 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Merge setVisibleRectTrajectoryVector and adjustVisibleRect to
+        the more descriptive coverWithTilesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=79230
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::paint):
+
+            Use coverWithTilesIfNeeded().
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
