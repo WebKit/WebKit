@@ -1,3 +1,20 @@
+2012-02-21  Adam Klein  <adamk@chromium.org>
+
+        ContainerNode::childrenChanged must be called immediately after removing children
+        https://bugs.webkit.org/show_bug.cgi?id=79162
+
+        Reviewed by Ryosuke Niwa.
+
+        In r108152, a call to childrenChanged() was erroneously moved
+        below the call to child->removedFromDocument(). This breaks, at the
+        least, the behavior of the <title> element. This patch corrects the
+        mistake and adds a test.
+
+        Test: fast/dom/title-directionality-removeChild.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+
 2012-02-21  Luke Macpherson   <macpherson@chromium.org>
 
         Implement many instances of HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE in CSSStyleApplyProperty.
