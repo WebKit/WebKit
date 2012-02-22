@@ -936,6 +936,9 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // New test, needs a rebaseline
 BUGWK77903 : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
 
+// New test, needs a rebaseline
+BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
+
 // Need rebaselining after bug 64591
 BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAIL
 
