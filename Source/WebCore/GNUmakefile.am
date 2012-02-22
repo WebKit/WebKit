@@ -787,19 +787,23 @@ vpath %.idl $(IDL_PATH)
 # it includes an empty command list (the semicolon).
 DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
-SUPPLEMENTAL_DEPENDENCY_FILE = $(top_builddir)/DerivedSources/WebCore/supplemental_dependency.tmp
-IDL_FILES_TMP = $(top_builddir)/DerivedSources/WebCore/idl_files.tmp
+.SECONDARY:
+DerivedSources/WebCore/idl_supplemental_dependencies: $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls)
+	$(AM_V_at)echo -n > $(top_builddir)/DerivedSources/WebCore/idl_files_list
+	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(top_builddir)/DerivedSources/WebCore/idl_files_list
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(top_builddir)/DerivedSources/WebCore/idl_files_list --supplementalDependencyFile $@
 
 .SECONDARY:
-$(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls)
-	$(AM_V_GEN)
-	$(AM_V_at)echo -n > $(IDL_FILES_TMP)
-	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
+DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm DerivedSources/WebCore/idl_supplemental_dependencies
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(top_builddir)/DerivedSources/WebCore/idl_supplemental_dependencies $<
 
-.SECONDARY:
-DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(SUPPLEMENTAL_DEPENDENCY_FILE)
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+# See https://bugs.webkit.org/show_bug.cgi?id=76388
+# We need to introduce a manual dependency to prevent non-generated sources from 
+# trying to build before the generated ones. This can happen if the supplemental
+# IDL generation takes a long time. The pipe represents an order-only dependency,
+# which means that GNUmake will only try to build the dependencies first, but
+# not rebuild all the targets if the dependencies change.
+$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) : | DerivedSources/WebCore/idl_supplemental_dependencies $(webcore_built_sources)
 
 noinst_LTLIBRARIES += \
 	libWebCore.la

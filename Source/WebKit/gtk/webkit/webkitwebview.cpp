@@ -212,7 +212,6 @@ enum {
     RESOURCE_LOAD_FINISHED,
     RESOURCE_CONTENT_LENGTH_RECEIVED,
     RESOURCE_LOAD_FAILED,
-    RUN_MODAL_DIALOG,
 
     LAST_SIGNAL
 };
@@ -2742,27 +2741,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_FRAME,
             WEBKIT_TYPE_WEB_RESOURCE,
             G_TYPE_POINTER);
-
-    /*
-     * WebKitWebView::run-modal-dialog
-     * @webView: the object which received the signal
-     *
-     * Invoked when the @webView should be run in the modal mode. This can be
-     * avoided if FALSE is returned in the signal handler. Otherwise, the
-     * @webView (or its toplevel window) should be made transient for its parent,
-     * set as a modal window, and TRUE should be returned in the signal handler.
-     * After that, a loop will be created and run until the @webView is closed
-     * (i.e. its chrome is destroyed).
-     *
-     * Since: 1.7.6
-     */
-    webkit_web_view_signals[RESOURCE_LOAD_FAILED] = g_signal_new("run-modal-dialog",
-            G_TYPE_FROM_CLASS(webViewClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled, NULL,
-            webkit_marshal_BOOLEAN__VOID,
-            G_TYPE_BOOLEAN, 0);
 
     /*
      * implementations of virtual methods
