@@ -4189,11 +4189,17 @@ BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 // Needs new baselines.
 BUGWK41386 : svg/foreignObject/fO-display-none-with-relative-pos-content.svg = IMAGE+TEXT
 BUGWK41386 : svg/foreignObject/fO-display-none.svg = IMAGE+TEXT
-BUGWK41386 : svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg = IMAGE+TEXT
-BUGWK41386 : svg/foreignObject/fO-parent-display-none.svg = IMAGE+TEXT
-BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = IMAGE+TEXT
-BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none.svg = IMAGE+TEXT
+BUGWK41386 : svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg = FAIL
+BUGWK41386 : svg/foreignObject/fO-parent-display-none.svg = FAIL
+BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = FAIL
+BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-changes.svg = IMAGE+TEXT
+
+// Started failing after bug 41386 (r108493) landed
+BUGWK41386 : svg/custom/visited-link-color.svg = IMAGE
+BUGWK41386 : svg/foreignObject/clip.html = IMAGE
+BUGWK41386 : svg/foreignObject/filter.html = IMAGE
+BUGWK41386 : svg/foreignObject/mask.html = IMAGE
 
 // Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
 BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
