@@ -957,15 +957,6 @@ static gboolean webViewClose(WebKitWebView* view)
     return TRUE;
 }
 
-static gboolean webViewRunModalDialog(WebKitWebView* view)
-{
-    GtkWindow* viewTopLevel = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
-    gtk_window_set_transient_for(GTK_WINDOW(viewTopLevel), GTK_WINDOW(window));
-    gtk_window_set_modal(GTK_WINDOW(viewTopLevel), TRUE);
-
-    return TRUE;
-}
-
 static void databaseQuotaExceeded(WebKitWebView* view, WebKitWebFrame* frame, WebKitWebDatabase *database)
 {
     ASSERT(view);
@@ -1291,7 +1282,6 @@ static WebKitWebView* createWebView()
                      "signal::status-bar-text-changed", webViewStatusBarTextChanged, 0,
                      "signal::create-web-view", webViewCreate, 0,
                      "signal::close-web-view", webViewClose, 0,
-                     "signal::run-modal-dialog", webViewRunModalDialog, 0,
                      "signal::database-quota-exceeded", databaseQuotaExceeded, 0,
                      "signal::document-load-finished", webViewDocumentLoadFinished, 0,
                      "signal::geolocation-policy-decision-requested", geolocationPolicyDecisionRequested, 0,

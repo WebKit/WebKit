@@ -1,3 +1,21 @@
+2012-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r107351.
+        http://trac.webkit.org/changeset/107351
+        https://bugs.webkit.org/show_bug.cgi?id=53600
+
+        Several issues introduced in WebKitGTK+ API
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::chromeDestroyed):
+        (WebKit::ChromeClient::canRunModal):
+        (WebKit::ChromeClient::runModal):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
 2012-02-21  Philippe Normand  <pnormand@igalia.com>
 
         Fix one more GTK+ unit test after r108278.
