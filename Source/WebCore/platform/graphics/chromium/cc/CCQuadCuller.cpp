@@ -75,7 +75,7 @@ static IntRect rectSubtractRegion(const Region& region, const IntRect& rect)
     return rect;
 }
 
-void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
+void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, const FloatRect& damageRect)
 {
     if (!quadList.size())
         return;
@@ -89,6 +89,8 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
         CCDrawQuad* drawQuad = quadList[i].get();
 
         FloatRect floatTransformedRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->quadRect()));
+        if (haveDamageRect)
+            floatTransformedRect.intersect(damageRect);
         // Inflate rect to be tested to stay conservative.
         IntRect transformedQuadRect(enclosingIntRect(floatTransformedRect));
 

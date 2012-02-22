@@ -242,8 +242,12 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
 void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
 {
-    for (unsigned i = 0; i < passes.size(); ++i)
-        passes[i]->optimizeQuads();
+    bool haveDamageRect = layerRendererCapabilities().usingPartialSwap;
+
+    for (unsigned i = 0; i < passes.size(); ++i) {
+        FloatRect damageRect = passes[i]->targetSurface()->damageTracker()->currentDamageRect();
+        passes[i]->optimizeQuads(haveDamageRect, damageRect);
+    }
 }
 
 IntSize CCLayerTreeHostImpl::contentSize() const

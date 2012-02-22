@@ -27,6 +27,7 @@
 
 #include "cc/CCRenderPass.h"
 
+#include "cc/CCDamageTracker.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
@@ -64,9 +65,9 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
-void CCRenderPass::optimizeQuads()
+void CCRenderPass::optimizeQuads(bool haveDamageRect, const FloatRect& damageRect)
 {
-    CCQuadCuller::cullOccludedQuads(m_quadList);
+    CCQuadCuller::cullOccludedQuads(m_quadList, haveDamageRect, damageRect);
 }
 
 }

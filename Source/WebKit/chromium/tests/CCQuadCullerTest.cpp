@@ -79,7 +79,7 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 9u);
 }
 
@@ -92,7 +92,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 13u);
 }
 
@@ -105,7 +105,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 13u);
 }
 
@@ -120,7 +120,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 12u);
 
     IntRect quadVisibleRect1 = quadList[1].get()->quadVisibleRect();
@@ -158,7 +158,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
     quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
 
     EXPECT_EQ(quadList.size(), 2u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 2u);
 }
 
@@ -181,7 +181,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
     quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
 
     EXPECT_EQ(quadList.size(), 2u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 2u);
 }
 
@@ -196,7 +196,7 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 9u);
 }
 
@@ -212,7 +212,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 12u);
 }
 
@@ -228,7 +228,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 12u);
 }
 
@@ -244,7 +244,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 13u);
 }
 
@@ -260,7 +260,7 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 13u);
 }
 
@@ -282,8 +282,61 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList);
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
     EXPECT_EQ(quadList.size(), 12u);
 }
+
+TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverTile)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    setQuads(rootState.get(), childState.get(), quadList);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(200, 100, 100, 100));
+    EXPECT_EQ(quadList.size(), 1u);
+}
+
+TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverCulledTile)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    setQuads(rootState.get(), childState.get(), quadList);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(100, 100, 100, 100));
+    EXPECT_EQ(quadList.size(), 1u);
+}
+
+TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverPartialTiles)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    setQuads(rootState.get(), childState.get(), quadList);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(50, 50, 200, 200));
+    EXPECT_EQ(quadList.size(), 9u);
+}
+
+TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverNoTiles)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    setQuads(rootState.get(), childState.get(), quadList);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(500, 500, 100, 100));
+    EXPECT_EQ(quadList.size(), 0u);
+}
+
 
 } // namespace

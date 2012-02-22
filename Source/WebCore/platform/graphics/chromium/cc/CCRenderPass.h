@@ -46,7 +46,7 @@ public:
     void appendQuadsForLayer(CCLayerImpl*);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
 
-    void optimizeQuads();
+    void optimizeQuads(bool haveDamageRect, const FloatRect& damageRect);
 
     const CCQuadList& quadList() const { return m_quadList; }
     CCRenderSurface* targetSurface() const { return m_targetSurface; }

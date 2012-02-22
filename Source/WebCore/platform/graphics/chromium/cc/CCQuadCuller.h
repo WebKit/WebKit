@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CCQuadCuller {
 public:
-    static void cullOccludedQuads(CCQuadList&);
+    static void cullOccludedQuads(CCQuadList&, bool haveDamageRect, const FloatRect& damageRect);
 
 private:
     // Make non-instantiable.

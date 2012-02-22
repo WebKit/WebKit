@@ -1,3 +1,28 @@
+2012-02-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Cull quads outside of the scissoring damage rect
+        https://bugs.webkit.org/show_bug.cgi?id=79181
+
+        Reviewed by James Robinson.
+
+        Quads outside of the partial swap cause us to execute GL operations
+        that actually use a fair amount of CPU time (enough to affect power
+        usage). Here we cull quads by only keeping their intersection
+        with the damage rect used for partial swap.
+
+        Unit test: CCQuadCuller.cpp
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::optimizeRenderPasses):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCQuadCuller.h:
+        (CCQuadCuller):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::optimizeQuads):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+
 2012-02-21  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] New CCOcclusionTracker class with tests
