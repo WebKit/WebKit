@@ -477,7 +477,7 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
 
     const Color& color = quad->color();
 
-    GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), color.red(), color.green(), color.blue(), color.alpha()));
+    GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0, color.alpha() / 255.0));
 
     float opacity = quad->opacity();
     drawTexturedQuad(tileTransform,
