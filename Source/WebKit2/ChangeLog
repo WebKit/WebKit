@@ -1,3 +1,11 @@
+2012-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Clean build is broken when using make -j
+        https://bugs.webkit.org/show_bug.cgi?id=76388
+
+        * GNUmakefile.am: Add some WebKit2 sources to global sources lists
+        so that we can refer to them in separate GNUmakefiles.
+
 2012-02-22  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         [GTK][WK2] Add WebGL WebSetting.

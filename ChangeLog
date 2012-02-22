@@ -1,3 +1,10 @@
+2012-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Clean build is broken when using make -j
+        https://bugs.webkit.org/show_bug.cgi?id=76388
+
+        * GNUmakefile.am: Add new global source list variables.
+
 2012-02-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         perf-o-matic: Extract logic to generate JSON responses as classes to unit test
