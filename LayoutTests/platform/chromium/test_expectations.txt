@@ -4217,3 +4217,6 @@ BUGCR113063 LEOPARD DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
 BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.html = PASS CRASH
 
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
+
+// Failing after test was updated in r108387, media engine sending incorrect referrer?
+BUGWK79239 : http/tests/media/video-referer.html = FAIL
