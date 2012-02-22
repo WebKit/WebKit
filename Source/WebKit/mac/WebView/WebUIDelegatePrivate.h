@@ -117,6 +117,8 @@ extern NSString *WebConsoleMessageWarningMessageLevel;
 extern NSString *WebConsoleMessageErrorMessageLevel;
 extern NSString *WebConsoleMessageDebugMessageLevel;
 
+@class DOMElement;
+@class DOMNode;
 @class WebSecurityOrigin;
 
 @protocol WebAllowDenyPolicyListener <NSObject>

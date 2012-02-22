@@ -1,3 +1,10 @@
+2012-02-21  John Sullivan  <sullivan@apple.com>
+
+        Build fix.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Added @class declarations for DOMNode and DOMElement.
+
 2012-02-21  Jon Lee  <jonlee@apple.com>
 
         Build fix for r108409.
