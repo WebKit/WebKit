@@ -29,6 +29,7 @@
 #include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JSArray.h"
+#include "JSCTypedArrayStubs.h"
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSString.h"
@@ -193,6 +194,17 @@ protected:
         addFunction(globalData, "setSamplingFlags", functionSetSamplingFlags, 1);
         addFunction(globalData, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
+        
+#if ENABLE(COMMANDLINE_TYPEDARRAYS)
+        addConstructableFunction(globalData, "Uint8Array", constructJSUint8Array, 1);
+        addConstructableFunction(globalData, "Uint16Array", constructJSUint16Array, 1);
+        addConstructableFunction(globalData, "Uint32Array", constructJSUint32Array, 1);
+        addConstructableFunction(globalData, "Int8Array", constructJSInt8Array, 1);
+        addConstructableFunction(globalData, "Int16Array", constructJSInt16Array, 1);
+        addConstructableFunction(globalData, "Int32Array", constructJSInt32Array, 1);
+        addConstructableFunction(globalData, "Float32Array", constructJSFloat32Array, 1);
+        addConstructableFunction(globalData, "Float64Array", constructJSFloat64Array, 1);
+#endif
 
         JSObject* array = constructEmptyArray(globalExec());
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -204,6 +216,12 @@ protected:
     {
         Identifier identifier(globalExec(), name);
         putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier, function));
+    }
+    
+    void addConstructableFunction(JSGlobalData& globalData, const char* name, NativeFunction function, unsigned arguments)
+    {
+        Identifier identifier(globalExec(), name);
+        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier, function, function));
     }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);

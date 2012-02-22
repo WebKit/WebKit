@@ -332,7 +332,7 @@ namespace JSC {
             ASSERT(!m_##type##ArrayDescriptor.m_classInfo || m_##type##ArrayDescriptor.m_classInfo == descriptor.m_classInfo); \
             m_##type##ArrayDescriptor = descriptor; \
         } \
-        const TypedArrayDescriptor& type##ArrayDescriptor() const { return m_##type##ArrayDescriptor; }
+        const TypedArrayDescriptor& type##ArrayDescriptor() const { ASSERT(m_##type##ArrayDescriptor.m_classInfo); return m_##type##ArrayDescriptor; }
 
         registerTypedArrayFunction(int8, Int8);
         registerTypedArrayFunction(int16, Int16);

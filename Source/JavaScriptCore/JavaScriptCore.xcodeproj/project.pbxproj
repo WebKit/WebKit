@@ -1413,6 +1413,7 @@
 		A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMv7Assembler.cpp; sourceTree = "<group>"; };
 		A7521E121429169A003C8D0C /* CardSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardSet.h; sourceTree = "<group>"; };
 		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
+		A767FF9F14F4502900789059 /* JSCTypedArrayStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCTypedArrayStubs.h; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWriteBarrier.h; sourceTree = "<group>"; };
 		A781E358141970C700094D90 /* StorageBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageBarrier.h; sourceTree = "<group>"; };
@@ -1738,6 +1739,7 @@
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
+				A767FF9F14F4502900789059 /* JSCTypedArrayStubs.h */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				1432EBD70A34CAD400717B9F /* API */,
 				9688CB120ED12B4E001D649F /* assembler */,

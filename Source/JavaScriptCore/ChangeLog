@@ -1,3 +1,24 @@
+2012-02-21  Oliver Hunt  <oliver@apple.com>
+
+        Make TypedArrays be available in commandline jsc
+        https://bugs.webkit.org/show_bug.cgi?id=79163
+
+        Reviewed by Gavin Barraclough.
+
+        Adds a compile time option to have jsc support a basic implementation
+        of the TypedArrays available in WebCore.  This lets us test the typed
+        array logic in the JIT witout having to build webcore.
+
+        * JSCTypedArrayStubs.h: Added.
+        (JSC):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (GlobalObject):
+        (GlobalObject::addConstructableFunction):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+
 2012-02-21  Tom Sepez  <tsepez@chromium.org>
 
         equalIgnoringNullity() only comparing half the bytes for equality
