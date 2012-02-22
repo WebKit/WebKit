@@ -33,6 +33,8 @@
 #include "DynamicsCompressorKernel.h"
 #include "ZeroPole.h"
 
+#include <wtf/OwnArrayPtr.h>
+
 namespace WebCore {
 
 class AudioBus;
@@ -62,25 +64,26 @@ public:
         ParamLast
     };
 
-    DynamicsCompressor(bool isStereo, float sampleRate);
+    DynamicsCompressor(float sampleRate, unsigned numberOfChannels);
 
     void process(const AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess);
     void reset();
+    void setNumberOfChannels(unsigned);
 
     float parameterValue(unsigned parameterID);
 
-    bool isStereo() const { return m_isStereo; }
     float sampleRate() const { return m_sampleRate; }
     float nyquist() const { return m_sampleRate / 2; }
 
 protected:
+    unsigned m_numberOfChannels;
+
     // m_parameters holds the tweakable compressor parameters.
     // FIXME: expose some of the most important ones (such as threshold, attack, release)
     // as DynamicsCompressorNode attributes.
     float m_parameters[ParamLast];
     void initializeParameters();
 
-    bool m_isStereo;
     float m_sampleRate;
 
     // Emphasis filter controls.
@@ -88,11 +91,16 @@ protected:
     float m_lastAnchor;
     float m_lastFilterStageGain;
 
-    // Emphasis filters.
-    ZeroPole m_preFilter[4];
-    ZeroPole m_preFilterR[4];
-    ZeroPole m_postFilter[4];
-    ZeroPole m_postFilterR[4];
+    typedef struct {
+        ZeroPole filters[4];
+    } ZeroPoleFilterPack4;
+
+    // Per-channel emphasis filters.
+    Vector<OwnPtr<ZeroPoleFilterPack4> > m_preFilterPacks;
+    Vector<OwnPtr<ZeroPoleFilterPack4> > m_postFilterPacks;
+
+    OwnArrayPtr<const float*> m_sourceChannels;
+    OwnArrayPtr<float*> m_destinationChannels;
 
     void setEmphasisStageParameters(unsigned stageIndex, float gain, float normalizedFrequency /* 0 -> 1 */);
     void setEmphasisParameters(float gain, float anchorFreq, float filterStageRatio);
