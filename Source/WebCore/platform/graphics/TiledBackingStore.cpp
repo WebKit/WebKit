@@ -278,19 +278,19 @@ void TiledBackingStore::createTiles()
         }
     }
 
-    // Now construct the tile(s)
+    // Now construct the tile(s) within the shortest distance.
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         Tile::Coordinate coordinate = tilesToCreate[n];
         setTile(coordinate, m_backend->createTile(this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
-    
-    // Paint the content of the newly created tiles
+
+    // Paint the content of the newly created tiles.
     if (tilesToCreateCount || didResizeTiles)
         updateTileBuffers();
 
-    // Keep creating tiles until the whole coverRect is covered.
+    // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     if (requiredTileCount)
         m_tileCreationTimer->startOneShot(m_tileCreationDelay);
 }

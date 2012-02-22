@@ -1,3 +1,12 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Improve comments in tiling code.
+
+        Rubberstamped by Simon Hausmann.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::createTiles):
+
 2012-02-22  'Pavel Feldman'  <pfeldman@google.com>
 
         Not reviewed: build fix.
