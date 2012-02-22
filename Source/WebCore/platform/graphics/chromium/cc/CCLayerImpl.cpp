@@ -104,6 +104,7 @@ void CCLayerImpl::createRenderSurface()
 {
     ASSERT(!m_renderSurface);
     m_renderSurface = adoptPtr(new CCRenderSurface(this));
+    setTargetRenderSurface(m_renderSurface.get());
 }
 
 bool CCLayerImpl::descendantDrawsContent()

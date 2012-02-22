@@ -323,17 +323,18 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         layer->setDrawOpacity(drawOpacity);
 
-        if (layer->parent()) {
+        if (layer != rootLayer) {
+            ASSERT(layer->parent());
+            layer->clearRenderSurface();
+
             // Layers inherit the clip rect from their parent.
             layer->setClipRect(layer->parent()->clipRect());
             if (layer->parent()->usesLayerClipping())
                 layer->setUsesLayerClipping(true);
 
+            // Layers without their own renderSurface will render into the nearest ancestor surface.
             layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
         }
-
-        if (layer != rootLayer)
-            layer->clearRenderSurface();
 
         if (layer->masksToBounds()) {
             IntRect clipRect = transformedLayerRect;
@@ -349,13 +350,6 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     layerScreenSpaceTransform.multiply(layer->drawTransform());
     layerScreenSpaceTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
     layer->setScreenSpaceTransform(layerScreenSpaceTransform);
-
-    if (layer->renderSurface())
-        layer->setTargetRenderSurface(layer->renderSurface());
-    else {
-        ASSERT(layer->parent());
-        layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
-    }
 
     // drawableContentRect() is always stored in the coordinate system of the
     // RenderSurface the layer draws into.

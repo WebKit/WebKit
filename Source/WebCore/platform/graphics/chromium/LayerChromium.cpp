@@ -503,6 +503,7 @@ void LayerChromium::createRenderSurface()
 {
     ASSERT(!m_renderSurface);
     m_renderSurface = adoptPtr(new RenderSurfaceChromium(this));
+    setTargetRenderSurface(m_renderSurface.get());
 }
 
 bool LayerChromium::descendantDrawsContent()
