@@ -1,3 +1,63 @@
+2012-02-22  Kentaro Hara  <haraken@chromium.org>
+
+        Add performance tests for the Element.id getter and setter
+        https://bugs.webkit.org/show_bug.cgi?id=79209
+
+        Reviewed by Adam Barth.
+
+        This patch adds performance tests for the Element.id getter and setter.
+
+        The results of 10 runs in my local Chromium/Linux are as follows:
+
+        dom_attributes_id_getter.html:
+        median= 92.0 ms, stdev= 1.65151445649 ms, min= 89.0 ms, max= 96.0 ms
+        median= 87.5 ms, stdev= 1.84390889146 ms, min= 85.0 ms, max= 92.0 ms
+        median= 94.0 ms, stdev= 1.46543508898 ms, min= 90.0 ms, max= 95.0 ms
+        median= 86.0 ms, stdev= 1.66958078571 ms, min= 84.0 ms, max= 91.0 ms
+        median= 94.0 ms, stdev= 2.25610283454 ms, min= 103.0 ms, max= 98.0 ms
+        median= 86.0 ms, stdev= 1.49666295471 ms, min= 84.0 ms, max= 91.0 ms
+        median= 86.0 ms, stdev= 1.5321553446 ms, min= 84.0 ms, max= 90.0 ms
+        median= 86.0 ms, stdev= 2.20227155455 ms, min= 84.0 ms, max= 94.0 ms
+        median= 96.0 ms, stdev= 1.74570902501 ms, min= 101.0 ms, max= 99.0 ms
+        median= 86.0 ms, stdev= 1.63935963108 ms, min= 84.0 ms, max= 90.0 ms
+        median= 94.0 ms, stdev= 1.49248115566 ms, min= 90.0 ms, max= 95.0 ms
+        median= 88.0 ms, stdev= 5.20192272146 ms, min= 84.0 ms, max= 98.0 ms
+        median= 86.0 ms, stdev= 1.41067359797 ms, min= 84.0 ms, max= 89.0 ms
+        median= 86.0 ms, stdev= 1.48660687473 ms, min= 84.0 ms, max= 89.0 ms
+        median= 94.0 ms, stdev= 1.58113883008 ms, min= 93.0 ms, max= 97.0 ms
+        median= 86.0 ms, stdev= 1.95959179423 ms, min= 84.0 ms, max= 93.0 ms
+        median= 86.0 ms, stdev= 1.8547236991 ms, min= 84.0 ms, max= 92.0 ms
+        median= 86.0 ms, stdev= 1.39283882772 ms, min= 84.0 ms, max= 89.0 ms
+        median= 88.0 ms, stdev= 1.48660687473 ms, min= 85.0 ms, max= 90.0 ms
+        median= 86.5 ms, stdev= 2.3 ms, min= 84.0 ms, max= 93.0 ms
+
+        dom_attributes_id_setter.html:
+        median= 123.0 ms, stdev= 2.06397674406 ms, min= 119.0 ms, max= 128.0 ms
+        median= 119.0 ms, stdev= 1.92028643697 ms, min= 117.0 ms, max= 123.0 ms
+        median= 121.0 ms, stdev= 1.8781639971 ms, min= 118.0 ms, max= 123.0 ms
+        median= 123.0 ms, stdev= 2.21585198062 ms, min= 119.0 ms, max= 130.0 ms
+        median= 124.5 ms, stdev= 2.36378933071 ms, min= 119.0 ms, max= 129.0 ms
+        median= 122.0 ms, stdev= 2.4474476501 ms, min= 118.0 ms, max= 128.0 ms
+        median= 123.0 ms, stdev= 1.76351920885 ms, min= 118.0 ms, max= 125.0 ms
+        median= 119.0 ms, stdev= 1.79652442232 ms, min= 117.0 ms, max= 125.0 ms
+        median= 121.0 ms, stdev= 1.49916643506 ms, min= 119.0 ms, max= 123.0 ms
+        median= 119.5 ms, stdev= 1.85135085816 ms, min= 117.0 ms, max= 125.0 ms
+        median= 124.0 ms, stdev= 1.43090880213 ms, min= 120.0 ms, max= 124.0 ms
+        median= 122.0 ms, stdev= 1.45859521458 ms, min= 118.0 ms, max= 123.0 ms
+        median= 123.0 ms, stdev= 1.50332963784 ms, min= 120.0 ms, max= 124.0 ms
+        median= 123.0 ms, stdev= 1.3638181697 ms, min= 120.0 ms, max= 125.0 ms
+        median= 119.0 ms, stdev= 1.43527000944 ms, min= 117.0 ms, max= 121.0 ms
+        median= 122.5 ms, stdev= 1.71682847134 ms, min= 118.0 ms, max= 124.0 ms
+        median= 121.0 ms, stdev= 1.44481832768 ms, min= 118.0 ms, max= 123.0 ms
+        median= 120.0 ms, stdev= 1.40978721799 ms, min= 117.0 ms, max= 122.0 ms
+        median= 122.0 ms, stdev= 1.68522995464 ms, min= 119.0 ms, max= 125.0 ms
+        median= 122.0 ms, stdev= 1.55804364509 ms, min= 118.0 ms, max= 123.0 ms
+
+
+        * Bindings/dom_attributes_id_getter.html: Added.
+        * Bindings/dom_attributes_id_setter.html: Added.
+        * Bindings/resources/dom_attributes_common.js: Added.
+
 2012-02-16  Alexis Menard  <alexis.menard@openbossa.org>
 
         Add a perf test for the CSS parser.
