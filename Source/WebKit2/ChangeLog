@@ -1,3 +1,27 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Disregard previous backing store as soon as possible
+        https://bugs.webkit.org/show_bug.cgi?id=79232
+
+        Reviewed by Simon Hausmann and No'am Rosenthal.
+
+        Between creating the new backing store and painting the content,
+        we do not want to drop the previous one as that might result in
+        briefly seeing flickering as the old tiles may be dropped before
+        something replaces them.
+
+        But we do need to drop it at some point and we need to make sure
+        to not spike the memory usage before of this.
+
+        What we now do, is to store the previous backing store as before,
+        but drop all tiles which are not visible and then drop it as soon
+        as the visible rect (which might change due if followed by a quick
+        panning) has been fully covered by tiles.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setContentsScale):
+        (WebCore::WebGraphicsLayer::updateContentBuffers):
+
 2012-02-22  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Implement proxy authentication handling.

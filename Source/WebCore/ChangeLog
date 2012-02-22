@@ -1,3 +1,23 @@
+2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Disregard previous backing store as soon as possible
+        https://bugs.webkit.org/show_bug.cgi?id=79232
+
+        Reviewed by Simon Hausmann and No'am Rosenthal.
+
+        Make it possible to drop non-visible tiles and to test
+        if the current visible rect is fully covered.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::visibleContentsRect):
+        (WebCore::TiledBackingStore::coverageRatio):
+        (WebCore::TiledBackingStore::visibleAreaIsCovered):
+        (WebCore):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::removeAllNonVisibleTiles):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+
 2012-02-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Move QMenu dependant scrollbar context menu handling out of WebCore

@@ -53,6 +53,7 @@ public:
 
     bool contentsFrozen() const { return m_contentsFrozen; }
     void setContentsFrozen(bool);
+
     void updateTileBuffers();
 
     void invalidate(const IntRect& dirtyRect);
@@ -70,7 +71,9 @@ public:
     IntRect tileRectForCoordinate(const Tile::Coordinate&) const;
     Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
     double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
-    float coverageRatio(const WebCore::IntRect& contentsRect);
+
+    bool visibleAreaIsCovered() const;
+    void removeAllNonVisibleTiles();
 
     void setSupportsAlpha(bool);
     bool supportsAlpha() const { return m_supportsAlpha; }
@@ -78,29 +81,31 @@ public:
 private:
     void startTileBufferUpdateTimer();
     void startTileCreationTimer();
-    
+
     typedef Timer<TiledBackingStore> TileTimer;
 
     void tileBufferUpdateTimerFired(TileTimer*);
     void tileCreationTimerFired(TileTimer*);
-    
+
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
-    
+
     void commitScaleChange();
 
     bool resizeEdgeTiles();
     void dropTilesOutsideRect(const IntRect&);
-    
+
     PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
-    void adjustForContentsRect(IntRect&) const;
     IntRect contentsRect() const;
-    
+    IntRect visibleContentsRect() const;
+
+    float coverageRatio(const IntRect&) const;
+    void adjustForContentsRect(IntRect&) const;
+
     void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
-    IntRect visibleContentsRect();
 
 private:
     TiledBackingStoreClient* m_client;

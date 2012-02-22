@@ -488,10 +488,20 @@ void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& t
 void WebGraphicsLayer::setContentsScale(float scale)
 {
     m_contentsScale = scale;
-    if (m_mainBackingStore && m_mainBackingStore->contentsScale() != scale) {
-        m_previousBackingStore = m_mainBackingStore.release();
-        createBackingStore();
-    }
+
+    if (!m_mainBackingStore || m_mainBackingStore->contentsScale() == scale)
+        return;
+
+    // Between creating the new backing store and painting the content,
+    // we do not want to drop the previous one as that might result in
+    // briefly seeing flickering as the old tiles may be dropped before
+    // something replaces them.
+    m_previousBackingStore = m_mainBackingStore.release();
+
+    // No reason to save the previous backing store for non-visible areas.
+    m_previousBackingStore->removeAllNonVisibleTiles();
+
+    createBackingStore();
 }
 
 void WebGraphicsLayer::createBackingStore()
@@ -582,12 +592,18 @@ void WebGraphicsLayer::updateContentBuffers()
     }
 
     m_inUpdateMode = true;
-    // This is the only place we (re)create the main tiled backing store,
-    // once we have a remote client and we are ready to send our data to the UI process.
+    // This is the only place we (re)create the main tiled backing store, once we
+    // have a remote client and we are ready to send our data to the UI process.
     if (!m_mainBackingStore)
         createBackingStore();
     m_mainBackingStore->updateTileBuffers();
     m_inUpdateMode = false;
+
+    // The previous backing store is kept around to avoid flickering between
+    // removing the existing tiles and painting the new ones. The first time
+    // the visibleRect is full painted we remove the previous backing store.
+    if (m_mainBackingStore->visibleAreaIsCovered())
+        m_previousBackingStore.clear();
 }
 
 void WebGraphicsLayer::purgeBackingStores()

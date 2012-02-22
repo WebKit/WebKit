@@ -164,7 +164,7 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 }
 
-IntRect TiledBackingStore::visibleContentsRect()
+IntRect TiledBackingStore::visibleContentsRect() const
 {
     return mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
 }
@@ -203,7 +203,7 @@ double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coor
 }
 
 // Returns a ratio between 0.0f and 1.0f of the surface of contentsRect covered by rendered tiles.
-float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect)
+float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) const
 {
     IntRect dirtyRect = mapFromContents(contentsRect);
     float rectArea = dirtyRect.width() * dirtyRect.height();
@@ -223,6 +223,11 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect)
         }
     }
     return coverArea / rectArea;
+}
+
+bool TiledBackingStore::visibleAreaIsCovered() const
+{
+    return coverageRatio(visibleContentsRect()) == 1.0f;
 }
 
 void TiledBackingStore::createTiles()
@@ -259,7 +264,7 @@ void TiledBackingStore::createTiles()
             if (tileAt(currentCoordinate))
                 continue;
             ++requiredTileCount;
-            // Distance is 0 for all currently visible tiles.
+            // Distance is 0 for all tiles inside the visibleRect.
             double distance = tileDistance(visibleRect, currentCoordinate);
             if (distance > shortestDistance)
                 continue;
@@ -400,6 +405,11 @@ void TiledBackingStore::dropTilesOutsideRect(const IntRect& keepRect)
     unsigned removeCount = toRemove.size();
     for (unsigned n = 0; n < removeCount; ++n)
         removeTile(toRemove[n]);
+}
+
+void TiledBackingStore::removeAllNonVisibleTiles()
+{
+    dropTilesOutsideRect(visibleContentsRect());
 }
 
 PassRefPtr<Tile> TiledBackingStore::tileAt(const Tile::Coordinate& coordinate) const
