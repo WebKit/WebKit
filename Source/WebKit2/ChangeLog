@@ -1,3 +1,15 @@
+2012-02-22  Jon Lee  <jonlee@apple.com>
+
+        Code cleanup in WebNotificationManager (79285)
+        https://bugs.webkit.org/show_bug.cgi?id=79285
+        <rdar://problem/10914522>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Simplify adding a blank vector to the map using .add(),
+        similar to what is found in WebNotificationClient.mm in WebKit 1.
+
 2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
