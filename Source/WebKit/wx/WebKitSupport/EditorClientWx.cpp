@@ -223,7 +223,7 @@ bool EditorClientWx::shouldInsertText(const String&, Range*,
     return true;
 }
 
-bool EditorClientWx::shouldApplyStyle(CSSStyleDeclaration*,
+bool EditorClientWx::shouldApplyStyle(StylePropertySet*,
                                        Range*)
 {
     notImplemented();

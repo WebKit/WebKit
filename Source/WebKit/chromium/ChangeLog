@@ -1,3 +1,15 @@
+2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the remaining uses of CSSStyleDeclaration in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=78939
+
+        Reviewed by Enrica Casucci.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::shouldApplyStyle):
+        * src/EditorClientImpl.h:
+        (EditorClientImpl):
+
 2012-02-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Cull quads outside of the scissoring damage rect

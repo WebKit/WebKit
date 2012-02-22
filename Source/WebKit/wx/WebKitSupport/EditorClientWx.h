@@ -64,7 +64,7 @@ public:
                                   EditorInsertAction);
     virtual bool shouldInsertText(const String&, Range*,
                                   EditorInsertAction);
-    virtual bool shouldApplyStyle(CSSStyleDeclaration*,
+    virtual bool shouldApplyStyle(StylePropertySet*,
                                   Range*);
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*);
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, 

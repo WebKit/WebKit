@@ -102,7 +102,7 @@ bool EditorClientWinCE::shouldChangeSelectedRange(Range*, Range*, EAffinity, boo
     return true;
 }
 
-bool EditorClientWinCE::shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*)
+bool EditorClientWinCE::shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*)
 {
     notImplemented();
     return true;

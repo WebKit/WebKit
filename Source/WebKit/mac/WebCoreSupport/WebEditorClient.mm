@@ -241,10 +241,10 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
     return [m_webView isSelectTrailingWhitespaceEnabled];
 }
 
-bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
+bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
+        shouldApplyStyle:kit(style->ensureCSSStyleDeclaration()) toElementsInDOMRange:kit(range)];
 }
 
 bool WebEditorClient::shouldMoveRangeAfterDelete(Range* range, Range* rangeToBeReplaced)

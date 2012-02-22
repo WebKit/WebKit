@@ -276,13 +276,13 @@ bool WebEditorClient::shouldInsertText(const String& /*str*/, Range* /* replacin
 //bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, SelectionAffinity selectionAffinity, bool stillSelecting)
 //{ notImplemented(); return false; }
 
-bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* /*style*/, Range* /*toElementsInDOMRange*/)
+bool WebEditorClient::shouldApplyStyle(StylePropertySet* /*style*/, Range* /*toElementsInDOMRange*/)
 { notImplemented(); return true; }
 
 bool WebEditorClient::shouldMoveRangeAfterDelete(Range* /*range*/, Range* /*rangeToBeReplaced*/)
 { notImplemented(); return true; }
 
-bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration* /*currentStyle*/, CSSStyleDeclaration* /*toProposedStyle*/)
+bool WebEditorClient::shouldChangeTypingStyle(StylePropertySet* /*currentStyle*/, StylePropertySet* /*toProposedStyle*/)
 { notImplemented(); return false; }
 
 void WebEditorClient::webViewDidChangeTypingStyle(WebNotification* /*notification*/)

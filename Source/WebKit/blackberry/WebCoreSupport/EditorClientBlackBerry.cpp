@@ -203,7 +203,7 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
     return true;
 }
 
-bool EditorClientBlackBerry::shouldApplyStyle(CSSStyleDeclaration*, Range*)
+bool EditorClientBlackBerry::shouldApplyStyle(StylePropertySet*, Range*)
 {
     notImplemented();
     return true;

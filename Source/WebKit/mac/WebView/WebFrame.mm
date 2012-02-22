@@ -799,7 +799,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return;
-    _private->coreFrame->editor()->computeAndSetTypingStyle(core(style), undoAction);
+    // FIXME: We shouldn't have to create a copy here.
+    _private->coreFrame->editor()->computeAndSetTypingStyle(core(style)->copy().get(), undoAction);
 }
 
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation

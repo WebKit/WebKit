@@ -1,3 +1,41 @@
+2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the remaining uses of CSSStyleDeclaration in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=78939
+
+        Reviewed by Enrica Casucci.
+
+        Changed the argument types of shouldApplyStyle, applyParagraphStyle, applyStyleToSelection,
+        applyParagraphStyleToSelection, and computeAndSetTypingStyle in Editor from CSSStyleDeclaration
+        to StylePropertySet.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::shouldApplyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::applyStyleToSelection):
+        (WebCore::Editor::applyParagraphStyleToSelection):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        * editing/Editor.h:
+        (WebCore):
+        (Editor):
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame):
+        (WebCore::executeApplyParagraphStyle):
+        (WebCore::executeMakeTextWritingDirectionLeftToRight):
+        (WebCore::executeMakeTextWritingDirectionNatural):
+        (WebCore::executeMakeTextWritingDirectionRightToLeft):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::shouldApplyStyle):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EditorClient.h:
+        (WebCore):
+        (EditorClient):
+
 2012-02-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Cull quads outside of the scissoring damage rect

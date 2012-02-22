@@ -461,7 +461,7 @@ public:
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) { return false; }
     virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) { return false; }
 
-    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) { return false; }
+    virtual bool shouldApplyStyle(StylePropertySet*, Range*) { return false; }
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) { return false; }
 
     virtual void didBeginEditing() { }

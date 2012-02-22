@@ -1,3 +1,13 @@
+2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the remaining uses of CSSStyleDeclaration in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=78939
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::shouldApplyStyle):
+
 2012-02-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Get rid of the LocalizationStrategy

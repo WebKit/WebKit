@@ -51,7 +51,7 @@ public:
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction);
     virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool);
-    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
+    virtual bool shouldApplyStyle(StylePropertySet*, Range*);
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*);
     virtual void didBeginEditing();
     virtual void respondToChangedContents();

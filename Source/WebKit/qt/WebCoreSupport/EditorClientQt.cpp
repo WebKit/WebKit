@@ -31,7 +31,6 @@
 #include "config.h"
 #include "EditorClientQt.h"
 
-#include "CSSStyleDeclaration.h"
 #include "Document.h"
 #include "UndoStepQt.h"
 #include "Editor.h"
@@ -48,6 +47,7 @@
 #include "Range.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
+#include "StylePropertySet.h"
 #include "WindowsKeyboardCodes.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
@@ -170,12 +170,12 @@ bool EditorClientQt::shouldChangeSelectedRange(Range* currentRange, Range* propo
     return acceptsEditing;
 }
 
-bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration* style,
+bool EditorClientQt::shouldApplyStyle(WebCore::StylePropertySet* style,
                                       WebCore::Range* range)
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n",
-               QString(style->cssText()).toUtf8().constData(), dumpRange(range).toUtf8().constData());
+               QString(style->asText()).toUtf8().constData(), dumpRange(range).toUtf8().constData());
     return acceptsEditing;
 }
 

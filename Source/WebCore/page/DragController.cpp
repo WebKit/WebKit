@@ -449,10 +449,10 @@ bool DragController::concludeEditDrag(DragData* dragData)
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<StylePropertySet> style = StylePropertySet::create();
         style->setProperty(CSSPropertyColor, color.serialized(), false);
-        if (!innerFrame->editor()->shouldApplyStyle(style->ensureCSSStyleDeclaration(), innerRange.get()))
+        if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))
             return false;
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        innerFrame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetColor);
+        innerFrame->editor()->applyStyle(style.get(), EditActionSetColor);
         return true;
     }
 

@@ -5526,8 +5526,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
     // change the API to allow this.
     WebFrame *webFrame = [self _selectedOrMainFrame];
     Frame* coreFrame = core(webFrame);
+    // FIXME: We shouldn't have to make a copy here.
     if (coreFrame)
-        coreFrame->editor()->applyStyle(core(style));
+        coreFrame->editor()->applyStyle(core(style)->copy().get());
 }
 
 @end

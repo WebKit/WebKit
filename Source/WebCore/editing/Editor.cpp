@@ -678,7 +678,7 @@ Node* Editor::findEventTargetFromSelection() const
     return findEventTargetFrom(m_frame->selection()->selection());
 }
 
-void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
+void Editor::applyStyle(StylePropertySet* style, EditAction editingAction)
 {
     switch (m_frame->selection()->selectionType()) {
     case VisibleSelection::NoSelection:
@@ -694,12 +694,12 @@ void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
     }
 }
     
-bool Editor::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
+bool Editor::shouldApplyStyle(StylePropertySet* style, Range* range)
 {   
     return client()->shouldApplyStyle(style, range);
 }
     
-void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingAction)
+void Editor::applyParagraphStyle(StylePropertySet* style, EditAction editingAction)
 {
     switch (m_frame->selection()->selectionType()) {
     case VisibleSelection::NoSelection:
@@ -713,18 +713,18 @@ void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingA
     }
 }
 
-void Editor::applyStyleToSelection(CSSStyleDeclaration* style, EditAction editingAction)
+void Editor::applyStyleToSelection(StylePropertySet* style, EditAction editingAction)
 {
-    if (!style || !style->length() || !canEditRichly())
+    if (!style || style->isEmpty() || !canEditRichly())
         return;
 
     if (client() && client()->shouldApplyStyle(style, m_frame->selection()->toNormalizedRange().get()))
         applyStyle(style, editingAction);
 }
 
-void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditAction editingAction)
+void Editor::applyParagraphStyleToSelection(StylePropertySet* style, EditAction editingAction)
 {
-    if (!style || !style->length() || !canEditRichly())
+    if (!style || style->isEmpty() || !canEditRichly())
         return;
     
     if (client() && client()->shouldApplyStyle(style, m_frame->selection()->toNormalizedRange().get()))
@@ -1262,7 +1262,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
 
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyDirection, direction == LeftToRightWritingDirection ? "ltr" : direction == RightToLeftWritingDirection ? "rtl" : "inherit", false);
-    applyParagraphStyleToSelection(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
+    applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 
 void Editor::selectComposition()
@@ -2579,9 +2579,9 @@ bool Editor::shouldChangeSelection(const VisibleSelection& oldSelection, const V
     return client() && client()->shouldChangeSelectedRange(oldSelection.toNormalizedRange().get(), newSelection.toNormalizedRange().get(), affinity, stillSelecting);
 }
 
-void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction editingAction)
+void Editor::computeAndSetTypingStyle(StylePropertySet* style, EditAction editingAction)
 {
-    if (!style || !style->length()) {
+    if (!style || style->isEmpty()) {
         m_frame->selection()->clearTypingStyle();
         return;
     }
@@ -2590,7 +2590,7 @@ void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction edi
     RefPtr<EditingStyle> typingStyle;
     if (m_frame->selection()->typingStyle()) {
         typingStyle = m_frame->selection()->typingStyle()->copy();
-        typingStyle->overrideWithStyle(style->makeMutable().get());
+        typingStyle->overrideWithStyle(style);
     } else
         typingStyle = EditingStyle::create(style);
 

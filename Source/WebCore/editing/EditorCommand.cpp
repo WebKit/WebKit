@@ -103,11 +103,11 @@ static bool applyCommandToFrame(Frame* frame, EditorCommandSource source, EditAc
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame->editor()->applyStyleToSelection(style->ensureCSSStyleDeclaration(), action);
+        frame->editor()->applyStyleToSelection(style, action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame->editor()->applyStyle(style->ensureCSSStyleDeclaration());
+        frame->editor()->applyStyle(style);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -179,11 +179,11 @@ static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source,
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame->editor()->applyParagraphStyleToSelection(style->ensureCSSStyleDeclaration(), action);
+        frame->editor()->applyParagraphStyleToSelection(style.get(), action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame->editor()->applyParagraphStyle(style->ensureCSSStyleDeclaration());
+        frame->editor()->applyParagraphStyle(style.get());
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -585,7 +585,7 @@ static bool executeMakeTextWritingDirectionLeftToRight(Frame* frame, Event*, Edi
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
     style->setProperty(CSSPropertyDirection, CSSValueLtr);
-    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
     return true;
 }
 
@@ -593,7 +593,7 @@ static bool executeMakeTextWritingDirectionNatural(Frame* frame, Event*, EditorC
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
-    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
     return true;
 }
 
@@ -602,7 +602,7 @@ static bool executeMakeTextWritingDirectionRightToLeft(Frame* frame, Event*, Edi
     RefPtr<StylePropertySet> style = StylePropertySet::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
     style->setProperty(CSSPropertyDirection, CSSValueRtl);
-    frame->editor()->applyStyle(style->ensureCSSStyleDeclaration(), EditActionSetWritingDirection);
+    frame->editor()->applyStyle(style.get(), EditActionSetWritingDirection);
     return true;
 }
 

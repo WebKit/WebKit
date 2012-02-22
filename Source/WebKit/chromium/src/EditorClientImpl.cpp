@@ -238,13 +238,11 @@ bool EditorClientImpl::shouldChangeSelectedRange(Range* fromRange,
     return true;
 }
 
-bool EditorClientImpl::shouldApplyStyle(CSSStyleDeclaration* style,
-                                        Range* range)
+bool EditorClientImpl::shouldApplyStyle(StylePropertySet* style, Range* range)
 {
     if (m_webView->client()) {
         // FIXME: Pass a reference to the CSSStyleDeclaration somehow.
-        return m_webView->client()->shouldApplyStyle(WebString(),
-                                                     WebRange(range));
+        return m_webView->client()->shouldApplyStyle(WebString(), WebRange(range));
     }
     return true;
 }

@@ -59,7 +59,7 @@ private:
     virtual bool shouldInsertText(const String&, WebCore::Range*, WebCore::EditorInsertAction) OVERRIDE;
     virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) OVERRIDE;
     
-    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*) OVERRIDE;
+    virtual bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*) OVERRIDE;
     virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) OVERRIDE;
 
     virtual void didBeginEditing() OVERRIDE;

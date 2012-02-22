@@ -45,7 +45,6 @@ OBJC_CLASS NSURL;
 namespace WebCore {
 
 class ArchiveResource;
-class CSSStyleDeclaration;
 class DocumentFragment;
 class Editor;
 class Element;
@@ -55,6 +54,7 @@ class KeyboardEvent;
 class Node;
 class Range;
 class SpellChecker;
+class StylePropertySet;
 class TextCheckerClient;
 class VisibleSelection;
 class VisiblePosition;
@@ -82,7 +82,7 @@ public:
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) = 0;
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     
-    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
+    virtual bool shouldApplyStyle(StylePropertySet*, Range*) = 0;
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
     virtual void didBeginEditing() = 0;

@@ -46,7 +46,6 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
 class Clipboard;
 class CompositeEditCommand;
 class DeleteButtonController;
@@ -63,6 +62,7 @@ class SimpleFontData;
 class SpellChecker;
 class SpellCheckRequest;
 class SpellingCorrectionController;
+class StylePropertySet;
 class Text;
 class TextCheckerClient;
 class TextEvent;
@@ -130,7 +130,7 @@ public:
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
     bool shouldShowDeleteInterface(HTMLElement*) const;
     bool shouldDeleteRange(Range*) const;
-    bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
+    bool shouldApplyStyle(StylePropertySet*, Range*);
     
     void respondToChangedSelection(const VisibleSelection& oldSelection);
     void respondToChangedContents(const VisibleSelection& endingSelection);
@@ -161,10 +161,10 @@ public:
     Node* removedAnchor() const { return m_removedAnchor.get(); }
     void setRemovedAnchor(PassRefPtr<Node> n) { m_removedAnchor = n; }
 
-    void applyStyle(CSSStyleDeclaration*, EditAction = EditActionUnspecified);
-    void applyParagraphStyle(CSSStyleDeclaration*, EditAction = EditActionUnspecified);
-    void applyStyleToSelection(CSSStyleDeclaration*, EditAction);
-    void applyParagraphStyleToSelection(CSSStyleDeclaration*, EditAction);
+    void applyStyle(StylePropertySet*, EditAction = EditActionUnspecified);
+    void applyParagraphStyle(StylePropertySet*, EditAction = EditActionUnspecified);
+    void applyStyleToSelection(StylePropertySet*, EditAction);
+    void applyParagraphStyleToSelection(StylePropertySet*, EditAction);
 
     void appliedEditing(PassRefPtr<CompositeEditCommand>);
     void unappliedEditing(PassRefPtr<EditCommandComposition>);
@@ -345,7 +345,7 @@ public:
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
 
-    void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
+    void computeAndSetTypingStyle(StylePropertySet* , EditAction = EditActionUnspecified);
     void applyEditingStyleToBodyElement() const;
     void applyEditingStyleToElement(Element*) const;
 

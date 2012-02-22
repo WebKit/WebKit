@@ -103,7 +103,7 @@ bool EditorClientEfl::shouldChangeSelectedRange(Range*, Range*, EAffinity, bool)
     return true;
 }
 
-bool EditorClientEfl::shouldApplyStyle(CSSStyleDeclaration*, Range*)
+bool EditorClientEfl::shouldApplyStyle(StylePropertySet*, Range*)
 {
     notImplemented();
     return true;

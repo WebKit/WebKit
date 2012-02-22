@@ -94,7 +94,7 @@ class EditorClient : public WebCore::EditorClient {
         virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction);
         virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
 
-        virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
+        virtual bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*);
 
         virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
 
