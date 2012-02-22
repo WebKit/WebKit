@@ -1,3 +1,13 @@
+2012-02-21  Tom Sepez  <tsepez@chromium.org>
+
+        equalIgnoringNullity() only comparing half the bytes for equality
+        https://bugs.webkit.org/show_bug.cgi?id=79135
+
+        Reviewed by Adam Barth.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringNullity):
+
 2012-02-21  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         Unnecessary preprocessor macros in MainThread.h/cpp

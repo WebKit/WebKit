@@ -735,7 +735,7 @@ bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
         return !a.size();
     if (a.size() != b->length())
         return false;
-    return !memcmp(a.data(), b->characters(), b->length());
+    return !memcmp(a.data(), b->characters(), b->length() * sizeof(UChar));
 }
 
 WTF_EXPORT_PRIVATE int codePointCompare(const StringImpl*, const StringImpl*);
