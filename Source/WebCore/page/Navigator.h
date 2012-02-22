@@ -60,10 +60,6 @@ public:
     // Relinquishes the storage lock, if one exists.
     void getStorageUpdates();
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    void registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode&);
-#endif
-
     void provideSupplement(const AtomicString&, PassOwnPtr<NavigatorSupplement>);
     NavigatorSupplement* requireSupplement(const AtomicString&);
 

@@ -25586,6 +25586,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\NavigatorRegisterProtocolHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\NavigatorRegisterProtocolHandler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\NavigatorSupplement.cpp"
 				>
 			</File>

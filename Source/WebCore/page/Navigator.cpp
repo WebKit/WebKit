@@ -23,22 +23,17 @@
 #include "config.h"
 #include "Navigator.h"
 
-#include "Chrome.h"
 #include "CookieJar.h"
 #include "DOMMimeTypeArray.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
-#include "PointerLock.h"
-#include "KURL.h"
-#include "Language.h"
 #include "Page.h"
-#include "PageGroup.h"
-#include "PlatformString.h"
+#include "PointerLock.h"
+#include "Language.h"
 #include "PluginData.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
@@ -158,101 +153,5 @@ void Navigator::getStorageUpdates()
 {
     // FIXME: Remove this method or rename to yieldForStorageUpdates.
 }
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-static HashSet<String>* protocolWhitelist;
-
-static void initProtocolHandlerWhitelist()
-{
-    protocolWhitelist = new HashSet<String>;
-    static const char* protocols[] = {
-        "irc",
-        "mailto",
-        "mms",
-        "news",
-        "nntp",
-        "sms",
-        "smsto",
-        "tel",
-        "urn",
-        "webcal",
-    };
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
-        protocolWhitelist->add(protocols[i]);
-}
-
-static bool verifyCustomHandlerURL(const String& baseURL, const String& url, ExceptionCode& ec)
-{
-    // The specification requires that it is a SYNTAX_ERR if the "%s" token is
-    // not present.
-    static const char token[] = "%s";
-    int index = url.find(token);
-    if (-1 == index) {
-        ec = SYNTAX_ERR;
-        return false;
-    }
-
-    // It is also a SYNTAX_ERR if the custom handler URL, as created by removing
-    // the "%s" token and prepending the base url, does not resolve.
-    String newURL = url;
-    newURL.remove(index, WTF_ARRAY_LENGTH(token) - 1);
-
-    KURL base(ParsedURLString, baseURL);
-    KURL kurl(base, newURL);
-
-    if (kurl.isEmpty() || !kurl.isValid()) {
-        ec = SYNTAX_ERR;
-        return false;
-    }
-
-    return true;
-}
-
-static bool isProtocolWhitelisted(const String& scheme)
-{
-    if (!protocolWhitelist)
-        initProtocolHandlerWhitelist();
-    return protocolWhitelist->contains(scheme);
-}
-
-static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
-{
-    if (scheme.startsWith("web+")) {
-        if (isValidProtocol(scheme))
-            return true;
-        ec = SECURITY_ERR;
-        return false;
-    }
-
-    if (isProtocolWhitelisted(scheme))
-        return true;
-    ec = SECURITY_ERR;
-    return false;
-}
-
-void Navigator::registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode& ec)
-{
-    if (!m_frame)
-        return;
-
-    Document* document = m_frame->document();
-    if (!document)
-        return;
-
-    String baseURL = document->baseURL().baseAsString();
-
-    if (!verifyCustomHandlerURL(baseURL, url, ec))
-        return;
-
-    if (!verifyProtocolHandlerScheme(scheme, ec))
-        return;
-
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    page->chrome()->registerProtocolHandler(scheme, baseURL, url, m_frame->displayStringModifiedByEncoding(title));
-}
-#endif
 
 } // namespace WebCore

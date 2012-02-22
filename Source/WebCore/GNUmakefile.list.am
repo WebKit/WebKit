@@ -2740,6 +2740,8 @@ webcore_sources += \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \
 	Source/WebCore/page/NavigatorBase.h \
+	Source/WebCore/page/NavigatorRegisterProtocolHandler.cpp \
+	Source/WebCore/page/NavigatorRegisterProtocolHandler.h \
 	Source/WebCore/page/NavigatorSupplement.cpp \
 	Source/WebCore/page/NavigatorSupplement.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \

@@ -1,3 +1,28 @@
+2012-02-21  Adam Barth  <abarth@webkit.org>
+
+        Separate the implementation of registerProtocolHandler from Navigator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=78945
+
+        Reviewed by Eric Seidel.
+
+        The implementation of registerProtocolHandler needlessly complicates
+        the implementation of Navigator.cpp.  In principle,
+        registerProtocolHandler (and possibly registerContentHandler, when we
+        implement that feature) could be its own module, but that seems like
+        overkill for one or two files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Navigator.cpp:
+        (WebCore):
+        * page/Navigator.h:
+        (Navigator):
+        * page/Navigator.idl:
+
 2012-02-21  MORITA Hajime  <morrita@google.com>
 
         HasIDFlag and HasClassFlag can be removed.
