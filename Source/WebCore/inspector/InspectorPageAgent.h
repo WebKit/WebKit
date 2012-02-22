@@ -58,6 +58,7 @@ class KURL;
 class Page;
 class RegularExpression;
 class SharedBuffer;
+class TextResourceDecoder;
 
 typedef String ErrorString;
 
@@ -77,6 +78,7 @@ public:
 
     static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*, InspectorClient*);
 
+    static PassRefPtr<TextResourceDecoder> createDecoder(const String& mimeType, const String& textEncodingName);
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
     static void resourceContent(ErrorString*, Frame*, const KURL&, String* result, bool* base64Encoded);

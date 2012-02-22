@@ -1,3 +1,29 @@
+2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: retrieving content for some XHR requests crashes inspected page renderer
+        https://bugs.webkit.org/show_bug.cgi?id=79026
+
+        Reviewed by Pavel Feldman.
+
+        Fixed loading empty xhr content and xhr content decoding that was
+        broken in r107672.
+
+        Tests: http/tests/inspector/network/network-cyrillic-xhr.html
+               http/tests/inspector/network/network-empty-xhr.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorPageAgent::createDecoder):
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        * inspector/InspectorPageAgent.h:
+        (WebCore):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::responseReceived):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::decoder):
+        (WebCore::NetworkResourcesData::ResourceData::setDecoder):
+
 2012-02-22  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: remove neural-net-style constructions

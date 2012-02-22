@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 18: Done.
+Tests empty xhr content is correctly loaded in inspector.
+
+Bug 79026
+http://127.0.0.1:8000/inspector/network/resources/empty.html
+resource.content: 
+http://127.0.0.1:8000/inspector/network/resources/empty.html
+resource.content: 
+

@@ -44,6 +44,7 @@
 #include "ContentSearchUtils.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "DOMImplementation.h"
 #include "DOMNodeHighlighter.h"
 #include "DOMPatchSupport.h"
 #include "Document.h"
@@ -67,6 +68,7 @@
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
+#include "TextResourceDecoder.h"
 #include "UserGestureIndicator.h"
 
 #include <wtf/CurrentTime.h>
@@ -129,6 +131,23 @@ static bool hasTextContent(CachedResource* cachedResource)
     return type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource || type == InspectorPageAgent::XHRResource;
 }
 
+// static
+PassRefPtr<TextResourceDecoder> InspectorPageAgent::createDecoder(const String& mimeType, const String& textEncodingName)
+{
+    RefPtr<TextResourceDecoder> decoder;
+    if (!textEncodingName.isEmpty())
+        decoder = TextResourceDecoder::create("text/plain", textEncodingName);
+    else if (mimeType == "text/plain")
+        decoder = TextResourceDecoder::create("text/plain", "ISO-8859-1");
+    else if (mimeType == "text/html")
+        decoder = TextResourceDecoder::create("text/html", "UTF-8");
+    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
+        decoder = TextResourceDecoder::create("application/xml");
+        decoder->useLenientXMLDecoding();
+    }
+    return decoder;
+}
+
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
 {
     bool hasZeroSize;
@@ -147,8 +166,12 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
         return true;
     }
 
+    if (hasZeroSize) {
+        *result = "";
+        return true;
+    }
+
     if (cachedResource) {
-        SharedBuffer* buffer = cachedResource->data();
         switch (cachedResource->type()) {
         case CachedResource::CSSStyleSheet:
             *result = static_cast<CachedCSSStyleSheet*>(cachedResource)->sheetText();
@@ -156,14 +179,15 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
         case CachedResource::Script:
             *result = static_cast<CachedScript*>(cachedResource)->script();
             return true;
-        case CachedResource::RawResource:
-            *result = String(buffer->data(), buffer->size());
+        case CachedResource::RawResource: {
+            SharedBuffer* buffer = cachedResource->data();
+            RefPtr<TextResourceDecoder> decoder = InspectorPageAgent::createDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
+            String content = decoder->decode(buffer->data(), buffer->size());
+            content += decoder->flush();
+            *result = content;
             return true;
+        }
         default:
-            if (hasZeroSize) {
-                *result = "";
-                return true;
-            }
             return decodeSharedBuffer(cachedResource->data(), cachedResource->encoding(), result);
         }
     }

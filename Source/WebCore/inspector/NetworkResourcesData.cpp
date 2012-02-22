@@ -29,7 +29,6 @@
 #include "config.h"
 #include "NetworkResourcesData.h"
 
-#include "DOMImplementation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 
@@ -80,20 +79,6 @@ unsigned NetworkResourcesData::ResourceData::purgeContent()
     return result;
 }
 
-void NetworkResourcesData::ResourceData::createDecoder(const String& mimeType, const String& textEncodingName)
-{
-    if (!textEncodingName.isEmpty())
-        m_decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (mimeType == "text/plain")
-        m_decoder = TextResourceDecoder::create("text/plain", "ISO-8859-1");
-    else if (mimeType == "text/html")
-        m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
-    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
-        m_decoder = TextResourceDecoder::create("application/xml");
-        m_decoder->useLenientXMLDecoding();
-    }
-}
-
 int NetworkResourcesData::ResourceData::dataLength() const
 {
     return m_dataBuffer ? m_dataBuffer->size() : 0;
@@ -113,6 +98,7 @@ int NetworkResourcesData::ResourceData::decodeDataToContent()
     ASSERT(!hasContent());
     int dataLength = m_dataBuffer->size();
     m_content = m_decoder->decode(m_dataBuffer->data(), m_dataBuffer->size());
+    m_content += m_decoder->flush();
     m_dataBuffer = nullptr;
     return 2 * m_content.length() - dataLength;
 }
@@ -143,7 +129,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
         return;
     resourceData->setFrameId(frameId);
     resourceData->setUrl(response.url());
-    resourceData->createDecoder(response.mimeType(), response.textEncodingName());
+    resourceData->setDecoder(InspectorPageAgent::createDecoder(response.mimeType(), response.textEncodingName()));
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)
