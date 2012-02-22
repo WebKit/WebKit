@@ -117,6 +117,17 @@ void SpeechInput::cancelRecognition(int listenerId)
     m_client->cancelRecognition(listenerId);
 }
 
+const AtomicString& SpeechInput::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("SpeechInput"));
+    return name;
+}
+
+void provideSpeechInputTo(Page* page, SpeechInputClient* client)
+{
+    PageSupplement::provideTo(page, SpeechInput::supplementName(), SpeechInput::create(client));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INPUT_SPEECH)

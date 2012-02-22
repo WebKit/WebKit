@@ -40,6 +40,7 @@ namespace WebCore {
 class IntRect;
 class SecurityOrigin;
 class SpeechInputListener;
+class Page;
 
 // Provides an interface for SpeechInput to call into the embedder.
 class SpeechInputClient {
@@ -64,6 +65,8 @@ public:
 protected:
     virtual ~SpeechInputClient() { }
 };
+
+void provideSpeechInputTo(Page*, SpeechInputClient*);
 
 } // namespace WebCore
 

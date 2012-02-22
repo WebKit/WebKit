@@ -397,9 +397,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.editorClient = &m_editorClientImpl;
     pageClients.dragClient = &m_dragClientImpl;
     pageClients.inspectorClient = &m_inspectorClientImpl;
-#if ENABLE(INPUT_SPEECH)
-    pageClients.speechInputClient = m_speechInputClient.get();
-#endif
     pageClients.geolocationClient = m_geolocationClientProxy.get();
 #if ENABLE(NOTIFICATIONS)
     pageClients.notificationClient = notificationPresenterImpl();
@@ -410,6 +407,10 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(MEDIA_STREAM)
     provideUserMediaTo(m_page.get(), &m_userMediaClientImpl);
 #endif
+#if ENABLE(INPUT_SPEECH)
+    provideSpeechInputTo(m_page.get(), m_speechInputClient.get());
+#endif
+
     provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());
     m_geolocationClientProxy->setController(m_page->geolocationController());
 

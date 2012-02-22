@@ -83,8 +83,6 @@ namespace WebCore {
     class ScrollableArea;
     class ScrollingCoordinator;
     class Settings;
-    class SpeechInput;
-    class SpeechInputClient;
     class StorageNamespace;
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
@@ -116,7 +114,6 @@ namespace WebCore {
             InspectorClient* inspectorClient;
             GeolocationClient* geolocationClient;
             RefPtr<BackForwardList> backForwardClient;
-            SpeechInputClient* speechInputClient;
             NotificationPresenter* notificationClient;
         };
 
@@ -184,9 +181,7 @@ namespace WebCore {
 #if ENABLE(POINTER_LOCK)
         PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
 #endif
-#if ENABLE(INPUT_SPEECH)
-        SpeechInput* speechInput();
-#endif
+
         ScrollingCoordinator* scrollingCoordinator();
 
         Settings* settings() const { return m_settings.get(); }
@@ -379,10 +374,6 @@ namespace WebCore {
 #endif
 #if ENABLE(POINTER_LOCK)
         OwnPtr<PointerLockController> m_pointerLockController;
-#endif
-#if ENABLE(INPUT_SPEECH)
-        SpeechInputClient* m_speechInputClient;
-        OwnPtr<SpeechInput> m_speechInput;
 #endif
         RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 

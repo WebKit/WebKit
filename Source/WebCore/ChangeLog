@@ -1,3 +1,34 @@
+2012-02-21  MORITA Hajime <morrita@google.com>
+
+        INPUT_SPEECH should be implemented as a PageSupplement.
+        https://bugs.webkit.org/show_bug.cgi?id=79051
+
+        Turned SpeechInput to a PageSupplement.
+
+        Reviewed by Adam Barth.
+
+        No new tests. No behavior change.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::speechInput):
+        (WebCore::InputFieldSpeechButtonElement::attach):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+        (WebCore):
+        (PageClients):
+        (Page):
+        * page/SpeechInput.cpp:
+        (WebCore::SpeechInput::supplementName):
+        (WebCore):
+        (WebCore::provideSpeechInputTo):
+        * page/SpeechInput.h:
+        (SpeechInput):
+        (WebCore::SpeechInput::from):
+        * page/SpeechInputClient.h:
+        (WebCore):
+
 2012-02-21  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add three small zoom gesture features

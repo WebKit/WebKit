@@ -67,8 +67,6 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include "SpeechInput.h"
-#include "SpeechInputClient.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "TextResourceDecoder.h"
@@ -136,9 +134,6 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(PointerLockController::create(this))
-#endif
-#if ENABLE(INPUT_SPEECH)
-    , m_speechInputClient(pageClients.speechInputClient)
 #endif
     , m_settings(Settings::create(this))
     , m_progress(ProgressTracker::create())
@@ -950,16 +945,6 @@ double Page::minimumTimerInterval() const
     return m_minimumTimerInterval;
 }
 
-#if ENABLE(INPUT_SPEECH)
-SpeechInput* Page::speechInput()
-{
-    ASSERT(m_speechInputClient);
-    if (!m_speechInput.get())
-        m_speechInput = SpeechInput::create(m_speechInputClient);
-    return m_speechInput.get();
-}
-#endif
-
 void Page::dnsPrefetchingStateChanged()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
@@ -1084,7 +1069,6 @@ Page::PageClients::PageClients()
     , dragClient(0)
     , inspectorClient(0)
     , geolocationClient(0)
-    , speechInputClient(0)
     , notificationClient(0)
 {
 }
