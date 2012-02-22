@@ -53,14 +53,14 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
     this.element.appendChild(this._topPaneSidebarElement);
 
     var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
-    var timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
-    topPaneSidebarTree.appendChild(timelinesOverviewItem);
-    timelinesOverviewItem.revealAndSelect(false);
-    timelinesOverviewItem.onselect = this._showTimelines.bind(this);
+    this._timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
+    topPaneSidebarTree.appendChild(this._timelinesOverviewItem);
+    this._timelinesOverviewItem.revealAndSelect(false);
+    this._timelinesOverviewItem.onselect = this._showTimelines.bind(this);
 
-    var memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
-    topPaneSidebarTree.appendChild(memoryOverviewItem);
-    memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
+    this._memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
+    topPaneSidebarTree.appendChild(this._memoryOverviewItem);
+    this._memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
 
     this._overviewGrid = new WebInspector.TimelineGrid();
     this._overviewGrid.element.id = "timeline-overview-grid";
@@ -101,7 +101,7 @@ WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor = .3;
 WebInspector.TimelineOverviewPane.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
 
 WebInspector.TimelineOverviewPane.Mode = {
-    Events: "Timeline",
+    Events: "Events",
     Memory: "Memory"
 };
 
@@ -112,6 +112,7 @@ WebInspector.TimelineOverviewPane.Events = {
 WebInspector.TimelineOverviewPane.prototype = {
     _showTimelines: function()
     {
+        this._timelinesOverviewItem.revealAndSelect(false);
         this._heapGraph.hide();
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, WebInspector.TimelineOverviewPane.Mode.Events);
@@ -119,15 +120,11 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _showMemoryGraph: function()
     {
+        this._memoryOverviewItem.revealAndSelect(false);
         this._heapGraph.show();
         this._heapGraph.update(this._records);
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, WebInspector.TimelineOverviewPane.Mode.Memory);
-    },
-
-    _onWindowChanged: function()
-    {
-        this._presentationModel.setWindowPosition(this._overviewWindow.windowLeft, this._overviewWindow.windowRight);
     },
 
     /**
@@ -139,6 +136,8 @@ WebInspector.TimelineOverviewPane.prototype = {
             return;
         this._startAtZero = enabled;
         if (enabled) {
+            if (this._heapGraph.visible)
+                this._showTimelines();
             this.element.addStyleClass("timeline-start-at-zero");
             this._startAtZeroOverview = new WebInspector.TimelineStartAtZeroOverview(this._presentationModel);
             this._startAtZeroOverview.show(this.element);
@@ -149,6 +148,11 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._startAtZeroOverview = null;
             this._showTimelines();
         }
+    },
+
+    _onWindowChanged: function()
+    {
+        this._presentationModel.setWindowPosition(this._overviewWindow.windowLeft, this._overviewWindow.windowRight);
     },
 
     _onCategoryVisibilityChanged: function(event)

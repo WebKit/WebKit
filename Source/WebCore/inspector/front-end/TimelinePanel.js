@@ -415,7 +415,10 @@ WebInspector.TimelinePanel.prototype = {
     {
         if (!this._memoryStatistics)
             return;
-        if (event.data === WebInspector.TimelineOverviewPane.Mode.Events && this._memoryStatistics.visible()) {
+        var shouldShowMemory = event.data === WebInspector.TimelineOverviewPane.Mode.Memory;
+        if (shouldShowMemory === this._memoryStatistics.visible())
+            return;
+        if (!shouldShowMemory) {
             this._timelineMemorySplitter.addStyleClass("hidden");
             this._memoryStatistics.hide();
             this.splitView.element.style.height = "auto";

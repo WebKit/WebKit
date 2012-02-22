@@ -1,5 +1,23 @@
 2012-02-22  Andrey Kosyakov  <caseq@chromium.org>
 
+        Web Inspector: fix memory counters and start-at-zero modes of timeline panels to co-exist nicely
+        https://bugs.webkit.org/show_bug.cgi?id=79241
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype.addTimlineEvent):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype._showTimelines):
+        (WebInspector.TimelineOverviewPane.prototype._showMemoryGraph):
+        (WebInspector.TimelineOverviewPane.prototype.setStartAtZero):
+        (WebInspector.TimelineOverviewPane.prototype._onWindowChanged):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._timelinesOverviewModeChanged):
+
+2012-02-22  Andrey Kosyakov  <caseq@chromium.org>
+
         Web Inspector: [experimental] add a mode to display timeline events aligned by the start time
         https://bugs.webkit.org/show_bug.cgi?id=79123
 

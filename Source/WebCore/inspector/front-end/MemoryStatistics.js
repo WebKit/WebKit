@@ -125,9 +125,9 @@ WebInspector.MemoryStatistics.prototype = {
         var counters = event.data["counters"];
         this._counters.push({
             time: event.data.endTime,
-            documentCount: counters.documents,
-            nodeCount: counters.nodes,
-            listenerCount: counters.jsEventListeners
+            documentCount: counters["documents"],
+            nodeCount: counters["nodes"],
+            listenerCount: counters["jsEventListeners"]
         });
     },
 
