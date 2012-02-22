@@ -843,16 +843,22 @@ class YarrGenerator : private MacroAssembler {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
+        UChar ch = term->patternCharacter;
 
         const RegisterID countRegister = regT1;
 
         m_backtrackingState.link(this);
 
-        loadFromFrame(term->frameLocation, countRegister);
-        m_backtrackingState.append(branchTest32(Zero, countRegister));
-        sub32(TrustedImm32(1), countRegister);
-        sub32(TrustedImm32(1), index);
-        jump(op.m_reentry);
+        if ((ch > 0xff) && (m_charSize == Char8)) {
+            // Have a 16 bit pattern character and an 8 bit string - short circuit
+            m_backtrackingState.append(op.m_jumps);
+        } else {
+            loadFromFrame(term->frameLocation, countRegister);
+            m_backtrackingState.append(branchTest32(Zero, countRegister));
+            sub32(TrustedImm32(1), countRegister);
+            sub32(TrustedImm32(1), index);
+            jump(op.m_reentry);
+        }
     }
 
     void generatePatternCharacterNonGreedy(size_t opIndex)
