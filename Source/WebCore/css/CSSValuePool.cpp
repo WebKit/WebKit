@@ -25,7 +25,10 @@
 
 #include "config.h"
 #include "CSSValuePool.h"
+
+#include "CSSParser.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 
 namespace WebCore {
 
@@ -125,6 +128,19 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& 
     RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, 0).first->second;
     if (!value)
         value = CSSPrimitiveValue::create(familyName, CSSPrimitiveValue::CSS_STRING);
+    return value;
+}
+
+PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& string, CSSStyleSheet* contextStyleSheet)
+{
+    // Just wipe out the cache and start rebuilding if it gets too big.
+    const int maximumFontFaceCacheSize = 128;
+    if (m_fontFaceValueCache.size() > maximumFontFaceCacheSize)
+        m_fontFaceValueCache.clear();
+
+    RefPtr<CSSValueList>& value = m_fontFaceValueCache.add(string, 0).first->second;
+    if (!value)
+        value = CSSParser::parseFontFaceValue(string, contextStyleSheet);
     return value;
 }
 

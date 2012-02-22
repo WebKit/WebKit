@@ -485,6 +485,14 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, int propertyId
     return true;
 }
 
+PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string, CSSStyleSheet* contextStyleSheet)
+{
+    RefPtr<StylePropertySet> dummyStyle = StylePropertySet::create();
+    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, false, contextStyleSheet))
+        return 0;
+    return static_pointer_cast<CSSValueList>(dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily));
+}
+
 bool CSSParser::parseValue(StylePropertySet* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet)
 {
     if (parseSimpleLengthValue(declaration, propertyId, string, important, strict, contextStyleSheet))

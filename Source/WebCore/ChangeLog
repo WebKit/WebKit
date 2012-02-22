@@ -1,3 +1,25 @@
+2012-02-21  Andreas Kling  <awesomekling@apple.com>
+
+        Cache <font face> family lists in CSSValuePool.
+        <http://webkit.org/b/79195>
+
+        Reviewed by Antti Koivisto.
+
+        HTMLFontElements with "face" attributes are very common in legacy web content.
+        Add a String->CSSValue cache for these in CSSValuePool and use it to avoid
+        reparsing and recreating duplicate font face values.
+
+        This knocks 20ms (~1.5%) worth of samples off of the Moz page cycler on my system.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceValue):
+        * css/CSSParser.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFaceValue):
+        * css/CSSValuePool.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::collectStyleForAttribute):
+
 2012-02-21  Adam Barth  <abarth@webkit.org>
 
         Separate the implementation of registerProtocolHandler from Navigator.cpp

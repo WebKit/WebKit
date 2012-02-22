@@ -26,6 +26,8 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include <wtf/text/StringBuilder.h>
@@ -173,9 +175,10 @@ void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
             addPropertyToAttributeStyle(style, CSSPropertyFontSize, size);
     } else if (attr->name() == colorAttr)
         addHTMLColorToStyle(style, CSSPropertyColor, attr->value());
-    else if (attr->name() == faceAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyFontFamily, attr->value());
-    else
+    else if (attr->name() == faceAttr) {
+        if (RefPtr<CSSValueList> fontFaceValue = document()->cssValuePool()->createFontFaceValue(attr->value(), document()->elementSheet()))
+            style->setProperty(CSSProperty(CSSPropertyFontFamily, fontFaceValue.release()));
+    } else
         HTMLElement::collectStyleForAttribute(attr, style);
 }
 

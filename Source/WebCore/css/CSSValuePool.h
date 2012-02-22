@@ -29,16 +29,20 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class CSSValueList;
 
 class CSSValuePool : public RefCounted<CSSValuePool> {
 public:
     static PassRefPtr<CSSValuePool> create() { return adoptRef(new CSSValuePool); }
     ~CSSValuePool();
 
+    PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&, CSSStyleSheet* contextStyleSheet);
     PassRefPtr<CSSPrimitiveValue> createFontFamilyValue(const String&);
     PassRefPtr<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
     PassRefPtr<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
@@ -72,6 +76,9 @@ private:
     IntegerValueCache m_pixelValueCache;
     IntegerValueCache m_percentValueCache;
     IntegerValueCache m_numberValueCache;
+
+    typedef HashMap<AtomicString, RefPtr<CSSValueList> > FontFaceValueCache;
+    FontFaceValueCache m_fontFaceValueCache;
 
     typedef HashMap<String, RefPtr<CSSPrimitiveValue> > FontFamilyValueCache;
     FontFamilyValueCache m_fontFamilyValueCache;
