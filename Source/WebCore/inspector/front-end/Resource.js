@@ -49,6 +49,7 @@ WebInspector.MIMETypes = {
     "image/x-xbitmap":             {2: true},
     "font/ttf":                    {3: true},
     "font/opentype":               {3: true},
+    "font/woff":                   {3: true},
     "application/x-font-type1":    {3: true},
     "application/x-font-ttf":      {3: true},
     "application/x-font-woff":     {3: true},
