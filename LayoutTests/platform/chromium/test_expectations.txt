@@ -4226,3 +4226,7 @@ BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = 
 
 // Failing after test was updated in r108387, media engine sending incorrect referrer?
 BUGWK79239 : http/tests/media/video-referer.html = FAIL
+
+// Asserting in debug builds since r108506
+BUGWK79229 DEBUG : http/tests/inspector/console-xhr-logging-async.html = CRASH
+BUGWK79229 DEBUG : http/tests/inspector/network/network-disable-cache-xhrs.html = CRASH
