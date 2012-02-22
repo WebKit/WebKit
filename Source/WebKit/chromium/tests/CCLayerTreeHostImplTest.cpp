@@ -67,7 +67,8 @@ public:
         for (size_t i = 0; i < scrollInfo.scrolls.size(); ++i) {
             if (scrollInfo.scrolls[i].layerId != id)
                 continue;
-            ASSERT_EQ(scrollInfo.scrolls[i].scrollDelta, scrollDelta);
+            EXPECT_EQ(scrollDelta.width(), scrollInfo.scrolls[i].scrollDelta.width());
+            EXPECT_EQ(scrollDelta.height(), scrollInfo.scrolls[i].scrollDelta.height());
             timesEncountered++;
         }
 
@@ -142,14 +143,14 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     scrollInfo = m_hostImpl->processScrollDeltas();
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
     EXPECT_EQ(root->sentScrollDelta(), scrollDelta);
-    expectContains(*scrollInfo.get(), root->id(), scrollDelta);
+    expectContains(*scrollInfo, root->id(), scrollDelta);
 
     IntSize scrollDelta2(-5, 27);
     root->scrollBy(scrollDelta2);
     scrollInfo = m_hostImpl->processScrollDeltas();
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
     EXPECT_EQ(root->sentScrollDelta(), scrollDelta + scrollDelta2);
-    expectContains(*scrollInfo.get(), root->id(), scrollDelta + scrollDelta2);
+    expectContains(*scrollInfo, root->id(), scrollDelta + scrollDelta2);
 
     root->scrollBy(IntSize());
     scrollInfo = m_hostImpl->processScrollDeltas();
@@ -184,6 +185,7 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
     {
         m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
         scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollDelta(IntSize());
 
         float pageScaleDelta = 2;
         m_hostImpl->pinchGestureBegin();
@@ -200,6 +202,7 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
     {
         m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
         scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollDelta(IntSize());
         float pageScaleDelta = 10;
 
         m_hostImpl->pinchGestureBegin();
@@ -214,6 +217,7 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
     {
         m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
         scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollDelta(IntSize());
         scrollLayer->setScrollPosition(IntPoint(50, 50));
 
         float pageScaleDelta = 0.1;
@@ -225,7 +229,25 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
         EXPECT_EQ(scrollInfo->pageScaleDelta, minPageScale);
 
         // Pushed to (0,0) via clamping against contents layer size.
-        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+        expectContains(*scrollInfo, scrollLayer->id(), IntSize(-50, -50));
+    }
+
+    // Two-finger panning
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollDelta(IntSize());
+        scrollLayer->setScrollPosition(IntPoint(20, 20));
+
+        float pageScaleDelta = 1;
+        m_hostImpl->pinchGestureBegin();
+        m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(10, 10));
+        m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(20, 20));
+        m_hostImpl->pinchGestureEnd();
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, pageScaleDelta);
+        expectContains(*scrollInfo, scrollLayer->id(), IntSize(-10, -10));
     }
 }
 
@@ -255,7 +277,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
 
         OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
         EXPECT_EQ(scrollInfo->pageScaleDelta, 2);
-        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+        expectContains(*scrollInfo, scrollLayer->id(), IntSize(-50, -50));
     }
 
     // Anchor zoom-out
@@ -272,7 +294,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
         OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
         EXPECT_EQ(scrollInfo->pageScaleDelta, minPageScale);
         // Pushed to (0,0) via clamping against contents layer size.
-        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+        expectContains(*scrollInfo, scrollLayer->id(), IntSize(-50, -50));
     }
 }
 

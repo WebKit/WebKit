@@ -128,6 +128,10 @@ protected:
 private:
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 
+    void computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo);
+    void computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo);
+    void makeScrollAndScaleSet(CCScrollAndScaleSet* scrollInfo, const IntSize& scrollOffset, float pageScale);
+
     void setPageScaleDelta(float);
     void applyPageScaleDeltaToScrollLayer();
     void adjustScrollsForPageScaleChange(float);
@@ -151,6 +155,7 @@ private:
     float m_minPageScale, m_maxPageScale;
 
     bool m_pinchGestureActive;
+    IntPoint m_previousPinchAnchor;
 
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
 

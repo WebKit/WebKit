@@ -137,6 +137,7 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
         m_pageScaleAnimation->zoomTo(targetPosition, pageScale, durationMs);
 
     m_client->setNeedsRedrawOnImplThread();
+    m_client->setNeedsCommitOnImplThread();
 }
 
 void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
@@ -498,6 +499,7 @@ bool CCLayerTreeHostImpl::haveWheelEventHandlers()
 void CCLayerTreeHostImpl::pinchGestureBegin()
 {
     m_pinchGestureActive = true;
+    m_previousPinchAnchor = IntPoint();
 }
 
 void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
@@ -505,18 +507,20 @@ void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
 {
     TRACE_EVENT("CCLayerTreeHostImpl::pinchGestureUpdate", this, 0);
 
-    if (magnifyDelta == 1.0)
-        return;
     if (!m_scrollLayerImpl)
         return;
 
+    if (m_previousPinchAnchor == IntPoint::zero())
+        m_previousPinchAnchor = anchor;
+
     // Keep the center-of-pinch anchor specified by (x, y) in a stable
     // position over the course of the magnify.
-    FloatPoint prevScaleAnchor(anchor.x() / m_pageScaleDelta, anchor.y() / m_pageScaleDelta);
+    FloatPoint previousScaleAnchor(m_previousPinchAnchor.x() / m_pageScaleDelta, m_previousPinchAnchor.y() / m_pageScaleDelta);
     setPageScaleDelta(m_pageScaleDelta * magnifyDelta);
     FloatPoint newScaleAnchor(anchor.x() / m_pageScaleDelta, anchor.y() / m_pageScaleDelta);
+    FloatSize move = previousScaleAnchor - newScaleAnchor;
 
-    FloatSize move = prevScaleAnchor - newScaleAnchor;
+    m_previousPinchAnchor = anchor;
 
     m_scrollLayerImpl->scrollBy(roundedIntSize(move));
     m_client->setNeedsCommitOnImplThread();
@@ -530,12 +534,68 @@ void CCLayerTreeHostImpl::pinchGestureEnd()
     m_client->setNeedsCommitOnImplThread();
 }
 
+void CCLayerTreeHostImpl::computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo)
+{
+    float pageScale = m_pageScaleAnimation->finalPageScale();
+    IntSize scrollOffset = m_pageScaleAnimation->finalScrollOffset();
+    scrollOffset.scale(m_pageScale / pageScale);
+    makeScrollAndScaleSet(scrollInfo, scrollOffset, pageScale);
+}
+
+void CCLayerTreeHostImpl::computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo)
+{
+    if (!m_scrollLayerImpl)
+        return;
+
+    // Only send fake scroll/zoom deltas if we're pinch zooming out by a
+    // significant amount. This also ensures only one fake delta set will be
+    // sent.
+    const float pinchZoomOutSensitivity = 0.95;
+    if (m_pageScaleDelta > pinchZoomOutSensitivity)
+        return;
+
+    // Compute where the scroll offset/page scale would be if fully pinch-zoomed
+    // out from the anchor point.
+    FloatSize scrollBegin = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    scrollBegin.scale(m_pageScaleDelta);
+    float scaleBegin = m_pageScale * m_pageScaleDelta;
+    float pageScaleDeltaToSend = m_minPageScale / m_pageScale;
+    FloatSize scaledContentsSize = contentSize();
+    scaledContentsSize.scale(pageScaleDeltaToSend);
+
+    FloatSize anchor = toSize(m_previousPinchAnchor);
+    FloatSize scrollEnd = scrollBegin + anchor;
+    scrollEnd.scale(m_minPageScale / scaleBegin);
+    scrollEnd -= anchor;
+    scrollEnd = scrollEnd.shrunkTo(roundedIntSize(scaledContentsSize - m_viewportSize)).expandedTo(FloatSize(0, 0));
+    scrollEnd.scale(1 / pageScaleDeltaToSend);
+
+    makeScrollAndScaleSet(scrollInfo, roundedIntSize(scrollEnd), m_minPageScale);
+}
+
+void CCLayerTreeHostImpl::makeScrollAndScaleSet(CCScrollAndScaleSet* scrollInfo, const IntSize& scrollOffset, float pageScale)
+{
+    if (!m_scrollLayerImpl)
+        return;
+
+    CCLayerTreeHostCommon::ScrollUpdateInfo scroll;
+    scroll.layerId = m_scrollLayerImpl->id();
+    scroll.scrollDelta = scrollOffset - toSize(m_scrollLayerImpl->scrollPosition());
+    scrollInfo->scrolls.append(scroll);
+    m_scrollLayerImpl->setSentScrollDelta(scroll.scrollDelta);
+    m_sentPageScaleDelta = scrollInfo->pageScaleDelta = pageScale / m_pageScale;
+}
+
 PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
 {
     OwnPtr<CCScrollAndScaleSet> scrollInfo = adoptPtr(new CCScrollAndScaleSet());
     bool didMove = m_scrollLayerImpl && (!m_scrollLayerImpl->scrollDelta().isZero() || m_pageScaleDelta != 1.0f);
     if (!didMove || m_pinchGestureActive || m_pageScaleAnimation) {
         m_sentPageScaleDelta = scrollInfo->pageScaleDelta = 1;
+        if (m_pinchGestureActive)
+            computePinchZoomDeltas(scrollInfo.get());
+        else if (m_pageScaleAnimation.get())
+            computeDoubleTapZoomDeltas(scrollInfo.get());
         return scrollInfo.release();
     }
 
