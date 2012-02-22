@@ -42,10 +42,11 @@ public:
     void filterToken(HTMLToken&);
 
 private:
+    static const size_t kMaximumFragmentLengthTarget = 100;
+
     enum State {
         Uninitialized,
-        Initial,
-        AfterScriptStartTag,
+        Initialized
     };
 
     enum AttributeKind {
@@ -55,9 +56,9 @@ private:
 
     void init();
 
-    bool filterTokenInitial(HTMLToken&);
-    bool filterTokenAfterScriptStartTag(HTMLToken&);
-
+    bool filterStartToken(HTMLToken&);
+    void filterEndToken(HTMLToken&);
+    bool filterCharacterToken(HTMLToken&);
     bool filterScriptToken(HTMLToken&);
     bool filterObjectToken(HTMLToken&);
     bool filterParamToken(HTMLToken&);
@@ -88,6 +89,8 @@ private:
 
     State m_state;
     String m_cachedSnippet;
+    bool m_shouldAllowCDATA;
+    unsigned m_scriptTagNestingLevel;
     bool m_notifiedClient;
 };
 

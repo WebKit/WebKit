@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+ Ensures HTML entities are recognized in script blocks in a context where CDATA is allowed even with nested script blocks.
