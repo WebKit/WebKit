@@ -72973,6 +72973,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\indexedDBViews.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\IndexedDBViews.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\InjectedFakeWorker.js"
 					>
 				</File>

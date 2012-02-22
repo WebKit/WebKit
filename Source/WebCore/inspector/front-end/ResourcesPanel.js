@@ -461,6 +461,14 @@ WebInspector.ResourcesPanel.prototype = {
         this._innerShowView(view);
     },
 
+    /**
+     * @param {WebInspector.View} view
+     */
+    showIndexedDB: function(view)
+    {
+        this._innerShowView(view);
+    },
+
     showDOMStorage: function(domStorage)
     {
         if (!domStorage)
@@ -1517,7 +1525,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
     refreshIndexedDB: function()
     {
         if (!this._indexedDBModel) {
-            this.createIndexedDBModel();
+            this._createIndexedDBModel();
             return;
         }
 
@@ -1531,7 +1539,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
     {
         var databaseId = /** @type {WebInspector.IndexedDBModel.DatabaseId} */ event.data;
 
-        var idbDatabaseTreeElement = new WebInspector.IDBDatabaseTreeElement(this, databaseId);
+        var idbDatabaseTreeElement = new WebInspector.IDBDatabaseTreeElement(this._storagePanel, this._indexedDBModel, databaseId);
         this._idbDatabaseTreeElements.push(idbDatabaseTreeElement);
         this.appendChild(idbDatabaseTreeElement);
 
@@ -1592,16 +1600,23 @@ WebInspector.IndexedDBTreeElement.prototype.__proto__ = WebInspector.StorageCate
  * @constructor
  * @extends {WebInspector.BaseStorageTreeElement}
  * @param {WebInspector.ResourcesPanel} storagePanel
+ * @param {WebInspector.IndexedDBModel} model
  * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
  */
-WebInspector.IDBDatabaseTreeElement = function(storagePanel, databaseId)
+WebInspector.IDBDatabaseTreeElement = function(storagePanel, model, databaseId)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, databaseId.name + " - " + databaseId.securityOrigin, ["indexed-db-storage-tree-item"]);
+    this._model = model;
     this._databaseId = databaseId;
     this._idbObjectStoreTreeElements = {};
 }
 
 WebInspector.IDBDatabaseTreeElement.prototype = {
+    get itemURL()
+    {
+        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name;
+    },
+
     /**
      * @param {WebInspector.IndexedDBModel.Database} database
      */
@@ -1613,7 +1628,7 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
             var objectStore = this._database.objectStores[objectStoreName];
             objectStoreNames[objectStore.name] = true;
             if (!this._idbObjectStoreTreeElements[objectStore.name]) {
-                var idbObjectStoreTreeElement = new WebInspector.IDBObjectStoreTreeElement(this._storagePanel, this._databaseId, objectStore);
+                var idbObjectStoreTreeElement = new WebInspector.IDBObjectStoreTreeElement(this._storagePanel, this._model, this._databaseId, objectStore);
                 this._idbObjectStoreTreeElements[objectStore.name] = idbObjectStoreTreeElement;
                 this.appendChild(idbObjectStoreTreeElement);
             }
@@ -1625,10 +1640,23 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
                 delete this._idbObjectStoreTreeElements[objectStoreName];
             }
         }
+        
+        if (this.children.length) {
+            this.hasChildren = true;
+            this.expand();
+        }
+
+        if (this._view)
+            this._view.update(database);
     },
 
     onselect: function()
     {
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        if (!this._view)
+            this._view = new WebInspector.IDBDatabaseView(this._database);
+
+        this._storagePanel.showIndexedDB(this._view);        
     }
 }
 
@@ -1638,18 +1666,25 @@ WebInspector.IDBDatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStora
  * @constructor
  * @extends {WebInspector.BaseStorageTreeElement}
  * @param {WebInspector.ResourcesPanel} storagePanel
+ * @param {WebInspector.IndexedDBModel} model
  * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
  * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
  */
-WebInspector.IDBObjectStoreTreeElement = function(storagePanel, databaseId, objectStore)
+WebInspector.IDBObjectStoreTreeElement = function(storagePanel, model, databaseId, objectStore)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, objectStore.name, ["indexed-db-object-store-storage-tree-item"]);
+    this._model = model;
     this._databaseId = databaseId;
     this._idbIndexTreeElements = {};
 }
 
 WebInspector.IDBObjectStoreTreeElement.prototype = {
-    /**
+    get itemURL()
+    {
+        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name + "/" + this._objectStore.name;
+    },
+
+   /**
      * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
      */
     update: function(objectStore)
@@ -1661,7 +1696,7 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
             var index = this._objectStore.indexes[indexName];
             indexNames[index.name] = true;
             if (!this._idbIndexTreeElements[index.name]) {
-                var idbIndexTreeElement = new WebInspector.IDBIndexTreeElement(this._storagePanel, this._databaseId, this._objectStore.name, index);
+                var idbIndexTreeElement = new WebInspector.IDBIndexTreeElement(this._storagePanel, this._model, this._databaseId, this._objectStore, index);
                 this._idbIndexTreeElements[index.name] = idbIndexTreeElement;
                 this.appendChild(idbIndexTreeElement);
             }
@@ -1673,6 +1708,23 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
                 delete this._idbIndexTreeElements[indexName];
             }
         }
+        
+        if (this.children.length) {
+            this.hasChildren = true;
+            this.expand();
+        }
+
+        if (this._view)
+            this._view.update(this._objectStore);
+    },
+
+    onselect: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        if (!this._view)
+            this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, null);
+
+        this._storagePanel.showIndexedDB(this._view);        
     }
 }
 
@@ -1682,24 +1734,44 @@ WebInspector.IDBObjectStoreTreeElement.prototype.__proto__ = WebInspector.BaseSt
  * @constructor
  * @extends {WebInspector.BaseStorageTreeElement}
  * @param {WebInspector.ResourcesPanel} storagePanel
+ * @param {WebInspector.IndexedDBModel} model
  * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
- * @param {string} objectStoreName
+ * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
  * @param {WebInspector.IndexedDBModel.Index} index
  */
-WebInspector.IDBIndexTreeElement = function(storagePanel, databaseId, objectStoreName, index)
+WebInspector.IDBIndexTreeElement = function(storagePanel, model, databaseId, objectStore, index)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, index.name, ["indexed-db-index-storage-tree-item"]);
+    this._model = model;
     this._databaseId = databaseId;
-    this._objectStoreName = objectStoreName;
+    this._objectStore = objectStore;
+    this._index = index;
 }
 
 WebInspector.IDBIndexTreeElement.prototype = {
+    get itemURL()
+    {
+        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name + "/" + this._objectStore.name + "/" + this._index.name;
+    },
+
     /**
      * @param {WebInspector.IndexedDBModel.Index} index
      */
     update: function(index)
     {
         this._index = index;
+        
+        if (this._view)
+            this._view.update(this._index);
+    },
+
+    onselect: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        if (!this._view)
+            this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, this._index);
+
+        this._storagePanel.showIndexedDB(this._view);        
     }
 }
 

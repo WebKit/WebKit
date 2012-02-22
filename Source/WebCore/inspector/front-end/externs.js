@@ -42,7 +42,7 @@ var JSON = {}
 /** @param {string} str */
 JSON.parse = function(str) {}
 /**
- * @param {Object} obj
+ * @param {*} obj
  * @param {Function=} replacer
  * @param {number=} space
  * @return {string}

@@ -452,10 +452,9 @@ public:
 
     void next()
     {
-        m_idbTransaction->didCompleteTaskEvents();
-
         ExceptionCode ec = 0;
         m_idbCursor->continueFunction(0, this, ec);
+        m_idbTransaction->didCompleteTaskEvents();
     }
 
     void end(bool hasMore)

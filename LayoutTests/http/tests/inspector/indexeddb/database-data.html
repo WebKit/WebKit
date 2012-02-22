@@ -38,9 +38,9 @@ function test()
         var idbKeyRangeString = idbKeyRange ? "{lower:\"" + idbKeyRange.lower + "\",lowerOpen:" + idbKeyRange.lowerOpen + ",upper:\"" + idbKeyRange.upper + "\",upperOpen:" + idbKeyRange.upperOpen + "}" : "null";
         InspectorTest.addResult("Dumping values, fromIndex = " + fromIndex + ", skipCount = " + skipCount + ", pageSize = " + pageSize + ", idbKeyRange = " + idbKeyRangeString);
         if (fromIndex)
-            indexedDBModel.loadIndexData(mainFrameId, databaseName, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback);
+            indexedDBModel.loadIndexData(databaseId, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback);
         else
-            indexedDBModel.loadObjectStoreData(mainFrameId, databaseName, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
+            indexedDBModel.loadObjectStoreData(databaseId, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
 
         function innerCallback(entries, hasMore)
         {

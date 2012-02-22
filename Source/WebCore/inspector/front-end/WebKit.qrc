@@ -68,6 +68,7 @@
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>IndexedDBModel.js</file>
+    <file>IndexedDBViews.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
     <file>InspectorBackend.js</file>
@@ -170,6 +171,7 @@
     <file>filteredItemSelectionDialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
+    <file>indexedDBViews.css</file>
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>

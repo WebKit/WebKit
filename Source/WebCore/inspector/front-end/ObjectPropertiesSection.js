@@ -43,6 +43,7 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     this.extraProperties = extraProperties;
     this.treeElementConstructor = treeElementConstructor || WebInspector.ObjectPropertyTreeElement;
     this.editable = true;
+    this.skipProto = false;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
 }
@@ -85,6 +86,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
         this.propertiesTreeOutline.removeChildren();
 
         for (var i = 0; i < properties.length; ++i) {
+            if (this.skipProto && properties[i].name === "__proto__")
+                continue;
+
             properties[i].parentObject = this.object;
             this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
         }

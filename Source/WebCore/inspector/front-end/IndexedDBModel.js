@@ -322,14 +322,25 @@ WebInspector.IndexedDBModel.prototype = {
 
     /**
      * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+     * @return {string|null}
      */
-    _loadDatabase: function(databaseId)
+    _assertFrameId: function(databaseId)
     {
         var frameIds = this._frameIdsBySecurityOrigin[databaseId.securityOrigin];
         if (!frameIds || !frameIds.length)
-            return;
+            return null;
 
-        var frameId = frameIds[0];
+        return frameIds[0];
+    },
+
+    /**
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+     */
+    _loadDatabase: function(databaseId)
+    {
+        var frameId = this._assertFrameId(databaseId);
+        if (!frameId)
+            return;
 
         /**
          * @param {IndexedDBAgent.DatabaseWithObjectStores} databaseWithObjectStores
@@ -359,16 +370,19 @@ WebInspector.IndexedDBModel.prototype = {
     },
 
     /**
-     * @param {string} frameId
-     * @param {string} databaseName
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
      * @param {string} objectStoreName
      * @param {webkitIDBKeyRange} idbKeyRange
      * @param {number} skipCount
      * @param {number} pageSize
      * @param {function(Array.<WebInspector.IndexedDBModel.Entry>, boolean)} callback
      */
-    loadObjectStoreData: function(frameId, databaseName, objectStoreName, idbKeyRange, skipCount, pageSize, callback)
+    loadObjectStoreData: function(databaseId, objectStoreName, idbKeyRange, skipCount, pageSize, callback)
     {
+        var frameId = this._assertFrameId(databaseId);
+        if (!frameId)
+            return;
+
         /**
          * @param {Array.<IndexedDBAgent.DataEntry>} dataEntries
          * @param {boolean} hasMore
@@ -385,12 +399,11 @@ WebInspector.IndexedDBModel.prototype = {
             callback(entries, hasMore);
         }
 
-        this._indexedDBRequestManager.requestObjectStoreData(frameId, databaseName, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
+        this._indexedDBRequestManager.requestObjectStoreData(frameId, databaseId.name, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
     },
 
     /**
-     * @param {string} frameId
-     * @param {string} databaseName
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
      * @param {string} objectStoreName
      * @param {string} indexName
      * @param {webkitIDBKeyRange} idbKeyRange
@@ -398,8 +411,12 @@ WebInspector.IndexedDBModel.prototype = {
      * @param {number} pageSize
      * @param {function(Array.<WebInspector.IndexedDBModel.Entry>, boolean)} callback
      */
-    loadIndexData: function(frameId, databaseName, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, callback)
+    loadIndexData: function(databaseId, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, callback)
     {
+        var frameId = this._assertFrameId(databaseId);
+        if (!frameId)
+            return;
+
         /**
          * @param {Array.<IndexedDBAgent.DataEntry>} dataEntries
          * @param {boolean} hasMore
@@ -416,7 +433,7 @@ WebInspector.IndexedDBModel.prototype = {
             callback(entries, hasMore);
         }
 
-        this._indexedDBRequestManager.requestIndexData(frameId, databaseName, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback.bind(this));
+        this._indexedDBRequestManager.requestIndexData(frameId, databaseId.name, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback.bind(this));
     }
 }
 
