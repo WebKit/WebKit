@@ -1462,7 +1462,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom);
 
     if (isFullLayout)
-        lineBoxes()->deleteLineBoxes(renderArena());
+        deleteLineBoxTree();
 
     // Text truncation only kicks in if your overflow isn't visible and your text-overflow-mode isn't
     // clip.

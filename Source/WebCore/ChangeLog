@@ -1,5 +1,28 @@
 2012-02-22  Abhishek Arya  <inferno@chromium.org>
 
+        Crash due to accessing removed parent lineboxes when clearing view selection.
+        https://bugs.webkit.org/show_bug.cgi?id=79264
+
+        Reviewed by Eric Seidel.
+
+        When our block needed a full layout, we were deleting our own lineboxes
+        and letting descendant children (at any level in hierarchy and not just 
+        immediate children) clear their own lineboxes as we keep laying them out.
+        This was problematic because those descendant children lineboxes were
+        pointing to removed parent lineboxes in the meantime. An example scenario
+        where this would go wrong is first-letter object removal, which can cause
+        clearing view selection, leading to accessing parent lineboxes. The patch
+        modifies clearing the entire linebox tree upfront. It shouldn't introduce
+        performance issues since it will eventually happen as we are laying out
+        those children.
+ 
+        Test: fast/css-generated-content/first-letter-textbox-parent-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
+2012-02-22  Abhishek Arya  <inferno@chromium.org>
+
         Cloning and linebox issues in multi-column layout.
         https://bugs.webkit.org/show_bug.cgi?id=78273
 
