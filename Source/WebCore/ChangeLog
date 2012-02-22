@@ -1,3 +1,103 @@
+2012-02-22  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: remove neural-net-style constructions
+        https://bugs.webkit.org/show_bug.cgi?id=79153
+
+        Reviewed by Yury Semikhatsky.
+
+        CParamType class removed completely, some ("virtual") methods are
+        removed. TypeModel notion is added instead with some minor helper
+        classes and methods.
+
+        * inspector/CodeGeneratorInspector.py:
+        (DomainNameFixes):
+        (RawTypes.BaseType):
+        (RawTypes.String):
+        (RawTypes.String.get_raw_type_model):
+        (RawTypes.Int):
+        (RawTypes.Int.get_raw_type_model):
+        (RawTypes.Number):
+        (RawTypes.Number.get_raw_type_model):
+        (RawTypes.Bool):
+        (RawTypes.Bool.get_raw_type_model):
+        (RawTypes.Object):
+        (RawTypes.Object.get_raw_type_model):
+        (RawTypes.Any):
+        (RawTypes.Any.get_raw_type_model):
+        (RawTypes.Array):
+        (RawTypes.Array.get_raw_type_model):
+        (replace_right_shift):
+        (CommandReturnPassModel):
+        (CommandReturnPassModel.ByReference):
+        (CommandReturnPassModel.ByReference.__init__):
+        (CommandReturnPassModel.ByReference.get_return_var_type):
+        (CommandReturnPassModel.get_output_argument_prefix):
+        (CommandReturnPassModel.get_output_to_raw_expression):
+        (CommandReturnPassModel.get_output_parameter_type):
+        (CommandReturnPassModel.get_set_return_condition):
+        (CommandReturnPassModel.ByPointer):
+        (CommandReturnPassModel.ByPointer.__init__):
+        (CommandReturnPassModel.ByPointer.get_return_var_type):
+        (TypeModel):
+        (TypeModel.RefPtrBased):
+        (TypeModel.RefPtrBased.__init__):
+        (TypeModel.RefPtrBased.get_optional):
+        (TypeModel.RefPtrBased.get_command_return_pass_model):
+        (TypeModel.RefPtrBased.get_input_param_type_text):
+        (TypeModel.RefPtrBased.get_event_setter_expression_pattern):
+        (TypeModel.Enum):
+        (TypeModel.Enum.__init__):
+        (TypeModel.Enum.get_optional):
+        (TypeModel.Enum.get_optional.EnumOptional):
+        (TypeModel.Enum.get_optional.EnumOptional.get_optional):
+        (TypeModel.Enum.get_optional.EnumOptional.get_command_return_pass_model):
+        (TypeModel.Enum.get_input_param_type_text):
+        (TypeModel.Enum.get_event_setter_expression_pattern):
+        (TypeModel.Enum.get_command_return_pass_model):
+        (TypeModel.ValueType):
+        (TypeModel.ValueType.__init__):
+        (TypeModel.ValueType.get_optional):
+        (TypeModel.ValueType.get_command_return_pass_model):
+        (TypeModel.ValueType.get_input_param_type_text):
+        (TypeModel.ValueType.get_event_setter_expression_pattern):
+        (TypeModel.ValueType.ValueOptional):
+        (TypeModel.ValueType.ValueOptional.__init__):
+        (TypeModel.ValueType.ValueOptional.get_optional):
+        (TypeModel.ValueType.ValueOptional.get_command_return_pass_model):
+        (TypeModel.ValueType.ValueOptional.get_input_param_type_text):
+        (TypeModel.ValueType.ValueOptional.get_event_setter_expression_pattern):
+        (TypeModel.init_class):
+        (TypeBindings.create_ad_hoc_type_declaration.Helper):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_array_item_c_type_text):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.EnumBinding):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_type_model):
+        (TypeBindings.create_type_declaration_):
+        (TypeBindings.create_type_declaration_.get_type_model):
+        (TypeBindings.create_type_declaration_.get_array_item_c_type_text):
+        (get_type_model):
+        (AdHocTypeContextImpl.__init__):
+        (PlainObjectBinding):
+        (PlainObjectBinding.get_type_model):
+        (AdHocTypeContext):
+        (ArrayBinding.get_array_item_c_type_text):
+        (ArrayBinding):
+        (ArrayBinding.get_type_model):
+        (RawTypeBinding.get_validator_call_text):
+        (RawTypeBinding.reduce_to_raw_type):
+        (RawTypeBinding):
+        (RawTypeBinding.get_type_model):
+        (MethodGenerateModes.StrictParameterMode.get_c_param_type_text):
+        (MethodGenerateModes.RawParameterMode.get_c_param_type_text):
+        (MethodGenerateModes.CombinedMode.get_c_param_type_text):
+        (Generator.go):
+        (Generator.process_event):
+        (Generator.process_command):
+        (Generator.resolve_type_and_generate_ad_hoc):
+        (Generator.resolve_type_and_generate_ad_hoc.AdHocTypeContext):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+
 2012-02-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Show IndexedDB views on selection IndexedDB elements in resources panel.
