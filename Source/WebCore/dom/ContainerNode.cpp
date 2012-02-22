@@ -592,6 +592,9 @@ void ContainerNode::removeChildren()
             removedChild->detach();
     }
 
+    // FIXME: This should be just above dispatchSubtreeModifiedEvent();
+    allowEventDispatch();
+
     childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
 
     for (i = 0; i < removedChildrenCount; ++i) {
@@ -602,8 +605,6 @@ void ContainerNode::removeChildren()
         // document. There is no explanation for this discrepancy between removeChild()
         // and its optimized version removeChildren().
     }
-
-    allowEventDispatch();
 
     dispatchSubtreeModifiedEvent();
 }

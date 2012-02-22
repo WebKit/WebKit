@@ -1,3 +1,14 @@
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
+        Partially revert r108418 - move allowEventDispatch() call back to where it used to be.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        Tested by fast/text/find-layout-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+
 2012-02-21  Anders Carlsson  <andersca@apple.com>
 
         Background jitters on pages with background-attachment: fixed
