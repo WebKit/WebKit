@@ -1,3 +1,19 @@
+2012-02-22  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r62632): page-break-inside: avoid is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=79262
+
+        Reviewed by Adele Peterson.
+
+        This was disabled in r62632 because of <http://webkit.org/b/41532>. Changes to the
+        pagination code since then have invalidated that bug, so enabling the feature again does not
+        re-introduce the bug.
+
+        Updated expected results for printing/page-break-inside-avoid.html.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+
 2012-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] webkitwebsrc: use HTTP referer provided by MediaPlayer
@@ -4262,7 +4278,7 @@
 
 2012-02-19  James Robinson  <jamesr@chromium.org>
 
-        Sort WebCore XCode project files with sort-Xcode-project-files script. Unreviewed.
+        Sort WebCore Xcode project files with sort-Xcode-project-files script. Unreviewed.
 
         * WebCore.xcodeproj/project.pbxproj:
 
