@@ -1,3 +1,28 @@
+2012-02-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Allocations from CopiedBlocks should always be 8-byte aligned
+        https://bugs.webkit.org/show_bug.cgi?id=79271
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/CopiedAllocator.h:
+        (JSC::CopiedAllocator::allocate):
+        * heap/CopiedBlock.h: Changed to add padding so that the start of the payload is always 
+        guaranteed to be 8 byte aligned on both 64- and 32-bit platforms.
+        (CopiedBlock):
+        * heap/CopiedSpace.cpp: Changed all assertions of isPointerAligned to is8ByteAligned.
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::getFreshBlock):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::allocateFromBlock):
+        * runtime/JSArray.h:
+        (ArrayStorage): Added padding for ArrayStorage to make sure that it is always 8 byte 
+        aligned on both 64- and 32-bit platforms.
+        * wtf/StdLibExtras.h:
+        (WTF::is8ByteAligned): Added new utility function that functions similarly to the 
+        way isPointerAligned does, but it just always checks for 8 byte alignment.
+        (WTF):
+
 2012-02-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108456.

@@ -79,7 +79,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
     }
     CopiedBlock* block = new (NotNull, allocation.base()) CopiedBlock(allocation);
     m_oversizeBlocks.push(block);
-    ASSERT(isPointerAligned(block->m_offset));
+    ASSERT(is8ByteAligned(block->m_offset));
 
     m_oversizeFilter.add(reinterpret_cast<Bits>(block));
     
@@ -256,7 +256,7 @@ CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, Cop
         }
     }
     ASSERT(block);
-    ASSERT(isPointerAligned(block->m_offset));
+    ASSERT(is8ByteAligned(block->m_offset));
     *outBlock = block;
     return true;
 }

@@ -114,6 +114,11 @@ inline bool isPointerAligned(void* p)
     return !((intptr_t)(p) & (sizeof(char*) - 1));
 }
 
+inline bool is8ByteAligned(void* p)
+{
+    return !((uintptr_t)(p) & (sizeof(double) - 1));
+}
+
 /*
  * C++'s idea of a reinterpret_cast lacks sufficient cojones.
  */
@@ -292,6 +297,7 @@ inline void* operator new(size_t, NotNullTag, void* location)
 
 using WTF::KB;
 using WTF::isPointerAligned;
+using WTF::is8ByteAligned;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::safeCast;

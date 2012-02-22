@@ -57,10 +57,11 @@ inline CopiedAllocator::CopiedAllocator()
 inline void* CopiedAllocator::allocate(size_t bytes)
 {
     ASSERT(m_currentOffset);
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(bytes)));
     ASSERT(fitsInCurrentBlock(bytes));
     void* ptr = static_cast<void*>(m_currentOffset);
     m_currentOffset += bytes;
-    ASSERT(isPointerAligned(ptr));
+    ASSERT(is8ByteAligned(ptr));
     return ptr;
 }
 

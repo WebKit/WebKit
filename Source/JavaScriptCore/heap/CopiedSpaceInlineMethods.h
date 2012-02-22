@@ -148,14 +148,14 @@ inline void* CopiedSpace::allocateFromBlock(CopiedBlock* block, size_t bytes)
 {
     ASSERT(!isOversize(bytes));
     ASSERT(fitsInBlock(block, bytes));
-    ASSERT(isPointerAligned(block->m_offset));
+    ASSERT(is8ByteAligned(block->m_offset));
     
     void* ptr = block->m_offset;
     ASSERT(block->m_offset >= block->m_payload && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
     block->m_offset = static_cast<void*>((static_cast<char*>(ptr) + bytes));
     ASSERT(block->m_offset >= block->m_payload && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
 
-    ASSERT(isPointerAligned(ptr));
+    ASSERT(is8ByteAligned(ptr));
     return ptr;
 }
 

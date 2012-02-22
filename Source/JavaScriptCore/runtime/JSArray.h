@@ -117,7 +117,9 @@ namespace JSC {
         unsigned m_numValuesInVector;
         void* m_allocBase; // Pointer to base address returned by malloc().  Keeping this pointer does eliminate false positives from the leak detector.
 #if CHECK_ARRAY_CONSISTENCY
-        bool m_inCompactInitialization;
+        uintptr_t m_inCompactInitialization; // Needs to be a uintptr_t for alignment purposes.
+#else
+        uintptr_t m_padding;
 #endif
         WriteBarrier<Unknown> m_vector[1];
     };
