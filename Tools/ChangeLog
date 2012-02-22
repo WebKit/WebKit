@@ -1,5 +1,35 @@
 2012-02-21  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: speed up hot filesystem_mock functions
+        https://bugs.webkit.org/show_bug.cgi?id=79159
+
+        Reviewed by Adam Barth.
+
+        Profiling run_webkit_tests_integrationtest.py revealed that
+        isdir(), normpath(), and join() are called a lot and were very
+        slow.This patch speeds them up substantially, shaving 20 seconds
+        off of the execution time.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.isdir):
+        (MockFileSystem._slow_but_correct_join):
+        (MockFileSystem.join):
+        (MockFileSystem.listdir):
+        (MockFileSystem._slow_but_correct_normpath):
+        (MockFileSystem.normpath):
+        (MockFileSystem.write_binary_file):
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py:
+        (MockFileSystemTest.quick_check):
+        (MockFileSystemTest):
+        (MockFileSystemTest.test_join):
+        (MockFileSystemTest.test_normpath):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (get_test_config): Call write_binary_file() instead of updating
+          filesystem.files directly, so that we create directories as
+          needed.
+
+2012-02-21  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: make the delay between starting workers configurable per-port
         https://bugs.webkit.org/show_bug.cgi?id=79148
 

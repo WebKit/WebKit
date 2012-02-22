@@ -26,7 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import re
 import unittest
+
 
 from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system import filesystem_unittest
@@ -40,6 +43,45 @@ class MockFileSystemTest(unittest.TestCase, filesystem_unittest.GenericFileSyste
     def tearDown(self):
         self.teardown_generic_test_dir()
         self.fs = None
+
+    def quick_check(self, test_fn, good_fn, *tests):
+        for test in tests:
+            if hasattr(test, '__iter__'):
+                expected = good_fn(*test)
+                actual = test_fn(*test)
+            else:
+                expected = good_fn(test)
+                actual = test_fn(test)
+            self.assertEquals(expected, actual, 'given %s, expected %s, got %s' % (repr(test), repr(expected), repr(actual)))
+
+    def test_join(self):
+        self.quick_check(self.fs.join,
+                         self.fs._slow_but_correct_join,
+                         ('',),
+                         ('', 'bar'),
+                         ('foo',),
+                         ('foo/',),
+                         ('foo', ''),
+                         ('foo/', ''),
+                         ('foo', 'bar'),
+                         ('foo', '/bar'),
+                         )
+
+    def test_normpath(self):
+        self.quick_check(self.fs.normpath,
+                         self.fs._slow_but_correct_normpath,
+                         '',
+                         '/',
+                         '.',
+                         '/.',
+                         'foo',
+                         'foo/',
+                         'foo/.',
+                         'foo/bar',
+                         '/foo',
+                         'foo/../bar',
+                         'foo/../bar/baz',
+                         '../foo')
 
 
 if __name__ == '__main__':

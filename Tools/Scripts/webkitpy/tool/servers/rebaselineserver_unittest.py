@@ -295,11 +295,9 @@ def get_test_config(test_files=[], result_files=[]):
     results_directory = '/WebKitBuild/Debug/layout-test-results'
     host = MockHost()
     for file in test_files:
-        file_path = host.filesystem.join(layout_tests_directory, file)
-        host.filesystem.files[file_path] = ''
+        host.filesystem.write_binary_file(host.filesystem.join(layout_tests_directory, file), '')
     for file in result_files:
-        file_path = host.filesystem.join(results_directory, file)
-        host.filesystem.files[file_path] = ''
+        host.filesystem.write_binary_file(host.filesystem.join(results_directory, file), '')
 
     class TestMacPort(WebKitPort):
         port_name = "mac"

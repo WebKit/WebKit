@@ -173,40 +173,45 @@ class MockFileSystem(object):
         return path in self.files and self.files[path] is not None
 
     def isdir(self, path):
-        if path in self.files:
-            return False
-        path = self.normpath(path)
-        if path in self.dirs:
-            return True
+        return self.normpath(path) in self.dirs
 
-        # We need to use a copy of the keys here in order to avoid switching
-        # to a different thread and potentially modifying the dict in
-        # mid-iteration.
-        files = self.files.keys()[:]
-        result = any(f.startswith(path) and len(self.split(f)[0]) >= len(path) for f in files)
-        if result:
-            self.dirs.add(path)
-        return result
-
-    def join(self, *comps):
-        # FIXME: might want tests for this and/or a better comment about how
-        # it works.
+    def _slow_but_correct_join(self, *comps):
         return re.sub(re.escape(os.path.sep), self.sep, os.path.join(*comps))
 
+    def join(self, *comps):
+        # This function is called a lot, so we optimize it; there are
+        # unittests to check that we match _slow_but_correct_join(), above.
+        path = ''
+        sep = self.sep
+        for comp in comps:
+            if not comp:
+                continue
+            if comp[0] == sep:
+                path = comp
+                continue
+            if path:
+                path += sep
+            path += comp
+        if comps[-1] == '' and path:
+            path += '/'
+        path = path.replace(sep + sep, sep)
+        return path
+
     def listdir(self, path):
+        sep = self.sep
         if not self.isdir(path):
             raise OSError("%s is not a directory" % path)
 
-        if not path.endswith(self.sep):
-            path += self.sep
+        if not path.endswith(sep):
+            path += sep
 
         dirs = []
         files = []
         for f in self.files:
             if self.exists(f) and f.startswith(path):
                 remaining = f[len(path):]
-                if self.sep in remaining:
-                    dir = remaining[:remaining.index(self.sep)]
+                if sep in remaining:
+                    dir = remaining[:remaining.index(sep)]
                     if not dir in dirs:
                         dirs.append(dir)
                 else:
@@ -262,10 +267,26 @@ class MockFileSystem(object):
         self.files[source] = None
         self.written_files[source] = None
 
-    def normpath(self, path):
-        # Like join(), relies on os.path functionality but normalizes the
-        # path separator to the mock one.
+    def _slow_but_correct_normpath(self, path):
         return re.sub(re.escape(os.path.sep), self.sep, os.path.normpath(path))
+
+    def normpath(self, path):
+        # This function is called a lot, so we try to optimize the common cases
+        # instead of always calling _slow_but_correct_normpath(), above.
+        if '..' in path:
+            # This doesn't happen very often; don't bother trying to optimize it.
+            return self._slow_but_correct_normpath(path)
+        if not path:
+            return '.'
+        if path == '/':
+            return path
+        if path == '/.':
+            return '/'
+        if path.endswith('/.'):
+            return path[:-2]
+        if path.endswith('/'):
+            return path[:-1]
+        return path
 
     def open_binary_tempfile(self, suffix=''):
         path = self._mktemp(suffix)
@@ -284,6 +305,7 @@ class MockFileSystem(object):
 
     def write_binary_file(self, path, contents):
         # FIXME: should this assert if dirname(path) doesn't exist?
+        self.maybe_make_directory(self.dirname(path))
         self.files[path] = contents
         self.written_files[path] = contents
 
