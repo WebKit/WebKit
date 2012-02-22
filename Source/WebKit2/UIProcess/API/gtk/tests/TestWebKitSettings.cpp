@@ -194,6 +194,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_webaudio(settings, TRUE);
     g_assert(webkit_settings_get_enable_webaudio(settings));
 
+    // WebGL is disabled by default.
+    g_assert(!webkit_settings_get_enable_webgl(settings));
+    webkit_settings_set_enable_webgl(settings, TRUE);
+    g_assert(webkit_settings_get_enable_webgl(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

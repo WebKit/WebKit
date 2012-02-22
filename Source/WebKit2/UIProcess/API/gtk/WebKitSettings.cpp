@@ -102,7 +102,8 @@ enum {
     PROP_ENABLE_CARET_BROWSING,
     PROP_ENABLE_FULLSCREEN,
     PROP_PRINT_BACKGROUNDS,
-    PROP_ENABLE_WEBAUDIO
+    PROP_ENABLE_WEBAUDIO,
+    PROP_ENABLE_WEBGL
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -205,6 +206,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_WEBAUDIO:
         webkit_settings_set_enable_webaudio(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_WEBGL:
+        webkit_settings_set_enable_webgl(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -312,6 +316,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WEBAUDIO:
         g_value_set_boolean(value, webkit_settings_get_enable_webaudio(settings));
+        break;
+    case PROP_ENABLE_WEBGL:
+        g_value_set_boolean(value, webkit_settings_get_enable_webgl(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -791,6 +798,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("enable-webaudio",
                                                          _("Enable WebAudio"),
                                                          _("Whether WebAudio content should be handled"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+    * WebKitSettings:enable-webgl:
+    *
+    * Enable or disable support for WebGL on pages. WebGL is an experimental
+    * proposal for allowing web pages to use OpenGL ES-like calls directly. The
+    * standard is currently a work-in-progress by the Khronos Group.
+    */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_WEBGL,
+                                    g_param_spec_boolean("enable-webgl",
+                                                         _("Enable WebGL"),
+                                                         _("Whether WebGL content should be rendered"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
@@ -2015,4 +2037,39 @@ void webkit_settings_set_enable_webaudio(WebKitSettings* settings, gboolean enab
 
     WKPreferencesSetWebAudioEnabled(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-webaudio");
+}
+
+/**
+ * webkit_settings_get_enable_webgl:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-webgl property.
+ *
+ * Returns: %TRUE If webgl support is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_webgl(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetWebGLEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_webgl:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-webgl property.
+ */
+void webkit_settings_set_enable_webgl(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetWebGLEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetWebGLEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-webgl");
 }

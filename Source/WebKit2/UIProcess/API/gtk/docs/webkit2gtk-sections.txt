@@ -218,6 +218,8 @@ webkit_settings_get_print_backgrounds
 webkit_settings_set_print_backgrounds
 webkit_settings_get_enable_webaudio
 webkit_settings_set_enable_webaudio
+webkit_settings_get_enable_webgl
+webkit_settings_set_enable_webgl
 
 <SUBSECTION Standard>
 WebKitSettingsClass

@@ -300,6 +300,13 @@ WEBKIT_API void
 webkit_settings_set_enable_webaudio                            (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_webgl                               (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_webgl                               (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

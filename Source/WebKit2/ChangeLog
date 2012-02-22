@@ -1,3 +1,24 @@
+2012-02-22  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        [GTK][WK2] Add WebGL WebSetting.
+        https://bugs.webkit.org/show_bug.cgi?id=79217
+
+        Reviewed by Martin Robinson.
+
+        Add a WebSetting to enable/disable Webgl.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_set_enable_webaudio):
+        (webkit_settings_get_enable_webgl):
+        (webkit_settings_set_enable_webgl):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Disregard previous backing store as soon as possible
