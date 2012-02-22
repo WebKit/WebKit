@@ -70,7 +70,7 @@ const double TCPMaximumSegmentLifetime = 2 * 60.0;
 
 // Constants for hybi-10 frame format.
 const unsigned char finalBit = 0x80;
-const unsigned char reserved1Bit = 0x40;
+const unsigned char compressBit = 0x40;
 const unsigned char reserved2Bit = 0x20;
 const unsigned char reserved3Bit = 0x10;
 const unsigned char opCodeMask = 0xF;
@@ -547,7 +547,7 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
     unsigned char secondByte = *p++;
 
     bool final = firstByte & finalBit;
-    bool reserved1 = firstByte & reserved1Bit;
+    bool compress = firstByte & compressBit;
     bool reserved2 = firstByte & reserved2Bit;
     bool reserved3 = firstByte & reserved3Bit;
     unsigned char opCode = firstByte & opCodeMask;
@@ -596,7 +596,7 @@ WebSocketChannel::ParseFrameResult WebSocketChannel::parseFrame(WebSocketFrame& 
 
     frame.opCode = static_cast<WebSocketFrame::OpCode>(opCode);
     frame.final = final;
-    frame.reserved1 = reserved1;
+    frame.compress = compress;
     frame.reserved2 = reserved2;
     frame.reserved3 = reserved3;
     frame.masked = masked;
@@ -624,8 +624,8 @@ bool WebSocketChannel::processFrame()
         return false;
     }
 
-    if (frame.reserved1 || frame.reserved2 || frame.reserved3) {
-        fail("One or more reserved bits are on: reserved1 = " + String::number(frame.reserved1) + ", reserved2 = " + String::number(frame.reserved2) + ", reserved3 = " + String::number(frame.reserved3));
+    if (frame.reserved2 || frame.reserved3) {
+        fail("One or more reserved bits are on: reserved2 = " + String::number(frame.reserved2) + ", reserved3 = " + String::number(frame.reserved3));
         return false;
     }
 
@@ -979,6 +979,8 @@ static void appendMaskedFramePayload(const WebSocketFrame& frame, Vector<char>& 
 static void makeFrameData(const WebSocketFrame& frame, Vector<char>& frameData)
 {
     unsigned char firstByte = (frame.final ? finalBit : 0) | frame.opCode;
+    if (frame.compress)
+        firstByte |= compressBit;
     frameData.append(firstByte);
     if (frame.payloadLength <= maxPayloadLengthWithoutExtendedLengthField)
         frameData.append(maskBit | frame.payloadLength);
@@ -1008,7 +1010,7 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     ASSERT(!m_suspended);
 
     ASSERT(!(opCode & ~opCodeMask)); // Checks whether "opCode" fits in the range of opCodes.
-    WebSocketFrame frame(opCode, true, true, data, dataLength);
+    WebSocketFrame frame(opCode, true, false, true, data, dataLength);
     Vector<char> frameData;
     makeFrameData(frame, frameData);
 

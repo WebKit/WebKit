@@ -51,10 +51,10 @@ struct WebSocketFrame {
     static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
     static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
 
-    WebSocketFrame(OpCode opCode = OpCodeInvalid, bool final = false, bool masked = false, const char* payload = 0, size_t payloadLength = 0)
+    WebSocketFrame(OpCode opCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, const char* payload = 0, size_t payloadLength = 0)
         : opCode(opCode)
         , final(final)
-        , reserved1(false)
+        , compress(compress)
         , reserved2(false)
         , reserved3(false)
         , masked(masked)
@@ -65,7 +65,7 @@ struct WebSocketFrame {
 
     OpCode opCode;
     bool final;
-    bool reserved1;
+    bool compress;
     bool reserved2;
     bool reserved3;
     bool masked;

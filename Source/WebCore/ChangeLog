@@ -1,3 +1,25 @@
+2012-02-21  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Rename "reserved1" flag of WebSocketFrame to compress
+        https://bugs.webkit.org/show_bug.cgi?id=79187
+
+        WebSocket deflate-frame extension draft specification defines COMP bit.
+        http://tools.ietf.org/html/draft-tyoshino-hybi-websocket-perframe-deflate-05#page-11
+
+        Reviewed by Kent Tamura.
+
+        No new tests. http/tests/websocket/tests/hybi/reserved-bits.html is revised to follow the change.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore):
+        (WebCore::WebSocketChannel::parseFrame): "reserved1" renamed "compress".
+        (WebCore::WebSocketChannel::processFrame): Removed reserved1 flag check.
+        (WebCore::makeFrameData):
+        (WebCore::WebSocketChannel::sendFrame):
+        * websockets/WebSocketFrame.h: "reserved1" flag renamed "compress".
+        (WebCore::WebSocketFrame::WebSocketFrame):
+        (WebSocketFrame):
+
 2012-02-21  Yael Aharon  <yael.aharon@nokia.com>
 
         [Texmap] Move all TextureMapper related files to graphics/texmap

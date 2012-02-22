@@ -15,7 +15,7 @@ if (window.layoutTestController)
 
 var closeEvent;
 
-// bitNumber must be 1, 2, or 3.
+// bitNumber must be 2 or 3.
 function doTest(bitNumber)
 {
     var url = "ws://localhost:8880/websocket/tests/hybi/reserved-bits?bit=" + bitNumber;
@@ -46,7 +46,7 @@ function doTest(bitNumber)
     };
 }
 
-doTest(1);
+doTest(2);
 
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
