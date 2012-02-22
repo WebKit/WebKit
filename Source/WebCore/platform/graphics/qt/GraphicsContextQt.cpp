@@ -301,7 +301,7 @@ void GraphicsContext::restorePlatformState()
 {
     if (!m_data->layers.isEmpty() && !m_data->layers.top()->alphaMask.isNull())
         if (!--m_data->layers.top()->saveCounter)
-            endTransparencyLayer();
+            endPlatformTransparencyLayer();
 
     m_data->p()->restore();
 

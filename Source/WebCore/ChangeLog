@@ -1,3 +1,12 @@
+2012-02-22  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt] clipToImageBuffer assertion fix in debug mode on Qt.
+
+        Rubber stamped by Csaba Osztrogonác.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::restorePlatformState):
+
 2012-02-22  Adam Barth  <abarth@webkit.org>
 
         [GTK] fast/frames/frame-dead-region.html crash
