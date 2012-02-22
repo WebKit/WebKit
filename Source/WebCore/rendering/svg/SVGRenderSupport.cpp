@@ -39,6 +39,7 @@
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -264,6 +265,8 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
                     // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
                     if (child->isSVGShape())
                         toRenderSVGShape(child)->setNeedsShapeUpdate();
+                    else if (child->isSVGText())
+                        toRenderSVGText(child)->setNeedsPositioningValuesUpdate();
 
                     needsLayout = true;
                 }

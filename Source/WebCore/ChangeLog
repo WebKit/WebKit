@@ -1,3 +1,19 @@
+2012-02-22  Bear Travis  <betravis@adobe.com>
+
+        Not correctly recalculating layout for elements within nested SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=77535
+
+        Reviewed by Dirk Schulze.
+
+        Relatively positioned text is not correctly updating its position when the
+        size of its nearest viewport changes. Updating to mark text for layout when
+        viewPort size changes.
+        
+        Test: svg/repaint/inner-svg-change-viewPort-relative.svg
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren):
+
 2012-02-22  Alexei Svitkine  <asvitkine@chromium.org>
 
         [chromium] Fix remaining compositing/rubberbanding test failures
