@@ -203,10 +203,12 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        var statusBarItems = [ this.toggleFilterButton.element, this.toggleTimelineButton.element ];
+        var statusBarItems = [ this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.garbageCollectButton.element, this._glueParentButton.element ];
+
         if (WebInspector.experimentsSettings.timelineStartAtZero.isEnabled())
             statusBarItems.push(this.toggleStartAtZeroButton.element);
-        statusBarItems.push(this.garbageCollectButton.element, this.clearButton.element, this.statusBarFilters);
+
+        statusBarItems.push(this.statusBarFilters);
         return statusBarItems;
     },
 
@@ -270,6 +272,10 @@ WebInspector.TimelinePanel.prototype = {
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";
+
+        this._glueParentButton = new WebInspector.StatusBarButton(WebInspector.UIString("Glue asynchronous events to causes"), "glue-async-status-bar-item");
+        this._glueParentButton.toggled = true;
+        this._glueParentButton.addEventListener("click", this._glueParentButtonClicked, this);
 
         this.statusBarFilters = document.createElement("div");
         this.statusBarFilters.className = "status-bar-items";
@@ -456,16 +462,28 @@ WebInspector.TimelinePanel.prototype = {
         ProfilerAgent.collectGarbage();
     },
 
+    _glueParentButtonClicked: function()
+    {
+        this._glueParentButton.toggled = !this._glueParentButton.toggled;
+        this._repopulateRecords();
+    },
+
     _toggleStartAtZeroButtonClicked: function()
     {
         var toggled = !this.toggleStartAtZeroButton.toggled
+        this._glueParentButton.disabled = toggled;
         this.toggleStartAtZeroButton.toggled = toggled;
         this._calculator = toggled ? new WebInspector.TimelineStartAtZeroCalculator() : new WebInspector.TimelineCalculator();
+        this._repopulateRecords();
+        this._overviewPane.setStartAtZero(toggled);
+    },
+
+    _repopulateRecords: function()
+    {
         this._resetPanel();
         var records = this._model.records;
         for (var i = 0; i < records.length; ++i)
             this._innerAddRecordToTimeline(records[i], this._rootRecord);
-        this._overviewPane.setStartAtZero(toggled);
         this._scheduleRefresh(false);
     },
 
@@ -485,6 +503,9 @@ WebInspector.TimelinePanel.prototype = {
 
     _findParentRecord: function(record)
     {
+        if (!this._glueParentButton.toggled)
+            return null;
+
         var recordTypes = WebInspector.TimelineAgent.RecordType;
         var parentRecord;
         if (record.type === recordTypes.ResourceReceiveResponse ||
@@ -559,7 +580,6 @@ WebInspector.TimelinePanel.prototype = {
             record = formattedRecord;
             do {
                 var parent = record.parent;
-                parent._cpuTime += formattedRecord._cpuTime;
                 if (parent._lastChildEndTime < record._lastChildEndTime)
                     parent._lastChildEndTime = record._lastChildEndTime;
                 for (var category in formattedRecord._aggregatedStats)
@@ -582,7 +602,7 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(false);
         this._overviewPane.sidebarResized(width);
         // Min width = <number of buttons on the left> * 31
-        this.statusBarFilters.style.left = Math.max(9 * 31, width) + "px";
+        this.statusBarFilters.style.left = Math.max((this.statusBarItems.length + 2) * 31, width) + "px";
 
         if (this._memoryStatistics)
             this._memoryStatistics.setSidebarWidth(width);
@@ -910,8 +930,7 @@ WebInspector.TimelineCalculator.prototype = {
         var start = (record.startTime - this.minimumBoundary) / this.boundarySpan * 100;
         var end = (record.startTime + record._selfTime - this.minimumBoundary) / this.boundarySpan * 100;
         var endWithChildren = (record._lastChildEndTime - this.minimumBoundary) / this.boundarySpan * 100;
-        var cpuWidth = record._cpuTime / this.boundarySpan * 100;
-        return {start: start, end: end, endWithChildren: endWithChildren, cpuWidth: cpuWidth};
+        return {start: start, end: end, endWithChildren: endWithChildren};
     },
 
     computeBarGraphWindowPosition: function(record, clientWidth)
@@ -924,10 +943,9 @@ WebInspector.TimelineCalculator.prototype = {
         var left = percentages.start / 100 * workingArea;
         var width = (percentages.end - percentages.start) / 100 * workingArea + minWidth;
         var widthWithChildren =  (percentages.endWithChildren - percentages.start) / 100 * workingArea;
-        var cpuWidth = percentages.cpuWidth / 100 * workingArea + minWidth;
         if (percentages.endWithChildren > percentages.end)
             widthWithChildren += borderWidth + minWidth;
-        return {left: left, width: width, widthWithChildren: widthWithChildren, cpuWidth: cpuWidth};
+        return {left: left, width: width, widthWithChildren: widthWithChildren};
     },
 
     calculateWindow: function()
@@ -1106,11 +1124,6 @@ WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh)
     this._barWithChildrenElement.row = this;
     this._barAreaElement.appendChild(this._barWithChildrenElement);
 
-    this._barCpuElement = document.createElement("div");
-    this._barCpuElement.className = "timeline-graph-bar cpu"
-    this._barCpuElement.row = this;
-    this._barAreaElement.appendChild(this._barCpuElement);
-
     this._barElement = document.createElement("div");
     this._barElement.className = "timeline-graph-bar";
     this._barElement.row = this;
@@ -1132,8 +1145,6 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barWithChildrenElement.style.width = barPosition.widthWithChildren + "px";
         this._barElement.style.left = barPosition.left + expandOffset + "px";
         this._barElement.style.width =  barPosition.width + "px";
-        this._barCpuElement.style.left = barPosition.left + expandOffset + "px";
-        this._barCpuElement.style.width = barPosition.cpuWidth + "px";
         this._expandElement._update(record, index, barPosition);
     },
 
@@ -1376,7 +1387,6 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         this._aggregatedStats = {};
         for (var category in categories)
             this._aggregatedStats[category] = 0;
-        this._cpuTime = this._selfTime;
 
         if (this._children) {
             for (var index = this._children.length; index; --index) {
@@ -1384,8 +1394,6 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 for (var category in categories)
                     this._aggregatedStats[category] += child._aggregatedStats[category];
             }
-            for (var category in this._aggregatedStats)
-                this._cpuTime += this._aggregatedStats[category];
         }
         this._aggregatedStats[this.category.name] += this._selfTime;
     },

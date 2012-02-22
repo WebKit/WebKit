@@ -1,3 +1,30 @@
+2012-02-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make 'glue asynchronous events' optional.
+        https://bugs.webkit.org/show_bug.cgi?id=79240
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._glueParentButtonClicked):
+        (WebInspector.TimelinePanel.prototype._toggleStartAtZeroButtonClicked):
+        (WebInspector.TimelinePanel.prototype._repopulateRecords):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._calculateAggregatedStats):
+        * inspector/front-end/timelinePanel.css:
+        (.glue-async-status-bar-item .glyph):
+        (.timeline-start-at-zero-status-bar-item .glyph):
+
 2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [REGRESSION] Console xhr logging is broken for async xhrs since r107672.

@@ -353,10 +353,6 @@
     opacity: 0.2;
 }
 
-.timeline-graph-bar.cpu {
-    opacity: 0.6;
-}
-
 .timeline-graph-side.even {
     background-color: rgba(0, 0, 0, 0.05);
 }
@@ -455,8 +451,12 @@
     -webkit-mask-position: -128px -24px;
 }
 
-.timeline-start-at-zero-status-bar-item .glyph {
+.glue-async-status-bar-item .glyph {
     -webkit-mask-position: -128px -48px;
+}
+
+.timeline-start-at-zero-status-bar-item .glyph {
+    -webkit-mask-position: -160px -48px;
 }
 
 .timeline-start-at-zero-status-bar-item.toggled-on .glyph {
