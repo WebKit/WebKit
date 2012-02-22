@@ -1,3 +1,15 @@
+2012-02-21  Matthew Delaney  <mdelaney@apple.com>
+
+        2D Canvas setTransform makes unnecessary matrix mults
+        https://bugs.webkit.org/show_bug.cgi?id=79190
+
+        Reviewed by Dan Bernstein.
+
+        No new tests - plenty of current tests using setTransform.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setTransform):
+
 2012-02-21  MORITA Hajime <morrita@google.com>
 
         INPUT_SPEECH should be implemented as a PageSupplement.
