@@ -118,7 +118,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 
 char* JSValue::description()
 {
-    static const size_t size = 64;
+    static const size_t size = 128;
     static char description[size];
 
     if (!*this)
@@ -127,14 +127,14 @@ char* JSValue::description()
         snprintf(description, size, "Int32: %d", asInt32());
     else if (isDouble()) {
 #if USE(JSVALUE64)
-        snprintf(description, size, "Double: %lf, %lx", asDouble(), reinterpretDoubleToIntptr(asDouble()));
+        snprintf(description, size, "Double: %lx, %lf", reinterpretDoubleToIntptr(asDouble()), asDouble());
 #else
         union {
             double asDouble;
             uint32_t asTwoInt32s[2];
         } u;
         u.asDouble = asDouble();
-        snprintf(description, size, "Double: %lf, %08x:%08x", asDouble(), u.asTwoInt32s[1], u.asTwoInt32s[0]);
+        snprintf(description, size, "Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
 #endif
     } else if (isCell())
         snprintf(description, size, "Cell: %p", asCell());

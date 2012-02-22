@@ -27,10 +27,49 @@
 #include "PutByIdStatus.h"
 
 #include "CodeBlock.h"
+#include "LowLevelInterpreter.h"
 #include "Structure.h"
 #include "StructureChain.h"
 
 namespace JSC {
+
+PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
+{
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(ident);
+#if ENABLE(LLINT)
+    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+
+    Structure* structure = instruction[4].u.structure.get();
+    if (!structure)
+        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    
+    if (instruction[0].u.opcode == llint_op_put_by_id) {
+        size_t offset = structure->get(*profiledBlock->globalData(), ident);
+        if (offset == notFound)
+            return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+        
+        return PutByIdStatus(SimpleReplace, structure, 0, 0, offset);
+    }
+    
+    ASSERT(instruction[0].u.opcode == llint_op_put_by_id_transition_direct
+           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal);
+    
+    Structure* newStructure = instruction[6].u.structure.get();
+    StructureChain* chain = instruction[7].u.structureChain.get();
+    ASSERT(newStructure);
+    ASSERT(chain);
+    
+    size_t offset = newStructure->get(*profiledBlock->globalData(), ident);
+    if (offset == notFound)
+        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    
+    return PutByIdStatus(SimpleTransition, structure, newStructure, chain, offset);
+#else
+    return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+#endif
+}
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
@@ -38,16 +77,19 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(ident);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+    if (!profiledBlock->numberOfStructureStubInfos())
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
+    
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
     
     StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
     if (!stubInfo.seen)
-        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
     
     switch (stubInfo.accessType) {
     case access_unset:
-        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
         
     case access_put_by_id_replace: {
         size_t offset = stubInfo.u.putByIdReplace.baseObjectStructure->get(

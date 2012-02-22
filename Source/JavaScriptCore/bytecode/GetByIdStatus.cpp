@@ -27,8 +27,34 @@
 #include "GetByIdStatus.h"
 
 #include "CodeBlock.h"
+#include "LowLevelInterpreter.h"
 
 namespace JSC {
+
+GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
+{
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(ident);
+#if ENABLE(LLINT)
+    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+    
+    if (instruction[0].u.opcode == llint_op_method_check)
+        instruction++;
+
+    Structure* structure = instruction[4].u.structure.get();
+    if (!structure)
+        return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+    
+    size_t offset = structure->get(*profiledBlock->globalData(), ident);
+    if (offset == notFound)
+        return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+    
+    return GetByIdStatus(SimpleDirect, StructureSet(structure), offset, false);
+#else
+    return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+#endif
+}
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
@@ -36,11 +62,14 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(ident);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+    if (!profiledBlock->numberOfStructureStubInfos())
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
+    
     // First check if it makes either calls, in which case we want to be super careful, or
     // if it's not set at all, in which case we punt.
     StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
     if (!stubInfo.seen)
-        return GetByIdStatus(NoInformation, StructureSet(), notFound);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
     
     PolymorphicAccessStructureList* list;
     int listSize;
@@ -60,18 +89,19 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
     for (int i = 0; i < listSize; ++i) {
         if (!list->list[i].isDirect)
-            return GetByIdStatus(MakesCalls, StructureSet(), notFound);
+            return GetByIdStatus(MakesCalls, StructureSet(), notFound, true);
     }
     
     // Next check if it takes slow case, in which case we want to be kind of careful.
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
-        return GetByIdStatus(TakesSlowPath, StructureSet(), notFound);
+        return GetByIdStatus(TakesSlowPath, StructureSet(), notFound, true);
     
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;
+    result.m_wasSeenInJIT = true;
     switch (stubInfo.accessType) {
     case access_unset:
-        return GetByIdStatus(NoInformation, StructureSet(), notFound);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
         
     case access_get_by_id_self: {
         Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
@@ -130,7 +160,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     
     return result;
 #else // ENABLE(JIT)
-    return GetByIdStatus(NoInformation, StructureSet(), notFound);
+    return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
 #endif // ENABLE(JIT)
 }
 

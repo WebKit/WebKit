@@ -36,9 +36,10 @@
 namespace JSC {
 
     class JSGlobalObject;
-    class Structure;
+    class LLIntOffsetsExtractor;
     class PropertyDescriptor;
     class PropertyNameArray;
+    class Structure;
 
     enum EnumerationMode {
         ExcludeDontEnumProperties,
@@ -163,6 +164,8 @@ namespace JSC {
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         const ClassInfo* m_classInfo;
         WriteBarrier<Structure> m_structure;
     };

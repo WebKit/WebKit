@@ -303,7 +303,7 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
 #endif
 
     ASSERT(Heap::isMarked(cell));
-
+    
     if (isJSString(cell)) {
         JSString::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;

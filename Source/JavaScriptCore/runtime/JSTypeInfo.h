@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+    class LLIntOffsetsExtractor;
+
     static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
     static const unsigned ImplementsHasInstance = 1 << 1;
     static const unsigned OverridesHasInstance = 1 << 2;
@@ -87,6 +89,8 @@ namespace JSC {
         }
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
         bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
 

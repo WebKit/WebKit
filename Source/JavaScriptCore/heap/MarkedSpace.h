@@ -41,6 +41,7 @@ namespace JSC {
 class Heap;
 class JSCell;
 class LiveObjectIterator;
+class LLIntOffsetsExtractor;
 class WeakGCHandle;
 class SlotVisitor;
 
@@ -51,6 +52,7 @@ public:
 
     MarkedSpace(Heap*);
 
+    MarkedAllocator& firstAllocator();
     MarkedAllocator& allocatorFor(size_t);
     MarkedAllocator& allocatorFor(MarkedBlock*);
     MarkedAllocator& destructorAllocatorFor(size_t);
@@ -79,6 +81,8 @@ public:
     void didConsumeFreeList(MarkedBlock*);
 
 private:
+    friend class LLIntOffsetsExtractor;
+    
     // [ 32... 256 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
     static const size_t preciseCutoff = 256;
@@ -127,6 +131,11 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
 {
     Functor functor;
     return forEachCell(functor);
+}
+
+inline MarkedAllocator& MarkedSpace::firstAllocator()
+{
+    return m_normalSpace.preciseAllocators[0];
 }
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)

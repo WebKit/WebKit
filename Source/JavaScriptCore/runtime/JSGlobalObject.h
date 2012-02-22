@@ -44,6 +44,7 @@ namespace JSC {
     class FunctionPrototype;
     class GetterSetter;
     class GlobalCodeBlock;
+    class LLIntOffsetsExtractor;
     class NativeErrorConstructor;
     class ProgramCodeBlock;
     class RegExpConstructor;
@@ -340,6 +341,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         // FIXME: Fold reset into init.
         JS_EXPORT_PRIVATE void init(JSObject* thisValue);
         void reset(JSValue prototype);

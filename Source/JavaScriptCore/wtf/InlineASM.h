@@ -70,4 +70,11 @@
 #define HIDE_SYMBOL(name)
 #endif
 
+// FIXME: figure out how this works on all the platforms. I know that
+// on Linux, the preferred form is ".Lstuff" as opposed to "Lstuff".
+// Don't know about any of the others.
+#if PLATFORM(MAC)
+#define LOCAL_LABEL_STRING(name) "L" #name
+#endif
+
 #endif // InlineASM_h

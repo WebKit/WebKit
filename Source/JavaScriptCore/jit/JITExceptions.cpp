@@ -64,7 +64,7 @@ ExceptionHandler genericThrow(JSGlobalData* globalData, ExecState* callFrame, JS
 
 ExceptionHandler jitThrow(JSGlobalData* globalData, ExecState* callFrame, JSValue exceptionValue, ReturnAddressPtr faultLocation)
 {
-    return genericThrow(globalData, callFrame, exceptionValue, callFrame->codeBlock()->bytecodeOffset(faultLocation));
+    return genericThrow(globalData, callFrame, exceptionValue, callFrame->codeBlock()->bytecodeOffset(callFrame, faultLocation));
 }
 
 }

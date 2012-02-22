@@ -50,6 +50,7 @@ namespace JSC {
     class JSGlobalData;
     class JSValue;
     class LiveObjectIterator;
+    class LLIntOffsetsExtractor;
     class MarkedArgumentBuffer;
     class RegisterFile;
     class UString;
@@ -95,6 +96,7 @@ namespace JSC {
         // true if an allocation or collection is in progress
         inline bool isBusy();
         
+        MarkedAllocator& firstAllocatorWithoutDestructors() { return m_objectSpace.firstAllocator(); }
         MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
         MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
         CheckedBoolean tryAllocateStorage(size_t, void**);
@@ -136,12 +138,13 @@ namespace JSC {
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     private:
+        friend class CodeBlock;
+        friend class LLIntOffsetsExtractor;
         friend class MarkedSpace;
         friend class MarkedAllocator;
         friend class MarkedBlock;
         friend class CopiedSpace;
         friend class SlotVisitor;
-        friend class CodeBlock;
         template<typename T> friend void* allocateCell(Heap&);
 
         void* allocateWithDestructor(size_t);

@@ -50,6 +50,29 @@ RegisterFile* CallFrame::registerFile()
 
 #endif
 
+#if USE(JSVALUE32_64)
+unsigned CallFrame::bytecodeOffsetForNonDFGCode() const
+{
+    ASSERT(codeBlock());
+    return currentVPC() - codeBlock()->instructions().begin();
+}
+
+void CallFrame::setBytecodeOffsetForNonDFGCode(unsigned offset)
+{
+    ASSERT(codeBlock());
+    setCurrentVPC(codeBlock()->instructions().begin() + offset);
+}
+#else
+Instruction* CallFrame::currentVPC() const
+{
+    return codeBlock()->instructions().begin() + bytecodeOffsetForNonDFGCode();
+}
+void CallFrame::setCurrentVPC(Instruction* vpc)
+{
+    setBytecodeOffsetForNonDFGCode(vpc - codeBlock()->instructions().begin());
+}
+#endif
+    
 #if ENABLE(DFG_JIT)
 bool CallFrame::isInlineCallFrameSlow()
 {
@@ -142,7 +165,7 @@ CallFrame* CallFrame::trueCallerFrame()
     //    more frames above the true caller due to inlining.
 
     // Am I an inline call frame? If so, we're done.
-    if (isInlineCallFrame() || !hasReturnPC())
+    if (isInlineCallFrame())
         return callerFrame()->removeHostCallFrameFlag();
     
     // I am a machine call frame, so the question is: is my caller a machine call frame
@@ -153,7 +176,7 @@ CallFrame* CallFrame::trueCallerFrame()
     ASSERT(!machineCaller->isInlineCallFrame());
     
     // Figure out how we want to get the current code location.
-    if (hasHostCallFrameFlag() || returnAddressIsInCtiTrampoline(returnPC()))
+    if (!hasReturnPC() || returnAddressIsInCtiTrampoline(returnPC()))
         return machineCaller->trueCallFrameFromVMCode()->removeHostCallFrameFlag();
     
     return machineCaller->trueCallFrame(returnPC())->removeHostCallFrameFlag();

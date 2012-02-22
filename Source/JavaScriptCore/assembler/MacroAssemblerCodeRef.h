@@ -31,8 +31,6 @@
 #include "RefPtr.h"
 #include "UnusedParam.h"
 
-#if ENABLE(ASSEMBLER)
-
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
 // instruction address on the platform (for example, check any alignment requirements).
 #if CPU(ARM_THUMB2)
@@ -273,6 +271,14 @@ public:
     {
         ASSERT_VALID_CODE_POINTER(m_value);
     }
+    
+    static MacroAssemblerCodePtr createFromExecutableAddress(void* value)
+    {
+        ASSERT_VALID_CODE_POINTER(value);
+        MacroAssemblerCodePtr result;
+        result.m_value = value;
+        return result;
+    }
 
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
@@ -359,7 +365,5 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(ASSEMBLER)
 
 #endif // MacroAssemblerCodeRef_h

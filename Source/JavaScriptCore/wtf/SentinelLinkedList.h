@@ -86,6 +86,8 @@ public:
 
     iterator begin();
     iterator end();
+    
+    bool isEmpty() { return begin() == end(); }
 
 private:
     RawNode m_headSentinel;

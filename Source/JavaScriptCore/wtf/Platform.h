@@ -928,6 +928,12 @@
 #define ENABLE_JIT 1
 #endif
 
+/* On some of the platforms where we have a JIT, we want to also have the 
+   low-level interpreter. */
+#if !defined(ENABLE_LLINT) && ENABLE(JIT) && OS(DARWIN) && (CPU(X86) || CPU(ARM_THUMB2)) && USE(JSVALUE32_64)
+#define ENABLE_LLINT 1
+#endif
+
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 /* Enable the DFG JIT on X86 and X86_64.  Only tested on Mac and GNU/Linux. */
 #if (CPU(X86) || CPU(X86_64)) && (PLATFORM(MAC) || OS(LINUX))

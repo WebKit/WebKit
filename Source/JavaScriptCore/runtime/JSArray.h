@@ -28,6 +28,7 @@
 namespace JSC {
 
     class JSArray;
+    class LLIntOffsetsExtractor;
 
     struct SparseArrayEntry : public WriteBarrier<Unknown> {
         typedef WriteBarrier<Unknown> Base;
@@ -122,6 +123,7 @@ namespace JSC {
     };
 
     class JSArray : public JSNonFinalObject {
+        friend class LLIntOffsetsExtractor;
         friend class Walker;
 
     protected:

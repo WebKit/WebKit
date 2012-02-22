@@ -1446,6 +1446,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
     PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
     JSValue baseValue = stackFrame.args[0].jsValue();
     ASSERT(baseValue.isObject());
+    
     asObject(baseValue)->putDirect(callFrame->globalData(), ident, stackFrame.args[2].jsValue(), slot);
     
     CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
@@ -1931,7 +1932,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Entered optimize_from_loop with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+    dataLog("%p: Entered optimize_from_loop with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
 
     if (codeBlock->hasOptimizedReplacement()) {
@@ -2186,45 +2187,13 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     return result;
 }
 
-inline CallFrame* arityCheckFor(CallFrame* callFrame, RegisterFile* registerFile, CodeSpecializationKind kind)
-{
-    JSFunction* callee = asFunction(callFrame->callee());
-    ASSERT(!callee->isHostFunction());
-    CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeFor(kind);
-    int argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
-
-    // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!registerFile->grow(callFrame->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
-        return 0;
-
-    ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-
-    // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
-    size_t delta = newCodeBlock->numParameters() - argumentCountIncludingThis;
-    Register* src = callFrame->registers();
-    Register* dst = callFrame->registers() + delta;
-
-    int i;
-    int end = -CallFrame::offsetFor(argumentCountIncludingThis);
-    for (i = -1; i >= end; --i)
-        dst[i] = src[i];
-
-    end -= delta;
-    for ( ; i >= end; --i)
-        dst[i] = jsUndefined();
-
-    CallFrame* newCallFrame = CallFrame::create(dst);
-    ASSERT((void*)newCallFrame <= registerFile->end());
-    return newCallFrame;
-}
-
 DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = arityCheckFor(callFrame, stackFrame.registerFile, CodeForCall);
+    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForCall);
     if (!newCallFrame)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
 
@@ -2237,7 +2206,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = arityCheckFor(callFrame, stackFrame.registerFile, CodeForConstruct);
+    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForConstruct);
     if (!newCallFrame)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
 
@@ -2314,6 +2283,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
+    
     JSValue callee = callFrame->calleeAsValue();
 
     CallData callData;

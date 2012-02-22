@@ -585,9 +585,7 @@ private:
     {
         UNUSED_PARAM(nodeIndex);
         
-        ValueProfile* profile = m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
-        ASSERT(profile);
-        PredictedType prediction = profile->computeUpdatedPrediction();
+        PredictedType prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
@@ -1022,6 +1020,9 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // If we get here then it looks like we should definitely inline this code. Proceed
     // with parsing the code to get bytecode, so that we can then parse the bytecode.
+    // Note that if LLInt is enabled, the bytecode will always be available. Also note
+    // that if LLInt is enabled, we may inline a code block that has never been JITted
+    // before!
     CodeBlock* codeBlock = m_codeBlockCache.get(CodeBlockKey(executable, kind), expectedFunction->scope());
     if (!codeBlock)
         return false;
@@ -1722,7 +1723,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_currentIndex);
             
             if (methodCallStatus.isSet()
-                && !getByIdStatus.isSet()
+                && !getByIdStatus.wasSeenInJIT()
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 // It's monomorphic as far as we can tell, since the method_check was linked
                 // but the slow path (i.e. the normal get_by_id) never fired.
@@ -1791,7 +1792,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_get_by_id);
         }
-        case op_put_by_id: {
+        case op_put_by_id:
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal: {
             NodeIndex value = get(currentInstruction[3].u.operand);
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];

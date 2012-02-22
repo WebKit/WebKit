@@ -27,17 +27,40 @@
 #include "CallLinkStatus.h"
 
 #include "CodeBlock.h"
+#include "LLIntCallLinkInfo.h"
 
 namespace JSC {
+
+CallLinkStatus CallLinkStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex)
+{
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+#if ENABLE(LLINT)
+    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+    LLIntCallLinkInfo* callLinkInfo = instruction[4].u.callLinkInfo;
+    
+    return CallLinkStatus(callLinkInfo->lastSeenCallee.get(), false);
+#else
+    return CallLinkStatus(0, false);
+#endif
+}
 
 CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    return CallLinkStatus(
-        profiledBlock->getCallLinkInfo(bytecodeIndex).lastSeenCallee.get(),
-        profiledBlock->couldTakeSlowCase(bytecodeIndex));
+    if (!profiledBlock->numberOfCallLinkInfos())
+        return computeFromLLInt(profiledBlock, bytecodeIndex);
+    
+    if (profiledBlock->couldTakeSlowCase(bytecodeIndex))
+        return CallLinkStatus(0, true);
+    
+    JSFunction* target = profiledBlock->getCallLinkInfo(bytecodeIndex).lastSeenCallee.get();
+    if (!target)
+        return computeFromLLInt(profiledBlock, bytecodeIndex);
+    
+    return CallLinkStatus(target, false);
 #else
     return CallLinkStatus(0, false);
 #endif

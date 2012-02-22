@@ -30,6 +30,7 @@ namespace JSC {
     class JSGlobalData;
     class JSGlobalObject;
     class JSObject;
+    class LLIntOffsetsExtractor;
     class ScopeChainIterator;
     class SlotVisitor;
     
@@ -91,6 +92,8 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         static const unsigned StructureFlags = OverridesVisitChildren;
     };
 

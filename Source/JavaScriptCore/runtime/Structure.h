@@ -45,6 +45,7 @@
 
 namespace JSC {
 
+    class LLIntOffsetsExtractor;
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureChain;
@@ -206,6 +207,8 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
+        friend class LLIntOffsetsExtractor;
+        
         JS_EXPORT_PRIVATE Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*);
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
