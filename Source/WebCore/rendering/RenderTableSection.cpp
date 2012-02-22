@@ -334,14 +334,10 @@ int RenderTableSection::calcRowLogicalHeight()
     m_rowPos[0] = spacing;
 
     for (unsigned r = 0; r < m_grid.size(); r++) {
-        m_rowPos[r + 1] = 0;
-        m_grid[r].baseline = 0;
-        LayoutUnit baseline = 0;
-        int bdesc = 0;
-        int ch = m_grid[r].logicalHeight.calcMinValue(0);
-        int pos = m_rowPos[r] + ch + (m_grid[r].rowRenderer ? spacing : 0);
+        LayoutUnit baselineDescent = 0;
 
-        m_rowPos[r + 1] = max(m_rowPos[r + 1], pos);
+        // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
+        m_rowPos[r + 1] = max(m_rowPos[r] + m_grid[r].logicalHeight.calcMinValue(0), 0);
 
         Row& row = m_grid[r].row;
         unsigned totalCols = row.size();
@@ -353,10 +349,13 @@ int RenderTableSection::calcRowLogicalHeight()
             if (!cell || current.inColSpan)
                 continue;
 
-            if ((cell->row() + cell->rowSpan() - 1) > r)
+            // FIXME: We are always adding the height of a rowspan to the last rows which doesn't match
+            // other browsers. See webkit.org/b/52185 for example.
+            if ((cell->row() + cell->rowSpan() - 1) != r)
                 continue;
 
-            unsigned indx = max(r - cell->rowSpan() + 1, 0u);
+            // For row spanning cells, |r| is the last row in the span.
+            unsigned cellStartRow = cell->row();
 
             if (cell->hasOverrideHeight()) {
                 if (!statePusher.didPush()) {
@@ -370,43 +369,27 @@ int RenderTableSection::calcRowLogicalHeight()
                 cell->layoutIfNeeded();
             }
 
-            int adjustedLogicalHeight = cell->logicalHeight() - (cell->intrinsicPaddingBefore() + cell->intrinsicPaddingAfter());
-
-            ch = cell->style()->logicalHeight().calcValue(0);
-            if (document()->inQuirksMode() || cell->style()->boxSizing() == BORDER_BOX) {
-                // Explicit heights use the border box in quirks mode.
-                // Don't adjust height.
-            } else {
-                // In strict mode, box-sizing: content-box do the right
-                // thing and actually add in the border and padding.
-                int adjustedPaddingBefore = cell->paddingBefore() - cell->intrinsicPaddingBefore();
-                int adjustedPaddingAfter = cell->paddingAfter() - cell->intrinsicPaddingAfter();
-                ch += adjustedPaddingBefore + adjustedPaddingAfter + cell->borderBefore() + cell->borderAfter();
-            }
-            ch = max(ch, adjustedLogicalHeight);
-
-            pos = m_rowPos[indx] + ch + (m_grid[r].rowRenderer ? spacing : 0);
-
-            m_rowPos[r + 1] = max(m_rowPos[r + 1], pos);
+            int cellLogicalHeight = cell->logicalHeightForRowSizing();
+            m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
 
             // find out the baseline
             EVerticalAlign va = cell->style()->verticalAlign();
             if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB) {
-                int b = cell->cellBaselinePosition();
-                if (b > cell->borderBefore() + cell->paddingBefore()) {
-                    baseline = max<LayoutUnit>(baseline, b - cell->intrinsicPaddingBefore());
-                    bdesc = max(bdesc, m_rowPos[indx] + ch - (b - cell->intrinsicPaddingBefore()));
+                int baselinePosition = cell->cellBaselinePosition();
+                if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
+                    m_grid[r].baseline = max(m_grid[r].baseline, baselinePosition - cell->intrinsicPaddingBefore());
+                    baselineDescent = max(baselineDescent, m_rowPos[cellStartRow] + cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
                 }
             }
         }
 
         // do we have baseline aligned elements?
-        if (baseline) {
+        if (m_grid[r].baseline)
             // increase rowheight if baseline requires
-            m_rowPos[r + 1] = max(m_rowPos[r + 1], baseline + bdesc + (m_grid[r].rowRenderer ? spacing : 0));
-            m_grid[r].baseline = baseline;
-        }
+            m_rowPos[r + 1] = max(m_rowPos[r + 1], m_grid[r].baseline + baselineDescent);
 
+        // Add the border-spacing to our final position.
+        m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
         m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r]);
     }
 
