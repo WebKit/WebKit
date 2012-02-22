@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,10 @@ private:
     void didCloseNotifications(const Vector<uint64_t>& notificationIDs);
     void didUpdateNotificationDecision(const String& originString, bool allowed);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
+    
+#if ENABLE(NOTIFICATIONS)
+    void removeNotificationFromContextMap(uint64_t notificationID, WebCore::Notification*);
+#endif
 
     WebProcess* m_process;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,7 +145,16 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
     if (it == m_notificationContextMap.end())
         return;
     
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(it->second), page->pageID());
+    Vector<uint64_t>& notificationIDs = it->second;
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(notificationIDs), page->pageID());
+    size_t count = notificationIDs.size();
+    for (size_t i = 0; i < count; ++i) {
+        RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
+        if (!notification)
+            continue;
+        m_notificationMap.remove(notification);
+    }
+    
     m_notificationContextMap.remove(it);
 #endif
 }
@@ -157,7 +166,8 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
     if (!notificationID)
         return;
 
-    m_notificationIDMap.take(notificationID);
+    m_notificationIDMap.remove(notificationID);
+    removeNotificationFromContextMap(notificationID, notification);
     m_process->connection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), page->pageID());
 #endif
 }
@@ -199,19 +209,30 @@ void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notif
         if (!isNotificationIDValid(notificationID))
             continue;
 
-        RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+        RefPtr<Notification> notification = m_notificationIDMap.take(notificationID);
         if (!notification)
             continue;
 
-        NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
-        ASSERT(it != m_notificationContextMap.end());
-        size_t index = it->second.find(notificationID);
-        ASSERT(index != notFound);
-        it->second.remove(index);
+        m_notificationMap.remove(notification);
+        removeNotificationFromContextMap(notificationID, notification.get());
 
         notification->dispatchCloseEvent();
     }
 #endif
 }
+
+#if ENABLE(NOTIFICATIONS)
+void WebNotificationManager::removeNotificationFromContextMap(uint64_t notificationID, Notification* notification)
+{
+    // This is a helper function for managing the hash maps.
+    NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
+    ASSERT(it != m_notificationContextMap.end());
+    size_t index = it->second.find(notificationID);
+    ASSERT(index != notFound);
+    it->second.remove(index);
+    if (it->second.isEmpty())
+        m_notificationContextMap.remove(it);
+}
+#endif
 
 } // namespace WebKit

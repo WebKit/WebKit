@@ -1,3 +1,23 @@
+2012-02-16  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Clearing notifications does not clean up internal state
+        https://bugs.webkit.org/show_bug.cgi?id=78861
+        <rdar://problem/10881167>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::clearNotifications): This function was missing removing the notification
+        entries from the other maps.
+        (WebKit::WebNotificationManager::didDestroyNotification): When the notification is destroyed, it should
+        also be removed from the context map.
+        (WebKit::WebNotificationManager::didCloseNotifications): Refactor to pull out the code that removes
+        a provided notification from the context map.
+        (WebKit::WebNotificationManager::removeNotificationFromContextMap): Find the notification in the map, and
+        remove it. If the map is empty, get rid of the entry.
+        * WebProcess/Notifications/WebNotificationManager.h:
+        (WebNotificationManager):
+
 2012-02-22  Jon Lee  <jonlee@apple.com>
 
         Code cleanup in WebNotificationManager (79285)
