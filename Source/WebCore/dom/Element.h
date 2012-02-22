@@ -394,6 +394,9 @@ public:
 
     const AtomicString& webkitRegionOverflow() const;
 
+    bool hasID() const;
+    bool hasClass() const;
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
@@ -695,6 +698,27 @@ inline Element* firstElementChild(const ContainerNode* container)
     while (child && !child->isElementNode())
         child = child->nextSibling();
     return static_cast<Element*>(child);
+}
+
+inline bool Element::hasID() const
+{
+    return attributeData() && attributeData()->hasID();
+}
+
+inline bool Element::hasClass() const
+{
+    return attributeData() && attributeData()->hasClass();
+}
+
+// Put here to make them inline.
+inline bool Node::hasID() const
+{
+    return isElementNode() && toElement(this)->hasID();
+}
+
+inline bool Node::hasClass() const
+{
+    return isElementNode() && toElement(this)->hasClass();
 }
 
 } // namespace

@@ -84,7 +84,6 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
             break;
     }
     bool hasClass = i < length;
-    setHasClass(hasClass);
     if (hasClass) {
         const bool shouldFoldCase = document()->inQuirksMode();
         ensureAttributeData()->setClass(newClassString, shouldFoldCase);

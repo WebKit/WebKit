@@ -697,7 +697,6 @@ void Element::attributeChanged(Attribute* attr)
 
 void Element::idAttributeChanged(Attribute* attr)
 {
-    setHasID(!attr->isNull());
     if (attributeData()) {
         if (attr->isNull())
             attributeData()->setIdForStyleResolution(nullAtom);

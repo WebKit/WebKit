@@ -1,3 +1,35 @@
+2012-02-21  MORITA Hajime  <morrita@google.com>
+
+        HasIDFlag and HasClassFlag can be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=77861
+
+        Reviewed by Andreas Kling.
+
+        Replaced HasIDFlag and HasClassFlag with a check against
+        ElementAttributeData. It looks these flags (originally bitfields)
+        were legacy of ancient era, where we didn't cache @id and @class
+        values and needed a hash lookup for each check.
+
+        No new tests. No behavioral change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::idAttributeChanged):
+        * dom/Element.h:
+        (WebCore::Element::hasID):
+        (WebCore):
+        (WebCore::Element::hasClass):
+        (WebCore::Node::hasID):
+        (WebCore::Node::hasClass):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::hasID):
+        (WebCore::ElementAttributeData::hasClass):
+        (ElementAttributeData):
+        * dom/Node.h:
+        (Node):
+        (WebCore::nodeStyleChangeShift):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+
 2012-02-21  Matthew Delaney  <mdelaney@apple.com>
 
         2D Canvas setTransform makes unnecessary matrix mults
