@@ -1,3 +1,30 @@
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
+        Enable ScrollingCoordinator in chromium whenever compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=79165
+
+        Reviewed by Adam Barth.
+
+        As the title says.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+            Remove ASSERT_NOT_REACHED()ed from these functions, they are now expected to be called but do nothing.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+            Guard a mac-specific piece of code in #if PLATFORM(MAC). This code already has a FIXME.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::shouldCompositeOverflowControls):
+            Make coordinatesScroll..() sufficient but not necessary for compositing overflow controls. In chromium, we
+            want to composite overflow controls even for FrameViews that we aren't coordinating via the
+            ScrollingCoordinator.
+
 2012-02-21  Adam Klein  <adamk@chromium.org>
 
         Setting innerText causes DOMSubtreeModified to be dispatched too early

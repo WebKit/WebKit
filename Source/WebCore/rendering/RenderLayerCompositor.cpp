@@ -1712,7 +1712,8 @@ static bool shouldCompositeOverflowControls(FrameView* view)
 
     if (Page* page = view->frame()->page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            return scrollingCoordinator->coordinatesScrollingForFrameView(view);
+            if (scrollingCoordinator->coordinatesScrollingForFrameView(view))
+                return true;
     }
 
 #if !PLATFORM(CHROMIUM)

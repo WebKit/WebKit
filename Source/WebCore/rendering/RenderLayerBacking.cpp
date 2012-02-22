@@ -101,9 +101,11 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
         if (page && frame && page->mainFrame() == frame) {
             m_isMainFrameRenderViewLayer = true;
 
+#if PLATFORM(MAC)
             // FIXME: It's a little weird that we base this decision on whether there's a scrolling coordinator or not.
             if (page->scrollingCoordinator())
                 m_usingTiledCacheLayer = true;
+#endif
         }
     }
     

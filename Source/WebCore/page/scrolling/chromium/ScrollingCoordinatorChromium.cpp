@@ -36,25 +36,21 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
 void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
@@ -62,19 +58,16 @@ void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScroll
                                                bool hasEnabledHorizontalScrollbar, bool hasEnabledVerticalScrollbar,
                                                const IntRect& viewportRect, const IntSize& contentsSize)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
 void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 
 void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
 {
-    ASSERT_NOT_REACHED();
     // FIXME: Implement!
 }
 

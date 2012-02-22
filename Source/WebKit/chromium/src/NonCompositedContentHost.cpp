@@ -27,6 +27,7 @@
 
 #include "NonCompositedContentHost.h"
 
+#include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
@@ -103,6 +104,7 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
 
     m_viewportSize = viewportSize;
     scrollLayer()->setScrollPosition(scrollPosition);
+    scrollLayer()->setPosition(-scrollPosition);
     // Due to the possibility of pinch zoom, the noncomposited layer is always
     // assumed to be scrollable.
     scrollLayer()->setScrollable(true);
