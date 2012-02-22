@@ -71,6 +71,8 @@ class FileLock(object):
                     os.close(self._lock_file_descriptor)
                     self._lock_file_descriptor = None
                     return False
+                # There's no compelling reason to spin hard here, so sleep for a bit.
+                time.sleep(0.01)
 
     def release_lock(self):
         try:

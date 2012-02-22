@@ -36,8 +36,8 @@ class FileLockTest(unittest.TestCase):
     def setUp(self):
         self._lock_name = "TestWebKit" + str(os.getpid()) + ".lock"
         self._lock_path = os.path.join(tempfile.gettempdir(), self._lock_name)
-        self._file_lock1 = FileLock(self._lock_path, 1)
-        self._file_lock2 = FileLock(self._lock_path, 1)
+        self._file_lock1 = FileLock(self._lock_path, 0.1)
+        self._file_lock2 = FileLock(self._lock_path, 0.1)
 
     def tearDown(self):
         self._file_lock1.release_lock()
