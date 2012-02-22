@@ -774,11 +774,7 @@ class Manager(object):
             worker_state = _WorkerState(worker_number, worker_connection)
             self._worker_states[worker_connection.name()] = worker_state
 
-            # FIXME: If we start workers up too quickly, DumpRenderTree appears
-            # to thrash on something and time out its first few tests. Until
-            # we can figure out what's going on, sleep a bit in between
-            # workers. This needs a bug filed.
-            time.sleep(0.1)
+            time.sleep(self._port.worker_startup_delay_secs())
 
         self._printer.print_update("Starting testing ...")
         for shard in all_shards:

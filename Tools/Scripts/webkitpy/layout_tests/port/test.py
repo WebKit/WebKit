@@ -371,6 +371,9 @@ class TestPort(Port):
     def default_worker_model(self):
         return 'inline'
 
+    def worker_startup_delay_secs(self):
+        return 0
+
     def check_build(self, needs_http):
         return True
 

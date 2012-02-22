@@ -1,3 +1,22 @@
+2012-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: make the delay between starting workers configurable per-port
+        https://bugs.webkit.org/show_bug.cgi?id=79148
+
+        Reviewed by Eric Seidel.
+
+        Because of bug 79147, we have to sleep a bit in between starting
+        DRTs; however, doing so across the board slows down the Test
+        port. Making this configurable shaves 10 seconds off of
+        run_webkit_tests_integrationtest.py
+        
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.worker_startup_delay_secs):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.worker_startup_delay_secs):
+
 2012-02-21  Jon Lee  <jonlee@apple.com>
 
         Bring notifications support to WK1 mac
