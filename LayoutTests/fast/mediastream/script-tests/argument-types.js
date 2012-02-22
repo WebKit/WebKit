@@ -55,8 +55,8 @@ test('new webkitPeerConnection("STUN NONE")', true, 'TypeError: Not enough argum
 test('new webkitPeerConnection("STUNS NONE")', true, 'TypeError: Not enough arguments');
 test('new webkitPeerConnection("undefined")', true, 'TypeError: Not enough arguments');
 test('new webkitPeerConnection("null")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection({}))', true, 'SyntaxError: Unexpected token )');
-test('new webkitPeerConnection(42))', true, 'SyntaxError: Unexpected token )');
+test('new webkitPeerConnection({})', true, 'TypeError: Not enough arguments');
+test('new webkitPeerConnection(42)', true, 'TypeError: Not enough arguments');
 test('new webkitPeerConnection(Infinity)', true, 'TypeError: Not enough arguments');
 test('new webkitPeerConnection(-Infinity)', true, 'TypeError: Not enough arguments');
 test('new webkitPeerConnection(emptyFunction)', true, 'TypeError: Not enough arguments');

@@ -23,8 +23,8 @@ PASS new webkitPeerConnection("STUN NONE") threw exception TypeError: Not enough
 PASS new webkitPeerConnection("STUNS NONE") threw exception TypeError: Not enough arguments.
 PASS new webkitPeerConnection("undefined") threw exception TypeError: Not enough arguments.
 PASS new webkitPeerConnection("null") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection({})) threw exception SyntaxError: Unexpected token ).
-PASS new webkitPeerConnection(42)) threw exception SyntaxError: Unexpected token ).
+PASS new webkitPeerConnection({}) threw exception TypeError: Not enough arguments.
+PASS new webkitPeerConnection(42) threw exception TypeError: Not enough arguments.
 PASS new webkitPeerConnection(Infinity) threw exception TypeError: Not enough arguments.
 PASS new webkitPeerConnection(-Infinity) threw exception TypeError: Not enough arguments.
 PASS new webkitPeerConnection(emptyFunction) threw exception TypeError: Not enough arguments.
