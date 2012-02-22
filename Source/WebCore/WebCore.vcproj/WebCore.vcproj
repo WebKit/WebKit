@@ -27573,6 +27573,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FractionalLayoutRect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FractionalLayoutRect.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FractionalLayoutSize.cpp"
 					>
 				</File>

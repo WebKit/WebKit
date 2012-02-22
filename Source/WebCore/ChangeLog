@@ -1,3 +1,88 @@
+2012-02-21  Emil A Eklund  <eae@chromium.org>
+
+        Add FractionalLayoutRect for sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=78924
+
+        Reviewed by Eric Seidel.
+
+        Add FractionalLayoutUnit version of Rect class. Uses FractionalLayoutPoint
+        and FractionalLayoutSize internally.
+
+        Also add conversions to int/float versions of same.
+
+        No new tests.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::FloatRect):
+        (WebCore):
+        * platform/graphics/FloatRect.h:
+        (WebCore):
+        (FloatRect):
+        * platform/graphics/FractionalLayoutRect.cpp: Added.
+        (WebCore):
+        (WebCore::FractionalLayoutRect::FractionalLayoutRect):
+        (WebCore::FractionalLayoutRect::intersects):
+        (WebCore::FractionalLayoutRect::contains):
+        (WebCore::FractionalLayoutRect::intersect):
+        (WebCore::FractionalLayoutRect::unite):
+        (WebCore::FractionalLayoutRect::uniteIfNonZero):
+        (WebCore::FractionalLayoutRect::scale):
+        (WebCore::unionRect):
+        (WebCore::enclosingIntRect):
+        (WebCore::enclosingFractionalLayoutRect):
+        (WebCore::pixelSnappedIntRect):
+        * platform/graphics/FractionalLayoutRect.h: Added.
+        (WebCore):
+        (FractionalLayoutRect):
+        (WebCore::FractionalLayoutRect::FractionalLayoutRect):
+        (WebCore::FractionalLayoutRect::location):
+        (WebCore::FractionalLayoutRect::size):
+        (WebCore::FractionalLayoutRect::setLocation):
+        (WebCore::FractionalLayoutRect::setSize):
+        (WebCore::FractionalLayoutRect::x):
+        (WebCore::FractionalLayoutRect::y):
+        (WebCore::FractionalLayoutRect::maxX):
+        (WebCore::FractionalLayoutRect::maxY):
+        (WebCore::FractionalLayoutRect::width):
+        (WebCore::FractionalLayoutRect::height):
+        (WebCore::FractionalLayoutRect::setX):
+        (WebCore::FractionalLayoutRect::setY):
+        (WebCore::FractionalLayoutRect::setWidth):
+        (WebCore::FractionalLayoutRect::setHeight):
+        (WebCore::FractionalLayoutRect::isEmpty):
+        (WebCore::FractionalLayoutRect::center):
+        (WebCore::FractionalLayoutRect::move):
+        (WebCore::FractionalLayoutRect::moveBy):
+        (WebCore::FractionalLayoutRect::expand):
+        (WebCore::FractionalLayoutRect::contract):
+        (WebCore::FractionalLayoutRect::shiftXEdgeTo):
+        (WebCore::FractionalLayoutRect::shiftMaxXEdgeTo):
+        (WebCore::FractionalLayoutRect::shiftYEdgeTo):
+        (WebCore::FractionalLayoutRect::shiftMaxYEdgeTo):
+        (WebCore::FractionalLayoutRect::minXMinYCorner):
+        (WebCore::FractionalLayoutRect::maxXMinYCorner):
+        (WebCore::FractionalLayoutRect::minXMaxYCorner):
+        (WebCore::FractionalLayoutRect::maxXMaxYCorner):
+        (WebCore::FractionalLayoutRect::contains):
+        (WebCore::FractionalLayoutRect::inflateX):
+        (WebCore::FractionalLayoutRect::inflateY):
+        (WebCore::FractionalLayoutRect::inflate):
+        (WebCore::FractionalLayoutRect::transposedRect):
+        (WebCore::FractionalLayoutRect::infiniteRect):
+        (WebCore::intersection):
+        (WebCore::unionRect):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::IntRect):
+        (WebCore):
+        * platform/graphics/IntRect.h:
+        (WebCore):
+        (IntRect):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         Enable ScrollingCoordinator in chromium whenever compositing is enabled

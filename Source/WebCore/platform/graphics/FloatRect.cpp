@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 
 #include "FloatConversion.h"
+#include "FractionalLayoutRect.h"
 #include "IntRect.h"
 #include <algorithm>
 #include <math.h>
@@ -39,6 +40,10 @@ using std::min;
 namespace WebCore {
 
 FloatRect::FloatRect(const IntRect& r) : m_location(r.location()), m_size(r.size())
+{
+}
+
+FloatRect::FloatRect(const FractionalLayoutRect& r) : m_location(r.location()), m_size(r.size())
 {
 }
 
