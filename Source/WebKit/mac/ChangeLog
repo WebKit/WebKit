@@ -1,3 +1,19 @@
+2012-02-21  Jon Lee  <jonlee@apple.com>
+
+        Build fix. Push ENABLE_NOTIFICATIONS into .mm file.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebView/WebNotification.h:
+        * WebView/WebNotification.mm:
+        (-[WebNotification title]):
+        (-[WebNotification body]):
+        (-[WebNotification origin]):
+        (-[WebNotification notificationID]):
+        (-[WebNotification dispatchShowEvent]):
+        (-[WebNotification dispatchCloseEvent]):
+        (-[WebNotification dispatchClickEvent]):
+        (-[WebNotification dispatchErrorEvent]):
+
 2012-02-21  John Sullivan  <sullivan@apple.com>
 
         Build fix.

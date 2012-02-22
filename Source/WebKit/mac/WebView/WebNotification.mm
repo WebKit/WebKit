@@ -28,30 +28,33 @@
 
 #import "WebNotification.h"
 
-#if ENABLE(NOTIFICATIONS)
-
 #import "WebNotificationInternal.h"
+
+#if ENABLE(NOTIFICATIONS)
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/Notification.h>
 #import <WebCore/ScriptExecutionContext.h>
-#import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
 using namespace WebCore;
+#endif
 
 OBJC_CLASS WebNotificationInternal;
 
 @interface WebNotificationPrivate : NSObject
 {
 @public
+#if ENABLE(NOTIFICATIONS)
     RefPtr<Notification> _internal;
     uint64_t _notificationID;
+#endif
 }
 @end
 
 @implementation WebNotificationPrivate
 @end
 
+#if ENABLE(NOTIFICATIONS)
 @implementation WebNotification (WebNotificationInternal)
 Notification* core(WebNotification *notification)
 {
@@ -70,6 +73,7 @@ Notification* core(WebNotification *notification)
     return self;
 }
 @end
+#endif
 
 @implementation WebNotification
 - (id)init
@@ -79,58 +83,75 @@ Notification* core(WebNotification *notification)
 
 - (NSString *)title
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     return core(self)->contents().title;
+#else
+    return nil;
+#endif
 }
 
 - (NSString *)body
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     return core(self)->contents().body;
+#else
+    return nil;
+#endif
 }
 
 - (WebSecurityOrigin *)origin
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:core(self)->scriptExecutionContext()->securityOrigin()] autorelease];
+#else
+    return nil;
+#endif
 }
 
 - (uint64_t)notificationID
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     return _private->_notificationID;
+#else
+    return 0;
+#endif
 }
 
 - (void)dispatchShowEvent
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     core(self)->dispatchShowEvent();
+#endif
 }
 
 - (void)dispatchCloseEvent
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     core(self)->dispatchCloseEvent();
+#endif
 }
 
 - (void)dispatchClickEvent
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     core(self)->dispatchClickEvent();
+#endif
 }
 
 - (void)dispatchErrorEvent
 {
+#if ENABLE(NOTIFICATIONS)
     ASSERT(core(self));
     core(self)->dispatchErrorEvent();
+#endif
 }
 
 @end
-
-#else
-
-@implementation WebNotification
-@end
-
-#endif // ENABLE(NOTIFICATIONS)
 

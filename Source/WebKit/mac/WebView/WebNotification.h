@@ -26,19 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(NOTIFICATIONS)
 @class WebNotificationPrivate;
 @class WebSecurityOrigin;
-#endif
 
 @interface WebNotification : NSObject
 {
-#if ENABLE(NOTIFICATIONS)
     WebNotificationPrivate *_private;
-#endif
 }
 
-#if ENABLE(NOTIFICATIONS)
 - (NSString *)title;
 - (NSString *)body;
 - (WebSecurityOrigin *)origin;
@@ -48,6 +43,5 @@
 - (void)dispatchCloseEvent;
 - (void)dispatchClickEvent;
 - (void)dispatchErrorEvent;
-#endif
 
 @end
