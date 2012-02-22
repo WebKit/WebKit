@@ -416,87 +416,6 @@ static void test_webkit_web_view_does_not_steal_focus()
     g_main_loop_unref(loop);
 }
 
-static gboolean emitKeyStroke(WebKitWebView* webView)
-{
-    GdkEvent* pressEvent = gdk_event_new(GDK_KEY_PRESS);
-    pressEvent->key.keyval = GDK_KEY_f;
-    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(webView));
-    pressEvent->key.window = window;
-    g_object_ref(pressEvent->key.window);
-
-    GdkDeviceManager* manager = gdk_display_get_device_manager(gdk_window_get_display(window));
-    gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(manager));
-
-    // When synthesizing an event, an invalid hardware_keycode value
-    // can cause it to be badly processed by Gtk+.
-    GdkKeymapKey* keys;
-    gint n_keys;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), GDK_KEY_f, &keys, &n_keys)) {
-        pressEvent->key.hardware_keycode = keys[0].keycode;
-        g_free(keys);
-    }
-
-    GdkEvent* releaseEvent = gdk_event_copy(pressEvent);
-    gtk_main_do_event(pressEvent);
-    gdk_event_free(pressEvent);
-    releaseEvent->key.type = GDK_KEY_RELEASE;
-    gtk_main_do_event(releaseEvent);
-    gdk_event_free(releaseEvent);
-
-    return FALSE;
-}
-
-static gboolean entering_fullscreen_cb(WebKitWebView* webView, GObject* element, gboolean blocked)
-{
-    if (blocked)
-        g_main_loop_quit(loop);
-    else
-        g_timeout_add(200, (GSourceFunc) emitKeyStroke, webView);
-    return blocked;
-}
-
-static gboolean leaving_fullscreen_cb(WebKitWebView* webView, GObject* element, gpointer data)
-{
-    g_main_loop_quit(loop);
-    return FALSE;
-}
-
-static void test_webkit_web_view_fullscreen(gconstpointer blocked)
-{
-    GtkWidget* window;
-    GtkWidget* web_view;
-    WebKitWebSettings *settings;
-
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    web_view = webkit_web_view_new();
-
-    settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(web_view));
-    g_object_set(settings, "enable-fullscreen", TRUE, NULL);
-    webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
-
-    gtk_container_add(GTK_CONTAINER(window), web_view);
-
-    gtk_widget_show_all(window);
-
-    loop = g_main_loop_new(NULL, TRUE);
-
-    g_signal_connect(web_view, "entering-fullscreen", G_CALLBACK(entering_fullscreen_cb), (gpointer) blocked);
-    g_signal_connect(web_view, "leaving-fullscreen", G_CALLBACK(leaving_fullscreen_cb), NULL);
-
-    webkit_web_view_load_string(WEBKIT_WEB_VIEW(web_view), "<html><body>"
-                   "<script>"
-                   "var eventName = 'keypress';"
-                   "document.addEventListener(eventName, function () {"
-                   "    document.documentElement.webkitRequestFullScreen();"
-                   "}, false);"
-                   "</script></body></html>", NULL, NULL, NULL);
-
-    g_timeout_add(100, (GSourceFunc) emitKeyStroke, WEBKIT_WEB_VIEW(web_view));
-    g_main_loop_run(loop);
-
-    gtk_widget_destroy(window);
-}
-
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -526,8 +445,6 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/window-features", test_webkit_web_view_window_features);
     g_test_add_func("/webkit/webview/webview-in-offscreen-window-does-not-crash", test_webkit_web_view_in_offscreen_window_does_not_crash);
     g_test_add_func("/webkit/webview/webview-does-not-steal-focus", test_webkit_web_view_does_not_steal_focus);
-    g_test_add_data_func("/webkit/webview/fullscreen", GINT_TO_POINTER(FALSE), test_webkit_web_view_fullscreen);
-    g_test_add_data_func("/webkit/webview/fullscreen-blocked", GINT_TO_POINTER(TRUE), test_webkit_web_view_fullscreen);
 
     return g_test_run ();
 }

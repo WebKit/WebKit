@@ -155,7 +155,6 @@ namespace WebKit {
         virtual bool supportsFullScreenForElement(const Element*, bool withKeyboard);
         virtual void enterFullScreenForElement(Element*);
         virtual void exitFullScreenForElement(Element*);
-        void cancelFullScreen();
 #endif
 
         virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
@@ -187,9 +186,6 @@ namespace WebKit {
         unsigned int m_repaintSoonSourceId;
 
         void invalidateWidgetRect(const IntRect&);
-#if ENABLE(FULLSCREEN_API)
-        RefPtr<Element> m_fullScreenElement;
-#endif
     };
 }
 

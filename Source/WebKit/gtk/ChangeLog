@@ -1,3 +1,23 @@
+2012-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r108522.
+        http://trac.webkit.org/changeset/108522
+        https://bugs.webkit.org/show_bug.cgi?id=76181
+
+        Broke 4 fullscreen tests on GTK.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullScreenForElement):
+        (WebKit::ChromeClient::enterFullScreenForElement):
+        (WebKit::ChromeClient::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient):
+        * tests/testwebview.c:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        * webkit/webkitwebview.h:
+        (_WebKitWebViewClass):
+
 2012-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] FullScreen signals

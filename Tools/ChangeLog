@@ -1,3 +1,15 @@
+2012-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r108522.
+        http://trac.webkit.org/changeset/108522
+        https://bugs.webkit.org/show_bug.cgi?id=76181
+
+        Broke 4 fullscreen tests on GTK.
+
+        * GtkLauncher/main.c:
+        (createBrowser):
+        (createWindow):
+
 2012-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] FullScreen signals
