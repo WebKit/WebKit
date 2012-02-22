@@ -79,7 +79,6 @@ ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
     , m_adjustmentWatcher(webView)
     , m_closeSoonTimer(0)
-    , m_modalLoop(0)
     , m_displayTimer(this, &ChromeClient::paint)
     , m_lastDisplayTime(0)
     , m_repaintSoonSourceId(0)
@@ -94,9 +93,6 @@ void ChromeClient::chromeDestroyed()
 
     if (m_repaintSoonSourceId)
         g_source_remove(m_repaintSoonSourceId);
-
-    if (m_modalLoop)
-        g_main_loop_quit(m_modalLoop);
 
     delete this;
 }
@@ -184,26 +180,13 @@ void ChromeClient::show()
 
 bool ChromeClient::canRunModal()
 {
-    return true;
+    notImplemented();
+    return false;
 }
 
 void ChromeClient::runModal()
 {
-    gboolean isHandled = false;
-    g_signal_emit_by_name(m_webView, "run-modal-dialog", &isHandled);
-    if (!isHandled)
-        return;
-
-    GMainContext* threadDefaultContext = g_main_context_ref_thread_default();
-    g_main_context_acquire(threadDefaultContext);
-
-    m_modalLoop = g_main_loop_new(threadDefaultContext, FALSE);
-    g_main_loop_run(m_modalLoop);
-    g_main_loop_unref(m_modalLoop);
-    m_modalLoop = 0;
-
-    g_main_context_release(threadDefaultContext);
-    g_main_context_unref(threadDefaultContext);
+    notImplemented();
 }
 
 void ChromeClient::setToolbarsVisible(bool visible)
