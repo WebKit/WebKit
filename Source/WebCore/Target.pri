@@ -2866,8 +2866,7 @@ contains(DEFINES, HAVE_QSTYLE=1) {
     HEADERS += platform/qt/QtStyleOptionWebComboBox.h \
                platform/qt/RenderThemeQStyle.h \
                platform/qt/ScrollbarThemeQt.h
-    SOURCES += platform/qt/RenderThemeQStyle.cpp \
-               platform/qt/ScrollbarQt.cpp
+    SOURCES += platform/qt/RenderThemeQStyle.cpp
 }
 
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {

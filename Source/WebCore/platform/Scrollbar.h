@@ -103,13 +103,6 @@ public:
 
     bool mouseDown(const PlatformMouseEvent&);
 
-#if PLATFORM(QT)
-    // For platforms that wish to handle context menu events.
-    // FIXME: This is misplaced.  Normal hit testing should be used to populate a correct
-    // context menu.  There's no reason why the scrollbar should have to do it.
-    bool contextMenu(const PlatformMouseEvent& event);
-#endif
-
     ScrollbarTheme* theme() const { return m_theme; }
 
     virtual void setParent(ScrollView*);
@@ -128,6 +121,8 @@ public:
     virtual IntPoint convertToContainingView(const IntPoint&) const;
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
+    void moveThumb(int pos, bool draggingDocument = false);
+
 protected:
     Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 
@@ -142,8 +137,6 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
     
-    void moveThumb(int pos, bool draggingDocument = false);
-
     ScrollableArea* m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;

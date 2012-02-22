@@ -105,6 +105,7 @@
 #include "RenderThemeQt.h"
 #include "SchemeRegistry.h"
 #include "Scrollbar.h"
+#include "ScrollbarTheme.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #if defined Q_OS_WIN32
@@ -3224,6 +3225,55 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
 }
 
 #ifndef QT_NO_CONTEXTMENU
+
+static bool handleScrollbarContextMenuEvent(Scrollbar* scrollBar, QContextMenuEvent* event)
+{
+    if (!QApplication::style()->styleHint(QStyle::SH_ScrollBar_ContextMenu))
+        return true;
+
+    bool horizontal = (scrollBar->orientation() == HorizontalScrollbar);
+
+    QMenu menu;
+    QAction* actScrollHere = menu.addAction(QCoreApplication::translate("QWebPage", "Scroll here"));
+    menu.addSeparator();
+
+    QAction* actScrollTop = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Left edge") : QCoreApplication::translate("QWebPage", "Top"));
+    QAction* actScrollBottom = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Right edge") : QCoreApplication::translate("QWebPage", "Bottom"));
+    menu.addSeparator();
+
+    QAction* actPageUp = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Page left") : QCoreApplication::translate("QWebPage", "Page up"));
+    QAction* actPageDown = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Page right") : QCoreApplication::translate("QWebPage", "Page down"));
+    menu.addSeparator();
+
+    QAction* actScrollUp = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll left") : QCoreApplication::translate("QWebPage", "Scroll up"));
+    QAction* actScrollDown = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll right") : QCoreApplication::translate("QWebPage", "Scroll down"));
+
+    QAction* actionSelected = menu.exec(event->globalPos());
+
+    if (actionSelected == actScrollHere) {
+        ScrollbarTheme* theme = scrollBar->theme();
+        // Set the pressed position to the middle of the thumb so that when we
+        // do move, the delta will be from the current pixel position of the
+        // thumb to the new position
+        int position = theme->trackPosition(scrollBar) + theme->thumbPosition(scrollBar) + theme->thumbLength(scrollBar) / 2;
+        scrollBar->setPressedPos(position);
+        const QPoint pos = scrollBar->convertFromContainingWindow(event->pos());
+        scrollBar->moveThumb(horizontal ? pos.x() : pos.y());
+    } else if (actionSelected == actScrollTop)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByDocument);
+    else if (actionSelected == actScrollBottom)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollRight : ScrollDown, ScrollByDocument);
+    else if (actionSelected == actPageUp)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByPage);
+    else if (actionSelected == actPageDown)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollRight : ScrollDown, ScrollByPage);
+    else if (actionSelected == actScrollUp)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByLine);
+    else if (actionSelected == actScrollDown)
+        scrollBar->scrollableArea()->scroll(horizontal ? ScrollRight : ScrollDown, ScrollByLine);
+    return true;
+}
+
 /*!
     Filters the context menu event, \a event, through handlers for scrollbars and
     custom event handlers in the web page. Returns true if the event was handled;
@@ -3242,7 +3292,7 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
         if (QWebFrame* webFrame = frameAt(event->pos())) {
             Frame* frame = QWebFramePrivate::core(webFrame);
             if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(convertMouseEvent(event, 1).position()))
-                return scrollbar->contextMenu(convertMouseEvent(event, 1));
+                return handleScrollbarContextMenuEvent(scrollbar, event);
         }
     }
 #endif

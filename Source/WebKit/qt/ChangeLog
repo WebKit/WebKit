@@ -1,3 +1,17 @@
+2012-02-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move QMenu dependant scrollbar context menu handling out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=79233
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move scrollbar context menu handling here, it's the only place where it is
+        used.
+
+        * Api/qwebpage.cpp:
+        (handleScrollbarContextMenuEvent):
+        (QWebPage::swallowContextMenuEvent):
+
 2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Merge setVisibleRectTrajectoryVector and adjustVisibleRect to

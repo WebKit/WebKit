@@ -1,3 +1,17 @@
+2012-02-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move QMenu dependant scrollbar context menu handling out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=79233
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move the code into WebKit/qt/Api/qwebpage.cpp, the only place where it is called from.
+
+        * Target.pri: Remove ScrollbarQt.cpp from build.
+        * platform/Scrollbar.h: Remove Qt-only context menu handling but make moveThum
+        accessible from the outside.
+        * platform/qt/ScrollbarQt.cpp: Removed. Not needed anymore.
+
 2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: retrieving content for some XHR requests crashes inspected page renderer
