@@ -1,3 +1,17 @@
+2012-02-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, rolling out r108453.
+        http://trac.webkit.org/changeset/108453
+        https://bugs.webkit.org/show_bug.cgi?id=78549
+
+        Broke Chromium's webkit_unit_tests.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCOcclusionTrackerTest.cpp: Removed.
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
