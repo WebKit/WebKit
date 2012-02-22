@@ -72,6 +72,10 @@
     border-right: 1px solid rgb(163, 163, 163);
 }
 
+.timeline-start-at-zero #timeline-overview-sidebar {
+    display: none;
+}
+
 #timeline-overview-grid {
     position: absolute;
     top: 0px;
@@ -79,6 +83,10 @@
     left: 200px;
     right: 0px;
     background-color: rgb(255, 255, 255);
+}
+
+.timeline-start-at-zero #timeline-overview-grid {
+    display: none;
 }
 
 .timeline-window-selector {
@@ -89,7 +97,7 @@
     z-index: 250;
 }
 
-#timeline-overview-window {
+.timeline-overview-window {
     background-color: white;
     position: absolute;
     left: 0;
@@ -97,6 +105,10 @@
     top: 0;
     bottom: 60px;
     z-index: 150;
+}
+
+.timeline-start-at-zero .timeline-overview-window {
+    bottom: 0;
 }
 
 .timeline-overview-dividers-background {
@@ -108,6 +120,10 @@
     position: absolute;
 }
 
+.timeline-start-at-zero .timeline-overview-dividers-background {
+    bottom: 0;
+}
+
 .timeline-overview-window-rulers {
     top: 0;
     bottom: 0;
@@ -115,7 +131,7 @@
     opacity: 0.2;
     border-right: 1px solid black;
     border-left: 1px solid black;
-    z-index: 150;
+    z-index: 250;
 }
 
 .timeline-window-resizer {
@@ -268,6 +284,10 @@
     z-index: 160;
 }
 
+.timeline-start-at-zero #timeline-overview-memory {
+    display: none;
+}
+
 #timeline-overview-memory > canvas {
     position: absolute;
     left: 0;
@@ -363,15 +383,15 @@
     width: 10px;
 }
 
-.timeline-loading {
+.popover .timeline-loading {
     -webkit-border-image: url(Images/timelineBarBlue.png) 4 4 5 4;
 }
 
-.timeline-scripting {
+.popover .timeline-scripting {
     -webkit-border-image: url(Images/timelineBarOrange.png) 4 4 5 4;
 }
 
-.timeline-rendering {
+.popover .timeline-rendering {
     -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
 }
 
@@ -433,6 +453,14 @@
 
 .garbage-collect-status-bar-item .glyph {
     -webkit-mask-position: -128px -24px;
+}
+
+.timeline-start-at-zero-status-bar-item .glyph {
+    -webkit-mask-position: -128px -48px;
+}
+
+.timeline-start-at-zero-status-bar-item.toggled-on .glyph {
+    background-color: rgb(66, 129, 235) !important;
 }
 
 .timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity {
@@ -548,4 +576,51 @@
 
 .memory-counter-sidebar-info.bottom-border-visible {
     border-bottom: 1px solid #AAA;
+}
+
+.timeline-overview-start-at-zero {
+    background-color: white;
+}
+
+.timeline-overview-start-at-zero-bars {
+    display: -webkit-box;
+    -webkit-box-align: end;
+    background-color: white;
+    padding-left: 4px;
+    padding-right: 4px;
+    z-index: 200;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.timeline-overview-start-at-zero-bars .padding {
+    -webkit-box-flex: 100000;
+}
+
+.timeline-overview-start-at-zero-bars .timeline-bar-vertical {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-pack: end;
+    width: 12px;
+    padding-right: 2px;
+    -webkit-box-flex: 1;
+}
+
+.timeline-bar-vertical div:first-child {
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+}
+
+.timeline-bar-vertical .timeline-loading {
+    background: -webkit-linear-gradient(left, rgb(201, 220, 245), rgb(109, 157, 222));
+    border: solid 1px rgb(106, 152, 213);
+}
+
+.timeline-bar-vertical .timeline-scripting {
+    background: -webkit-linear-gradient(left, rgb(251, 222, 168), rgb(234, 182, 77));
+    border: solid 1px rgb(223, 175, 77);
+}
+
+.timeline-bar-vertical .timeline-rendering {
+    background: -webkit-linear-gradient(left, rgb(213, 185, 236), rgb(137, 62, 200));
+    border: solid 1px rgb(130, 59, 190);
 }

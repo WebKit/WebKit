@@ -1,3 +1,87 @@
+2012-02-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [experimental] add a mode to display timeline events aligned by the start time
+        https://bugs.webkit.org/show_bug.cgi?id=79123
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype._showTimelines):
+        (WebInspector.TimelineOverviewPane.prototype._showMemoryGraph):
+        (WebInspector.TimelineOverviewPane.prototype._onWindowChanged):
+        (WebInspector.TimelineOverviewPane.prototype.setStartAtZero):
+        (WebInspector.TimelineOverviewPane.prototype.update):
+        (WebInspector.TimelineOverviewPane.prototype.reset):
+        (WebInspector.TimelineOverviewWindow):
+        (WebInspector.TimelineOverviewWindow.prototype.reset):
+        (WebInspector.TimelineOverviewWindow.prototype._setWindowPosition):
+        (WebInspector.TimelineOverviewWindow.prototype.scrollWindow):
+        (WebInspector.TimelineStartAtZeroOverview):
+        (WebInspector.TimelineStartAtZeroOverview.prototype.reset):
+        (WebInspector.TimelineStartAtZeroOverview.prototype.update):
+        (WebInspector.TimelineStartAtZeroOverview.prototype._filterRecords):
+        (WebInspector.TimelineStartAtZeroOverview.prototype._buildBar):
+        (WebInspector.TimelineStartAtZeroOverview.prototype._onWindowChanged):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._toggleStartAtZeroButtonClicked):
+        (WebInspector.TimelinePanel.prototype.get _startAtZero):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype._onRecordsCleared):
+        (WebInspector.TimelinePanel.prototype._resetPanel):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._filterRecords):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineStartAtZeroCalculator):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.calculateWindow):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.reset):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.formatValue):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generateAggregatedInfo):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._calculateAggregatedStats):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype.get aggregatedStats):
+        (WebInspector.TimelineModel.prototype.get records):
+        (WebInspector.TimelinePresentationModel):
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.prototype.setWindowIndices):
+        (WebInspector.TimelineRecordFilter):
+        (WebInspector.TimelineRecordFilter.prototype.accept):
+        (WebInspector.TimelineStartAtZeroRecordFilter):
+        (WebInspector.TimelineStartAtZeroRecordFilter.prototype.accept):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-start-at-zero #timeline-overview-sidebar):
+        (.timeline-start-at-zero #timeline-overview-grid):
+        (.timeline-overview-window):
+        (.timeline-start-at-zero .timeline-overview-window):
+        (.timeline-start-at-zero .timeline-overview-dividers-background):
+        (.timeline-overview-window-rulers):
+        (.timeline-start-at-zero #timeline-overview-memory):
+        (.popover .timeline-loading):
+        (.popover .timeline-scripting):
+        (.popover .timeline-rendering):
+        (.timeline-start-at-zero-status-bar-item .glyph):
+        (.timeline-start-at-zero-status-bar-item.toggled-on .glyph):
+        (.timeline-overview-start-at-zero):
+        (.timeline-overview-start-at-zero-bars):
+        (.timeline-overview-start-at-zero-bars .padding):
+        (.timeline-overview-start-at-zero-bars .timeline-bar-vertical):
+        (.timeline-bar-vertical div:first-child):
+        (.timeline-bar-vertical .timeline-loading):
+        (.timeline-bar-vertical .timeline-scripting):
+        (.timeline-bar-vertical .timeline-rendering):
+
 2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Disregard previous backing store as soon as possible
