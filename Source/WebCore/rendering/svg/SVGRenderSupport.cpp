@@ -79,6 +79,13 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     object->parent()->mapLocalToContainer(repaintContainer, false, true, transformState, wasFixed);
 }
 
+static inline bool isRenderingMaskImage(RenderObject* object)
+{
+    if (object->frame() && object->frame()->view())
+        return object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
+    return false;
+}
+
 bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
 {
     ASSERT(object);
@@ -89,11 +96,8 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
-    bool isRenderingMask = false;
-    if (object->frame() && object->frame()->view())
-        isRenderingMask = object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
-
     // Setup transparency layers before setting up SVG resources!
+    bool isRenderingMask = isRenderingMaskImage(object);
     float opacity = isRenderingMask ? 1 : style->opacity();
     const ShadowData* shadow = svgStyle->shadow();
     if (opacity < 1 || shadow) {
@@ -168,7 +172,7 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
     }
 #endif
 
-    if (style->opacity() < 1)
+    if (style->opacity() < 1 && !isRenderingMaskImage(object))
         paintInfo.context->endTransparencyLayer();
 
     if (svgStyle->shadow())
