@@ -1,3 +1,18 @@
+2012-02-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Node::attach() should be after attaching children in Element::attach().
+        https://bugs.webkit.org/show_bug.cgi?id=79201
+
+        Reviewed by Hajime Morita.
+
+        In Element::attach(), Node::attach() is called before attaching children if a shaodw root exists.
+        This may cause O(N^2) problem in NodeRenderingContext.
+
+        No new tests. Existing tests should cover this.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+
 2012-02-22  Kenichi Ishibashi  <bashi@chromium.org>
 
         Adding WebSocket per-frame DEFLATE extension

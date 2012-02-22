@@ -928,7 +928,6 @@ void Element::attach()
     // When a shadow root exists, it does the work of attaching the children.
     if (hasShadowRoot()) {
         parentPusher.push();
-        Node::attach();
         shadowRootList()->attach();
 
         // In a shadow tree, some of light children may be attached by 'content' element.
@@ -938,6 +937,7 @@ void Element::attach()
             if (!child->attached())
                 child->attach();
         }
+        Node::attach();
     } else {
         if (firstChild())
             parentPusher.push();
