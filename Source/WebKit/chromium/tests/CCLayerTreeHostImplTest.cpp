@@ -307,12 +307,19 @@ public:
         m_didDrawCalled = true;
     }
 
+    virtual void willDraw(LayerRendererChromium*)
+    {
+        m_willDrawCalled = true;
+    }
+
     bool didDrawCalled() const { return m_didDrawCalled; }
+    bool willDrawCalled() const { return m_willDrawCalled; }
 
 private:
     explicit DidDrawCheckLayer(int id)
         : CCLayerImpl(id)
         , m_didDrawCalled(false)
+        , m_willDrawCalled(false)
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
@@ -320,7 +327,44 @@ private:
     }
 
     bool m_didDrawCalled;
+    bool m_willDrawCalled;
 };
+
+TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
+{
+GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    m_hostImpl->initializeLayerRenderer(context);
+
+    // Ensure visibleLayerRect for root layer is empty
+    m_hostImpl->setViewportSize(IntSize(0, 0));
+
+    RefPtr<DidDrawCheckLayer> root = DidDrawCheckLayer::create(0);
+    m_hostImpl->setRootLayer(root);
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+
+    m_hostImpl->drawLayers();
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+
+    EXPECT_TRUE(root->visibleLayerRect().isEmpty());
+
+    // Ensure visibleLayerRect for root layer is not empty
+    m_hostImpl->setViewportSize(IntSize(10, 10));
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+
+    m_hostImpl->drawLayers();
+
+    EXPECT_TRUE(root->willDrawCalled());
+    EXPECT_TRUE(root->didDrawCalled());
+
+    EXPECT_FALSE(root->visibleLayerRect().isEmpty());
+}
 
 TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 {

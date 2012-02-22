@@ -1,3 +1,18 @@
+2012-02-22  Tim Dresser  <tdresser@chromium.org>
+
+        CCLayerTreeHostImpl calls didDraw more frequently than willDraw
+        https://bugs.webkit.org/show_bug.cgi?id=79139
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::DidDrawCheckLayer::willDraw):
+        (DidDrawCheckLayer):
+        (WebKit::DidDrawCheckLayer::willDrawCalled):
+        (WebKit::DidDrawCheckLayer::DidDrawCheckLayer):
+        (WebKit::TEST_F):
+        (WebKit):
+
 2012-02-22  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] New CCOcclusionTracker class with tests

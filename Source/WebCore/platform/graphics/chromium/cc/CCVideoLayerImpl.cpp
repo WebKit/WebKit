@@ -158,6 +158,7 @@ void CCVideoLayerImpl::didDraw()
     for (unsigned plane = 0; plane < m_frame->planes(); ++plane)
         m_textures[plane].m_texture->unreserve();
     m_provider->putCurrentFrame(m_frame);
+    m_frame = 0;
 }
 
 IntSize CCVideoLayerImpl::computeVisibleSize(const VideoFrameChromium* frame, unsigned plane)

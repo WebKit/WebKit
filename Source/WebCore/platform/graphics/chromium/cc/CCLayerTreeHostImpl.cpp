@@ -281,10 +281,9 @@ void CCLayerTreeHostImpl::drawLayers()
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
-        if (it.representsItself())
+        if (it.representsItself() && !it->visibleLayerRect().isEmpty())
             it->didDraw();
     }
-
     m_layerRenderer->finishDrawingFrame();
 
     ++m_frameNumber;
