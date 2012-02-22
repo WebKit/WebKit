@@ -738,6 +738,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
     
     GraphicsContextStateSaver backgroundClipStateSaver(*context, false);
+    OwnPtr<ImageBuffer> maskImage;
+    IntRect maskRect;
+
     if (bgLayer->clip() == PaddingFillBox || bgLayer->clip() == ContentFillBox) {
         // Clip to the padding or content boxes as necessary.
         bool includePadding = bgLayer->clip() == ContentFillBox;
@@ -751,17 +754,17 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be.  It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
-        IntRect maskRect = pixelSnappedIntRect(rect);
+        maskRect = pixelSnappedIntRect(rect);
         maskRect.intersect(paintInfo.rect);
-        
+
         // Now create the mask.
-        OwnPtr<ImageBuffer> maskImage = context->createCompatibleBuffer(maskRect.size());
+        maskImage = context->createCompatibleBuffer(maskRect.size());
         if (!maskImage)
             return;
-        
+
         GraphicsContext* maskImageContext = maskImage->context();
         maskImageContext->translate(-maskRect.x(), -maskRect.y());
-        
+
         // Now add the text to the clip.  We do this by painting using a special paint phase that signals to
         // InlineTextBoxes that they should just add their contents to the clip.
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, paintInfo.renderRegion, 0);
@@ -772,12 +775,13 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
             paint(info, scrolledPaintRect.location() - localOffset);
         }
-        
+
         // The mask has been created.  Now we just need to clip to it.
         backgroundClipStateSaver.save();
-        context->clipToImageBuffer(maskImage.get(), maskRect);
+        context->clip(maskRect);
+        context->beginTransparencyLayer(1);
     }
-    
+
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     bool isOpaqueRoot = false;
@@ -854,6 +858,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             context->drawTiledImage(image.get(), style()->colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), 
                 compositeOp, useLowQualityScaling);
         }
+    }
+
+    if (bgLayer->clip() == TextFillBox) {
+        context->drawImageBuffer(maskImage.get(), ColorSpaceDeviceRGB, maskRect, CompositeDestinationIn);
+        context->endTransparencyLayer();
     }
 }
 

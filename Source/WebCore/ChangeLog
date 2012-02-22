@@ -1,3 +1,20 @@
+2012-02-22  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Drop clipToImageBuffer from RenderBoxModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=79225
+
+        Reviewed by Nikolas Zimmermann.
+
+        -webkit-background-clip: text is a rarely used non-standard
+        feature uses clipToImageBuffer. It is replaced by
+        CompositeDestinationIn on a transparent layer. The new
+        approach has the same speed as the old one.
+
+        Existing tests cover this issue.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2012-02-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Merge setVisibleRectTrajectoryVector and adjustVisibleRect to
