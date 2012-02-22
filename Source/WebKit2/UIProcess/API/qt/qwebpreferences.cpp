@@ -54,6 +54,8 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetPrivateBrowsingEnabled(preferencesRef());
     case DnsPrefetchEnabled:
         return WKPreferencesGetDNSPrefetchingEnabled(preferencesRef());
+    case FrameFlatteningEnabled:
+        return WKPreferencesGetFrameFlatteningEnabled(preferencesRef());
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -86,6 +88,9 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         break;
     case DnsPrefetchEnabled:
         WKPreferencesSetDNSPrefetchingEnabled(preferencesRef(), enable);
+        break;
+    case FrameFlatteningEnabled:
+        WKPreferencesSetFrameFlatteningEnabled(preferencesRef(), enable);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -291,6 +296,17 @@ void QWebPreferences::setNavigatorQtObjectEnabled(bool enable)
         return;
     d->webViewPrivate->setNavigatorQtObjectEnabled(enable);
     emit navigatorQtObjectEnabledChanged();
+}
+
+bool QWebPreferences::frameFlatteningEnabled() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::FrameFlatteningEnabled);
+}
+
+void QWebPreferences::setFrameFlatteningEnabled(bool enable)
+{
+    d->setAttribute(QWebPreferencesPrivate::FrameFlatteningEnabled, enable);
+    emit frameFlatteningEnabledChanged();
 }
 
 QString QWebPreferences::standardFontFamily() const

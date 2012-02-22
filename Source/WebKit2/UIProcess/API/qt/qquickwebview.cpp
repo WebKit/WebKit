@@ -117,6 +117,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     // Any page setting should preferrable be set before creating the page.
     webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+    webPageProxy->pageGroup()->preferences()->setFrameFlatteningEnabled(true);
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();

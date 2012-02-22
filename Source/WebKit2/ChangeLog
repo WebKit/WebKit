@@ -1,3 +1,22 @@
+2012-02-22  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Add frame flattening setting to QWebPreferences.
+        https://bugs.webkit.org/show_bug.cgi?id=79099
+
+        Reviewed by Simon Hausmann.
+
+        Frame flattening is enabled by default for Qt WebKit2.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::setNavigatorQtObjectEnabled):
+        (QWebPreferences::frameFlatteningEnabled):
+        (QWebPreferences::setFrameFlatteningEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
