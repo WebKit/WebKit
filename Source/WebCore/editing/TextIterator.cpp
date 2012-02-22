@@ -487,24 +487,19 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    if (!renderer->firstTextBox() && str.length() > 0) {
-        if (!m_handledFirstLetter && renderer->isTextFragment()) {
-            handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
-            if (m_firstLetterText) {
-                handleTextBox();
-                return false;
-            }
-        }
+    if (renderer->firstTextBox())
+        m_textBox = renderer->firstTextBox();
+
+    bool shouldHandleFirstLetter = !m_handledFirstLetter && renderer->isTextFragment() && !m_offset;
+    if (shouldHandleFirstLetter)
+        handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
+
+    if (!renderer->firstTextBox() && str.length() > 0 && !shouldHandleFirstLetter) {
         if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
     }
-
-    
-    m_textBox = renderer->firstTextBox();
-    if (!m_handledFirstLetter && renderer->isTextFragment() && !m_offset)
-        handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
 
     if (m_firstLetterText)
         renderer = m_firstLetterText;
@@ -562,6 +557,7 @@ void TextIterator::handleTextBox()
                 nextTextBox = m_sortedTextBoxes[m_sortedTextBoxesPosition + 1];
         } else 
             nextTextBox = m_textBox->nextTextBox();
+        ASSERT(!nextTextBox || nextTextBox->renderer() == renderer);
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),
@@ -630,6 +626,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment* renderer)
             m_handledFirstLetter = true;
             m_remainingTextBox = m_textBox;
             m_textBox = firstLetter->firstTextBox();
+            m_sortedTextBoxes.clear();
             m_firstLetterText = firstLetter;
         }
     }
