@@ -5785,10 +5785,10 @@ endif  # END USE_TEXTURE_MAPPER_CAIRO
 
 if USE_TEXTURE_MAPPER_GL
 webcore_sources += \
-	Source/WebCore/platform/graphics/opengl/TextureMapperGL.cpp \
-	Source/WebCore/platform/graphics/opengl/TextureMapperGL.h \
-	Source/WebCore/platform/graphics/opengl/TextureMapperShaderManager.cpp \
-	Source/WebCore/platform/graphics/opengl/TextureMapperShaderManager.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperGL.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
 	Source/WebCore/platform/graphics/texmap/LayerTransform.cpp \

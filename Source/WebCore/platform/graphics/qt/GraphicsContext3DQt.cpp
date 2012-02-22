@@ -40,7 +40,7 @@
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
-#include <opengl/TextureMapperGL.h>
+#include <texmap/TextureMapperGL.h>
 #endif
 
 #if ENABLE(WEBGL)

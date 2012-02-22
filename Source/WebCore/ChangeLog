@@ -1,3 +1,26 @@
+2012-02-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Texmap] Move all TextureMapper related files to graphics/texmap
+        https://bugs.webkit.org/show_bug.cgi?id=79141
+
+        Reviewed by Martin Robinson.
+
+        Move TextureMaooerGL and TextureMapperShaderManager files to graphics/texmap.
+        No new tests. 
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp
+        * platform/graphics/opengl/TextureMapperGL.cpp: Removed.
+        * platform/graphics/opengl/TextureMapperGL.h: Removed.
+        * platform/graphics/opengl/TextureMapperShaderManager.cpp: Removed.
+        * platform/graphics/opengl/TextureMapperShaderManager.h: Removed.
+        * platform/graphics/texmap/TextureMapperGL.cpp: Copied from Source/WebCore/platform/graphics/opengl/TextureMapperGL.cpp.
+        * platform/graphics/texmap/TextureMapperGL.h: Copied from Source/WebCore/platform/graphics/opengl/TextureMapperGL.h.
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp: Copied from Source/WebCore/platform/graphics/opengl/TextureMapperShaderManager.cpp.
+        * platform/graphics/texmap/TextureMapperShaderManager.h: Copied from Source/WebCore/platform/graphics/opengl/TextureMapperShaderManager.h.
+
 2012-02-20  MORITA Hajime  <morrita@google.com>
 
         MEDIA_STREAM should be implemented as a PageSupplement.
