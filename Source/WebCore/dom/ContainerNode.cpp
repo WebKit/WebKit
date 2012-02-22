@@ -592,11 +592,7 @@ void ContainerNode::removeChildren()
             removedChild->detach();
     }
 
-    allowEventDispatch();
-
-    // Dispatch a single post-removal mutation event denoting a modified subtree.
     childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
-    dispatchSubtreeModifiedEvent();
 
     for (i = 0; i < removedChildrenCount; ++i) {
         Node* removedChild = removedChildren[i].get();
@@ -606,6 +602,10 @@ void ContainerNode::removeChildren()
         // document. There is no explanation for this discrepancy between removeChild()
         // and its optimized version removeChildren().
     }
+
+    allowEventDispatch();
+
+    dispatchSubtreeModifiedEvent();
 }
 
 bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)

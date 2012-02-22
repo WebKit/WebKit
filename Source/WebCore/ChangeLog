@@ -1,3 +1,21 @@
+2012-02-21  Adam Klein  <adamk@chromium.org>
+
+        Setting innerText causes DOMSubtreeModified to be dispatched too early
+        https://bugs.webkit.org/show_bug.cgi?id=79140
+
+        Reviewed by Ryosuke Niwa.
+
+        Followup to r108152: move children change notifications later in
+        ContainerNode::removeChildren(), thus making sure Node::inDocument()
+        is in the correct state when we call into script.
+
+        Tests: fast/dom/getElementById-consistency3.html
+               fast/dom/getElementById-consistency4.html
+               fast/dom/getElementById-consistency5.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+
 2012-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure in TextIterator::handleTextBox
