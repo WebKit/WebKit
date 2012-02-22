@@ -1,5 +1,24 @@
 2012-02-22  Adam Barth  <abarth@webkit.org>
 
+        [GTK] fast/frames/frame-dead-region.html crash
+        https://bugs.webkit.org/show_bug.cgi?id=79205
+
+        Unreviewed.
+
+        Apparently we're not supposed to call willDetachPage from
+        CachedFrame::destroy.  This call got added in
+        http://trac.webkit.org/changeset/108428, but it seems to cause a crash.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeAndRemoveChild):
+        (WebCore::FrameLoader::detachFromParent):
+        * page/Frame.h:
+        (WebCore::Frame::detachFromPage):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
+2012-02-22  Adam Barth  <abarth@webkit.org>
+
         Move Geolocation code into Modules/geolocation
         https://bugs.webkit.org/show_bug.cgi?id=79204
 

@@ -348,7 +348,6 @@ namespace WebCore {
 
     inline void Frame::detachFromPage()
     {
-        willDetachPage();
         m_page = 0;
     }
 
