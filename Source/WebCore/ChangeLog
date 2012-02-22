@@ -1,3 +1,15 @@
+2012-02-22  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
+
+        [gtk] Accessibility: use find funtion in vector instead of for.
+        https://bugs.webkit.org/show_bug.cgi?id=77878
+
+        Reviewed by Hajime Morita.
+
+        Minor cleanup, use the find function from vector.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetIndexInParent):
+
 2012-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor

@@ -396,14 +396,8 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     if (parent && parent->isTableRow() && coreObject->isTableCell())
         return getIndexInParentForCellInRow(coreObject);
 
-    AccessibilityObject::AccessibilityChildrenVector children = parent->children();
-    unsigned count = children.size();
-    for (unsigned i = 0; i < count; ++i) {
-        if (children[i] == coreObject)
-            return i;
-    }
-
-    return -1;
+    size_t index = parent->children().find(coreObject);
+    return (index == WTF::notFound) ? -1 : index;
 }
 
 static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
