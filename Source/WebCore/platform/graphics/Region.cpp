@@ -443,6 +443,9 @@ void Region::intersect(const Region& region)
 
 void Region::unite(const Region& region)
 {
+    if (region.isEmpty())
+        return;
+
     Shape unitedShape = Shape::unionShapes(m_shape, region.m_shape);
 
     m_shape.swap(unitedShape);
