@@ -128,7 +128,7 @@ class MacPort(ApplePort):
         return self._build_path('WebCore.framework/Versions/A/WebCore')
 
     def show_results_html_file(self, results_filename):
-        self._run_script('run-safari', ['-NSOpen', results_filename])
+        self._run_script('run-safari', ['--no-saved-state', '-NSOpen', results_filename])
 
     # FIXME: The next two routines turn off the http locking in order
     # to work around failures on the bots caused when the slave restarts.
