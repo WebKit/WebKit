@@ -1,5 +1,12 @@
 2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Build fix, disable LLINT for now and fix ENABLE defines for it.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+        * wtf/Platform.h:
+
+2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix for non-Mac wx builds.
 
         * runtime/DatePrototype.cpp:

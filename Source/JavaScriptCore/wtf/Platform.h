@@ -642,6 +642,7 @@
 #define ENABLE_JIT 1
 #endif
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
+#define ENABLE_LLINT 0
 #if OS(DARWIN)
 #define WTF_USE_CF 1
 #define WTF_USE_CORE_TEXT 1

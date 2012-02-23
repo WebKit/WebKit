@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(LLLINT)
+
 #include "CodeBlock.h"
 #include "Executable.h"
 #include "Heap.h"
@@ -80,3 +82,5 @@ int main(int, char**)
     printf("%p\n", JSC::LLIntOffsetsExtractor::dummy());
     return 0;
 }
+
+#endif // ENABLE(LLINT)
