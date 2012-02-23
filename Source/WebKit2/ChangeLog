@@ -1,5 +1,11 @@
 2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed test fix after r108614: Adjust public API after changes.
+
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+
+2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Build fix. Qt WebKit2 can not be compiled due to QtWebPageEventHandler.
         https://bugs.webkit.org/show_bug.cgi?id=79335
 

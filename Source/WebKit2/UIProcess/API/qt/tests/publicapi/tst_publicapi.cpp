@@ -43,6 +43,12 @@ static QStringList expectedAPI = QStringList()
     << "QQuickWebView.NetworkErrorDomain --> ErrorDomain"
     << "QQuickWebView.HttpErrorDomain --> ErrorDomain"
     << "QQuickWebView.DownloadErrorDomain --> ErrorDomain"
+    << "QQuickWebView.LinkClickedNavigation --> NavigationType"
+    << "QQuickWebView.FormSubmittedNavigation --> NavigationType"
+    << "QQuickWebView.BackForwardNavigation --> NavigationType"
+    << "QQuickWebView.ReloadNavigation --> NavigationType"
+    << "QQuickWebView.FormResubmittedNavigation --> NavigationType"
+    << "QQuickWebView.OtherNavigation --> NavigationType"
     << "QQuickWebView.title --> QString"
     << "QQuickWebView.url --> QUrl"
     << "QQuickWebView.icon --> QUrl"
@@ -73,6 +79,7 @@ static QStringList expectedAPI = QStringList()
     << "QWebNavigationRequest.button --> int"
     << "QWebNavigationRequest.modifiers --> int"
     << "QWebNavigationRequest.action --> int"
+    << "QWebNavigationRequest.navigationType --> QQuickWebView::NavigationType"
     << "QWebNavigationRequest.actionChanged() --> void"
     ;
 
