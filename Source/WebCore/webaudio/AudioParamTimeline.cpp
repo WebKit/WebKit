@@ -242,6 +242,13 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                 // The value goes exponentially from value1 to value2 in a duration of deltaTime seconds (corresponding to numSampleFrames).
                 // Compute the per-sample multiplier.
                 float multiplier = powf(value2 / value1, 1 / numSampleFrames);
+
+                // Set the starting value of the exponential ramp. This is the same as multiplier ^
+                // AudioUtilities::timeToSampleFrame(currentTime - time1, sampleRate), but is more
+                // accurate, especially if multiplier is close to 1.
+                value = value1 * powf(value2 / value1,
+                                      AudioUtilities::timeToSampleFrame(currentTime - time1, sampleRate) / numSampleFrames);
+
                 for (; writeIndex < fillToFrame; ++writeIndex) {
                     values[writeIndex] = value;
                     value *= multiplier;

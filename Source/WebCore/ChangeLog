@@ -1,3 +1,16 @@
+2012-02-22  Raymond Toy  <rtoy@google.com>
+
+        exponentialRampToValue doesn't use starting value
+        https://bugs.webkit.org/show_bug.cgi?id=78035
+
+        Reviewed by Chris Rogers.
+
+        Test: webaudio/audioparam-exponentialRampToValueAtTime.html
+
+        * webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl): Set
+        starting value for exponential ramp.
+
 2012-02-22  Andreas Kling  <awesomekling@apple.com>
 
         Make parsing color presentation attributes do less pointless work.
