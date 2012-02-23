@@ -1,3 +1,17 @@
+2012-02-23  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] DRT doesn't support scheduleAsynchronousKeyDown.
+        https://bugs.webkit.org/show_bug.cgi?id=78481
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added a new API to deliver all mutations explicitly.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] FullScreen signals

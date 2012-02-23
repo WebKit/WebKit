@@ -1,3 +1,23 @@
+2012-02-23  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] DRT doesn't support scheduleAsynchronousKeyDown.
+        https://bugs.webkit.org/show_bug.cgi?id=78481
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Extracted shareable code from keyDownCallback and then added createKeyPressEvent
+        to create gdk press key event.
+        Added sendKeyDown and sendAsynchronousKeyDown to evaluate keyDown event directly
+        and asynchronously. Eventually, sendAsynchronousKeyDown calls sendKeyDown.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (scheduleAsynchronousClickCallback):
+        (createKeyPressEvent):
+        (sendKeyDown):
+        (keyDownCallback):
+        (sendAsynchronousKeyDown):
+        (scheduleAsynchronousKeyDownCallback):
+
 2012-02-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] WebKitTestRunner should use 480x360 sized view for W3C SVG tests

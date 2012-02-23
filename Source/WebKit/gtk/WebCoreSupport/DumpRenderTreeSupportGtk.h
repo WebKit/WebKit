@@ -129,6 +129,8 @@ public:
 
     static void setHixie76WebSocketProtocolEnabled(WebKitWebView*, bool enabled);
 
+    static void deliverAllMutationsIfNecessary();
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;

@@ -1578,11 +1578,6 @@ security/block-test.html
 fast/dom/Window/window-custom-prototype.html
 http/tests/security/cross-frame-access-object-getPrototypeOf.html
 
-# GTK port DRT doesn't support some API like scheduleAsynchronousKeyDown.
-# http://webkit.org/b/78481, http://webkit.org/b/78290
-fast/mutation/end-of-task-delivery.html
-fast/mutation/inline-event-listener.html
-
 # Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 # https://bugs.webkit.org/show_bug.cgi?id=76564
 fast/workers/worker-crash-with-invalid-location.html

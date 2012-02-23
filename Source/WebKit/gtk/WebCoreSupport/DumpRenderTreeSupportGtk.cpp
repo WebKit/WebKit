@@ -61,6 +61,7 @@
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "WebKitDOMRangePrivate.h"
+#include "WebKitMutationObserver.h"
 #include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebframe.h"
@@ -914,4 +915,11 @@ bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWeb
         return false;
 
     return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
+}
+
+void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
+{
+#if ENABLE(MUTATION_OBSERVERS)
+    WebKitMutationObserver::deliverAllMutations();
+#endif
 }

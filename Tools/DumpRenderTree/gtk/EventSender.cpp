@@ -3,6 +3,7 @@
  * Copyright (C) 2009 Zan Dobersek <zandobersek@gmail.com>
  * Copyright (C) 2009 Holger Hans Peter Freyther
  * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2012 ChangSeok Oh <shivamidow@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,7 @@
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
+#include "WebKitMutationObserver.h"
 #include <GOwnPtrGtk.h>
 #include <GRefPtrGtk.h>
 #include <GtkVersioning.h>
@@ -248,7 +250,7 @@ static gboolean sendClick(gpointer)
 
 static JSValueRef scheduleAsynchronousClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    g_idle_add(sendClick, 0);
+    g_timeout_add(0, sendClick, 0);
     return JSValueMakeUndefined(context);
 }
 
@@ -611,10 +613,9 @@ void replaySavedEvents()
     endOfQueue = 0;
 }
 
-static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static GdkEvent* createKeyPressEvent(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
+    g_return_val_if_fail(argumentCount >= 1, 0);
     guint modifiers = argumentCount >= 2 ? gdkModifersFromJSValue(context, arguments[1]) : 0;
 
     // handle location argument.
@@ -623,7 +624,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         location = (int)JSValueToNumber(context, arguments[2], exception);
 
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    g_return_val_if_fail((!exception || !*exception), 0);
+
     int gdkKeySym = GDK_VoidSymbol;
     if (location == DOM_KEY_LOCATION_NUMPAD) {
         if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
@@ -717,10 +719,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     JSStringRelease(character);
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
+    g_return_val_if_fail(view, 0);
 
-    // create and send the event
     GdkEvent* pressEvent = gdk_event_new(GDK_KEY_PRESS);
     pressEvent->key.keyval = gdkKeySym;
     pressEvent->key.state = modifiers;
@@ -732,17 +732,30 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
 
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
-    GdkKeymapKey* keys;
-    gint n_keys;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys, &n_keys)) {
-        pressEvent->key.hardware_keycode = keys[0].keycode;
-        g_free(keys);
-    }
+    GOwnPtr<GdkKeymapKey> keys;
+    gint nKeys;
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys.outPtr(), &nKeys))
+        pressEvent->key.hardware_keycode = keys.get()[0].keycode;
 
+    return pressEvent;
+}
+
+static void sendKeyDown(GdkEvent* pressEvent)
+{
+    g_return_if_fail(pressEvent);
     GdkEvent* releaseEvent = gdk_event_copy(pressEvent);
+    releaseEvent->type = GDK_KEY_RELEASE;
+
     dispatchEvent(pressEvent);
-    releaseEvent->key.type = GDK_KEY_RELEASE;
     dispatchEvent(releaseEvent);
+
+    DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary();
+}
+
+static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    GdkEvent* pressEvent = createKeyPressEvent(context, argumentCount, arguments, exception);
+    sendKeyDown(pressEvent);
 
     return JSValueMakeUndefined(context);
 }
@@ -811,6 +824,21 @@ static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+static gboolean sendAsynchronousKeyDown(gpointer userData)
+{
+    sendKeyDown(static_cast<GdkEvent*>(userData));
+    return FALSE;
+}
+
+static JSValueRef scheduleAsynchronousKeyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    GdkEvent* pressEvent = createKeyPressEvent(context, argumentCount, arguments, exception);
+    if (pressEvent)
+        g_timeout_add(0, sendAsynchronousKeyDown, static_cast<gpointer>(pressEvent));
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "mouseScrollBy", mouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "continuousMouseScrollBy", continuousMouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -827,6 +855,7 @@ static JSStaticFunction staticFunctions[] = {
     { "zoomPageOut", zoomPageOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scheduleAsynchronousClick", scheduleAsynchronousClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scalePageBy", scalePageByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "scheduleAsynchronousKeyDown", scheduleAsynchronousKeyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 
     { 0, 0, 0 }
 };
