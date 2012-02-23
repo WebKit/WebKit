@@ -882,6 +882,7 @@ dom_binding_idls += \
 	$(WebCore)/inspector/ScriptProfile.idl \
 	$(WebCore)/inspector/ScriptProfileNode.idl \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
+	$(WebCore)/mediastream/DOMWindowMediaStream.idl \
 	$(WebCore)/mediastream/LocalMediaStream.idl \
 	$(WebCore)/mediastream/MediaStream.idl \
 	$(WebCore)/mediastream/MediaStreamEvent.idl \

@@ -990,6 +990,7 @@
             'inspector/ScriptProfile.idl',
             'inspector/ScriptProfileNode.idl',
             'loader/appcache/DOMApplicationCache.idl',
+            'mediastream/DOMWindowMediaStream.idl',
             'mediastream/LocalMediaStream.idl',
             'mediastream/MediaStream.idl',
             'mediastream/MediaStreamEvent.idl',

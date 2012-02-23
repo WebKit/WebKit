@@ -1,3 +1,17 @@
+2012-02-23  Adam Barth  <abarth@webkit.org>
+
+        Move MediaStream related declarations from DOMWindow to DOMWindowMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=79343
+
+        Reviewed by Eric Seidel.
+
+        These declarations belong in the MEDIA_STREAM module.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * mediastream/DOMWindowMediaStream.idl: Added.
+        * page/DOMWindow.idl:
+
 2012-02-22  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Every call to RenderObject::setAnimatableStyle() iterates through all m_compositeAnimations: potentially O(N^2)
