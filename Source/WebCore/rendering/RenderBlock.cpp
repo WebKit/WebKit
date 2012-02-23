@@ -997,18 +997,12 @@ void RenderBlock::moveChildTo(RenderBlock* toBlock, RenderObject* child, RenderO
 void RenderBlock::moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
 {
     ASSERT(!beforeChild || toBlock == beforeChild->parent());
-    RenderObject* nextChild = startChild;
-    while (nextChild && nextChild != endChild) {
-        RenderObject* child = nextChild;
-        nextChild = child->nextSibling();
-        if (fullRemoveInsert) {
-            // Takes care of adding the new child correctly if toBlock and fromBlock
-            // have different kind of children (block vs inline).
-            toBlock->addChildIgnoringContinuation(children()->removeChildNode(this, child), beforeChild);
-        } else
-            toBlock->children()->insertChildNode(toBlock, children()->removeChildNode(this, child, false), beforeChild, false);
-        if (child == endChild)
-            return;
+
+    for (RenderObject* child = startChild; child && child != endChild; ) {
+        // Save our next sibling as moveChildTo will clear it.
+        RenderObject* nextSibling = child->nextSibling();
+        moveChildTo(toBlock, child, beforeChild, fullRemoveInsert);
+        child = nextSibling;
     }
 }
 

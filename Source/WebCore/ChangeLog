@@ -1,3 +1,18 @@
+2012-02-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Cleanup RenderBlock::moveChildrenTo
+        https://bugs.webkit.org/show_bug.cgi?id=79319
+
+        Reviewed by Eric Seidel.
+
+        Refactoring, no change in behavior expected.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveChildrenTo):
+        Removed inline check that was redundant, switched to |while| to a |for|
+        to show what's going on more closely and adds a call to moveChildTo to
+        share more code between the 2 functions.
+
 2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Add support for touch cancellation
