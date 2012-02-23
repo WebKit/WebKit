@@ -55,7 +55,7 @@ public:
     virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction);
     virtual bool shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool);
 
-    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
+    virtual bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*);
     virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
 
     virtual void didBeginEditing();

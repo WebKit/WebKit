@@ -1,3 +1,10 @@
+2012-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r108462.
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        (EditorClientWinCE):
+
 2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor
