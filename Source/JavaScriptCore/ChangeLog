@@ -1,3 +1,9 @@
+2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for non-Mac wx builds.
+
+        * runtime/DatePrototype.cpp:
+
 2012-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG's logic for emitting a Flush is too convoluted and contains an inaccurate comment
