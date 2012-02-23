@@ -1,3 +1,16 @@
+2012-02-23  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] XSS Auditor bypass via javascript url and control characters
+        https://bugs.webkit.org/show_bug.cgi?id=79154
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/xssAuditor/javascript-link-control-char2.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore):
+        (WebCore::XSSAuditor::eraseDangerousAttributesIfInjected):
+
 2012-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS macro

@@ -133,23 +133,6 @@ static bool isDangerousHTTPEquiv(const String& value)
     return equalIgnoringCase(equiv, "refresh") || equalIgnoringCase(equiv, "set-cookie");
 }
 
-static bool containsJavaScriptURL(const Vector<UChar, 32>& value)
-{
-    static const char javaScriptScheme[] = "javascript:";
-    static const size_t lengthOfJavaScriptScheme = sizeof(javaScriptScheme) - 1;
-
-    size_t i;
-    for (i = 0; i < value.size(); ++i) {
-        if (!isHTMLSpace(value[i]))
-            break;
-    }
-
-    if (value.size() - i < lengthOfJavaScriptScheme)
-        return false;
-
-    return equalIgnoringCase(value.data() + i, javaScriptScheme, lengthOfJavaScriptScheme);
-}
-
 static inline String decode16BitUnicodeEscapeSequences(const String& string)
 {
     // Note, the encoding is ignored since each %u-escape sequence represents a UTF-16 code unit.
@@ -456,7 +439,7 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = token.attributes().at(i);
         bool isInlineEventHandler = isNameOfInlineEventHandler(attribute.m_name);
-        bool valueContainsJavaScriptURL = isInlineEventHandler ? false : containsJavaScriptURL(attribute.m_value);
+        bool valueContainsJavaScriptURL = !isInlineEventHandler && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(String(attribute.m_value.data(), attribute.m_value.size())));
         if (!isInlineEventHandler && !valueContainsJavaScriptURL)
             continue;
         // Beware of trailing characters which came from the page itself, not the 
