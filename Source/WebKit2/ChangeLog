@@ -1,3 +1,21 @@
+2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Add support for touch cancellation
+        https://bugs.webkit.org/show_bug.cgi?id=79348
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Convert and forward incoming touch cancellation events
+        to the web process.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::webEventTypeForEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::event):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleEvent):
+
 2012-02-23  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build fix after r108428.

@@ -27,18 +27,13 @@
 
 namespace WebCore {
 
-PlatformTouchPoint::PlatformTouchPoint(const QTouchEvent::TouchPoint& point)
+PlatformTouchPoint::PlatformTouchPoint(const QTouchEvent::TouchPoint& point, State state)
     // The QTouchEvent::TouchPoint API states that ids will be >= 0.
     : m_id(point.id())
+    , m_state(state)
     , m_screenPos(point.screenPos().toPoint())
     , m_pos(point.pos().toPoint())
 {
-    switch (point.state()) {
-    case Qt::TouchPointReleased: m_state = TouchReleased; break;
-    case Qt::TouchPointMoved: m_state = TouchMoved; break;
-    case Qt::TouchPointPressed: m_state = TouchPressed; break;
-    case Qt::TouchPointStationary: m_state = TouchStationary; break;
-    }
     // Qt reports touch point size as rectangles, but we will pretend it is an oval.
     QRect touchRect = point.rect().toAlignedRect();
     if (touchRect.isValid()) {

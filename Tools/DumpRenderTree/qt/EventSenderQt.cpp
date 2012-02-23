@@ -463,6 +463,14 @@ void EventSender::touchEnd()
     m_touchActive = false;
 }
 
+#if QT_VERSION >= 0x050000
+void EventSender::touchCancel()
+{
+    sendTouchEvent(QEvent::TouchCancel);
+    m_touchActive = false;
+}
+#endif
+
 void EventSender::clearTouchPoints()
 {
     m_touchPoints.clear();
@@ -476,6 +484,14 @@ void EventSender::releaseTouchPoint(int index)
         return;
 
     m_touchPoints[index].setState(Qt::TouchPointReleased);
+}
+
+void EventSender::cancelTouchPoint(int index)
+{
+    // FIXME: No cancellation state in Qt 5, mapped to release instead.
+    // PlatformTouchEvent conversion later will map all touch points to
+    // cancelled.
+    releaseTouchPoint(index);
 }
 
 void EventSender::sendTouchEvent(QEvent::Type type)

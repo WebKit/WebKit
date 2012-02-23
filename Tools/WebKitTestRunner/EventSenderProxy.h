@@ -64,8 +64,10 @@ public:
     void touchStart();
     void touchMove();
     void touchEnd();
+    void touchCancel();
     void clearTouchPoints();
     void releaseTouchPoint(int index);
+    void cancelTouchPoint(int index);
 #endif
 
 private:

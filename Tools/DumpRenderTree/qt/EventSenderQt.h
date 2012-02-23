@@ -73,6 +73,9 @@ public slots:
     void touchStart();
     void touchMove();
     void touchEnd();
+#if QT_VERSION >= 0x050000
+    void touchCancel();
+#endif
     void zoomPageIn();
     void zoomPageOut();
     void textZoomIn();
@@ -80,6 +83,7 @@ public slots:
     void scalePageBy(float scaleFactor, float x, float y);
     void clearTouchPoints();
     void releaseTouchPoint(int index);
+    void cancelTouchPoint(int index);
 
 protected:
     void timerEvent(QTimerEvent*);

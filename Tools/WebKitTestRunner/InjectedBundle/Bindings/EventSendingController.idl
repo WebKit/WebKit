@@ -50,8 +50,10 @@ module WTR {
         void touchStart();
         void touchMove();
         void touchEnd();
+        void touchCancel();
         void clearTouchPoints();
         void releaseTouchPoint(in long index);
+        void cancelTouchPoint(in long index);
 #endif
     };
 

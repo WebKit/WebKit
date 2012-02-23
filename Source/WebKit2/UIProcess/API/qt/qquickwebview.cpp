@@ -1389,6 +1389,7 @@ bool QQuickWebView::event(QEvent* ev)
     case QEvent::FocusOut:
     case QEvent::TouchBegin:
     case QEvent::TouchEnd:
+    case QEvent::TouchCancel:
     case QEvent::TouchUpdate:
         if (d->pageView->eventHandler()->handleEvent(ev))
             return true;

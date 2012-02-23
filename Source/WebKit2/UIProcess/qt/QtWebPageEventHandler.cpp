@@ -143,6 +143,7 @@ bool QtWebPageEventHandler::handleEvent(QEvent* ev)
         return handleFocusOutEvent(static_cast<QFocusEvent*>(ev));
     case QEvent::TouchBegin:
     case QEvent::TouchEnd:
+    case QEvent::TouchCancel:
     case QEvent::TouchUpdate:
         touchEvent(static_cast<QTouchEvent*>(ev));
         return true;

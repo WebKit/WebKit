@@ -86,6 +86,8 @@ static WebEvent::Type webEventTypeForEvent(const QEvent* event)
         return WebEvent::TouchMove;
     case QEvent::TouchEnd:
         return WebEvent::TouchEnd;
+    case QEvent::TouchCancel:
+        return WebEvent::TouchCancel;
 #endif
     default:
         // assert
@@ -206,6 +208,11 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event, con
             ASSERT_NOT_REACHED();
             break;
         }
+
+        // Qt does not have a Qt::TouchPointCancelled point state, so if we receive a touch cancel event,
+        // simply cancel all touch points here.
+        if (type == WebEvent::TouchCancel)
+            state = WebPlatformTouchPoint::TouchCancelled;
 
         m_touchPoints.append(WebPlatformTouchPoint(id, state, touchPoint.screenPos().toPoint(), fromItemTransform.map(touchPoint.pos()).toPoint()));
     }

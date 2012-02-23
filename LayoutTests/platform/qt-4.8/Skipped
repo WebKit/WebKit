@@ -62,3 +62,6 @@ fast/events/click-count.html
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 fast/events/drag-selects-image.html
 #################################################
+
+# eventSender missing touchCancel() and cancelTouchPoint()
+fast/events/touch/send-oncancel-event.html

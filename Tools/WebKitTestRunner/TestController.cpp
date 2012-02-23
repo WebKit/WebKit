@@ -699,6 +699,13 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 
+        if (WKStringIsEqualToUTF8CString(subMessageName, "TouchCancel")) {
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
+            m_eventSenderProxy->touchCancel();
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
+            return 0;
+        }
+
         if (WKStringIsEqualToUTF8CString(subMessageName, "ClearTouchPoints")) {
             m_eventSenderProxy->clearTouchPoints();
             return 0;
@@ -708,6 +715,13 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
             int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
             m_eventSenderProxy->releaseTouchPoint(index);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "CancelTouchPoint")) {
+            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
+            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
+            m_eventSenderProxy->cancelTouchPoint(index);
             return 0;
         }
 #endif

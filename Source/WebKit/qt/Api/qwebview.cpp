@@ -703,7 +703,11 @@ bool QWebView::event(QEvent *e)
 #endif
         } else if (e->type() == QEvent::TouchBegin 
                    || e->type() == QEvent::TouchEnd 
-                   || e->type() == QEvent::TouchUpdate) {
+                   || e->type() == QEvent::TouchUpdate
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+                   || e->type() == QEvent::TouchCancel
+#endif
+                  ) {
             d->page->event(e);
 
             // Always return true so that we'll receive also TouchUpdate and TouchEnd events

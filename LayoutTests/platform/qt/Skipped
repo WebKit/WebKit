@@ -1534,8 +1534,6 @@ fast/repaint/block-selection-gap-stale-cache-2.html
 fast/repaint/block-selection-gap-stale-cache.html
 fast/repaint/inline-overflow.html
 fast/repaint/inline-relative-positioned.html
-# eventSender missing touchCancel() and cancelTouchPoint()
-fast/events/touch/send-oncancel-event.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html

@@ -40,11 +40,39 @@ PlatformTouchEvent::PlatformTouchEvent(QTouchEvent* event)
     case QEvent::TouchEnd:
         m_type = PlatformEvent::TouchEnd;
         break;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    case QEvent::TouchCancel:
+        m_type = PlatformEvent::TouchCancel;
+        break;
+#endif
     }
 
     const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
-    for (int i = 0; i < points.count(); ++i)
-        m_touchPoints.append(PlatformTouchPoint(points.at(i)));
+    for (int i = 0; i < points.count(); ++i) {
+        PlatformTouchPoint::State state = PlatformTouchPoint::TouchStateEnd;
+
+        switch (points.at(i).state()) {
+        case Qt::TouchPointReleased:
+            state = PlatformTouchPoint::TouchReleased;
+            break;
+        case Qt::TouchPointMoved:
+            state = PlatformTouchPoint::TouchMoved;
+            break;
+        case Qt::TouchPointPressed:
+            state = PlatformTouchPoint::TouchPressed;
+            break;
+        case Qt::TouchPointStationary:
+            state = PlatformTouchPoint::TouchStationary;
+            break;
+        }
+
+        // Qt does not have a Qt::TouchPointCancelled point state, so if we receive a touch cancel event,
+        // simply cancel all touch points here.
+        if (m_type == PlatformEvent::TouchCancel)
+            state = PlatformTouchPoint::TouchCancelled;
+
+        m_touchPoints.append(PlatformTouchPoint(points.at(i), state));
+    }
 
     m_modifiers = 0;
     if (event->modifiers()  & Qt::ShiftModifier)

@@ -3116,6 +3116,9 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    case QEvent::TouchCancel:
+#endif
         // Return whether the default action was cancelled in the JS event handler
         return d->touchEvent(static_cast<QTouchEvent*>(ev));
 #ifndef QT_NO_PROPERTIES

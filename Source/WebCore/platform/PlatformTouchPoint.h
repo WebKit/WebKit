@@ -48,7 +48,7 @@ public:
     PlatformTouchPoint() { };
 
 #if PLATFORM(QT)
-    PlatformTouchPoint(const QTouchEvent::TouchPoint&);
+    PlatformTouchPoint(const QTouchEvent::TouchPoint&, State);
 #elif PLATFORM(EFL)
     PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State);
 #endif
