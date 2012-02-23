@@ -21,6 +21,7 @@
 #include "WebEditorClient.h"
 
 #include "Frame.h"
+#include "FrameDestructionObserver.h"
 #include "PlatformKeyboardEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -130,7 +131,28 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
 }
 
 #if PLATFORM(X11)
+class EditorClientFrameDestructionObserver : FrameDestructionObserver {
+public:
+    EditorClientFrameDestructionObserver(Frame* frame, GClosure* closure)
+        : FrameDestructionObserver(frame)
+        , m_closure(closure)
+    {
+        g_closure_add_finalize_notifier(m_closure, this, destroyOnClosureFinalization);
+    }
+
+    void frameDestroyed()
+    {
+        g_closure_invalidate(m_closure);
+        FrameDestructionObserver::frameDestroyed();
+    }
+private:
+    GClosure* m_closure;
+
+    static void destroyOnClosureFinalization(gpointer data, GClosure* closure) { delete data; }
+};
+
 static Frame* frameSettingClipboard;
+
 static void collapseSelection(GtkClipboard* clipboard, Frame* frame)
 {
     if (frameSettingClipboard && frameSettingClipboard == frame)
@@ -156,6 +178,10 @@ void WebEditorClient::setSelectionPrimaryClipboardIfNeeded(Frame* frame)
 
     frameSettingClipboard = frame;
     GClosure* callback = g_cclosure_new(G_CALLBACK(collapseSelection), frame, 0);
+    // This observer will be self-destroyed on closure finalization,
+    // that will happen either after closure execution or after
+    // closure invalidation.
+    new EditorClientFrameDestructionObserver(frame, callback);
     g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
     PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, PasteboardHelper::DoNotIncludeSmartPaste, callback);
     frameSettingClipboard = 0;

@@ -1,3 +1,23 @@
+2012-02-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][GTK] WebProcess SIGSEVs due to incorrect clipboard handling
+        https://bugs.webkit.org/show_bug.cgi?id=79252
+
+        Do not execute clipboard callbacks after the Frame associated with
+        it is destroyed.
+
+        This change is already covered by the TestWebViewEditor unit tests
+        (among others), they hang (because WebProcess dies) without this
+        patch in Debug builds.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (EditorClientFrameDestructionObserver):
+        (WebKit::EditorClientFrameDestructionObserver::EditorClientFrameDestructionObserver):
+        (WebKit::EditorClientFrameDestructionObserver::frameDestroyed):
+        (WebKit::EditorClientFrameDestructionObserver::destroyOnClosureFinalization):
+        (WebKit):
+        (WebKit::WebEditorClient::setSelectionPrimaryClipboardIfNeeded):
+
 2012-02-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Page doesn't get repainted while panning is in progress
