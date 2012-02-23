@@ -3274,7 +3274,6 @@
             'platform/graphics/chromium/cc/CCLayerImpl.h',
             'platform/graphics/chromium/cc/CCLayerIterator.cpp',
             'platform/graphics/chromium/cc/CCLayerIterator.h',
-            'platform/graphics/chromium/cc/CCLayerIteratorPosition.h',
             'platform/graphics/chromium/cc/CCLayerQuad.cpp',
             'platform/graphics/chromium/cc/CCLayerQuad.h',
             'platform/graphics/chromium/cc/CCLayerSorter.cpp',
