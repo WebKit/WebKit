@@ -1,3 +1,9 @@
+2012-02-23  Adam Roben  <aroben@apple.com>
+
+        Mac build fix after r108615
+
+        * WebCore.exp.in: Added a missing export.
+
 2012-02-23  Adam Barth  <abarth@webkit.org>
 
         Move MediaStream related declarations from DOMWindow to DOMWindowMediaStream
