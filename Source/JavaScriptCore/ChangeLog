@@ -1,3 +1,14 @@
+2012-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS macro
+        https://bugs.webkit.org/show_bug.cgi?id=79371
+
+        Reviewed by Daniel Bates.
+
+        * CMakeLists.txt:
+        * shell/CMakeLists.txt:
+        * wtf/CMakeLists.txt:
+
 2012-02-23  Aron Rosenberg  <arosenberg@logitech.com>
 
         Fix the PRI macros used in WTF::String formatters to be compatible with Qt and Visual Studio 2005 and newer.
