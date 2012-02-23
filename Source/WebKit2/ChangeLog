@@ -1,3 +1,10 @@
+2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] Trivial build fix after r108615.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-02-22  Michael Tyutyunik  <michael.tyutyunik@nokia.com>
 
         [Qt][WK2] navigationType is missing in new API

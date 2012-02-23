@@ -232,11 +232,12 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
 #endif
-#if ENABLE(NOTIFICATIONS)
-    pageClients.notificationClient = new WebNotificationClient(this);
-#endif
     
     m_page = adoptPtr(new Page(pageClients));
+
+#if ENABLE(NOTIFICATIONS)
+    WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
+#endif
 
     // Qt does not yet call setIsInWindow. Until it does, just leave
     // this line out so plug-ins and video will work. Eventually all platforms
