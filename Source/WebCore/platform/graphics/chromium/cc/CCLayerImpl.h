@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
+#include "cc/CCLayerAnimationControllerImpl.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurface.h"
 #include <wtf/OwnPtr.h>
@@ -45,12 +46,21 @@ class CCLayerSorter;
 class LayerChromium;
 class LayerRendererChromium;
 
-class CCLayerImpl : public RefCounted<CCLayerImpl> {
+class CCLayerImpl : public RefCounted<CCLayerImpl>, public CCLayerAnimationControllerImplClient {
 public:
     static PassRefPtr<CCLayerImpl> create(int id)
     {
         return adoptRef(new CCLayerImpl(id));
     }
+
+    // CCLayerAnimationControllerImplClient implementation.
+    virtual int id() const { return m_layerId; }
+    virtual void setOpacity(float);
+    virtual float opacity() const { return m_opacity; }
+    virtual void setTransform(const TransformationMatrix&);
+    virtual const TransformationMatrix& transform() const { return m_transform; }
+    virtual const IntSize& bounds() const { return m_bounds; }
+
     virtual ~CCLayerImpl();
 
     // Tree structure.
@@ -65,8 +75,6 @@ public:
 
     void setReplicaLayer(PassRefPtr<CCLayerImpl>);
     CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
-
-    int id() const { return m_layerId; }
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }
@@ -111,9 +119,6 @@ public:
     void setOpaque(bool);
     bool opaque() const { return m_opaque; }
 
-    void setOpacity(float);
-    float opacity() const { return m_opacity; }
-
     void setPosition(const FloatPoint&);
     const FloatPoint& position() const { return m_position; }
 
@@ -128,9 +133,6 @@ public:
 
     void setSublayerTransform(const TransformationMatrix&);
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
-
-    void setTransform(const TransformationMatrix&);
-    const TransformationMatrix& transform() const { return m_transform; }
 
     void setName(const String& name) { m_name = name; }
     const String& name() const { return m_name; }
@@ -154,7 +156,6 @@ public:
     CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
-    const IntSize& bounds() const { return m_bounds; }
     void setBounds(const IntSize&);
 
     const IntSize& contentBounds() const { return m_contentBounds; }
@@ -202,6 +203,8 @@ public:
 
     bool layerPropertyChanged() const { return m_layerPropertyChanged; }
     void resetAllChangeTrackingForSubtree();
+
+    CCLayerAnimationControllerImpl* layerAnimationController() { return m_layerAnimationController.get(); }
 
 protected:
     explicit CCLayerImpl(int);
@@ -312,6 +315,9 @@ private:
     // Rect indicating what was repainted/updated during update.
     // Note that plugin layers bypass this and leave it empty.
     FloatRect m_updateRect;
+
+    // Manages animations for this layer.
+    OwnPtr<CCLayerAnimationControllerImpl> m_layerAnimationController;
 };
 
 void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter*);

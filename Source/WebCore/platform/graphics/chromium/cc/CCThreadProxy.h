@@ -25,6 +25,7 @@
 #ifndef CCThreadProxy_h
 #define CCThreadProxy_h
 
+#include "cc/CCAnimationEvents.h"
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
@@ -70,6 +71,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread();
     virtual void setNeedsRedrawOnImplThread();
     virtual void setNeedsCommitOnImplThread();
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>);
 
     // CCSchedulerClient implementation
     virtual bool canDraw();
@@ -86,6 +88,7 @@ private:
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
+    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>);
 
     // Called on impl thread
     struct ReadbackRequest {

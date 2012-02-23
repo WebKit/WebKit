@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerAnimationControllerImpl.h"
 
+#include "TransformationMatrix.h"
 #include "TransformOperations.h"
 
 namespace WebCore {
@@ -44,28 +45,30 @@ CCLayerAnimationControllerImpl::CCLayerAnimationControllerImpl(CCLayerAnimationC
 {
 }
 
-void CCLayerAnimationControllerImpl::animate(double frameBeginTimeSecs)
+CCLayerAnimationControllerImpl::~CCLayerAnimationControllerImpl()
 {
-    startAnimationsWaitingForNextTick(frameBeginTimeSecs);
-    startAnimationsWaitingForStartTime(frameBeginTimeSecs);
-    startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs);
+}
+
+void CCLayerAnimationControllerImpl::animate(double frameBeginTimeSecs, CCAnimationEventsVector& events)
+{
+    startAnimationsWaitingForNextTick(frameBeginTimeSecs, events);
+    startAnimationsWaitingForStartTime(frameBeginTimeSecs, events);
+    startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs, events);
     resolveConflicts(frameBeginTimeSecs);
     tickAnimations(frameBeginTimeSecs);
     purgeFinishedAnimations();
-    startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs);
+    startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs, events);
 }
 
 void CCLayerAnimationControllerImpl::add(PassOwnPtr<CCActiveAnimation> anim)
 {
     m_activeAnimations.append(anim);
-    if (m_client)
-        m_client->animationControllerImplDidActivate(this);
 }
 
-CCActiveAnimation* CCLayerAnimationControllerImpl::getActiveAnimation(CCActiveAnimation::GroupID group, CCActiveAnimation::TargetProperty property)
+CCActiveAnimation* CCLayerAnimationControllerImpl::getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty property)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->group() == group && m_activeAnimations[i]->targetProperty() == property)
+        if (m_activeAnimations[i]->group() == groupId && m_activeAnimations[i]->targetProperty() == property)
             return m_activeAnimations[i].get();
     }
     return 0;
@@ -80,25 +83,28 @@ bool CCLayerAnimationControllerImpl::hasActiveAnimation() const
     return false;
 }
 
-void CCLayerAnimationControllerImpl::startAnimationsWaitingForNextTick(double now)
+void CCLayerAnimationControllerImpl::startAnimationsWaitingForNextTick(double now, CCAnimationEventsVector& events)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForNextTick) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
             m_activeAnimations[i]->setStartTime(now);
+            events.append(CCAnimationStartedEvent(m_client->id(), now));
         }
     }
 }
 
-void CCLayerAnimationControllerImpl::startAnimationsWaitingForStartTime(double now)
+void CCLayerAnimationControllerImpl::startAnimationsWaitingForStartTime(double now, CCAnimationEventsVector& events)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForStartTime && m_activeAnimations[i]->startTime() <= now)
+        if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForStartTime && m_activeAnimations[i]->startTime() <= now) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
+            events.append(CCAnimationStartedEvent(m_client->id(), now));
+        }
     }
 }
 
-void CCLayerAnimationControllerImpl::startAnimationsWaitingForTargetAvailability(double now)
+void CCLayerAnimationControllerImpl::startAnimationsWaitingForTargetAvailability(double now, CCAnimationEventsVector& events)
 {
     // First collect running properties.
     TargetProperties blockedProperties;
@@ -130,6 +136,7 @@ void CCLayerAnimationControllerImpl::startAnimationsWaitingForTargetAvailability
             if (nullIntersection) {
                 m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
                 m_activeAnimations[i]->setStartTime(now);
+                events.append(CCAnimationStartedEvent(m_client->id(), now));
                 for (size_t j = i + 1; j < m_activeAnimations.size(); ++j) {
                     if (m_activeAnimations[i]->group() == m_activeAnimations[j]->group()) {
                         m_activeAnimations[j]->setRunState(CCActiveAnimation::Running, now);
@@ -178,9 +185,10 @@ void CCLayerAnimationControllerImpl::purgeFinishedAnimations()
                 }
             }
         }
-        if (allAnimsWithSameIdAreFinished)
+        if (allAnimsWithSameIdAreFinished) {
+            m_finishedAnimations.append(m_activeAnimations[i]->signature());
             m_activeAnimations.remove(i);
-        else
+        } else
             i++;
     }
 }
@@ -194,14 +202,11 @@ void CCLayerAnimationControllerImpl::tickAnimations(double now)
 
             case CCActiveAnimation::Transform: {
                 const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->animationCurve()->toTransformAnimationCurve();
-                const TransformOperations operations = transformAnimationCurve->getValue(trimmed);
+                const TransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
                 if (m_activeAnimations[i]->isFinishedAt(now))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, now);
 
-                // Decide here if absolute or relative. Absolute for now.
-                TransformationMatrix toApply;
-                operations.apply(FloatSize(), toApply);
-                m_client->setTransform(toApply);
+                m_client->setTransform(matrix);
                 break;
             }
 

@@ -25,6 +25,7 @@
 #ifndef CCSingleThreadProxy_h
 #define CCSingleThreadProxy_h
 
+#include "cc/CCAnimationEvents.h"
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
@@ -63,6 +64,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }
     virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
     virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>);
 
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();
@@ -107,6 +109,24 @@ public:
     {
 #if !ASSERT_DISABLED
         CCProxy::setCurrentThreadIsImplThread(false);
+#endif
+    }
+};
+
+// For use in the single-threaded case. In debug builds, it pretends that the
+// code is running on the main thread to satisfy assertion checks.
+class DebugScopedSetMainThread {
+public:
+    DebugScopedSetMainThread()
+    {
+#if !ASSERT_DISABLED
+        CCProxy::setCurrentThreadIsImplThread(false);
+#endif
+    }
+    ~DebugScopedSetMainThread()
+    {
+#if !ASSERT_DISABLED
+        CCProxy::setCurrentThreadIsImplThread(true);
 #endif
     }
 };

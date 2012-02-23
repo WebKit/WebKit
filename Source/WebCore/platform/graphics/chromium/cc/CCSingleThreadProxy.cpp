@@ -233,6 +233,13 @@ void CCSingleThreadProxy::stop()
     m_layerTreeHost = 0;
 }
 
+void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events)
+{
+    ASSERT(CCProxy::isImplThread());
+    DebugScopedSetMainThread main;
+    m_layerTreeHost->setAnimationEvents(events);
+}
+
 // Called by the legacy scheduling path (e.g. where render_widget does the scheduling)
 void CCSingleThreadProxy::compositeImmediately()
 {

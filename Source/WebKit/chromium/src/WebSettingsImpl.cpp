@@ -543,4 +543,9 @@ void WebSettingsImpl::setPartialSwapEnabled(bool enabled)
     m_settings->setPartialSwapEnabled(enabled);
 }
 
+void WebSettingsImpl::setThreadedAnimationEnabled(bool enabled)
+{
+    m_settings->setThreadedAnimationEnabled(enabled);
+}
+
 } // namespace WebKit

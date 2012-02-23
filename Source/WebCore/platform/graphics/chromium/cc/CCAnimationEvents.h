@@ -22,55 +22,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCAnimationCurve_h
-#define CCAnimationCurve_h
+#ifndef CCAnimationEvents_h
+#define CCAnimationEvents_h
 
-#include "TransformationMatrix.h"
-
-#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CCFloatAnimationCurve;
-class CCTransformAnimationCurve;
-class TransformOperations;
-
-// An animation curve is a function that returns a value given a time.
-// There are currently only two types of curve, float and transform.
-class CCAnimationCurve {
-public:
-    enum Type { Float, Transform };
-
-    virtual ~CCAnimationCurve() { }
-
-    virtual double duration() const = 0;
-    virtual Type type() const = 0;
-    virtual PassOwnPtr<CCAnimationCurve> clone() const = 0;
-
-    const CCFloatAnimationCurve* toFloatAnimationCurve() const;
-    const CCTransformAnimationCurve* toTransformAnimationCurve() const;
+// Indicates that an animation has started on a particular layer.
+struct CCAnimationStartedEvent {
+    CCAnimationStartedEvent(int layerID, double time)
+        : layerID(layerID)
+        , time(time) { }
+    int layerID;
+    double time;
 };
 
-class CCFloatAnimationCurve : public CCAnimationCurve {
-public:
-    virtual ~CCFloatAnimationCurve() { }
-
-    virtual float getValue(double t) const = 0;
-
-    // Partial CCAnimation implementation.
-    virtual Type type() const { return Float; }
-};
-
-class CCTransformAnimationCurve : public CCAnimationCurve {
-public:
-    virtual ~CCTransformAnimationCurve() { }
-
-    virtual TransformationMatrix getValue(double t, const IntSize& layerSize) const = 0;
-
-    // Partial CCAnimation implementation.
-    virtual Type type() const { return Transform; }
-};
+typedef Vector<CCAnimationStartedEvent> CCAnimationEventsVector;
 
 } // namespace WebCore
 
-#endif // CCAnimation_h
+#endif // CCAnimationEvents_h

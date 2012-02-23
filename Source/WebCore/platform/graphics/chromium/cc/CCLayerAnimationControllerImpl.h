@@ -27,8 +27,10 @@
 
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationCurve.h"
+#include "cc/CCAnimationEvents.h"
 
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -44,35 +46,41 @@ class CCLayerAnimationControllerImplClient {
 public:
     virtual ~CCLayerAnimationControllerImplClient() { }
 
+    virtual int id() const = 0;
     virtual float opacity() const = 0;
     virtual void setOpacity(float) = 0;
     virtual const TransformationMatrix& transform() const = 0;
     virtual void setTransform(const TransformationMatrix&) = 0;
-    virtual void animationControllerImplDidActivate(CCLayerAnimationControllerImpl*) = 0;
+    virtual const IntSize& bounds() const = 0;
 };
 
 class CCLayerAnimationControllerImpl {
+    WTF_MAKE_NONCOPYABLE(CCLayerAnimationControllerImpl);
 public:
     static PassOwnPtr<CCLayerAnimationControllerImpl> create(CCLayerAnimationControllerImplClient*);
 
-    void animate(double frameBeginTimeSecs);
+    virtual ~CCLayerAnimationControllerImpl();
+
+    void animate(double frameBeginTimeSecs, CCAnimationEventsVector&);
 
     void add(PassOwnPtr<CCActiveAnimation>);
 
     // Returns the active animation in the given group, animating the given property if such an
     // animation exists.
-    CCActiveAnimation* getActiveAnimation(CCActiveAnimation::GroupID, CCActiveAnimation::TargetProperty);
+    CCActiveAnimation* getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty);
 
     // Returns true if there are any animations that are neither finished nor aborted.
     bool hasActiveAnimation() const;
 
 private:
+    friend class CCLayerAnimationController;
+
     // The animator is owned by the layer.
     explicit CCLayerAnimationControllerImpl(CCLayerAnimationControllerImplClient*);
 
-    void startAnimationsWaitingForNextTick(double now);
-    void startAnimationsWaitingForStartTime(double now);
-    void startAnimationsWaitingForTargetAvailability(double now);
+    void startAnimationsWaitingForNextTick(double now, CCAnimationEventsVector&);
+    void startAnimationsWaitingForStartTime(double now, CCAnimationEventsVector&);
+    void startAnimationsWaitingForTargetAvailability(double now, CCAnimationEventsVector&);
     void resolveConflicts(double now);
     void purgeFinishedAnimations();
 
@@ -80,6 +88,7 @@ private:
 
     CCLayerAnimationControllerImplClient* m_client;
     Vector<OwnPtr<CCActiveAnimation> > m_activeAnimations;
+    Vector<CCActiveAnimation::AnimationSignature> m_finishedAnimations;
 };
 
 } // namespace WebCore

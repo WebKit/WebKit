@@ -58,6 +58,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_sentPageScaleDelta(1)
     , m_minPageScale(0)
     , m_maxPageScale(0)
+    , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
 {
     ASSERT(CCProxy::isImplThread());
@@ -98,21 +99,8 @@ GraphicsContext3D* CCLayerTreeHostImpl::context()
 
 void CCLayerTreeHostImpl::animate(double frameBeginTimeMs)
 {
-    if (!m_pageScaleAnimation)
-        return;
-
-    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
-
-    setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(frameBeginTimeMs) / m_pageScale);
-    IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(frameBeginTimeMs);
-    nextScroll.scale(1 / m_pageScaleDelta);
-    m_scrollLayerImpl->scrollBy(nextScroll - scrollTotal);
-    m_client->setNeedsRedrawOnImplThread();
-
-    if (m_pageScaleAnimation->isAnimationCompleteAtTime(frameBeginTimeMs)) {
-        m_pageScaleAnimation.clear();
-        m_client->setNeedsCommitOnImplThread();
-    }
+    animatePageScale(frameBeginTimeMs);
+    animateLayers(frameBeginTimeMs);
 }
 
 void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs)
@@ -248,6 +236,34 @@ void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
         FloatRect damageRect = passes[i]->targetSurface()->damageTracker()->currentDamageRect();
         passes[i]->optimizeQuads(haveDamageRect, damageRect);
     }
+}
+
+void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double frameBeginTimeSecs, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)
+{
+    bool subtreeNeedsAnimateLayers = false;
+
+    CCLayerAnimationControllerImpl* currentController = current->layerAnimationController();
+
+    bool hadActiveAnimation = currentController->hasActiveAnimation();
+    currentController->animate(frameBeginTimeSecs, events);
+    bool startedAnimation = events.size() > 0;
+
+    // We animated if we either ticked a running animation, or started a new animation.
+    if (hadActiveAnimation || startedAnimation)
+        didAnimate = true;
+
+    // If the current controller still has an active animation, we must continue animating layers.
+    if (currentController->hasActiveAnimation())
+         subtreeNeedsAnimateLayers = true;
+
+    for (size_t i = 0; i < current->children().size(); ++i) {
+        bool childNeedsAnimateLayers = false;
+        animateLayersRecursive(current->children()[i].get(), frameBeginTimeSecs, events, didAnimate, childNeedsAnimateLayers);
+        if (childNeedsAnimateLayers)
+            subtreeNeedsAnimateLayers = true;
+    }
+
+    needsAnimateLayers = subtreeNeedsAnimateLayers;
 }
 
 IntSize CCLayerTreeHostImpl::contentSize() const
@@ -624,4 +640,42 @@ void CCLayerTreeHostImpl::setFullRootLayerDamage()
     }
 }
 
+void CCLayerTreeHostImpl::animatePageScale(double frameBeginTimeMs)
+{
+    if (!m_pageScaleAnimation)
+        return;
+
+    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+
+    setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(frameBeginTimeMs) / m_pageScale);
+    IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(frameBeginTimeMs);
+    nextScroll.scale(1 / m_pageScaleDelta);
+    m_scrollLayerImpl->scrollBy(nextScroll - scrollTotal);
+    m_client->setNeedsRedrawOnImplThread();
+
+    if (m_pageScaleAnimation->isAnimationCompleteAtTime(frameBeginTimeMs)) {
+        m_pageScaleAnimation.clear();
+        m_client->setNeedsCommitOnImplThread();
+    }
 }
+
+void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
+{
+    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers || !m_rootLayerImpl)
+        return;
+
+    TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);
+
+    OwnPtr<CCAnimationEventsVector> events(adoptPtr(new CCAnimationEventsVector));
+
+    bool didAnimate = false;
+    animateLayersRecursive(m_rootLayerImpl.get(), frameBeginTimeMs / 1000, *events, didAnimate, m_needsAnimateLayers);
+
+    if (!events->isEmpty())
+        m_client->postAnimationEventsToMainThreadOnImplThread(events.release());
+
+    if (didAnimate)
+        m_client->setNeedsRedrawOnImplThread();
+}
+
+} // namespace WebCore

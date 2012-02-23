@@ -61,6 +61,10 @@
 
 using namespace std;
 
+namespace {
+static int s_nextGroupId = 0;
+}
+
 namespace WebCore {
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
@@ -124,7 +128,7 @@ bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 void GraphicsLayerChromium::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);
-    if (!m_inSetChildren) 
+    if (!m_inSetChildren)
         updateChildList();
 }
 
@@ -382,6 +386,31 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
         updateChildList();
 }
 
+bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
+{
+    return m_layer->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), s_nextGroupId++, timeOffset);
+}
+
+void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)
+{
+    m_layer->pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
+}
+
+void GraphicsLayerChromium::removeAnimation(const String& animationName)
+{
+    m_layer->removeAnimation(mapAnimationNameToId(animationName));
+}
+
+void GraphicsLayerChromium::suspendAnimations(double time)
+{
+    m_layer->suspendAnimations(time);
+}
+
+void GraphicsLayerChromium::resumeAnimations()
+{
+    m_layer->resumeAnimations();
+}
+
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
 {
     bool childrenChanged = false;
@@ -396,12 +425,12 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
     } else {
         if (m_contentsLayer) {
             childrenChanged = true;
-  
+
             // The old contents layer will be removed via updateChildList.
             m_contentsLayer = 0;
         }
     }
-  
+
     if (childrenChanged)
         updateChildList();
 }
@@ -550,7 +579,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_layer->setAnchorPoint(FloatPoint(0.5f, 0.5f));
         TransformationMatrix identity;
         m_layer->setTransform(identity);
-        
+
         // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         m_layer->setOpacity(1);
 
@@ -687,6 +716,12 @@ void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
 void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)
 {
     paintGraphicsLayerContents(context, clip);
+}
+
+int GraphicsLayerChromium::mapAnimationNameToId(const String& animationName)
+{
+    // FIXME: need to maintain a name to id mapping in this class.
+    return 0;
 }
 
 } // namespace WebCore

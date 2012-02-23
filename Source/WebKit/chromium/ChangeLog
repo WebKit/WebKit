@@ -1,3 +1,98 @@
+2012-02-22  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Plumb from GraphicsLayer to the cc thread animation code
+        https://bugs.webkit.org/show_bug.cgi?id=75874
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * public/WebSettings.h:
+        * public/platform/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setThreadedAnimationEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * tests/CCActiveAnimationTest.cpp:
+        (WebCore::createActiveAnimation):
+        * tests/CCAnimationTestCommon.cpp: Added.
+        (WebKitTests):
+        (WebKitTests::FakeFloatAnimationCurve::FakeFloatAnimationCurve):
+        (WebKitTests::FakeFloatAnimationCurve::~FakeFloatAnimationCurve):
+        (WebKitTests::FakeFloatAnimationCurve::clone):
+        (WebKitTests::FakeTransformTransition::FakeTransformTransition):
+        (WebKitTests::FakeTransformTransition::~FakeTransformTransition):
+        (WebKitTests::FakeTransformTransition::getValue):
+        (WebKitTests::FakeTransformTransition::clone):
+        (WebKitTests::FakeFloatTransition::FakeFloatTransition):
+        (WebKitTests::FakeFloatTransition::~FakeFloatTransition):
+        (WebKitTests::FakeFloatTransition::getValue):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::FakeLayerAnimationControllerImplClient):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::~FakeLayerAnimationControllerImplClient):
+        (WebKitTests::FakeFloatTransition::clone):
+        (WebKitTests::addOpacityTransition):
+        * tests/CCAnimationTestCommon.h: Added.
+        (WebCore):
+        (WebKitTests):
+        (FakeFloatAnimationCurve):
+        (WebKitTests::FakeFloatAnimationCurve::duration):
+        (WebKitTests::FakeFloatAnimationCurve::getValue):
+        (FakeTransformTransition):
+        (WebKitTests::FakeTransformTransition::duration):
+        (FakeFloatTransition):
+        (WebKitTests::FakeFloatTransition::duration):
+        (FakeLayerAnimationControllerImplClient):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::id):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::opacity):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::setOpacity):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::transform):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::setTransform):
+        (WebKitTests::FakeLayerAnimationControllerImplClient::bounds):
+        * tests/CCLayerAnimationControllerImplTest.cpp:
+        (WebKitTests::createActiveAnimation):
+        (WebKitTests::TEST):
+        * tests/CCLayerAnimationControllerTest.cpp: Added.
+        (WebKitTests):
+        (WebKitTests::createActiveAnimation):
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::CCLayerTreeHostImplTest::postAnimationEventsToMainThreadOnImplThread):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::animateLayers):
+        (MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImpl::animateLayers):
+        (WTF::MockLayerTreeHost::create):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImpl):
+        (WTF):
+        (MockLayerAnimationController):
+        (WTF::MockLayerAnimationController::create):
+        (WTF::MockLayerAnimationController::addAnimation):
+        (WTF::MockLayerTreeHostClient::scheduleComposite):
+        (WTF::CCLayerTreeHostTest::postAddAnimationToMainThread):
+        (CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::beginTest):
+        (WTF::CCLayerTreeHostTestAddAnimation::animateLayers):
+        (WTF::CCLayerTreeHostTestAddAnimation::afterTest):
+        (WTF::TEST_F):
+        * tests/TreeSynchronizerTest.cpp:
+        (FakeLayerAnimationController):
+        (WebKitTests::FakeLayerAnimationController::create):
+        (WebKitTests::FakeLayerAnimationController::synchronizedAnimations):
+        (WebKitTests::FakeLayerAnimationController::FakeLayerAnimationController):
+        (WebKitTests::FakeLayerAnimationController::synchronizeAnimations):
+        (WebKitTests):
+        (WebKitTests::TEST):
+
 2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor

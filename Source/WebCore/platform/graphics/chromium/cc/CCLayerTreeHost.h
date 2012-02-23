@@ -30,6 +30,7 @@
 #include "LayerChromium.h"
 #include "RateLimiter.h"
 #include "TransformationMatrix.h"
+#include "cc/CCAnimationEvents.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
@@ -75,6 +76,7 @@ struct CCSettings {
             , refreshRate(0)
             , perTilePainting(false)
             , partialSwapEnabled(false)
+            , threadedAnimationEnabled(false)
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max()) { }
 
     bool acceleratePainting;
@@ -84,6 +86,7 @@ struct CCSettings {
     double refreshRate;
     bool perTilePainting;
     bool partialSwapEnabled;
+    bool threadedAnimationEnabled;
     size_t maxPartialTextureUpdates;
 };
 
@@ -162,6 +165,8 @@ public:
     // virtual for testing
     virtual void setNeedsCommit();
     void setNeedsRedraw();
+
+    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>);
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }

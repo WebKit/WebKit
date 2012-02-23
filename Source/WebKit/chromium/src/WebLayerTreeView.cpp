@@ -45,6 +45,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.refreshRate = refreshRate;
     settings.perTilePainting = perTilePainting;
     settings.partialSwapEnabled = partialSwapEnabled;
+    settings.threadedAnimationEnabled = threadedAnimationEnabled;
 
     // FIXME: showFPSCounter / showPlatformLayerTree / maxPartialTextureUpdates aren't supported currently.
     return settings;

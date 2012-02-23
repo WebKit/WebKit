@@ -3168,6 +3168,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         ccSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
         ccSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
+        ccSettings.threadedAnimationEnabled = page()->settings()->threadedAnimationEnabled();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());

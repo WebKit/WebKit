@@ -259,6 +259,13 @@ void CCThreadProxy::setNeedsCommitOnImplThread()
     m_schedulerOnImplThread->setNeedsCommit();
 }
 
+void CCThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events)
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT("CCThreadProxy::postAnimationEventsToMainThreadOnImplThread", this, 0);
+    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::setAnimationEvents, events));
+}
+
 void CCThreadProxy::setNeedsRedraw()
 {
     ASSERT(isMainThread());
@@ -560,6 +567,14 @@ void CCThreadProxy::didCompleteSwapBuffers()
     if (!m_layerTreeHost)
         return;
     m_layerTreeHost->didCompleteSwapBuffers();
+}
+
+void CCThreadProxy::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
+{
+    ASSERT(isMainThread());
+    if (!m_layerTreeHost)
+        return;
+    m_layerTreeHost->setAnimationEvents(events);
 }
 
 void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)

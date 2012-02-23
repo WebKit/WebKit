@@ -536,6 +536,9 @@ namespace WebCore {
         bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
 #endif
 
+        void setThreadedAnimationEnabled(bool enabled) { m_threadedAnimationEnabled = enabled; }
+        bool threadedAnimationEnabled() const { return m_threadedAnimationEnabled; }
+
     private:
         Settings(Page*);
 
@@ -686,6 +689,7 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled : 1;
 #endif
+        bool m_threadedAnimationEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

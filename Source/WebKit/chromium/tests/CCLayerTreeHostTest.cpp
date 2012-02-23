@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "CCAnimationTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
 #include "FilterOperations.h"
@@ -35,6 +36,8 @@
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
+#include "cc/CCActiveAnimation.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
@@ -50,6 +53,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace WebKitTests;
 using namespace WTF;
 
 namespace {
@@ -60,6 +64,7 @@ public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
+    virtual void animateLayers(CCLayerTreeHostImpl*) { }
     virtual void applyScrollAndScale(const IntSize&, float) { }
     virtual void updateAnimations(double frameBeginTime) { }
     virtual void layout() { }
@@ -91,6 +96,13 @@ public:
         m_testHooks->drawLayersOnCCThread(this);
     }
 
+protected:
+    virtual void animateLayers(double frameBeginTimeMs)
+    {
+        CCLayerTreeHostImpl::animateLayers(frameBeginTimeMs);
+        m_testHooks->animateLayers(this);
+    }
+
 private:
     MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
         : CCLayerTreeHostImpl(settings, client)
@@ -106,7 +118,11 @@ class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
-        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, settings));
+        // For these tests, we will enable threaded animations.
+        CCSettings settingsCopy = settings;
+        settingsCopy.threadedAnimationEnabled = true;
+
+        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, settingsCopy));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(rootLayer);
@@ -119,7 +135,10 @@ public:
 
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
     {
-        return MockLayerTreeHostImpl::create(m_testHooks, settings(), client);
+        // For these tests, we will enable threaded animations.
+        CCSettings settings;
+        settings.threadedAnimationEnabled = true;
+        return MockLayerTreeHostImpl::create(m_testHooks, settings, client);
     }
 
 private:
@@ -130,6 +149,25 @@ private:
     }
 
     TestHooks* m_testHooks;
+};
+
+// Adapts CCLayerAnimationController for test. Adds a dummy implementation of addAnimation that inserts a float animation.
+// FIXME: once CCLayerAnimationController::addAnimation is implemented, that function should be called directly and this
+// class can be removed.
+class MockLayerAnimationController : public CCLayerAnimationController {
+public:
+    static PassOwnPtr<MockLayerAnimationController> create()
+    {
+        return adoptPtr(new MockLayerAnimationController);
+    }
+
+private:
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, int animationId, int groupId, double timeOffset)
+    {
+        double duration = 0;
+        activeAnimations().append(CCActiveAnimation::create(adoptPtr(new FakeFloatTransition(duration, 1, 0)), animationId, groupId, CCActiveAnimation::Opacity));
+        return true;
+    }
 };
 
 class CompositorFakeWebGraphicsContext3DWithTextureTracking : public CompositorFakeWebGraphicsContext3D {
@@ -226,7 +264,9 @@ public:
     {
     }
 
-    virtual void scheduleComposite() { }
+    virtual void scheduleComposite()
+    {
+    }
 
 private:
     explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
@@ -256,6 +296,11 @@ public:
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsAnimate, this);
     }
 
+    void postAddAnimationToMainThread()
+    {
+        callOnMainThread(CCLayerTreeHostTest::dispatchAddAnimation, this);
+    }
+
     void postSetNeedsCommitToMainThread()
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
@@ -270,7 +315,6 @@ public:
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsAnimateAndCommit, this);
     }
-
 
     void postSetVisibleToMainThread(bool visible)
     {
@@ -312,6 +356,15 @@ protected:
       ASSERT(test);
       if (test->m_layerTreeHost)
           test->m_layerTreeHost->setNeedsAnimate();
+    }
+
+    static void dispatchAddAnimation(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
+          test->m_layerTreeHost->rootLayer()->addAnimation(KeyframeValueList(AnimatedPropertyOpacity), IntSize(), 0, 0, 0, 0.0);
     }
 
     static void dispatchSetNeedsAnimateAndCommit(void* self)
@@ -464,6 +517,7 @@ void CCLayerTreeHostTest::doBeginTest()
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
+    rootLayer->setLayerAnimationController(MockLayerAnimationController::create());
 
     m_beginning = true;
     beginTest();
@@ -786,6 +840,47 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Add a layer animation and confirm that CCLayerTreeHostImpl::animateLayers does get
+// called and continues to get called.
+class CCLayerTreeHostTestAddAnimation : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestAddAnimation()
+        : m_numAnimates(0)
+        , m_layerTreeHostImpl(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddAnimationToMainThread();
+    }
+
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl)
+    {
+        if (!m_numAnimates) {
+            // The animation had zero duration so layerTreeHostImpl should no
+            // longer need to animate its layers.
+            EXPECT_FALSE(layerTreeHostImpl->needsAnimateLayers());
+            m_numAnimates++;
+            return;
+        }
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numAnimates;
+    CCLayerTreeHostImpl* m_layerTreeHostImpl;
+};
+
+TEST_F(CCLayerTreeHostTestAddAnimation, runMultiThread)
 {
     runTestThreaded();
 }

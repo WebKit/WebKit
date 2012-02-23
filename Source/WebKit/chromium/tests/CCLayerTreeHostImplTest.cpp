@@ -52,6 +52,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread() { }
     virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>) { }
 
     static void expectClearedScrollDeltasRecursive(CCLayerImpl* layer)
     {

@@ -32,15 +32,25 @@
 
 namespace WebCore {
 
-CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, GroupID group, TargetProperty targetProperty)
+PassOwnPtr<CCActiveAnimation> CCActiveAnimation::create(PassOwnPtr<CCAnimationCurve> curve, int animationId, int groupId, TargetProperty targetProperty)
+{
+    return adoptPtr(new CCActiveAnimation(curve, animationId, groupId, targetProperty));
+}
+
+CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int animationId, int groupId, TargetProperty targetProperty)
     : m_animationCurve(curve)
-    , m_group(group)
+    , m_id(animationId)
+    , m_group(groupId)
     , m_targetProperty(targetProperty)
     , m_runState(WaitingForTargetAvailability)
     , m_iterations(1)
     , m_startTime(0)
     , m_pauseTime(0)
     , m_totalPausedTime(0)
+{
+}
+
+CCActiveAnimation::~CCActiveAnimation()
 {
 }
 
@@ -61,6 +71,21 @@ bool CCActiveAnimation::isFinishedAt(double time) const
     return m_runState == Running
         && m_iterations >= 0
         && m_iterations * m_animationCurve->duration() <= time - startTime() - m_totalPausedTime;
+}
+
+bool CCActiveAnimation::isWaiting() const
+{
+    return m_runState == WaitingForNextTick
+        || m_runState == WaitingForTargetAvailability
+        || m_runState == WaitingForStartTime;
+}
+
+bool CCActiveAnimation::isRunningOrHasRun() const
+{
+    return m_runState == Running
+        || m_runState == Finished
+        || m_runState == Aborted
+        || m_runState == Paused;
 }
 
 double CCActiveAnimation::trimTimeToCurrentIteration(double now) const
@@ -93,6 +118,38 @@ double CCActiveAnimation::trimTimeToCurrentIteration(double now) const
 
     // Finally, return x where trimmed = x + n * m_animation->duration() for some positive integer n.
     return fmod(trimmed, m_animationCurve->duration());
+}
+
+PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
+{
+    OwnPtr<CCActiveAnimation> toReturn(adoptPtr(new CCActiveAnimation(m_animationCurve->clone(), m_id, m_group, m_targetProperty)));
+    toReturn->m_runState = m_runState;
+    toReturn->m_iterations = m_iterations;
+    toReturn->m_startTime = m_startTime;
+    toReturn->m_pauseTime = m_pauseTime;
+    toReturn->m_totalPausedTime = m_totalPausedTime;
+    return toReturn.release();
+}
+
+void CCActiveAnimation::synchronizeProperties(CCActiveAnimation* other)
+{
+    // It is possible for the impl thread to initiate a run state change.
+    // This happens when the animation was waiting for a future event to take
+    // place, and the event has happened. In that case, we want 'this' to
+    // assume the impl thread's run state and start time.
+    if (isWaiting() && other->isRunningOrHasRun()) {
+        m_runState = other->m_runState;
+        m_startTime = other->m_startTime;
+    } else {
+        other->m_runState = m_runState;
+        other->m_startTime = m_startTime;
+    }
+
+    // Change in state related to iterations and pause is always initiated from
+    // the main thread, so it is safe to push properties in that direction.
+    other->m_iterations = m_iterations;
+    other->m_pauseTime = m_pauseTime;
+    other->m_totalPausedTime = m_totalPausedTime;
 }
 
 } // namespace WebCore

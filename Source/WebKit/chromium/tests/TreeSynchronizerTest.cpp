@@ -26,13 +26,16 @@
 
 #include "TreeSynchronizer.h"
 
+#include "CCAnimationTestCommon.h"
 #include "LayerChromium.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKitTests;
 
 namespace {
 
@@ -89,6 +92,30 @@ private:
     }
 
     Vector<int>* m_ccLayerDestructionList;
+};
+
+class FakeLayerAnimationController : public CCLayerAnimationController {
+public:
+    static PassOwnPtr<FakeLayerAnimationController> create()
+    {
+        return adoptPtr(new FakeLayerAnimationController);
+    }
+
+    bool synchronizedAnimations() const { return m_synchronizedAnimations; }
+
+private:
+    FakeLayerAnimationController()
+        : m_synchronizedAnimations(false)
+    {
+    }
+
+    virtual void synchronizeAnimations(CCLayerAnimationControllerImpl* controllerImpl)
+    {
+        CCLayerAnimationController::synchronizeAnimations(controllerImpl);
+        m_synchronizedAnimations = true;
+    }
+
+    bool m_synchronizedAnimations;
 };
 
 void expectTreesAreIdentical(LayerChromium* layer, CCLayerImpl* ccLayer)
@@ -307,5 +334,19 @@ TEST(TreeSynchronizerTest, syncMaskReplicaAndReplicaMaskLayers)
     expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
 }
 
+TEST(TreeSynchronizerTest, synchronizeAnimations)
+{
+    DebugScopedSetImplThread impl;
+    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
+
+    layerTreeRoot->setLayerAnimationController(FakeLayerAnimationController::create());
+
+    EXPECT_FALSE(static_cast<FakeLayerAnimationController*>(layerTreeRoot->layerAnimationController())->synchronizedAnimations());
+
+    RefPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), 0);
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    EXPECT_TRUE(static_cast<FakeLayerAnimationController*>(layerTreeRoot->layerAnimationController())->synchronizedAnimations());
+}
 
 } // namespace

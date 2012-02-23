@@ -137,6 +137,7 @@ public:
     virtual void setAcceleratedPaintingEnabled(bool);
     virtual void setPerTilePaintingEnabled(bool);
     virtual void setPartialSwapEnabled(bool);
+    virtual void setThreadedAnimationEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

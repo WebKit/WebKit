@@ -33,6 +33,7 @@
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCLayerAnimationControllerImpl.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/text/WTFString.h>
@@ -61,6 +62,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_drawOpacity(0)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
+    , m_layerAnimationController(CCLayerAnimationControllerImpl::create(this))
 {
     ASSERT(CCProxy::isImplThread());
 }

@@ -50,7 +50,8 @@ public:
             , showPlatformLayerTree(false)
             , refreshRate(0)
             , perTilePainting(false)
-            , partialSwapEnabled(false) { }
+            , partialSwapEnabled(false)
+            , threadedAnimationEnabled(false) { }
 
         bool acceleratePainting;
         bool compositeOffscreen;
@@ -59,6 +60,7 @@ public:
         double refreshRate;
         bool perTilePainting;
         bool partialSwapEnabled;
+        bool threadedAnimationEnabled;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;
 #endif

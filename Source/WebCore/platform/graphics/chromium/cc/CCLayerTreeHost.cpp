@@ -171,9 +171,11 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
 
     // Synchronize trees, if one exists at all...
-    if (rootLayer())
+    if (rootLayer()) {
         hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
-    else
+        // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+        hostImpl->setNeedsAnimateLayers();
+    } else
         hostImpl->setRootLayer(0);
 
     hostImpl->setSourceFrameNumber(frameNumber());
@@ -259,6 +261,12 @@ void CCLayerTreeHost::setNeedsRedraw()
         m_client->scheduleComposite();
 }
 
+void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
+{
+    ASSERT(CCThreadProxy::isMainThread());
+    // FIXME: need to walk the tree.
+}
+
 void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
 {
     if (m_rootLayer == rootLayer)
@@ -334,9 +342,12 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
         hostImpl->setRootLayer(0);
         return;
     }
-    if (rootLayer())
+
+    if (rootLayer()) {
         hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
-    else
+        // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+        hostImpl->setNeedsAnimateLayers();
+    } else
         hostImpl->setRootLayer(0);
 }
 

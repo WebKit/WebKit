@@ -25,24 +25,20 @@
 #include "config.h"
 
 #include "cc/CCActiveAnimation.h"
-
-#include "cc/CCAnimationCurve.h"
+#include "CCAnimationTestCommon.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
+using namespace WebKitTests;
+using namespace WebCore;
 
-class FakeFloatAnimation : public CCFloatAnimationCurve {
-public:
-    virtual double duration() const { return 1; }
-    virtual float getValue(double now) const { return 0; }
-};
+namespace {
 
 PassOwnPtr<CCActiveAnimation> createActiveAnimation(int iterations)
 {
-    OwnPtr<CCActiveAnimation> toReturn(CCActiveAnimation::create(adoptPtr(new FakeFloatAnimation), 1, CCActiveAnimation::Opacity));
+    OwnPtr<CCActiveAnimation> toReturn(CCActiveAnimation::create(adoptPtr(new FakeFloatAnimationCurve), 0, 1, CCActiveAnimation::Opacity));
     toReturn->setIterations(iterations);
     return toReturn.release();
 }
@@ -164,4 +160,4 @@ TEST(CCActiveAnimationTest, IsFinished)
     EXPECT_TRUE(anim->isFinished());
 }
 
-} // namespace WebCore
+} // namespace
