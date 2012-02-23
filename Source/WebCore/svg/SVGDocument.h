@@ -53,7 +53,7 @@ private:
 
     virtual bool isSVGDocument() const { return true; }
 
-    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
 
     FloatPoint m_translate;
 };

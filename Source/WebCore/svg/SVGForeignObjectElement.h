@@ -46,7 +46,7 @@ private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
 
     virtual bool selfHasRelativeLengths() const;

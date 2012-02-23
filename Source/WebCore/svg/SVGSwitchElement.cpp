@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGSwitchElement.h"
 
+#include "NodeRenderingContext.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
 
@@ -49,7 +50,7 @@ PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagNa
     return adoptRef(new SVGSwitchElement(tagName, document));
 }
 
-bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
+bool SVGSwitchElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
     // FIXME: This function does not do what the comment below implies it does.
     // It will create a renderer for any valid SVG element children, not just the first one.
@@ -61,7 +62,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
         if (!element || !element->isValid())
             continue;
 
-        return node == child; // Only allow this child if it's the first valid child
+        return node == childContext.node(); // Only allow this child if it's the first valid child
     }
 
     return false;

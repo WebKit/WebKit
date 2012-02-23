@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "NodeRenderingContext.h"
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
 #include "SVGCursorElement.h"
@@ -386,10 +387,10 @@ void SVGElement::finishParsingChildren()
     sendSVGLoadEventIfPossible();
 }
 
-bool SVGElement::childShouldCreateRenderer(Node* child) const
+bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isSVGElement())
-        return static_cast<SVGElement*>(child)->isValid();
+    if (childContext.node()->isSVGElement())
+        return static_cast<SVGElement*>(childContext.node())->isValid();
     return false;
 }
 

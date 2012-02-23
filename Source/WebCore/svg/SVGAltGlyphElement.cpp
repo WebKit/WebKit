@@ -26,6 +26,7 @@
 #include "SVGAltGlyphElement.h"
 
 #include "ExceptionCode.h"
+#include "NodeRenderingContext.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGAltGlyphDefElement.h"
@@ -75,9 +76,9 @@ const AtomicString& SVGAltGlyphElement::format() const
     return fastGetAttribute(SVGNames::formatAttr);
 }
 
-bool SVGAltGlyphElement::childShouldCreateRenderer(Node* child) const
+bool SVGAltGlyphElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isTextNode())
+    if (childContext.node()->isTextNode())
         return true;
     return false;
 }

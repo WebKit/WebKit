@@ -4182,6 +4182,9 @@ BUGCR114777 MAC : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
 BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
 BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
 
+// Needs rebaseline
+BUGWK78878 : media/audio-repaint.html = IMAGE
+
 // Needs new baselines.
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT

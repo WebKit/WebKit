@@ -62,7 +62,6 @@ private:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return true; }
-    virtual bool canHaveChildren() const { return false; }
 
     virtual void updateFromElement();
 
