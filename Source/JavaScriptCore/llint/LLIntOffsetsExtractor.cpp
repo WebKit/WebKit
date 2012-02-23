@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(LLLINT)
-
 #include "CodeBlock.h"
 #include "Executable.h"
 #include "Heap.h"
@@ -83,4 +81,4 @@ int main(int, char**)
     return 0;
 }
 
-#endif // ENABLE(LLINT)
+

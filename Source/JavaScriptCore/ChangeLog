@@ -1,3 +1,9 @@
+2012-02-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Build fix.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+
 2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, disable LLINT for now and fix ENABLE defines for it.
