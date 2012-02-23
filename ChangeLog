@@ -1,3 +1,17 @@
+2012-02-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Remove FindGDK.cmake and FindGDK-PixBuf.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=79292
+
+        Reviewed by Daniel Bates.
+
+        These files were committed when the EFL port's buildsystem code
+        was upstreamed, but are currently not being used anywhere, as the EFL
+        port has not depended on GDK for a long time.
+
+        * Source/cmake/FindGDK-PixBuf.cmake: Removed.
+        * Source/cmake/FindGDK.cmake: Removed.
+
 2012-02-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Clean build is broken when using make -j
