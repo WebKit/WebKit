@@ -1,3 +1,13 @@
+2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: mad Redo to Cmd+Shift+Z, not Cmd+Y on a Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=79341
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.handleShortcut):
+
 2012-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after 108629.

@@ -1049,13 +1049,15 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
 
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+005A") { // Z key
+        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && event.keyIdentifier === "U+005A") { // Z key
             WebInspector.domAgent.undo(this._updateSidebars.bind(this));
             event.handled = true;
             return;
         }
 
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.keyIdentifier === "U+0059") { // Y key
+        var isRedoKey = WebInspector.isMac() ? event.metaKey && event.shiftKey && event.keyIdentifier === "U+005A" : // Z key
+                                               event.ctrlKey && event.keyIdentifier === "U+0059"; // Y key
+        if (isRedoKey) {
             DOMAgent.redo(this._updateSidebars.bind(this));
             event.handled = true;
             return;
