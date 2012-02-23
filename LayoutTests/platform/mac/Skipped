@@ -136,6 +136,9 @@ fast/media/media-query-list-07.html
 # Needs layoutTestController.enableAutoResizeMode()
 fast/autoresize
 
+# Uses layoutTestController.titleTextDirection, which is Chromium-only
+fast/dom/title-directionality-removeChild.html
+
 # Test is flaky and thus not useful until fixed.
 # https://bugs.webkit.org/show_bug.cgi?id=36642
 fast/replaced/border-radius-clip.html
