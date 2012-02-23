@@ -58,7 +58,7 @@ public:
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void purgeGLResources();
     void setVisibleContentsRectAndScale(const WebCore::IntRect&, float);
-    void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&);
+    void setVisibleContentRectTrajectoryVector(const WebCore::IntRect&, const WebCore::FloatPoint&);
 #if USE(TILED_BACKING_STORE)
     void syncRemoteContent();
     void swapContentBuffers();

@@ -354,10 +354,10 @@ void DrawingAreaProxyImpl::setVisibleContentsRectAndScale(const WebCore::IntRect
         m_layerTreeHostProxy->setVisibleContentsRectAndScale(visibleContentsRect, scale);
 }
 
-void DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint& trajectoryVector)
+void DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
 {
     if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->setVisibleContentRectTrajectoryVector(trajectoryVector);
+        m_layerTreeHostProxy->setVisibleContentRectTrajectoryVector(visibleContentsRect, trajectoryVector);
 }
 
 void DrawingAreaProxyImpl::paintLayerTree(BackingStore::PlatformGraphicsContext context)

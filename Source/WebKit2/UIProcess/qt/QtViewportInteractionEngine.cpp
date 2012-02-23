@@ -125,7 +125,7 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
 
     connect(m_content, SIGNAL(widthChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
     connect(m_content, SIGNAL(heightChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
-    connect(m_flickProvider, SIGNAL(movingChanged()), SLOT(scrollStateChanged()), Qt::DirectConnection);
+    connect(m_flickProvider, SIGNAL(movingChanged()), SLOT(flickableMovingStateChanged()), Qt::DirectConnection);
 
     connect(m_scaleAnimation, SIGNAL(valueChanged(QVariant)),
             SLOT(scaleAnimationValueChanged(QVariant)), Qt::DirectConnection);
@@ -187,12 +187,42 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
     return true;
 }
 
-void QtViewportInteractionEngine::scrollStateChanged()
+void QtViewportInteractionEngine::flickableMovingStateChanged()
 {
-    if (m_flickProvider->isMoving() && !m_scrollUpdateDeferrer)
-        m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
-    else
-        m_scrollUpdateDeferrer.clear();
+    if (m_flickProvider->isMoving()) {
+        if (m_scrollUpdateDeferrer)
+            return; // We get the isMoving() signal multiple times.
+        panMoveStarted();
+    } else
+        panMoveEnded();
+}
+
+void QtViewportInteractionEngine::panMoveStarted()
+{
+    m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
+
+    m_lastScrollPosition = m_flickProvider->contentPos();
+    connect(m_flickProvider, SIGNAL(contentXChanged()), SLOT(flickableMovingPositionUpdate()));
+    connect(m_flickProvider, SIGNAL(contentYChanged()), SLOT(flickableMovingPositionUpdate()));
+}
+
+void QtViewportInteractionEngine::panMoveEnded()
+{
+    // This method is called on the end of the pan or pan kinetic animation.
+    m_scrollUpdateDeferrer.clear();
+
+    m_lastScrollPosition = QPointF();
+    disconnect(m_flickProvider, SIGNAL(contentXChanged()), this, SLOT(flickableMovingPositionUpdate()));
+    disconnect(m_flickProvider, SIGNAL(contentYChanged()), this, SLOT(flickableMovingPositionUpdate()));
+}
+
+void QtViewportInteractionEngine::flickableMovingPositionUpdate()
+{
+    QPointF newPosition = m_flickProvider->contentPos();
+
+    emit viewportTrajectoryVectorChanged(m_lastScrollPosition - newPosition);
+
+    m_lastScrollPosition = newPosition;
 }
 
 void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
@@ -427,12 +457,8 @@ void QtViewportInteractionEngine::panGestureRequestUpdate(const QTouchEvent* eve
 {
     ASSERT(event->type() == QEvent::TouchUpdate);
 
-    QPointF viewportPosition = event->touchPoints().first().pos();
-
-    emit viewportTrajectoryVectorChanged(m_lastPinchCenterInViewportCoordinates - viewportPosition);
-
     m_flickProvider->handleTouchFlickEvent(const_cast<QTouchEvent*>(event));
-    m_lastPinchCenterInViewportCoordinates = viewportPosition;
+    m_lastPinchCenterInViewportCoordinates = event->touchPoints().first().pos();
 }
 
 void QtViewportInteractionEngine::panGestureCancelled()

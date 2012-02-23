@@ -563,9 +563,9 @@ void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
     pushUpdateToQueue(DestroyImageMessage::create(data));
 }
 
-void LayerTreeHostProxy::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
+void LayerTreeHostProxy::setVisibleContentRectTrajectoryVector(const IntRect& rect, const FloatPoint& trajectoryVector)
 {
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectTrajectoryVector(trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectTrajectoryVector(rect, trajectoryVector), m_drawingAreaProxy->page()->pageID());
 }
 
 void LayerTreeHostProxy::setVisibleContentsRectAndScale(const IntRect& rect, float scale)

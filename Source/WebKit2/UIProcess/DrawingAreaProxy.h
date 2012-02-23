@@ -94,7 +94,7 @@ public:
 
 #if USE(TILED_BACKING_STORE)
     virtual void setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale) { }
-    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
+    virtual void setVisibleContentRectTrajectoryVector(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector) { }
     virtual void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
     virtual void updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
     virtual void removeTileForLayer(int layerID, int tileID) { }

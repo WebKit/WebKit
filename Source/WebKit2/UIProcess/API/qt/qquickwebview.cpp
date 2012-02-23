@@ -212,14 +212,6 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
     context->downloadManager()->addDownload(download, downloadItem);
 }
 
-void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
-{
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (!drawingArea)
-        return;
-    drawingArea->setVisibleContentRectTrajectoryVector(trajectoryVector);
-}
-
 void QQuickWebViewPrivate::_q_onVisibleChanged()
 {
     webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
@@ -620,12 +612,27 @@ void QQuickWebViewFlickablePrivate::_q_updateVisibleContentRectAndScale()
     const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->contentsScale();
 
+    // This is only for our QML ViewportInfo debugging API.
+    q->experimental()->viewportInfo()->didUpdateCurrentScale();
+
     QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
     drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
     webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
-    q->experimental()->viewportInfo()->didUpdateCurrentScale();
+}
+
+void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
+{
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (!drawingArea)
+        return;
+
+    Q_Q(QQuickWebView);
+    const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
+
+    QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
+    drawingArea->setVisibleContentRectTrajectoryVector(alignedVisibleContentRect, trajectoryVector);
 }
 
 void QQuickWebViewFlickablePrivate::_q_suspend()
