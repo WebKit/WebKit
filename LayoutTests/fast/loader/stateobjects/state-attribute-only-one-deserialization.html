@@ -45,7 +45,7 @@
         // Our stored reference to stateObject will not match the state object in this pop state event, as it is the same as history.state which is a structured clone of the history item's state object.
         shouldBeTrue("popStateEvent.state !== stateObject");
         // The event's state object and the current state object should match.
-        shouldBeTrue("popStateEvent.state === history.state"); // This fails for now, needs to be fixed.
+        shouldBeTrue("popStateEvent.state === history.state");
 
         var s = document.createElement("script");
         s.src = "../../js/resources/js-test-post.js";

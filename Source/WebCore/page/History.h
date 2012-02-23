@@ -45,7 +45,6 @@ public:
 
     unsigned length() const;
     SerializedScriptValue* state();
-    bool stateChanged() const;
     void back();
     void forward();
     void go(int distance);
@@ -53,6 +52,9 @@ public:
     void back(ScriptExecutionContext*);
     void forward(ScriptExecutionContext*);
     void go(ScriptExecutionContext*, int distance);
+
+    bool stateChanged() const;
+    bool isSameAsCurrentState(SerializedScriptValue*) const;
 
     enum StateObjectType {
         StateObjectPush,

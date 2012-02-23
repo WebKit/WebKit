@@ -31,23 +31,60 @@
 #include "config.h"
 #include "V8PopStateEvent.h"
 
+#include "History.h"
 #include "PopStateEvent.h"
 #include "SerializedScriptValue.h"
+#include "V8HiddenPropertyName.h"
+#include "V8History.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+// Save the state value to a hidden attribute in the V8PopStateEvent, and return it, for convenience.
+static v8::Handle<v8::Value> cacheState(v8::Handle<v8::Object> popStateEvent, v8::Handle<v8::Value> state)
+{
+    popStateEvent->SetHiddenValue(V8HiddenPropertyName::state(), state);
+    return state;
+}
 
 v8::Handle<v8::Value> V8PopStateEvent::stateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.PopStateEvent.state");
 
+    v8::Handle<v8::Value> result = info.Holder()->GetHiddenValue(V8HiddenPropertyName::state());
+
+    if (!result.IsEmpty())
+        return result;
+
     PopStateEvent* event = V8PopStateEvent::toNative(info.Holder());
-    SerializedScriptValue* serializedState = event->serializedState();
-    if (serializedState)
-        return serializedState->deserialize();
     if (!event->state().hasNoValue())
-        return event->state().v8Value();
-    return v8::Null();
+        return cacheState(info.Holder(), event->state().v8Value());
+
+    History* history = event->history();
+    if (!history || !event->serializedState())
+        return cacheState(info.Holder(), v8::Null());
+
+    // There's no cached value from a previous invocation, nor a state value was provided by the
+    // event, but there is a history object, so first we need to see if the state object has been
+    // deserialized through the history object already.
+    // The current history state object might've changed in the meantime, so we need to take care
+    // of using the correct one, and always share the same deserialization with history.state.
+
+    bool isSameState = history->isSameAsCurrentState(event->serializedState());
+
+    if (isSameState) {
+        v8::Handle<v8::Object> v8History = toV8(history).As<v8::Object>();
+        if (!history->stateChanged()) {
+            result = v8History->GetHiddenValue(V8HiddenPropertyName::state());
+            if (!result.IsEmpty())
+                return cacheState(info.Holder(), result);
+        }
+        result = event->serializedState()->deserialize();
+        v8History->SetHiddenValue(V8HiddenPropertyName::state(), result);
+    } else
+        result = event->serializedState()->deserialize();
+
+    return cacheState(info.Holder(), result);
 }
 
 } // namespace WebCore

@@ -12,7 +12,7 @@ Inside popstate event
 
 PASS history.state !== stateObject is true
 PASS popStateEvent.state !== stateObject is true
-FAIL popStateEvent.state === history.state should be true. Was false.
+PASS popStateEvent.state === history.state is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -29,7 +29,6 @@
 
 #include "Event.h"
 #include "ScriptValue.h"
-#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -39,27 +38,30 @@ struct PopStateEventInit : public EventInit {
     ScriptValue state;
 };
 
+class History;
+class SerializedScriptValue;
+
 class PopStateEvent : public Event {
 public:
     virtual ~PopStateEvent();
     static PassRefPtr<PopStateEvent> create();
-    static PassRefPtr<PopStateEvent> create(const ScriptValue&);
-    static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>);
+    static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
     static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
 
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
     ScriptValue state() const { return m_state; }
+    History* history() const { return m_history.get(); }
 
     virtual const AtomicString& interfaceName() const;
 
 private:
     PopStateEvent();
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
-    explicit PopStateEvent(const ScriptValue&);
-    explicit PopStateEvent(PassRefPtr<SerializedScriptValue>);
+    explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
 
     ScriptValue m_state;
     RefPtr<SerializedScriptValue> m_serializedState;
+    RefPtr<History> m_history;
 };
 
 } // namespace WebCore

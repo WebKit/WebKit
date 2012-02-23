@@ -43,7 +43,8 @@ namespace WebCore {
     V(devtoolsInjectedScript) \
     V(sleepFunction) \
     V(toStringString) \
-    V(event)
+    V(event) \
+    V(state)
 
 
     class V8HiddenPropertyName {

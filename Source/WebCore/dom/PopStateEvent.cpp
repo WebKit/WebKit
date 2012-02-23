@@ -28,6 +28,8 @@
 #include "PopStateEvent.h"
 
 #include "EventNames.h"
+#include "History.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -38,6 +40,7 @@ PopStateEventInit::PopStateEventInit()
 PopStateEvent::PopStateEvent()
     : Event(eventNames().popstateEvent, false, true)
     , m_serializedState(0)
+    , m_history(0)
 {
 }
 
@@ -45,19 +48,14 @@ PopStateEvent::PopStateEvent(const AtomicString& type, const PopStateEventInit& 
     : Event(type, initializer)
     , m_state(initializer.state)
     , m_serializedState(0)
+    , m_history(0)
 {
 }
 
-PopStateEvent::PopStateEvent(const ScriptValue& state)
-    : Event(eventNames().popstateEvent, false, true)
-    , m_state(state)
-    , m_serializedState(0)
-{
-}
-
-PopStateEvent::PopStateEvent(PassRefPtr<SerializedScriptValue> serializedState)
+PopStateEvent::PopStateEvent(PassRefPtr<SerializedScriptValue> serializedState, PassRefPtr<History> history)
     : Event(eventNames().popstateEvent, false, true)
     , m_serializedState(serializedState)
+    , m_history(history)
 {
 }
 
@@ -70,14 +68,9 @@ PassRefPtr<PopStateEvent> PopStateEvent::create()
     return adoptRef(new PopStateEvent);
 }
 
-PassRefPtr<PopStateEvent> PopStateEvent::create(const ScriptValue& state)
+PassRefPtr<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> serializedState, PassRefPtr<History> history)
 {
-    return adoptRef(new PopStateEvent(state));
-}
-
-PassRefPtr<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> serializedState)
-{
-    return adoptRef(new PopStateEvent(serializedState));
+    return adoptRef(new PopStateEvent(serializedState, history));
 }
 
 PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)

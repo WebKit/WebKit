@@ -1,3 +1,44 @@
+2012-02-22  Pablo Flouret  <pablof@motorola.com>
+
+        PopStateEvent.state should use the same object as history.state
+        https://bugs.webkit.org/show_bug.cgi?id=77493
+
+        Reviewed by Kentaro Hara.
+
+        Tests: fast/loader/stateobjects/state-attribute-history-getter.html
+               fast/loader/stateobjects/state-attribute-popstate-event.html
+
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore):
+        (WebCore::cacheState):
+        (WebCore::JSPopStateEvent::state):
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::stateAccessorGetter):
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        (WebCore):
+        (WebCore::cacheState):
+        (WebCore::V8PopStateEvent::stateAccessorGetter):
+        * dom/Document.cpp:
+        (WebCore::Document::enqueuePopstateEvent):
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent):
+        (WebCore::PopStateEvent::create):
+        * dom/PopStateEvent.h:
+        (WebCore):
+        (PopStateEvent):
+        (WebCore::PopStateEvent::history):
+        * dom/PopStateEvent.idl:
+        * page/History.cpp:
+        (WebCore::History::stateChanged):
+        (WebCore):
+        (WebCore::History::isSameAsCurrentState):
+        * page/History.h:
+        (History):
+
 2012-02-22  Adam Klein  <adamk@chromium.org>
 
         Remove obsolete FIXMEs from ContainerNode
