@@ -37,7 +37,10 @@ static PassRefPtr<GraphicsContext3D> createCompositorMockGraphicsContext3D(Graph
     webAttrs.alpha = attrs.alpha;
 
     OwnPtr<WebKit::WebGraphicsContext3D> webContext = WebKit::CompositorFakeWebGraphicsContext3D::create(webAttrs);
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(
+        webContext.release(), attrs, 0,
+        GraphicsContext3D::RenderDirectlyToHostWindow,
+        GraphicsContext3DPrivate::ForUseOnAnotherThread);
 }
 
 }

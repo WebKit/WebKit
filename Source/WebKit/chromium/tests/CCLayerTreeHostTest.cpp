@@ -246,7 +246,10 @@ public:
         webAttrs.alpha = attrs.alpha;
 
         OwnPtr<WebGraphicsContext3D> webContext = CompositorFakeWebGraphicsContext3DWithTextureTracking::create(webAttrs);
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(
+            webContext.release(), attrs, 0,
+            GraphicsContext3D::RenderDirectlyToHostWindow,
+            GraphicsContext3DPrivate::ForUseOnAnotherThread);
     }
 
     virtual void didCommitAndDrawFrame()

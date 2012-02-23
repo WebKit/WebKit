@@ -1,3 +1,40 @@
+2012-02-23  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r108666.
+        http://trac.webkit.org/changeset/108666
+        https://bugs.webkit.org/show_bug.cgi?id=79321
+
+        Breaks webplugin tests: http://goo.gl/CoHIi
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::create):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextForAnotherThread):
+        (WebCore::GraphicsContext3DPrivate::platformTexture):
+        (WebCore::GraphicsContext3D::create):
+        * src/GraphicsContext3DPrivate.h:
+        (WebKit):
+        (GraphicsContext3DPrivate):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebViewImpl.cpp:
+        (std::getCompositorContextAttributes):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (CCLayerTreeHostImplTest):
+        (WebKit::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        * tests/CompositorFakeGraphicsContext3D.h:
+        (WebCore::createCompositorMockGraphicsContext3D):
+        * tests/FakeGraphicsContext3DTest.cpp:
+        (TEST):
+
 2012-02-23  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Add video stream texture support

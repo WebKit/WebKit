@@ -41,7 +41,8 @@ class GrContext;
 
 namespace WebKit {
 class WebGraphicsContext3D;
-}
+class WebViewImpl;
+} // namespace WebKit
 
 namespace WebCore {
 
@@ -54,10 +55,22 @@ class GraphicsContext3DMemoryAllocationChangedCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
-    // Callers must make the context current before using it AND check that the context was created successfully
-    // via ContextLost before using the context in any way. Once made current on a thread, the context cannot
-    // be used on any other thread.
-    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::RenderStyle, bool preserveDrawingBuffer = false);
+    static PassOwnPtr<GraphicsContext3DPrivate> create(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
+
+    enum ThreadUsage {
+        ForUseOnThisThread,
+        ForUseOnAnotherThread,
+    };
+
+    // createGraphicsContextForAnotherThread is equivalent to
+    // GraphicsContext3D::create, but will skip making the context
+    // current. Callers must make the context current before using it AND check
+    // that the context was created successfully via ContextLost. Once made
+    // current on a thread, the context cannot be used on any other thread.
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextForAnotherThread(GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle);
+
+    // Used in tests to create a GraphicsContext3D from a mocked WebGraphicsContext3D.
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle, ThreadUsage);
 
     ~GraphicsContext3DPrivate();
 
@@ -308,7 +321,7 @@ public:
     void texStorage2DEXT(GC3Denum target, GC3Dint levels, GC3Duint internalformat, GC3Dint width, GC3Dint height);
 
 private:
-    GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer);
+    GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
@@ -316,6 +329,7 @@ private:
     OwnPtr<GraphicsErrorMessageCallbackAdapter> m_errorMessageCallbackAdapter;
     OwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
     OwnPtr<GraphicsContext3DMemoryAllocationChangedCallbackAdapter> m_memoryAllocationChangedCallbackAdapter;
+    WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;
     HashSet<String> m_requestableExtensions;
