@@ -1,3 +1,14 @@
+2012-02-23  Gavin Barraclough  <barraclough@apple.com>
+
+        pop of array hole should get from the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=79338
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+            - If the fast fast vector case fails, more closely follow the spec.
+
 2012-02-23  Yong Li  <yoli@rim.com>
 
         JSString::outOfMemory() should ASSERT(isRope()) rather than !isRope()

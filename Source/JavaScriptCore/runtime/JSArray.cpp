@@ -1184,7 +1184,6 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
 JSValue JSArray::pop(ExecState* exec)
 {
     checkConsistency();
-
     ArrayStorage* storage = m_storage;
     
     unsigned length = storage->m_length;
@@ -1194,47 +1193,32 @@ JSValue JSArray::pop(ExecState* exec)
         return jsUndefined();
     }
 
-    --length;
-
-    JSValue result;
-
-    if (length < m_vectorLength) {
-        WriteBarrier<Unknown>& valueSlot = storage->m_vector[length];
+    unsigned index = length - 1;
+    if (index < m_vectorLength) {
+        WriteBarrier<Unknown>& valueSlot = storage->m_vector[index];
         if (valueSlot) {
             --storage->m_numValuesInVector;
-            result = valueSlot.get();
+            JSValue element = valueSlot.get();
             valueSlot.clear();
-        } else
-            result = jsUndefined();
-    } else {
-        result = jsUndefined();
-        if (SparseArrayValueMap* map = m_sparseValueMap) {
-            SparseArrayValueMap::iterator it = map->find(length);
-            if (it != map->notFound()) {
-                unsigned attributes = it->second.attributes;
-
-                result = it->second.get(exec, this);
-                if (exec->hadException())
-                    return jsUndefined();
-                
-                if (attributes & DontDelete) {
-                    throwError(exec, createTypeError(exec, "Unable to delete property."));
-                    checkConsistency();
-                    return result;
-                }
-                
-                map->remove(it);
-                if (map->isEmpty() && !map->sparseMode())
-                    deallocateSparseMap();
-            }
+            
+            ASSERT(isLengthWritable());
+            storage->m_length = index;
+            checkConsistency();
+            return element;
         }
     }
 
-    storage->m_length = length;
-
+    // Let element be the result of calling the [[Get]] internal method of O with argument indx.
+    JSValue element = get(exec, index);
+    if (exec->hadException())
+        return jsUndefined();
+    // Call the [[Delete]] internal method of O with arguments indx and true.
+    deletePropertyByIndex(this, exec, index);
+    // Call the [[Put]] internal method of O with arguments "length", indx, and true.
+    setLength(exec, index, true);
+    // Return element.
     checkConsistency();
-
-    return result;
+    return element;
 }
 
 // Push & putIndex are almost identical, with two small differences.
