@@ -67,7 +67,6 @@ public:
 
     virtual bool is2d() const { return true; }
     virtual bool isAccelerated() const;
-    virtual bool paintsIntoCanvasBuffer() const;
 
     CanvasStyle* strokeStyle() const;
     void setStrokeStyle(PassRefPtr<CanvasStyle>);

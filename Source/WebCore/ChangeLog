@@ -1,3 +1,32 @@
+2012-02-22  James Robinson  <jamesr@chromium.org>
+
+        Remove GraphicsContext3D::paintsIntoCanvasBuffer and unify WebGL and canvas 2d logic
+        https://bugs.webkit.org/show_bug.cgi?id=79317
+
+        Reviewed by Kenneth Russell.
+
+        HTMLCanvasElement::paint needs to know whether to attempt to paint the canvas buffer for its context. In the
+        case of an accelerated canvas or WebGL context, unless we are printing it is typically the composited layer's
+        responsibility to present the contents and the element itself is only responsible for backgrounds, borders and
+        the like.  This removes a rather indirect path that WebGL content used to take to accomplish this and unifies
+        the logic with CanvasRenderingContext2D's, which has the exact same needs.
+
+        Covered by existing canvas layout tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paintsIntoCanvasBuffer):
+        (WebCore):
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+        (HTMLCanvasElement):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+
 2012-02-22  Pablo Flouret  <pablof@motorola.com>
 
         PopStateEvent.state should use the same object as history.state

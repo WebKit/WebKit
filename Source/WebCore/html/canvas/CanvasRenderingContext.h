@@ -55,7 +55,6 @@ public:
     virtual bool isAccelerated() const { return false; }
 
     virtual void paintRenderingResultsToCanvas() {}
-    virtual bool paintsIntoCanvasBuffer() const { return true; }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }

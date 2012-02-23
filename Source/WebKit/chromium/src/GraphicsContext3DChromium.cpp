@@ -345,13 +345,6 @@ PassRefPtr<ImageData> GraphicsContext3DPrivate::paintRenderingResultsToImageData
     return imageData.release();
 }
 
-bool GraphicsContext3DPrivate::paintsIntoCanvasBuffer() const
-{
-    // If the gpu compositor is on then skip the readback and software rendering path.
-    ASSERT(m_webViewImpl);
-    return !m_webViewImpl->isAcceleratedCompositingActive();
-}
-
 void GraphicsContext3DPrivate::reshape(int width, int height)
 {
     if (width == m_impl->width() && height == m_impl->height())
@@ -1247,11 +1240,6 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
 }
 
 DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, CanvasRenderingContext*, bool)
-
-bool GraphicsContext3D::paintsIntoCanvasBuffer() const
-{
-    return m_private->paintsIntoCanvasBuffer();
-}
 
 DELEGATE_TO_INTERNAL_R(createBuffer, Platform3DObject)
 DELEGATE_TO_INTERNAL_R(createFramebuffer, Platform3DObject)

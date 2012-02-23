@@ -98,7 +98,6 @@ public:
     void paintRenderingResultsToCanvas(CanvasRenderingContext*, DrawingBuffer*);
     void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
-    bool paintsIntoCanvasBuffer() const;
     bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
 
     void prepareTexture();

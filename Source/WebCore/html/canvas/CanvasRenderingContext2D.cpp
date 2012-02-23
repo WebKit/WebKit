@@ -155,20 +155,6 @@ bool CanvasRenderingContext2D::isAccelerated() const
 #endif
 }
 
-bool CanvasRenderingContext2D::paintsIntoCanvasBuffer() const
-{
-#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
-    if (!isAccelerated())
-        return true;
-
-    RenderBox* renderBox = canvas()->renderBox();
-    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-        return false;
-#endif
-    return true;
-}
-
-
 void CanvasRenderingContext2D::reset()
 {
     unwindStateStack();

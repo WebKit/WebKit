@@ -719,11 +719,6 @@ PassRefPtr<ImageData> WebGLRenderingContext::paintRenderingResultsToImageData()
     return imageData;
 }
 
-bool WebGLRenderingContext::paintsIntoCanvasBuffer() const
-{
-    return m_context->paintsIntoCanvasBuffer();
-}
-
 void WebGLRenderingContext::reshape(int width, int height)
 {
     // This is an approximation because at WebGLRenderingContext level we don't

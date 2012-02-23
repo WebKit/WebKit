@@ -77,7 +77,6 @@ public:
 
     virtual bool is3d() const { return true; }
     virtual bool isAccelerated() const { return true; }
-    virtual bool paintsIntoCanvasBuffer() const;
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;

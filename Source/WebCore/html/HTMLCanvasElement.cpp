@@ -45,6 +45,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
+#include "RenderLayer.h"
 #include "Settings.h"
 #include <math.h>
 #include <stdio.h>
@@ -269,6 +270,20 @@ void HTMLCanvasElement::reset()
         (*it)->canvasResized(this);
 }
 
+bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
+{
+    ASSERT(m_context);
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_context->isAccelerated())
+        return true;
+
+    if (renderBox() && renderBox()->hasLayer() && renderBox()->layer()->hasAcceleratedCompositing())
+        return false;
+#endif
+    return true;
+}
+
+
 void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, bool useLowQualityScale)
 {
     // Clear the dirty rect
@@ -278,7 +293,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, boo
         return;
     
     if (m_context) {
-        if (!m_context->paintsIntoCanvasBuffer() && !document()->printing())
+        if (!paintsIntoCanvasBuffer() && !document()->printing())
             return;
         m_context->paintRenderingResultsToCanvas();
     }

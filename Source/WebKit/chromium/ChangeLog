@@ -1,3 +1,16 @@
+2012-02-22  James Robinson  <jamesr@chromium.org>
+
+        Remove GraphicsContext3D::paintsIntoCanvasBuffer and unify WebGL and canvas 2d logic
+        https://bugs.webkit.org/show_bug.cgi?id=79317
+
+        Reviewed by Kenneth Russell.
+
+        Remove paintsIntoCanvasBuffer() implementations.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore):
+        * src/GraphicsContext3DPrivate.h:
+
 2012-02-22  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r108590.

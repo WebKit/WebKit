@@ -814,18 +814,6 @@ public:
     PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
     bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
 
-#if PLATFORM(QT)
-    bool paintsIntoCanvasBuffer() const { return true; }
-#elif PLATFORM(CHROMIUM)
-    bool paintsIntoCanvasBuffer() const;
-#elif PLATFORM(GTK)
-    bool paintsIntoCanvasBuffer() const { return true; }
-#elif PLATFORM(EFL)
-    bool paintsIntoCanvasBuffer() const { return true; }
-#else
-    bool paintsIntoCanvasBuffer() const { return false; }
-#endif
-
     // Support for buffer creation and deletion
     Platform3DObject createBuffer();
     Platform3DObject createFramebuffer();

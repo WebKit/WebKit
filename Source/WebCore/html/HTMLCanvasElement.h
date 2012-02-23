@@ -148,6 +148,8 @@ private:
 
     bool shouldDefer() const;
 
+    bool paintsIntoCanvasBuffer() const;
+
     HashSet<CanvasObserver*> m_observers;
 
     IntSize m_size;
