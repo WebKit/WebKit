@@ -91,8 +91,11 @@ shouldBe('obj.foo', '1');
 var array = freeze([0,1,2]);
 array[0] = 3;
 shouldBe('array[0]', '0');
+shouldBeFalse('Object.getOwnPropertyDescriptor(array, "length").writable')
 
 // Check that freezing arguments objects works correctly.
 var args = freeze((function(){ return arguments; })(0,1,2));
 args[0] = 3;
 shouldBe('args[0]', '0');
+shouldBeFalse('Object.getOwnPropertyDescriptor(args, "length").writable')
+shouldBeFalse('Object.getOwnPropertyDescriptor(args, "callee").writable')

@@ -1,5 +1,30 @@
 2012-02-23  Gavin Barraclough  <barraclough@apple.com>
 
+        Object.isSealed / Object.isFrozen don't work for native objects
+        https://bugs.webkit.org/show_bug.cgi?id=79331
+
+        Reviewed by Sam Weinig.
+
+        Need to inspect all properties, including static ones.
+        This exposes a couple of bugs in Array & Arguments:
+            - getOwnPropertyDescriptor doesn't correctly report the writable attribute of array length.
+            - Arguments object's defineOwnProperty does not handle callee/caller/length correctly.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::defineOwnProperty):
+            - Add handling for callee/caller/length.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertyDescriptor):
+            - report length's writability correctly.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+            - Add spec-based implementation for non-final objects.
+
+2012-02-23  Gavin Barraclough  <barraclough@apple.com>
+
         pop of array hole should get from the prototype chain
         https://bugs.webkit.org/show_bug.cgi?id=79338
 

@@ -302,13 +302,13 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
 
 bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
-        return false;
-
     Arguments* thisObject = jsCast<Arguments*>(object);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments) {
+        if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
+            return false;
+
         if (!thisObject->d->deletedArguments) {
             thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
             memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
@@ -328,8 +328,38 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, const Ident
                     thisObject->d->deletedArguments[i] = true; // 1. Call the [[Delete]] internal method of map passing P and false as arguments.
             }
         }
+
+        return true;
     }
-    return true;
+
+    if (propertyName == exec->propertyNames().length && !thisObject->d->overrodeLength) {
+        thisObject->d->overrodeLength = true;
+        if (!descriptor.isAccessorDescriptor()) {
+            if (!descriptor.value())
+                descriptor.setValue(jsNumber(thisObject->d->numArguments));
+            if (!descriptor.configurablePresent())
+                descriptor.setConfigurable(true);
+        }
+        if (!descriptor.configurablePresent())
+            descriptor.setConfigurable(true);
+    }
+
+    if (propertyName == exec->propertyNames().callee && !thisObject->d->overrodeCallee) {
+        thisObject->d->overrodeCallee = true;
+        if (!descriptor.isAccessorDescriptor()) {
+            if (!descriptor.value())
+                descriptor.setValue(thisObject->d->callee.get());
+            if (!descriptor.configurablePresent())
+                descriptor.setConfigurable(true);
+        }
+        if (!descriptor.configurablePresent())
+            descriptor.setConfigurable(true);
+    }
+
+    if (propertyName == exec->propertyNames().caller && thisObject->d->isStrictMode)
+        thisObject->createStrictModeCallerIfNecessary(exec);
+
+    return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
 void Arguments::tearOff(CallFrame* callFrame)

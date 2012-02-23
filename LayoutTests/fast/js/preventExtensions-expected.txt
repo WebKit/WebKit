@@ -18,7 +18,10 @@ PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
 PASS obj.foo is 1
 PASS array[0] is 0
+PASS Object.getOwnPropertyDescriptor(array, "length").writable is false
 PASS args[0] is 0
+PASS Object.getOwnPropertyDescriptor(args, "length").writable is false
+PASS Object.getOwnPropertyDescriptor(args, "callee").writable is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

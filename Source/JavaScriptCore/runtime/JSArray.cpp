@@ -694,7 +694,7 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
 {
     JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(thisObject->length()), DontDelete | DontEnum);
+        descriptor.setDescriptor(jsNumber(thisObject->length()), thisObject->isLengthWritable() ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly);
         return true;
     }
 
