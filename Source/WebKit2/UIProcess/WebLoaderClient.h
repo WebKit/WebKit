@@ -83,6 +83,7 @@ public:
 
     void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
+    void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
 
     void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
 };

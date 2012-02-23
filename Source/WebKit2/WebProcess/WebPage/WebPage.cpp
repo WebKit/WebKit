@@ -210,6 +210,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
     , m_isShowingContextMenu(false)
+    , m_willGoToBackForwardItemCallbackEnabled(true)
 #if PLATFORM(WIN)
     , m_gestureReachedScrollingLimit(false)
 #endif

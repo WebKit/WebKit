@@ -606,9 +606,10 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         processDidExit,
         didChangeBackForwardList,
         0, // shouldGoToBackForwardItem
-        0,  // didFailToInitializePlugin
+        0, // didFailToInitializePlugin
         didDetectXSSForFrame,
         0, // didNewFirstVisuallyNonEmptyLayout
+        0, // willGoToBackForwardListItem
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     

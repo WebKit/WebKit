@@ -503,6 +503,8 @@ public:
     void numWheelEventHandlersChanged(unsigned);
     void recomputeShortCircuitHorizontalWheelEventsState();
 
+    bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
+    
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -571,6 +573,8 @@ private:
 
     void didRemoveBackForwardItem(uint64_t);
 
+    void setWillGoToBackForwardItemCallbackEnabled(bool enabled) { m_willGoToBackForwardItemCallbackEnabled = enabled; }
+    
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 
@@ -765,6 +769,8 @@ private:
     unsigned m_cachedPageCount;
 
     bool m_isShowingContextMenu;
+    
+    bool m_willGoToBackForwardItemCallbackEnabled;
 
 #if PLATFORM(WIN)
     bool m_gestureReachedScrollingLimit;

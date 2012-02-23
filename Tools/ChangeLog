@@ -1,3 +1,18 @@
+2012-02-22  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10406044> and https://bugs.webkit.org/show_bug.cgi?id=79279
+        Synchronous ShouldGoToBackForwardListItem causes lots of WebProcess hangs
+
+        Reviewed by Anders Carlsson.
+
+        Update our tools to the new form of the PageLoadClient.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]): 
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-02-22  Daniel Bates  <dbates@webkit.org>
 
         new-run-webkit-tests shouldn't restore Safari state on Lion when showing results

@@ -932,6 +932,11 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
         return false;
     }
     
+    if (webPage->willGoToBackForwardItemCallbackEnabled()) {
+        webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID));
+        return true;
+    }
+    
     bool shouldGoToBackForwardListItem;
     if (!webPage->sendSync(Messages::WebPageProxy::ShouldGoToBackForwardListItem(itemID), Messages::WebPageProxy::ShouldGoToBackForwardListItem::Reply(shouldGoToBackForwardListItem)))
         return false;

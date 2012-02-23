@@ -254,6 +254,11 @@ bool WebPageProxy::isValid()
 void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
 {
     m_loaderClient.initialize(loadClient);
+    
+    if (!loadClient)
+        return;
+
+    process()->send(Messages::WebPage::SetWillGoToBackForwardItemCallbackEnabled(loadClient->version > 0), m_pageID);
 }
 
 void WebPageProxy::initializePolicyClient(const WKPagePolicyClient* policyClient)
@@ -606,6 +611,12 @@ void WebPageProxy::shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGo
 {
     WebBackForwardListItem* item = process()->webBackForwardItem(itemID);
     shouldGoToBackForwardItem = item && m_loaderClient.shouldGoToBackForwardListItem(this, item);
+}
+
+void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID)
+{
+    if (WebBackForwardListItem* item = process()->webBackForwardItem(itemID))
+        m_loaderClient.willGoToBackForwardListItem(this, item);
 }
 
 String WebPageProxy::activeURL() const

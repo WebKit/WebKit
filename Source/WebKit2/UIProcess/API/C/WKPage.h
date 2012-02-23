@@ -71,6 +71,7 @@ typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, WKBackFor
 typedef bool (*WKPageShouldGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, const void *clientInfo);
 typedef void (*WKPageDidFailToInitializePluginCallback)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
 typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, const void *clientInfo);
 
 struct WKPageLoaderClient {
     int                                                                 version;
@@ -110,6 +111,8 @@ struct WKPageLoaderClient {
 
     // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.
     WKPageDidNewFirstVisuallyNonEmptyLayoutCallback                     didNewFirstVisuallyNonEmptyLayout;
+
+    WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

@@ -1,3 +1,56 @@
+2012-02-22  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10406044> and https://bugs.webkit.org/show_bug.cgi?id=79279
+        Synchronous ShouldGoToBackForwardListItem causes lots of WebProcess hangs
+
+        Reviewed by Anders Carlsson.
+
+        Anytime the WebProcess sends a sync message up to the UI Process a hang can ensue.
+        
+        In the case of shouldGoToBackForwardListItem it seems many clients want a back/forward
+        notification but don't actually want to make a policy decision.
+
+        Making it an asynchronous notification instead of a synchronous policy call will remove the
+        possibility of a hang here.
+
+        If clients later decide it is important to have a policy here we should implement a form of
+        shouldGoToBackForwardListItem in the bundle loader client.
+
+        Add a notification "willGoToBackForwardListItem" to the WKPageLoaderClient:
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeLoaderClient): Tell the WebProcess whether it should be
+          sending the shouldGoToBackForwardListItem or willGoToBackForwardListItem form of this message.
+        (WebKit::WebPageProxy::shouldGoToBackForwardListItem): 
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Add an asynchronous WillGoToBackForwardListItem message
+
+        Store a flag in the WebProcess - Sent from the UIProcess - to tell the FrameLoaderClient which form 
+        of the callback should be used:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::willGoToBackForwardItemCallbackEnabled):
+        (WebKit::WebPage::setWillGoToBackForwardItemCallbackEnabled):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::shouldGoToBackForwardListItem): Only consider calling this for
+          version 0 clients.
+        (WebKit::WebLoaderClient::willGoToBackForwardListItem): Later clients get this callback.
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem): Send either the synchronous "should" message
+          or the asynchronous "will" message depending on which the WebProcess was last told that the
+          UIProcess expects. There is an edge case where the wrong one might be sent because the WebProcess
+          hasn't received the message about a change in the WKPageLoaderClient yet but that's probably okay;
+          It seems unlikely that a UIProcess client would ever rapidly change between v0 and other versions
+          of the loader client and the UIProcess of WebKit2 is equipped to handle that case if it comes up.
+
 2012-02-16  Jon Lee  <jonlee@apple.com>
 
         [WK2] Clearing notifications does not clean up internal state
