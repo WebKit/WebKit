@@ -63,6 +63,11 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     performCSE(dfg);
     performVirtualRegisterAllocation(dfg);
     performCFA(dfg);
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("Graph after optimization:\n");
+    dfg.dump();
+#endif
     
     JITCompiler dataFlowJIT(dfg);
     if (compileMode == CompileFunction) {

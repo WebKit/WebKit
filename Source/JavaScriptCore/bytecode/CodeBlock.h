@@ -52,6 +52,7 @@
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"
+#include "LazyOperandValueProfile.h"
 #include "LineInfo.h"
 #include "Nodes.h"
 #include "PredictionTracker.h"
@@ -727,6 +728,11 @@ namespace JSC {
         }
 
         DFG::ExitProfile& exitProfile() { return m_exitProfile; }
+        
+        CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles()
+        {
+            return m_lazyOperandValueProfiles;
+        }
 #endif
 
         // Constant Pool
@@ -1187,6 +1193,7 @@ namespace JSC {
         // This is relevant to non-DFG code blocks that serve as the profiled code block
         // for DFG code blocks.
         DFG::ExitProfile m_exitProfile;
+        CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
 #endif
 #if ENABLE(VALUE_PROFILER)
         Vector<ValueProfile> m_argumentValueProfiles;

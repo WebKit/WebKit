@@ -1,3 +1,144 @@
+2012-02-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit value profiling should have graceful handling of local variables and arguments
+        https://bugs.webkit.org/show_bug.cgi?id=79310
+
+        Reviewed by Gavin Barraclough.
+        
+        Previously, if we OSR exited because a prediction in a local was wrong, we'd
+        only realize what the true type of the local was if the regular value profiling
+        kicked in and told us. Unless the local was block-locally copy propagated, in
+        which case we'd know from an OSR exit profile.
+        
+        This patch adds OSR exit profiling to all locals and arguments. Now, if we OSR
+        exit because of a mispredicted local or argument type, we'll know what the type of
+        the local or argument should be immediately upon exiting.
+        
+        The way that local variable OSR exit profiling works is that we now have a lazily
+        added set of OSR-exit-only value profiles for exit sites that are BadType and that
+        cited a GetLocal as their value source. The value profiles are only added if the
+        OSR exit is taken, and are keyed by CodeBlock, bytecode index of the GetLocal, and
+        operand. The look-up is performed by querying the
+        CompressedLazyOperandValueProfileHolder in the CodeBlock, using a key that contains
+        the bytecode index and the operand. Because the value profiles are added at random
+        times, they are not sorted; instead they are just stored in an arbitrarily-ordered
+        SegmentedVector. Look-ups are made fast by "decompressing": the DFG::ByteCodeParser
+        creates a LazyOperandValueProfileParser, which turns the
+        CompressedLazyOperandValueProfileHolder's contents into a HashMap for the duration
+        of DFG parsing.
+        
+        Previously, OSR exits had a pointer to the ValueProfile that had the specFailBucket
+        into which values observed during OSR exit would be placed. Now it uses a lazy
+        thunk for a ValueProfile. I call this the MethodOfGettingAValueProfile. It may
+        either contain a ValueProfile inside it (which works for previous uses of OSR exit
+        profiling) or it may just have knowledge of how to go about creating the
+        LazyOperandValueProfile in the case that the OSR exit is actually taken. This
+        ensures that we never have to create NumOperands*NumBytecodeIndices*NumCodeBlocks
+        value profiling buckets unless we actually did OSR exit on every single operand,
+        in every single instruction, in each code block (that's probably unlikely).
+        
+        This appears to be neutral on the major benchmarks, but is a double-digit speed-up
+        on code deliberately written to have data flow that spans basic blocks and where
+        the code exhibits post-optimization polymorphism in a local variable.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::lazyOperandValueProfiles):
+        * bytecode/LazyOperandValueProfile.cpp: Added.
+        (JSC):
+        (JSC::CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder):
+        (JSC::CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder):
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        (JSC::CompressedLazyOperandValueProfileHolder::add):
+        (JSC::LazyOperandValueProfileParser::LazyOperandValueProfileParser):
+        (JSC::LazyOperandValueProfileParser::~LazyOperandValueProfileParser):
+        (JSC::LazyOperandValueProfileParser::getIfPresent):
+        (JSC::LazyOperandValueProfileParser::prediction):
+        * bytecode/LazyOperandValueProfile.h: Added.
+        (JSC):
+        (LazyOperandValueProfileKey):
+        (JSC::LazyOperandValueProfileKey::LazyOperandValueProfileKey):
+        (JSC::LazyOperandValueProfileKey::operator!):
+        (JSC::LazyOperandValueProfileKey::operator==):
+        (JSC::LazyOperandValueProfileKey::hash):
+        (JSC::LazyOperandValueProfileKey::bytecodeOffset):
+        (JSC::LazyOperandValueProfileKey::operand):
+        (JSC::LazyOperandValueProfileKey::isHashTableDeletedValue):
+        (JSC::LazyOperandValueProfileKeyHash::hash):
+        (JSC::LazyOperandValueProfileKeyHash::equal):
+        (LazyOperandValueProfileKeyHash):
+        (WTF):
+        (JSC::LazyOperandValueProfile::LazyOperandValueProfile):
+        (LazyOperandValueProfile):
+        (JSC::LazyOperandValueProfile::key):
+        (CompressedLazyOperandValueProfileHolder):
+        (LazyOperandValueProfileParser):
+        * bytecode/MethodOfGettingAValueProfile.cpp: Added.
+        (JSC):
+        (JSC::MethodOfGettingAValueProfile::fromLazyOperand):
+        (JSC::MethodOfGettingAValueProfile::getSpecFailBucket):
+        * bytecode/MethodOfGettingAValueProfile.h: Added.
+        (JSC):
+        (MethodOfGettingAValueProfile):
+        (JSC::MethodOfGettingAValueProfile::MethodOfGettingAValueProfile):
+        (JSC::MethodOfGettingAValueProfile::operator!):
+        * bytecode/ValueProfile.cpp: Removed.
+        * bytecode/ValueProfile.h:
+        (JSC):
+        (ValueProfileBase):
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::dump):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        (JSC::MinimalValueProfile::MinimalValueProfile):
+        (ValueProfileWithLogNumberOfBuckets):
+        (JSC::ValueProfileWithLogNumberOfBuckets::ValueProfileWithLogNumberOfBuckets):
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::getValueProfileBytecodeOffset):
+        (JSC::getRareCaseProfileBytecodeOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::injectLazyOperandPrediction):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::fixVariableAccessPredictions):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        (Graph):
+        * dfg/DFGNode.h:
+        (Node):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        (JSC::DFG::Phase::endPhase):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::nonUnifiedPrediction):
+        (VariableAccessData):
+
 2012-02-23  Filip Pizlo  <fpizlo@apple.com>
 
         Build fix.

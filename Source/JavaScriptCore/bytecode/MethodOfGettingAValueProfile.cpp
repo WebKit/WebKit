@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,46 @@
  */
 
 #include "config.h"
-#include "DFGPhase.h"
+#include "MethodOfGettingAValueProfile.h"
 
 #if ENABLE(DFG_JIT)
 
-namespace JSC { namespace DFG {
+#include "CodeBlock.h"
 
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-void Phase::beginPhase()
+namespace JSC {
+
+MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
+    CodeBlock* codeBlock, const LazyOperandValueProfileKey& key)
 {
-    dataLog("Beginning DFG phase %s.\n", m_name);
-    dataLog("Graph before %s:\n", m_name);
-    m_graph.dump(m_codeBlock);
+    MethodOfGettingAValueProfile result;
+    result.m_kind = LazyOperand;
+    result.u.lazyOperand.codeBlock = codeBlock;
+    result.u.lazyOperand.bytecodeOffset = key.bytecodeOffset();
+    result.u.lazyOperand.operand = key.operand();
+    return result;
 }
 
-void Phase::endPhase()
+EncodedJSValue* MethodOfGettingAValueProfile::getSpecFailBucket(unsigned index) const
 {
+    switch (m_kind) {
+    case None:
+        return 0;
+        
+    case Ready:
+        return u.profile->specFailBucket(index);
+        
+    case LazyOperand:
+        return u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(
+            LazyOperandValueProfileKey(
+                u.lazyOperand.bytecodeOffset, u.lazyOperand.operand))->specFailBucket(index);
+        
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
-#endif
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
 #endif // ENABLE(DFG_JIT)
+

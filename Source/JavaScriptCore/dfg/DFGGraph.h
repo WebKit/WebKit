@@ -32,6 +32,7 @@
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
 #include "DFGNode.h"
+#include "MethodOfGettingAValueProfile.h"
 #include "PredictionTracker.h"
 #include "RegisterFile.h"
 #include <wtf/BitVector.h>
@@ -271,7 +272,7 @@ public:
         Node& node = at(nodeIndex);
         CodeBlock* profiledBlock = baselineCodeBlockFor(node.codeOrigin);
         
-        if (node.op == GetLocal) {
+        if (node.hasLocal()) {
             if (!operandIsArgument(node.local()))
                 return 0;
             int argument = operandToArgument(node.local());
@@ -284,6 +285,24 @@ public:
             return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndexForValueProfile());
         
         return 0;
+    }
+    
+    MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(NodeIndex nodeIndex)
+    {
+        if (nodeIndex == NoNode)
+            return MethodOfGettingAValueProfile();
+        
+        Node& node = at(nodeIndex);
+        CodeBlock* profiledBlock = baselineCodeBlockFor(node.codeOrigin);
+        
+        if (node.op == GetLocal) {
+            return MethodOfGettingAValueProfile::fromLazyOperand(
+                profiledBlock,
+                LazyOperandValueProfileKey(
+                    node.codeOrigin.bytecodeIndex, node.local()));
+        }
+        
+        return MethodOfGettingAValueProfile(valueProfileFor(nodeIndex));
     }
     
     JSGlobalData& m_globalData;

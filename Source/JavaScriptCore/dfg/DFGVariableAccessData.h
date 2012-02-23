@@ -70,6 +70,11 @@ public:
         return mergePrediction(find()->m_prediction, prediction);
     }
     
+    PredictedType nonUnifiedPrediction()
+    {
+        return m_prediction;
+    }
+    
     PredictedType prediction()
     {
         return find()->m_prediction;

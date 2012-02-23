@@ -37,6 +37,7 @@
 #include "DFGGPRInfo.h"
 #include "DFGOperands.h"
 #include "MacroAssembler.h"
+#include "MethodOfGettingAValueProfile.h"
 #include "ValueProfile.h"
 #include "ValueRecovery.h"
 #include <wtf/Vector.h>
@@ -82,12 +83,12 @@ private:
 // This structure describes how to exit the speculative path by
 // going into baseline code.
 struct OSRExit {
-    OSRExit(ExitKind, JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
+    OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
     
     MacroAssemblerCodeRef m_code;
     
     JSValueSource m_jsValueSource;
-    ValueProfile* m_valueProfile;
+    MethodOfGettingAValueProfile m_valueProfile;
     
     CorrectableJumpPoint m_check;
     NodeIndex m_nodeIndex;

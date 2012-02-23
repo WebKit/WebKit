@@ -104,11 +104,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
 	Source/JavaScriptCore/bytecode/JumpTable.h \
 	Source/JavaScriptCore/bytecode/LLIntCallLinkInfo.h \
+	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.cpp \
+	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.h \
 	Source/JavaScriptCore/bytecode/LineInfo.h \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.cpp \
 	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.h \
+	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.cpp \
+	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
 	Source/JavaScriptCore/bytecode/Opcode.h \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.cpp \
@@ -124,7 +128,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/StructureSet.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.h \
-	Source/JavaScriptCore/bytecode/ValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/ValueProfile.h \
 	Source/JavaScriptCore/bytecode/ValueRecovery.h \
 	Source/JavaScriptCore/bytecode/VirtualRegister.h \

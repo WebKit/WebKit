@@ -29,6 +29,7 @@
 #include "config.h"
 #include "PredictedType.h"
 
+#include "JSArray.h"
 #include "JSByteArray.h"
 #include "JSFunction.h"
 #include "ValueProfile.h"

@@ -1946,6 +1946,8 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
             visitor.append(&inlineCallFrame.callee);
         }
     }
+    
+    m_lazyOperandValueProfiles.computeUpdatedPredictions();
 #endif
 
 #if ENABLE(VALUE_PROFILER)

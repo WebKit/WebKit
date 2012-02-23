@@ -88,14 +88,20 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     // 3) Refine some value profile, if appropriate.
     
     if (!!exit.m_jsValueSource && !!exit.m_valueProfile) {
+        EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
+        
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
+        dataLog("  (have exit profile, bucket %p)  ", bucket);
+#endif
+            
         if (exit.m_jsValueSource.isAddress()) {
             // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
             // since we know how to restore it.
             m_jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
-            m_jit.storePtr(GPRInfo::tagTypeNumberRegister, exit.m_valueProfile->specFailBucket(0));
+            m_jit.storePtr(GPRInfo::tagTypeNumberRegister, bucket);
             m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
         } else
-            m_jit.storePtr(exit.m_jsValueSource.gpr(), exit.m_valueProfile->specFailBucket(0));
+            m_jit.storePtr(exit.m_jsValueSource.gpr(), bucket);
     }
 
     // 4) Figure out how many scratch slots we'll need. We need one for every GPR/FPR

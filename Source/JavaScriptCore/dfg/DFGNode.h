@@ -485,7 +485,7 @@ struct Node {
     {
         return variableAccessData()->local();
     }
-
+    
     bool hasIdentifier()
     {
         switch (op) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #ifndef ValueProfile_h
 #define ValueProfile_h
 
+#include <wtf/Platform.h>
+
+#if ENABLE(VALUE_PROFILER)
+
 #include "JSArray.h"
 #include "PredictedType.h"
 #include "Structure.h"
@@ -36,15 +40,14 @@
 
 namespace JSC {
 
-#if ENABLE(VALUE_PROFILER)
-struct ValueProfile {
-    static const unsigned logNumberOfBuckets = 0; // 1 bucket
-    static const unsigned numberOfBuckets = 1 << logNumberOfBuckets;
+template<unsigned numberOfBucketsArgument>
+struct ValueProfileBase {
+    static const unsigned numberOfBuckets = numberOfBucketsArgument;
     static const unsigned numberOfSpecFailBuckets = 1;
     static const unsigned bucketIndexMask = numberOfBuckets - 1;
     static const unsigned totalNumberOfBuckets = numberOfBuckets + numberOfSpecFailBuckets;
     
-    ValueProfile()
+    ValueProfileBase()
         : m_bytecodeOffset(-1)
         , m_prediction(PredictNone)
         , m_numberOfSamplesInPrediction(0)
@@ -53,7 +56,7 @@ struct ValueProfile {
             m_buckets[i] = JSValue::encode(JSValue());
     }
     
-    ValueProfile(int bytecodeOffset)
+    ValueProfileBase(int bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
         , m_prediction(PredictNone)
         , m_numberOfSamplesInPrediction(0)
@@ -103,7 +106,6 @@ struct ValueProfile {
         return false;
     }
     
-#ifndef NDEBUG
     void dump(FILE* out)
     {
         fprintf(out,
@@ -123,10 +125,23 @@ struct ValueProfile {
             }
         }
     }
-#endif
     
     // Updates the prediction and returns the new one.
-    PredictedType computeUpdatedPrediction();
+    PredictedType computeUpdatedPrediction()
+    {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
+            JSValue value = JSValue::decode(m_buckets[i]);
+            if (!value)
+                continue;
+            
+            m_numberOfSamplesInPrediction++;
+            mergePrediction(m_prediction, predictionFromValue(value));
+            
+            m_buckets[i] = JSValue::encode(JSValue());
+        }
+        
+        return m_prediction;
+    }
     
     int m_bytecodeOffset; // -1 for prologue
     
@@ -136,7 +151,32 @@ struct ValueProfile {
     EncodedJSValue m_buckets[totalNumberOfBuckets];
 };
 
-inline int getValueProfileBytecodeOffset(ValueProfile* valueProfile)
+struct MinimalValueProfile : public ValueProfileBase<0> {
+    MinimalValueProfile(): ValueProfileBase<0>() { }
+    MinimalValueProfile(int bytecodeOffset): ValueProfileBase<0>(bytecodeOffset) { }
+};
+
+template<unsigned logNumberOfBucketsArgument>
+struct ValueProfileWithLogNumberOfBuckets : public ValueProfileBase<1 << logNumberOfBucketsArgument> {
+    static const unsigned logNumberOfBuckets = logNumberOfBucketsArgument;
+    
+    ValueProfileWithLogNumberOfBuckets()
+        : ValueProfileBase<1 << logNumberOfBucketsArgument>()
+    {
+    }
+    ValueProfileWithLogNumberOfBuckets(int bytecodeOffset)
+        : ValueProfileBase<1 << logNumberOfBucketsArgument>(bytecodeOffset)
+    {
+    }
+};
+
+struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
+    ValueProfile(): ValueProfileWithLogNumberOfBuckets<0>() { }
+    ValueProfile(int bytecodeOffset): ValueProfileWithLogNumberOfBuckets<0>(bytecodeOffset) { }
+};
+
+template<typename T>
+inline int getValueProfileBytecodeOffset(T* valueProfile)
 {
     return valueProfile->m_bytecodeOffset;
 }
@@ -158,9 +198,10 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
 {
     return rareCaseProfile->m_bytecodeOffset;
 }
-#endif
 
-}
+} // namespace JSC
 
-#endif
+#endif // ENABLE(VALUE_PROFILER)
+
+#endif // ValueProfile_h
 

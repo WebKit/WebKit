@@ -1478,6 +1478,22 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\MethodOfGettingAValueProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\MethodOfGettingAValueProfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\LazyOperandValueProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\LazyOperandValueProfile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\GetByIdStatus.h"
 				>
 			</File>
@@ -1611,10 +1627,6 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\StructureStubInfo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\ValueProfile.cpp"
 				>
 			</File>
 			<File

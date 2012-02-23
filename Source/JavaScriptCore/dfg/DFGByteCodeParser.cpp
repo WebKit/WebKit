@@ -108,6 +108,8 @@ private:
     };
     template<PhiStackType stackType>
     void processPhiStack();
+    
+    void fixVariableAccessPredictions();
     // Add spill locations to nodes.
     void allocateVirtualRegisters();
     
@@ -155,6 +157,22 @@ private:
     {
         setDirect(m_inlineStackTop->remapOperand(operand), value);
     }
+    
+    NodeIndex injectLazyOperandPrediction(NodeIndex nodeIndex)
+    {
+        Node& node = m_graph[nodeIndex];
+        ASSERT(node.op == GetLocal);
+        ASSERT(node.codeOrigin.bytecodeIndex == m_currentIndex);
+        PredictedType prediction = 
+            m_inlineStackTop->m_lazyOperands.prediction(
+                LazyOperandValueProfileKey(m_currentIndex, node.local()));
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Lazy operand [@%u, bc#%u, r%d] prediction: %s\n",
+                nodeIndex, m_currentIndex, node.local(), predictionToString(prediction));
+#endif
+        node.variableAccessData()->predict(prediction);
+        return nodeIndex;
+    }
 
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getLocal(unsigned operand)
@@ -170,7 +188,7 @@ private:
                 Node& flushChild = m_graph[nodePtr->child1()];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index());
+                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index()));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
@@ -191,7 +209,7 @@ private:
         
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
-        nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
+        nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
         
         m_currentBlock->variablesAtHead.setLocalFirstTime(operand, nodeIndex);
@@ -220,7 +238,7 @@ private:
                 Node& flushChild = m_graph[nodePtr->child1()];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index());
+                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index()));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
@@ -233,7 +251,7 @@ private:
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
                 ASSERT(nodePtr->local() == static_cast<VirtualRegister>(operand));
-                nodeIndex = addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex);
+                nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
                 m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                 return nodeIndex;
             }
@@ -249,7 +267,7 @@ private:
 
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
-        nodeIndex = addToGraph(GetLocal, OpInfo(variableAccessData), phi);
+        nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
         
         m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, nodeIndex);
@@ -848,6 +866,11 @@ private:
         bool m_callsiteBlockHeadNeedsLinking;
         
         VirtualRegister m_returnValue;
+        
+        // Predictions about variable types collected from the profiled code block,
+        // which are based on OSR exit profiles that past DFG compilatins of this
+        // code block had gathered.
+        LazyOperandValueProfileParser m_lazyOperands;
         
         // Did we see any returns? We need to handle the (uncommon but necessary)
         // case where a procedure that does not return was inlined.
@@ -2316,6 +2339,14 @@ void ByteCodeParser::processPhiStack()
     }
 }
 
+void ByteCodeParser::fixVariableAccessPredictions()
+{
+    for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
+        VariableAccessData* data = &m_graph.m_variableAccessData[i];
+        data->find()->predict(data->nonUnifiedPrediction());
+    }
+}
+
 void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTargets)
 {
     ASSERT(block->end != NoNode);
@@ -2418,6 +2449,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
+    , m_lazyOperands(profiledBlock->lazyOperandValueProfiles())
     , m_didReturn(false)
     , m_didEarlyReturn(false)
     , m_caller(byteCodeParser->m_inlineStackTop)
@@ -2585,6 +2617,8 @@ bool ByteCodeParser::parse()
     dataLog("Processing argument phis.\n");
 #endif
     processPhiStack<ArgumentPhiStack>();
+    
+    fixVariableAccessPredictions();
     
     m_graph.m_preservedVars = m_preservedVars;
     m_graph.m_localVars = m_numLocals;
