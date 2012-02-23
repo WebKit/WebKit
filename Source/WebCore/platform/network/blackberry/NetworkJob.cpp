@@ -111,6 +111,7 @@ NetworkJob::NetworkJob()
     , m_redirectCount(0)
     , m_deferredData(*this)
     , m_deferLoadingCount(0)
+    , m_frame(0)
 {
 }
 
@@ -137,6 +138,14 @@ bool NetworkJob::initialize(int playerId,
 
     m_streamFactory = streamFactory;
     m_frame = &frame;
+
+    if (m_frame && m_frame->loader()->pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
+        // In the case the frame will be detached soon, we still need to ping the server, but it is
+        // no longer safe to reference the Frame object.
+        // See http://trac.webkit.org/changeset/65910 and https://bugs.webkit.org/show_bug.cgi?id=30457.
+        m_frame = 0;
+    }
+
     m_redirectCount = redirectCount;
     m_deferLoadingCount = deferLoadingCount;
 

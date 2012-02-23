@@ -1,3 +1,24 @@
+2012-02-22  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] NetworkJob can access deleted objects.
+        https://bugs.webkit.org/show_bug.cgi?id=79246
+
+        Reviewed by Antonio Gomes.
+
+        When a NetworkJob is created by unload handler, we still need
+        to send the request to the server, but we shouldn't save and
+        keep using the Frame pointer because the frame is being detached.
+        The NetworkJob will be cancelled by PingLoader as soon as it gets
+        first response from host.
+        Also see https://bugs.webkit.org/show_bug.cgi?id=30457.
+
+        No new tests because existing test case is good enough like
+        LayoutTests/http/tests/navigation/image-load-in-unload-handler.html.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::initialize):
+
 2012-02-22  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Remove zlib.h from WebSocketDeflater.h
