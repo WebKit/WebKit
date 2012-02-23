@@ -37,7 +37,9 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
-#include <zlib.h>
+
+struct z_stream_s;
+typedef z_stream_s z_stream;
 
 namespace WebCore {
 
@@ -64,7 +66,7 @@ private:
     int m_windowBits;
     ContextTakeOverMode m_contextTakeOverMode;
     Vector<char> m_buffer;
-    z_stream m_stream;
+    OwnPtr<z_stream> m_stream;
 };
 
 class WebSocketInflater {
@@ -85,7 +87,7 @@ private:
 
     int m_windowBits;
     Vector<char> m_buffer;
-    z_stream m_stream;
+    OwnPtr<z_stream> m_stream;
 };
 
 }

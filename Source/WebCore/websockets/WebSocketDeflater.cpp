@@ -41,6 +41,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+#include <zlib.h>
 
 namespace WebCore {
 
@@ -58,27 +59,28 @@ WebSocketDeflater::WebSocketDeflater(int windowBits, ContextTakeOverMode context
 {
     ASSERT(m_windowBits >= 8);
     ASSERT(m_windowBits <= 15);
-    memset(&m_stream, 0, sizeof(z_stream));
+    m_stream = adoptPtr(new z_stream);
+    memset(m_stream.get(), 0, sizeof(z_stream));
 }
 
 bool WebSocketDeflater::initialize()
 {
-    return deflateInit2(&m_stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -m_windowBits, defaultMemLevel, Z_DEFAULT_STRATEGY) == Z_OK;
+    return deflateInit2(m_stream.get(), Z_DEFAULT_COMPRESSION, Z_DEFLATED, -m_windowBits, defaultMemLevel, Z_DEFAULT_STRATEGY) == Z_OK;
 }
 
 WebSocketDeflater::~WebSocketDeflater()
 {
-    int result = deflateEnd(&m_stream);
+    int result = deflateEnd(m_stream.get());
     if (result != Z_OK)
         LOG(Network, "deflateEnd() failed: %d", result);
 }
 
-static void setStreamParameter(z_stream& stream, const char* inputData, size_t inputLength, char* outputData, size_t outputLength)
+static void setStreamParameter(z_stream* stream, const char* inputData, size_t inputLength, char* outputData, size_t outputLength)
 {
-    stream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(inputData));
-    stream.avail_in = inputLength;
-    stream.next_out = reinterpret_cast<Bytef*>(outputData);
-    stream.avail_out = outputLength;
+    stream->next_in = reinterpret_cast<Bytef*>(const_cast<char*>(inputData));
+    stream->avail_in = inputLength;
+    stream->next_out = reinterpret_cast<Bytef*>(outputData);
+    stream->avail_out = outputLength;
 }
 
 bool WebSocketDeflater::addBytes(const char* data, size_t length)
@@ -86,15 +88,15 @@ bool WebSocketDeflater::addBytes(const char* data, size_t length)
     if (!length)
         return false;
 
-    size_t maxLength = deflateBound(&m_stream, length);
+    size_t maxLength = deflateBound(m_stream.get(), length);
     size_t writePosition = m_buffer.size();
     m_buffer.grow(writePosition + maxLength);
-    setStreamParameter(m_stream, data, length, m_buffer.data() + writePosition, maxLength);
-    int result = deflate(&m_stream, Z_NO_FLUSH);
-    if (result != Z_OK || m_stream.avail_in > 0)
+    setStreamParameter(m_stream.get(), data, length, m_buffer.data() + writePosition, maxLength);
+    int result = deflate(m_stream.get(), Z_NO_FLUSH);
+    if (result != Z_OK || m_stream->avail_in > 0)
         return false;
 
-    m_buffer.shrink(writePosition + maxLength - m_stream.avail_out);
+    m_buffer.shrink(writePosition + maxLength - m_stream->avail_out);
     return true;
 }
 
@@ -104,9 +106,9 @@ bool WebSocketDeflater::finish()
         size_t writePosition = m_buffer.size();
         m_buffer.grow(writePosition + bufferIncrementUnit);
         size_t availableCapacity = m_buffer.size() - writePosition;
-        setStreamParameter(m_stream, 0, 0, m_buffer.data() + writePosition, availableCapacity);
-        int result = deflate(&m_stream, Z_SYNC_FLUSH);
-        m_buffer.shrink(writePosition + availableCapacity - m_stream.avail_out);
+        setStreamParameter(m_stream.get(), 0, 0, m_buffer.data() + writePosition, availableCapacity);
+        int result = deflate(m_stream.get(), Z_SYNC_FLUSH);
+        m_buffer.shrink(writePosition + availableCapacity - m_stream->avail_out);
         if (result == Z_OK)
             break;
         if (result != Z_BUF_ERROR)
@@ -123,7 +125,7 @@ void WebSocketDeflater::reset()
 {
     m_buffer.clear();
     if (m_contextTakeOverMode == DoNotTakeOverContext)
-        deflateReset(&m_stream);
+        deflateReset(m_stream.get());
 }
 
 PassOwnPtr<WebSocketInflater> WebSocketInflater::create(int windowBits)
@@ -134,17 +136,18 @@ PassOwnPtr<WebSocketInflater> WebSocketInflater::create(int windowBits)
 WebSocketInflater::WebSocketInflater(int windowBits)
     : m_windowBits(windowBits)
 {
-    memset(&m_stream, 0, sizeof(z_stream));
+    m_stream = adoptPtr(new z_stream);
+    memset(m_stream.get(), 0, sizeof(z_stream));
 }
 
 bool WebSocketInflater::initialize()
 {
-    return inflateInit2(&m_stream, -m_windowBits) == Z_OK;
+    return inflateInit2(m_stream.get(), -m_windowBits) == Z_OK;
 }
 
 WebSocketInflater::~WebSocketInflater()
 {
-    int result = inflateEnd(&m_stream);
+    int result = inflateEnd(m_stream.get());
     if (result != Z_OK)
         LOG(Network, "inflateEnd() failed: %d", result);
 }
@@ -160,10 +163,10 @@ bool WebSocketInflater::addBytes(const char* data, size_t length)
         m_buffer.grow(writePosition + bufferIncrementUnit);
         size_t availableCapacity = m_buffer.size() - writePosition;
         size_t remainingLength = length - consumedSoFar;
-        setStreamParameter(m_stream, data + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
-        int result = inflate(&m_stream, Z_NO_FLUSH);
-        consumedSoFar += remainingLength - m_stream.avail_in;
-        m_buffer.shrink(writePosition + availableCapacity - m_stream.avail_out);
+        setStreamParameter(m_stream.get(), data + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
+        int result = inflate(m_stream.get(), Z_NO_FLUSH);
+        consumedSoFar += remainingLength - m_stream->avail_in;
+        m_buffer.shrink(writePosition + availableCapacity - m_stream->avail_out);
         if (result == Z_BUF_ERROR)
             continue;
         if (result != Z_OK)
@@ -185,10 +188,10 @@ bool WebSocketInflater::finish()
         m_buffer.grow(writePosition + bufferIncrementUnit);
         size_t availableCapacity = m_buffer.size() - writePosition;
         size_t remainingLength = strippedLength - consumedSoFar;
-        setStreamParameter(m_stream, strippedFields + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
-        int result = inflate(&m_stream, Z_FINISH);
-        consumedSoFar += remainingLength - m_stream.avail_in;
-        m_buffer.shrink(writePosition + availableCapacity - m_stream.avail_out);
+        setStreamParameter(m_stream.get(), strippedFields + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
+        int result = inflate(m_stream.get(), Z_FINISH);
+        consumedSoFar += remainingLength - m_stream->avail_in;
+        m_buffer.shrink(writePosition + availableCapacity - m_stream->avail_out);
         if (result == Z_BUF_ERROR)
             continue;
         if (result != Z_OK && result != Z_STREAM_END)
