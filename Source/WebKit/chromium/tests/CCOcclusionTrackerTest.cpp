@@ -105,11 +105,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
     EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 70, 70)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 30, 70, 70)));
@@ -157,11 +157,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
     EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 70, 70)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 30, 70, 70)));
@@ -207,11 +207,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
     EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(50, 50, 50, 50)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(49, 50, 50, 50)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(50, 49, 50, 50)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(51, 50, 50, 50)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(50, 51, 50, 50)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(50, 50, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(49, 50, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(50, 49, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(51, 50, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(50, 51, 50, 50)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(50, 50, 50, 50)).isEmpty());
     EXPECT_EQ_RECT(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 50, 50, 50)));
@@ -265,11 +265,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
     EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 430, 61, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 430, 60, 71)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 430, 61, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 71)));
 
     occlusion.markOccludedBehindLayer(child.get());
     occlusion.finishedTargetRenderSurface(child.get(), child->renderSurface());
@@ -280,9 +280,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
     EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
 
 
     /* Justification for the above occlusion from |layer|:
@@ -366,11 +366,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)).isEmpty());
     // This is the little piece not occluded by child2
@@ -403,18 +403,18 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     Vector<IntRect> screen = occlusion.occlusionInScreenSpace().rects();
     Vector<IntRect> target = occlusion.occlusionInTargetSurface().rects();
 
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
     EXPECT_EQ_RECT(IntRect(90, 30, 10, 10), occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 70, 70)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 30, 60, 10)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 30, 60, 10)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 29, 60, 10)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(31, 30, 60, 10)));
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 31, 60, 10)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 60, 10)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 60, 10)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 60, 10)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 30, 60, 10)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 31, 60, 10)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 60, 10)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 30, 1, 10), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 30, 60, 10)));
@@ -511,23 +511,23 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
     EXPECT_EQ_RECT(clippedLayerInChild, occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child.get(), clippedLayerInChild));
-    EXPECT_EQ(true, occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
+    EXPECT_TRUE(occlusion.occluded(child.get(), clippedLayerInChild));
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(-1, 0);
-    EXPECT_EQ(false, occlusion.occluded(child.get(), clippedLayerInChild));
-    EXPECT_EQ(false, occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
+    EXPECT_FALSE(occlusion.occluded(child.get(), clippedLayerInChild));
+    EXPECT_FALSE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(1, 0);
     clippedLayerInChild.move(1, 0);
-    EXPECT_EQ(false, occlusion.occluded(child.get(), clippedLayerInChild));
-    EXPECT_EQ(false, occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
+    EXPECT_FALSE(occlusion.occluded(child.get(), clippedLayerInChild));
+    EXPECT_FALSE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(-1, 0);
     clippedLayerInChild.move(0, -1);
-    EXPECT_EQ(false, occlusion.occluded(child.get(), clippedLayerInChild));
-    EXPECT_EQ(false, occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
+    EXPECT_FALSE(occlusion.occluded(child.get(), clippedLayerInChild));
+    EXPECT_FALSE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(0, 1);
     clippedLayerInChild.move(0, 1);
-    EXPECT_EQ(false, occlusion.occluded(child.get(), clippedLayerInChild));
-    EXPECT_EQ(false, occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
+    EXPECT_FALSE(occlusion.occluded(child.get(), clippedLayerInChild));
+    EXPECT_FALSE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(0, -1);
 
     // Surface is not occluded by things that draw into itself.
@@ -542,7 +542,7 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
     EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(75, 55, 1, 1)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(75, 55, 1, 1)));
     EXPECT_EQ_RECT(IntRect(75, 55, 1, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(75, 55, 1, 1)));
 
     // Surface is not occluded by things that draw into itself.
@@ -594,11 +594,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
     EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
+    EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)).isEmpty());
     EXPECT_EQ_RECT(IntRect(9, 430, 1, 70), occlusion.unoccludedContentRect(child.get(), IntRect(9, 430, 60, 70)));
@@ -618,9 +618,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
     EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 40, 70, 60)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 40, 1, 60), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 40, 70, 60)));
@@ -706,11 +706,11 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_EQ_RECT(IntRect(0, 420, 60, 80), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child2.get(), IntRect(0, 420, 60, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-1, 420, 60, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 419, 60, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 420, 61, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 420, 60, 81)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(0, 420, 60, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-1, 420, 60, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 419, 60, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 420, 61, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 420, 60, 81)));
 
     // Surface is not occluded by things that draw into itself.
     EXPECT_EQ_RECT(IntRect(0, 420, 60, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(0, 420, 60, 80)));
@@ -726,11 +726,11 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_EQ_RECT(IntRect(0, 430, 70, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child2.get(), IntRect(0, 430, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-1, 430, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 429, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 430, 71, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(0, 430, 70, 71)));
+    EXPECT_TRUE(occlusion.occluded(child1.get(), IntRect(0, 430, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-1, 430, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 429, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 430, 71, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 430, 70, 71)));
 
     // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
     EXPECT_EQ_RECT(IntRect(0, 430, 10, 70), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(0, 430, 70, 70)));
@@ -744,15 +744,15 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(20, 30, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 30, 80, 70)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(20, 40, 80, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(19, 40, 80, 60)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(20, 39, 80, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(20, 40, 80, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(19, 40, 80, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 39, 80, 60)));
 
     // |child1| and |child2| both draw into parent so they should not occlude it.
     EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(20, 30, 80, 70)));
@@ -839,15 +839,15 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-11, 420, 70, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 419, 70, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-11, 420, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 419, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
 
     // Surface is not occluded by things that draw into itself.
     EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(-10, 420, 70, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(child2.get(), IntRect(30, 250, 1, 1)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child2.get(), IntRect(30, 250, 1, 1)));
 
     occlusion.markOccludedBehindLayer(child2.get());
     occlusion.finishedTargetRenderSurface(child2.get(), child2->renderSurface());
@@ -860,19 +860,19 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_EQ_RECT(IntRect(-10, 430, 80, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(true, occlusion.occluded(child2.get(), IntRect(-10, 430, 80, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-11, 430, 80, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 429, 80, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 430, 81, 70)));
-    EXPECT_EQ(false, occlusion.occluded(child2.get(), IntRect(-10, 430, 80, 71)));
+    EXPECT_TRUE(occlusion.occluded(child1.get(), IntRect(-10, 430, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-11, 430, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 429, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 430, 81, 70)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 430, 80, 71)));
 
     // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
     EXPECT_EQ_RECT(IntRect(-10, 430, 10, 80), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(-10, 430, 70, 80)));
-    EXPECT_EQ(true, occlusion.surfaceOccluded(child1.get(), IntRect(0, 430, 70, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(child1.get(), IntRect(-1, 430, 70, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(child1.get(), IntRect(0, 429, 70, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(child1.get(), IntRect(1, 430, 70, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(child1.get(), IntRect(0, 431, 70, 80)));
+    EXPECT_TRUE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 430, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(-1, 430, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 429, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(1, 430, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 431, 70, 80)));
 
     occlusion.markOccludedBehindLayer(child1.get());
     occlusion.finishedTargetRenderSurface(child1.get(), child1->renderSurface());
@@ -883,19 +883,19 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(20, 20, 80, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 20, 80, 80)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(30, 20, 70, 80)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(29, 20, 70, 80)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(30, 19, 70, 80)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 20, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 20, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 19, 70, 80)));
 
-    EXPECT_EQ(true, occlusion.occluded(parent.get(), IntRect(20, 30, 80, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(19, 30, 80, 70)));
-    EXPECT_EQ(false, occlusion.occluded(parent.get(), IntRect(20, 29, 80, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(20, 30, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(19, 30, 80, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 29, 80, 70)));
 
     // |child1| and |child2| both draw into parent so they should not occlude it.
     EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(20, 20, 80, 80)));
-    EXPECT_EQ(false, occlusion.surfaceOccluded(parent.get(), IntRect(50, 50, 1, 1)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(50, 50, 1, 1)));
 
 
     /* Justification for the above occlusion:

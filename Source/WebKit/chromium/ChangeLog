@@ -1,3 +1,13 @@
+2012-02-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Fix CCOcclusionTracker unit test assertion
+        https://bugs.webkit.org/show_bug.cgi?id=79275
+
+        Reviewed by James Robinson.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::TEST):
+
 2012-02-22  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Plumb from GraphicsLayer to the cc thread animation code
