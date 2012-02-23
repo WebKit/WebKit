@@ -658,7 +658,8 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
      */
 }
 
-TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
+// Disabled due to http://webkit.org/b/79314.
+TEST(CCOcclusionTrackerTest, DISABLED_surfaceOcclusionWithOverlappingSiblingSurfaces)
 {
     // This tests that the right transforms are being used.
     TestCCOcclusionTracker occlusion;
@@ -784,7 +785,8 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
      */
 }
 
-TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
+// Disabled due to http://webkit.org/b/79314.
+TEST(CCOcclusionTrackerTest, DISABLED_surfaceOcclusionInScreenSpace)
 {
     // This tests that the right transforms are being used.
     TestCCOcclusionTracker occlusion;

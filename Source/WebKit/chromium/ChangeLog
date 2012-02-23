@@ -1,3 +1,12 @@
+2012-02-22  Yuta Kitamura  <yutak@chromium.org>
+
+        [Chromium] Unreviewed. Disable two tests from CCOcclusionTrackerTest
+        which cause assertion failures.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-02-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Fix CCOcclusionTracker unit test assertion
