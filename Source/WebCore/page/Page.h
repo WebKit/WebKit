@@ -70,8 +70,6 @@ namespace WebCore {
     class InspectorController;
     class MediaCanStartListener;
     class Node;
-    class NotificationController;
-    class NotificationPresenter;
     class PageGroup;
     class PluginData;
     class PointerLockController;
@@ -84,9 +82,6 @@ namespace WebCore {
     class ScrollingCoordinator;
     class Settings;
     class StorageNamespace;
-#if ENABLE(NOTIFICATIONS)
-    class NotificationPresenter;
-#endif
 
     typedef uint64_t LinkHash;
 
@@ -114,7 +109,6 @@ namespace WebCore {
             InspectorClient* inspectorClient;
             GeolocationClient* geolocationClient;
             RefPtr<BackForwardList> backForwardClient;
-            NotificationPresenter* notificationClient;
         };
 
         Page(PageClients&);
@@ -174,9 +168,6 @@ namespace WebCore {
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
-#endif
-#if ENABLE(NOTIFICATIONS)
-        NotificationController* notificationController() const { return m_notificationController.get(); }
 #endif
 #if ENABLE(POINTER_LOCK)
         PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
@@ -369,9 +360,6 @@ namespace WebCore {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         OwnPtr<GeolocationController> m_geolocationController;
 #endif
-#if ENABLE(NOTIFICATIONS)
-        OwnPtr<NotificationController> m_notificationController;
-#endif
 #if ENABLE(POINTER_LOCK)
         OwnPtr<PointerLockController> m_pointerLockController;
 #endif
@@ -424,10 +412,6 @@ namespace WebCore {
         bool m_canStartMedia;
 
         RefPtr<StorageNamespace> m_sessionStorage;
-
-#if ENABLE(NOTIFICATIONS)
-        NotificationPresenter* m_notificationPresenter;
-#endif
 
         ViewMode m_viewMode;
 

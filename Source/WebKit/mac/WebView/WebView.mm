@@ -742,10 +742,10 @@ static NSString *leakOutlookQuirksUserScriptContents()
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(self);
 #endif
-#if ENABLE(NOTIFICATIONS)
-    pageClients.notificationClient = new WebNotificationClient(self);
-#endif
     _private->page = new Page(pageClients);
+#if ENABLE(NOTIFICATIONS)
+    WebCore::provideNotification(_private->page, new WebNotificationClient(self));
+#endif
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::provideDeviceOrientationTo(_private->page, new WebDeviceOrientationClient(self));
 #endif

@@ -332,9 +332,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     else
         pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif
-#if ENABLE(NOTIFICATIONS)
-    pageClients.notificationClient = NotificationPresenterClientQt::notificationPresenter();
-#endif
     page = new Page(pageClients);
 #if ENABLE(DEVICE_ORIENTATION)
     if (useMock)
@@ -342,6 +339,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     else
         WebCore::provideDeviceOrientationTo(page, new DeviceOrientationClientQt);
     WebCore::provideDeviceMotionTo(page, new DeviceMotionClientQt);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    WebCore::provideNotification(page, NotificationPresenterClientQt::notificationPresenter());
 #endif
 
     // By default each page is put into their own unique page group, which affects popup windows

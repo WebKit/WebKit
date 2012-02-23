@@ -40,6 +40,7 @@ namespace WebCore {
 class Document;
 class Notification;
 class KURL;
+class Page;
 class ScriptExecutionContext;
 
 class NotificationPresenter {
@@ -83,6 +84,8 @@ public:
 protected:
     virtual ~NotificationPresenter() { }
 };
+
+void provideNotification(Page*, NotificationPresenter*);
 
 } // namespace WebCore
 

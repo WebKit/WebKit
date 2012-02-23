@@ -50,6 +50,24 @@ PassOwnPtr<NotificationController> NotificationController::create(Page* page, No
     return adoptPtr(new NotificationController(page, client));
 }
 
+NotificationPresenter* NotificationController::clientFrom(Page* page)
+{
+    if (NotificationController* controller = NotificationController::from(page))
+        return controller->client();
+    return 0;
+}
+
+const AtomicString& NotificationController::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NotificationController"));
+    return name;
+}
+
+void provideNotification(Page* page, NotificationPresenter* client)
+{
+    PageSupplement::provideTo(page, NotificationController::supplementName(), NotificationController::create(page, client));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS)

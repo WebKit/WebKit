@@ -398,9 +398,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.dragClient = &m_dragClientImpl;
     pageClients.inspectorClient = &m_inspectorClientImpl;
     pageClients.geolocationClient = m_geolocationClientProxy.get();
-#if ENABLE(NOTIFICATIONS)
-    pageClients.notificationClient = notificationPresenterImpl();
-#endif
     pageClients.backForwardClient = BackForwardListChromium::create(this);
 
     m_page = adoptPtr(new Page(pageClients));
@@ -409,6 +406,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
 #if ENABLE(INPUT_SPEECH)
     provideSpeechInputTo(m_page.get(), m_speechInputClient.get());
+#endif
+#if ENABLE(NOTIFICATIONS)
+    provideNotification(m_page.get(), notificationPresenterImpl());
 #endif
 
     provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());

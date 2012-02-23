@@ -51,8 +51,6 @@
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
-#include "NotificationController.h"
-#include "NotificationPresenter.h"
 #include "PageGroup.h"
 #include "PluginData.h"
 #include "PluginView.h"
@@ -70,6 +68,7 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "TextResourceDecoder.h"
+#include "VoidCallback.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -128,9 +127,6 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     , m_geolocationController(GeolocationController::create(this, pageClients.geolocationClient))
-#endif
-#if ENABLE(NOTIFICATIONS)
-    , m_notificationController(NotificationController::create(this, pageClients.notificationClient))
 #endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(PointerLockController::create(this))
@@ -1071,7 +1067,6 @@ Page::PageClients::PageClients()
     , dragClient(0)
     , inspectorClient(0)
     , geolocationClient(0)
-    , notificationClient(0)
 {
 }
 

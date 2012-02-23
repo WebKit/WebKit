@@ -719,7 +719,7 @@ NotificationCenter* DOMWindow::webkitNotifications() const
     if (!page)
         return 0;
 
-    NotificationPresenter* provider = page->notificationController()->client();
+    NotificationPresenter* provider = NotificationController::clientFrom(page);
     if (provider) 
         m_notifications = NotificationCenter::create(document, provider);    
       
