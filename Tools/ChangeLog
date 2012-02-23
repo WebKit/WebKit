@@ -1,3 +1,16 @@
+2012-02-23  Eric Seidel  <eric@webkit.org>
+
+        Remove old broken find_checkout_root tests now that find_checkout_root is gone
+        https://bugs.webkit.org/show_bug.cgi?id=79405
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py: Added.
+        (SCMDetectorTest):
+        (SCMDetectorTest.test_find_checkout_root):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SVNTestRepository.tear_down):
+
 2012-02-23  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Implement proxy authentication dialog.
