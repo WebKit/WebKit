@@ -86,10 +86,10 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 static const HashTable JSTestInterfaceConstructorTable = { 4, 3, JSTestInterfaceConstructorTableValues, 0 };
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-COMPILE_ASSERT(1 == TestInterface::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPLEMENTALCONSTANT1IsWrongUseDoNotCheckConstants);
+COMPILE_ASSERT(1 == TestSupplemental::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPLEMENTALCONSTANT1IsWrongUseDoNotCheckConstants);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-COMPILE_ASSERT(2 == TestInterface::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
+COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 #endif
 
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, &JSTestInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };

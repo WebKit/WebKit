@@ -627,7 +627,11 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
                 push(@checks, "#if ${conditionalString}\n");
             }
 
-            push(@checks, "COMPILE_ASSERT($value == ${interfaceName}::$name, ${interfaceName}Enum${name}IsWrongUseDoNotCheckConstants);\n");
+            if ($constant->extendedAttributes->{"ImplementedBy"}) {
+                push(@checks, "COMPILE_ASSERT($value == " . $constant->extendedAttributes->{"ImplementedBy"} . "::$name, ${interfaceName}Enum${name}IsWrongUseDoNotCheckConstants);\n");
+            } else {
+                push(@checks, "COMPILE_ASSERT($value == ${interfaceName}::$name, ${interfaceName}Enum${name}IsWrongUseDoNotCheckConstants);\n");
+            }
 
             if ($conditional) {
                 push(@checks, "#endif\n");

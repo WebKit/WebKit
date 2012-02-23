@@ -1369,6 +1369,10 @@ sub GenerateImplementation
             push(@hashValue2, "0");
             push(@hashSpecials, "DontDelete | ReadOnly");
 
+            my $implementedBy = $constant->extendedAttributes->{"ImplementedBy"};
+            if ($implementedBy) {
+                $implIncludes{"${implementedBy}.h"} = 1;
+            }
             my $conditional = $constant->extendedAttributes->{"Conditional"};
             if ($conditional) {
                 $conditionals{$name} = $conditional;

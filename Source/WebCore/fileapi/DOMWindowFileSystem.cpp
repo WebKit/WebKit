@@ -99,8 +99,8 @@ void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, con
     LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
 }
 
-COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(DOMWindow::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
 
 } // namespace WebCore
 

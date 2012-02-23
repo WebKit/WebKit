@@ -352,16 +352,6 @@ namespace WebCore {
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
 
-#if ENABLE(FILE_SYSTEM)
-        // They are placed here and in all capital letters so they can be checked against the constants in the
-        // IDL at compile time.
-        // FIXME: Move these constants to DOMWindowFileSystem.
-        enum FileSystemType {
-            TEMPORARY,
-            PERSISTENT,
-        };
-#endif
-
 #if ENABLE(NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
         // Renders webkitNotifications object safely inoperable, disconnects

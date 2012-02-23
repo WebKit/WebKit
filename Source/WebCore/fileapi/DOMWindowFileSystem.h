@@ -44,6 +44,13 @@ public:
     static void webkitRequestFileSystem(DOMWindow*, int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
     static void webkitResolveLocalFileSystemURL(DOMWindow*, const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
 
+    // They are placed here and in all capital letters so they can be checked against the constants in the
+    // IDL at compile time.
+    enum FileSystemType {
+        TEMPORARY,
+        PERSISTENT,
+    };
+
 private:
     DOMWindowFileSystem();
     ~DOMWindowFileSystem();

@@ -2428,6 +2428,10 @@ END
         my $value = $constant->value;
         my $attrExt = $constant->extendedAttributes;
         my $conditional = $attrExt->{"Conditional"};
+        my $implementedBy = $attrExt->{"ImplementedBy"};
+        if ($implementedBy) {
+            AddToImplIncludes("${implementedBy}.h");
+        }
         if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@constantsEnabledAtRuntime, $constant);
         } else {
