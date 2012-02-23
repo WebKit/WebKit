@@ -1647,7 +1647,6 @@ fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/key-events-in-input-button.html
-fast/forms/input-radio-checked-tab.html
 fast/frames/onlyCommentInIFrame.html
 fast/invalid/junk-data.xml
 fast/loader/text-document-wrapping.html
