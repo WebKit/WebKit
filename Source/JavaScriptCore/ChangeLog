@@ -1,3 +1,14 @@
+2012-02-23  Aron Rosenberg  <arosenberg@logitech.com>
+
+        Fix the PRI macros used in WTF::String formatters to be compatible with Qt and Visual Studio 2005 and newer.
+        https://bugs.webkit.org/show_bug.cgi?id=76210
+
+        Add compile time check for Visual Studio 2005 or newer.
+
+        Reviewed by Simon Hausmann.
+
+        * os-win32/inttypes.h:
+
 2012-02-22  Gavin Barraclough  <barraclough@apple.com>
 
         Implement [[DefineOwnProperty]] for the arguments object
