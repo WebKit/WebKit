@@ -1,3 +1,12 @@
+2012-02-23  Daniel Bates  <dbates@webkit.org>
+
+        Add missing "Reviewed by" line to change log entry for changeset r108631
+        (https://bugs.webkit.org/show_bug.cgi?id=79252)
+
+        The patch landed in changeset r108631 was reviewed by Martin Robinson.
+
+        * ChangeLog:
+
 2012-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS macro
@@ -58,6 +67,8 @@
 
         [WK2][GTK] WebProcess SIGSEVs due to incorrect clipboard handling
         https://bugs.webkit.org/show_bug.cgi?id=79252
+
+        Reviewed by Martin Robinson.
 
         Do not execute clipboard callbacks after the Frame associated with
         it is destroyed.
