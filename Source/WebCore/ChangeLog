@@ -1,3 +1,39 @@
+2012-02-23  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Allow to use WebCore imagedecoders
+        https://bugs.webkit.org/show_bug.cgi?id=32410
+
+        Add ENABLE(QT_IMAGE_DECODER) guards around Qt imagedecoders and set it to default.
+        By passing ENABLE_QT_IMAGE_DECODER=0 define to the build system WebKit will build
+        with WebCore's imagedecoders.
+
+        I added NO_RETURN attribute to 2 functions of PNG and JPEG decoders to avoid compiler warnings
+        because in Qt-port we treat warning as errors (-Werror).
+
+        I'm continuing the refactoring of this area and try to use Qt imagedecoders only in 
+        cases when WebCore doesn't support the image format.
+
+        Reviewed by Simon Hausmann.
+
+        No behavior change, no need new tests.
+
+        * Target.pri:
+        * WebCore.pri:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::getAddr):
+        (ImageFrame):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        NO_RETURN has been added to a function to avoid warning message.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        NO_RETURN has been added to a function to avoid warning message.
+        (WebCore):
+        * platform/image-decoders/qt/ImageFrameQt.cpp:
+        (WebCore):
+        (WebCore::ImageFrame::asNewNativeImage):
+
 2012-02-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Push CCLayerIteratorPosition struct into CCLayerIterator class.

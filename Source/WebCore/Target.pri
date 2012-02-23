@@ -2191,7 +2191,6 @@ HEADERS += \
     platform/graphics/Region.h \
     platform/graphics/RoundedRect.h \
     platform/graphics/qt/FontCustomPlatformData.h \
-    platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/qt/TransparencyLayer.h \
     platform/graphics/SegmentedFontData.h \
@@ -2802,7 +2801,6 @@ SOURCES += \
     platform/graphics/qt/GraphicsContextQt.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \
-    platform/graphics/qt/ImageDecoderQt.cpp \
     platform/graphics/qt/ImageQt.cpp \
     platform/graphics/qt/IntPointQt.cpp \
     platform/graphics/qt/IntRectQt.cpp \
@@ -3936,6 +3934,35 @@ contains(DEFINES, ENABLE_MHTML=1) {
         loader/archive/mhtml/MHTMLArchive.cpp \
         loader/archive/mhtml/MHTMLParser.cpp \
         page/PageSerializer.cpp
+}
+
+contains(DEFINES, ENABLE_QT_IMAGE_DECODER=1) {
+    HEADERS += platform/graphics/qt/ImageDecoderQt.h
+    SOURCES += platform/graphics/qt/ImageDecoderQt.cpp
+} else {
+    HEADERS += \
+        platform/image-decoders/bmp/BMPImageDecoder.h \
+        platform/image-decoders/bmp/BMPImageReader.h \
+        platform/image-decoders/gif/GIFImageDecoder.h \
+        platform/image-decoders/gif/GIFImageReader.h\
+        platform/image-decoders/ico/ICOImageDecoder.h \
+        platform/image-decoders/jpeg/JPEGImageDecoder.h \
+        platform/image-decoders/png/PNGImageDecoder.h
+
+    SOURCES += \
+        platform/image-decoders/ImageDecoder.cpp \
+        platform/image-decoders/bmp/BMPImageDecoder.cpp \
+        platform/image-decoders/bmp/BMPImageReader.cpp \
+        platform/image-decoders/gif/GIFImageDecoder.cpp \
+        platform/image-decoders/gif/GIFImageReader.cpp\
+        platform/image-decoders/ico/ICOImageDecoder.cpp \
+        platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
+        platform/image-decoders/png/PNGImageDecoder.cpp
+
+    contains(DEFINES, WTF_USE_WEBP=1) {
+        HEADERS += platform/image-decoders/webp/WEBPImageDecoder.h
+        SOURCES += platform/image-decoders/webp/WEBPImageDecoder.cpp
+    }
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {

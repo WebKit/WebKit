@@ -103,7 +103,7 @@ void init_source(j_decompress_ptr jd);
 boolean fill_input_buffer(j_decompress_ptr jd);
 void skip_input_data(j_decompress_ptr jd, long num_bytes);
 void term_source(j_decompress_ptr jd);
-void error_exit(j_common_ptr cinfo);
+void error_exit(j_common_ptr cinfo) NO_RETURN;
 
 // Implementation of a JPEG src object that understands our state machine
 struct decoder_source_mgr {
