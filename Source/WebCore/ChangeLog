@@ -1,3 +1,26 @@
+2012-02-22  Dmitry Lomov  <dslomov@google.com>
+
+        [JSC] Implement ArrayBuffer and typed array cloning in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=79294
+
+        Reviewed by Oliver Hunt.
+
+        Covered by existing tests.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::typedArrayElementSize):
+        (WebCore):
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::readArrayBufferViewSubtag):
+        (CloneDeserializer):
+        (WebCore::CloneDeserializer::readArrayBuffer):
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        (WebCore::CloneDeserializer::getJSValue):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2012-02-22  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed speculative chromium-mac build fix.

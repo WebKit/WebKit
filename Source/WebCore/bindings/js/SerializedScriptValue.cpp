@@ -31,13 +31,25 @@
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"
+#include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSBlob.h"
+#include "JSDataView.h"
 #include "JSDOMGlobalObject.h"
 #include "JSFile.h"
 #include "JSFileList.h"
+#include "JSFloat32Array.h"
+#include "JSFloat64Array.h"
 #include "JSImageData.h"
+#include "JSInt16Array.h"
+#include "JSInt32Array.h"
+#include "JSInt8Array.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
+#include "JSUint16Array.h"
+#include "JSUint32Array.h"
+#include "JSUint8Array.h"
+#include "JSUint8ClampedArray.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include <limits>
@@ -91,8 +103,46 @@ enum SerializationTag {
     RegExpTag = 18,
     ObjectReferenceTag = 19,
     MessagePortReferenceTag = 20,
+    ArrayBufferTag = 21,
+    ArrayBufferViewTag = 22,
     ErrorTag = 255
 };
+
+enum ArrayBufferViewSubtag {
+    DataViewTag = 0,
+    Int8ArrayTag = 1,
+    Uint8ArrayTag = 2,
+    Uint8ClampedArrayTag = 3,
+    Int16ArrayTag = 4,
+    Uint16ArrayTag = 5,
+    Int32ArrayTag = 6,
+    Uint32ArrayTag = 7,
+    Float32ArrayTag = 8,
+    Float64ArrayTag = 9
+};
+
+static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
+{
+    switch (tag) {
+    case DataViewTag:
+    case Int8ArrayTag:
+    case Uint8ArrayTag:
+    case Uint8ClampedArrayTag:
+        return 1;
+    case Int16ArrayTag:
+    case Uint16ArrayTag:
+        return 2;
+    case Int32ArrayTag:
+    case Uint32ArrayTag:
+    case Float32ArrayTag:
+        return 4;
+    case Float64ArrayTag:
+        return 8;
+    default:
+        return 0;
+    }
+
+}
 
 /* CurrentVersion tracks the serialization version so that persistant stores
  * are able to correctly bail out in the case of encountering newer formats.
@@ -137,8 +187,10 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    | FileList
  *    | ImageData
  *    | Blob
- *    | ObjectReferenceTag <opIndex:IndexType>
+ *    | ObjectReference
  *    | MessagePortReferenceTag <value:uint32_t>
+ *    | ArrayBuffer
+ *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLenght:uint32_t> (ArrayBuffer | ObjectReference)
  *
  * String :-
  *      EmptyStringTag
@@ -165,6 +217,12 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *
  * RegExp :-
  *    RegExpTag <pattern:StringData><flags:StringData>
+ *
+ * ObjectReference :-
+ *    ObjectReferenceTag <opIndex:IndexType>
+ *
+ * ArrayBuffer :-
+ *    ArrayBufferTag <length:uint32_t> <contents:byte{length}>
  */
 
 typedef pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
@@ -417,6 +475,40 @@ private:
         }
     }
 
+    bool dumpArrayBufferView(JSObject* obj)
+    {
+        write(ArrayBufferViewTag);
+        if (obj->inherits(&JSDataView::s_info))
+            write(DataViewTag);
+        else if (obj->inherits(&JSUint8ClampedArray::s_info))
+            write(Uint8ClampedArrayTag);
+        else if (obj->inherits(&JSInt8Array::s_info))
+            write(Int8ArrayTag);
+        else if (obj->inherits(&JSUint8Array::s_info))
+            write(Uint8ArrayTag);
+        else if (obj->inherits(&JSInt16Array::s_info))
+            write(Int16ArrayTag);
+        else if (obj->inherits(&JSUint16Array::s_info))
+            write(Uint16ArrayTag);
+        else if (obj->inherits(&JSInt32Array::s_info))
+            write(Int32ArrayTag);
+        else if (obj->inherits(&JSUint32Array::s_info))
+            write(Uint32ArrayTag);
+        else if (obj->inherits(&JSFloat32Array::s_info))
+            write(Float32ArrayTag);
+        else if (obj->inherits(&JSFloat64Array::s_info))
+            write(Float64ArrayTag);
+        else
+            return false;
+
+        RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(obj);
+        write(static_cast<uint32_t>(arrayBufferView->byteOffset()));
+        write(static_cast<uint32_t>(arrayBufferView->byteLength()));
+        RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->buffer();
+        JSValue bufferObj = toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), arrayBuffer.get());
+        return dumpIfTerminal(bufferObj);
+    }
+
     bool dumpIfTerminal(JSValue value)
     {
         if (!value.isCell()) {
@@ -510,6 +602,20 @@ private:
                 }
                 return false;
             }
+            if (obj->inherits(&JSArrayBuffer::s_info)) {
+                if (!startObjectInternal(obj)) // handle duplicates
+                    return true;
+                write(ArrayBufferTag);
+                RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(obj);
+                write(arrayBuffer->byteLength());
+                write(static_cast<const uint8_t *>(arrayBuffer->data()), arrayBuffer->byteLength());
+                return true;
+            }
+            if (obj->inherits(&JSArrayBufferView::s_info)) {
+                if (!startObjectInternal(obj))
+                    return true;
+                return dumpArrayBufferView(obj);
+            }
 
             CallData unusedData;
             if (getCallData(value, unusedData) == CallTypeNone)
@@ -521,6 +627,11 @@ private:
     }
 
     void write(SerializationTag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+
+    void write(ArrayBufferViewSubtag tag)
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
@@ -1065,6 +1176,14 @@ private:
         return static_cast<SerializationTag>(*m_ptr++);
     }
 
+    bool readArrayBufferViewSubtag(ArrayBufferViewSubtag& tag)
+    {
+        if (m_ptr >= m_end)
+            return false;
+        tag = static_cast<ArrayBufferViewSubtag>(*m_ptr++);
+        return true;
+    }
+
     void putProperty(JSArray* array, unsigned index, JSValue value)
     {
         if (array->canSetIndex(index))
@@ -1092,6 +1211,83 @@ private:
         if (m_isDOMGlobalObject)
             file = File::create(String(path->ustring().impl()), KURL(KURL(), String(url->ustring().impl())), String(type->ustring().impl()));
         return true;
+    }
+
+    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        uint32_t length;
+        if (!read(length))
+            return false;
+        if (m_ptr + length > m_end)
+            return false;
+        arrayBuffer = ArrayBuffer::create(m_ptr, length);
+        m_ptr += length;
+        return true;
+    }
+
+    bool readArrayBufferView(JSValue& arrayBufferView)
+    {
+        ArrayBufferViewSubtag arrayBufferViewSubtag;
+        if (!readArrayBufferViewSubtag(arrayBufferViewSubtag))
+            return false;
+        uint32_t byteOffset;
+        if (!read(byteOffset))
+            return false;
+        uint32_t byteLength;
+        if (!read(byteLength))
+            return false;
+        JSObject* arrayBufferObj = asObject(readTerminal());
+        if (!arrayBufferObj || !arrayBufferObj->inherits(&JSArrayBuffer::s_info))
+            return false;
+
+        unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);
+        if (!elementSize)
+            return false;
+        unsigned length = byteLength / elementSize;
+        if (length * elementSize != byteLength)
+            return false;
+
+        RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(arrayBufferObj);
+        switch (arrayBufferViewSubtag) {
+        case DataViewTag:
+            arrayBufferView = getJSValue(DataView::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Int8ArrayTag:
+            arrayBufferView = getJSValue(Int8Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Uint8ArrayTag:
+            arrayBufferView = getJSValue(Uint8Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Uint8ClampedArrayTag:
+            arrayBufferView = getJSValue(Uint8ClampedArray::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Int16ArrayTag:
+            arrayBufferView = getJSValue(Int16Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Uint16ArrayTag:
+            arrayBufferView = getJSValue(Uint16Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Int32ArrayTag:
+            arrayBufferView = getJSValue(Int32Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Uint32ArrayTag:
+            arrayBufferView = getJSValue(Uint32Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Float32ArrayTag:
+            arrayBufferView = getJSValue(Float32Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        case Float64ArrayTag:
+            arrayBufferView = getJSValue(Float64Array::create(arrayBuffer, byteOffset, length).get());
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    template<class T>
+    JSValue getJSValue(T* nativeObj)
+    {
+        return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
     }
 
     JSValue readTerminal()
@@ -1150,7 +1346,7 @@ private:
             }
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
+            return getJSValue(result.get());
         }
         case ImageDataTag: {
             int32_t width;
@@ -1173,7 +1369,7 @@ private:
             RefPtr<ImageData> result = ImageData::create(IntSize(width, height));
             memcpy(result->data()->data()->data(), m_ptr, length);
             m_ptr += length;
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
+            return getJSValue(result.get());
         }
         case BlobTag: {
             CachedStringRef url;
@@ -1187,7 +1383,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), Blob::create(KURL(KURL(), url->ustring().impl()), String(type->ustring().impl()), size));
+            return getJSValue(Blob::create(KURL(KURL(), url->ustring().impl()), String(type->ustring().impl()), size).get());
         }
         case StringTag: {
             CachedStringRef cachedString;
@@ -1224,8 +1420,26 @@ private:
                 fail();
                 return JSValue();
             }
-            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()),
-                        m_messagePorts->at(index).get());
+            return getJSValue(m_messagePorts->at(index).get());
+        }
+        case ArrayBufferTag: {
+            RefPtr<ArrayBuffer> arrayBuffer;
+            if (!readArrayBuffer(arrayBuffer)) {
+                fail();
+                return JSValue();
+            }
+            JSValue result = getJSValue(arrayBuffer.get());
+            m_gcBuffer.append(result);
+            return result;
+        }
+        case ArrayBufferViewTag: {
+            JSValue arrayBufferView;
+            if (!readArrayBufferView(arrayBufferView)) {
+                fail();
+                return JSValue();
+            }
+            m_gcBuffer.append(arrayBufferView);
+            return arrayBufferView;
         }
         default:
             m_ptr--; // Push the tag back
