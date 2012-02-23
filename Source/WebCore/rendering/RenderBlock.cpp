@@ -781,34 +781,48 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
     if (!beforeChild)
         beforeChild = afterPseudoElementRenderer();
 
-    // If the requested beforeChild is not one of our children, then this is because
-    // there is an anonymous container within this object that contains the beforeChild.
     if (beforeChild && beforeChild->parent() != this) {
-        RenderObject* beforeChildAnonymousContainer = anonymousContainer(beforeChild);
-        ASSERT(beforeChildAnonymousContainer);
-        ASSERT(beforeChildAnonymousContainer->isAnonymous());
+        RenderObject* beforeChildContainer = beforeChild->parent();
+        while (beforeChildContainer->parent() != this)
+            beforeChildContainer = beforeChildContainer->parent();
+        ASSERT(beforeChildContainer);
 
-        if (beforeChildAnonymousContainer->isAnonymousBlock()) {
-            // Insert the child into the anonymous block box instead of here.
-            if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                beforeChild->parent()->addChild(newChild, beforeChild);
-            else
-                addChild(newChild, beforeChild->parent());
-            return;
+        if (beforeChildContainer->isAnonymous()) {
+            // If the requested beforeChild is not one of our children, then this is because
+            // there is an anonymous container within this object that contains the beforeChild.
+            RenderObject* beforeChildAnonymousContainer = beforeChildContainer;
+            if (beforeChildAnonymousContainer->isAnonymousBlock()) {
+                // Insert the child into the anonymous block box instead of here.
+                if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
+                    beforeChild->parent()->addChild(newChild, beforeChild);
+                else
+                    addChild(newChild, beforeChild->parent());
+                return;
+            }
+
+            ASSERT(beforeChildAnonymousContainer->isTable());
+            if (newChild->isTablePart()) {
+                // Insert into the anonymous table.
+                beforeChildAnonymousContainer->addChild(newChild, beforeChild);
+                return;
+            }
+
+            beforeChild = splitTablePartsAroundChild(beforeChild);
+
+            ASSERT(beforeChild->parent() == this);
+            if (beforeChild->parent() != this) {
+                // We should never reach here. If we do, we need to use the
+                // safe fallback to use the topmost beforeChild container.
+                beforeChild = beforeChildContainer;
+            }
+        } else {
+            // We will reach here when beforeChild is a run-in element.
+            // If run-in element precedes a block-level element, it becomes the
+            // the first inline child of that block level element. The insertion
+            // point will be before that block-level element.
+            ASSERT(beforeChild->isRunIn());
+            beforeChild = beforeChildContainer;
         }
-
-        ASSERT(beforeChildAnonymousContainer->isTable());
-        if ((newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
-                || (newChild->isTableCaption())
-                || newChild->isTableSection()
-                || newChild->isTableRow()
-                || newChild->isTableCell()) {
-            // Insert into the anonymous table.
-            beforeChildAnonymousContainer->addChild(newChild, beforeChild);
-            return;
-        }
-
-        beforeChild = splitTablePartsAroundChild(beforeChild);
     }
 
     // Check for a spanning element in columns.

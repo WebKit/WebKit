@@ -1,3 +1,20 @@
+2012-02-22  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
+        https://bugs.webkit.org/show_bug.cgi?id=79043
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/runin/runin-div-before-child.html
+               fast/runin/runin-table-before-child.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): handle
+        the case of run-in elements and strengthen code to handle cases where
+        beforeChild is incorrectly set.
+        * rendering/RenderObject.h: remove anonymousContainer function since
+        the new logic in RenderBlock does not need it.
+
 2012-02-22  Hayato Ito  <hayato@chromium.org>
 
         Make ShadowRootList manage a node distribution.
