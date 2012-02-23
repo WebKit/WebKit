@@ -1,3 +1,9 @@
+2012-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after 108629.
+
+        * WebCore.exp.in:
+
 2012-02-23  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] XSS Auditor bypass via javascript url and control characters
