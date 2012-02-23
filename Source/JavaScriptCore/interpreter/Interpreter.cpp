@@ -817,6 +817,25 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 
+static int getLineNumberForCallFrame(CallFrame* callFrame)
+{
+    callFrame = callFrame->removeHostCallFrameFlag();
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock)
+        return -1;
+#if ENABLE(INTERPRETER)
+    if (!globalData->canUseJIT())
+        return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode() - 1);
+#endif
+#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
+    if (codeBlock->getJITType() == JITCode::DFGJIT)
+        return codeBlock->lineNumberForBytecodeOffset(codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex);
+#endif
+    return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode());
+#endif
+}
+
 static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber)
 {
     UNUSED_PARAM(globalData);
@@ -929,6 +948,9 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, int line, Vector<Stack
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return;
 
+    if (line == -1)
+        line = getLineNumberForCallFrame(callFrame);
+    
     while (callFrame && callFrame != CallFrame::noCaller()) {
         UString sourceURL;
         if (callFrame->codeBlock()) {

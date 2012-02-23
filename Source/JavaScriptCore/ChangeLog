@@ -1,3 +1,20 @@
+2012-02-23  Oliver Hunt  <oliver@apple.com>
+
+        Make Interpreter::getStackTrace be able to generate the line number for the top callframe if none is provided
+        https://bugs.webkit.org/show_bug.cgi?id=79407
+
+        Reviewed by Gavin Barraclough.
+
+        Outside of exception handling, we don't know what our source line number is.  This
+        change allows us to pass -1 is as the initial line number, and get the correct line
+        number in the resultant stack trace.  We can't completely elide the initial line
+        number (yet) due to some idiosyncrasies of the exception handling machinery.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC):
+        (JSC::Interpreter::getStackTrace):
+
 2012-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit value profiling should have graceful handling of local variables and arguments
