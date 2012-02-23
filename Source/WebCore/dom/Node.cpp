@@ -809,9 +809,9 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
-inline static ShadowRoot* shadowRoot(Node* node)
+inline static ShadowRoot* oldestShadowRoot(Node* node)
 {
-    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->youngestShadowRoot() : 0;
+    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->oldestShadowRoot() : 0;
 }
 
 inline void Node::setStyleChange(StyleChangeType changeType)
@@ -2270,12 +2270,11 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         fprintf(stderr, "%s", indent.utf8().data());
         node->showNode();
 
-        ContainerNode* rootNode = shadowRoot(const_cast<Node*>(node));
-
-        if (rootNode) {
-            indent += "\t";
-            traverseTreeAndMark(indent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
-        }
+        if (node->isShadowRoot()) {
+            if (ShadowRoot* youngerShadowRoot = toShadowRoot(const_cast<Node*>(node))->youngerShadowRoot())
+                traverseTreeAndMark(indent + "\t", youngerShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
+        } else if (ShadowRoot* rootNode = oldestShadowRoot(const_cast<Node*>(node)))
+            traverseTreeAndMark(indent + "\t", rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
     }
 }
 
@@ -2321,8 +2320,11 @@ static void showSubTreeAcrossFrame(Node* node, const Node* markedNode, const Str
     node->showNode();
     if (node->isFrameOwnerElement())
         showSubTreeAcrossFrame(static_cast<HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
-    if (ShadowRoot* shadow = shadowRoot(node))
-        showSubTreeAcrossFrame(shadow, markedNode, indent + "\t");
+    if (node->isShadowRoot()) {
+        if (ShadowRoot* youngerShadowRoot = toShadowRoot(node)->youngerShadowRoot())
+            showSubTreeAcrossFrame(youngerShadowRoot, markedNode, indent + "\t");
+    } else if (ShadowRoot* shadowRoot = oldestShadowRoot(node))
+        showSubTreeAcrossFrame(shadowRoot, markedNode, indent + "\t");
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
         showSubTreeAcrossFrame(child, markedNode, indent + "\t");
 }

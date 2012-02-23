@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "HTMLContentSelector.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 
@@ -123,4 +124,27 @@ void ShadowRootList::detach()
     }
 }
 
+InsertionPoint* ShadowRootList::insertionPointFor(Node* node) const
+{
+    if (!m_selector)
+        return 0;
+    HTMLContentSelection* found = m_selector->findFor(node);
+    if (!found)
+        return 0;
+    return found->insertionPoint();
 }
+
+bool ShadowRootList::isSelectorActive() const
+{
+    return m_selector && m_selector->hasCandidates();
+}
+
+HTMLContentSelector* ShadowRootList::ensureSelector()
+{
+    if (!m_selector)
+        m_selector = adoptPtr(new HTMLContentSelector());
+    m_selector->willSelectOver(host());
+    return m_selector.get();
+}
+
+} // namespace

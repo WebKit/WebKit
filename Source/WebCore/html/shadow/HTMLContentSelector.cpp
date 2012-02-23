@@ -145,11 +145,12 @@ void HTMLContentSelector::didSelect()
     m_candidates.clear();
 }
 
-void HTMLContentSelector::willSelectOver(ShadowRoot* scope)
+void HTMLContentSelector::willSelectOver(Element* shadowHost)
 {
     if (!m_candidates.isEmpty())
         return;
-    for (Node* node = scope->shadowHost()->firstChild(); node; node = node->nextSibling())
+    ASSERT(shadowHost);
+    for (Node* node = shadowHost->firstChild(); node; node = node->nextSibling())
         m_candidates.append(node);
 }
 

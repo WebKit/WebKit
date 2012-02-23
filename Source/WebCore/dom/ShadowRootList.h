@@ -27,23 +27,27 @@
 #ifndef ShadowRootList_h
 #define ShadowRootList_h
 
+#include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class ShadowRoot;
+class Node;
 class Element;
+class HTMLContentElement;
+class HTMLContentSelector;
 
 class ShadowRootList {
 public:
     ShadowRootList();
     ~ShadowRootList();
 
-    bool hasShadowRoot();
-    ShadowRoot* youngestShadowRoot();
-    ShadowRoot* oldestShadowRoot();
+    bool hasShadowRoot() const;
+    ShadowRoot* youngestShadowRoot() const;
+    ShadowRoot* oldestShadowRoot() const;
 
     void pushShadowRoot(ShadowRoot*);
     ShadowRoot* popShadowRoot();
@@ -59,24 +63,45 @@ public:
     void attach();
     void detach();
 
+    InsertionPoint* insertionPointFor(Node*) const;
+
+    HTMLContentSelector* selector() const;
+    HTMLContentSelector* ensureSelector();
+
+    bool isSelectorActive() const;
+
 private:
+    Element* host() const;
+
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
+    OwnPtr<HTMLContentSelector> m_selector;
     WTF_MAKE_NONCOPYABLE(ShadowRootList);
 };
 
-inline bool ShadowRootList::hasShadowRoot()
+inline bool ShadowRootList::hasShadowRoot() const
 {
     return !m_shadowRoots.isEmpty();
 }
 
-inline ShadowRoot* ShadowRootList::youngestShadowRoot()
+inline ShadowRoot* ShadowRootList::youngestShadowRoot() const
 {
     return m_shadowRoots.head();
 }
 
-inline ShadowRoot* ShadowRootList::oldestShadowRoot()
+inline ShadowRoot* ShadowRootList::oldestShadowRoot() const
 {
     return m_shadowRoots.tail();
+}
+
+inline HTMLContentSelector* ShadowRootList::selector() const
+{
+    return m_selector.get();
+}
+
+inline Element* ShadowRootList::host() const
+{
+    ASSERT(hasShadowRoot());
+    return youngestShadowRoot()->host();
 }
 
 } // namespace

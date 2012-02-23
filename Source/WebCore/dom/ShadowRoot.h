@@ -62,7 +62,6 @@ public:
 
     InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();
-    bool isSelectorActive() const;
 
     virtual void attach();
     void reattachHostChildrenAndShadow();
@@ -72,11 +71,8 @@ public:
 
     Element* host() const { return shadowHost(); }
 
-    HTMLContentSelector* selector() const;
-    HTMLContentSelector* ensureSelector();
-
-    ShadowRoot* youngerShadowRoot() const { return prev(); }
-    ShadowRoot* olderShadowRoot() const { return next(); }
+    ShadowRoot* youngerShadowRoot() { return prev(); }
+    ShadowRoot* olderShadowRoot() { return next(); }
 
 private:
     ShadowRoot(Document*);
@@ -92,7 +88,6 @@ private:
     ShadowRoot* m_next;
     bool m_applyAuthorSheets : 1;
     bool m_needsRecalculateContent : 1;
-    OwnPtr<HTMLContentSelector> m_selector;
 };
 
 inline void ShadowRoot::clearNeedsReattachHostChildrenAndShadow()

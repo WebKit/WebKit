@@ -67,8 +67,9 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             m_visualParentShadowRoot = toElement(parent)->shadowRootList()->youngestShadowRoot();
 
         if (m_visualParentShadowRoot) {
-            if ((m_insertionPoint = m_visualParentShadowRoot->insertionPointFor(m_node))
-                && m_visualParentShadowRoot->isSelectorActive()) {
+            ShadowRootList* shadowRootList = m_visualParentShadowRoot->host()->shadowRootList();
+            if ((m_insertionPoint = shadowRootList->insertionPointFor(m_node))
+                && shadowRootList->isSelectorActive()) {
                 m_phase = AttachingDistributed;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                 return;

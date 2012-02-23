@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
+#include "ShadowRootList.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -73,7 +74,7 @@ void HTMLContentElement::attach()
 
     // Before calling StyledElement::attach, selector must be calculated.
     if (root) {
-        HTMLContentSelector* selector = root->ensureSelector();
+        HTMLContentSelector* selector = root->host()->shadowRootList()->ensureSelector();
         selector->unselect(&m_selections);
         selector->select(this, &m_selections);
     }
@@ -89,7 +90,7 @@ void HTMLContentElement::attach()
 void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (HTMLContentSelector* selector = root->selector())
+        if (HTMLContentSelector* selector = root->host()->shadowRootList()->selector())
             selector->unselect(&m_selections);
 
         // When content element is detached, shadow tree should be recreated to re-calculate selector for

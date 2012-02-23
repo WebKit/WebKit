@@ -134,7 +134,7 @@ public:
     void unselect(HTMLContentSelectionList*);
     HTMLContentSelection* findFor(Node* key) const;
 
-    void willSelectOver(ShadowRoot*);
+    void willSelectOver(Element* shadowHost);
     void didSelect();
     bool hasCandidates() const { return !m_candidates.isEmpty(); }
 

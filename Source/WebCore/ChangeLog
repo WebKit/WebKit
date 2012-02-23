@@ -1,3 +1,47 @@
+2012-02-22  Hayato Ito  <hayato@chromium.org>
+
+        Make ShadowRootList manage a node distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=79008
+
+        Reviewed by Dimitri Glazkov.
+
+        The result of node distributions is currently stored in
+        ShadowRoot. To support multiple ShadowRoots, such node distribution
+        information should be managed in one place per shadow host. Now
+        ShadowRootList takes this responsibility on behalf of owing
+        multiple ShadowRoots. Clients should ask ShadowRootList for such
+        information, not for each ShadowRoot.
+
+        No tests. No change in behavior.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        (WebCore::ShadowRoot::attach):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * dom/ShadowRootList.cpp:
+        (WebCore::ShadowRootList::insertionPointFor):
+        (WebCore):
+        (WebCore::ShadowRootList::isSelectorActive):
+        (WebCore::ShadowRootList::ensureSelector):
+        * dom/ShadowRootList.h:
+        (WebCore):
+        (ShadowRootList):
+        (WebCore::ShadowRootList::hasShadowRoot):
+        (WebCore::ShadowRootList::youngestShadowRoot):
+        (WebCore::ShadowRootList::oldestShadowRoot):
+        (WebCore::ShadowRootList::selector):
+        (WebCore::ShadowRootList::host):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        * html/shadow/HTMLContentSelector.cpp:
+        (WebCore::HTMLContentSelector::willSelectOver):
+        * html/shadow/HTMLContentSelector.h:
+        (HTMLContentSelector):
+
 2012-02-22  Wei James  <james.wei@intel.com>
 
         Add multi channels support in AudioBus and AudioBufferSourceNode

@@ -128,7 +128,8 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
     element->setShadowRoot(shadowRoot, ec);
     if (ec)
         return 0;
-
+    ASSERT(element == shadowRoot->host());
+    ASSERT(element->hasShadowRoot());
     return shadowRoot.release();
 }
 
@@ -183,16 +184,6 @@ void ShadowRoot::setNeedsReattachHostChildrenAndShadow()
         shadowHost()->setNeedsStyleRecalc();
 }
 
-InsertionPoint* ShadowRoot::insertionPointFor(Node* node) const
-{
-    if (!m_selector)
-        return 0;
-    HTMLContentSelection* found = m_selector->findFor(node);
-    if (!found)
-        return 0;
-    return found->insertionPoint();
-}
-
 void ShadowRoot::hostChildrenChanged()
 {
     if (!hasContentElement())
@@ -200,11 +191,6 @@ void ShadowRoot::hostChildrenChanged()
 
     // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
     setNeedsReattachHostChildrenAndShadow();
-}
-
-bool ShadowRoot::isSelectorActive() const
-{
-    return m_selector && m_selector->hasCandidates();
 }
 
 bool ShadowRoot::hasContentElement() const
@@ -232,10 +218,12 @@ void ShadowRoot::attach()
     // Children of m_selector is populated lazily in
     // ensureSelector(), and here we just ensure that
     // it is in clean state.
-    ASSERT(!m_selector || !m_selector->hasCandidates());
+    // FIXME: This assertion breaks if multiple shadow roots are being attached.
+    // ShadowRootList should have responsibility of side effect of selector in attaching/detaching.
+    ASSERT(!host()->shadowRootList()->selector() || !host()->shadowRootList()->selector()->hasCandidates());
     DocumentFragment::attach();
-    if (m_selector)
-        m_selector->didSelect();
+    if (HTMLContentSelector* selector = host()->shadowRootList()->selector())
+        selector->didSelect();
 }
 
 void ShadowRoot::reattachHostChildrenAndShadow()
@@ -257,18 +245,4 @@ void ShadowRoot::reattachHostChildrenAndShadow()
     }
 }
 
-HTMLContentSelector* ShadowRoot::selector() const
-{
-    return m_selector.get();
-}
-
-HTMLContentSelector* ShadowRoot::ensureSelector()
-{
-    if (!m_selector)
-        m_selector = adoptPtr(new HTMLContentSelector());
-    m_selector->willSelectOver(this);
-    return m_selector.get();
-}
-
-
-}
+} // namespace
