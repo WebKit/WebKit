@@ -1,3 +1,20 @@
+2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build fix. Qt WebKit2 can not be compiled due to QtWebPageEventHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=79335
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        In the upcoming Qt 5 builds the convenient setInputMethodHints method on QQuickItem
+        will be removed. There's no need for us to use it, we can implement passing the hints
+        to the input method right away in our re-implementation of inputMethodQuery, which works
+        with old and newer Qt 5 builds.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::inputMethodQuery):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::updateTextInputState):
+
 2012-02-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2][GTK] WebProcess SIGSEVs due to incorrect clipboard handling

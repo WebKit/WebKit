@@ -1233,6 +1233,8 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
         return QString(state.selectedText);
     case Qt::ImMaximumTextLength:
         return QVariant(); // No limit.
+    case Qt::ImHints:
+        return int(Qt::InputMethodHints(state.inputMethodHints));
     default:
         // Rely on the base implementation for ImEnabled, ImHints and ImPreferredLanguage.
         return QQuickItem::inputMethodQuery(property);

@@ -462,8 +462,6 @@ void QtWebPageEventHandler::updateTextInputState()
 
     const EditorState& editor = m_webPageProxy->editorState();
 
-    m_webView->setInputMethodHints(Qt::InputMethodHints(editor.inputMethodHints));
-
     if (!m_webView->hasFocus())
         return;
 
