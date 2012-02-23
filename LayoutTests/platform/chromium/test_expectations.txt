@@ -3063,13 +3063,6 @@ BUGWK71392 : css3/filters/custom-filter-property-computed-style.html = FAIL
 BUGWK71392 : css3/filters/custom-filter-property-parsing.html = FAIL
 BUGWK71392 : css3/filters/custom-filter-shader-cache.html = FAIL
 
-// Need rebaselining after drop-shadows are implemented in compositor.
-BUGWK79386 : css3/filters/effect-drop-shadow-hw.html = FAIL
-BUGWK79386 : css3/filters/filter-animation-from-none-hw.html = FAIL
-BUGWK79386 : css3/filters/filter-animation-from-none-multi-hw.html = FAIL
-BUGWK79386 : css3/filters/filter-animation-hw.html = FAIL
-BUGWK79386 : css3/filters/filter-animation-multi-hw.html = FAIL
-
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS
 
