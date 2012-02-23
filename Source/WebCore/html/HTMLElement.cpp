@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "ChildListMutationScope.h"
 #include "DocumentFragment.h"
 #include "Event.h"
@@ -1103,7 +1104,7 @@ void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, int propertyID, 
     addPropertyToAttributeStyle(style, propertyID, value);
 }
 
-static String parseColorStringWithCrazyLegacyRules(const String& colorString)
+static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
 {
     // Per spec, only look at the first 128 digits of the string.
     const size_t maxColorLength = 128;
@@ -1125,14 +1126,14 @@ static String parseColorStringWithCrazyLegacyRules(const String& colorString)
     }
 
     if (!digitBuffer.size())
-        return "#000000";
+        return Color::black;
 
     // Pad the buffer out to at least the next multiple of three in size.
     digitBuffer.append('0');
     digitBuffer.append('0');
 
     if (digitBuffer.size() < 6)
-        return String::format("#0%c0%c0%c", digitBuffer[0], digitBuffer[1], digitBuffer[2]);
+        return makeRGB(toASCIIHexValue(digitBuffer[0]), toASCIIHexValue(digitBuffer[1]), toASCIIHexValue(digitBuffer[2]));
 
     // Split the digits into three components, then search the last 8 digits of each component.
     ASSERT(digitBuffer.size() >= 6);
@@ -1152,7 +1153,11 @@ static String parseColorStringWithCrazyLegacyRules(const String& colorString)
     ASSERT(greenIndex + 1 < componentLength * 2);
     ASSERT(blueIndex >= componentLength * 2);
     ASSERT(blueIndex + 1 < digitBuffer.size());
-    return String::format("#%c%c%c%c%c%c", digitBuffer[redIndex], digitBuffer[redIndex + 1], digitBuffer[greenIndex], digitBuffer[greenIndex + 1], digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
+
+    int redValue = toASCIIHexValue(digitBuffer[redIndex], digitBuffer[redIndex + 1]);
+    int greenValue = toASCIIHexValue(digitBuffer[greenIndex], digitBuffer[greenIndex + 1]);
+    int blueValue = toASCIIHexValue(digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
+    return makeRGB(redValue, greenValue, blueValue);
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
@@ -1170,12 +1175,10 @@ void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, int propertyID, c
 
     // If the string is a named CSS color or a 3/6-digit hex color, use that.
     Color parsedColor(colorString);
-    if (parsedColor.isValid()) {
-        addPropertyToAttributeStyle(style, propertyID, colorString);
-        return;
-    }
+    if (!parsedColor.isValid())
+        parsedColor.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
 
-    addPropertyToAttributeStyle(style, propertyID, parseColorStringWithCrazyLegacyRules(colorString));
+    style->setProperty(propertyID, document()->cssValuePool()->createColorValue(parsedColor.rgb()));
 }
 
 void StyledElement::copyNonAttributeProperties(const Element* sourceElement)

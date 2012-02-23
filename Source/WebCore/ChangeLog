@@ -1,3 +1,30 @@
+2012-02-22  Andreas Kling  <awesomekling@apple.com>
+
+        Make parsing color presentation attributes do less pointless work.
+        <http://webkit.org/b/79304>
+
+        Reviewed by Antti Koivisto.
+
+        Let HTMLElement::addHTMLColorToStyle() construct the color CSSValue directly
+        rather than passing a string that has to go through CSSParser.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::setProperty):
+        * css/StylePropertySet.h:
+
+            Added a setProperty(propertyID, CSSValue) overload that expands shorthand
+            properties if necessary. Also added a little comment about the behavior
+            differences between setProperty() overloads.
+
+        * html/HTMLElement.cpp:
+        (WebCore::parseColorStringWithCrazyLegacyRules):
+
+            Changed this to return an RGBA32.
+
+        (WebCore::HTMLElement::addHTMLColorToStyle):
+
+            Figure out the RGB value and construct a (pooled) CSSValue directly.
+
 2012-02-22  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Plumb from GraphicsLayer to the cc thread animation code

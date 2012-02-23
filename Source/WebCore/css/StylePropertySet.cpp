@@ -582,6 +582,21 @@ bool StylePropertySet::setProperty(int propertyID, const String& value, bool imp
     return CSSParser::parseValue(this, propertyID, value, important, useStrictParsing(), contextStyleSheet);
 }
 
+void StylePropertySet::setProperty(int propertyID, PassRefPtr<CSSValue> prpValue, bool important)
+{
+    CSSPropertyLonghand longhand = longhandForProperty(propertyID);
+    if (!longhand.length()) {
+        setProperty(CSSProperty(propertyID, prpValue, important));
+        return;
+    }
+
+    removePropertiesInSet(longhand.properties(), longhand.length());
+
+    RefPtr<CSSValue> value = prpValue;
+    for (unsigned i = 0; i < longhand.length(); ++i)
+        m_properties.append(CSSProperty(longhand.properties()[i], value, important));
+}
+
 void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
     if (!removeShorthandProperty(property.id())) {
