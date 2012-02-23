@@ -1,3 +1,16 @@
+2012-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Subframes with scrollable areas must be added to the non-fast scrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=79306
+        <rdar://problem/10915564>
+
+        Reviewed by Andreas Kling.
+
+        When computing the non-fast scrollable region, add subframes with scrollable regions to the region.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::computeNonFastScrollableRegion):
+
 2012-02-22  Nate Chapin  <japhet@chromium.org>
 
         CachedResourceLoader ignores the Range header

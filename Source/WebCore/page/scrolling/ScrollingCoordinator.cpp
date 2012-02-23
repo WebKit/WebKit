@@ -114,14 +114,22 @@ static Region computeNonFastScrollableRegion(FrameView* frameView)
 {
     Region nonFastScrollableRegion;
 
-        if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+    HashSet<FrameView*> childFrameViews;
+    for (HashSet<RefPtr<Widget> >::const_iterator it = frameView->children()->begin(), end = frameView->children()->end(); it != end; ++it) {
+        if ((*it)->isFrameView())
+            childFrameViews.add(static_cast<FrameView*>(it->get()));
+    }
+
+    if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
 
             // Check if this area can be scrolled at all.
+            // If this scrollable area is a frame view that itself has scrollable areas, then we need to add it to the region.
             if ((!scrollableArea->horizontalScrollbar() || !scrollableArea->horizontalScrollbar()->enabled())
-                && (!scrollableArea->verticalScrollbar() || !scrollableArea->verticalScrollbar()->enabled()))
-                continue;
+                && (!scrollableArea->verticalScrollbar() || !scrollableArea->verticalScrollbar()->enabled())
+                && (!childFrameViews.contains(static_cast<FrameView*>(scrollableArea)) || !static_cast<FrameView*>(scrollableArea)->scrollableAreas()))
+                    continue;
 
             nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
         }
