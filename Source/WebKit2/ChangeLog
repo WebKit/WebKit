@@ -1,3 +1,17 @@
+2012-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Flush layer changes after layout when resizing web page
+        https://bugs.webkit.org/show_bug.cgi?id=79399
+        <rdar://problem/10920157>
+
+        Reviewed by Andreas Kling.
+
+        Flush layer changes after layout, otherwise the scrollbars won't be updated
+        until sometime later which looks bad.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
 2012-02-23  Daniel Bates  <dbates@webkit.org>
 
         Add missing "Reviewed by" line to change log entry for changeset r108631

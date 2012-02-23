@@ -171,6 +171,9 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
 
+    if (!m_layerTreeStateIsFrozen)
+        flushLayers();
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
