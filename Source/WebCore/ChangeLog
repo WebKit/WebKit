@@ -1,3 +1,20 @@
+2012-02-22  Wei James  <james.wei@intel.com>
+
+        Add multi channels support in AudioBus and AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=79017
+
+        Reviewed by Chris Rogers.
+
+        Tests: webaudio/up-mixing-mono-51.html
+               webaudio/up-mixing-mono-stereo.html
+               webaudio/up-mixing-stereo-51.html
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::copyFrom):
+        (WebCore::AudioBus::sumFrom):
+        (WebCore::AudioBus::processWithGainFromMonoStereo):
+        (WebCore::AudioBus::processWithGainFrom):
+
 2012-02-22  Kentaro Hara  <haraken@chromium.org>
 
         [Supplemental] should support constants
