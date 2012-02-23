@@ -1,3 +1,13 @@
+2012-02-22  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Fix to launch the EWebLauncher using the script, run-launcher.
+        https://bugs.webkit.org/show_bug.cgi?id=79076
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitdirs.pm: Fix the path of libewebkit.so.
+        (builtDylibPathForName):
+
 2012-02-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Add eventSender.gestureTap

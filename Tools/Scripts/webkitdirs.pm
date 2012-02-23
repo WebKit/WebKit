@@ -728,7 +728,7 @@ sub builtDylibPathForName
         return "NotFound";
     }
     if (isEfl()) {
-        return "$configurationProductDir/Source/WebKit/libewebkit.so";
+        return "$configurationProductDir/lib/libewebkit.so";
     }
     if (isWinCE()) {
         return "$configurationProductDir/$libraryName";
