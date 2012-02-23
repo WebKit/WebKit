@@ -1,5 +1,14 @@
 2012-02-23  Peter Beverloo  <peter@chromium.org>
 
+        Unreviewed build fix. Remove the ffmpeg binary directory from the
+        Chromium-Windows DEPS file, following the commit done in the
+        Chromium repository:
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=123123
+
+        * DEPS:
+
+2012-02-23  Peter Beverloo  <peter@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
