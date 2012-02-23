@@ -41,6 +41,9 @@ public:
     CCVideoLayerImpl::Texture* textures() const { return m_textures; }
     VideoFrameChromium* frame() const { return m_frame; }
     GC3Denum format() const { return m_format; }
+    const float* matrix() const { return m_matrix; }
+
+    void setMatrix(const float* matrix) { m_matrix = matrix; }
 
 private:
     CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, VideoFrameChromium*, GC3Denum format);
@@ -48,6 +51,7 @@ private:
     CCVideoLayerImpl::Texture* m_textures;
     VideoFrameChromium* m_frame;
     GC3Denum m_format;
+    const float* m_matrix;
 };
 
 }

@@ -1,3 +1,38 @@
+2012-02-23  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Add video stream texture support
+        https://bugs.webkit.org/show_bug.cgi?id=78398
+
+        This upstreams the abstraction used on Android for
+        hardware video decoding with the compositor.
+
+        Most of the interfaces are kept generic and the core
+        of this change is to allow texturing from an external
+        texture while receiving notifications (on the compositor
+        thread if we are running it) when there are new frames to
+        be displayed.
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * public/WebMediaPlayer.h:
+        (WebKit):
+        (WebKit::WebMediaPlayer::setStreamTextureClient):
+        (WebMediaPlayer):
+        * public/WebStreamTextureClient.h: Copied from Source/WebKit/chromium/public/WebVideoFrame.h.
+        (WebKit):
+        (WebStreamTextureClient):
+        (WebKit::WebStreamTextureClient::~WebStreamTextureClient):
+        * public/WebVideoFrame.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::setVideoFrameProviderClient):
+        (WebKit::WebMediaPlayerClientImpl::didReceiveFrame):
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::didUpdateMatrix):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-02-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up GraphicsContext3D initialization paths

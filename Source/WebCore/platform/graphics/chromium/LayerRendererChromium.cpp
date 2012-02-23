@@ -736,12 +736,12 @@ void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
 }
 
 template<class Program>
-void LayerRendererChromium::drawSingleTextureVideoQuad(const CCVideoDrawQuad* quad, Program* program, float widthScaleFactor, Platform3DObject textureId)
+void LayerRendererChromium::drawSingleTextureVideoQuad(const CCVideoDrawQuad* quad, Program* program, float widthScaleFactor, Platform3DObject textureId, GC3Denum target)
 {
     ASSERT(program && program->initialized());
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    GLC(context(), context()->bindTexture(target, textureId));
 
     GLC(context(), context()->useProgram(program->program()));
     GLC(context(), context()->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, widthScaleFactor, 1));
@@ -759,13 +759,25 @@ void LayerRendererChromium::drawRGBA(const CCVideoDrawQuad* quad)
     const CCVideoLayerImpl::RGBAProgram* program = videoLayerRGBAProgram();
     const CCVideoLayerImpl::Texture& texture = quad->textures()[VideoFrameChromium::rgbPlane];
     float widthScaleFactor = static_cast<float>(texture.m_visibleSize.width()) / texture.m_texture->size().width();
-    drawSingleTextureVideoQuad(quad, program, widthScaleFactor, texture.m_texture->textureId());
+    drawSingleTextureVideoQuad(quad, program, widthScaleFactor, texture.m_texture->textureId(), GraphicsContext3D::TEXTURE_2D);
 }
 
-void LayerRendererChromium::drawNativeTexture(const CCVideoDrawQuad* quad)
+void LayerRendererChromium::drawNativeTexture2D(const CCVideoDrawQuad* quad)
 {
     const CCVideoLayerImpl::NativeTextureProgram* program = videoLayerNativeTextureProgram();
-    drawSingleTextureVideoQuad(quad, program, 1, quad->frame()->textureId());
+    drawSingleTextureVideoQuad(quad, program, 1, quad->frame()->textureId(), GraphicsContext3D::TEXTURE_2D);
+}
+
+void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
+{
+    ASSERT(context()->getExtensions()->supports("GL_OES_EGL_image_external") && context()->getExtensions()->isEnabled("GL_OES_EGL_image_external"));
+
+    const CCVideoLayerImpl::StreamTextureProgram* program = streamTextureLayerProgram();
+    GLC(context(), context()->useProgram(program->program()));
+    ASSERT(quad->matrix());
+    GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), false, const_cast<float*>(quad->matrix()), 1));
+
+    drawSingleTextureVideoQuad(quad, program, 1, quad->frame()->textureId(), Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES);
 }
 
 bool LayerRendererChromium::copyFrameToTextures(const CCVideoDrawQuad* quad)
@@ -822,7 +834,10 @@ void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
         drawRGBA(quad);
         break;
     case GraphicsContext3D::TEXTURE_2D:
-        drawNativeTexture(quad);
+        drawNativeTexture2D(quad);
+        break;
+    case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES:
+        drawStreamTexture(quad);
         break;
     default:
         CRASH(); // Someone updated convertVFCFormatToGC3DFormat above but update this!
@@ -1384,6 +1399,16 @@ const CCVideoLayerImpl::NativeTextureProgram* LayerRendererChromium::videoLayerN
     return m_videoLayerNativeTextureProgram.get();
 }
 
+const CCVideoLayerImpl::StreamTextureProgram* LayerRendererChromium::streamTextureLayerProgram()
+{
+    if (!m_streamTextureLayerProgram)
+        m_streamTextureLayerProgram = adoptPtr(new CCVideoLayerImpl::StreamTextureProgram(m_context.get()));
+    if (!m_streamTextureLayerProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::streamTextureLayerProgram::initialize", this, 0);
+        m_streamTextureLayerProgram->initialize(m_context.get());
+    }
+    return m_streamTextureLayerProgram.get();
+}
 
 void LayerRendererChromium::cleanupSharedObjects()
 {
@@ -1425,6 +1450,8 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_videoLayerRGBAProgram->cleanup(m_context.get());
     if (m_videoLayerYUVProgram)
         m_videoLayerYUVProgram->cleanup(m_context.get());
+    if (m_streamTextureLayerProgram)
+        m_streamTextureLayerProgram->cleanup(m_context.get());
 
     m_borderProgram.clear();
     m_headsUpDisplayProgram.clear();
@@ -1443,6 +1470,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_renderSurfaceProgramAA.clear();
     m_videoLayerRGBAProgram.clear();
     m_videoLayerYUVProgram.clear();
+    m_streamTextureLayerProgram.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

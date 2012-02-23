@@ -40,7 +40,9 @@
 #include "VideoLayerChromium.h"
 #include "WebAudioSourceProviderClient.h"
 #include "WebMediaPlayerClient.h"
+#include "WebStreamTextureClient.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore { class AudioSourceProviderClient; }
 
@@ -56,7 +58,8 @@ class WebMediaPlayerClientImpl : public WebCore::MediaPlayerPrivateInterface
 #if USE(ACCELERATED_COMPOSITING)
                                , public WebCore::VideoFrameProvider
 #endif
-                               , public WebMediaPlayerClient {
+                               , public WebMediaPlayerClient
+                               , public WebStreamTextureClient {
 
 public:
     static bool isEnabled();
@@ -149,6 +152,10 @@ public:
     virtual bool sourceAppend(const unsigned char* data, unsigned length);
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
 #endif
+
+    // WebStreamTextureClient methods:
+    virtual void didReceiveFrame();
+    virtual void didUpdateMatrix(const float*);
 
 private:
     WebMediaPlayerClientImpl();

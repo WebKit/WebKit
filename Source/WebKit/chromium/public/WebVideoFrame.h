@@ -61,6 +61,7 @@ public:
     virtual int stride(unsigned plane) const { return 0; }
     virtual const void* data(unsigned plane) const { return 0; }
     virtual unsigned textureId() const { return 0; }
+    virtual unsigned textureTarget() const { return 0; }
 };
 
 } // namespace WebKit

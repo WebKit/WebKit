@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,56 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoFrameChromium_h
-#define VideoFrameChromium_h
+#ifndef WebStreamTextureClient_h
+#define WebStreamTextureClient_h
 
-#include "IntSize.h"
+namespace WebKit {
 
-namespace WebCore {
-
-// A class that represents a video frame in chromium.
-class VideoFrameChromium {
+class WebStreamTextureClient {
 public:
-    static const unsigned maxPlanes;
-    static const unsigned numRGBPlanes;
-    static const unsigned rgbPlane;
-    static const unsigned numYUVPlanes;
-    static const unsigned yPlane;
-    static const unsigned uPlane;
-    static const unsigned vPlane;
+    virtual void didReceiveFrame() = 0;
+    virtual void didUpdateMatrix(const float*) = 0;
 
-    // These enums must be kept in sync with WebKit::WebVideoFrame.
-    enum Format {
-        Invalid,
-        RGB555,
-        RGB565,
-        RGB24,
-        RGB32,
-        RGBA,
-        YV12,
-        YV16,
-        NV12,
-        Empty,
-        ASCII,
-        I420,
-        NativeTexture,
-    };
-
-    virtual ~VideoFrameChromium();
-    virtual Format format() const = 0;
-    virtual unsigned width() const = 0;
-    virtual unsigned width(unsigned plane) const = 0;
-    virtual unsigned height() const = 0;
-    virtual unsigned height(unsigned plane) const = 0;
-    virtual unsigned planes() const = 0;
-    virtual int stride(unsigned plane) const = 0;
-    virtual const void* data(unsigned plane) const = 0;
-    virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
-    virtual bool hasPaddingBytes(unsigned plane) const = 0;
-    virtual unsigned textureId() const = 0;
-    virtual unsigned textureTarget() const = 0;
+protected:
+    virtual ~WebStreamTextureClient() { }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif

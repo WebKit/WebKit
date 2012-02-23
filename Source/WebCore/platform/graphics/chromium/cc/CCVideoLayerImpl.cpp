@@ -62,10 +62,21 @@ const float CCVideoLayerImpl::yuvAdjust[3] = {
     -0.5f,
 };
 
+// This matrix is the default transformation for stream textures.
+const float CCVideoLayerImpl::flipTransform[16] = {
+    1, 0, 0, 0,
+    0, -1, 0, 0,
+    0, 0, 1, 0,
+    0, 1, 0, 1,
+};
+
 CCVideoLayerImpl::CCVideoLayerImpl(int id, VideoFrameProvider* provider)
     : CCLayerImpl(id)
     , m_provider(provider)
+    , m_layerTreeHostImpl(0)
+    , m_frame(0)
 {
+    memcpy(m_streamTextureMatrix, flipTransform, sizeof(m_streamTextureMatrix));
     provider->setVideoFrameProviderClient(this);
 }
 
@@ -88,16 +99,16 @@ void CCVideoLayerImpl::stopUsingProvider()
 }
 
 // Convert VideoFrameChromium::Format to GraphicsContext3D's format enum values.
-static GC3Denum convertVFCFormatToGC3DFormat(VideoFrameChromium::Format format)
+static GC3Denum convertVFCFormatToGC3DFormat(const VideoFrameChromium* frame)
 {
-    switch (format) {
+    switch (frame->format()) {
     case VideoFrameChromium::YV12:
     case VideoFrameChromium::YV16:
         return GraphicsContext3D::LUMINANCE;
     case VideoFrameChromium::RGBA:
         return GraphicsContext3D::RGBA;
     case VideoFrameChromium::NativeTexture:
-        return GraphicsContext3D::TEXTURE_2D;
+        return frame->textureTarget();
     case VideoFrameChromium::Invalid:
     case VideoFrameChromium::RGB555:
     case VideoFrameChromium::RGB565:
@@ -118,15 +129,17 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 
     MutexLocker locker(m_providerMutex);
 
-    if (!m_provider)
+    if (!m_provider) {
+        m_frame = 0;
         return;
+    }
 
     m_frame = m_provider->getCurrentFrame();
 
     if (!m_frame)
         return;
 
-    m_format = convertVFCFormatToGC3DFormat(m_frame->format());
+    m_format = convertVFCFormatToGC3DFormat(m_frame);
 
     if (m_format == GraphicsContext3D::INVALID_VALUE) {
         m_provider->putCurrentFrame(m_frame);
@@ -143,7 +156,12 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 void CCVideoLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCVideoDrawQuad::create(sharedQuadState, quadRect, m_textures, m_frame, m_format));
+    OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_textures, m_frame, m_format);
+
+    if (m_format == Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES)
+        videoQuad->setMatrix(m_streamTextureMatrix);
+
+    quadList.append(videoQuad.release());
 }
 
 void CCVideoLayerImpl::didDraw()
@@ -212,6 +230,23 @@ bool CCVideoLayerImpl::reserveTextures(const VideoFrameChromium* frame, GC3Denum
             return false;
     }
     return true;
+}
+
+void CCVideoLayerImpl::didReceiveFrame()
+{
+    setNeedsRedraw();
+}
+
+void CCVideoLayerImpl::didUpdateMatrix(const float matrix[16])
+{
+    memcpy(m_streamTextureMatrix, matrix, sizeof(m_streamTextureMatrix));
+    setNeedsRedraw();
+}
+
+void CCVideoLayerImpl::setNeedsRedraw()
+{
+    if (m_layerTreeHostImpl)
+        m_layerTreeHostImpl->setNeedsRedraw();
 }
 
 void CCVideoLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

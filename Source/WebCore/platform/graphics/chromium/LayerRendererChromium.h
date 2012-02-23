@@ -130,6 +130,7 @@ public:
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
     const CCVideoLayerImpl::NativeTextureProgram* videoLayerNativeTextureProgram();
+    const CCVideoLayerImpl::StreamTextureProgram* streamTextureLayerProgram();
 
     void getFramebufferPixels(void *pixels, const IntRect&);
 
@@ -170,8 +171,9 @@ private:
     ManagedTexture* getOffscreenLayerTexture();
     void copyPlaneToTexture(const CCVideoDrawQuad*, const void* plane, int index);
     bool copyFrameToTextures(const CCVideoDrawQuad*);
-    template<class Program> void drawSingleTextureVideoQuad(const CCVideoDrawQuad*, Program*, float widthScaleFactor, Platform3DObject textureId);
-    void drawNativeTexture(const CCVideoDrawQuad*);
+    template<class Program> void drawSingleTextureVideoQuad(const CCVideoDrawQuad*, Program*, float widthScaleFactor, Platform3DObject textureId, GC3Denum target);
+    void drawNativeTexture2D(const CCVideoDrawQuad*);
+    void drawStreamTexture(const CCVideoDrawQuad*);
     void drawRGBA(const CCVideoDrawQuad*);
     void drawYUV(const CCVideoDrawQuad*);
 
@@ -233,6 +235,7 @@ private:
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
     OwnPtr<CCVideoLayerImpl::NativeTextureProgram> m_videoLayerNativeTextureProgram;
+    OwnPtr<CCVideoLayerImpl::StreamTextureProgram> m_streamTextureLayerProgram;
 
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;

@@ -1,3 +1,67 @@
+2012-02-23  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Add video stream texture support
+        https://bugs.webkit.org/show_bug.cgi?id=78398
+
+        This upstreams the abstraction used on Android for
+        hardware video decoding with the compositor.
+
+        Most of the interfaces are kept generic and the core
+        of this change is to allow texturing from an external
+        texture while receiving notifications (on the compositor
+        thread if we are running it) when there are new frames to
+        be displayed.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawSingleTextureVideoQuad):
+        (WebCore::LayerRendererChromium::drawRGBA):
+        (WebCore::LayerRendererChromium::drawNativeTexture):
+        (WebCore):
+        (WebCore::LayerRendererChromium::drawStreamTexture):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        (WebCore::LayerRendererChromium::streamTextureLayerProgram):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderVideoTransform::VertexShaderVideoTransform):
+        (WebCore):
+        (WebCore::VertexShaderVideoTransform::init):
+        (WebCore::VertexShaderVideoTransform::getShaderString):
+        (WebCore::FragmentShaderOESImageExternal::init):
+        (WebCore::FragmentShaderOESImageExternal::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (VertexShaderVideoTransform):
+        (WebCore::VertexShaderVideoTransform::matrixLocation):
+        (WebCore::VertexShaderVideoTransform::texTransformLocation):
+        (WebCore::VertexShaderVideoTransform::texMatrixLocation):
+        (WebCore):
+        (FragmentShaderOESImageExternal):
+        * platform/graphics/chromium/VideoFrameChromium.h:
+        * platform/graphics/chromium/VideoFrameProvider.h:
+        (Client):
+        (VideoFrameProvider):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.cpp:
+        (WebCore::CCVideoDrawQuad::CCVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.h:
+        (WebCore::CCVideoDrawQuad::matrix):
+        (CCVideoDrawQuad):
+        (WebCore::CCVideoDrawQuad::setMatrix):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore):
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        (WebCore::convertVFCFormatToGC3DFormat):
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        (WebCore::CCVideoLayerImpl::didReceiveFrame):
+        (WebCore::CCVideoLayerImpl::didUpdateMatrix):
+        (WebCore::CCVideoLayerImpl::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (WebCore):
+        (CCVideoLayerImpl):
+
 2012-02-23  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Implement drop-shadow() CSS filter on composited layers.

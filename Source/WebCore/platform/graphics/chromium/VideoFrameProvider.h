@@ -43,6 +43,8 @@ public:
     public:
         // Provider will call this method to tell the client to stop using it.
         virtual void stopUsingProvider() = 0;
+        virtual void didReceiveFrame() = 0;
+        virtual void didUpdateMatrix(const float*) = 0;
     };
 
     virtual void setVideoFrameProviderClient(Client*) = 0;

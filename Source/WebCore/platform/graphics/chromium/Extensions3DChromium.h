@@ -63,6 +63,9 @@ public:
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
     enum {
+        // GL_OES_EGL_image_external
+        GL_TEXTURE_EXTERNAL_OES = 0x8D65,
+
         // GL_CHROMIUM_map_sub (enums inherited from GL_ARB_vertex_buffer_object)
         READ_ONLY = 0x88B8,
         WRITE_ONLY = 0x88B9,

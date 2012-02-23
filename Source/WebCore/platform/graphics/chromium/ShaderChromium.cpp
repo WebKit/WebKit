@@ -255,6 +255,39 @@ String VertexShaderTile::getShaderString() const
     );
 }
 
+VertexShaderVideoTransform::VertexShaderVideoTransform()
+    : m_matrixLocation(-1)
+    , m_texTransformLocation(-1)
+    , m_texMatrixLocation(-1)
+{
+}
+
+bool VertexShaderVideoTransform::init(GraphicsContext3D* context, unsigned program)
+{
+    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    m_texTransformLocation = context->getUniformLocation(program, "texTransform");
+    m_texMatrixLocation = context->getUniformLocation(program, "texMatrix");
+    return m_matrixLocation != -1 && m_texTransformLocation != -1 && m_texMatrixLocation != -1;
+}
+
+String VertexShaderVideoTransform::getShaderString() const
+{
+    return SHADER(
+        attribute vec4 a_position;
+        attribute vec2 a_texCoord;
+        uniform mat4 matrix;
+        uniform vec4 texTransform;
+        uniform mat4 texMatrix;
+        varying vec2 v_texCoord;
+        void main()
+        {
+            gl_Position = matrix * a_position;
+            vec2 texCoord = vec2(texMatrix * vec4(a_texCoord.x, 1.0 - a_texCoord.y, 0.0, 1.0));
+            v_texCoord = texCoord * texTransform.zw + texTransform.xy;
+        }
+    );
+}
+
 FragmentTexAlphaBinding::FragmentTexAlphaBinding()
     : m_samplerLocation(-1)
     , m_alphaLocation(-1)
@@ -294,6 +327,27 @@ String FragmentShaderRGBATexFlipAlpha::getShaderString() const
             gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha;
         }
     );
+}
+
+bool FragmentShaderOESImageExternal::init(GraphicsContext3D* context, unsigned program)
+{
+    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+
+    return m_samplerLocation != -1;
+}
+
+String FragmentShaderOESImageExternal::getShaderString() const
+{
+    // Cannot use the SHADER() macro because of the '#' char
+    return "#extension GL_OES_EGL_image_external : require \n"
+           "precision mediump float;\n"
+           "varying vec2 v_texCoord;\n"
+           "uniform samplerExternalOES s_texture;\n"
+           "void main()\n"
+           "{\n"
+           "    vec4 texColor = texture2D(s_texture, v_texCoord);\n"
+           "    gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w);\n"
+           "}\n";
 }
 
 String FragmentShaderRGBATexAlpha::getShaderString() const

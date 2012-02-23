@@ -257,6 +257,7 @@
                 'public/WebStorageNamespace.h',
                 'public/WebStorageQuotaCallbacks.h',
                 'public/WebStorageQuotaType.h',
+                'public/WebStreamTextureClient.h',
                 'public/WebTextAffinity.h',
                 'public/WebTextCaseSensitivity.h',
                 'public/WebTextCheckingCompletion.h',

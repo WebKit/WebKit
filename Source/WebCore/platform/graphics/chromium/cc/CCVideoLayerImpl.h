@@ -35,6 +35,9 @@
 
 namespace WebCore {
 
+class CCLayerTreeHostImpl;
+class CCVideoLayerImpl;
+
 template<class VertexShader, class FragmentShader> class ProgramBinding;
 
 class CCVideoLayerImpl : public CCLayerImpl
@@ -53,17 +56,23 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
     typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> NativeTextureProgram;
+    typedef ProgramBinding<VertexShaderVideoTransform, FragmentShaderOESImageExternal> StreamTextureProgram;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     Mutex& providerMutex() { return m_providerMutex; }
     VideoFrameProvider* provider() const { return m_provider; }
 
-    // VideoFrameProvider::Client implementation (callable on any thread).
-    virtual void stopUsingProvider();
+    // VideoFrameProvider::Client implementation.
+    virtual void stopUsingProvider(); // Callable on any thread.
+    virtual void didReceiveFrame(); // Callable on impl thread.
+    virtual void didUpdateMatrix(const float*); // Callable on impl thread.
+
+    void setNeedsRedraw();
 
     static const float yuv2RGB[9];
     static const float yuvAdjust[3];
+    static const float flipTransform[16];
 
     struct Texture {
         OwnPtr<ManagedTexture> m_texture;
@@ -83,6 +92,9 @@ private:
     VideoFrameProvider* m_provider;
 
     Texture m_textures[MaxPlanes];
+
+    float m_streamTextureMatrix[16];
+    CCLayerTreeHostImpl* m_layerTreeHostImpl;
 
     VideoFrameChromium* m_frame;
     GC3Denum m_format;

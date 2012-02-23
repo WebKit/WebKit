@@ -128,4 +128,11 @@ unsigned VideoFrameChromiumImpl::textureId() const
     return 0;
 }
 
+unsigned VideoFrameChromiumImpl::textureTarget() const
+{
+    if (m_webVideoFrame)
+        return m_webVideoFrame->textureTarget();
+    return 0;
+}
+
 } // namespace WebKit

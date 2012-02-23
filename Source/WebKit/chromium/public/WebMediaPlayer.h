@@ -40,6 +40,7 @@ namespace WebKit {
 class WebAudioSourceProvider;
 class WebAudioSourceProviderClient;
 class WebMediaPlayerClient;
+class WebStreamTextureClient;
 class WebURL;
 struct WebRect;
 struct WebSize;
@@ -161,6 +162,8 @@ public:
     // It should always be called after getCurrentFrame(). Frame passed to this
     // method should no longer be referenced after the call is made.
     virtual void putCurrentFrame(WebVideoFrame*) { }
+
+    virtual void setStreamTextureClient(WebStreamTextureClient*) { }
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
 

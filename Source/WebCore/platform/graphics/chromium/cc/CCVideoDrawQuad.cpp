@@ -39,6 +39,7 @@ CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const
     , m_textures(textures)
     , m_frame(frame)
     , m_format(format)
+    , m_matrix(0)
 {
 }
 
