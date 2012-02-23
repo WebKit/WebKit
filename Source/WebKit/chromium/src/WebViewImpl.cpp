@@ -170,7 +170,7 @@ using namespace std;
 
 namespace {
 
-GraphicsContext3D::Attributes getCompositorContextAttributes()
+WebKit::WebGraphicsContext3D::Attributes getCompositorContextAttributes(bool threaded)
 {
     // Explicitly disable antialiasing for the compositor. As of the time of
     // this writing, the only platform that supported antialiasing for the
@@ -182,9 +182,10 @@ GraphicsContext3D::Attributes getCompositorContextAttributes()
     // be optimized to resolve directly into the IOSurface shared between the
     // GPU and browser processes. For these reasons and to avoid platform
     // disparities we explicitly disable antialiasing.
-    GraphicsContext3D::Attributes attributes;
+    WebKit::WebGraphicsContext3D::Attributes attributes;
     attributes.antialias = false;
     attributes.shareResources = true;
+    attributes.forUseOnAnotherThread = threaded;
     return attributes;
 }
 
@@ -3204,10 +3205,12 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
 {
     RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
-        if (CCProxy::hasImplThread())
-            context = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        else
-            context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        WebKit::WebGraphicsContext3D::Attributes attributes = getCompositorContextAttributes(CCProxy::hasImplThread());
+        OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes, true /* renderDirectlyToHostWindow */));
+        if (!webContext)
+            return context;
+
+        context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
     return context;
 }
@@ -3301,17 +3304,7 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
-        if (m_temporaryOnscreenGraphicsContext3D) {
-            WebGraphicsContext3D* webContext = GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
-            if (webContext && !webContext->isContextLost())
-                return webContext;
-        }
-        if (CCProxy::hasImplThread())
-            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        else
-            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-
-        return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
+        return GraphicsContext3DPrivate::extractWebGraphicsContext3D(createLayerTreeHostContext3D().get());
     }
 #endif
     return 0;

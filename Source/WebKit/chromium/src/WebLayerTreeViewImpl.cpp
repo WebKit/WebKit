@@ -86,21 +86,7 @@ PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createLayerTreeHostContext3D
     if (!webContext)
         return 0;
 
-    WebGraphicsContext3D::Attributes webAttributes = webContext->getContextAttributes();
-    GraphicsContext3D::Attributes attributes;
-    attributes.alpha = webAttributes.alpha;
-    attributes.depth = webAttributes.depth;
-    attributes.stencil = webAttributes.stencil;
-    attributes.antialias = webAttributes.antialias;
-    attributes.premultipliedAlpha = webAttributes.premultipliedAlpha;
-    attributes.canRecoverFromContextLoss = webAttributes.canRecoverFromContextLoss;
-    attributes.noExtensions = webAttributes.noExtensions;
-    attributes.shareResources = webAttributes.shareResources;
-    attributes.preserveDrawingBuffer = false;
-
-    GraphicsContext3D::RenderStyle style = GraphicsContext3D::RenderDirectlyToHostWindow;
-    GraphicsContext3DPrivate::ThreadUsage usage = CCProxy::hasImplThread() ? GraphicsContext3DPrivate::ForUseOnAnotherThread : GraphicsContext3DPrivate::ForUseOnThisThread;
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attributes, 0, style, usage);
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow, false /* preserveDrawingBuffer */ );
 }
 
 void WebLayerTreeViewImpl::didCommitAndDrawFrame()
