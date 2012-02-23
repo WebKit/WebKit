@@ -1,3 +1,16 @@
+2012-02-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108626.
+        http://trac.webkit.org/changeset/108626
+        https://bugs.webkit.org/show_bug.cgi?id=79370
+
+        broke qt-wk2 bot, somehow the workaround does not work on the
+        bot (Requested by Ossy on #webkit).
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+        (WTR::PlatformWebView::resizeTo):
+
 2012-02-23  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] DRT doesn't support scheduleAsynchronousKeyDown.
