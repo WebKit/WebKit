@@ -594,3 +594,53 @@ shouldBe("descriptor.value", '"one"');
 shouldBe("descriptor.writable", 'true');
 shouldBe("descriptor.enumerable", 'true');
 shouldBe("descriptor.configurable", 'true');
+
+// Test cases for [[DefineOwnProperty]] applied to the arguments object.
+(function(a0,a1,a2,a3){
+    Object.defineProperties(arguments, {
+        1: { get: function(){ return 201; } },
+        2: { value: 202, writable: false },
+        3: { writable: false },
+    });
+
+    // Test a0 is a live mapped argument.
+    shouldBeTrue(String( a0 === 100 ));
+    shouldBeTrue(String( arguments[0] === 100 ));
+    a0 = 300;
+    shouldBeTrue(String( a0 === 300 ));
+    shouldBeTrue(String( arguments[0] === 300 ));
+    arguments[0] = 400;
+    shouldBeTrue(String( a0 === 400 ));
+    shouldBeTrue(String( arguments[0] === 400 ));
+
+    // When a1 is redefined as an accessor, it is no longer live.
+    shouldBeTrue(String( a1 === 101 ));
+    shouldBeTrue(String( arguments[1] === 201 ));
+    a1 = 301;
+    shouldBeTrue(String( a1 === 301 ));
+    shouldBeTrue(String( arguments[1] === 201 ));
+    arguments[1] = 401;
+    shouldBeTrue(String( a1 === 301 ));
+    shouldBeTrue(String( arguments[1] === 201 ));
+
+    // When a2 is make read-only the value is set, but it is no longer live.
+    shouldBeTrue(String( a2 === 202 ));
+    shouldBeTrue(String( arguments[2] === 202 ));
+    a2 = 302;
+    shouldBeTrue(String( a2 === 302 ));
+    shouldBeTrue(String( arguments[2] === 202 ));
+    arguments[2] = 402;
+    shouldBeTrue(String( a2 === 302 ));
+    shouldBeTrue(String( arguments[2] === 202 ));
+
+    // When a3 is make read-only it remains live.
+    shouldBeTrue(String( a3 === 103 ));
+    shouldBeTrue(String( arguments[3] === 103 ));
+    a3 = 303;
+    shouldBeTrue(String( a3 === 303 ));
+    shouldBeTrue(String( arguments[3] === 303 ));
+    arguments[3] = 403;
+    shouldBeTrue(String( a3 === 403 ));
+    shouldBeTrue(String( arguments[3] === 403 ));
+
+})(100,101,102,103);

@@ -1,5 +1,21 @@
 2012-02-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Implement [[DefineOwnProperty]] for the arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=79309
+
+        Reviewed by Sam Weinig.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deletePropertyByIndex):
+        (JSC::Arguments::deleteProperty):
+            - Deleting an argument should also delete the copy on the object, if any.
+        (JSC::Arguments::defineOwnProperty):
+            - Defining a property may override the live mapping.
+        * runtime/Arguments.h:
+        (Arguments):
+
+2012-02-22  Gavin Barraclough  <barraclough@apple.com>
+
         Fix Object.freeze for non-final objects.
         https://bugs.webkit.org/show_bug.cgi?id=79286
 

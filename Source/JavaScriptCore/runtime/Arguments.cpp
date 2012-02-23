@@ -243,6 +243,9 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < thisObject->d->numArguments) {
+        if (!Base::deletePropertyByIndex(cell, exec, i))
+            return false;
+
         if (!thisObject->d->deletedArguments) {
             thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
             memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
@@ -258,10 +261,16 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 
 bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName) 
 {
+    if (exec->globalData().isInDefineOwnProperty())
+        return Base::deleteProperty(cell, exec, propertyName);
+
     Arguments* thisObject = jsCast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments) {
+        if (!Base::deleteProperty(cell, exec, propertyName))
+            return false;
+
         if (!thisObject->d->deletedArguments) {
             thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
             memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
@@ -285,10 +294,42 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
         thisObject->createStrictModeCalleeIfNecessary(exec);
     }
     
-    if (propertyName == exec->propertyNames().caller && !thisObject->d->isStrictMode)
+    if (propertyName == exec->propertyNames().caller && thisObject->d->isStrictMode)
         thisObject->createStrictModeCallerIfNecessary(exec);
 
     return JSObject::deleteProperty(thisObject, exec, propertyName);
+}
+
+bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
+        return false;
+
+    Arguments* thisObject = jsCast<Arguments*>(object);
+    bool isArrayIndex;
+    unsigned i = propertyName.toArrayIndex(isArrayIndex);
+    if (isArrayIndex && i < thisObject->d->numArguments) {
+        if (!thisObject->d->deletedArguments) {
+            thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
+            memset(thisObject->d->deletedArguments.get(), 0, sizeof(bool) * thisObject->d->numArguments);
+        }
+        // From ES 5.1, 10.6 Arguments Object
+        // 5. If the value of isMapped is not undefined, then
+        if (!thisObject->d->deletedArguments[i]) {
+            // a. If IsAccessorDescriptor(Desc) is true, then
+            if (descriptor.isAccessorDescriptor()) {
+                // i. Call the [[Delete]] internal method of map passing P, and false as the arguments.
+                thisObject->d->deletedArguments[i] = true;
+            } else if (descriptor.value()) { // b. Else i. If Desc.[[Value]] is present, then
+                // 1. Call the [[Put]] internal method of map passing P, Desc.[[Value]], and Throw as the arguments.
+                // ii. If Desc.[[Writable]] is present and its value is false, then
+                thisObject->argument(i).set(exec->globalData(), thisObject, descriptor.value());
+                if (descriptor.writablePresent() && !descriptor.writable())
+                    thisObject->d->deletedArguments[i] = true; // 1. Call the [[Delete]] internal method of map passing P and false as arguments.
+            }
+        }
+    }
+    return true;
 }
 
 void Arguments::tearOff(CallFrame* callFrame)
