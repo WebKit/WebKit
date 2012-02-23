@@ -1,3 +1,22 @@
+2012-02-23  Koji Ishii  <kojiishi@gmail.com>
+
+        CSS2:text-decoration: <rt> element should not inherit text-decoration property
+        https://bugs.webkit.org/show_bug.cgi?id=71266
+
+        Reviewed by Kentaro Hara.
+
+        Tests: fast/ruby/text-decoration-in-descendants-ruby-expected.html
+               fast/ruby/text-decoration-in-descendants-ruby.html
+
+        The spec says "text decorations are not propagated to any out-of-flow descendants":
+        http://www.w3.org/TR/2011/WD-css3-text-20110901/#decoration
+        Floats etc. are fixed in bug 18611, but <rt> is not inline either and therefore
+        it should be included; it was confirmed at a discussion at www-style.
+        http://lists.w3.org/Archives/Public/www-style/2011Sep/0238.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+
 2012-02-23  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Allow to use WebCore imagedecoders
