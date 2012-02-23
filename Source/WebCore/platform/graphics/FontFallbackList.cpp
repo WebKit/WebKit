@@ -39,6 +39,7 @@ FontFallbackList::FontFallbackList()
     : m_pageZero(0)
     , m_cachedPrimarySimpleFontData(0)
     , m_fontSelector(0)
+    , m_fontSelectorVersion(0)
     , m_familyIndex(0)
     , m_generation(fontCache()->generation())
     , m_pitch(UnknownPitch)
@@ -57,6 +58,7 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_pitch = UnknownPitch;
     m_loadingCustomFonts = false;
     m_fontSelector = fontSelector;
+    m_fontSelectorVersion = m_fontSelector ? m_fontSelector->version() : 0;
     m_generation = fontCache()->generation();
 }
 

@@ -44,6 +44,8 @@ public:
 
     virtual void registerForInvalidationCallbacks(FontSelectorClient*) = 0;
     virtual void unregisterForInvalidationCallbacks(FontSelectorClient*) = 0;
+    
+    virtual unsigned version() const = 0;
 };
 
 class FontSelectorClient {

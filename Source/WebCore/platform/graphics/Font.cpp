@@ -120,11 +120,12 @@ bool Font::operator==(const Font& other) const
     
     FontSelector* first = m_fontList ? m_fontList->fontSelector() : 0;
     FontSelector* second = other.m_fontList ? other.m_fontList->fontSelector() : 0;
-    
+
     return first == second
            && m_fontDescription == other.m_fontDescription
            && m_letterSpacing == other.m_letterSpacing
            && m_wordSpacing == other.m_wordSpacing
+           && (m_fontList ? m_fontList->fontSelectorVersion() : 0) == (other.m_fontList ? other.m_fontList->fontSelectorVersion() : 0)
            && (m_fontList ? m_fontList->generation() : 0) == (other.m_fontList ? other.m_fontList->generation() : 0);
 }
 
