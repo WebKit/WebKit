@@ -45,6 +45,7 @@ private:
     virtual const char* renderName() const { return "RenderProgress"; }
     virtual bool isProgress() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool canHaveChildren() const { return false; }
     virtual void updateFromElement();
 
     void animationTimerFired(Timer<RenderProgress>*);

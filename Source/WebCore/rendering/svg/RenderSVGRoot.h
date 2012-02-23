@@ -56,6 +56,7 @@ public:
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    virtual bool canHaveChildren() const { return true; }
 
     virtual bool isSVGRoot() const { return true; }
     virtual const char* renderName() const { return "RenderSVGRoot"; }
@@ -86,7 +87,6 @@ private:
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual bool canBeSelectionLeaf() const { return false; }
-    virtual bool canHaveChildren() const { return true; }
 
     void updateCachedBoundaries();
     void buildLocalToBorderBoxTransform();

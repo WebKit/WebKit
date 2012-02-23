@@ -26,7 +26,6 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
-#include "NodeRenderingContext.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -59,11 +58,6 @@ PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagNa
 RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderMeter(this);
-}
-
-bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
-{
-    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 const AtomicString& HTMLMeterElement::formControlType() const

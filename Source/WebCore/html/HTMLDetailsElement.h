@@ -36,8 +36,9 @@ private:
     HTMLDetailsElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
+
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    bool childShouldCreateRenderer(Node*) const;
 
     void createShadowSubtree();
 

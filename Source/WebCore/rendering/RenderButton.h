@@ -56,6 +56,8 @@ public:
     void setText(const String&);
     String text() const;
 
+    virtual bool canHaveChildren() const;
+
 private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

@@ -70,6 +70,7 @@ private:
     virtual bool isTextControl() const { return true; }
     virtual void computePreferredLogicalWidths();
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
+    virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
     
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);

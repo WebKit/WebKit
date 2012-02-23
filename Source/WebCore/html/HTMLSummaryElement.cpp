@@ -26,10 +26,9 @@
 #include "DetailsMarkerControl.h"
 #include "HTMLContentElement.h"
 #include "HTMLDetailsElement.h"
-#include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "HTMLNames.h"
 #include "MouseEvent.h"
-#include "NodeRenderingContext.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
 #include "ShadowRoot.h"
@@ -71,11 +70,6 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* d
 RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSummary(this);
-}
-
-bool HTMLSummaryElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
-{
-    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 void HTMLSummaryElement::createShadowSubtree()

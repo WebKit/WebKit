@@ -26,7 +26,6 @@
 #include "AffineTransform.h"
 #include "Attribute.h"
 #include "FloatRect.h"
-#include "NodeRenderingContext.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGElementInstance.h"
@@ -142,16 +141,16 @@ RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGText(this);
 }
 
-bool SVGTextElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 {
-    if (childContext.node()->isTextNode()
-        || childContext.node()->hasTagName(SVGNames::aTag)
+    if (child->isTextNode()
+        || child->hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
-        || childContext.node()->hasTagName(SVGNames::altGlyphTag)
+        || child->hasTagName(SVGNames::altGlyphTag)
 #endif
-        || childContext.node()->hasTagName(SVGNames::textPathTag)
-        || childContext.node()->hasTagName(SVGNames::trefTag)
-        || childContext.node()->hasTagName(SVGNames::tspanTag))
+        || child->hasTagName(SVGNames::textPathTag)
+        || child->hasTagName(SVGNames::trefTag)
+        || child->hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

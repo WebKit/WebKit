@@ -62,7 +62,6 @@ public:
 
     void hostChildrenChanged();
 
-    bool isOnEncapsulationBoundary() const;
     bool hasFlowThreadParent() const { return m_parentFlowRenderer; }
     RenderFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
     void moveToFlowThreadIfNeeded();
@@ -108,13 +107,6 @@ inline RenderStyle* NodeRenderingContext::style() const
 inline InsertionPoint* NodeRenderingContext::insertionPoint() const
 {
     return m_insertionPoint;
-}
-
-inline bool NodeRenderingContext::isOnEncapsulationBoundary() const
-{
-    return (m_phase == AttachingDistributed
-            || m_phase == AttachingShadowChild
-            || m_phase == AttachingFallbacked);
 }
 
 class NodeRendererFactory {

@@ -28,7 +28,6 @@
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "NodeRenderingContext.h"
 #include "RenderDetails.h"
 #include "ShadowRoot.h"
 #include "ShadowRootList.h"
@@ -138,18 +137,15 @@ void HTMLDetailsElement::parseAttribute(Attribute* attr)
         HTMLElement::parseAttribute(attr);
 }
 
-bool HTMLDetailsElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool HTMLDetailsElement::childShouldCreateRenderer(Node* child) const
 {
-    if (!childContext.isOnEncapsulationBoundary())
-        return false;
-
     if (m_isOpen)
-        return HTMLElement::childShouldCreateRenderer(childContext);
+        return true;
 
-    if (!childContext.node()->hasTagName(summaryTag))
+    if (!child->hasTagName(summaryTag))
         return false;
 
-    return childContext.node() == findMainSummary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return child == findMainSummary();
 }
 
 void HTMLDetailsElement::toggleOpen()

@@ -1,3 +1,103 @@
+2012-02-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, rolling out r108602.
+        http://trac.webkit.org/changeset/108602
+        https://bugs.webkit.org/show_bug.cgi?id=78878
+
+        Caused a couple of layout test failures on Chromium bots.
+
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        (Element):
+        * dom/Node.h:
+        (WebCore::Node::childShouldCreateRenderer):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::childShouldCreateRenderer):
+        * html/HTMLDetailsElement.h:
+        (HTMLDetailsElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLMeterElement.h:
+        (HTMLMeterElement):
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLProgressElement.h:
+        (HTMLProgressElement):
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        (HTMLSelectElement):
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLSummaryElement.h:
+        (HTMLSummaryElement):
+        * html/HTMLTextFormControlElement.cpp:
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::canHaveChildren):
+        (WebCore):
+        * rendering/RenderButton.h:
+        (RenderButton):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::canHaveChildren):
+        (RenderListBox):
+        * rendering/RenderMedia.h:
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::canHaveChildren):
+        * rendering/RenderMeter.h:
+        (WebCore::RenderMeter::canHaveChildren):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::canHaveChildren):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::canHaveChildren):
+        * rendering/svg/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::canHaveChildren):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+        * svg/SVGAElement.h:
+        (SVGAElement):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::childShouldCreateRenderer):
+        * svg/SVGAltGlyphElement.h:
+        (SVGAltGlyphElement):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::childShouldCreateRenderer):
+        * svg/SVGDocument.h:
+        (SVGDocument):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::childShouldCreateRenderer):
+        * svg/SVGForeignObjectElement.h:
+        (SVGForeignObjectElement):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGSwitchElement.h:
+        (SVGSwitchElement):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::childShouldCreateRenderer):
+        * svg/SVGTRefElement.h:
+        (SVGTRefElement):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer):
+        * svg/SVGTSpanElement.h:
+        (SVGTSpanElement):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * svg/SVGTextElement.h:
+        (SVGTextElement):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer):
+        * svg/SVGTextPathElement.h:
+
 2012-02-22  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::addChildIgnoringAnonymousColumnBlocks.

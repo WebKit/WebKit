@@ -62,6 +62,8 @@ private:
 
     virtual void updateFromElement();
 
+    virtual bool canHaveChildren() const { return false; }
+
     virtual bool hasControlClip() const { return true; }
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;

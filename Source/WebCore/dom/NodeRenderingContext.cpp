@@ -274,13 +274,24 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 
     if (m_phase == AttachingNotInTree || m_phase == AttachingNotDistributed || m_phase == AttachingNotFallbacked)
         return false;
+
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
-    if (!parentRenderer->canHaveChildren())
+
+    if (m_phase == AttachingStraight) {
+        // FIXME: Ignoring canHaveChildren() in a case of shadow children might be wrong.
+        // See https://bugs.webkit.org/show_bug.cgi?id=52423
+        if (!parentRenderer->canHaveChildren())
+            return false;
+
+        if (m_visualParentShadowRoot)
+            return false;
+    }
+
+    if (!m_parentNodeForRenderingAndStyle->childShouldCreateRenderer(m_node))
         return false;
-    if (!m_parentNodeForRenderingAndStyle->childShouldCreateRenderer(*this))
-        return false;
+
     return true;
 }
 

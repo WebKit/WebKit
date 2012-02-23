@@ -372,7 +372,7 @@ public:
     virtual void dispatchFormControlChangeEvent() { }
 
 #if ENABLE(SVG)
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
+    virtual bool childShouldCreateRenderer(Node*) const; 
 #endif
     
 #if ENABLE(FULLSCREEN_API)

@@ -63,7 +63,6 @@
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "MIMETypeRegistry.h"
-#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -465,12 +464,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderMedia(this);
 #endif
 }
-
-bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
-{
-    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
-}
-
+ 
 void HTMLMediaElement::insertedIntoDocument()
 {
     LOG(Media, "HTMLMediaElement::insertedIntoDocument");

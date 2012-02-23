@@ -42,7 +42,6 @@
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
-#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
@@ -324,11 +323,6 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
     if (usesMenuList())
         return new (arena) RenderMenuList(this);
     return new (arena) RenderListBox(this);
-}
-
-bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
-{
-    return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
 HTMLOptionsCollection* HTMLSelectElement::options()

@@ -37,7 +37,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
@@ -63,11 +62,6 @@ HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagN
 
 HTMLTextFormControlElement::~HTMLTextFormControlElement()
 {
-}
-
-bool HTMLTextFormControlElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
-{
-    return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
 void HTMLTextFormControlElement::insertedIntoDocument()

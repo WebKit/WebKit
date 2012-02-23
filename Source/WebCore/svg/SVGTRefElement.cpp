@@ -27,7 +27,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "MutationEvent.h"
-#include "NodeRenderingContext.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
@@ -238,9 +237,9 @@ RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGInline(this);
 }
 
-bool SVGTRefElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGTRefElement::childShouldCreateRenderer(Node* child) const
 {
-    return childContext.node()->isInShadowTree();
+    return child->isInShadowTree();
 }
 
 bool SVGTRefElement::rendererIsNeeded(const NodeRenderingContext& context)

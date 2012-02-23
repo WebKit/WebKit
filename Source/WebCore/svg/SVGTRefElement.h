@@ -47,7 +47,7 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
+    virtual bool childShouldCreateRenderer(Node*) const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
     virtual void insertedIntoDocument();

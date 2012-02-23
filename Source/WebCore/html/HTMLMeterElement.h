@@ -70,7 +70,6 @@ private:
     virtual bool recalcWillValidate() const { return false; }
     virtual const AtomicString& formControlType() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void attach();
 
