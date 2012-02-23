@@ -4188,14 +4188,13 @@ BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
 // Needs new baselines.
-BUGWK41386 : svg/foreignObject/fO-display-none-with-relative-pos-content.svg = IMAGE+TEXT
-BUGWK41386 : svg/foreignObject/fO-display-none.svg = IMAGE+TEXT
+BUGWK41386 : svg/foreignObject/fO-display-none-with-relative-pos-content.svg = FAIL
+BUGWK41386 : svg/foreignObject/fO-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none.svg = FAIL
-BUGWK41386 : svg/foreignObject/fO-parent-display-changes.svg = IMAGE+TEXT
-
+BUGWK41386 : svg/foreignObject/fO-parent-display-changes.svg = FAIL
 
 // Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
 BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
