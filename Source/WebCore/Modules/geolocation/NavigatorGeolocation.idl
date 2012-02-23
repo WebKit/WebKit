@@ -23,10 +23,7 @@ module window {
         Conditional=GEOLOCATION,
         Supplemental=Navigator
     ] NavigatorGeolocation {
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-        // FIXME: Enable this interface for GOBJECT.
         readonly attribute [V8EnabledAtRuntime] Geolocation geolocation;
-#endif
     };
 
 }

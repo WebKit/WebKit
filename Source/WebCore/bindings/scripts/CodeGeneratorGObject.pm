@@ -389,8 +389,8 @@ sub GenerateProperty {
         push(@setterArguments, "${convertFunction}(g_value_get_$gtype(value))");
         unshift(@getterArguments, "coreSelf");
         unshift(@setterArguments, "coreSelf");
-        $getterFunctionName = "${implementedBy}::$getterFunctionName";
-        $setterFunctionName = "${implementedBy}::$setterFunctionName";
+        $getterFunctionName = "WebCore::${implementedBy}::$getterFunctionName";
+        $setterFunctionName = "WebCore::${implementedBy}::$setterFunctionName";
     } else {
         push(@setterArguments, "${convertFunction}(g_value_get_$gtype(value))");
         $getterFunctionName = "coreSelf->$getterFunctionName";
@@ -926,7 +926,7 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $functionName = "${implementedBy}::${functionName}";
+                $functionName = "WebCore::${implementedBy}::${functionName}";
             } else {
                 $functionName = "item->${functionName}";
             }
@@ -937,7 +937,7 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $getterContentHead = "${assign}convertToUTF8String(${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "));\n";
+                $getterContentHead = "${assign}convertToUTF8String(WebCore::${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "));\n";
             } else {
                 $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(" . join(", ", @arguments) . "));\n";
             }
@@ -952,7 +952,7 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $functionName = "${implementedBy}::${functionName}";
+                $functionName = "WebCore::${implementedBy}::${functionName}";
             } else {
                 $functionName = "item->${functionName}";
             }
@@ -964,7 +964,7 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $functionName = "${implementedBy}::${functionName}";
+                $functionName = "WebCore::${implementedBy}::${functionName}";
                 $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
             } else {
                 $functionName = "item->${functionName}";
@@ -976,7 +976,7 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $contentHead = "${assign}${assignPre}${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
             } else {
                 $contentHead = "${assign}${assignPre}item->${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
             }
