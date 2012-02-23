@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '123195'
+  'chromium_rev': '122745'
 }
 
 deps = {
@@ -145,6 +145,8 @@ deps_os = {
   'win': {
     'third_party/cygwin':
       From('chromium_deps', 'src/third_party/cygwin'),
+    'third_party/ffmpeg/binaries/chromium/win/ia32':
+      From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
     'third_party/lighttpd':
       From('chromium_deps', 'src/third_party/lighttpd'),
     'third_party/nss':
