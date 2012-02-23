@@ -2630,3 +2630,7 @@ fast/workers/worker-crash-with-invalid-location.html
 # [Qt] REGRESSION(r108112): sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T2.html crashes intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=79029
 sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T2.html
+
+# Web Inspector: [Regression] network worker tests crash on qt.
+# https://bugs.webkit.org/show_bug.cgi?id=79263
+http/tests/inspector/network/network-embed.html
