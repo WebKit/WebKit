@@ -1,3 +1,25 @@
+2012-02-23  Alok Priyadarshi  <alokp@chromium.org>
+
+        Microsoft IE fishtank demo causes assertion in RenderLayer::convertToLayerCoords
+        https://bugs.webkit.org/show_bug.cgi?id=61964
+
+        Reviewed by James Robinson.
+        
+        The assertion is caused with the following callstack:
+        WebCore::RenderLayer::convertToLayerCoords
+        WebCore::RenderLayerCompositor::layerWillBeRemoved
+        WebCore::RenderLayer::removeChild
+        WebCore::RenderLayer::removeOnlyThisLayer
+        
+        WebCore::RenderLayer::removeOnlyThisLayer removes itself from the parent
+        before moving its children to its parent. When WebCore::RenderLayer::convertToLayerCoords
+        is called for one of the children, it tries to walk to root only to stop at the immediate
+        parent which was disconnected from the tree in WebCore::RenderLayer::removeOnlyThisLayer.
+        If removal of layer is delayed until the children has been moved, the ASSERT is avoided.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+
 2012-02-23  Matthew Delaney  <mdelaney@apple.com>
 
         Fix for canvas breakage caused by r108597 from the following:

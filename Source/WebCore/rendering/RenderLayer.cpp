@@ -1193,22 +1193,16 @@ void RenderLayer::removeOnlyThisLayer()
     // Dirty the clip rects.
     clearClipRectsIncludingDescendants();
 
-    // Remove us from the parent.
-    RenderLayer* parent = m_parent;
     RenderLayer* nextSib = nextSibling();
     bool hasLayerOffset;
     const LayoutPoint offsetFromRootBeforeMove = computeOffsetFromRoot(hasLayerOffset);
-    parent->removeChild(this);
-    
-    if (reflection())
-        removeChild(reflectionLayer());
 
     // Now walk our kids and reattach them to our parent.
     RenderLayer* current = m_first;
     while (current) {
         RenderLayer* next = current->nextSibling();
         removeChild(current);
-        parent->addChild(current, nextSib);
+        m_parent->addChild(current, nextSib);
         current->setRepaintStatus(NeedsFullRepaint);
         LayoutPoint offsetFromRoot = offsetFromRootBeforeMove;
         // updateLayerPositions depends on hasLayer() already being false for proper layout.
@@ -1216,6 +1210,11 @@ void RenderLayer::removeOnlyThisLayer()
         current->updateLayerPositions(hasLayerOffset ? &offsetFromRoot : 0);
         current = next;
     }
+
+    // Remove us from the parent.
+    if (reflection())
+        removeChild(reflectionLayer());
+    m_parent->removeChild(this);
 
     m_renderer->destroyLayer();
 }
