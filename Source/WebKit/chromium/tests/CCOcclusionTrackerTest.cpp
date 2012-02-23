@@ -909,7 +909,7 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
       |  | |                |               | |
       |  | |                |               | |
       +--|-|----------------+               | |
-         | |                                | | 500
+         | |                                | | 510
          | |                                | |
          | |                                | |
          | |                                | |
@@ -919,7 +919,152 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
          | +--------------------------------|-+
          |                                  |
          +----------------------------------+
-                         500
+                         510
+     */
+}
+
+TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
+{
+    // This tests that the right transforms are being used.
+    TestCCOcclusionTracker occlusion;
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child1 = LayerChromium::create();
+    RefPtr<LayerChromium> child2 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(child1);
+    parent->addChild(child2);
+    child1->addChild(layer1);
+    child2->addChild(layer2);
+
+    TransformationMatrix child1Transform;
+    child1Transform.translate(250, 250);
+    child1Transform.rotate(-90);
+    child1Transform.translate(-250, -250);
+
+    TransformationMatrix child2Transform;
+    child2Transform.translate(250, 250);
+    child2Transform.rotate(90);
+    child2Transform.translate(-250, -250);
+
+    // The owning layers have very different bounds from the surfaces that they own.
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child1.get(), child1Transform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 20), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(layer1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -20), IntSize(510, 520), true);
+    setLayerPropertiesForTesting(child2.get(), child2Transform, identityMatrix, FloatPoint(0, 0), FloatPoint(20, 40), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(layer2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -10), IntSize(510, 510), true);
+
+    // Make them both render surfaces
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    child1->setFilters(filters);
+    child2->setFilters(filters);
+
+    child1->setMasksToBounds(false);
+    child2->setMasksToBounds(false);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    occlusion.enterTargetRenderSurface(child2->renderSurface());
+    occlusion.markOccludedBehindLayer(layer2.get());
+
+    EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+    EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-11, 420, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 419, 70, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
+    EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
+
+    // Surface is not occluded by things that draw into itself.
+    EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(-10, 420, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child2.get(), IntRect(30, 250, 1, 1)));
+
+    occlusion.markOccludedBehindLayer(child2.get());
+    occlusion.finishedTargetRenderSurface(child2.get(), child2->renderSurface());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(child1->renderSurface());
+    occlusion.markOccludedBehindLayer(layer1.get());
+
+    EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+    EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.occlusionInTargetSurface().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+    EXPECT_TRUE(occlusion.occluded(child1.get(), IntRect(420, -20, 80, 90)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(419, -20, 80, 90)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(420, -21, 80, 90)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(420, -19, 80, 90)));
+    EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(421, -20, 80, 90)));
+
+    // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
+    EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -20, 80, 90)));
+    EXPECT_EQ_RECT(IntRect(490, -10, 10, 80), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -10, 80, 80)));
+    EXPECT_EQ_RECT(IntRect(420, -20, 70, 10), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -20, 70, 90)));
+    EXPECT_TRUE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -10, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(419, -10, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -11, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(421, -10, 70, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -9, 70, 80)));
+
+    occlusion.markOccludedBehindLayer(child1.get());
+    occlusion.finishedTargetRenderSurface(child1.get(), child1->renderSurface());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+    EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInTargetSurface().bounds());
+    EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(10, 20, 90, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(9, 20, 90, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(10, 19, 90, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(11, 20, 90, 80)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(10, 21, 90, 80)));
+
+    // |child1| and |child2| both draw into parent so they should not occlude it.
+    EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(10, 20, 90, 80)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(10, 20, 1, 1)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(99, 20, 1, 1)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(10, 9, 1, 1)));
+    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(99, 99, 1, 1)));
+
+
+    /* Justification for the above occlusion:
+               100
+      +---------------------+
+      |20                   |       layer1
+     10+----------------------------------+
+  100 || 30                 |     layer2  |
+      |20+----------------------------------+
+      || |                  |             | |
+      || |                  |             | |
+      || |                  |             | |
+      +|-|------------------+             | |
+       | |                                | | 510
+       | |                            510 | |
+       | |                                | |
+       | |                                | |
+       | |                                | |
+       | |                                | |
+       | |                520             | |
+       +----------------------------------+ |
+         |                                  |
+         +----------------------------------+
+                         510
      */
 }
 
