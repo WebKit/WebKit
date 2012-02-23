@@ -397,10 +397,10 @@ public:
 #endif
         if (arrayBufferView.isByteArray())
             append(ByteArrayTag);
-        else if (arrayBufferView.isUnsignedByteArray())
-            append(UnsignedByteArrayTag);
         else if (arrayBufferView.isUnsignedByteClampedArray())
             append(UnsignedByteClampedArrayTag);
+        else if (arrayBufferView.isUnsignedByteArray())
+            append(UnsignedByteArrayTag);
         else if (arrayBufferView.isShortArray())
             append(ShortArrayTag);
         else if (arrayBufferView.isUnsignedShortArray())

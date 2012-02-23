@@ -1,3 +1,14 @@
+2012-02-22  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium][V8] Support Uint8ClampedArray in postMessage
+        https://bugs.webkit.org/show_bug.cgi?id=79291.
+
+        Reviewed by Kenneth Russell.
+
+        Covered by existing tests.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+
 2012-02-22  Kentaro Hara  <haraken@chromium.org>
 
         Enable Geolocation bindings for GObject
