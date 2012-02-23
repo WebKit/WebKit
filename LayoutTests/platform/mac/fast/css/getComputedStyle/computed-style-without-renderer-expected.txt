@@ -157,11 +157,12 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-hyphenate-limit-before: auto
     -webkit-hyphenate-limit-lines: no-limit
     -webkit-hyphens: manual
+    -webkit-line-align: none
     -webkit-line-box-contain: block inline replaced
     -webkit-line-break: normal
     -webkit-line-clamp: none
     -webkit-line-grid: none
-    -webkit-line-grid-snap: none
+    -webkit-line-snap: none
     -webkit-locale: auto
     -webkit-margin-before-collapse: collapse
     -webkit-margin-after-collapse: collapse
