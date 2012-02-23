@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,6 +176,7 @@ private:
                 }
                 nodePtr = &flushChild;
             }
+            ASSERT(nodePtr->op != Flush);
             if (nodePtr->op == GetLocal)
                 return nodeIndex;
             ASSERT(nodePtr->op == SetLocal);
@@ -225,6 +226,9 @@ private:
                 }
                 nodePtr = &flushChild;
             }
+            
+            ASSERT(nodePtr->op != Flush);
+            
             if (nodePtr->op == SetArgument) {
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
@@ -282,13 +286,10 @@ private:
         
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
-            if (node.op == Flush || node.op == SetArgument) {
-                // If a local has already been flushed, or if it's an argument in the
-                // first basic block, then there is really no need to flush it. In fact
-                // emitting a Flush instruction could just confuse things, since the
-                // getArgument() code assumes that we never see a Flush of a SetArgument.
-                return;
-            }
+            if (node.op == Flush)
+                nodeIndex = node.child1().index();
+            
+            ASSERT(m_graph[nodeIndex].op != Flush);
         
             addToGraph(Flush, OpInfo(node.variableAccessData()), nodeIndex);
             return;
