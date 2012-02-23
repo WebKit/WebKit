@@ -1,3 +1,13 @@
+2012-02-22  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed speculative chromium-mac build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=75874
+
+        This broke in r108581.
+
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        (WebCore):
+
 2012-02-22  Raymond Toy  <rtoy@google.com>
 
         exponentialRampToValue doesn't use starting value

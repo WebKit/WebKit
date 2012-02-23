@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Animation;
 class CCLayerAnimationControllerImpl;
-struct IntSize;
+class IntSize;
 class KeyframeValueList;
 
 class CCLayerAnimationController {
