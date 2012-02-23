@@ -278,13 +278,20 @@ WebInspector.View.prototype = {
             return;
         }
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", cssFile, false);
-        xhr.send(null);
+        if (WebInspector.experimentsSettings.debugCSS.isEnabled()) {
+            styleElement = document.createElement("link");
+            styleElement.rel = "stylesheet";
+            styleElement.type = "text/css";
+            styleElement.href = cssFile;
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", cssFile, false);
+            xhr.send(null);
 
-        styleElement = document.createElement("style");
-        styleElement.type = "text/css";
-        styleElement.textContent = xhr.responseText;
+            styleElement = document.createElement("style");
+            styleElement.type = "text/css";
+            styleElement.textContent = xhr.responseText;
+        }
         document.head.insertBefore(styleElement, document.head.firstChild);
 
         WebInspector.View._cssFileToStyleElement[cssFile] = styleElement;
