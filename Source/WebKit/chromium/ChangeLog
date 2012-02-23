@@ -1,5 +1,16 @@
 2012-02-22  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r108590.
+        http://trac.webkit.org/changeset/108590
+
+        I mistakenly disabled tests even though the fix was already
+        in.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::TEST):
+
+2012-02-22  Yuta Kitamura  <yutak@chromium.org>
+
         [Chromium] Unreviewed. Disable two tests from CCOcclusionTrackerTest
         which cause assertion failures.
 
