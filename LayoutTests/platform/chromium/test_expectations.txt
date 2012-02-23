@@ -2849,7 +2849,6 @@ BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
 // more failures for triaging, fails on deps bots at least?
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = PASS TIMEOUT
-BUGWK60125 : fast/files/create-blob-url-crash.html = PASS CRASH
 
 // flakiness
 BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
