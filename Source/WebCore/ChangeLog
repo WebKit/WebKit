@@ -1,3 +1,18 @@
+2012-02-22  Adam Klein  <adamk@chromium.org>
+
+        Remove obsolete FIXMEs from ContainerNode
+        https://bugs.webkit.org/show_bug.cgi?id=79295
+
+        Reviewed by Ryosuke Niwa.
+
+        Each of these three identical FIXMEs has since been fixed by adding
+        "RefPtr<Node> protect(this)" at the top of each method.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+
 2012-02-22  Dmitry Lomov  <dslomov@google.com>
 
         [JSC] Implement ArrayBuffer and typed array cloning in JSC

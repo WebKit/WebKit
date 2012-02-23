@@ -158,11 +158,6 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         if (ec)
             return false;
 
-        // FIXME: After sending the mutation events, "this" could be destroyed.
-        // We can prevent that by doing a "ref", but first we have to make sure
-        // that no callers call with ref count == 0 and parent = 0 (as of this
-        // writing, there are definitely callers who call that way).
-
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "next" is no longer a child of "this".
         // It's also possible that "child" has been inserted elsewhere.
@@ -292,11 +287,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     removeChild(oldChild, ec);
     if (ec)
         return false;
-
-    // FIXME: After sending the mutation events, "this" could be destroyed.
-    // We can prevent that by doing a "ref", but first we have to make sure
-    // that no callers call with ref count == 0 and parent = 0 (as of this
-    // writing, there are definitely callers who call that way).
 
     bool isFragment = newChild->nodeType() == DOCUMENT_FRAGMENT_NODE && !newChild->isShadowRoot();
 
@@ -468,11 +458,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         ec = NOT_FOUND_ERR;
         return false;
     }
-
-    // FIXME: After sending the mutation events, "this" could be destroyed.
-    // We can prevent that by doing a "ref", but first we have to make sure
-    // that no callers call with ref count == 0 and parent = 0 (as of this
-    // writing, there are definitely callers who call that way).
 
     Node* prev = child->previousSibling();
     Node* next = child->nextSibling();
