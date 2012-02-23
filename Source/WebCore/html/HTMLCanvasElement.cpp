@@ -273,6 +273,10 @@ void HTMLCanvasElement::reset()
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 {
     ASSERT(m_context);
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    return true;
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_context->isAccelerated())
         return true;

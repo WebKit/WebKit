@@ -1,3 +1,13 @@
+2012-02-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Fix for canvas breakage caused by r108597 from the following:
+        https://bugs.webkit.org/show_bug.cgi?id=79317
+
+        Reviewed by Oliver Hunt.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paintsIntoCanvasBuffer):
+
 2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: mad Redo to Cmd+Shift+Z, not Cmd+Y on a Mac.
