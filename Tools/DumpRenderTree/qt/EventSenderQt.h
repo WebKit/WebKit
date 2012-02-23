@@ -81,8 +81,6 @@ public slots:
     void clearTouchPoints();
     void releaseTouchPoint(int index);
 
-    void gestureTap(int x, int y);
-
 protected:
     void timerEvent(QTimerEvent*);
 
