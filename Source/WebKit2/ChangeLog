@@ -1,3 +1,9 @@
+2012-02-23  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build fix after r108428.
+
+        * win/WebKit2CFLite.def: Add missing export declaration.
+
 2012-02-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed test fix after r108614: Adjust public API after changes.
