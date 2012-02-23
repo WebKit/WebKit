@@ -1,3 +1,9 @@
+2012-02-23  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-02-22  Hajime Morrita  <morrita@chromium.org>
 
         NOTIFICATIONS should be implemented as PageSupplement
