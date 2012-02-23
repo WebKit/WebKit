@@ -1,3 +1,12 @@
+2012-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add FindQuickTimeSDK
+        https://bugs.webkit.org/show_bug.cgi?id=79345
+
+        Reviewed by Adam Roben.
+
+        * Source/cmake/FindQuickTimeSDK.cmake: Added.
+
 2012-02-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Remove FindGDK.cmake and FindGDK-PixBuf.cmake
