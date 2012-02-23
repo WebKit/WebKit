@@ -1,3 +1,19 @@
+2012-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Crash in ScrollElasticityController::snapRubberBandTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=79372
+        <rdar://problem/10915193>
+
+        Reviewed by Andreas Kling.
+
+        Invalidate the rubber-band timer in the ScrollingTreeNodeMac destructor.
+
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        (ScrollingTreeNodeMac):
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::~ScrollingTreeNodeMac):
+        (WebCore):
+
 2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add experiment that loads stylesheets as links

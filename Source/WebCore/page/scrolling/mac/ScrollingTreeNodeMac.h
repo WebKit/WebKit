@@ -39,6 +39,7 @@ namespace WebCore {
 class ScrollingTreeNodeMac : public ScrollingTreeNode, private ScrollElasticityControllerClient {
 public:
     explicit ScrollingTreeNodeMac(ScrollingTree*);
+    virtual ~ScrollingTreeNodeMac();
 
 private:
     // ScrollingTreeNode member functions.

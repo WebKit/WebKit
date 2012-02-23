@@ -45,6 +45,12 @@ ScrollingTreeNodeMac::ScrollingTreeNodeMac(ScrollingTree* scrollingTree)
 {
 }
 
+ScrollingTreeNodeMac::~ScrollingTreeNodeMac()
+{
+    if (m_snapRubberbandTimer)
+        CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
+}
+
 void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 {
     ScrollingTreeNode::update(state);
