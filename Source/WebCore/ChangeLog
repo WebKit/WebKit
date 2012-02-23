@@ -1,3 +1,11 @@
+2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, use the strings in LocalizedStrings.cpp.
+
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::localizedString):
+        (WebCore):
+
 2012-02-23  Alok Priyadarshi  <alokp@chromium.org>
 
         Microsoft IE fishtank demo causes assertion in RenderLayer::convertToLayerCoords
