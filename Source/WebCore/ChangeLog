@@ -1,3 +1,17 @@
+2012-02-23  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Implement drop-shadow() CSS filter on composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=79386
+
+        Reviewed by James Robinson.
+
+        Covered by css3/filters/effect-drop-shadow-hw.html
+
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+        (WebCore::CCRenderSurfaceFilters::apply):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::DropShadowFilterOperation::movesPixels):
+
 2012-02-23  Erik Arvidsson  <arv@chromium.org>
 
         Add support for InterfaceName in the bindings

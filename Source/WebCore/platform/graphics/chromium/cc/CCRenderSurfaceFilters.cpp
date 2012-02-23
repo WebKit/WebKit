@@ -198,8 +198,8 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         const FilterOperation* filterOperation = filters.at(i);
         // Allocate a destination texture.
         GrTextureDesc desc;
-        desc.fFlags = kRenderTarget_GrTextureFlagBit;
-        desc.fAALevel = kNone_GrAALevel;
+        desc.fFlags = kRenderTarget_GrTextureFlagBit | kNoStencil_GrTextureFlagBit;
+        desc.fSampleCnt = 0;
         desc.fWidth = size.width();
         desc.fHeight = size.height();
         desc.fConfig = kRGBA_8888_GrPixelConfig;
@@ -278,6 +278,20 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
             canvas.saveLayer(0, &paint);
             canvas.drawBitmap(source, 0, 0);
             canvas.restore();
+            break;
+        }
+        case FilterOperation::DROP_SHADOW: {
+            const DropShadowFilterOperation* op = static_cast<const DropShadowFilterOperation*>(filterOperation);
+            SkAutoTUnref<SkImageFilter> blurFilter(new SkBlurImageFilter(op->stdDeviation(), op->stdDeviation()));
+            SkAutoTUnref<SkColorFilter> colorFilter(SkColorFilter::CreateModeFilter(op->color().rgb(), SkXfermode::kSrcIn_Mode));
+            SkPaint paint;
+            paint.setImageFilter(blurFilter.get());
+            paint.setColorFilter(colorFilter.get());
+            paint.setXfermodeMode(SkXfermode::kSrcOver_Mode);
+            canvas.saveLayer(0, &paint);
+            canvas.drawBitmap(source, op->x(), -op->y());
+            canvas.restore();
+            canvas.drawBitmap(source, 0, 0);
             break;
         }
         case FilterOperation::PASSTHROUGH:

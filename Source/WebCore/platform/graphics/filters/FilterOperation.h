@@ -311,6 +311,7 @@ public:
     Color color() const { return m_color; }
 
     virtual bool affectsOpacity() const { return true; }
+    virtual bool movesPixels() const { return true; }
 
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
