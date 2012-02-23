@@ -43,7 +43,7 @@ public:
     StylePropertySet* ensureInlineStyleDecl() { return ensureAttributeData()->ensureInlineStyleDecl(this); }
     
     // Unlike StylePropertySet setters, these implement invalidation.
-    bool setInlineStyleProperty(int propertyID, int value, bool important = false);
+    bool setInlineStyleProperty(int propertyID, int identifier, bool important = false);
     bool setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false);
     bool setInlineStyleProperty(int propertyID, const String& value, bool important = false);
     bool removeInlineStyleProperty(int propertyID);
@@ -67,7 +67,7 @@ protected:
     virtual bool isPresentationAttribute(Attribute*) const { return false; }
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
 
-    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int value);
+    void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int identifier);
     void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, double value, CSSPrimitiveValue::UnitTypes);
     void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, const String& value);
 
@@ -108,16 +108,6 @@ inline StylePropertySet* StyledElement::attributeStyle()
     if (attributeStyleDirty())
         updateAttributeStyle();
     return attributeData() ? attributeData()->attributeStyle() : 0;
-}
-
-inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, int value)
-{
-    style->setProperty(propertyID, value, false, document()->elementSheet());
-}
-
-inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
-{
-    style->setProperty(propertyID, value, unit, false, document()->elementSheet());
 }
 
 inline void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, const String& value)

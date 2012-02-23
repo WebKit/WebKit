@@ -341,10 +341,7 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         bool borderBottom;
         bool borderLeft;
         if (getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft)) {
-            addPropertyToAttributeStyle(style, CSSPropertyBorderTopWidth, CSSValueThin);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, CSSValueThin);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftWidth, CSSValueThin);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderRightWidth, CSSValueThin);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, CSSValueThin);
             addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
             addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
             addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);

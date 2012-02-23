@@ -56,10 +56,7 @@ void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StyleProper
     } else if (attr->name() == bordercolorAttr) {
         if (!attr->value().isEmpty()) {
             addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
-            addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
+            addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
         }
     } else if (attr->name() == valignAttr) {
         if (!attr->value().isEmpty())

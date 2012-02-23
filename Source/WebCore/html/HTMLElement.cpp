@@ -143,11 +143,8 @@ static unsigned parseBorderWidthAttribute(Attribute* attr)
 
 void HTMLElement::applyBorderAttributeToStyle(Attribute* attr, StylePropertySet* style)
 {
-    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
-    addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
-    addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
-    addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
-    addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attr), CSSPrimitiveValue::CSS_PX);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
 void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StylePropertySet* style)

@@ -621,17 +621,6 @@ bool StylePropertySet::setProperty(int propertyID, int identifier, bool importan
     return true;
 }
 
-bool StylePropertySet::setProperty(int propertyID, double number, CSSPrimitiveValue::UnitTypes unit, bool important, CSSStyleSheet* contextStyleSheet)
-{
-    RefPtr<CSSPrimitiveValue> value;    
-    if (Document* document = contextStyleSheet ? contextStyleSheet->findDocument() : 0)
-        value = document->cssValuePool()->createValue(number, unit);
-    else
-        value = CSSPrimitiveValue::create(number, unit);
-    setProperty(CSSProperty(propertyID, value, important));
-    return true;
-}
-
 void StylePropertySet::parseDeclaration(const String& styleDeclaration, CSSStyleSheet* contextStyleSheet)
 {
     m_properties.clear();

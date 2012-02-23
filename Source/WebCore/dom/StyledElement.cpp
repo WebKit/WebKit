@@ -116,20 +116,18 @@ void StyledElement::inlineStyleChanged()
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
     
-bool StyledElement::setInlineStyleProperty(int propertyID, int value, bool important)
+bool StyledElement::setInlineStyleProperty(int propertyID, int identifier, bool important)
 {
-    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, important, document()->elementSheet());
-    if (changes)
-        inlineStyleChanged();
-    return changes;
+    ensureInlineStyleDecl()->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier), important);
+    inlineStyleChanged();
+    return true;
 }
 
 bool StyledElement::setInlineStyleProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
-    bool changes = ensureInlineStyleDecl()->setProperty(propertyID, value, unit, important, document()->elementSheet());
-    if (changes)
-        inlineStyleChanged();
-    return changes;
+    ensureInlineStyleDecl()->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit), important);
+    inlineStyleChanged();
+    return true;
 }
 
 bool StyledElement::setInlineStyleProperty(int propertyID, const String& value, bool important)
@@ -169,6 +167,16 @@ void StyledElement::updateAttributeStyle()
         style->shrinkToFit();
         attributeData()->setAttributeStyle(style.release());
     }
+}
+
+void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, int identifier)
+{
+    style->setProperty(propertyID, document()->cssValuePool()->createIdentifierValue(identifier));
+}
+
+void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, int propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
+{
+    style->setProperty(propertyID, document()->cssValuePool()->createValue(value, unit));
 }
 
 }

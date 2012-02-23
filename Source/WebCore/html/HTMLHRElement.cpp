@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -76,19 +77,15 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
     } else if (attr->name() == colorAttr) {
-        addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
+        addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
         addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == noshadeAttr) {
-        addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, CSSValueSolid);
-        addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, CSSValueSolid);
-        addHTMLColorToStyle(style, CSSPropertyBorderColor, String("grey")); // FIXME: Pass as rgb() value.
-        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, String("grey")); // FIXME: Pass as rgb() value.
+        addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
+
+        RefPtr<CSSPrimitiveValue> darkGrayValue = document()->cssValuePool()->createColorValue(Color::darkGray);
+        style->setProperty(CSSPropertyBorderColor, darkGrayValue);
+        style->setProperty(CSSPropertyBackgroundColor, darkGrayValue);
     } else if (attr->name() == sizeAttr) {
         StringImpl* si = attr->value().impl();
         int size = si->toInt();

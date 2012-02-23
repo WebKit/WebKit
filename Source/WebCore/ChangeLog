@@ -1,3 +1,38 @@
+2012-02-23  Andreas Kling  <awesomekling@apple.com>
+
+        Make use of StylePropertySet::setProperty(propertyID, CSSValue).
+        <http://webkit.org/b/79374>
+
+        Reviewed by Antti Koivisto.
+
+        Use the new setProperty() overload that takes a CSSValue in more places. This allows us
+        to get rid of 1/3 setProperty() overloads that don't expand shorthands.
+
+        * css/StylePropertySet.h:
+        * css/StylePropertySet.cpp:
+
+            Remove the setProperty() overload for specific primitive value types. StyledElement
+            can take care of this without help from StylePropertySet.
+
+        * dom/StyledElement.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addPropertyToAttributeStyle):
+
+            Switch some functions over to using the setProperty() overload that takes a CSSValue.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForAttribute):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForAttribute):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForAttribute):
+
+            Use shorthands where possible to shrink the code a bit. Pass border widths as CSS_PX
+            values directly instead of making a CSSParser round-trip.
+
 2012-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, use the strings in LocalizedStrings.cpp.

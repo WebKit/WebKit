@@ -70,7 +70,6 @@ public:
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(int propertyID, int value, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
-    bool setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false, CSSStyleSheet* contextStyleSheet = 0);
     void setProperty(const CSSProperty&, CSSProperty* slot = 0);
     
     bool removeProperty(int propertyID, String* returnText = 0);
