@@ -1,3 +1,38 @@
+2012-02-22  Nate Chapin  <japhet@chromium.org>
+
+        Prevent CachedRawResource from sending the same data
+        chunk multiple times.
+        https://bugs.webkit.org/show_bug.cgi?id=78810
+
+        Reviewed by Adam Barth.
+
+        If a CachedRawResource receives data while a CachedRawResourceCallback
+        timer is active, the incremental data will be sent to the client, followed
+        but all data received so far, resulting in invalid data. Resolving this adds
+        complexity to CachedRawResource and requires making a few more CachedResource
+        functions virtual, so push the callback logic into CachedResource where it can
+        be implemented more cleanly.
+
+        Test: inspector/debugger/script-formatter-console.html
+            should no longer be flaky.
+
+        * loader/cache/CachedRawResource.cpp: CachedRawResourceCallback renamed and moved to CachedResource.
+        (WebCore::CachedRawResource::didAddClient): More or less the same as sendCallbacks() was.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addClient): Check the return value of addClientToSet() to determine whether
+            or not to call didAddClient.
+        (WebCore::CachedResource::didAddClient): May be called during addClient(), or may be called on a timer.
+            If called on a timer, move the client between sets.
+        (WebCore::CachedResource::addClientToSet): Determine whether didAddClient() can be called synchronously and
+            return true if it can.
+        (WebCore::CachedResource::removeClient): Ensure we cancel pending callbacks if necessary.
+        (WebCore::CachedResource::CachedResourceCallback::CachedResourceCallback): Renamed and moved from CachedRawResource.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::hasClients): Check m_clientsAwaitingCallback as well as m_clients.
+        (WebCore::CachedResource::CachedResourceCallback::schedule):
+        (WebCore::CachedResource::hasClient): Helper for calling contains() on both m_clientsAwaitingCallback and m_clients.
+
 2012-02-22  Daniel Bates  <dbates@webkit.org>
 
         Update change log entry for r108561 to reflect removal of "if (m_dispatchSoonList.isEmpty())".

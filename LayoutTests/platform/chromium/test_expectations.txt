@@ -719,8 +719,7 @@ BUGWK75647 : http/tests/inspector/network/download.html = PASS CRASH TIMEOUT
 
 BUGWK75916 SKIP LINUX : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TEXT TIMEOUT
 
-BUGWK78810 LINUX WIN RELEASE : inspector/debugger/script-formatter-console.html = PASS TEXT
-BUGWK78810 LINUX WIN DEBUG SLOW : inspector/debugger/script-formatter-console.html = PASS TEXT
+BUGWK78810 LINUX WIN DEBUG SLOW : inspector/debugger/script-formatter-console.html = PASS
 
 // -----------------------------------------------------------------
 // Editing tests

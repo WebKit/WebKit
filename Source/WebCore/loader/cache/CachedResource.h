@@ -31,6 +31,7 @@
 #include "ResourceLoadPriority.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -110,8 +111,8 @@ public:
     void setLoadPriority(ResourceLoadPriority);
 
     void addClient(CachedResourceClient*);
-    virtual void removeClient(CachedResourceClient*);
-    bool hasClients() const { return !m_clients.isEmpty(); }
+    void removeClient(CachedResourceClient*);
+    bool hasClients() const { return !m_clients.isEmpty() || !m_clientsAwaitingCallback.isEmpty(); }
     void deleteIfPossible();
 
     enum PreloadResult {
@@ -254,6 +255,22 @@ protected:
     
     HashCountedSet<CachedResourceClient*> m_clients;
 
+    class CachedResourceCallback {
+    public:
+        static PassOwnPtr<CachedResourceCallback> schedule(CachedResource* resource, CachedResourceClient* client) { return adoptPtr(new CachedResourceCallback(resource, client)); }
+        void cancel();
+    private:
+        CachedResourceCallback(CachedResource*, CachedResourceClient*);
+        void timerFired(Timer<CachedResourceCallback>*);
+
+        CachedResource* m_resource;
+        CachedResourceClient* m_client;
+        Timer<CachedResourceCallback> m_callbackTimer;
+    };
+    HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback> > m_clientsAwaitingCallback;
+
+    bool hasClient(CachedResourceClient* client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
+
     ResourceRequest m_resourceRequest;
     String m_accept;
     RefPtr<SubresourceLoader> m_loader;
@@ -267,7 +284,7 @@ protected:
     OwnPtr<PurgeableBuffer> m_purgeableData;
 
 private:
-    void addClientToSet(CachedResourceClient*);
+    bool addClientToSet(CachedResourceClient*);
 
     virtual PurgePriority purgePriority() const { return PurgeDefault; }
 
