@@ -12,7 +12,7 @@ function throwError() {
 var object = {
    nonInlineable : function nonInlineable() {
        if (0) return [arguments, function(){}];
-       if (++callCount == 9999999) {
+       if (++callCount == 999999) {
            var f = nonInlineable;
            while (f) {
                resultArray.push(f.name);
@@ -25,7 +25,7 @@ var object = {
    }
 }
 function makeInlinableCall(o) {
-   for (var i = 0; i < 10000; i++)
+   for (var i = 0; i < 1000; i++)
        o.inlineable();
 }
 
