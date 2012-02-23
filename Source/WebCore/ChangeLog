@@ -1,3 +1,17 @@
+2012-02-22  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] Align supplementName() values.
+        https://bugs.webkit.org/show_bug.cgi?id=79311
+
+        Reviewed by Adam Barth.
+
+        No new tests. No behavioral change.
+
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::supplementName):
+        * mediastream/UserMediaController.cpp:
+        (WebCore::UserMediaController::supplementName):
+
 2012-02-22  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r108602.

@@ -139,7 +139,7 @@ void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* 
 
 const AtomicString& DeviceOrientationController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("deviceOrientation"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceOrientationController"));
     return name;
 }
 
