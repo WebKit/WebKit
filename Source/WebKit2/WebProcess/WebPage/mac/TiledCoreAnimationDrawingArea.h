@@ -61,6 +61,7 @@ private:
 
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
+    virtual void setDeviceScaleFactor(float) OVERRIDE;
 
     void setRootCompositingLayer(CALayer *);
 

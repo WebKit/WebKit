@@ -184,6 +184,11 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
+void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    m_webPage->setDeviceScaleFactor(deviceScaleFactor);
+}
+
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 {
     ASSERT(!m_layerTreeStateIsFrozen);

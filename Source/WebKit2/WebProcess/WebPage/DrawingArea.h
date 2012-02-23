@@ -105,6 +105,7 @@ private:
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) { }
+    virtual void setDeviceScaleFactor(float deviceScaleFactor) { }
 #endif
 };
 

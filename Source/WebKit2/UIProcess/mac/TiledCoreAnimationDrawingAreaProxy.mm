@@ -53,7 +53,7 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    // FIXME: Implement.
+    m_webPageProxy->process()->send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_webPageProxy->pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()

@@ -1,3 +1,26 @@
+2012-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Implement TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=79297
+        <rdar://problem/10748510>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange):
+        Send a message to the web process.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setDeviceScaleFactor):
+        Add empty stub.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add SetDeviceScaleFactor message.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setDeviceScaleFactor):
+        Call WebPage::setDeviceScaleFactor.
+
 2012-02-22  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10406044> and https://bugs.webkit.org/show_bug.cgi?id=79279
