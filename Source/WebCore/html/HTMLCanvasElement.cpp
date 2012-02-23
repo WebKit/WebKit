@@ -274,7 +274,8 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 {
     ASSERT(m_context);
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    return true;
+    if (m_context->is2d())
+        return true;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
