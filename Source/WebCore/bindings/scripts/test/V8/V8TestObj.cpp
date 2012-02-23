@@ -1963,7 +1963,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestObj", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
+    defaultSignature = configureTemplate(desc, "TestObject", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
         TestObjAttrs, WTF_ARRAY_LENGTH(TestObjAttrs),
         TestObjCallbacks, WTF_ARRAY_LENGTH(TestObjCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

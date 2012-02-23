@@ -23,7 +23,8 @@ module window {
     interface [
         JSGenerateIsReachable=ImplFrame,
         NamedGetter,
-        IndexedGetter
+        IndexedGetter,
+        InterfaceName=MimeTypeArray
     ] DOMMimeTypeArray {
         readonly attribute unsigned long length;
         DOMMimeType item(in [Optional=DefaultIsUndefined] unsigned long index);

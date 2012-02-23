@@ -31,7 +31,8 @@
 // changes in its ouput.
 module test {
     interface [
-        Constructor
+        Constructor,
+        InterfaceName=TestObject
     ] TestObj {
         // Attributes
         readonly attribute long            readOnlyIntAttr;

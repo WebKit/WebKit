@@ -20,7 +20,9 @@
 
 module window {
 
-    interface DOMMimeType {
+    interface [
+        InterfaceName=MimeType
+    ] DOMMimeType {
         readonly attribute DOMString type;
         readonly attribute DOMString suffixes;
         readonly attribute DOMString description;

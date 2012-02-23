@@ -54,6 +54,7 @@ ExtendsDOMGlobalObject
 Immutable
 ImplementedAs=*
 IndexedGetter
+InterfaceName=*
 InitializedByEventConstructor
 IsIndex
 IsWorkerContext

@@ -187,7 +187,7 @@ COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrong
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 
-const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &Base::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
+const ClassInfo JSTestObjConstructor::s_info = { "TestObjectConstructor", &Base::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -302,7 +302,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 };
 
 static const HashTable JSTestObjPrototypeTable = { 266, 255, JSTestObjPrototypeTableValues, 0 };
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
@@ -321,7 +321,7 @@ bool JSTestObjPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* e
     return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, descriptor);
 }
 
-const ClassInfo JSTestObj::s_info = { "TestObj", &Base::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
+const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
     : JSDOMWrapper(structure, globalObject)

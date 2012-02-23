@@ -189,20 +189,6 @@ sub GetParentClassName
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
-sub GetVisibleClassName
-{
-    my $className = shift;
-
-    return "DOMException" if $className eq "DOMCoreException";
-    return "FormData" if $className eq "DOMFormData";
-    return "MimeType" if $className eq "DOMMimeType";
-    return "MimeTypeArray" if $className eq "DOMMimeTypeArray";
-    return "Plugin" if $className eq "DOMPlugin";
-    return "PluginArray" if $className eq "DOMPluginArray";
-    
-    return $className;
-}
-
 sub GetCallbackClassName
 {
     my $className = shift;
@@ -1323,7 +1309,7 @@ sub GenerateImplementation
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
-    my $visibleClassName = GetVisibleClassName($interfaceName);
+    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
     my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
     my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
 
@@ -1412,7 +1398,7 @@ sub GenerateImplementation
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
 
         my $protoClassName = "${className}Prototype";
-        GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode);
+        GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $dataNode);
         if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
             GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $dataNode->extendedAttributes->{"NamedConstructor"}, $dataNode, "GeneratingNamedConstructor");
         }
@@ -1478,9 +1464,9 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}PrototypeTable);\n");
         push(@implContent, "}\n\n");
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &Base::s_info, 0, get${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, get${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
     if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
@@ -1539,7 +1525,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", &Base::s_info, ");
+    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
     if ($numAttributes > 0 && !$dataNode->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "&${className}Table");
@@ -3373,7 +3359,7 @@ sub GenerateConstructorDefinition
     my $className = shift;
     my $protoClassName = shift;
     my $interfaceName = shift;
-    my $visibleClassName = shift;
+    my $visibleInterfaceName = shift;
     my $dataNode = shift;
     my $generatingNamedConstructor = shift;
 
@@ -3388,13 +3374,13 @@ sub GenerateConstructorDefinition
     }
 
     if ($generatingNamedConstructor) {
-        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@$outputArray, "    : DOMConstructorWithDocument(structure, globalObject)\n");
         push(@$outputArray, "{\n");
         push(@$outputArray, "}\n\n");
     } else {
-        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
         push(@$outputArray, "{\n");

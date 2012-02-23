@@ -22,7 +22,8 @@ module window {
 
     interface [
         NamedGetter,
-        IndexedGetter
+        IndexedGetter,
+        InterfaceName=Plugin
     ] DOMPlugin {
         readonly attribute DOMString name;
         readonly attribute DOMString filename;

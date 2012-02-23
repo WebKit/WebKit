@@ -33,7 +33,8 @@ module html {
     interface [
         CustomConstructor,
         JSGenerateToNativeObject,
-        JSGenerateToJSObject
+        JSGenerateToJSObject,
+        InterfaceName=FormData
     ] DOMFormData {
         // void append(DOMString name, DOMString value);
         // void append(DOMString name, Blob value, optional DOMString filename);

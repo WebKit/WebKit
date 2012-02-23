@@ -2224,7 +2224,7 @@ sub GenerateImplementation
     my $object = shift;
     my $dataNode = shift;
     my $interfaceName = $dataNode->name;
-    my $visibleInterfaceName = GetVisibleInterfaceName($interfaceName);
+    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
     my $className = "V8$interfaceName";
     my $implClassName = $interfaceName;
 
@@ -3781,15 +3781,6 @@ sub WriteData
     $codeGenerator->UpdateFile($headerFileName, $contents);
 
     @headerContent = ();
-}
-
-sub GetVisibleInterfaceName
-{
-    my $interfaceName = shift;
-
-    return "DOMException" if $interfaceName eq "DOMCoreException";
-    return "FormData" if $interfaceName eq "DOMFormData";
-    return $interfaceName;
 }
 
 sub GetCallbackClassName

@@ -23,7 +23,8 @@ module window {
     interface [
         JSGenerateIsReachable=ImplFrame,
         NamedGetter,
-        IndexedGetter
+        IndexedGetter,
+        InterfaceName=PluginArray
     ] DOMPluginArray {
         readonly attribute unsigned long length;
         DOMPlugin item(in [Optional=DefaultIsUndefined] unsigned long index);

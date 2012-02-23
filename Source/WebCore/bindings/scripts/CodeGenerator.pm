@@ -653,4 +653,14 @@ sub ExtendedAttributeContains
     return grep { $_ eq $keyword } @callWithKeywords;
 }
 
+# FIXME: This is backwards. We currently name the interface and the IDL files with the implementation name. We
+# should use the real interface name in the IDL files and then use ImplementedAs to map this to the implementation name.
+sub GetVisibleInterfaceName
+{
+    my $object = shift;
+    my $dataNode = shift;
+    my $interfaceName = $dataNode->extendedAttributes->{"InterfaceName"};
+    return $interfaceName ? $interfaceName : $dataNode->name;
+}
+
 1;
