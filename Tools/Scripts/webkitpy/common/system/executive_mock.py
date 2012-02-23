@@ -63,7 +63,7 @@ class MockExecutive(object):
                 env_string = ", env=%s" % env
             log("MOCK run_and_throw_if_fail: %s, cwd=%s%s" % (args, cwd, env_string))
         if self._should_throw_when_run.intersection(args):
-            raise ScriptError("Exception for %s" % args)
+            raise ScriptError("Exception for %s" % args, output="MOCK command output")
         return "MOCK output of child process"
 
     def run_command(self,

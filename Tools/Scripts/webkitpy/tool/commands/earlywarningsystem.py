@@ -32,10 +32,11 @@ from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
+from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch
 from webkitpy.tool.bot.queueengine import QueueEngine
-from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate, UnableToApplyPatch
 from webkitpy.tool.commands.queues import AbstractReviewQueue
 
 

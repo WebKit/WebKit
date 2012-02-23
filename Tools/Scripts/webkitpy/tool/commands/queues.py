@@ -46,9 +46,11 @@ from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
-from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
-from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
+from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
+from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch
+from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
+from webkitpy.tool.bot.stylequeuetask import StyleQueueTask, StyleQueueTaskDelegate
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
@@ -408,35 +410,43 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         log(script_error.message_with_output())
 
 
-class StyleQueue(AbstractReviewQueue):
+class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
     name = "style-queue"
+
     def __init__(self):
         AbstractReviewQueue.__init__(self)
 
     def should_proceed_with_work_item(self, patch):
-        self._update_status("Checking style", patch)
         return True
 
     def review_patch(self, patch):
+        task = StyleQueueTask(self, patch)
         try:
-            # Run the style checks.
-            self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
-        finally:
-            # Apply the watch list.
-            try:
-                self.run_webkit_patch(["apply-watchlist-local", patch.bug_id()])
-            except ScriptError, e:
-                # Don't turn the style bot block red due to watchlist errors.
-                pass
-
+            return task.run()
+        except UnableToApplyPatch, e:
+            self._did_error(patch, "%s unable to apply patch." % self.name)
+            return False
+        except ScriptError, e:
+            message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (patch.id(), self.name, e.output)
+            self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
+            self._did_fail(patch)
+            return False
         return True
 
-    @classmethod
-    def handle_script_error(cls, tool, state, script_error):
-        is_svn_apply = script_error.command_name() == "svn-apply"
-        status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
-        if is_svn_apply:
-            QueueEngine.exit_after_handled_error(script_error)
-        message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (state["patch"].id(), cls.name, script_error.message_with_output(output_limit=3*1024))
-        tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
-        sys.exit(1)
+    # StyleQueueTaskDelegate methods
+
+    def run_command(self, command):
+        self.run_webkit_patch(command)
+
+    def command_passed(self, message, patch):
+        self._update_status(message, patch=patch)
+
+    def command_failed(self, message, script_error, patch):
+        failure_log = self._log_from_script_error_for_upload(script_error)
+        return self._update_status(message, patch=patch, results_file=failure_log)
+
+    def expected_failures(self):
+        return None
+
+    def refetch_patch(self, patch):
+        return self._tool.bugs.fetch_attachment(patch.id())

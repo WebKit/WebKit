@@ -1,3 +1,43 @@
+2012-02-23  Adam Barth  <abarth@webkit.org>
+
+        style-queue shouldn't spam bugs if it fails to update its working copy
+        https://bugs.webkit.org/show_bug.cgi?id=79412
+
+        Reviewed by Eric Seidel.
+
+        This patch moves style-queue over to the new PatchAnalysisTask
+        infrastructure, which is smarter about retrying patches when update
+        fails.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_and_throw_if_fail):
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (UnableToApplyPatch):
+        (UnableToApplyPatch.__init__):
+        (PatchAnalysisTask.__init__):
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py: Added.
+        (StyleQueueTaskDelegate):
+        (StyleQueueTaskDelegate.parent_command):
+        (StyleQueueTask):
+        (StyleQueueTask.validate):
+        (StyleQueueTask._check_style):
+        (StyleQueueTask._apply_watch_list):
+        (StyleQueueTask.run):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (StyleQueue):
+        (StyleQueue.should_proceed_with_work_item):
+        (StyleQueue.review_patch):
+        (StyleQueue.run_command):
+        (StyleQueue.command_passed):
+        (StyleQueue.command_failed):
+        (StyleQueue.expected_failures):
+        (StyleQueue.refetch_patch):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (StyleQueueTest.test_style_queue_with_style_exception):
+        (test_style_queue_with_watch_list_exception):
+
 2012-02-23  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Allow to use WebCore imagedecoders

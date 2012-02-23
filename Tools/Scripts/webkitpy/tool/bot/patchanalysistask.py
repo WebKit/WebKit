@@ -30,6 +30,12 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 
 
+class UnableToApplyPatch(Exception):
+    def __init__(self, patch):
+        Exception.__init__(self)
+        self.patch = patch
+
+
 class PatchAnalysisTaskDelegate(object):
     def parent_command(self):
         raise NotImplementedError("subclasses must implement")
@@ -71,7 +77,6 @@ class PatchAnalysisTask(object):
         self._results_archive_from_patch_test_run = None
         self._results_from_patch_test_run = None
         self._expected_failures = delegate.expected_failures()
-        assert(self._expected_failures)
 
     def _run_command(self, command, success_message, failure_message):
         try:

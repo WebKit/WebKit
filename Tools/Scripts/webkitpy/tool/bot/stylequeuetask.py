@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,38 +29,42 @@
 from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, UnableToApplyPatch
 
 
-class EarlyWarningSystemTaskDelegate(PatchAnalysisTaskDelegate):
-    pass
+class StyleQueueTaskDelegate(PatchAnalysisTaskDelegate):
+    def parent_command(self):
+        return "style-queue"
 
 
-class EarlyWarningSystemTask(PatchAnalysisTask):
-    def __init__(self, delegate, patch, should_run_tests=True):
-        PatchAnalysisTask.__init__(self, delegate, patch)
-        self._should_run_tests = should_run_tests
-
+class StyleQueueTask(PatchAnalysisTask):
     def validate(self):
-        self._patch = self._delegate.refetch_patch(self._patch)
-        if self._patch.is_obsolete():
-            return False
-        if self._patch.bug().is_closed():
-            return False
-        if self._patch.review() == "-":
-            return False
         return True
 
+    def _check_style(self):
+        return self._run_command([
+            "check-style",
+            "--no-clean",
+            "--no-update",
+            "--non-interactive",
+            self._patch.id(),
+        ],
+        "ChangeLog validated",
+        "ChangeLog did not pass validation")
+
+    def _apply_watch_list(self):
+        return self._run_command([
+            "apply-watchlist-local",
+            self._patch.bug_id(),
+        ],
+        "ChangeLog validated",
+        "ChangeLog did not pass validation")
+
     def run(self):
-        if not self.validate():
-            return False
         if not self._clean():
             return False
         if not self._update():
             return False
         if not self._apply():
             raise UnableToApplyPatch(self._patch)
-        if not self._build():
-            if not self._build_without_patch():
-                return False
+        self._apply_watch_list()
+        if not self._check_style():
             return self.report_failure()
-        if not self._should_run_tests:
-            return True
-        return self._test_patch()
+        return True
