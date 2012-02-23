@@ -1,3 +1,17 @@
+2012-02-22  Nate Chapin  <japhet@chromium.org>
+
+        CachedResourceLoader ignores the Range header
+        in determineRavlidationPolicy(), resulting in incorrect
+        cache hits.
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/xmlhttprequest/range-test.html
+        Test written by Aaron Colwell (acolwell@chromium.org).
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
 2012-02-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r104060): Web font is not loaded if specified by link element dynamically inserted

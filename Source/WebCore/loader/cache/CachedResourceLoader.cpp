@@ -531,6 +531,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // of things about how revalidation works that manual headers violate, so punt to Reload instead.
     if (request.isConditional())
         return Reload;
+
+    // Re-using resources in the case of a Range header is very simple if the headers are identical and
+    // much tougher if they aren't.
+    if (existingResource->resourceRequest().httpHeaderField("Range") != request.httpHeaderField("Range"))
+        return Reload;
     
     // Don't reload resources while pasting.
     if (m_allowStaleResources)
