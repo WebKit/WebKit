@@ -677,3 +677,12 @@ void EventSender::postEvent(QObject* receiver, QEvent* event)
     } else
         QApplication::postEvent(receiver, event); // event deleted by the system
 }
+
+void EventSender::gestureTap(int x, int y)
+{
+    addTouchPoint(x, y);
+    touchStart();
+    releaseTouchPoint(0);
+    touchEnd();
+}
+
