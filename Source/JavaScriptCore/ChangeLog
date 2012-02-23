@@ -1,3 +1,17 @@
+2012-02-23  Yong Li  <yoli@rim.com>
+
+        JSString::outOfMemory() should ASSERT(isRope()) rather than !isRope()
+        https://bugs.webkit.org/show_bug.cgi?id=79268
+
+        Reviewed by Michael Saboff.
+
+        resolveRope() is the only caller of outOfMemory(), and it calls outOfMemory()
+        after it fails to allocate a buffer for m_value. So outOfMemory() should assert
+        isRope() rather than !isRope().
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::outOfMemory):
+
 2012-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS macro

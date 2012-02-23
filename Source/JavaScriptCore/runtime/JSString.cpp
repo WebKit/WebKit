@@ -189,7 +189,7 @@ void JSString::outOfMemory(ExecState* exec) const
 {
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
         m_fibers[i].clear();
-    ASSERT(!isRope());
+    ASSERT(isRope());
     ASSERT(m_value == UString());
     if (exec)
         throwOutOfMemoryError(exec);
