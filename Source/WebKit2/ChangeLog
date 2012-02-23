@@ -1,3 +1,27 @@
+2012-02-22  Michael Tyutyunik  <michael.tyutyunik@nokia.com>
+
+        [Qt][WK2] navigationType is missing in new API
+        https://bugs.webkit.org/show_bug.cgi?id=78867
+
+        Reviewed by Simon Hausmann.
+
+        In QtWebPagePolicyClient::decidePolicyForNavigationAction()
+        navigationType argument is dropped by mistake. Adding it back
+        and make it available through NavigationRequest.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebnavigationrequest.cpp:
+        (QWebNavigationRequestPrivate::QWebNavigationRequestPrivate):
+        (QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::QWebNavigationRequest):
+        (QWebNavigationRequest::navigationType):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h:
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        (toQuickWebViewNavigationType):
+        * UIProcess/qt/QtWebPagePolicyClient.h:
+        (QtWebPagePolicyClient):
+
 2012-02-22  Anders Carlsson  <andersca@apple.com>
 
         Implement TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange

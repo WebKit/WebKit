@@ -76,6 +76,7 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
     Q_ENUMS(NavigationRequestAction)
     Q_ENUMS(ErrorDomain)
+    Q_ENUMS(NavigationType)
 
 public:
     enum NavigationRequestAction {
@@ -89,6 +90,16 @@ public:
         HttpErrorDomain,
         DownloadErrorDomain
     };
+
+    enum NavigationType {
+        LinkClickedNavigation,
+        FormSubmittedNavigation,
+        BackForwardNavigation,
+        ReloadNavigation,
+        FormResubmittedNavigation,
+        OtherNavigation
+    };
+
     QQuickWebView(QQuickItem* parent = 0);
     virtual ~QQuickWebView();
 

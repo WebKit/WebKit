@@ -20,6 +20,7 @@
 #ifndef qwebnavigationrequest_p_h
 #define qwebnavigationrequest_p_h
 
+#include "qquickwebview_p.h"
 #include "qwebkitglobal.h"
 
 #include <QtCore/QObject>
@@ -34,9 +35,11 @@ class QWEBKIT_EXPORT QWebNavigationRequest : public QObject {
     Q_PROPERTY(int button READ button CONSTANT FINAL)
     Q_PROPERTY(int modifiers READ modifiers CONSTANT FINAL)
     Q_PROPERTY(int action READ action WRITE setAction NOTIFY actionChanged FINAL)
+    Q_PROPERTY(QQuickWebView::NavigationType navigationType READ navigationType CONSTANT FINAL)
 
 public:
-    QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent = 0);
+    QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers,
+                          QQuickWebView::NavigationType navigationType, QObject* parent = 0);
     ~QWebNavigationRequest();
 
     QUrl url() const;
@@ -46,6 +49,7 @@ public:
     int action() const;
 
     void setAction(int action);
+    QQuickWebView::NavigationType navigationType() const;
 
 Q_SIGNALS:
     void actionChanged();

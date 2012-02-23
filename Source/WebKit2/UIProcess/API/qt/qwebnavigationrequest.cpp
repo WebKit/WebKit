@@ -25,12 +25,14 @@
 
 class QWebNavigationRequestPrivate {
 public:
-    QWebNavigationRequestPrivate(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+    QWebNavigationRequestPrivate(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button,
+                                 Qt::KeyboardModifiers modifiers, QQuickWebView::NavigationType navigationType)
         : url(url)
         , originatingUrl(originatingUrl)
         , button(button)
         , modifiers(modifiers)
         , action(QQuickWebView::AcceptRequest)
+        , navigationType(navigationType)
     {
     }
 
@@ -43,11 +45,13 @@ public:
     Qt::MouseButton button;
     Qt::KeyboardModifiers modifiers;
     int action;
+    QQuickWebView::NavigationType navigationType;
 };
 
-QWebNavigationRequest::QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent)
+QWebNavigationRequest::QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button,
+                                             Qt::KeyboardModifiers modifiers, QQuickWebView::NavigationType navigationType, QObject* parent)
     : QObject(parent)
-    , d(new QWebNavigationRequestPrivate(url, originatingUrl, button, modifiers))
+    , d(new QWebNavigationRequestPrivate(url, originatingUrl, button, modifiers, navigationType))
 {
 }
 
@@ -90,3 +94,7 @@ int QWebNavigationRequest::action() const
     return int(d->action);
 }
 
+QQuickWebView::NavigationType QWebNavigationRequest::navigationType() const
+{
+    return d->navigationType;
+}
