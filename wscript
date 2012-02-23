@@ -148,7 +148,8 @@ def build(bld):
             'Source/WebCore/bindings/cpp/WebDOMEventTarget.cpp',
             'Source/WebCore/platform/KillRingNone.cpp',
             'Source/WebCore/platform/text/LocalizedDateNone.cpp',
-            'Source/WebCore/platform/text/LocalizedNumberNone.cpp'
+            'Source/WebCore/platform/text/LocalizedNumberNone.cpp',
+            'Source/WebCore/page/scrolling/ScrollingCoordinatorNone.cpp',
         ]  
     
         if building_on_win32:
