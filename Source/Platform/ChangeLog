@@ -1,3 +1,45 @@
+2012-02-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebGraphicsContext3D header into the Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=79301
+
+        Reviewed by Adam Barth.
+
+        Moves WebGraphicsContext3D and WebNonCopyable (which WGC3D depends on).
+
+        * Platform.gypi:
+        * chromium/public/WebGraphicsContext3D.h: Copied from Source/WebKit/chromium/public/platform/WebGraphicsContext3D.h.
+        (WebKit):
+        (WebGraphicsContext3D):
+        (ActiveInfo):
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        (Attributes):
+        (WebGraphicsContextLostCallback):
+        (WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback::~WebGraphicsContextLostCallback):
+        (WebGraphicsErrorMessageCallback):
+        (WebKit::WebGraphicsContext3D::WebGraphicsErrorMessageCallback::~WebGraphicsErrorMessageCallback):
+        (WebGraphicsSwapBuffersCompleteCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM::~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM):
+        (WebGraphicsMemoryAllocationChangedCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM::~WebGraphicsMemoryAllocationChangedCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::~WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::setMemoryAllocationChangedCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::setParentContext):
+        (WebKit::WebGraphicsContext3D::setSwapBuffersCompleteCallbackCHROMIUM):
+        (WebKit::WebGraphicsContext3D::rateLimitOffscreenContextCHROMIUM):
+        (WebKit::WebGraphicsContext3D::setContextLostCallback):
+        (WebKit::WebGraphicsContext3D::setErrorMessageCallback):
+        (WebKit::WebGraphicsContext3D::getGraphicsResetStatusARB):
+        (WebKit::WebGraphicsContext3D::getTranslatedShaderSourceANGLE):
+        (WebKit::WebGraphicsContext3D::texImageIOSurface2DCHROMIUM):
+        (WebKit::WebGraphicsContext3D::texStorage2DEXT):
+        (WebKit::WebGraphicsContext3D::onCreateGrGLInterface):
+        * chromium/public/WebNonCopyable.h: Copied from Source/WebKit/chromium/public/platform/WebNonCopyable.h.
+        (WebKit):
+        (WebNonCopyable):
+        (WebKit::WebNonCopyable::WebNonCopyable):
+        (WebKit::WebNonCopyable::~WebNonCopyable):
+
 2012-02-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move Web*Layer* headers into Platform
