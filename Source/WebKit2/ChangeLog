@@ -1,3 +1,15 @@
+2012-02-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Wrong signal name on emission in WebKitWindowProperties.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=79352
+
+        Reviewed by Philippe Normand.
+
+        Emit the signal 'resizable' instead of 'resizable-visible'.
+
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        (webkitWindowPropertiesSetResizable): Use right signal name.
+
 2012-02-23  Anders Carlsson  <andersca@apple.com>
 
         Flush layer changes after layout when resizing web page

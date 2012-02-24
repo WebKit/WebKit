@@ -377,7 +377,7 @@ void webkitWindowPropertiesSetResizable(WebKitWindowProperties* windowProperties
     if (windowProperties->priv->resizable == resizable)
         return;
     windowProperties->priv->resizable = resizable;
-    g_object_notify(G_OBJECT(windowProperties), "resizable-visible");
+    g_object_notify(G_OBJECT(windowProperties), "resizable");
 }
 
 void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowProperties, bool fullscreen)
