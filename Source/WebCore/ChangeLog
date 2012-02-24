@@ -1,3 +1,22 @@
+2012-02-24  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Little optimization in CSSParser::parseShorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=79356
+
+        Reviewed by Tony Chang.
+
+        Remove one loop by initializing array values at declaration time.
+        Also early return when the number of properties parsed are equals
+        with longhands count of the shorthand. It happens to be very often
+        the case (e.g. border). Instruments shows an improvement from 19ms
+        to 17ms on the time spent in this function for the css-parser-yui
+        benchmark.
+
+        No new tests : refactor, exisiting ones should cover.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShorthand):
+
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
         Move HTML-related APIs from DOMWindow.idl to DOMWindowHTML.idl

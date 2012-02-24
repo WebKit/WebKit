@@ -2678,16 +2678,15 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     ShorthandScope scope(this, propId);
 
     bool found = false;
-    bool fnd[6]; // Trust me ;)
-    for (int i = 0; i < numProperties; i++)
-        fnd[i] = false;
+    int propertiesParsed = 0;
+    bool fnd[6]= { false, false, false, false, false, false }; // 6 is enough size.
 
     while (m_valueList->current()) {
         found = false;
         for (int propIndex = 0; !found && propIndex < numProperties; ++propIndex) {
-            if (!fnd[propIndex]) {
-                if (parseValue(properties[propIndex], important))
+            if (!fnd[propIndex] && parseValue(properties[propIndex], important)) {
                     fnd[propIndex] = found = true;
+                    propertiesParsed++;
             }
         }
 
@@ -2696,6 +2695,9 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
         if (!found)
             return false;
     }
+
+    if (propertiesParsed == numProperties)
+        return true;
 
     // Fill in any remaining properties with the initial value.
     ImplicitScope implicitScope(this, PropertyImplicit);
