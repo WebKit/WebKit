@@ -1585,7 +1585,7 @@ static bool joinRequiresMitre(BoxSide side, BoxSide adjacentSide, const BorderEd
 }
 
 void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-    const LayoutRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdge edges[], const Path* path,
+    const IntRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdge edges[], const Path* path,
     BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
     const BorderEdge& edgeToRender = edges[side];
@@ -1630,9 +1630,9 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
     }
 }
 
-static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdge edges[], int side)
+static IntRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdge edges[], int side)
 {
-    LayoutRect sideRect = outerBorder.rect();
+    IntRect sideRect = outerBorder.rect();
     int width = edges[side].width;
 
     if (side == BSTop)
@@ -1658,7 +1658,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         roundedPath.addRoundedRect(outerBorder);
     
     if (edges[BSTop].shouldRender() && includesEdge(edgeSet, BSTop)) {
-        LayoutRect sideRect = outerBorder.rect();
+        IntRect sideRect = outerBorder.rect();
         sideRect.setHeight(edges[BSTop].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
@@ -1666,7 +1666,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
     }
 
     if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
-        LayoutRect sideRect = outerBorder.rect();
+        IntRect sideRect = outerBorder.rect();
         sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
@@ -1674,7 +1674,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
     }
 
     if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
-        LayoutRect sideRect = outerBorder.rect();
+        IntRect sideRect = outerBorder.rect();
         sideRect.setWidth(edges[BSLeft].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
@@ -1682,7 +1682,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
     }
 
     if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
-        LayoutRect sideRect = outerBorder.rect();
+        IntRect sideRect = outerBorder.rect();
         sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
@@ -1811,7 +1811,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             for (int i = BSTop; i <= BSLeft; ++i) {
                 const BorderEdge& currEdge = edges[i];
                 if (currEdge.shouldRender()) {
-                    LayoutRect sideRect = calculateSideRect(outerBorder, edges, i);
+                    IntRect sideRect = calculateSideRect(outerBorder, edges, i);
                     path.addRect(sideRect);
                 }
             }
@@ -2433,9 +2433,9 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
     graphicsContext->clipConvexPolygon(4, secondQuad, !secondEdgeMatches);
 }
 
-static LayoutRect calculateSideRectIncludingInner(const RoundedRect& outerBorder, const BorderEdge edges[], BoxSide side)
+static IntRect calculateSideRectIncludingInner(const RoundedRect& outerBorder, const BorderEdge edges[], BoxSide side)
 {
-    LayoutRect sideRect = outerBorder.rect();
+    IntRect sideRect = outerBorder.rect();
     int width;
 
     switch (side) {

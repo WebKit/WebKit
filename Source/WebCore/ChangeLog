@@ -1,3 +1,44 @@
+2012-02-23  Levi Weintraub  <leviw@chromium.org>
+
+        Switch drawLineForBoxSide to use integers
+        https://bugs.webkit.org/show_bug.cgi?id=78647
+
+        Reviewed by Eric Seidel.
+
+        drawLineForBoxSide handles painting lines for boxes which must be done on pixel boundaries.
+        Its interface doesn't make it possible to pixel snap properly within the function itself --
+        it draws one side of the box at a time, and the logical right and bottom lines can only be
+        properly determined using the logical top and left positions -- so it needs to be treated 
+        like a graphics context function, whereby the caller handles the proper pixel snapping before
+        passing the values in.
+
+        No new tests. No change in behavior.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::pixelSnappedIntRectFromEdges): convenience function for returning a pixel snapped
+        int rect from four LayoutUnits that are its edges (as opposed to position and size).
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules): Pixel snapping the column rule rect.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintOneBorderSide): Side rects are now IntRects by the time
+        they get to paintOneBorderSide.
+        (WebCore::calculateSideRect): Properly use RoundedRect as IntRects instead of LayoutRects.
+        (WebCore::RenderBoxModelObject::paintBorderSides): Ditto.
+        (WebCore::RenderBoxModelObject::paintBorder): Ditto.
+        (WebCore::calculateSideRectIncludingInner): Ditto.
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine): Outline widths are related to borders and stored
+        as ints. Removing an unnecessary conversion to LayoutUnits. Pixel snapping the edges of the box.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide): Moving back to integers and removing an
+        unnecessary pixelSnappedIntRect call.
+        (WebCore::RenderObject::paintOutline): Pixel snapping the column rule rect and using an integer
+        for outlineOffset.
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-02-23  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to platform/graphics/IntPoint.h

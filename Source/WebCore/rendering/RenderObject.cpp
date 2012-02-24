@@ -807,7 +807,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
     return false;
 }
 
-void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2,
+void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
                                       BoxSide side, Color color, EBorderStyle style,
                                       int adjacentWidth1, int adjacentWidth2, bool antialias)
 {
@@ -982,7 +982,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
                 // this matters for rects in transformed contexts.
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->drawRect(pixelSnappedIntRect(LayoutRect(x1, y1, x2 - x1, y2 - y1)));
+                graphicsContext->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
                 graphicsContext->setShouldAntialias(wasAntialiased);
                 graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;
@@ -1141,7 +1141,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
 
     Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
-    LayoutUnit outlineOffset = styleToUse->outlineOffset();
+    int outlineOffset = styleToUse->outlineOffset();
 
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
@@ -1153,10 +1153,10 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
-    LayoutRect inner = paintRect;
+    IntRect inner = pixelSnappedIntRect(paintRect);
     inner.inflate(outlineOffset);
 
-    LayoutRect outer = inner;
+    IntRect outer = pixelSnappedIntRect(inner);
     outer.inflate(outlineWidth);
 
     // FIXME: This prevents outlines from painting inside the object. See bug 12042
@@ -1178,14 +1178,14 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
         outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
     }
 
-    LayoutUnit leftOuter = outer.x();
-    LayoutUnit leftInner = inner.x();
-    LayoutUnit rightOuter = outer.maxX();
-    LayoutUnit rightInner = inner.maxX();
-    LayoutUnit topOuter = outer.y();
-    LayoutUnit topInner = inner.y();
-    LayoutUnit bottomOuter = outer.maxY();
-    LayoutUnit bottomInner = inner.maxY();
+    int leftOuter = outer.x();
+    int leftInner = inner.x();
+    int rightOuter = outer.maxX();
+    int rightInner = inner.maxX();
+    int topOuter = outer.y();
+    int topInner = inner.y();
+    int bottomOuter = outer.maxY();
+    int bottomInner = inner.maxY();
     
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, leftInner, bottomOuter, BSLeft, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);
