@@ -1,3 +1,19 @@
+2012-02-24  Daniel Bates  <dbates@webkit.org>
+
+        Substitute ENABLE(CLASSIC_INTERPRETER) for ENABLE(INTERPRETER) in Interpreter.cpp
+
+        Reviewed by Oliver Hunt.
+
+        There are a few places in Interpreter.cpp that need to be updated to use
+        ENABLE(CLASSIC_INTERPRETER) following the renaming of ENABLE_INTERPRETER to
+        ENABLE_CLASSIC_INTERPRETER in changeset <http://trac.webkit.org/changeset/108020>
+        (https://bugs.webkit.org/show_bug.cgi?id=78791).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC::getCallerInfo):
+        (JSC::getSourceURLFromCallFrame):
+
 2012-02-24  Adam Roben  <aroben@apple.com>
 
         Undo the BUILDING_WTF part of r108808

@@ -823,7 +823,7 @@ static int getLineNumberForCallFrame(CallFrame* callFrame)
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
         return -1;
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
     if (!globalData->canUseJIT())
         return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode() - 1);
 #endif
@@ -854,7 +854,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     if (callframeIsHost) {
         // Don't need to deal with inline callframes here as by definition we haven't
         // inlined a call with an intervening native call frame.
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (!globalData->canUseJIT()) {
             bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
             lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
@@ -870,7 +870,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
             bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
 #endif
     } else {
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
         if (!globalData->canUseJIT()) {
             bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnVPC());
             lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
@@ -914,7 +914,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
 static ALWAYS_INLINE const UString getSourceURLFromCallFrame(CallFrame* callFrame) 
 {
     ASSERT(!callFrame->hasHostCallFrameFlag());
-#if ENABLE(INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER)
 #if ENABLE(JIT)
     if (callFrame->globalData().canUseJIT())
         return callFrame->codeBlock()->ownerExecutable()->sourceURL();
