@@ -393,7 +393,7 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        log(script_error.message_with_output())
+        log(script_error.output)
 
 
 class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
@@ -404,6 +404,9 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
 
     def review_patch(self, patch):
         task = StyleQueueTask(self, patch)
+        if not task.validate():
+            self._did_error(patch, "%s did not process patch." % self.name)
+            return False
         try:
             return task.run()
         except UnableToApplyPatch, e:

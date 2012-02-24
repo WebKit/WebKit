@@ -1,3 +1,34 @@
+2012-02-24  Adam Barth  <abarth@webkit.org>
+
+        style-queue tries to apply the patch twice
+        https://bugs.webkit.org/show_bug.cgi?id=79459
+
+        Reviewed by Eric Seidel.
+
+        Previously, we applied the patch using both apply-patch and
+        check-style.  This patch introduces a check-style-local to mirror the
+        apply-watchlist-local, which operates on the current working diff.
+
+        This patch also cleans up some other bugs I found by running the queue
+        locally for a while.  The queue still prints out a slightly
+        less-than-ideal message on the bugs when it find an error, but it's ok
+        for now.  We'll need to iterate a bit.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask.validate):
+        (StyleQueueTask._check_style):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (CheckStyleLocal):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest._default_expected_stderr):
+        (EarlyWarningSytemTest._test_testing_ews):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractReviewQueue.handle_script_error):
+        (StyleQueue.review_patch):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        (QueuesTest.assert_queue_outputs):
+
 2012-02-23  Adam Barth  <abarth@webkit.org>
 
         should_proceed_with_work_item is unused and can be removed

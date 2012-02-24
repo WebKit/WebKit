@@ -36,15 +36,20 @@ class StyleQueueTaskDelegate(PatchAnalysisTaskDelegate):
 
 class StyleQueueTask(PatchAnalysisTask):
     def validate(self):
+        self._patch = self._delegate.refetch_patch(self._patch)
+        if self._patch.is_obsolete():
+            return False
+        if self._patch.bug().is_closed():
+            return False
+        if self._patch.review() == "-":
+            return False
         return True
 
     def _check_style(self):
         return self._run_command([
-            "check-style",
-            "--no-clean",
-            "--no-update",
+            "check-style-local",
             "--non-interactive",
-            self._patch.id(),
+            "--quiet",
         ],
         "Style checked",
         "Patch did not pass style check")

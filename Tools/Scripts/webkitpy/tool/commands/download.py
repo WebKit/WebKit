@@ -128,6 +128,14 @@ class LandCowboy(AbstractSequencedCommand):
         options.check_style_filter = "-changelog"
 
 
+class CheckStyleLocal(AbstractSequencedCommand):
+    name = "check-style-local"
+    help_text = "Run check-webkit-style on the current working directory diff"
+    steps = [
+        steps.CheckStyle,
+    ]
+
+
 class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.
