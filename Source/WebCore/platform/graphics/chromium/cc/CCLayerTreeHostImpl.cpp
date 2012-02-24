@@ -229,6 +229,8 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
 void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
 {
+    TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::optimizeRenderPasses", "passes.size()", static_cast<long long unsigned>(passes.size()));
+
     bool haveDamageRect = layerRendererCapabilities().usingPartialSwap;
 
     for (unsigned i = 0; i < passes.size(); ++i) {

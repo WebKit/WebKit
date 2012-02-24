@@ -1,3 +1,19 @@
+2012-02-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Avoid culling work for fully-non-opaque tiles, and add tracing for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=79183
+
+        Reviewed by James Robinson.
+
+        Addresses performance issues with draw culling by avoiding the work
+        of mapRect and other function calls when the quad has no opaque area.
+        And adds a TRACE_EVENT to watch the time spent in draw culling.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::optimizeRenderPasses):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+
 2012-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts panel navigator overlay should be shown automatically only one time.

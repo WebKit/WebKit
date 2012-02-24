@@ -96,20 +96,21 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, 
 
         IntRect transformedVisibleQuadRect = rectSubtractRegion(opaqueCoverageThusFar, transformedQuadRect);
         bool keepQuad = !transformedVisibleQuadRect.isEmpty();
+        if (!keepQuad)
+            continue;
 
         // See if we can reduce the number of pixels to draw by reducing the size of the draw
         // quad - we do this by changing its visible rect.
-        if (keepQuad && transformedVisibleQuadRect != transformedQuadRect && drawQuad->isLayerAxisAlignedIntRect())
+        if (transformedVisibleQuadRect != transformedQuadRect && drawQuad->isLayerAxisAlignedIntRect())
             drawQuad->setQuadVisibleRect(drawQuad->quadTransform().inverse().mapRect(transformedVisibleQuadRect));
 
         // When adding rect to opaque region, deflate it to stay conservative.
-        if (keepQuad && drawQuad->isLayerAxisAlignedIntRect()) {
+        if (drawQuad->isLayerAxisAlignedIntRect() && !drawQuad->opaqueRect().isEmpty()) {
             FloatRect floatOpaqueRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->opaqueRect()));
             opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatOpaqueRect)));
         }
 
-        if (keepQuad)
-            culledList.append(quadList[i].release());
+        culledList.append(quadList[i].release());
     }
     quadList.clear(); // Release anything that remains.
 
