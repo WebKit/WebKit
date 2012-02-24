@@ -418,7 +418,7 @@ WebCore::IntRect LayerTreeHostQt::visibleContentsRect() const
     return m_visibleContentsRect;
 }
 
-void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float scale)
+void LayerTreeHostQt::setVisibleContentsRectForScaling(const IntRect& rect, float scale)
 {
     m_visibleContentsRect = rect;
     m_contentsScale = scale;
@@ -431,7 +431,7 @@ void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float s
     scheduleLayerFlush();
 }
 
-void LayerTreeHostQt::setVisibleContentRectTrajectoryVector(const IntRect& rect, const FloatPoint& trajectoryVector)
+void LayerTreeHostQt::setVisibleContentsRectForPanning(const IntRect& rect, const FloatPoint& trajectoryVector)
 {
     m_visibleContentsRect = rect;
 

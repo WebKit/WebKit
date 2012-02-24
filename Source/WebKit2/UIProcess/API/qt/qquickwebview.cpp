@@ -468,7 +468,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
     // whether its fixed or not. We still need to tell the drawing area which part of it
     // has to be rendered on tiles, and in desktop mode it's all of it.
-    webPageProxy->drawingArea()->setVisibleContentsRectAndScale(IntRect(IntPoint(), viewportSize), 1);
+    webPageProxy->drawingArea()->setVisibleContentsRectForScaling(IntRect(IntPoint(), viewportSize), 1);
 }
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
@@ -535,8 +535,8 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
-    QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), q, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
-    QObject::connect(interactionEngine.data(), SIGNAL(visibleContentRectAndScaleChanged()), q, SLOT(_q_updateVisibleContentRectAndScale()));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentWasMoved(const QPointF&)), q, SLOT(_q_commitPositionChange(const QPointF&)));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentWasScaled()), q, SLOT(_q_commitScaleChange()));
 
     _q_resume();
 
@@ -599,10 +599,10 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     webPageProxy->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
-    _q_updateVisibleContentRectAndScale();
+    _q_commitScaleChange();
 }
 
-void QQuickWebViewFlickablePrivate::_q_updateVisibleContentRectAndScale()
+void QQuickWebViewFlickablePrivate::_q_commitScaleChange()
 {
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
@@ -616,13 +616,12 @@ void QQuickWebViewFlickablePrivate::_q_updateVisibleContentRectAndScale()
     q->experimental()->viewportInfo()->didUpdateCurrentScale();
 
     QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
-    drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
+    drawingArea->setVisibleContentsRectForScaling(alignedVisibleContentRect, scale);
 
-    // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
     webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
-void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
+void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVector)
 {
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
@@ -632,7 +631,12 @@ void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& tra
     const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
 
     QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
-    drawingArea->setVisibleContentRectTrajectoryVector(alignedVisibleContentRect, trajectoryVector);
+    drawingArea->setVisibleContentsRectForPanning(alignedVisibleContentRect, trajectoryVector);
+
+    if (!trajectoryVector.isNull())
+        return;
+
+    webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
 void QQuickWebViewFlickablePrivate::_q_suspend()
@@ -652,7 +656,8 @@ void QQuickWebViewFlickablePrivate::_q_resume()
         postTransitionState->apply();
     }
 
-    _q_updateVisibleContentRectAndScale();
+    // FIXME: Revise this.
+    _q_commitScaleChange();
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)

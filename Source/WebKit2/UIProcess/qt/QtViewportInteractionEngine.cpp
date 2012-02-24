@@ -78,7 +78,7 @@ public:
         emit engine->contentResumeRequested();
 
         // Make sure that tiles all around the viewport will be requested.
-        emit engine->viewportTrajectoryVectorChanged(QPointF());
+        emit engine->contentWasMoved(QPointF());
     }
 
 private:
@@ -220,7 +220,7 @@ void QtViewportInteractionEngine::flickableMovingPositionUpdate()
 {
     QPointF newPosition = m_flickProvider->contentPos();
 
-    emit viewportTrajectoryVectorChanged(m_lastScrollPosition - newPosition);
+    emit contentWasMoved(m_lastScrollPosition - newPosition);
 
     m_lastScrollPosition = newPosition;
 }
@@ -273,9 +273,11 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
 
     QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
 
-    m_flickProvider->setContentPos(-boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight()));
+    QPointF currentPosition = m_flickProvider->contentPos();
+    QPointF newPosition = -boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight());
+    m_flickProvider->setContentPos(newPosition);
 
-    emit visibleContentRectAndScaleChanged();
+    emit contentWasMoved(currentPosition - newPosition);
 }
 
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
@@ -511,7 +513,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     m_pinchStartScale = m_content->contentsScale();
 
     // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
-    emit viewportTrajectoryVectorChanged(QPointF());
+    emit contentWasMoved(QPointF());
 }
 
 void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)

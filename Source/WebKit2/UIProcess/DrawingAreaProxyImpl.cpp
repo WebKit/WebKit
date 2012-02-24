@@ -348,16 +348,16 @@ void DrawingAreaProxyImpl::didReceiveLayerTreeHostProxyMessage(CoreIPC::Connecti
         m_layerTreeHostProxy->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
 }
 
-void DrawingAreaProxyImpl::setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale)
+void DrawingAreaProxyImpl::setVisibleContentsRectForScaling(const WebCore::IntRect& visibleContentsRect, float scale)
 {
     if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->setVisibleContentsRectAndScale(visibleContentsRect, scale);
+        m_layerTreeHostProxy->setVisibleContentsRectForScaling(visibleContentsRect, scale);
 }
 
-void DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
+void DrawingAreaProxyImpl::setVisibleContentsRectForPanning(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
 {
     if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->setVisibleContentRectTrajectoryVector(visibleContentsRect, trajectoryVector);
+        m_layerTreeHostProxy->setVisibleContentsRectForPanning(visibleContentsRect, trajectoryVector);
 }
 
 void DrawingAreaProxyImpl::paintLayerTree(BackingStore::PlatformGraphicsContext context)

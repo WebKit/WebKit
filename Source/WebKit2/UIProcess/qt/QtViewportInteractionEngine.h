@@ -103,6 +103,9 @@ Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();
 
+    void contentWasMoved(const QPointF& trajectoryVector);
+    void contentWasScaled();
+
     void viewportTrajectoryVectorChanged(const QPointF&);
     void visibleContentRectAndScaleChanged();
 

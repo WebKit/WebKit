@@ -73,8 +73,8 @@ public:
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
-    virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float scale);
-    virtual void setVisibleContentRectTrajectoryVector(const WebCore::IntRect&, const WebCore::FloatPoint&);
+    virtual void setVisibleContentsRectForScaling(const WebCore::IntRect&, float scale);
+    virtual void setVisibleContentsRectForPanning(const WebCore::IntRect&, const WebCore::FloatPoint&);
     virtual void didSyncCompositingStateForLayer(const WebLayerInfo&);
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);

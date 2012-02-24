@@ -1,3 +1,52 @@
+2012-02-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Tiling: Improve the method names dealing with moving and scaling.
+
+        Rubberstamped by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_commitScaleChange):
+        (QQuickWebViewPrivate::_q_commitPositionChange):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::_q_commitScaleChange):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setVisibleContentsRectForScaling):
+        (WebKit::DrawingAreaProxy::setVisibleContentsRectForPanning):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRectForScaling):
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRectForPanning):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRectForPanning):
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRectForScaling):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::flickableMovingPositionUpdate):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setVisibleContentsRectForScaling):
+        (WebKit::LayerTreeHost::setVisibleContentsRectForPanning):
+        (WebKit::LayerTreeHost::setVisibleContentsRectForLayer):
+        * WebProcess/WebPage/LayerTreeHost.messages.in:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setVisibleContentsRectForScaling):
+        (WebKit::LayerTreeHostQt::setVisibleContentsRectForPanning):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-02-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] Destructor not invoked in EditorClientFrameDestructionObserver

@@ -563,16 +563,16 @@ void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
     pushUpdateToQueue(DestroyImageMessage::create(data));
 }
 
-void LayerTreeHostProxy::setVisibleContentRectTrajectoryVector(const IntRect& rect, const FloatPoint& trajectoryVector)
+void LayerTreeHostProxy::setVisibleContentsRectForPanning(const IntRect& rect, const FloatPoint& trajectoryVector)
 {
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectTrajectoryVector(rect, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRectForPanning(rect, trajectoryVector), m_drawingAreaProxy->page()->pageID());
 }
 
-void LayerTreeHostProxy::setVisibleContentsRectAndScale(const IntRect& rect, float scale)
+void LayerTreeHostProxy::setVisibleContentsRectForScaling(const IntRect& rect, float scale)
 {
     m_visibleContentsRect = rect;
     m_contentsScale = scale;
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectAndScale(rect, scale), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRectForScaling(rect, scale), m_drawingAreaProxy->page()->pageID());
 }
 
 void LayerTreeHostProxy::purgeGLResources()

@@ -84,11 +84,13 @@ public:
     virtual QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
     virtual void updateViewportSize() { }
     void updateTouchViewportSize();
-    virtual void _q_updateVisibleContentRectAndScale() { }
 
     virtual void _q_suspend() { }
     virtual void _q_resume() { }
-    void _q_viewportTrajectoryVectorChanged(const QPointF&);
+
+    virtual void _q_commitScaleChange() { }
+    void _q_commitPositionChange(const QPointF&);
+
     void _q_onOpenPanelFilesSelected();
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
@@ -185,9 +187,10 @@ public:
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args);
     virtual QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
     virtual void updateViewportSize();
-    virtual void _q_updateVisibleContentRectAndScale();
+
     virtual void _q_suspend();
     virtual void _q_resume();
+    virtual void _q_commitScaleChange();
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);

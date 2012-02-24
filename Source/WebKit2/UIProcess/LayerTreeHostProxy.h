@@ -57,8 +57,8 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void purgeGLResources();
-    void setVisibleContentsRectAndScale(const WebCore::IntRect&, float);
-    void setVisibleContentRectTrajectoryVector(const WebCore::IntRect&, const WebCore::FloatPoint&);
+    void setVisibleContentsRectForScaling(const WebCore::IntRect&, float);
+    void setVisibleContentsRectForPanning(const WebCore::IntRect&, const WebCore::FloatPoint&);
 #if USE(TILED_BACKING_STORE)
     void syncRemoteContent();
     void swapContentBuffers();
