@@ -848,7 +848,8 @@ WebInspector.DetailedHeapshotView.prototype = {
     _inspectedObjectChanged: function(event)
     {
         var selectedNode = event.target.selectedNode;
-        ConsoleAgent.addInspectedObject(selectedNode.snapshotNodeId);
+        if (selectedNode instanceof WebInspector.HeapSnapshotGenericObjectNode)
+            ConsoleAgent.addInspectedHeapObject(selectedNode.snapshotNodeId);
     },
 
     _setRetainmentDataGridSource: function(nodeItem)

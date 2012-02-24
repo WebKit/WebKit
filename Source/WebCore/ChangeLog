@@ -1,3 +1,17 @@
+2012-02-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: exception in front-end on selecting an element in heap snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=79447
+
+        Fixed a typo in method name and added a check that selected node has
+        corresponding heap snapshot object before adding that object to the console
+        as $0 entry.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._inspectedObjectChanged):
+
 2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: hide color picker upon panel switch.
