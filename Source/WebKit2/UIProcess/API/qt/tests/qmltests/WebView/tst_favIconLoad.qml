@@ -1,20 +1,15 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
 
     SignalSpy {
         id: spy
         target: webView
         signalName: "iconChanged"
-    }
-
-    SignalSpy {
-        id: loadSpy
-        target: webView
-        signalName: "loadSucceeded"
     }
 
     Image {
@@ -31,9 +26,8 @@ WebView {
                 // If this is not the first test, then load a blank page without favicon, restoring the initial state.
                 webView.load('about:blank')
                 spy.wait()
-                loadSpy.wait()
+                verify(webView.waitForLoadSucceeded())
             }
-            loadSpy.clear()
             spy.clear()
         }
 

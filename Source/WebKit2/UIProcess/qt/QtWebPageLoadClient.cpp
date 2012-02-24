@@ -24,6 +24,7 @@
 #include "WKStringQt.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
+#include "qwebloadrequest_p.h"
 #include <WKFrame.h>
 
 QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webView)
@@ -49,10 +50,10 @@ QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webVi
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }
 
-void QtWebPageLoadClient::didStartProvisionalLoadForFrame()
+void QtWebPageLoadClient::didStartProvisionalLoadForFrame(const QUrl& url)
 {
-    emit m_webView->navigationStateChanged();
-    emit m_webView->loadStarted();
+    QWebLoadRequest loadRequest(url, QQuickWebView::LoadStartedStatus);
+    m_webView->d_func()->didChangeLoadingState(&loadRequest);
 }
 
 void QtWebPageLoadClient::didCommitLoadForFrame(const QUrl& url)
@@ -90,14 +91,16 @@ void QtWebPageLoadClient::dispatchLoadSucceeded()
 
 void QtWebPageLoadClient::dispatchLoadFailed(WKErrorRef error)
 {
-    emit m_webView->navigationStateChanged();
-
     int errorCode = WKErrorGetErrorCode(error);
-    if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad)
+    if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad) {
+        // Make sure that LoadStartedStatus has a counterpart when e.g. requesting a download.
+        dispatchLoadSucceeded();
         return;
+    }
 
     QtWebError qtError(error);
-    emit m_webView->loadFailed(static_cast<QQuickWebView::ErrorDomain>(qtError.type()), qtError.errorCode(), qtError.url(), qtError.description());
+    QWebLoadRequest loadRequest(qtError.url(), QQuickWebView::LoadFailedStatus, qtError.description(), static_cast<QQuickWebView::ErrorDomain>(qtError.type()), qtError.errorCode());
+    emit m_webView->loadingChanged(&loadRequest);
 }
 
 void QtWebPageLoadClient::setLoadProgress(int loadProgress)
@@ -116,7 +119,10 @@ void QtWebPageLoadClient::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef 
 {
     if (!WKFrameIsMainFrame(frame))
         return;
-    toQtWebPageLoadClient(clientInfo)->didStartProvisionalLoadForFrame();
+    WebFrameProxy* wkframe = toImpl(frame);
+    QString urlStr(wkframe->provisionalURL());
+    QUrl qUrl = urlStr;
+    toQtWebPageLoadClient(clientInfo)->didStartProvisionalLoadForFrame(qUrl);
 }
 
 void QtWebPageLoadClient::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)

@@ -2,9 +2,10 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 1.0
+import "../common"
 
 Item {
-    WebView {
+    TestWebView {
         id: webView
         property variant lastMessage
         experimental.preferences.navigatorQtObjectEnabled: true
@@ -13,7 +14,7 @@ Item {
         }
     }
 
-    WebView {
+    TestWebView {
         id: otherWebView
         property variant lastMessage
         experimental.preferences.navigatorQtObjectEnabled: true
@@ -22,7 +23,7 @@ Item {
         }
     }
 
-    WebView {
+    TestWebView {
         id: disabledWebView
         property bool receivedMessage
         experimental.preferences.navigatorQtObjectEnabled: false
@@ -32,21 +33,9 @@ Item {
     }
 
     SignalSpy {
-        id: loadSpy
-        target: webView
-        signalName: "loadSucceeded"
-    }
-
-    SignalSpy {
         id: messageSpy
         target: webView.experimental
         signalName: "messageReceived"
-    }
-
-    SignalSpy {
-        id: otherLoadSpy
-        target: otherWebView
-        signalName: "loadSucceeded"
     }
 
     SignalSpy {
@@ -55,28 +44,20 @@ Item {
         signalName: "messageReceived"
     }
 
-    SignalSpy {
-        id: disabledWebViewLoadSpy
-        target: disabledWebView
-        signalName: "loadSucceeded"
-    }
-
     TestCase {
         name: "DesktopWebViewMessaging"
         property url testUrl: Qt.resolvedUrl("../common/messaging.html")
 
         function init() {
-            loadSpy.clear()
             messageSpy.clear()
             webView.lastMessage = null
-            otherLoadSpy.clear()
             otherMessageSpy.clear()
             otherWebView.lastMessage = null
         }
 
         function test_basic() {
             webView.load(testUrl)
-            loadSpy.wait()
+            verify(webView.waitForLoadSucceeded())
             webView.experimental.postMessage("HELLO")
             messageSpy.wait()
             compare(webView.lastMessage.data, "OLLEH")
@@ -86,8 +67,8 @@ Item {
         function test_twoWebViews() {
             webView.load(testUrl)
             otherWebView.load(testUrl)
-            loadSpy.wait()
-            otherLoadSpy.wait()
+            verify(webView.waitForLoadSucceeded())
+            verify(otherWebView.waitForLoadSucceeded())
             webView.experimental.postMessage("FIRST")
             otherWebView.experimental.postMessage("SECOND")
             messageSpy.wait()
@@ -99,7 +80,7 @@ Item {
         function test_disabled() {
             disabledWebView.load(testUrl)
             verify(!disabledWebView.experimental.preferences.navigatorQtObjectEnabled)
-            disabledWebViewLoadSpy.wait()
+            verify(disabledWebView.waitForLoadSucceeded())
             disabledWebView.experimental.postMessage("HI")
             wait(1000)
             verify(!disabledWebView.receivedMessage)

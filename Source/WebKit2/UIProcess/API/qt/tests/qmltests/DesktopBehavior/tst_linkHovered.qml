@@ -1,8 +1,9 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
     width: 200
     height: 400
@@ -15,12 +16,6 @@ WebView {
         id: spy
         target: webView
         signalName: "linkHovered"
-    }
-
-    SignalSpy {
-        id: loadSpy
-        target: webView
-        signalName: "loadSucceeded"
     }
 
     onLinkHovered: {
@@ -49,7 +44,7 @@ WebView {
         function test_linkHovered() {
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/test2.html"))
-            loadSpy.wait()
+            verify(webView.waitForLoadSucceeded())
             mouseMove(webView, 100, 100)
             spy.wait()
             compare(spy.count, 1)
@@ -65,7 +60,7 @@ WebView {
         function test_linkHoveredDoesntEmitRepeated() {
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/test2.html"))
-            loadSpy.wait()
+            verify(webView.waitForLoadSucceeded())
 
             for (var i = 0; i < 100; i += 10)
                 mouseMove(webView, 100, 100 + i)

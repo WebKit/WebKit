@@ -22,10 +22,14 @@
 #include <QSignalSpy>
 #include <QTimer>
 
+class QQuickWebView;
+
 #if !defined(TESTS_SOURCE_DIR)
 #define TESTS_SOURCE_DIR ""
 #endif
 
 void addQtWebProcessToPath();
 bool waitForSignal(QObject*, const char* signal, int timeout = 10000);
+bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
+bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
 void suppressDebugOutput();

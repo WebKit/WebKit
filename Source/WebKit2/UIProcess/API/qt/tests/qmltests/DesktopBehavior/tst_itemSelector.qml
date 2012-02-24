@@ -2,10 +2,11 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 1.0
+import "../common"
 
 // FIXME: Moved to Desktop tests because we want to have mouseClick() to open the <select> tag. We can move it back
 // when TestCase starts supporting touch events, see https://bugreports.qt.nokia.com/browse/QTBUG-23083.
-WebView {
+TestWebView {
     id: webView
 
     width: 400
@@ -37,12 +38,6 @@ WebView {
     }
 
     SignalSpy {
-        id: loadSpy
-        target: webView
-        signalName: "loadSucceeded"
-    }
-
-    SignalSpy {
         id: titleSpy
         target: webView
         signalName: "titleChanged"
@@ -58,9 +53,8 @@ WebView {
             webView.finalSelection = -1
             webView.useAcceptDirectly = false
             webView.selectorLoaded = false
-            loadSpy.clear()
             webView.load(Qt.resolvedUrl("../common/select.html"))
-            loadSpy.wait()
+            verify(webView.waitForLoadSucceeded())
             titleSpy.clear()
         }
 

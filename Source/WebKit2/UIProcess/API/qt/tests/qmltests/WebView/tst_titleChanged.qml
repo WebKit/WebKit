@@ -1,17 +1,12 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
     width: 400
     height: 300
-
-    SignalSpy {
-        id: spy
-        target: webView
-        signalName: "loadSucceeded"
-    }
 
     SignalSpy {
         id: spyTitle
@@ -26,6 +21,7 @@ WebView {
             compare(spyTitle.count, 0)
             var testUrl = Qt.resolvedUrl("../common/test3.html")
             webView.load(testUrl)
+            verify(webView.waitForLoadSucceeded())
             spyTitle.wait()
             compare(webView.title, "Test page 3")
             spyTitle.wait()

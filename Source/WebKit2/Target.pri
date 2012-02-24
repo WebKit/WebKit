@@ -174,6 +174,7 @@ HEADERS += \
     UIProcess/API/qt/qwebdownloaditem_p_p.h \
     UIProcess/API/qt/qwebpermissionrequest_p.h \
     UIProcess/API/qt/qtwebsecurityorigin_p.h \
+    UIProcess/API/qt/qwebloadrequest_p.h \
     UIProcess/API/qt/qwebnavigationrequest_p.h \
     UIProcess/API/qt/qquickwebpage_p.h \
     UIProcess/API/qt/qquickwebpage_p_p.h \
@@ -503,6 +504,7 @@ SOURCES += \
     UIProcess/API/qt/qwebdownloaditem.cpp \
     UIProcess/API/qt/qwebpermissionrequest.cpp \
     UIProcess/API/qt/qtwebsecurityorigin.cpp \
+    UIProcess/API/qt/qwebloadrequest.cpp \
     UIProcess/API/qt/qwebnavigationrequest.cpp \
     UIProcess/API/qt/qquickwebpage.cpp \
     UIProcess/API/qt/qwebnavigationhistory.cpp \

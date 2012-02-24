@@ -18,6 +18,8 @@
 */
 
 #include "util.h"
+#include "qquickwebview_p.h"
+#include "qwebloadrequest_p.h"
 #include <stdio.h>
 
 void addQtWebProcessToPath()
@@ -50,6 +52,58 @@ bool waitForSignal(QObject* obj, const char* signal, int timeout)
     return timeoutSpy.isEmpty();
 }
 
+class LoadSpy : public QEventLoop {
+    Q_OBJECT
+public:
+    LoadSpy(QQuickWebView* webView)
+    {
+        connect(webView, SIGNAL(loadingChanged(QWebLoadRequest*)), SLOT(onLoadingChanged(QWebLoadRequest*)));
+    }
+signals:
+    void loadSucceeded();
+    void loadFailed();
+private slots:
+    void onLoadingChanged(QWebLoadRequest* loadRequest)
+    {
+        if (loadRequest->status() == QQuickWebView::LoadSucceededStatus)
+            emit loadSucceeded();
+        else if (loadRequest->status() == QQuickWebView::LoadFailedStatus)
+            emit loadFailed();
+    }
+};
+
+bool waitForLoadSucceeded(QQuickWebView* webView, int timeout)
+{
+    QEventLoop loop;
+    LoadSpy loadSpy(webView);
+    QObject::connect(&loadSpy, SIGNAL(loadSucceeded()), &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
+
+bool waitForLoadFailed(QQuickWebView* webView, int timeout)
+{
+    QEventLoop loop;
+    LoadSpy loadSpy(webView);
+    QObject::connect(&loadSpy, SIGNAL(loadFailed()), &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
+
 static void messageHandler(QtMsgType type, const char* message)
 {
     if (type == QtCriticalMsg) {
@@ -65,3 +119,5 @@ void suppressDebugOutput()
     if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty()) \
         qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
 }
+
+#include "util.moc"

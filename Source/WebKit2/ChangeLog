@@ -1,3 +1,89 @@
+2012-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] API: Unify the loading properties and signals.
+        https://bugs.webkit.org/show_bug.cgi?id=79486
+
+        Reviewed by Simon Hausmann.
+
+        - Remove the canReload signal, instead assume that calling reload in those cases
+          won't have any effect.
+        - Replace loadStarted, loadSucceeded and loadFailed by a single signal: loadingChanged.
+          The signal carries an argument with a status and error codes giving the intended context.
+        - Use loadingChanged as the notification signal for the property "loading" instead of
+          navigationStateChanged.
+
+        Also update all API tests to use the new loading signals and add some utility functions
+        to track the loading since the new API aims to be more adapted to declarative logic
+        and the auto tests are using an imperative logic.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::loadDidSucceed):
+        (QQuickWebViewPrivate::didChangeLoadingState):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/qwebloadrequest.cpp: Added.
+        (QWebLoadRequestPrivate):
+        (QWebLoadRequestPrivate::QWebLoadRequestPrivate):
+        (QWebLoadRequest::QWebLoadRequest):
+        (QWebLoadRequest::~QWebLoadRequest):
+        (QWebLoadRequest::url):
+        (QWebLoadRequest::status):
+        (QWebLoadRequest::errorString):
+        (QWebLoadRequest::errorDomain):
+        (QWebLoadRequest::errorCode):
+        * UIProcess/API/qt/qwebloadrequest_p.h: Added.
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_itemSelector.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_loadHtml.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_javaScriptDialogs.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadHtml.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_navigationHistory.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_properties.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_titleChanged.qml:
+        * UIProcess/API/qt/tests/qmltests/common/TestWebView.qml: Added.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::navigationStatusAtStartup):
+        (LoadStartedCatcher::LoadStartedCatcher):
+        (LoadStartedCatcher::onLoadingChanged):
+        (tst_QQuickWebView::stopEnabledAfterLoadStarted):
+        (tst_QQuickWebView::loadEmptyPageViewHidden):
+        (tst_QQuickWebView::loadNonexistentFileUrl):
+        (tst_QQuickWebView::backAndForward):
+        (tst_QQuickWebView::reload):
+        (tst_QQuickWebView::stop):
+        (tst_QQuickWebView::loadProgress):
+        (tst_QQuickWebView::showWebView):
+        (tst_QQuickWebView::multipleWebViewWindows):
+        (tst_QQuickWebView::multipleWebViews):
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/API/qt/tests/util.cpp:
+        (LoadSpy):
+        (LoadSpy::LoadSpy):
+        (LoadSpy::onLoadingChanged):
+        (waitForLoadSucceeded):
+        (waitForLoadFailed):
+        * UIProcess/API/qt/tests/util.h:
+        * UIProcess/qt/QtWebError.h:
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::didStartProvisionalLoadForFrame):
+        (QtWebPageLoadClient::dispatchLoadFailed):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (QtWebPageLoadClient):
+
 2012-02-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r108798.

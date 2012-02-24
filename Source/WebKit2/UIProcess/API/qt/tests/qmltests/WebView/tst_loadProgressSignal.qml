@@ -1,17 +1,12 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
     width: 400
     height: 300
-
-    SignalSpy {
-        id: spy
-        target: webView
-        signalName: "loadSucceeded"
-    }
 
     SignalSpy {
         id: spyProgress
@@ -29,7 +24,7 @@ WebView {
             spyProgress.wait()
             compare(true, webView.loadProgress > -1 && webView.loadProgress < 101)
             if (webView.loadProgress > 0 && webView.loadProgress < 100) {
-                spy.wait()
+                verify(webView.waitForLoadSucceeded())
                 spyProgress.wait()
                 compare(webView.loadProgress, 100)
             }

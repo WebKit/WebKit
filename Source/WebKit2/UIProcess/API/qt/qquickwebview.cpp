@@ -38,6 +38,7 @@
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p_p.h"
+#include "qwebloadrequest_p.h"
 #include "qwebnavigationhistory_p.h"
 #include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p.h"
@@ -79,6 +80,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , userDidOverrideContentHeight(false)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
+    , m_loadStartedSignalSent(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
@@ -146,8 +148,9 @@ QPointF QQuickWebViewPrivate::pageItemPos()
 void QQuickWebViewPrivate::loadDidSucceed()
 {
     Q_Q(QQuickWebView);
-    emit q->navigationStateChanged();
-    emit q->loadSucceeded();
+    ASSERT(!q->loading());
+    QWebLoadRequest loadRequest(q->url(), QQuickWebView::LoadSucceededStatus);
+    emit q->loadingChanged(&loadRequest);
 }
 
 void QQuickWebViewPrivate::setNeedsDisplay()
@@ -173,6 +176,14 @@ void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const
     setIcon(iconURL);
 }
 
+void QQuickWebViewPrivate::didChangeLoadingState(QWebLoadRequest* loadRequest)
+{
+    Q_Q(QQuickWebView);
+    ASSERT(q->loading() == (loadRequest->status() == QQuickWebView::LoadStartedStatus));
+    emit q->loadingChanged(loadRequest);
+    m_loadStartedSignalSent = loadRequest->status() == QQuickWebView::LoadStartedStatus;
+}
+
 void QQuickWebViewPrivate::didChangeBackForwardList()
 {
     navigationHistory->d->reset();
@@ -180,15 +191,17 @@ void QQuickWebViewPrivate::didChangeBackForwardList()
 
 void QQuickWebViewPrivate::processDidCrash()
 {
-    emit q_ptr->navigationStateChanged();
     pageView->eventHandler()->resetGestureRecognizers();
-    WebCore::KURL url(WebCore::ParsedURLString, webPageProxy->urlAtProcessExit());
-    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
+    QUrl url(KURL(WebCore::ParsedURLString, webPageProxy->urlAtProcessExit()));
+    if (m_loadStartedSignalSent) {
+        QWebLoadRequest loadRequest(url, QQuickWebView::LoadFailedStatus, QLatin1String("The web process crashed."), QQuickWebView::InternalErrorDomain, 0);
+        didChangeLoadingState(&loadRequest);
+    }
+    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(url.toString(QUrl::RemoveUserInfo)));
 }
 
 void QQuickWebViewPrivate::didRelaunchProcess()
 {
-    emit q_ptr->navigationStateChanged();
     qWarning("WARNING: The web process has been successfully restarted.");
     pageView->d->setDrawingAreaSize(viewSize());
 }
@@ -1177,15 +1190,6 @@ bool QQuickWebView::loading() const
     Q_D(const QQuickWebView);
     RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
     return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-}
-
-bool QQuickWebView::canReload() const
-{
-    Q_D(const QQuickWebView);
-    RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
-    if (mainFrame)
-        return (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-    return d->webPageProxy->backForwardList()->currentItem();
 }
 
 QPointF QQuickWebView::mapToWebContent(const QPointF& pointInViewCoordinates) const

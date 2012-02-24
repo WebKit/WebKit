@@ -2,17 +2,12 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 1.0
+import "../common"
 
-WebView {
+TestWebView {
     id: webView
     width: 400
     height: 300
-
-    SignalSpy {
-        id: spy
-        target: webView
-        signalName: "loadSucceeded"
-    }
 
     ListView {
         id: backItemsList
@@ -40,64 +35,56 @@ WebView {
         name: "WebViewNavigationHistory"
 
         function test_navigationHistory() {
-            compare(spy.count, 0)
             compare(webView.loadProgress, 0)
             webView.load(Qt.resolvedUrl("../common/test1.html"))
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.canGoBack, false)
             compare(webView.canGoForward, false)
             compare(backItemsList.count, 0)
             compare(forwardItemsList.count, 0)
-            spy.clear()
             webView.load(Qt.resolvedUrl("../common/test2.html"))
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/test2.html"))
             compare(webView.canGoBack, true)
             compare(webView.canGoForward, false)
             compare(backItemsList.count, 1)
-            spy.clear()
             webView.experimental.goBackTo(0)
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/test1.html"))
             compare(webView.canGoBack, false)
             compare(webView.canGoForward, true)
             compare(backItemsList.count, 0)
             compare(forwardItemsList.count, 1)
-            spy.clear()
             webView.goForward()
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/test2.html"))
             compare(webView.canGoBack, true)
             compare(webView.canGoForward, false)
             compare(backItemsList.count, 1)
             compare(forwardItemsList.count, 0)
-            spy.clear()
             webView.load(Qt.resolvedUrl("../common/javascript.html"))
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/javascript.html"))
             compare(webView.canGoBack, true)
             compare(webView.canGoForward, false)
             compare(backItemsList.count, 2)
             compare(forwardItemsList.count, 0)
-            spy.clear()
             webView.experimental.goBackTo(1)
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/test1.html"))
             compare(webView.canGoBack, false)
             compare(webView.canGoForward, true)
             compare(backItemsList.count, 0)
             compare(forwardItemsList.count, 2)
-            spy.clear()
             webView.experimental.goForwardTo(1)
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/javascript.html"))
             compare(webView.canGoBack, true)
             compare(webView.canGoForward, false)
             compare(backItemsList.count, 2)
             compare(forwardItemsList.count, 0)
-            spy.clear()
             webView.goBack()
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.url, Qt.resolvedUrl("../common/test2.html"))
             compare(webView.canGoBack, true)
             compare(webView.canGoForward, true)

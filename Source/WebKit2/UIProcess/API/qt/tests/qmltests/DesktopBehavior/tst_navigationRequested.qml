@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 1.0
+import "../common"
 
 Item {
     property int expectedLength: 0
@@ -11,7 +12,7 @@ Item {
     property url beginUrl: Qt.resolvedUrl("../common/test2.html")
     property url endUrl: Qt.resolvedUrl("../common/test1.html")
 
-    WebView {
+    TestWebView {
         id: webView
         width: 200
         height: 200
@@ -45,20 +46,8 @@ Item {
         }
     }
 
-    SignalSpy {
-        id: spy
-        target: webView
-        signalName: "loadSucceeded"
-    }
-
-    WebView {
+    TestWebView {
         id: otherWebView
-    }
-
-    SignalSpy {
-        id: otherSpy
-        target: otherWebView
-        signalName: "loadSucceeded"
     }
 
     SignalSpy {
@@ -86,8 +75,6 @@ Item {
         }
 
         function init() {
-            spy.clear()
-            otherSpy.clear()
             downloadSpy.clear()
             downloadFinishedSpy.clear()
             shouldDownload = false
@@ -96,25 +83,19 @@ Item {
 
         function test_usePolicy() {
             webView.load(beginUrl)
-            spy.wait()
-            spy.clear()
+            verify(webView.waitForLoadSucceeded())
             mouseClick(webView, 100, 100, Qt.LeftButton)
-            spy.wait()
-            compare(spy.count, 1)
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Test page 1")
             compare(webView.url, endUrl)
         }
 
         function test_ignorePolicy() {
             webView.load(beginUrl)
-            spy.wait()
-            spy.clear()
-            compare(spy.count, 0)
-            compare(otherSpy.count, 0)
+            verify(webView.waitForLoadSucceeded())
             mouseClick(webView, 100, 100, Qt.MiddleButton, Qt.ControlModifier)
-            otherSpy.wait()
-            compare(spy.count, 0)
-            compare(otherSpy.count, 1)
+            verify(otherWebView.waitForLoadSucceeded())
+            verify(webView.loadStatus == null)
             compare(webView.url, beginUrl)
             compare(otherWebView.title, "Test page 1")
             compare(otherWebView.url, endUrl)
@@ -122,9 +103,7 @@ Item {
 
         function test_downloadPolicy() {
             webView.load(beginUrl)
-            spy.wait()
-            spy.clear()
-            compare(spy.count, 0)
+            verify(webView.waitForLoadSucceeded())
             downloadSpy.clear()
             downloadFinishedSpy.clear()
             expectedLength = 0
@@ -139,10 +118,9 @@ Item {
 
         function test_originatingUrl() {
             webView.load(beginUrl)
-            spy.wait()
-            spy.clear()
+            verify(webView.waitForLoadSucceeded())
             mouseClick(webView, 100, 100, Qt.LeftButton)
-            spy.wait()
+            verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Test page 1")
             compare(webView.url, endUrl)
             compare(originatingUrl, beginUrl)

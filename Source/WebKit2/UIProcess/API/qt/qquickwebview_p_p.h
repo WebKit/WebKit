@@ -77,6 +77,7 @@ public:
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args) { }
+    void didChangeLoadingState(QWebLoadRequest* loadRequest);
     void didChangeBackForwardList();
 
     void setNeedsDisplay();
@@ -158,6 +159,7 @@ protected:
     bool userDidOverrideContentHeight;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
+    bool m_loadStartedSignalSent;
     QUrl m_iconURL;
 };
 

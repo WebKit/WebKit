@@ -1,3 +1,13 @@
+2012-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] API: Unify the loading properties and signals.
+        https://bugs.webkit.org/show_bug.cgi?id=79486
+
+        Reviewed by Simon Hausmann.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+
 2012-02-24  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         [Qt] Build fix. macro "QSKIP" now only takes 1 argument on Qt5
