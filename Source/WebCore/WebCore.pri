@@ -203,22 +203,6 @@ contains(CONFIG, texmap) {
     LIBS += -lsqlite3
 }
 
-contains(DEFINES, ENABLE_QT_IMAGE_DECODER=0) {
-    INCLUDEPATH += \
-        $$SOURCE_DIR/platform/image-decoders/bmp \
-        $$SOURCE_DIR/platform/image-decoders/gif \
-        $$SOURCE_DIR/platform/image-decoders/ico \
-        $$SOURCE_DIR/platform/image-decoders/jpeg \
-        $$SOURCE_DIR/platform/image-decoders/png
-
-    LIBS += -ljpeg -lpng12
-
-    contains(DEFINES, WTF_USE_WEBP=1) {
-        INCLUDEPATH += $$SOURCE_DIR/platform/image-decoders/webp
-        LIBS += -lwebp
-    }
-}
-
 win32-*|wince* {
     DLLDESTDIR = $${ROOT_BUILD_DIR}/bin
 
