@@ -29,6 +29,7 @@ namespace WebCore {
 struct CSSNamespace;
 class CSSParser;
 class CSSRule;
+class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class Document;
 
@@ -114,6 +115,8 @@ public:
     unsigned length() const { return m_children.size(); }
     CSSRule* item(unsigned index) { return index < length() ? m_children.at(index).get() : 0; }
 
+    void notifyLoadedSheet(const CachedCSSStyleSheet*);
+
 private:
     CSSStyleSheet(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset);
     CSSStyleSheet(CSSImportRule* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset);
@@ -128,6 +131,7 @@ private:
     bool m_strictParsing : 1;
     bool m_isUserStyleSheet : 1;
     bool m_hasSyntacticallyValidCSSHeader : 1;
+    bool m_didLoadErrorOccur : 1;
 };
 
 } // namespace

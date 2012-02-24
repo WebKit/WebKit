@@ -297,6 +297,7 @@ public:
 
     // For <link> and <style> elements.
     virtual bool sheetLoaded() { return true; }
+    virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
     bool attributeStyleDirty() const { return getFlag(AttributeStyleDirtyFlag); }

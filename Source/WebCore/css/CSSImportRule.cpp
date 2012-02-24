@@ -103,8 +103,10 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
 
     m_loading = false;
 
-    if (parent)
+    if (parent) {
+        parent->notifyLoadedSheet(sheet);
         parent->checkLoaded();
+    }
 }
 
 bool CSSImportRule::isLoading() const

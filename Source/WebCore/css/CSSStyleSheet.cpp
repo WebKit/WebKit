@@ -27,6 +27,7 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
+#include "CachedCSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -60,6 +61,7 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& b
     , m_strictParsing(false)
     , m_isUserStyleSheet(false)
     , m_hasSyntacticallyValidCSSHeader(true)
+    , m_didLoadErrorOccur(false)
 {
     ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
 }
@@ -70,6 +72,7 @@ CSSStyleSheet::CSSStyleSheet(CSSImportRule* ownerRule, const String& href, const
     , m_loadCompleted(false)
     , m_strictParsing(!ownerRule || ownerRule->useStrictParsing())
     , m_hasSyntacticallyValidCSSHeader(true)
+    , m_didLoadErrorOccur(false)
 {
     CSSStyleSheet* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
     m_isUserStyleSheet = parentSheet ? parentSheet->isUserStyleSheet() : false;
@@ -237,7 +240,21 @@ void CSSStyleSheet::checkLoaded()
     RefPtr<CSSStyleSheet> protector(this);
     if (CSSStyleSheet* styleSheet = parentStyleSheet())
         styleSheet->checkLoaded();
-    m_loadCompleted = ownerNode() ? ownerNode()->sheetLoaded() : true;
+
+    RefPtr<Node> owner = ownerNode();
+    if (!owner)
+        m_loadCompleted = true;
+    else {
+        m_loadCompleted = owner->sheetLoaded();
+        if (m_loadCompleted)
+            owner->notifyLoadedSheetAndAllCriticalSubresources(m_didLoadErrorOccur);
+    }
+}
+
+void CSSStyleSheet::notifyLoadedSheet(const CachedCSSStyleSheet* sheet)
+{
+    ASSERT(sheet);
+    m_didLoadErrorOccur |= sheet->errorOccurred();
 }
 
 void CSSStyleSheet::startLoadingDynamicSheet()

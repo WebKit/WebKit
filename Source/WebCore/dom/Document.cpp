@@ -2279,6 +2279,9 @@ void Document::implicitClose()
     ImageLoader::dispatchPendingBeforeLoadEvents();
     ImageLoader::dispatchPendingLoadEvents();
 
+    HTMLLinkElement::dispatchPendingLoadEvents();
+    HTMLStyleElement::dispatchPendingLoadEvents();
+
 #if ENABLE(SVG)
     // To align the HTML load event and the SVGLoad event for the outermost <svg> element, fire it from
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
