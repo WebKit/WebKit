@@ -1,6 +1,5 @@
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
-  layoutTestController.dumpResourceResponseMIMETypes();
   layoutTestController.waitUntilDone();
 }
 
