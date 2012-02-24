@@ -933,6 +933,9 @@ BUGWK77535 : svg/repaint/inner-svg-change-viewPort-relative.svg = IMAGE IMAGE+TE
 // Updated test, needs a rebaseline
 BUGWK78613 : svg/custom/circle-move-invalidation.svg = IMAGE IMAGE+TEXT
 
+// Changed test, needs a rebaseline
+BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
+
 // New test, needs a rebaseline
 BUGWK77903 : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
 
