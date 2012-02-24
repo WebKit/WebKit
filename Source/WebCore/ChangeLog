@@ -1,3 +1,24 @@
+2012-02-24  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Windows and WinCE build after changeset r108809
+        <http://trac.webkit.org/changeset/108809> (https://bugs.webkit.org/show_bug.cgi?id=38995)
+
+        Substitute styleLoadEventSender() for loadEventSender() in HTMLStyleElement.cpp
+        and substitute linkLoadEventSender() for loadEventSender() in HTMLLinkElement.cpp. 
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::linkLoadEventSender):
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::dispatchPendingLoadEvents):
+        (WebCore::HTMLLinkElement::dispatchPendingEvent):
+        (WebCore::HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::styleLoadEventSender):
+        (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        (WebCore::HTMLStyleElement::dispatchPendingLoadEvents):
+        (WebCore::HTMLStyleElement::dispatchPendingEvent):
+        (WebCore::HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources):
+
 2012-02-24  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix Chromium Android build by building HarfBuzzShaperBase.cpp

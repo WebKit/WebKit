@@ -52,7 +52,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static LinkEventSender& loadEventSender()
+static LinkEventSender& linkLoadEventSender()
 {
     DEFINE_STATIC_LOCAL(LinkEventSender, sharedLoadEventSender, (eventNames().loadEvent));
     return sharedLoadEventSender;
@@ -91,7 +91,7 @@ HTMLLinkElement::~HTMLLinkElement()
     if (inDocument())
         document()->removeStyleSheetCandidateNode(this);
 
-    loadEventSender().cancelEvent(this);
+    linkLoadEventSender().cancelEvent(this);
 }
 
 void HTMLLinkElement::setDisabledState(bool disabled)
@@ -373,12 +373,12 @@ bool HTMLLinkElement::sheetLoaded()
 
 void HTMLLinkElement::dispatchPendingLoadEvents()
 {
-    loadEventSender().dispatchPendingEvents();
+    linkLoadEventSender().dispatchPendingEvents();
 }
 
 void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 {
-    ASSERT_UNUSED(eventSender, eventSender == &loadEventSender());
+    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender());
     if (m_loadedSheet)
         linkLoaded();
     else
@@ -390,7 +390,7 @@ void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccu
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    loadEventSender().dispatchEventSoon(this);
+    linkLoadEventSender().dispatchEventSoon(this);
     m_firedLoad = true;
 }
 

@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static StyleEventSender& loadEventSender()
+static StyleEventSender& styleLoadEventSender()
 {
     DEFINE_STATIC_LOCAL(StyleEventSender, sharedLoadEventSender, (eventNames().loadEvent));
     return sharedLoadEventSender;
@@ -62,7 +62,7 @@ HTMLStyleElement::~HTMLStyleElement()
     // Therefore we can't ASSERT(!m_isRegisteredWithScopingNode).
     StyleElement::clearDocumentData(document(), this);
 
-    loadEventSender().cancelEvent(this);
+    styleLoadEventSender().cancelEvent(this);
 }
 
 PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
@@ -230,12 +230,12 @@ Element* HTMLStyleElement::scopingElement() const
 
 void HTMLStyleElement::dispatchPendingLoadEvents()
 {
-    loadEventSender().dispatchPendingEvents();
+    styleLoadEventSender().dispatchPendingEvents();
 }
 
 void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender)
 {
-    ASSERT_UNUSED(eventSender, eventSender == &loadEventSender());
+    ASSERT_UNUSED(eventSender, eventSender == &styleLoadEventSender());
     if (m_loadedSheet)
         dispatchEvent(Event::create(eventNames().loadEvent, false, false));
     else
@@ -247,7 +247,7 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    loadEventSender().dispatchEventSoon(this);
+    styleLoadEventSender().dispatchEventSoon(this);
     m_firedLoad = true;
 }
 
