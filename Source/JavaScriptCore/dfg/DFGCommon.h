@@ -53,7 +53,7 @@
 #define DFG_ENABLE_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
 #define DFG_ENABLE_JIT_BREAK_ON_EVERY_FUNCTION 0
-// Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
+// Emit a breakpoint into the head of every generated block, to aid debugging in GDB.
 #define DFG_ENABLE_JIT_BREAK_ON_EVERY_BLOCK 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
 #define DFG_ENABLE_JIT_BREAK_ON_EVERY_NODE 0
@@ -73,6 +73,9 @@
 #define DFG_ENABLE_RESTRICTIONS 1
 // Enable verification that the DFG is able to insert code for control flow edges.
 #define DFG_ENABLE_EDGE_CODE_VERIFICATION 0
+// Pretend that all variables in the top-level code block got captured. Great
+// for testing code gen for activations.
+#define DFG_ENABLE_ALL_VARIABLES_CAPTURED 0
 
 namespace JSC { namespace DFG {
 

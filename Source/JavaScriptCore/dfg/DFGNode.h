@@ -799,7 +799,7 @@ struct Node {
 
     bool shouldGenerate()
     {
-        return m_refCount && op != Phi && op != Flush;
+        return m_refCount;
     }
 
     unsigned refCount()

@@ -765,7 +765,6 @@ FPRTemporary::FPRTemporary(SpeculativeJIT* jit, JSValueOperand& op1)
 }
 #endif
 
-#ifndef NDEBUG
 void ValueSource::dump(FILE* out) const
 {
     switch (kind()) {
@@ -792,7 +791,6 @@ void ValueSource::dump(FILE* out) const
         break;
     }
 }
-#endif
 
 void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition)
 {
@@ -930,7 +928,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
         NodeIndex nodeIndex = block.variablesAtHead.argument(i);
-        if (nodeIndex == NoNode)
+        if (nodeIndex == NoNode || m_jit.graph().argumentIsCaptured(i))
             m_arguments[i] = ValueSource(ValueInRegisterFile);
         else
             m_arguments[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
@@ -942,7 +940,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_variables.size() == block.variablesAtHead.numberOfLocals());
     for (size_t i = 0; i < m_variables.size(); ++i) {
         NodeIndex nodeIndex = block.variablesAtHead.local(i);
-        if (nodeIndex == NoNode)
+        if (nodeIndex == NoNode || m_jit.graph().localIsCaptured(i))
             m_variables[i] = ValueSource(ValueInRegisterFile);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
             m_variables[i] = ValueSource(DoubleInRegisterFile);

@@ -163,13 +163,13 @@ public:
     // that block must be abstractly interpreted again. This also sets
     // to->cfaShouldRevisit to true, if it returns true, or if to has not been
     // visited yet.
-    static bool merge(BasicBlock* from, BasicBlock* to);
+    bool merge(BasicBlock* from, BasicBlock* to);
     
     // Merge the abstract state stored at the block's tail into all of its
     // successors. Returns true if any of the successors' states changed. Note
     // that this is automatically called in endBasicBlock() if MergeMode is
     // MergeToSuccessors.
-    static bool mergeToSuccessors(Graph&, BasicBlock*);
+    bool mergeToSuccessors(Graph&, BasicBlock*);
 
 #ifndef NDEBUG
     void dump(FILE* out);

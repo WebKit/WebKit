@@ -113,6 +113,11 @@ void AbstractState::initialize(Graph& graph)
             continue;
         }
         
+        if (graph.argumentIsCaptured(i)) {
+            root->valuesAtHead.argument(i).makeTop();
+            continue;
+        }
+        
         PredictedType prediction = node.variableAccessData()->prediction();
         if (isInt32Prediction(prediction))
             root->valuesAtHead.argument(i).set(PredictInt32);
@@ -143,6 +148,11 @@ void AbstractState::initialize(Graph& graph)
         else
             root->valuesAtHead.argument(i).makeTop();
     }
+    for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
+        if (!graph.localIsCaptured(i))
+            continue;
+        root->valuesAtHead.local(i).makeTop();
+    }
 }
 
 bool AbstractState::endBasicBlock(MergeMode mergeMode)
@@ -164,14 +174,28 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("        Merging state for argument %zu.\n", argument);
 #endif
-            changed |= mergeStateAtTail(block->valuesAtTail.argument(argument), m_variables.argument(argument), block->variablesAtTail.argument(argument));
+            AbstractValue& destination = block->valuesAtTail.argument(argument);
+            if (m_graph.argumentIsCaptured(argument)) {
+                if (!destination.isTop()) {
+                    destination.makeTop();
+                    changed = true;
+                }
+            } else
+                changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
         }
         
         for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("        Merging state for local %zu.\n", local);
 #endif
-            changed |= mergeStateAtTail(block->valuesAtTail.local(local), m_variables.local(local), block->variablesAtTail.local(local));
+            AbstractValue& destination = block->valuesAtTail.local(local);
+            if (m_graph.localIsCaptured(local)) {
+                if (!destination.isTop()) {
+                    destination.makeTop();
+                    changed = true;
+                }
+            } else
+                changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
         }
     }
     
@@ -216,11 +240,17 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     }
             
     case GetLocal: {
-        forNode(nodeIndex) = m_variables.operand(node.local());
+        if (m_graph.isCaptured(node.local()))
+            forNode(nodeIndex).makeTop();
+        else
+            forNode(nodeIndex) = m_variables.operand(node.local());
         break;
     }
         
     case SetLocal: {
+        if (m_graph.isCaptured(node.local()))
+            break;
+        
         if (node.variableAccessData()->shouldUseDoubleFormat()) {
             forNode(node.child1()).filter(PredictNumber);
             m_variables.operand(node.local()).set(PredictDouble);
@@ -1016,11 +1046,29 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     
     bool changed = false;
     
-    for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument)
-        changed |= mergeVariableBetweenBlocks(to->valuesAtHead.argument(argument), from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
+    for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
+        AbstractValue& destination = to->valuesAtHead.argument(argument);
+        if (m_graph.argumentIsCaptured(argument)) {
+            if (destination.isTop())
+                continue;
+            destination.makeTop();
+            changed = true;
+            continue;
+        }
+        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
+    }
     
-    for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local)
-        changed |= mergeVariableBetweenBlocks(to->valuesAtHead.local(local), from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
+    for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
+        AbstractValue& destination = to->valuesAtHead.local(local);
+        if (m_graph.localIsCaptured(local)) {
+            if (destination.isTop())
+                continue;
+            destination.makeTop();
+            changed = true;
+            continue;
+        }
+        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
+    }
 
     if (!to->cfaHasVisited)
         changed = true;

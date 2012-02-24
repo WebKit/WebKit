@@ -1751,27 +1751,30 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        if (node.variableAccessData()->shouldUseDoubleFormat()) {
-            FPRTemporary result(this);
-            m_jit.loadDouble(JITCompiler::addressFor(node.local()), result.fpr());
-            VirtualRegister virtualRegister = node.virtualRegister();
-            m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
-            m_generationInfo[virtualRegister].initDouble(m_compileIndex, node.refCount(), result.fpr());
-            break;
+        if (!m_jit.graph().isCaptured(node.local())) {
+            if (node.variableAccessData()->shouldUseDoubleFormat()) {
+                FPRTemporary result(this);
+                m_jit.loadDouble(JITCompiler::addressFor(node.local()), result.fpr());
+                VirtualRegister virtualRegister = node.virtualRegister();
+                m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
+                m_generationInfo[virtualRegister].initDouble(m_compileIndex, node.refCount(), result.fpr());
+                break;
+            }
+            
+            if (isInt32Prediction(value.m_type)) {
+                GPRTemporary result(this);
+                m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
+                
+                // Like integerResult, but don't useChildren - our children are phi nodes,
+                // and don't represent values within this dataflow with virtual registers.
+                VirtualRegister virtualRegister = node.virtualRegister();
+                m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
+                m_generationInfo[virtualRegister].initInteger(m_compileIndex, node.refCount(), result.gpr());
+                break;
+            }
         }
-        
+
         GPRTemporary result(this);
-        if (isInt32Prediction(value.m_type)) {
-            m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
-
-            // Like integerResult, but don't useChildren - our children are phi nodes,
-            // and don't represent values within this dataflow with virtual registers.
-            VirtualRegister virtualRegister = node.virtualRegister();
-            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
-            m_generationInfo[virtualRegister].initInteger(m_compileIndex, node.refCount(), result.gpr());
-            break;
-        }
-
         m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.gpr());
 
         // Like jsValueResult, but don't useChildren - our children are phi nodes,
@@ -1780,7 +1783,9 @@ void SpeculativeJIT::compile(Node& node)
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
 
         DataFormat format;
-        if (isCellPrediction(value.m_type))
+        if (m_jit.graph().isCaptured(node.local()))
+            format = DataFormatJS;
+        else if (isCellPrediction(value.m_type))
             format = DataFormatJSCell;
         else if (isBooleanPrediction(value.m_type))
             format = DataFormatJSBoolean;
@@ -1817,48 +1822,60 @@ void SpeculativeJIT::compile(Node& node)
         // OSR exit, would not be visible to the old JIT in any way.
         m_codeOriginForOSR = nextNode.codeOrigin;
         
-        if (node.variableAccessData()->shouldUseDoubleFormat()) {
-            SpeculateDoubleOperand value(this, node.child1());
-            m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
-            noResult(m_compileIndex);
-            // Indicate that it's no longer necessary to retrieve the value of
-            // this bytecode variable from registers or other locations in the register file,
-            // but that it is stored as a double.
-            valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
-        } else {
+        if (!m_jit.graph().isCaptured(node.local())) {
+            if (node.variableAccessData()->shouldUseDoubleFormat()) {
+                SpeculateDoubleOperand value(this, node.child1());
+                m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+                // Indicate that it's no longer necessary to retrieve the value of
+                // this bytecode variable from registers or other locations in the register file,
+                // but that it is stored as a double.
+                valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
+                break;
+            }
+        
             PredictedType predictedType = node.variableAccessData()->prediction();
             if (isInt32Prediction(predictedType)) {
                 SpeculateIntegerOperand value(this, node.child1());
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
-            } else if (isArrayPrediction(predictedType)) {
+                valueSourceReferenceForOperand(node.local()) = ValueSource(Int32InRegisterFile);
+                break;
+            }
+            if (isArrayPrediction(predictedType)) {
                 SpeculateCellOperand cell(this, node.child1());
                 GPRReg cellGPR = cell.gpr();
                 if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
                     speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
                 m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
                 noResult(m_compileIndex);
-            } else if (isByteArrayPrediction(predictedType)) {
+                valueSourceReferenceForOperand(node.local()) = ValueSource(CellInRegisterFile);
+                break;
+            }
+            if (isByteArrayPrediction(predictedType)) {
                 SpeculateCellOperand cell(this, node.child1());
                 GPRReg cellGPR = cell.gpr();
                 if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
                     speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
                 m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
                 noResult(m_compileIndex);
-            } else if (isBooleanPrediction(predictedType)) {
+                valueSourceReferenceForOperand(node.local()) = ValueSource(CellInRegisterFile);
+                break;
+            }
+            if (isBooleanPrediction(predictedType)) {
                 SpeculateBooleanOperand boolean(this, node.child1());
                 m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
                 noResult(m_compileIndex);
-            } else {
-                JSValueOperand value(this, node.child1());
-                m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
-                noResult(m_compileIndex);
+                valueSourceReferenceForOperand(node.local()) = ValueSource(BooleanInRegisterFile);
+                break;
             }
-
-            // Indicate that it's no longer necessary to retrieve the value of
-            // this bytecode variable from registers or other locations in the register file.
-            valueSourceReferenceForOperand(node.local()) = ValueSource::forPrediction(predictedType);
         }
+        
+        JSValueOperand value(this, node.child1());
+        m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
+        noResult(m_compileIndex);
+
+        valueSourceReferenceForOperand(node.local()) = ValueSource(ValueInRegisterFile);
         break;
     }
 
@@ -2007,7 +2024,7 @@ void SpeculativeJIT::compile(Node& node)
     case ArithAbs: {
         if (at(node.child1()).shouldSpeculateInteger() && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this);
             GPRTemporary scratch(this);
             
             m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
@@ -3358,9 +3375,9 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case Phi:
     case Flush:
-        ASSERT_NOT_REACHED();
+    case Phi:
+        break;
 
     case Breakpoint:
 #if ENABLE(DEBUG_WITH_BREAKPOINT)

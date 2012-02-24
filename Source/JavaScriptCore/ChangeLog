@@ -1,3 +1,75 @@
+2012-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to handle variables getting captured
+        https://bugs.webkit.org/show_bug.cgi?id=79469
+
+        Reviewed by Oliver Hunt.
+        
+        Made captured variables work by placing a Flush on the SetLocal and
+        forcing the emission of the GetLocal even if copy propagation tells us
+        who has the value.
+        
+        Changed the CFA and various prediction codes to understand that we can't
+        really prove anything about captured variables. Well, we could in the
+        future by just looking at what side effects are happening, but in this
+        first cut we just assume that we can't reason about captured variables.
+        
+        Also added a mode where the DFG pretends that all variables and arguments
+        got captured. Used this mode to harden the code.
+        
+        This is performance neutral. Capturing all variables is a slow down, but
+        not too big of one. This seems to predict that when we add activation
+        support, the amount of speed benefit we'll get from increased coverage
+        will far outweigh the pessimism that we'll have to endure for captured
+        variables.
+
+        * bytecode/CodeType.h:
+        (JSC::codeTypeToString):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::merge):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flushArgument):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGCommon.h:
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::needsActivation):
+        (Graph):
+        (JSC::DFG::Graph::argumentIsCaptured):
+        (JSC::DFG::Graph::localIsCaptured):
+        (JSC::DFG::Graph::isCaptured):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldGenerate):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (ValueSource):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+
 2012-02-24  Gavin Barraclough  <barraclough@apple.com>
 
         Should not allow malformed \x escapes

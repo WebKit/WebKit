@@ -104,9 +104,7 @@ public:
         return m_nodeIndex;
     }
     
-#ifndef NDEBUG
     void dump(FILE* out) const;
-#endif
     
 private:
     static NodeIndex nodeIndexFromKind(ValueSourceKind kind)

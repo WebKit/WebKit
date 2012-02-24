@@ -185,16 +185,32 @@ private:
                 // Two possibilities: either the block wants the local to be live
                 // but has not loaded its value, or it has loaded its value, in
                 // which case we're done.
-                Node& flushChild = m_graph[nodePtr->child1()];
+                nodeIndex = nodePtr->child1().index();
+                Node& flushChild = m_graph[nodeIndex];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index()));
+                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
                 nodePtr = &flushChild;
             }
+            
+            ASSERT(&m_graph[nodeIndex] == nodePtr);
             ASSERT(nodePtr->op != Flush);
+
+            if (m_graph.localIsCaptured(operand)) {
+                // We wish to use the same variable access data as the previous access,
+                // but for all other purposes we want to issue a load since for all we
+                // know, at this stage of compilation, the local has been clobbered.
+                
+                // Make sure we link to the Phi node, not to the GetLocal.
+                if (nodePtr->op == GetLocal)
+                    nodeIndex = nodePtr->child1().index();
+                
+                return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+            }
+            
             if (nodePtr->op == GetLocal)
                 return nodeIndex;
             ASSERT(nodePtr->op == SetLocal);
@@ -218,7 +234,11 @@ private:
     }
     void setLocal(unsigned operand, NodeIndex value)
     {
-        m_currentBlock->variablesAtTail.local(operand) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
+        m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
+        if (m_graph.localIsCaptured(operand))
+            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -226,7 +246,7 @@ private:
     {
         unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
-
+        
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
 
         if (nodeIndex != NoNode) {
@@ -235,16 +255,18 @@ private:
                 // Two possibilities: either the block wants the local to be live
                 // but has not loaded its value, or it has loaded its value, in
                 // which case we're done.
-                Node& flushChild = m_graph[nodePtr->child1()];
+                nodeIndex = nodePtr->child1().index();
+                Node& flushChild = m_graph[nodeIndex];
                 if (flushChild.op == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
-                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodePtr->child1().index()));
+                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
                 nodePtr = &flushChild;
             }
             
+            ASSERT(&m_graph[nodeIndex] == nodePtr);
             ASSERT(nodePtr->op != Flush);
             
             if (nodePtr->op == SetArgument) {
@@ -254,6 +276,12 @@ private:
                 nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
                 m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                 return nodeIndex;
+            }
+            
+            if (m_graph.argumentIsCaptured(argument)) {
+                if (nodePtr->op == GetLocal)
+                    nodeIndex = nodePtr->child1().index();
+                return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
             }
             
             if (nodePtr->op == GetLocal)
@@ -278,11 +306,15 @@ private:
     {
         unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
-
-        m_currentBlock->variablesAtTail.argument(argument) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
+        
+        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
+        m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
+        if (m_graph.argumentIsCaptured(argument))
+            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
     
-    void flush(int operand)
+    void flushArgument(int operand)
     {
         // FIXME: This should check if the same operand had already been flushed to
         // some other local variable.
@@ -308,7 +340,10 @@ private:
                 nodeIndex = node.child1().index();
             
             ASSERT(m_graph[nodeIndex].op != Flush);
-        
+            
+            // Emit a Flush regardless of whether we already flushed it.
+            // This gives us guidance to see that the variable also needs to be flushed
+            // for arguments, even if it already had to be flushed for other reasons.
             addToGraph(Flush, OpInfo(node.variableAccessData()), nodeIndex);
             return;
         }
@@ -1066,7 +1101,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // FIXME: Don't flush constants!
     
     for (int i = 1; i < argumentCountIncludingThis; ++i)
-        flush(registerOffset + argumentToOperand(i));
+        flushArgument(registerOffset + argumentToOperand(i));
     
     int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
@@ -2255,7 +2290,11 @@ void ByteCodeParser::processPhiStack()
                 dataLog("      Found @%u.\n", valueInPredecessor);
 #endif
             }
-            ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi || m_graph[valueInPredecessor].op == Flush || (m_graph[valueInPredecessor].op == SetArgument && stackType == ArgumentPhiStack));
+            ASSERT(m_graph[valueInPredecessor].op == SetLocal
+                   || m_graph[valueInPredecessor].op == Phi
+                   || m_graph[valueInPredecessor].op == Flush
+                   || (m_graph[valueInPredecessor].op == SetArgument
+                       && stackType == ArgumentPhiStack));
             
             VariableAccessData* dataForPredecessor = m_graph[valueInPredecessor].variableAccessData();
             
@@ -2527,6 +2566,16 @@ void ByteCodeParser::parseCodeBlock()
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("Parsing code block %p. codeType = %s, numCapturedVars = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
+            codeBlock,
+            codeTypeToString(codeBlock->codeType()),
+            codeBlock->m_numCapturedVars,
+            codeBlock->needsFullScopeChain()?"true":"false",
+            codeBlock->ownerExecutable()->needsActivation()?"true":"false",
+            codeBlock->ownerExecutable()->isStrictMode()?"true":"false");
+#endif
+    
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
@@ -2599,6 +2648,14 @@ bool ByteCodeParser::parse()
 {
     // Set during construction.
     ASSERT(!m_currentIndex);
+    
+#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
+    // We should be pretending that the code has an activation.
+    ASSERT(m_graph.needsActivation());
+#else
+    // For now we should never see code that needs activations.
+    ASSERT(!m_graph.needsActivation());
+#endif
     
     InlineStackEntry inlineStackEntry(this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, 0, InvalidVirtualRegister, InvalidVirtualRegister, CodeForCall);
     

@@ -52,9 +52,9 @@ public:
         for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
             Node& node = m_graph[i];
         
-            if (!node.shouldGenerate())
+            if (!node.shouldGenerate() || node.op == Phi || node.op == Flush)
                 continue;
-        
+            
             // GetLocal nodes are effectively phi nodes in the graph, referencing
             // results from prior blocks.
             if (node.op != GetLocal) {

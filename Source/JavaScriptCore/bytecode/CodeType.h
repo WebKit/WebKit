@@ -26,11 +26,28 @@
 #ifndef CodeType_h
 #define CodeType_h
 
+#include <wtf/Platform.h>
+
 namespace JSC {
 
 enum CodeType { GlobalCode, EvalCode, FunctionCode };
 
+inline const char* codeTypeToString(CodeType codeType)
+{
+    switch (codeType) {
+    case GlobalCode:
+        return "GlobalCode";
+    case EvalCode:
+        return "EvalCode";
+    case FunctionCode:
+        return "FunctionCode";
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
+
+} // namespace JSC
 
 #endif // CodeType_h
 

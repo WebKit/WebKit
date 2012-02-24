@@ -305,6 +305,41 @@ public:
         return MethodOfGettingAValueProfile(valueProfileFor(nodeIndex));
     }
     
+    bool needsActivation() const
+    {
+#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
+        return true;
+#else
+        return m_codeBlock->ownerExecutable()->needsActivation() && m_codeBlock->codeType() != GlobalCode;
+#endif
+    }
+    
+    // Pass an argument index. Currently it's ignored, but that's somewhat
+    // of a bug.
+    bool argumentIsCaptured(int) const
+    {
+        return needsActivation();
+    }
+    bool localIsCaptured(int operand) const
+    {
+#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
+        return operand < m_codeBlock->m_numVars;
+#else
+        return operand < m_codeBlock->m_numCapturedVars;
+#endif
+    }
+    
+    bool isCaptured(int operand) const
+    {
+        if (operandIsArgument(operand))
+            return argumentIsCaptured(operandToArgument(operand));
+        return localIsCaptured(operand);
+    }
+    bool isCaptured(VirtualRegister virtualRegister) const
+    {
+        return isCaptured(static_cast<int>(virtualRegister));
+    }
+    
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;

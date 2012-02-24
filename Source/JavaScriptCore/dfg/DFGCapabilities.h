@@ -57,11 +57,13 @@ inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 
 inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount
+        && !codeBlock->ownerExecutable()->needsActivation();
 }
 inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount
+        && !codeBlock->ownerExecutable()->needsActivation();
 }
 
 // Opcode checking.
