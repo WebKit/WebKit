@@ -2344,25 +2344,10 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureTapDown:
         break;
-    case PlatformEvent::GestureTap: {
-        // FIXME: Refactor this code to not hit test multiple times once hit testing has been corrected as suggested above.
-        PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-        PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-        PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-        mouseMoved(fakeMouseMove);
-        handleMousePressEvent(fakeMouseDown);
-        handleMouseReleaseEvent(fakeMouseUp);
-        return true;
-    }
-    case PlatformEvent::GestureScrollUpdate: {
-        const float tickDivisor = (float)WheelEvent::tickMultiplier;
-        // FIXME: Replace this interim implementation once the above fixme has been addressed.
-        IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
-        IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
-        PlatformWheelEvent syntheticWheelEvent(point, globalPoint, gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
-        handleWheelEvent(syntheticWheelEvent);
-        return true;
-    }
+    case PlatformEvent::GestureTap:
+        return handleGestureTap(gestureEvent);
+    case PlatformEvent::GestureScrollUpdate:
+        return handleGestureScrollUpdate(gestureEvent);
     case PlatformEvent::GestureDoubleTap:
     case PlatformEvent::GestureScrollBegin:
     case PlatformEvent::GestureScrollEnd:
@@ -2371,6 +2356,32 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         ASSERT_NOT_REACHED();
     }
     return true;
+}
+
+bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
+{
+    // FIXME: Refactor this code to not hit test multiple times once hit testing
+    // has been corrected as suggested above in handleGestureEvent().
+    bool defaultPrevented = false;
+    PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    mouseMoved(fakeMouseMove);
+    defaultPrevented |= handleMousePressEvent(fakeMouseDown);
+    defaultPrevented |= handleMouseReleaseEvent(fakeMouseUp);
+    return defaultPrevented;
+}
+
+bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gestureEvent)
+{
+    const float tickDivisor = (float)WheelEvent::tickMultiplier;
+    // FIXME: Replace this interim implementation once the above fixme in handleGestureEvent() has been addressed.
+    bool defaultPrevented = false;
+    IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
+    IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
+    PlatformWheelEvent syntheticWheelEvent(point, globalPoint, gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+    defaultPrevented |= handleWheelEvent(syntheticWheelEvent);
+    return defaultPrevented;
 }
 #endif
 

@@ -162,6 +162,8 @@ public:
 
 #if ENABLE(GESTURE_EVENTS)
     bool handleGestureEvent(const PlatformGestureEvent&);
+    bool handleGestureTap(const PlatformGestureEvent&);
+    bool handleGestureScrollUpdate(const PlatformGestureEvent&);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
