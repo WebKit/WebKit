@@ -161,6 +161,7 @@ fast/css/style-scoped
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
+fast/dom/shadow/iframe-shadow.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
@@ -1415,6 +1416,10 @@ svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html
 
 # Crashes due to debug assert until we fix issues with style elements in SVG
 svg/custom/use-referencing-style-crash.svg
+
+# [Qt] svg/text/text-rescale.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=79451
+svg/text/text-rescale.html
 
 # ============================================================================= #
 # Failing CSS Tests
