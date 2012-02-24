@@ -37,6 +37,7 @@ module core {
         void loaded();
         void closeWindow();
         void bringToFront();
+        void setZoomFactor(in float zoom);
         void inspectedURLChanged(in DOMString newURL);
 
         void requestAttachWindow();

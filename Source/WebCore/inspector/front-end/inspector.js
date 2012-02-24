@@ -306,6 +306,30 @@ var WebInspector = {
         Capabilities[name] = result;
         if (callback)
             callback();
+    },
+
+    _zoomIn: function()
+    {
+        ++this._zoomLevel;
+        this._requestZoom();
+    },
+
+    _zoomOut: function()
+    {
+        --this._zoomLevel;
+        this._requestZoom();
+    },
+
+    _resetZoom: function()
+    {
+        this._zoomLevel = 0;
+        this._requestZoom();
+    },
+
+    _requestZoom: function()
+    {
+        WebInspector.settings.zoomLevel.set(this._zoomLevel);
+        InspectorFrontendHost.setZoomFactor(Math.pow(1.2, this._zoomLevel));
     }
 }
 
@@ -402,6 +426,10 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     if (Capabilities.nativeInstrumentationEnabled)
         this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
+
+    this._zoomLevel = WebInspector.settings.zoomLevel.get();
+    if (this._zoomLevel)
+        this._requestZoom();
 
     this._createPanels();
     this._createGlobalStatusBarItems();
@@ -672,6 +700,7 @@ WebInspector.documentKeyDown = function(event)
     }
 
     var isMac = WebInspector.isMac();
+    var hasCtrlOrMeta = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
     switch (event.keyIdentifier) {
         case "U+001B": // Escape key
             if (event.target.hasStyleClass("text-prompt") || !WebInspector.isInEditMode(event)) {
@@ -690,6 +719,24 @@ WebInspector.documentKeyDown = function(event)
         case "F5":
             if (!isMac && !WebInspector.isInEditMode(event)) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
+                event.preventDefault();
+            }
+            break;
+        case "U+004B": // +
+            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+                WebInspector._zoomIn();
+                event.preventDefault();
+            }
+            break;
+        case "U+004D": // -
+            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+                WebInspector._zoomOut();
+                event.preventDefault();
+            }
+            break;
+        case "U+0030": // 0
+            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+                WebInspector._resetZoom();
                 event.preventDefault();
             }
             break;

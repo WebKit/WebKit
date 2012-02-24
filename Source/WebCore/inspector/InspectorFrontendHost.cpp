@@ -181,6 +181,11 @@ void InspectorFrontendHost::bringToFront()
         m_client->bringToFront();
 }
 
+void InspectorFrontendHost::setZoomFactor(float zoom)
+{
+    m_frontendPage->mainFrame()->setPageAndTextZoomFactors(zoom, 1);
+}
+
 void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
 {
     if (m_client)

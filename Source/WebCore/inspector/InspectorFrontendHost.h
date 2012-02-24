@@ -63,6 +63,7 @@ public:
     void requestSetDockSide(const String&);
     void closeWindow();
     void bringToFront();
+    void setZoomFactor(float);
     void inspectedURLChanged(const String&);
 
     void setAttachedWindowHeight(unsigned height);

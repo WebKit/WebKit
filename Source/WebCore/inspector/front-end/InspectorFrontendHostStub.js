@@ -36,6 +36,7 @@ if (!window.InspectorFrontendHost) {
 WebInspector.InspectorFrontendHostStub = function()
 {
     this._attachedWindowHeight = 0;
+    this.isStub = true;
 }
 
 WebInspector.InspectorFrontendHostStub.prototype = {
@@ -160,6 +161,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     loadResourceSynchronously: function(url)
     {
         return "";
+    },
+
+    setZoomFactor: function(zoom)
+    {
     }
 }
 
