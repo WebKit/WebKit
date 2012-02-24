@@ -37,6 +37,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
+#include "WebIntentRequest.h"
 #include "WebSpellCheckClient.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
@@ -237,6 +238,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL&, bool didBlockEntirePage);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
     virtual bool willCheckAndDispatchMessageEvent(WebKit::WebFrame* source, WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);
+    virtual void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
 
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
     
@@ -410,6 +412,9 @@ private:
         PointerLockWillFailSync
     } m_pointerLockPlannedResult;
 #endif
+
+    // For web intents: holds the current request, if any.
+    WebKit::WebIntentRequest m_currentRequest;
 };
 
 #endif // WebViewHost_h

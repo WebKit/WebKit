@@ -1,3 +1,26 @@
+2012-02-23  Greg Billock  <gbillock@google.com>
+
+        Don't clear IntentRequest callback pointers on stop()
+
+        This causes re-entry into ScriptExecutionContext when
+        the ActiveDOMCallback objects get deleted, which crashes.
+        Instead, just de-activate the object and wait for
+        context destruction to clean up.
+
+        Test crashes consistently without fix and passes with fix.
+        Added some test infrastructure to support this test.
+        https://bugs.webkit.org/show_bug.cgi?id=78638
+
+        Reviewed by Adam Barth.
+
+        * Modules/intents/IntentRequest.cpp:
+        (WebCore::IntentRequest::IntentRequest):
+        (WebCore::IntentRequest::stop):
+        (WebCore::IntentRequest::postResult):
+        (WebCore::IntentRequest::postFailure):
+        * Modules/intents/IntentRequest.h:
+        (IntentRequest):
+
 2012-02-23  Konrad Piascik  <kpiascik@rim.com>
 
         Upstream BlackBerry Cookie Management Classes

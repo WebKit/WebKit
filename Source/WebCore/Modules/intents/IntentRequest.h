@@ -60,6 +60,7 @@ private:
     RefPtr<Intent> m_intent;
     RefPtr<IntentResultCallback> m_successCallback;
     RefPtr<IntentResultCallback> m_errorCallback;
+    bool m_stopped;
 };
 
 } // namespace WebCore

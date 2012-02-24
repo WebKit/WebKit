@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script>
+      var latch = true;
+
+      function buttonClicked() {
+        frames[0].startIntent();
+      }
+
+      function frameloaded() {
+        if (latch) {
+          latch = false;
+          startTest();
+          return;
+        }
+
+        debug("* loaded replacement page");
+
+        if (window.layoutTestController) {
+          window.layoutTestController.notifyDone();
+        }
+      }
+
+      function startTest() {
+        if (window.layoutTestController) {
+          window.layoutTestController.waitUntilDone();
+          window.layoutTestController.dumpChildFramesAsText();
+        }
+
+        debug("* loaded");
+
+        // We must simulate a button press with eventSender because intents
+        // require a user gesture.
+        var button = document.getElementById("button");
+        if (eventSender) {
+          eventSender.mouseMoveTo(button.getBoundingClientRect().left + 2, button.getBoundingClientRect().top + 12);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          debug("* sent mouseup");
+        }
+      }
+    </script>
+  </head>
+<body>
+<input type="button" id="button" value="Start Web Intent" onmouseup="buttonClicked()">
+<iframe id="frame" onload="frameloaded()" src="resources/web-intents-reload-orig.html"></iframe>
+</body>
+</html>

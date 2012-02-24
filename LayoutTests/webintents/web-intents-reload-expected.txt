@@ -1,0 +1,10 @@
+Received Web Intent: action=action type=type
+* loaded
+* sent mouseup
+* loaded replacement page
+ 
+
+--------
+Frame: 'frame'
+--------
+PASS

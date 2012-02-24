@@ -47,6 +47,7 @@
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
+#include "WebIntent.h"
 #include "WebKit.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
@@ -1311,6 +1312,14 @@ bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* source, WebSecurity
     }
 
     return false;
+}
+
+void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& request)
+{
+    printf("Received Web Intent: action=%s type=%s\n",
+           request.intent().action().utf8().data(),
+           request.intent().type().utf8().data());
+    m_currentRequest = request;
 }
 
 // Public functions -----------------------------------------------------------
