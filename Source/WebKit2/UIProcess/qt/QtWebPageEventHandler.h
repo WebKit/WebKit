@@ -43,22 +43,7 @@ public:
     QtWebPageEventHandler(WKPageRef, QQuickWebPage*, QQuickWebView*);
     ~QtWebPageEventHandler();
 
-    void handleKeyPressEvent(QKeyEvent*);
-    void handleKeyReleaseEvent(QKeyEvent*);
-    void handleFocusInEvent(QFocusEvent*);
-    void handleFocusOutEvent(QFocusEvent*);
-    void handleMouseMoveEvent(QMouseEvent*);
-    void handleMousePressEvent(QMouseEvent*);
-    void handleMouseReleaseEvent(QMouseEvent*);
-    void handleWheelEvent(QWheelEvent*);
-    void handleHoverLeaveEvent(QHoverEvent*);
-    void handleHoverMoveEvent(QHoverEvent*);
-    void handleDragEnterEvent(QDragEnterEvent*);
-    void handleDragLeaveEvent(QDragLeaveEvent*);
-    void handleDragMoveEvent(QDragMoveEvent*);
-    void handleDropEvent(QDropEvent*);
-    void handleInputMethodEvent(QInputMethodEvent*);
-    void handleTouchEvent(QTouchEvent*);
+    bool handleEvent(QEvent*);
 
     void setViewportInteractionEngine(QtViewportInteractionEngine*);
 
@@ -89,7 +74,25 @@ private slots:
     void inputPanelVisibleChanged();
 
 private:
+    bool handleKeyPressEvent(QKeyEvent*);
+    bool handleKeyReleaseEvent(QKeyEvent*);
+    bool handleFocusInEvent(QFocusEvent*);
+    bool handleFocusOutEvent(QFocusEvent*);
+    bool handleMouseMoveEvent(QMouseEvent*);
+    bool handleMousePressEvent(QMouseEvent*);
+    bool handleMouseReleaseEvent(QMouseEvent*);
+    bool handleWheelEvent(QWheelEvent*);
+    bool handleHoverLeaveEvent(QHoverEvent*);
+    bool handleHoverMoveEvent(QHoverEvent*);
+    bool handleDragEnterEvent(QDragEnterEvent*);
+    bool handleDragLeaveEvent(QDragLeaveEvent*);
+    bool handleDragMoveEvent(QDragMoveEvent*);
+    bool handleDropEvent(QDropEvent*);
+
     void timerEvent(QTimerEvent*);
+
+    void touchEvent(QTouchEvent*);
+    void inputMethodEvent(QInputMethodEvent*);
 
     QPointF m_lastClick;
     QBasicTimer m_clickTimer;
