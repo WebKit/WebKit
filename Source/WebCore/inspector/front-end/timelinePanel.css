@@ -560,11 +560,12 @@
 }
 
 .memory-counter-sidebar-info {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     font-size: 11px;
+    margin: 10px;
+}
+
+.memory-counter-sidebar-info .swatch{
+    background-image: none;
 }
 
 .memory-counter-sidebar-info.bottom-border-visible {
@@ -573,15 +574,19 @@
 
 .memory-counter-sidebar-info .title {
     margin: 4px;
-    font-weight: bold;
 }
 
-.memory-counter-sidebar-info .counter-value {
+.memory-counter-value {
     margin: 4px;
+    font-size: 11px;
 }
 
 .timeline-overview-start-at-zero {
     background-color: white;
+}
+
+#counter-values-bar {
+    border-bottom: solid 1px lightgray;
 }
 
 .timeline-overview-start-at-zero-bars {

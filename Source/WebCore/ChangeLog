@@ -1,3 +1,46 @@
+2012-02-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show all counters on one graph
+        https://bugs.webkit.org/show_bug.cgi?id=79484
+
+        Now it is possible to hide any counter. All graphs share the same area.
+        Current values are displayed above that area.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.getDocumentCount):
+        (WebInspector.MemoryStatistics.getNodeCount):
+        (WebInspector.MemoryStatistics.getListenerCount):
+        (WebInspector.MemoryStatistics):
+        (WebInspector.SwatchCheckbox):
+        (WebInspector.SwatchCheckbox.prototype.get checked):
+        (WebInspector.SwatchCheckbox.prototype.set checked):
+        (WebInspector.SwatchCheckbox.prototype._toggleCheckbox):
+        (WebInspector.CounterUI):
+        (WebInspector.CounterUI.prototype._toggleCounterGraph):
+        (WebInspector.CounterUI.prototype.setRange):
+        (WebInspector.CounterUI.prototype.updateCurrentValue):
+        (WebInspector.CounterUI.prototype.clearCurrentValueAndMarker):
+        (WebInspector.CounterUI.prototype.get visible):
+        (WebInspector.CounterUI.prototype.saveImageUnderMarker):
+        (WebInspector.CounterUI.prototype.restoreImageUnderMarker):
+        (WebInspector.CounterUI.prototype.discardImageUnderMarker):
+        (WebInspector.MemoryStatistics.prototype._updateSize):
+        (WebInspector.MemoryStatistics.prototype._draw):
+        (WebInspector.MemoryStatistics.prototype._onMouseOut):
+        (WebInspector.MemoryStatistics.prototype._refreshCurrentValues):
+        (WebInspector.MemoryStatistics.prototype._highlightCurrentPositionOnGraphs):
+        (WebInspector.MemoryStatistics.prototype._drawGraph):
+        (WebInspector.MemoryStatistics.prototype._clear):
+        * inspector/front-end/timelinePanel.css:
+        (.memory-counter-sidebar-info):
+        (.memory-counter-sidebar-info .swatch):
+        (.memory-counter-sidebar-info .title):
+        (.memory-counter-value):
+        (#counter-values-bar):
+
 2012-02-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: map Ctrl/Cmd +/- to zoom in hosted mode.
