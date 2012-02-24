@@ -1,3 +1,12 @@
+2012-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Do not show scripts panel navigator automatically more than once to the same user.
+        https://bugs.webkit.org/show_bug.cgi?id=79489
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+
 2012-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Fix GTK WebAudio build for WebKitGTK 1.7.90.

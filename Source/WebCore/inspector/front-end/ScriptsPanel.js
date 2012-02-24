@@ -35,6 +35,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.registerRequiredCSS("scriptsPanel.css");
 
     WebInspector.settings.pauseOnExceptionStateString = WebInspector.settings.createSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
+    WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
 
     this._presentationModel = presentationModel;
 
@@ -958,7 +959,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _maybeShowNavigatorOverlay: function()
     {
-        if (this._navigator && WebInspector.settings.navigatorHidden.get() && !this._navigatorWasOnceHidden)
+        if (this._navigator && WebInspector.settings.navigatorHidden.get() && !WebInspector.settings.navigatorWasOnceHidden.get())
             this._showNavigatorOverlay();
     },
 
@@ -1041,7 +1042,7 @@ WebInspector.ScriptsPanel.prototype = {
     _navigatorOverlayWillHide: function(event)
     {
         delete this._navigatorOverlayShown;
-        this._navigatorWasOnceHidden = true;
+        WebInspector.settings.navigatorWasOnceHidden.set(true);
         this.editorView.element.appendChild(this._navigatorShowHideButton);
         this._navigatorShowHideButton.removeStyleClass("toggled-on");
         this._navigatorShowHideButton.title = WebInspector.UIString("Show scripts navigator");
