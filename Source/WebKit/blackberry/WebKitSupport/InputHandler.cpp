@@ -110,14 +110,13 @@ InputHandler::InputHandler(WebPagePrivate* page)
     : m_webPage(page)
     , m_currentFocusElement(0)
     , m_processingChange(false)
-    , m_navigationMode(false)
     , m_changingFocus(false)
     , m_currentFocusElementType(TextEdit)
     , m_currentFocusElementTextEditMask(DEFAULT_STYLE)
     , m_composingTextStart(0)
     , m_composingTextEnd(0)
-    , m_pendingKeyboardStateChange(NoChange)
-    , m_delayClientNotificationOfNavigationModeChange(false)
+    , m_pendingKeyboardVisibilityChange(NoChange)
+    , m_delayKeyboardVisibilityChange(false)
 {
 }
 
@@ -226,7 +225,7 @@ BlackBerryInputType InputHandler::elementType(Element* element) const
 void InputHandler::nodeFocused(Node* node)
 {
     if (isActiveTextEdit() && m_currentFocusElement == node) {
-        setNavigationMode(true);
+        notifyClientOfKeyboardVisibilityChange(true);
         return;
     }
 
@@ -394,10 +393,10 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
         // End any composition that is in progress.
         finishComposition();
 
-        // Send change notifications. Only cancel navigation mode if we are not
-        // refocusing to avoid flashing the keyboard when switching between two
-        // input fields.
-        setNavigationMode(false, !refocusOccuring);
+        // Only hide the keyboard if we aren't refocusing on a new input field.
+        if (!refocusOccuring)
+            notifyClientOfKeyboardVisibilityChange(false);
+
         m_webPage->m_client->inputFocusLost();
         m_webPage->m_selectionHandler->selectionPositionChanged();
     }
@@ -478,8 +477,7 @@ void InputHandler::setElementFocused(Element* element)
 
     m_webPage->m_client->inputFocusGained(type,
                                           m_currentFocusElementTextEditMask,
-                                          m_delayClientNotificationOfNavigationModeChange /* wait an explicit keyboard show call */);
-    m_navigationMode = true;
+                                          m_delayKeyboardVisibilityChange /* wait for explicit keyboard show call */);
 
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
 }
@@ -547,7 +545,7 @@ void InputHandler::nodeTextChanged(const Node* node)
 
 void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 {
-    if (!m_currentFocusElement || !m_navigationMode || !m_currentFocusElement->document())
+    if (!m_currentFocusElement || !m_currentFocusElement->document())
         return;
 
     if (!BlackBerry::Platform::Settings::get()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
@@ -725,66 +723,36 @@ void InputHandler::frameUnloaded(Frame* frame)
     setElementUnfocused(false /*refocusOccuring*/);
 }
 
-void InputHandler::setNavigationMode(bool active, bool sendMessage)
+void InputHandler::setDelayKeyboardVisibilityChange(bool value)
 {
-    if (active && !isActiveTextEdit()) {
-        if (!m_navigationMode)
-            return;
-
-        // We can't be active if there is no element. Send out notification that we
-        // aren't in navigation mode.
-        active = false;
-    }
-
-    // Don't send the change if it's setting the event setting navigationMode true
-    // if we are already in navigation mode and this is a navigation move event.
-    // We need to send the event when it's triggered by a touch event or mouse
-    // event to allow display of the VKB, but do not want to send it when it's
-    // triggered by a navigation event as it has no effect.
-    // Touch events are simulated as mouse events so mousePressed will be active
-    // when it is a re-entry event.
-    // See RIM Bugs #369 & #878.
-    if (active && active == m_navigationMode && !m_webPage->m_mainFrame->eventHandler()->mousePressed())
-        return;
-
-    m_navigationMode = active;
-
-    InputLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::setNavigationMode %s, %s", active ? "true" : "false", sendMessage ? "message sent" : "message not sent");
-
-    if (sendMessage)
-        notifyClientOfNavigationModeChange(active);
+    m_delayKeyboardVisibilityChange = value;
+    m_pendingKeyboardVisibilityChange = NoChange;
 }
 
-void InputHandler::setDelayClientNotificationOfNavigationModeChange(bool value)
+void InputHandler::processPendingKeyboardVisibilityChange()
 {
-    m_delayClientNotificationOfNavigationModeChange = value;
-    m_pendingKeyboardStateChange = NoChange;
-}
-
-void InputHandler::processPendingClientNavigationModeChangeNotification()
-{
-    if (!m_delayClientNotificationOfNavigationModeChange) {
-        ASSERT(m_pendingKeyboardStateChange == NoChange);
+    if (!m_delayKeyboardVisibilityChange) {
+        ASSERT(m_pendingKeyboardVisibilityChange == NoChange);
         return;
     }
 
-    m_delayClientNotificationOfNavigationModeChange = false;
+    m_delayKeyboardVisibilityChange = false;
 
-    if (m_pendingKeyboardStateChange == NoChange)
+    if (m_pendingKeyboardVisibilityChange == NoChange)
         return;
 
-    notifyClientOfNavigationModeChange(m_pendingKeyboardStateChange == Visible);
-    m_pendingKeyboardStateChange = NoChange;
+    notifyClientOfKeyboardVisibilityChange(m_pendingKeyboardVisibilityChange == Visible);
+    m_pendingKeyboardVisibilityChange = NoChange;
 }
 
-void InputHandler::notifyClientOfNavigationModeChange(bool active)
+void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
 {
-    if (!m_delayClientNotificationOfNavigationModeChange) {
-        m_webPage->m_client->inputSetNavigationMode(active);
+    if (!m_delayKeyboardVisibilityChange) {
+        m_webPage->showVirtualKeyboard(visible);
         return;
     }
 
-    m_pendingKeyboardStateChange = active ? Visible : NotVisible;
+    m_pendingKeyboardVisibilityChange = visible ? Visible : NotVisible;
 }
 
 bool InputHandler::selectionAtStartOfElement()
@@ -969,68 +937,6 @@ bool InputHandler::handleKeyboardInput(const BlackBerry::Platform::KeyboardEvent
             ensureFocusTextElementVisible(EdgeIfNeeded);
     }
     return keyboardEventHandled;
-}
-
-bool InputHandler::handleNavigationMove(unsigned short character, bool shiftDown, bool altDown, bool canExitField)
-{
-    InputLog(BlackBerry::Platform::LogLevelInfo, "InputHandler::handleNavigationMove received character=%lc", character);
-
-    bool eventHandled = false;
-    ASSERT(m_webPage->m_page->focusController());
-    if (Frame* focusedFrame = m_webPage->m_page->focusController()->focusedFrame()) {
-        // If alt is down, do not break out of the field.
-        if (canExitField && !altDown) {
-            if ((character == KEYCODE_LEFT || character == KEYCODE_UP) && selectionAtStartOfElement()
-                || (character == KEYCODE_RIGHT || character == KEYCODE_DOWN) && selectionAtEndOfElement()) {
-                setNavigationMode(false);
-                return true;
-            }
-        }
-
-        switch (character) {
-        case KEYCODE_LEFT:
-            if (altDown && shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveToBeginningOfLineAndModifySelection").execute();
-            else if (altDown)
-                eventHandled = focusedFrame->editor()->command("MoveToBeginningOfLine").execute();
-            else if (shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveLeftAndModifySelection").execute();
-            else
-                eventHandled = focusedFrame->editor()->command("MoveLeft").execute();
-            break;
-        case KEYCODE_RIGHT:
-            if (altDown && shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveToEndOfLineAndModifySelection").execute();
-            else if (altDown)
-                eventHandled = focusedFrame->editor()->command("MoveToEndOfLine").execute();
-            else if (shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveRightAndModifySelection").execute();
-            else
-                eventHandled = focusedFrame->editor()->command("MoveRight").execute();
-            break;
-        case KEYCODE_UP:
-            if (altDown && shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveToBeginningOfDocumentAndModifySelection").execute();
-            else if (altDown)
-                eventHandled = focusedFrame->editor()->command("MoveToBeginningOfDocument").execute();
-            else if (shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveUpAndModifySelection").execute();
-            else
-                eventHandled = focusedFrame->editor()->command("MoveUp").execute();
-            break;
-        case KEYCODE_DOWN:
-            if (altDown && shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveToEndOfDocumentAndModifySelection").execute();
-            else if (altDown)
-                eventHandled = focusedFrame->editor()->command("MoveToEndOfDocument").execute();
-            else if (shiftDown)
-                eventHandled = focusedFrame->editor()->command("MoveDownAndModifySelection").execute();
-            else
-                eventHandled = focusedFrame->editor()->command("MoveDown").execute();
-            break;
-        }
-    }
-    return eventHandled;
 }
 
 bool InputHandler::deleteSelection()

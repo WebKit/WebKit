@@ -122,7 +122,7 @@ bool TouchEventHandler::shouldSuppressMouseDownOnTouchDown() const
 
 void TouchEventHandler::touchEventCancel()
 {
-    m_webPage->m_inputHandler->processPendingClientNavigationModeChangeNotification();
+    m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
 
     if (!shouldSuppressMouseDownOnTouchDown()) {
         // Input elements delay mouse down and do not need to be released on touch cancel.
@@ -203,7 +203,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             // let only delay client notifications when there is not input text node involved.
             if (m_convertTouchToMouse
                 && (m_webPage->m_inputHandler->isInputMode() && !m_lastFatFingersResult.isTextInput())) {
-                m_webPage->m_inputHandler->setDelayClientNotificationOfNavigationModeChange(true);
+                m_webPage->m_inputHandler->setDelayKeyboardVisibilityChange(true);
                 handleFatFingerPressed();
             } else if (!shouldSuppressMouseDownOnTouchDown())
                 handleFatFingerPressed();
@@ -212,17 +212,20 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
         }
     case Platform::TouchPoint::TouchReleased:
         {
-            m_webPage->m_inputHandler->processPendingClientNavigationModeChangeNotification();
+            // Apply any suppressed changes. This does not eliminate the need
+            // for the show after the handling of fat finger pressed as it may
+            // have triggered a state change.
+            m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
 
             if (shouldSuppressMouseDownOnTouchDown())
                 handleFatFingerPressed();
 
             // The rebase has eliminated a necessary event when the mouse does not
             // trigger an actual selection change preventing re-showing of the
-            // keyboard. If input mode is active, call setNavigationMode which
+            // keyboard. If input mode is active, call showVirtualKeyboard which
             // will update the state and display keyboard if needed.
             if (m_webPage->m_inputHandler->isInputMode())
-                m_webPage->m_inputHandler->setNavigationMode(true);
+                m_webPage->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
 
             IntPoint adjustedPoint;
             if (m_convertTouchToMouse) {

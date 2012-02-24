@@ -1,3 +1,40 @@
+2012-02-23  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] InputHandler requires cleanup of Navigation Mode handling.
+        https://bugs.webkit.org/show_bug.cgi?id=79366
+
+        Reviewed by Rob Buis.
+
+        Cleanup InputHandler navigation based code.
+
+        1) Remove the concept of NavigationMode and replace it
+           with simple showKeyboard calls.
+
+        2) Remove navigation move events and replace with standard
+           key events.
+
+        3) Standardize function/variable names and remove obsolete
+           functions.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::nodeFocused):
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        (BlackBerry::WebKit::InputHandler::setDelayKeyboardVisibilityChange):
+        (BlackBerry::WebKit::InputHandler::processPendingKeyboardVisibilityChange):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfKeyboardVisibilityChange):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the remaining uses of CSSStyleDeclaration in Editor

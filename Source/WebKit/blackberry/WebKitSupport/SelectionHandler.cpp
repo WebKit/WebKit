@@ -43,6 +43,8 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 
+#include <BlackBerryPlatformKeyboardEvent.h>
+
 #include <sys/keycodes.h>
 
 #define SHOWDEBUG_SELECTIONHANDLER 0
@@ -221,7 +223,7 @@ void SelectionHandler::setCaretPosition(const IntPoint &position)
 
     if (!DOMSupport::isPositionInNode(m_webPage->focusedOrMainFrame()->document()->focusedNode(), visibleCaretPosition.deepEquivalent())) {
         if (unsigned short character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
-            m_webPage->m_inputHandler->handleNavigationMove(character, false /* shiftDown */, false /* altDown */, false /* canExitField */);
+            m_webPage->m_inputHandler->handleKeyboardInput(BlackBerry::Platform::KeyboardEvent(character));
 
         selectionPositionChanged();
         return;
@@ -398,10 +400,10 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     if (!character)
         return false;
 
-    DEBUG_SELECTION(BlackBerry::Platform::LogLevelInfo, "SelectionHandler::setSelection making selection change attempt using navigation");
+    DEBUG_SELECTION(BlackBerry::Platform::LogLevelInfo, "SelectionHandler::setSelection making selection change attempt using key event %d", character);
 
     if (shouldExtendSelectionInDirection(controller->selection(), character))
-        m_webPage->m_inputHandler->handleNavigationMove(character, true /* shiftDown */, false /* altDown */, false /* canExitField */);
+        m_webPage->m_inputHandler->handleKeyboardInput(BlackBerry::Platform::KeyboardEvent(character, BlackBerry::Platform::KeyboardEvent::KeyDown, KEYMOD_SHIFT));
 
     // Must send the selectionPositionChanged every time, sometimes this will duplicate but an accepted
     // handleNavigationMove may not make an actual selection change.

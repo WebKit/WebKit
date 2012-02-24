@@ -63,7 +63,6 @@ public:
     void frameUnloaded(WebCore::Frame*);
 
     bool handleKeyboardInput(const BlackBerry::Platform::KeyboardEvent&, bool changeIsPartOfComposition = false);
-    bool handleNavigationMove(const unsigned short character, bool shiftDown, bool altDown, bool canExitField = true);
 
     bool deleteSelection();
     void insertText(const WTF::String&);
@@ -77,15 +76,13 @@ public:
 
     void setInputValue(const WTF::String&);
 
-    void setDelayClientNotificationOfNavigationModeChange(bool value);
-    void processPendingClientNavigationModeChangeNotification();
+    void setDelayKeyboardVisibilityChange(bool value);
+    void processPendingKeyboardVisibilityChange();
 
-    void notifyClientOfNavigationModeChange(bool active);
+    void notifyClientOfKeyboardVisibilityChange(bool visible);
 
     bool isInputMode() const { return isActiveTextEdit(); }
     bool isMultilineInputMode() const { return isActiveTextEdit() && elementType(m_currentFocusElement.get()) == BlackBerry::Platform::InputTypeTextArea; }
-
-    void setNavigationMode(bool active, bool sendMessage = true);
 
     void ensureFocusElementVisible(bool centerFieldInDisplay = true);
     void handleInputLocaleChanged(bool isRTL);
@@ -182,7 +179,6 @@ private:
     RefPtr<WebCore::Element> m_currentFocusElement;
 
     bool m_processingChange;
-    bool m_navigationMode;
     bool m_changingFocus;
 
     FocusElementType m_currentFocusElementType;
@@ -191,8 +187,8 @@ private:
     int m_composingTextStart;
     int m_composingTextEnd;
 
-    PendingKeyboardStateChange m_pendingKeyboardStateChange;
-    bool m_delayClientNotificationOfNavigationModeChange;
+    PendingKeyboardStateChange m_pendingKeyboardVisibilityChange;
+    bool m_delayKeyboardVisibilityChange;
 };
 
 }

@@ -171,8 +171,9 @@ public:
     virtual void inputFocusLost() = 0;
     virtual void inputTextChanged() = 0;
     virtual void inputSelectionChanged(unsigned selectionStart, unsigned selectionEnd) = 0;
-    virtual void inputSetNavigationMode(bool) = 0;
     virtual void inputLearnText(wchar_t* text, int length) = 0;
+
+    virtual void showVirtualKeyboard(bool) = 0;
 
     virtual void checkSpellingOfString(const unsigned short* text, int length, int& misspellingLocation, int& misspellingLength) = 0;
     virtual void requestSpellingSuggestionsForString(unsigned start, unsigned end) = 0;
