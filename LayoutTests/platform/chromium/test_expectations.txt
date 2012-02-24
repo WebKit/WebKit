@@ -4222,3 +4222,6 @@ BUGWK79454 : svg/text/text-viewbox-rescale.html = IMAGE
 
 // Flaky for DEBUG since r108585
 BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
+
+// Flaky for DEBUG
+BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
