@@ -210,7 +210,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     if (!m_page)
         return;
 
-    FrameView* view = m_page->mainFrame()->view();
+    FrameView* view = frameView();
 
     GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp);
@@ -253,6 +253,14 @@ RenderBox* SVGImage::embeddedContentBox() const
     if (!rootElement)
         return 0;
     return toRenderBox(rootElement->renderer());
+}
+
+FrameView* SVGImage::frameView() const
+{
+    if (!m_page)
+        return 0;
+
+    return m_page->mainFrame()->view();
 }
 
 bool SVGImage::hasRelativeWidth() const

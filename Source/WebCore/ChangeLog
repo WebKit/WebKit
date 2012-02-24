@@ -1,5 +1,32 @@
 2012-02-24  Tim Horton  <timothy_horton@apple.com>
 
+        Infinite repaint loop with SVGImageCache and deferred repaint timers
+        https://bugs.webkit.org/show_bug.cgi?id=78315
+        <rdar://problem/10651634>
+
+        Reviewed by Dean Jackson.
+
+        Only defer image redraw on a timer if we're in layout. This breaks
+        the repaint loop while still preventing us from drawing inside layout.
+
+        No new tests, as the problem only occurs in a nonstandard configuration.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::frameView):
+        (WebCore):
+        * svg/graphics/SVGImage.h:
+        (WebCore):
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageContentChanged):
+        (WebCore::SVGImageCache::redraw):
+        (WebCore::SVGImageCache::redrawTimerFired):
+        (WebCore):
+        * svg/graphics/SVGImageCache.h:
+        (SVGImageCache):
+
+2012-02-24  Tim Horton  <timothy_horton@apple.com>
+
         SVG should be supported in Dashboard compatibility mode
         https://bugs.webkit.org/show_bug.cgi?id=78322
         <rdar://problem/5861278>
