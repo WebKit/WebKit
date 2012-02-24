@@ -1,3 +1,9 @@
+2012-02-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium image for inspector status bar button updated.
+
+        * src/js/Images/segmentSelectedEndChromium.png:
+
 2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         SpellCheckRequest needs to know the context where the spellcheck happened.
