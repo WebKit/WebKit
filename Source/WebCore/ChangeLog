@@ -1,3 +1,16 @@
+2012-02-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Font related problem with newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=79402
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Apply the descent += 1 workaround needed to produce correct metrics only for Qt 4,
+        because the behaviour has been corrected in Qt 5.
+
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
         Move XML-related APIs from DOMWindow.idl to DOMWindowXML.idl
