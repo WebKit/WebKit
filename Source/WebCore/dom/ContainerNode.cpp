@@ -240,10 +240,6 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
-#if ENABLE(INSPECTOR)
-        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
-#endif
-
         insertBeforeCommon(next.get(), child);
 
         childrenChanged(true, nextChildPreviousSibling.get(), nextChild, 1);
@@ -681,10 +677,6 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
-
-#if ENABLE(INSPECTOR)
-    InspectorInstrumentation::willInsertDOMNode(document(), newChild.get(), this);
-#endif
 
     forbidEventDispatch();
     Node* last = m_lastChild;

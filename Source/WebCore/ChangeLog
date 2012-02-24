@@ -1,3 +1,24 @@
+2012-02-24  Adam Klein  <adamk@chromium.org>
+
+        Don't notify the inspector of Node insertions initiated by the parser
+        https://bugs.webkit.org/show_bug.cgi?id=79388
+
+        Reviewed by Adam Barth.
+
+        This is part of a series of changes to make ContainerNode's
+        implementation simpler and more internally consistent.
+
+        I don't know of a way to break on parser-initiated insertions,
+        and the code already doesn't notify on parser-initiated removes
+        (in ContainerNode::parserRemoveChild).
+
+        No new tests, should already be covered by
+        inspector/debugger/dom-breakpoints.html.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::parserAddChild):
+
 2012-02-24  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Windows and WinCE build after changeset r108809
