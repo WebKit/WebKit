@@ -123,6 +123,7 @@ var TEST_TYPES = [
     'crypto_unittests',
     'googleurl_unittests',
     'gfx_unittests',
+    'gpu_tests',
     'gpu_unittests',
     'installer_util_unittests',
     'interactive_ui_tests',
@@ -179,6 +180,7 @@ function handleValidHashParameterWrapper(key, value)
         validateParameter(g_currentState, key, value,
             function() {
               return value in LAYOUT_TESTS_BUILDER_GROUPS ||
+                  value in CHROMIUM_GPU_TESTS_BUILDER_GROUPS ||
                   value in CHROMIUM_GTESTS_BUILDER_GROUPS;
             });
         return true;
@@ -420,12 +422,14 @@ function isLayoutTestResults()
     return g_currentState.testType == 'layout-tests';
 }
 
-function currentBuilderGroup(opt_state)
+function currentBuilderGroupCategory(opt_state)
 {
     var state = opt_state || g_currentState;
     switch (state.testType) {
     case 'layout-tests':
-        return LAYOUT_TESTS_BUILDER_GROUPS[state.group]
+        return LAYOUT_TESTS_BUILDER_GROUPS
+    case 'gpu_tests':
+        return CHROMIUM_GPU_TESTS_BUILDER_GROUPS
     case 'aura_unittests':
     case 'aura_shell_unittests':
     case 'base_unittests':
@@ -456,10 +460,16 @@ function currentBuilderGroup(opt_state)
     case 'ui_tests':
     case 'unit_tests':
     case 'views_unittests':
-        return CHROMIUM_GTESTS_BUILDER_GROUPS[state.group];
+        return CHROMIUM_GTESTS_BUILDER_GROUPS
     default:
         console.log('invalid testType parameter: ' + state.testType);
     }
+}
+
+function currentBuilderGroup(opt_state)
+{
+    var state = opt_state || g_currentState;
+    return currentBuilderGroupCategory(state)[state.group]
 }
 
 function builderMaster(builderName)
@@ -889,7 +899,7 @@ function htmlForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNo
     }
 
     html += selectHTML('Group', 'group',
-        Object.keys(isLayoutTestResults() ? LAYOUT_TESTS_BUILDER_GROUPS : CHROMIUM_GTESTS_BUILDER_GROUPS));
+        Object.keys(currentBuilderGroupCategory()));
 
     if (!isTreeMap())
         html += checkboxHTML('showAllRuns', 'Show all runs', g_currentState.showAllRuns);
