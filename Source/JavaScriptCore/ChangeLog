@@ -1,6 +1,16 @@
 2012-02-24  Daniel Bates  <dbates@webkit.org>
 
+        Fix change log entry for changeset r108819; add bug URL
+        https://bugs.webkit.org/show_bug.cgi?id=79504
+
+        Changeset r108819 is associated with bug #79504.
+
+        * ChangeLog
+
+2012-02-24  Daniel Bates  <dbates@webkit.org>
+
         Substitute ENABLE(CLASSIC_INTERPRETER) for ENABLE(INTERPRETER) in Interpreter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=79504
 
         Reviewed by Oliver Hunt.
 
