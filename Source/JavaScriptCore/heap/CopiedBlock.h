@@ -58,6 +58,7 @@ private:
     void* m_offset;
     uintptr_t m_isPinned;
     uintptr_t m_padding;
+    uintptr_t m_dummy;
     char m_payload[1];
 };
 

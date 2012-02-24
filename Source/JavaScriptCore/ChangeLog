@@ -1,3 +1,17 @@
+2012-02-24  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt] Buildfix for "Zero out CopiedBlocks on initialization".
+        https://bugs.webkit.org/show_bug.cgi?id=79199
+
+        Ruber stamped by Csaba Osztrogonác.
+
+        Temporary fix since the new member wastes a little space on
+        64 bit systems. Although it is harmless, it is only needed
+        for 32 bit systems.
+
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+
 2012-02-24  Han Hojong  <hojong.han@samsung.com>
 
         Remove useless jump instructions for short circuit
