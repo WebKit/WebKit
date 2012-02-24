@@ -23,26 +23,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSolidColorLayer_h
-#define WebSolidColorLayer_h
-
-#include "WebCommon.h"
-#include "WebFloatRect.h"
-#include "WebLayer.h"
-
-namespace WebKit {
-class WebSolidColorLayerImpl;
-
-class WebSolidColorLayer : public WebLayer {
-public:
-    WEBKIT_EXPORT static WebSolidColorLayer create();
-    WEBKIT_EXPORT void setBackgroundColor(const WebColor&);
-
-#if WEBKIT_IMPLEMENTATION
-    WebSolidColorLayer(const WTF::PassRefPtr<WebSolidColorLayerImpl>&);
-#endif
-};
-
-} // namespace WebKit
-
-#endif // WebSolidColorLayer_h
+#include "../../../../Platform/chromium/public/WebSolidColorLayer.h"

@@ -1,3 +1,27 @@
+2012-02-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move Web*Layer* headers into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=79425
+
+        Reviewed by Adam Barth.
+
+        Adds forwarding headers for Web*Layer* APIs and their dependencies.  The forwarding headers for the Web*Layer*
+        APIs are temporary since Web*Layer* is not exposed in the client interface.  The other headers (such as
+        WebColor) are exposed in both the client and platform APIs, so the forwarding headers are permanent, although we
+        might move them back down to public/ at some point.
+
+        * public/platform/WebCanvas.h:
+        * public/platform/WebColor.h:
+        * public/platform/WebColorName.h:
+        * public/platform/WebContentLayer.h:
+        * public/platform/WebContentLayerClient.h:
+        * public/platform/WebExternalTextureLayer.h:
+        * public/platform/WebLayer.h:
+        * public/platform/WebLayerTreeView.h:
+        * public/platform/WebLayerTreeViewClient.h:
+        * public/platform/WebPrivatePtr.h:
+        * public/platform/WebSolidColorLayer.h:
+
 2012-02-24  Peter Collingbourne  <peter@pcc.me.uk>
 
         [chromium] Have WebFrameImpl::selectionAsMarkup create interchange markup.

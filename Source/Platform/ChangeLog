@@ -1,3 +1,79 @@
+2012-02-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move Web*Layer* headers into Platform
+        https://bugs.webkit.org/show_bug.cgi?id=79425
+
+        Reviewed by Adam Barth.
+
+        This moves the Web*Layer* headers and their dependencies from WebKit/chromium/public/platform/ into
+        Platform/chromium/public.
+
+        * Platform.gypi:
+        * chromium/public/WebCanvas.h: Copied from Source/WebKit/chromium/public/platform/WebCanvas.h.
+        (WebKit):
+        * chromium/public/WebColor.h: Copied from Source/WebKit/chromium/public/platform/WebColor.h.
+        (WebKit):
+        * chromium/public/WebColorName.h: Copied from Source/WebKit/chromium/public/platform/WebColorName.h.
+        (WebKit):
+        * chromium/public/WebContentLayer.h: Copied from Source/WebKit/chromium/public/platform/WebContentLayer.h.
+        (WebKit):
+        (WebContentLayer):
+        (WebKit::WebContentLayer::WebContentLayer):
+        (WebKit::WebContentLayer::~WebContentLayer):
+        (WebKit::WebContentLayer::operator=):
+        * chromium/public/WebContentLayerClient.h: Copied from Source/WebKit/chromium/public/platform/WebContentLayerClient.h.
+        (WebKit):
+        (WebContentLayerClient):
+        (WebKit::WebContentLayerClient::~WebContentLayerClient):
+        * chromium/public/WebExternalTextureLayer.h: Copied from Source/WebKit/chromium/public/platform/WebExternalTextureLayer.h.
+        (WebKit):
+        (WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::~WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::operator=):
+        * chromium/public/WebLayer.h: Copied from Source/WebKit/chromium/public/platform/WebLayer.h.
+        (WebKit):
+        (WebLayer):
+        (WebKit::WebLayer::WebLayer):
+        (WebKit::WebLayer::~WebLayer):
+        (WebKit::WebLayer::operator=):
+        (WebKit::WebLayer::isNull):
+        (WebKit::WebLayer::to):
+        (WebKit::WebLayer::toConst):
+        (WebKit::WebLayer::unwrap):
+        (WebKit::WebLayer::constUnwrap):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebLayerTreeView.h: Copied from Source/WebKit/chromium/public/platform/WebLayerTreeView.h.
+        (WebCore):
+        (WebKit):
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+        (WebKit::WebLayerTreeView::WebLayerTreeView):
+        (WebKit::WebLayerTreeView::~WebLayerTreeView):
+        (WebKit::WebLayerTreeView::operator=):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebLayerTreeViewClient.h: Copied from Source/WebKit/chromium/public/platform/WebLayerTreeViewClient.h.
+        (WebKit):
+        (WebLayerTreeViewClient):
+        (WebKit::WebLayerTreeViewClient::~WebLayerTreeViewClient):
+        * chromium/public/WebPrivatePtr.h: Copied from Source/WebKit/chromium/public/platform/WebPrivatePtr.h.
+        (WebKit):
+        (WebPrivatePtr):
+        (WebKit::WebPrivatePtr::WebPrivatePtr):
+        (WebKit::WebPrivatePtr::~WebPrivatePtr):
+        (WebKit::WebPrivatePtr::isNull):
+        (WebKit::WebPrivatePtr::reset):
+        (WebKit::WebPrivatePtr::operator=):
+        (WebKit::WebPrivatePtr::get):
+        (WebKit::WebPrivatePtr::operator->):
+        (WebKit::WebPrivatePtr::assign):
+        * chromium/public/WebSolidColorLayer.h: Copied from Source/WebKit/chromium/public/platform/WebSolidColorLayer.h.
+        (WebKit):
+        (WebSolidColorLayer):
+
 2012-02-08  James Robinson  <jamesr@chromium.org>
 
         r107042 caused compile breakages on chromium try bots
