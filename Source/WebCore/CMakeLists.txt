@@ -1714,6 +1714,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextMetricsBuilder.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
+        svg/DOMWindowSVG.idl
         svg/SVGAElement.cpp
         svg/SVGAltGlyphDefElement.cpp
         svg/SVGAltGlyphElement.cpp

@@ -1,3 +1,19 @@
+2012-02-23  Eric Seidel  <eric@webkit.org>
+
+        Move SVG element constructors out of DOMWindow.idl into a new DOMWindowSVG.idl suplemental
+        https://bugs.webkit.org/show_bug.cgi?id=79379
+
+        Reviewed by Adam Barth.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.idl:
+        * svg/DOMWindowSVG.idl: Added.
+
 2012-02-23  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb video damage to the damage tracker.

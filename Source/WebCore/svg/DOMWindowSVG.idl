@@ -1,0 +1,187 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+module window {
+
+    // FIXME: Most of this could/should be generated from make_names.pl/SVGNames.in
+    // to reduce the chance that we forget a constructor when adding a new element.
+    interface [
+        Conditional=SVG,
+        Supplemental=DOMWindow
+    ] DOMWindowSVG {
+
+        attribute SVGZoomEventConstructor SVGZoomEvent;
+
+        // Expose all implemented SVG 1.1 interfaces, excluding the SVG MI interfaces:
+        // SVGAnimatedPathData, SVGAnimatedPoints, SVGExternalResourcesRequired,
+        // SVGFilterPrimitiveStandardAttributes, SVGFitToViewBox, SVGLangSpace, SVGLocatable
+        // SVGStylable, SVGTests, SVGTransformable, SVGURIReference, SVGZoomAndPan
+        attribute SVGAElementConstructor SVGAElement;
+        attribute SVGAngleConstructor SVGAngle;
+        attribute SVGAnimatedAngleConstructor SVGAnimatedAngle;
+        attribute SVGAnimatedBooleanConstructor SVGAnimatedBoolean;
+        attribute SVGAnimatedEnumerationConstructor SVGAnimatedEnumeration;
+        attribute SVGAnimatedIntegerConstructor SVGAnimatedInteger;
+        attribute SVGAnimatedLengthConstructor SVGAnimatedLength;
+        attribute SVGAnimatedLengthListConstructor SVGAnimatedLengthList;
+        attribute SVGAnimatedNumberConstructor SVGAnimatedNumber;
+        attribute SVGAnimatedNumberListConstructor SVGAnimatedNumberList;
+        attribute SVGAnimatedPreserveAspectRatioConstructor SVGAnimatedPreserveAspectRatio;
+        attribute SVGAnimatedRectConstructor SVGAnimatedRect;
+        attribute SVGAnimatedStringConstructor SVGAnimatedString;
+        attribute SVGAnimatedTransformListConstructor SVGAnimatedTransformList;
+        attribute SVGCircleElementConstructor SVGCircleElement;
+        attribute SVGClipPathElementConstructor SVGClipPathElement;
+        attribute SVGColorConstructor SVGColor;
+        attribute SVGCursorElementConstructor SVGCursorElement;
+//      attribute SVGCSSRuleConstructor SVGCSSRule;
+        attribute SVGDefsElementConstructor SVGDefsElement;
+        attribute SVGDescElementConstructor SVGDescElement;
+        attribute SVGDocumentConstructor SVGDocument;
+        attribute SVGElementConstructor SVGElement;
+        attribute SVGElementInstanceConstructor SVGElementInstance;
+        attribute SVGElementInstanceListConstructor SVGElementInstanceList;
+        attribute SVGEllipseElementConstructor SVGEllipseElement;
+        attribute SVGForeignObjectElementConstructor SVGForeignObjectElement;
+        attribute SVGExceptionConstructor SVGException;
+        attribute SVGGElementConstructor SVGGElement;
+        attribute SVGGradientElementConstructor SVGGradientElement;
+        attribute SVGImageElementConstructor SVGImageElement;
+        attribute SVGLengthConstructor SVGLength;
+        attribute SVGLengthListConstructor SVGLengthList;
+        attribute SVGLinearGradientElementConstructor SVGLinearGradientElement;
+        attribute SVGLineElementConstructor SVGLineElement;
+        attribute SVGMarkerElementConstructor SVGMarkerElement;
+        attribute SVGMaskElementConstructor SVGMaskElement;
+        attribute SVGMatrixConstructor SVGMatrix;
+        attribute SVGMetadataElementConstructor SVGMetadataElement;
+        attribute SVGNumberConstructor SVGNumber;
+        attribute SVGNumberListConstructor SVGNumberList;
+        attribute SVGPaintConstructor SVGPaint;
+        attribute SVGPathElementConstructor SVGPathElement;
+        attribute SVGPathSegConstructor SVGPathSeg;
+        attribute SVGPathSegArcAbsConstructor SVGPathSegArcAbs;
+        attribute SVGPathSegArcRelConstructor SVGPathSegArcRel;
+        attribute SVGPathSegClosePathConstructor SVGPathSegClosePath;
+        attribute SVGPathSegCurvetoCubicAbsConstructor SVGPathSegCurvetoCubicAbs;
+        attribute SVGPathSegCurvetoCubicRelConstructor SVGPathSegCurvetoCubicRel;
+        attribute SVGPathSegCurvetoCubicSmoothAbsConstructor SVGPathSegCurvetoCubicSmoothAbs;
+        attribute SVGPathSegCurvetoCubicSmoothRelConstructor SVGPathSegCurvetoCubicSmoothRel;
+        attribute SVGPathSegCurvetoQuadraticAbsConstructor SVGPathSegCurvetoQuadraticAbs;
+        attribute SVGPathSegCurvetoQuadraticRelConstructor SVGPathSegCurvetoQuadraticRel;
+        attribute SVGPathSegCurvetoQuadraticSmoothAbsConstructor SVGPathSegCurvetoQuadraticSmoothAbs;
+        attribute SVGPathSegCurvetoQuadraticSmoothRelConstructor SVGPathSegCurvetoQuadraticSmoothRel;
+        attribute SVGPathSegLinetoAbsConstructor SVGPathSegLinetoAbs;
+        attribute SVGPathSegLinetoHorizontalAbsConstructor SVGPathSegLinetoHorizontalAbs;
+        attribute SVGPathSegLinetoHorizontalRelConstructor SVGPathSegLinetoHorizontalRel;
+        attribute SVGPathSegLinetoRelConstructor SVGPathSegLinetoRel;
+        attribute SVGPathSegLinetoVerticalAbsConstructor SVGPathSegLinetoVerticalAbs;
+        attribute SVGPathSegLinetoVerticalRelConstructor SVGPathSegLinetoVerticalRel;
+        attribute SVGPathSegListConstructor SVGPathSegList;
+        attribute SVGPathSegMovetoAbsConstructor SVGPathSegMovetoAbs;
+        attribute SVGPathSegMovetoRelConstructor SVGPathSegMovetoRel;
+        attribute SVGPatternElementConstructor SVGPatternElement;
+        attribute SVGPointConstructor SVGPoint;
+        attribute SVGPointListConstructor SVGPointList;
+        attribute SVGPolygonElementConstructor SVGPolygonElement;
+        attribute SVGPolylineElementConstructor SVGPolylineElement;
+        attribute SVGPreserveAspectRatioConstructor SVGPreserveAspectRatio;
+        attribute SVGRadialGradientElementConstructor SVGRadialGradientElement;
+        attribute SVGRectConstructor SVGRect;
+        attribute SVGRectElementConstructor SVGRectElement;
+        attribute SVGRenderingIntentConstructor SVGRenderingIntent;
+        attribute SVGScriptElementConstructor SVGScriptElement;
+        attribute SVGStopElementConstructor SVGStopElement;
+        attribute SVGStringListConstructor SVGStringList;
+        attribute SVGStyleElementConstructor SVGStyleElement;
+        attribute SVGSVGElementConstructor SVGSVGElement;
+        attribute SVGSwitchElementConstructor SVGSwitchElement;
+        attribute SVGSymbolElementConstructor SVGSymbolElement;
+        attribute SVGTextContentElementConstructor SVGTextContentElement;
+        attribute SVGTextElementConstructor SVGTextElement;
+        attribute SVGTextPathElementConstructor SVGTextPathElement;
+        attribute SVGTextPositioningElementConstructor SVGTextPositioningElement;
+        attribute SVGTitleElementConstructor SVGTitleElement;
+        attribute SVGTransformConstructor SVGTransform;
+        attribute SVGTransformListConstructor SVGTransformList;
+        attribute SVGTRefElementConstructor SVGTRefElement;
+        attribute SVGTSpanElementConstructor SVGTSpanElement;
+        attribute SVGUnitTypesConstructor SVGUnitTypes;
+        attribute SVGUseElementConstructor SVGUseElement;
+        attribute SVGViewElementConstructor SVGViewElement;
+//      attribute SVGViewSpecConstructor SVGViewSpec;
+
+        attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
+        attribute SVGAnimateElementConstructor SVGAnimateElement;
+        attribute SVGAnimateMotionElementConstructor SVGAnimateMotionElement;
+        attribute SVGAnimateTransformElementConstructor SVGAnimateTransformElement;
+        attribute SVGMPathElementConstructor SVGMPathElement;
+        attribute SVGSetElementConstructor SVGSetElement;
+
+#if defined(ENABLE_SVG_FONTS) && ENABLE_SVG_FONTS
+        attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;
+        attribute SVGAltGlyphElementConstructor SVGAltGlyphElement;
+        attribute SVGAltGlyphItemElementConstructor SVGAltGlyphItemElement;
+//      attribute SVGDefinitionSrcElementConstructor SVGDefinitionSrcElement;
+        attribute SVGFontElementConstructor SVGFontElement;
+        attribute SVGFontFaceElementConstructor SVGFontFaceElement;
+        attribute SVGFontFaceFormatElementConstructor SVGFontFaceFormatElement;
+        attribute SVGFontFaceNameElementConstructor SVGFontFaceNameElement;
+        attribute SVGFontFaceSrcElementConstructor SVGFontFaceSrcElement;
+        attribute SVGFontFaceUriElementConstructor SVGFontFaceUriElement;
+        attribute SVGGlyphElementConstructor SVGGlyphElement;
+        attribute SVGGlyphRefElementConstructor SVGGlyphRefElement;
+        attribute SVGHKernElementConstructor SVGHKernElement;
+        attribute SVGMissingGlyphElementConstructor SVGMissingGlyphElement;
+        attribute SVGVKernElementConstructor SVGVKernElement;
+#endif
+
+#if defined(ENABLE_FILTERS) && ENABLE_FILTERS
+        attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
+        attribute SVGFEBlendElementConstructor SVGFEBlendElement;
+        attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
+        attribute SVGFEComponentTransferElementConstructor SVGFEComponentTransferElement;
+        attribute SVGFECompositeElementConstructor SVGFECompositeElement;
+        attribute SVGFEConvolveMatrixElementConstructor SVGFEConvolveMatrixElement;
+        attribute SVGFEDiffuseLightingElementConstructor SVGFEDiffuseLightingElement;
+        attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
+        attribute SVGFEDistantLightElementConstructor SVGFEDistantLightElement;
+        attribute SVGFEDropShadowElementConstructor SVGFEDropShadowElement;
+        attribute SVGFEFloodElementConstructor SVGFEFloodElement;
+        attribute SVGFEFuncAElementConstructor SVGFEFuncAElement;
+        attribute SVGFEFuncBElementConstructor SVGFEFuncBElement;
+        attribute SVGFEFuncGElementConstructor SVGFEFuncGElement;
+        attribute SVGFEFuncRElementConstructor SVGFEFuncRElement;
+        attribute SVGFEGaussianBlurElementConstructor SVGFEGaussianBlurElement;
+        attribute SVGFEImageElementConstructor SVGFEImageElement;
+        attribute SVGFEMergeElementConstructor SVGFEMergeElement;
+        attribute SVGFEMergeNodeElementConstructor SVGFEMergeNodeElement;
+        attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
+        attribute SVGFEOffsetElementConstructor SVGFEOffsetElement;
+        attribute SVGFEPointLightElementConstructor SVGFEPointLightElement;
+        attribute SVGFESpecularLightingElementConstructor SVGFESpecularLightingElement;
+        attribute SVGFESpotLightElementConstructor SVGFESpotLightElement;
+        attribute SVGFETileElementConstructor SVGFETileElement;
+        attribute SVGFETurbulenceElementConstructor SVGFETurbulenceElement;
+        attribute SVGFilterElementConstructor SVGFilterElement;
+#endif
+
+    };
+
+}
