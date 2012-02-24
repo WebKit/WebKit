@@ -1,3 +1,18 @@
+2012-02-24  Mathias Bynens  <mathias@qiwi.be>
+
+        `\u200c` and `\u200d` should be allowed in IdentifierPart, as per ES5
+        https://bugs.webkit.org/show_bug.cgi?id=78908
+
+        Add additional checks for zero-width non-joiner (0x200C) and
+        zero-width joiner (0x200D) characters.
+
+        Reviewed by Michael Saboff.
+
+        * parser/Lexer.cpp:
+        (JSC::isNonASCIIIdentPart)
+        * runtime/LiteralParser.cpp:
+        (JSC::::Lexer::lexIdentifier)
+
 2012-02-23  Kenichi Ishibashi  <bashi@chromium.org>
 
         Adding WebSocket per-frame DEFLATE extension

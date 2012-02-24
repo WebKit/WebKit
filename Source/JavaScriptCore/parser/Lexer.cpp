@@ -3,6 +3,7 @@
  *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
+ *  Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -379,8 +380,8 @@ static inline bool isIdentStart(int c)
 
 static NEVER_INLINE bool isNonASCIIIdentPart(int c)
 {
-    return category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other
-        | Mark_NonSpacing | Mark_SpacingCombining | Number_DecimalDigit | Punctuation_Connector);
+    return (category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other
+        | Mark_NonSpacing | Mark_SpacingCombining | Number_DecimalDigit | Punctuation_Connector)) || c == 0x200C || c == 0x200D;
 }
 
 static ALWAYS_INLINE bool isIdentPart(int c)

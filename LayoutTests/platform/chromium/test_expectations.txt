@@ -909,6 +909,9 @@ BUGCR10278 LINUX : fast/css/font-face-unicode-range.html = FAIL
 // what the resolution was.
 BUGCR10279 : fast/js/var-declarations-shadowing.html = FAIL
 
+// FIXME: Enable this test when V8 r10800 has rolled into WebKit.
+BUGWK79361 : fast/js/var-declarations-zero-width.html = FAIL
+
 // Implement full JSON support in V8
 BUGCR14885 SLOW : fast/js/JSON-parse.html = FAIL
 BUGCR14885 SLOW : fast/js/JSON-stringify.html = CRASH FAIL
