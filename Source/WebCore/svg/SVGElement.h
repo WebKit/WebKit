@@ -114,7 +114,7 @@ protected:
 
     virtual void finishParsingChildren();
     virtual void attributeChanged(Attribute*) OVERRIDE;
-    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     
     virtual void removedFromDocument();
 

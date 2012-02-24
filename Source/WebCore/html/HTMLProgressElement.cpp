@@ -26,6 +26,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
+#include "NodeRenderingContext.h"
 #include "HTMLDivElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -62,6 +63,11 @@ PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName&
 RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderProgress(this);
+}
+
+bool HTMLProgressElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+{
+    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 bool HTMLProgressElement::supportsFocus() const

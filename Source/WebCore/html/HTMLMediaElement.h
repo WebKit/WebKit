@@ -339,6 +339,7 @@ private:
     virtual bool isMouseFocusable() const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void didRecalcStyle(StyleChange);

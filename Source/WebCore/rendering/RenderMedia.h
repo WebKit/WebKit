@@ -51,6 +51,7 @@ protected:
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    virtual bool canHaveChildren() const { return true; }
 
     virtual const char* renderName() const { return "RenderMedia"; }
     virtual bool isMedia() const { return true; }

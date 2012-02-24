@@ -1,3 +1,159 @@
+2012-02-23  MORITA Hajime  <morrita@google.com>
+
+        Adding a ShadowRoot to image-backed element causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=78878
+
+        Reviewed by Dimitri Glazkov.
+
+        The crash happened because NodeRenderingContext tried to append a
+        child to a renderer regardless one isn't capable of holding any
+        children if it appears in the shadow attaching phase. RenderImage
+        is one of such renderer classes which aren't capable.
+
+        NodeRenderingContext decide whether the contextual node as a child
+        can create its renderer based on RenderObject::canHaveChildren()
+        and Node::childShouldCreateRenderer(). But the responsibility
+        between these two methods are getting confused. which results this
+        unfortuante crash path.
+
+        This change re-aligns the responsibility:
+
+        - Now canHaveChildren() purely declares the ability of the
+          renderer. If the renderer is capable of having children, it
+          return true regardless of HTML semantics.
+
+        - On the other hand, childShouldCreateRenderer() cares about the
+          semantics. If the element doesn't allow children to be rendered,
+          this returns false.
+
+        - Note that these decision on elements are contextual. Each element
+          needs to know which role it is playing in the tree composition
+          algorithm of Shadow DOM. That's why the method parameter is changed
+          from Node* to NodeRenderingContext.
+
+        - Fixed updateFirstLetter() which relied on this confused assumption.
+          This change introduces RenderDeprecatedFlexibleBox::buttonText()
+          to refine the relying assumption.
+
+        With this change, some decision points are moved from a renderer to an
+        element. Following renderers no longer stop reject having children:
+
+        - RenderButton, RenderListBox, RenderMenuList, RenderMeter,
+          RenderProgress, RenderTextControl.
+
+        Corresponding element for such a render (HTMLProgressElement of
+        RenderProgress for exaple) now cares about that.
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests: fast/dom/shadow/shadow-on-image-expected.html
+               fast/dom/shadow/shadow-on-image.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        (Element):
+        * dom/Node.h:
+        (WebCore::Node::childShouldCreateRenderer):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::isOnEncapsulationBoundary):
+        (WebCore):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::childShouldCreateRenderer):
+        * html/HTMLDetailsElement.h:
+        (HTMLDetailsElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+        (WebCore::HTMLMediaElement::childShouldCreateRenderer):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::childShouldCreateRenderer):
+        (WebCore):
+        * html/HTMLMeterElement.h:
+        (HTMLMeterElement):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::childShouldCreateRenderer):
+        (WebCore):
+        * html/HTMLProgressElement.h:
+        (HTMLProgressElement):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer):
+        (WebCore):
+        * html/HTMLSelectElement.h:
+        (HTMLSelectElement):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::childShouldCreateRenderer):
+        (WebCore):
+        * html/HTMLSummaryElement.h:
+        (HTMLSummaryElement):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::childShouldCreateRenderer):
+        (WebCore):
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderButton.cpp:
+        * rendering/RenderButton.h:
+        (RenderButton):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        (WebCore::RenderDeprecatedFlexibleBox::buttonText):
+        * rendering/RenderListBox.h:
+        (RenderListBox):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::canHaveChildren):
+        * rendering/RenderMenuList.h:
+        (RenderMenuList):
+        (WebCore::RenderMenuList::hasControlClip):
+        * rendering/RenderMeter.h:
+        * rendering/RenderProgress.h:
+        * rendering/RenderTextControl.h:
+        * rendering/svg/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::canHaveChildren):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+        * svg/SVGAElement.h:
+        (SVGAElement):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::childShouldCreateRenderer):
+        * svg/SVGAltGlyphElement.h:
+        (SVGAltGlyphElement):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::childShouldCreateRenderer):
+        * svg/SVGDocument.h:
+        (SVGDocument):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::childShouldCreateRenderer):
+        * svg/SVGForeignObjectElement.h:
+        (SVGForeignObjectElement):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGSwitchElement.h:
+        (SVGSwitchElement):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::childShouldCreateRenderer):
+        * svg/SVGTRefElement.h:
+        (SVGTRefElement):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer):
+        * svg/SVGTSpanElement.h:
+        (SVGTSpanElement):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * svg/SVGTextElement.h:
+        (SVGTextElement):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer):
+        * svg/SVGTextPathElement.h:
+
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
         Support [Supplemental] on static methods
@@ -16768,7 +16924,7 @@
         (WebCore::RenderFrameSet::positionFramesWithFlattening):
         * rendering/RenderImage.cpp:
         (WebCore::RenderImage::paintReplaced):
-                * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::scrollRectToVisible):
         (WebCore::RenderLayer::positionOverflowControls):
         (WebCore::RenderLayer::calculateRects):
@@ -16846,7 +17002,7 @@
         (WebCore::RenderFrameSet::positionFramesWithFlattening):
         * rendering/RenderImage.cpp:
         (WebCore::RenderImage::paintReplaced):
-        * rendering/RenderLayer.cpp:
+                * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::scrollRectToVisible):
         (WebCore::RenderLayer::positionOverflowControls):
         (WebCore::RenderLayer::calculateRects):

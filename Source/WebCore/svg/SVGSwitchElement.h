@@ -43,7 +43,7 @@ private:
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
 
-    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

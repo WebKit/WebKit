@@ -114,6 +114,7 @@ private:
 
     virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
 
     bool isPlaceholderEmpty() const;
 

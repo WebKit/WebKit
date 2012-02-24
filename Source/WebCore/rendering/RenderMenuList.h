@@ -62,12 +62,12 @@ private:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return true; }
-    virtual bool canHaveChildren() const { return false; }
 
     virtual void updateFromElement();
 
-    virtual bool hasControlClip() const { return true; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+    virtual bool hasControlClip() const { return true; }
+    virtual RenderText* buttonText() const OVERRIDE { return m_buttonText; }
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 

@@ -53,7 +53,7 @@ private:
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGTransformable::localCoordinateSpaceTransform(mode); }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(Node*) const;
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
             
     virtual void svgAttributeChanged(const QualifiedName&);
 

@@ -25,6 +25,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameView.h"
+#include "NodeRenderingContext.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
@@ -95,10 +96,10 @@ void SVGDocument::updatePan(const FloatPoint& pos) const
     }
 }
 
-bool SVGDocument::childShouldCreateRenderer(Node* node) const
+bool SVGDocument::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (node->hasTagName(SVGNames::svgTag))
-        return static_cast<SVGSVGElement*>(node)->isValid();
+    if (childContext.node()->hasTagName(SVGNames::svgTag))
+        return static_cast<SVGSVGElement*>(childContext.node())->isValid();
     return true;
 }
 

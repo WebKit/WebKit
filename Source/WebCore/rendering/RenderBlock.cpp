@@ -5810,6 +5810,36 @@ static inline bool shouldSkipForFirstLetter(UChar c)
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
+// We only honor first-letter if 
+// - the firstLetterBlock can have children in the DOM and
+// - the block doesn't have any special assumption on its text children.
+// This correctly prevents form controls from honoring first-letter.
+static inline bool isSafeToCreateFirstLetterRendererOn(RenderObject* renderer)
+{
+    return (renderer->canHaveChildren()
+            && !(renderer->isDeprecatedFlexibleBox()
+                 && static_cast<RenderDeprecatedFlexibleBox*>(renderer)->buttonText()));
+}
+
+static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
+{
+    RenderObject* firstLetterBlock = start;
+    while (true) {
+        bool canHaveFirstLetterRenderer = firstLetterBlock->style()->hasPseudoStyle(FIRST_LETTER)
+            && isSafeToCreateFirstLetterRendererOn(firstLetterBlock);
+        if (canHaveFirstLetterRenderer)
+            return firstLetterBlock;
+
+        RenderObject* parentBlock = firstLetterBlock->parent();
+        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock || 
+            !parentBlock->isBlockFlow())
+            return 0;
+        firstLetterBlock = parentBlock;
+    } 
+
+    return 0;
+}
+   
 void RenderBlock::updateFirstLetter()
 {
     if (!document()->usesFirstLetterRules())
@@ -5820,23 +5850,8 @@ void RenderBlock::updateFirstLetter()
 
     // FIXME: We need to destroy the first-letter object if it is no longer the first child.  Need to find
     // an efficient way to check for that situation though before implementing anything.
-    RenderObject* firstLetterBlock = this;
-    bool hasPseudoStyle = false;
-    while (true) {
-        // We only honor first-letter if the firstLetterBlock can have children in the DOM. This correctly 
-        // prevents form controls from honoring first-letter.
-        hasPseudoStyle = firstLetterBlock->style()->hasPseudoStyle(FIRST_LETTER) 
-            && firstLetterBlock->canHaveChildren();
-        if (hasPseudoStyle)
-            break;
-        RenderObject* parentBlock = firstLetterBlock->parent();
-        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock || 
-            !parentBlock->isBlockFlow())
-            break;
-        firstLetterBlock = parentBlock;
-    } 
-
-    if (!hasPseudoStyle) 
+    RenderObject* firstLetterBlock = findFirstLetterBlock(this);
+    if (!firstLetterBlock)
         return;
 
     // Drill into inlines looking for our first text child.

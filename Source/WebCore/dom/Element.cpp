@@ -1852,13 +1852,13 @@ void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, u
 }
 
 #if ENABLE(SVG)
-bool Element::childShouldCreateRenderer(Node* child) const
+bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
     // Only create renderers for SVG elements whose parents are SVG elements, or for proper <svg xmlns="svgNS"> subdocuments.
-    if (child->isSVGElement())
-        return child->hasTagName(SVGNames::svgTag) || isSVGElement();
+    if (childContext.node()->isSVGElement())
+        return childContext.node()->hasTagName(SVGNames::svgTag) || isSVGElement();
 
-    return Node::childShouldCreateRenderer(child);
+    return Node::childShouldCreateRenderer(childContext);
 }
 #endif
     

@@ -50,13 +50,12 @@ public:
 
     virtual void updateBeforeAfterContent(PseudoId);
 
+    virtual RenderText* buttonText() const OVERRIDE;
     virtual bool hasControlClip() const { return true; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
     void setText(const String&);
     String text() const;
-
-    virtual bool canHaveChildren() const;
 
 private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
