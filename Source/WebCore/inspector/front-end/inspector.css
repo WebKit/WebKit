@@ -1437,8 +1437,6 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 }
 
 .swatch {
-    display: inline-block;
-    vertical-align: baseline;
     margin-left: 1px;
     margin-right: 2px;
     margin-bottom: -1px;
@@ -1446,6 +1444,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     height: 1em;
     border: 1px solid rgba(128, 128, 128, 0.6);
     background-image: url(Images/checker.png);
+    display: inline-block;
 }
 
 .swatch-inner {

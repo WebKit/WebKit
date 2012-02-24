@@ -536,7 +536,7 @@
     background: rgba(230, 230, 230, 1) !important;
     border: 1px solid #646464;
     padding: 10px;
-    width: 210px;
+    width: 220px;
     z-index: 10;
     -webkit-user-select: none;
 }
@@ -552,11 +552,14 @@
     top: 0;
     left: 0;
     bottom: 0;
-    right: 20%;
+    right: 40px;
 }
 
 .spectrum-display-value {
     -webkit-user-select: text;
+    position: relative;
+    left: 2px;
+    top: -6px;
 }
 
 .spectrum-hue {
@@ -564,12 +567,13 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 83%;
+    left: 170px;
+    -webkit-box-reflect: right -28px;
 }
 
 .spectrum-fill {
     /* Same as spectrum-color width to force aspect ratio. */
-    margin-top: 80%;
+    margin-top: 150px;
 }
 
 .spectrum-range-container {
@@ -583,12 +587,15 @@
 }
 
 .spectrum-range-container label {
-    width: 32px;
     display: inline-block;
+    padding-right: 4px;
 }
 
 .spectrum-range-container input {
-    width: 130px;
+    position: absolute;
+    left: 15px;
+    right: 40px;
+    margin: 3px 0 0 0;
 }
 
 .swatch, .spectrum-dragger, .spectrum-slider {
@@ -623,9 +630,14 @@
     position: absolute;
     top: 0;
     cursor: pointer;
-    height: 5px;
-    width: 110%;
-    margin-left: -5%;
-    background: white;
-    opacity: .8;
+    border: 1px solid black;
+    height: 4px;
+    left: -1px;
+    right: -1px;
+}
+
+.spectrum-container .swatch {
+    width: 20px;
+    height:20px;
+    margin: 0;
 }

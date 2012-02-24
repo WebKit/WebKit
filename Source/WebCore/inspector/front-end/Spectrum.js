@@ -51,7 +51,7 @@ WebInspector.Spectrum = function()
 
     var rangeContainer = this._containerElement.createChild("div", "spectrum-range-container");
     var alphaLabel = rangeContainer.createChild("label");
-    alphaLabel.textContent = WebInspector.UIString("alpha: ");
+    alphaLabel.textContent = WebInspector.UIString("\u03B1:");
 
     this._alphaElement = rangeContainer.createChild("input", "spectrum-range");
     this._alphaElement.setAttribute("type", "range");
