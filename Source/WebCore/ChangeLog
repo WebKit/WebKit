@@ -1,5 +1,18 @@
 2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: hide color picker upon panel switch.
+        https://bugs.webkit.org/show_bug.cgi?id=79355
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.willHide):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._showUserAgentStylesSettingChanged):
+        (WebInspector.StylesSidebarPane.prototype.willHide):
+
+2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: make color review larger in the color picker.
         https://bugs.webkit.org/show_bug.cgi?id=79339
 

@@ -154,6 +154,11 @@ WebInspector.ElementsPanel.prototype = {
         // Detach heavy component on hide
         this.contentElement.removeChild(this.treeOutline.element);
 
+        for (var pane in this.sidebarPanes) {
+            if (this.sidebarPanes[pane].willHide)
+                this.sidebarPanes[pane].willHide();
+        }
+
         WebInspector.Panel.prototype.willHide.call(this);
     },
 

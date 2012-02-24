@@ -864,6 +864,12 @@ WebInspector.StylesSidebarPane.prototype = {
     _showUserAgentStylesSettingChanged: function()
     {
         this._rebuildUpdate();
+    },
+
+    willHide: function()
+    {
+        if (this._spectrum.visible)
+            this._spectrum.hide();
     }
 }
 
