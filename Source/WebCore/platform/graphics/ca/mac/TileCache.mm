@@ -275,6 +275,12 @@ void TileCache::tileRevalidationTimerFired(Timer<TileCache>*)
 
 void TileCache::revalidateTiles()
 {
+    // If the underlying PlatformLayer has been destroyed, but the WebTileCacheLayer hasn't
+    // platformLayer will be null here.
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    if (!platformLayer)
+        return;
+
     IntRect tileCoverageRect = enclosingIntRect(visibleRect());
     if (tileCoverageRect.isEmpty())
         return;
@@ -343,7 +349,6 @@ void TileCache::revalidateTiles()
     if (!didCreateNewTiles)
         return;
 
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     platformLayer->owner()->platformCALayerDidCreateTiles();
 }
 

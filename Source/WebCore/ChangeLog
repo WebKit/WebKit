@@ -1,3 +1,17 @@
+2012-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Crash in TileCache::revalidateTiles
+        https://bugs.webkit.org/show_bug.cgi?id=79510
+        <rdar://problem/10928035>
+
+        Reviewed by Sam Weinig.
+
+        Handle the tile cache layer's PlatformCALayer going away before the
+        CALayer itself has been deallocated.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::revalidateTiles):
+
 2012-02-24  Adam Klein  <adamk@chromium.org>
 
         Don't notify the inspector of Node insertions initiated by the parser
