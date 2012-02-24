@@ -1,3 +1,25 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Move XML-related APIs from DOMWindow.idl to DOMWindowXML.idl
+        https://bugs.webkit.org/show_bug.cgi?id=79434
+
+        Reviewed by Adam Barth.
+
+        For WebKit modularization, this patch moves XML-related APIs
+        from DOMWindow.idl to DOMWIndowXML.idl.
+
+        No tests. No change in behavior.
+
+        * xml/DOMWindowXML.idl: Added.
+        * page/DOMWindow.idl:
+
+        * CMakeLists.txt: Added "DOMWindowXML.idl".
+        * DerivedSources.make: Ditto.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
 2012-02-24  Renata Hodovan  <reni@webkit.org>
 
         External <use> xlink:href references do not work

@@ -391,6 +391,7 @@ SET(WebCore_IDL_FILES
     websockets/CloseEvent.idl
     websockets/DOMWindowWebSocket.idl
 
+    xml/DOMWindowXML.idl
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestException.idl
