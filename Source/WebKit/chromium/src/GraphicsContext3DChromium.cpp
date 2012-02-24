@@ -158,6 +158,23 @@ Platform3DObject GraphicsContext3DPrivate::platformTexture() const
 }
 
 #if USE(SKIA)
+class GrMemoryAllocationChangedCallback : public Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM {
+public:
+    GrMemoryAllocationChangedCallback(GraphicsContext3DPrivate* context)
+        : m_context(context)
+    {
+    }
+
+    virtual void onGpuMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
+    {
+        if (!gpuResourceSizeInBytes && m_context->grContext())
+            m_context->grContext()->freeGpuResources();
+    }
+
+private:
+    GraphicsContext3DPrivate* m_context;
+};
+
 GrContext* GraphicsContext3DPrivate::grContext()
 {
     // Limit the number of textures we hold in the bitmap->texture cache.
@@ -168,8 +185,12 @@ GrContext* GraphicsContext3DPrivate::grContext()
     if (!m_grContext) {
         SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
         m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
-        if (m_grContext)
+        if (m_grContext) {
             m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+            Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(getExtensions());
+            if (extensions3DChromium->supports("GL_CHROMIUM_gpu_memory_manager"))
+                extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(adoptPtr(new GrMemoryAllocationChangedCallback(this)));
+        }
     }
     return m_grContext;
 }
