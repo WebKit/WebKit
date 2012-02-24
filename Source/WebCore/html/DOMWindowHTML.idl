@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+module window {
+
+    // FIXME: Most of this could/should be generated from make_names.pl/HTMLNames.in
+    // to reduce the chance that we forget a constructor when adding a new element.
+    interface [
+        Supplemental=DOMWindow
+    ] DOMWindowHTML {
+
+        attribute HTMLDocumentConstructor HTMLDocument;
+
+        attribute HTMLElementConstructor HTMLElement;
+        attribute HTMLAnchorElementConstructor HTMLAnchorElement;
+        attribute HTMLAppletElementConstructor HTMLAppletElement;
+        attribute HTMLAreaElementConstructor HTMLAreaElement;
+        attribute HTMLBRElementConstructor HTMLBRElement;
+        attribute HTMLBaseElementConstructor HTMLBaseElement;
+        attribute HTMLBaseFontElementConstructor HTMLBaseFontElement;
+        attribute HTMLBodyElementConstructor HTMLBodyElement;
+        attribute HTMLButtonElementConstructor HTMLButtonElement;
+        attribute HTMLCanvasElementConstructor HTMLCanvasElement;
+        attribute HTMLDListElementConstructor HTMLDListElement;
+        attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
+        attribute HTMLDivElementConstructor HTMLDivElement;
+        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
+        attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
+        attribute HTMLFontElementConstructor HTMLFontElement;
+        attribute HTMLFormElementConstructor HTMLFormElement;
+        attribute HTMLFrameElementConstructor HTMLFrameElement;
+        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
+        attribute HTMLHRElementConstructor HTMLHRElement;
+        attribute HTMLHeadElementConstructor HTMLHeadElement;
+        attribute HTMLHeadingElementConstructor HTMLHeadingElement;
+        attribute HTMLHtmlElementConstructor HTMLHtmlElement;
+        attribute HTMLIFrameElementConstructor HTMLIFrameElement;
+        attribute HTMLImageElementConstructor HTMLImageElement;
+        attribute HTMLInputElementConstructor HTMLInputElement;
+        attribute HTMLKeygenElementConstructor HTMLKeygenElement;
+        attribute HTMLLIElementConstructor HTMLLIElement;
+        attribute HTMLLabelElementConstructor HTMLLabelElement;
+        attribute HTMLLegendElementConstructor HTMLLegendElement;
+        attribute HTMLLinkElementConstructor HTMLLinkElement;
+        attribute HTMLMapElementConstructor HTMLMapElement;
+        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
+        attribute HTMLMenuElementConstructor HTMLMenuElement;
+        attribute HTMLMetaElementConstructor HTMLMetaElement;
+#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
+        attribute HTMLMeterElementConstructor HTMLMeterElement;
+#endif
+        attribute HTMLModElementConstructor HTMLModElement;
+        attribute HTMLOListElementConstructor HTMLOListElement;
+        attribute HTMLObjectElementConstructor HTMLObjectElement;
+        attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
+        attribute HTMLOptionElementConstructor HTMLOptionElement;
+        attribute HTMLOutputElementConstructor HTMLOutputElement;
+        attribute HTMLParagraphElementConstructor HTMLParagraphElement;
+        attribute HTMLParamElementConstructor HTMLParamElement;
+        attribute HTMLPreElementConstructor HTMLPreElement;
+#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
+        attribute HTMLProgressElementConstructor HTMLProgressElement;
+#endif
+        attribute HTMLQuoteElementConstructor HTMLQuoteElement;
+        attribute HTMLScriptElementConstructor HTMLScriptElement;
+        attribute HTMLSelectElementConstructor HTMLSelectElement;
+        attribute HTMLSpanElementConstructor HTMLSpanElement;
+        attribute HTMLStyleElementConstructor HTMLStyleElement;
+        attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
+        attribute HTMLTableCellElementConstructor HTMLTableCellElement;
+        attribute HTMLTableColElementConstructor HTMLTableColElement;
+        attribute HTMLTableElementConstructor HTMLTableElement;
+        attribute HTMLTableRowElementConstructor HTMLTableRowElement;
+        attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
+        attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
+        attribute HTMLTitleElementConstructor HTMLTitleElement;
+        attribute HTMLUListElementConstructor HTMLUListElement;
+
+        attribute HTMLCollectionConstructor HTMLCollection;
+        attribute HTMLAllCollectionConstructor HTMLAllCollection;
+        attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
+        attribute HTMLUnknownElementConstructor HTMLUnknownElement;
+
+        attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
+        attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
+
+    };
+
+}

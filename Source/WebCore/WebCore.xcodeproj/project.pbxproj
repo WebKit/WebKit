@@ -10783,6 +10783,7 @@
 		A89AACD514F6C12700C1FA4A /* DOMWindowSVG.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowSVG.idl; sourceTree = "<group>"; };
 		A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceNodeWithSpanCommand.cpp; sourceTree = "<group>"; };
 		A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceNodeWithSpanCommand.h; sourceTree = "<group>"; };
+		A8A5205D14F6BD3C00FBA19E /* DOMWindowHTML.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowHTML.idl; sourceTree = "<group>"; };
 		A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLEntityTable.cpp; sourceTree = "<group>"; };
 		A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentParser.cpp; sourceTree = "<group>"; };
 		A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodedDataDocumentParser.h; sourceTree = "<group>"; };
@@ -13878,7 +13879,6 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
-				EB49DB8E14F46E8B002299D9 /* IDBTracing.h */,
 				B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */,
 				B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
@@ -13953,6 +13953,7 @@
 				C585A6BF11D4FB3D004C3E4B /* IDBRequest.cpp */,
 				C585A6C011D4FB3D004C3E4B /* IDBRequest.h */,
 				C585A6C111D4FB3D004C3E4B /* IDBRequest.idl */,
+				EB49DB8E14F46E8B002299D9 /* IDBTracing.h */,
 				B6566267120B115A006EA85C /* IDBTransaction.cpp */,
 				B6566268120B115A006EA85C /* IDBTransaction.h */,
 				B6566269120B115A006EA85C /* IDBTransaction.idl */,
@@ -16744,6 +16745,7 @@
 				2E37DFD712DBAFB800A6B233 /* DOMURL.cpp */,
 				2E37DFD812DBAFB800A6B233 /* DOMURL.h */,
 				2E37DFD912DBAFB800A6B233 /* DOMURL.idl */,
+				A8A5205D14F6BD3C00FBA19E /* DOMWindowHTML.idl */,
 				F55B3D871251F12D003EF269 /* EmailInputType.cpp */,
 				F55B3D881251F12D003EF269 /* EmailInputType.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
@@ -22589,6 +22591,7 @@
 				C585A6EF11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.h in Headers */,
 				C585A6F111D4FB3D004C3E4B /* IDBObjectStoreBackendInterface.h in Headers */,
 				C585A6F411D4FB3D004C3E4B /* IDBRequest.h in Headers */,
+				EB49DB8F14F46E8B002299D9 /* IDBTracing.h in Headers */,
 				B656626B120B115A006EA85C /* IDBTransaction.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
@@ -24339,7 +24342,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				EB49DB8F14F46E8B002299D9 /* IDBTracing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

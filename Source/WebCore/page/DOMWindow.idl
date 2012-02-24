@@ -59,7 +59,6 @@ module window {
 #endif
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
-
         DOMSelection getSelection();
 
         readonly attribute [CheckSecurityForNode] Element frameElement;
@@ -393,85 +392,13 @@ module window {
         attribute ProcessingInstructionConstructor ProcessingInstruction;
         attribute [Conditional=SHADOW_DOM, V8EnabledAtRuntime=shadowDOM] ShadowRootConstructor WebKitShadowRoot;
 
-        attribute HTMLDocumentConstructor HTMLDocument;
         attribute DOMWindowConstructor Window;
 
-        attribute HTMLElementConstructor HTMLElement;
-        attribute HTMLAnchorElementConstructor HTMLAnchorElement;
-        attribute HTMLAppletElementConstructor HTMLAppletElement;
-        attribute HTMLAreaElementConstructor HTMLAreaElement;
-        attribute HTMLBRElementConstructor HTMLBRElement;
-        attribute HTMLBaseElementConstructor HTMLBaseElement;
-        attribute HTMLBaseFontElementConstructor HTMLBaseFontElement;
-        attribute HTMLBodyElementConstructor HTMLBodyElement;
-        attribute HTMLButtonElementConstructor HTMLButtonElement;
-        attribute HTMLCanvasElementConstructor HTMLCanvasElement;
-        attribute HTMLDListElementConstructor HTMLDListElement;
-        attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
-        attribute HTMLDivElementConstructor HTMLDivElement;
-        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
-        attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
-        attribute HTMLFontElementConstructor HTMLFontElement;
-        attribute HTMLFormElementConstructor HTMLFormElement;
-        attribute HTMLFrameElementConstructor HTMLFrameElement;
-        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
-        attribute HTMLHRElementConstructor HTMLHRElement;
-        attribute HTMLHeadElementConstructor HTMLHeadElement;
-        attribute HTMLHeadingElementConstructor HTMLHeadingElement;
-        attribute HTMLHtmlElementConstructor HTMLHtmlElement;
-        attribute HTMLIFrameElementConstructor HTMLIFrameElement;
-        attribute HTMLImageElementConstructor HTMLImageElement;
-        attribute HTMLInputElementConstructor HTMLInputElement;
-        attribute HTMLKeygenElementConstructor HTMLKeygenElement;
-        attribute HTMLLIElementConstructor HTMLLIElement;
-        attribute HTMLLabelElementConstructor HTMLLabelElement;
-        attribute HTMLLegendElementConstructor HTMLLegendElement;
-        attribute HTMLLinkElementConstructor HTMLLinkElement;
-        attribute HTMLMapElementConstructor HTMLMapElement;
-        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
-        attribute HTMLMenuElementConstructor HTMLMenuElement;
-        attribute HTMLMetaElementConstructor HTMLMetaElement;
-#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
-        attribute HTMLMeterElementConstructor HTMLMeterElement;
-#endif
-        attribute HTMLModElementConstructor HTMLModElement;
-        attribute HTMLOListElementConstructor HTMLOListElement;
-        attribute HTMLObjectElementConstructor HTMLObjectElement;
-        attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
-        attribute HTMLOptionElementConstructor HTMLOptionElement;
-        attribute HTMLOutputElementConstructor HTMLOutputElement;
-        attribute HTMLParagraphElementConstructor HTMLParagraphElement;
-        attribute HTMLParamElementConstructor HTMLParamElement;
-        attribute HTMLPreElementConstructor HTMLPreElement;
-#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
-        attribute HTMLProgressElementConstructor HTMLProgressElement;
-#endif
-        attribute HTMLQuoteElementConstructor HTMLQuoteElement;
-        attribute HTMLScriptElementConstructor HTMLScriptElement;
-        attribute HTMLSelectElementConstructor HTMLSelectElement;
-        attribute HTMLSpanElementConstructor HTMLSpanElement;
-        attribute HTMLStyleElementConstructor HTMLStyleElement;
-        attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
-        attribute HTMLTableCellElementConstructor HTMLTableCellElement;
-        attribute HTMLTableColElementConstructor HTMLTableColElement;
-        attribute HTMLTableElementConstructor HTMLTableElement;
-        attribute HTMLTableRowElementConstructor HTMLTableRowElement;
-        attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
-        attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
-        attribute HTMLTitleElementConstructor HTMLTitleElement;
-        attribute HTMLUListElementConstructor HTMLUListElement;
-
-        attribute HTMLCollectionConstructor HTMLCollection;
-        attribute HTMLAllCollectionConstructor HTMLAllCollection;
-        attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
-        attribute HTMLUnknownElementConstructor HTMLUnknownElement;
-
-        attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
-        attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
-
+        // FIXME: Should these Canvas constructors move to html/DOMWindowHTML with the rest of canvas?
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
+
         attribute ImageDataConstructor ImageData;
         attribute [Conditional=WEBGL] WebGLActiveInfoConstructor WebGLActiveInfo;
         attribute [Conditional=WEBGL] WebGLBufferConstructor WebGLBuffer;

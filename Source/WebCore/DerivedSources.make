@@ -191,6 +191,7 @@ BINDING_IDLS = \
     $(WebCore)/html/DOMSettableTokenList.idl \
     $(WebCore)/html/DOMTokenList.idl \
     $(WebCore)/html/DOMURL.idl \
+    $(WebCore)/html/DOMWindowHTML.idl \
     $(WebCore)/html/HTMLAllCollection.idl \
     $(WebCore)/html/HTMLAnchorElement.idl \
     $(WebCore)/html/HTMLAppletElement.idl \
