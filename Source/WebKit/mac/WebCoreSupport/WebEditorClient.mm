@@ -972,15 +972,15 @@ void WebEditorClient::setInputMethodState(bool)
 @end
 #endif
 
-void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, WebCore::TextCheckingTypeMask checkingTypes, const String& text)
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, const WebCore::TextCheckingRequest& request)
 {
 #ifndef BUILDING_ON_LEOPARD
-    NSRange range = NSMakeRange(0, text.length());
+    NSRange range = NSMakeRange(0, request.text().length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
-    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:text range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0 
+    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:request.text() range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0
                                          completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
             [currentLoop performSelector:@selector(perform) 
-                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence types:checkingTypes results:results] autorelease]
+                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:request.sequence() types:request.mask() results:results] autorelease]
                                 argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
         }];
 #endif

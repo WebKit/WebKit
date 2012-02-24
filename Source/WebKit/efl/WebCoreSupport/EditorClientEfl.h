@@ -120,7 +120,7 @@ public:
     virtual void getGuessesForWord(const String& word, const String& context, WTF::Vector<String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) { }
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, const WebCore::TextCheckingRequest&) { }
     virtual TextCheckerClient* textChecker() { return this; }
 
 private:

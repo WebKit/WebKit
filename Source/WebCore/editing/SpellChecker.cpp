@@ -47,12 +47,13 @@ namespace WebCore {
 
 static const int unrequestedSequence = -1;
 
-SpellCheckRequest::SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String& text, TextCheckingTypeMask mask)
+SpellCheckRequest::SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String& text, TextCheckingTypeMask mask, TextCheckingProcessType processType)
     : m_sequence(sequence)
-    , m_checkingRange(checkingRange)
-    , m_paragraphRange(paragraphRange)
     , m_text(text)
     , m_mask(mask)
+    , m_processType(processType)
+    , m_checkingRange(checkingRange)
+    , m_paragraphRange(paragraphRange)
     , m_rootEditableElement(m_checkingRange->startContainer()->rootEditableElement())
 {
 }
@@ -62,7 +63,7 @@ SpellCheckRequest::~SpellCheckRequest()
 }
 
 // static
-PassRefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask textCheckingOptions, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
+PassRefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask textCheckingOptions, TextCheckingProcessType processType, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
 {
     ASSERT(checkingRange);
     ASSERT(paragraphRange);
@@ -71,7 +72,7 @@ PassRefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask tex
     if (!text.length())
         return PassRefPtr<SpellCheckRequest>();
 
-    return adoptRef(new SpellCheckRequest(unrequestedSequence, checkingRange, paragraphRange, text, textCheckingOptions));
+    return adoptRef(new SpellCheckRequest(unrequestedSequence, checkingRange, paragraphRange, text, textCheckingOptions, processType));
 }
 
 
@@ -145,7 +146,7 @@ void SpellChecker::invokeRequest(PassRefPtr<SpellCheckRequest> request)
     ASSERT(!m_processingRequest);
 
     m_processingRequest = request;
-    client()->requestCheckingOfString(this, m_processingRequest->sequence(), m_processingRequest->mask(), m_processingRequest->text());
+    client()->requestCheckingOfString(this, m_processingRequest->textCheckingRequest());
 }
 
 void SpellChecker::enqueueRequest(PassRefPtr<SpellCheckRequest> request)

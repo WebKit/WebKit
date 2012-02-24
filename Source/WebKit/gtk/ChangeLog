@@ -1,3 +1,13 @@
+2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
+
+        SpellCheckRequest needs to know the context where the spellcheck happened.
+        https://bugs.webkit.org/show_bug.cgi?id=79320
+
+        Reviewed by Hajime Morita.
+
+        * WebCoreSupport/TextCheckerClientGtk.h:
+        (WebKit::TextCheckerClientGtk::requestCheckingOfString):
+
 2012-02-23  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] DRT doesn't support scheduleAsynchronousKeyDown.
