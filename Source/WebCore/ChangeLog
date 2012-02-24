@@ -1,3 +1,12 @@
+2012-02-23  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: add clause in ASSERT missing from r108474.
+
+        No new tests. (fix)
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::willRemove):
+
 2012-02-23  Eric Seidel  <eric@webkit.org>
 
         Split out HTML constructors into new DOMWindowHTML suplemental idl

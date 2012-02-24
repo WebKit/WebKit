@@ -162,7 +162,7 @@ void HTMLStyleElement::willRemove()
     // That is, because willRemove() is also called if an ancestor is removed from the document.
     // Now, if we want to register <style scoped> even if it's not inDocument,
     // we'd need to find a way to discern whether that is the case, or whether <style scoped> itself is about to be removed.
-    ASSERT(!scoped() || !inDocument() || m_isRegisteredWithScopingNode);
+    ASSERT(!scoped() || !inDocument() || m_isRegisteredWithScopingNode || !RuntimeEnabledFeatures::styleScopedEnabled());
     if (m_isRegisteredWithScopingNode)
         unregisterWithScopingNode();
     HTMLElement::willRemove();
