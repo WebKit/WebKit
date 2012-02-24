@@ -247,6 +247,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload);
     bindMethod("enableFixedLayoutMode", &LayoutTestController::enableFixedLayoutMode);
     bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
+    bindMethod("selectionAsMarkup", &LayoutTestController::selectionAsMarkup);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -2113,6 +2114,11 @@ void LayoutTestController::setFixedLayoutSize(const CppArgumentList& arguments, 
     int width = arguments[0].toInt32();
     int height = arguments[1].toInt32();
     m_shell->webView()->setFixedLayoutSize(WebSize(width, height));
+}
+
+void LayoutTestController::selectionAsMarkup(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
 }
 
 void LayoutTestController::workerThreadCount(CppVariant* result)

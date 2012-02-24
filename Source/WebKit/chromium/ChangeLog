@@ -1,3 +1,21 @@
+2012-02-24  Peter Collingbourne  <peter@pcc.me.uk>
+
+        [chromium] Have WebFrameImpl::selectionAsMarkup create interchange markup.
+        https://bugs.webkit.org/show_bug.cgi?id=77307
+
+        Reviewed by Tony Chang.
+
+        This function is currently used to build markup in order to
+        print the selection, and will also be used to build markup for
+        the clipboard.  Without this change, the markup will refer to
+        (for example) nonexistent CSS classes and invalid relative
+        paths and therefore will not be interpreted correctly.
+
+        Chromium bug: http://crbug.com/23329
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectionAsMarkup):
+
 2012-02-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium image for inspector status bar button updated.
