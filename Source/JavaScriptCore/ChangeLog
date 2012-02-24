@@ -1,5 +1,13 @@
 2012-02-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, build fix for builds where the DFG is disabled but the LLInt is
+        enabled.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+
+2012-02-24  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should be able to handle variables getting captured
         https://bugs.webkit.org/show_bug.cgi?id=79469
 

@@ -73,6 +73,12 @@
 #define OFFLINE_ASM_ALWAYS_ALLOCATE_SLOW 0
 #endif
 
+#if ENABLE(VALUE_PROFILER)
+#define OFFLINE_ASM_VALUE_PROFILER 1
+#else
+#define OFFLINE_ASM_VALUE_PROFILER 0
+#endif
+
 #if CPU(ARM_THUMB2)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)          \
     ".globl " SYMBOL_STRING(label) "\n"          \

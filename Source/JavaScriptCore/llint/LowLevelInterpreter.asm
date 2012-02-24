@@ -379,7 +379,7 @@ macro writeBarrier(tag, payload)
 end
 
 macro valueProfile(tag, payload, profile)
-    if JIT_ENABLED
+    if VALUE_PROFILER
         storei tag, ValueProfile::m_buckets + TagOffset[profile]
         storei payload, ValueProfile::m_buckets + PayloadOffset[profile]
     end
@@ -450,7 +450,7 @@ end
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
 # Must call dispatch(0) after calling this.
 macro functionInitialization(profileArgSkip)
-    if JIT_ENABLED
+    if VALUE_PROFILER
         # Profile the arguments. Unfortunately, we have no choice but to do this. This
         # code is pretty horrendous because of the difference in ordering between
         # arguments and value profiles, the desire to have a simple loop-down-to-zero
