@@ -1,3 +1,17 @@
+2012-02-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Use private QSGRenderNode in QQuickWebView for improved Qt Scene Graph integration
+        https://bugs.webkit.org/show_bug.cgi?id=79022
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (PageProxyNode::PageProxyNode):
+        (PageProxyNode::changedStates):
+        (PageProxyNode::render):
+        (PageProxyNode):
+
 2012-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Encode/decode Null ResourceResponse objects in WebKit2

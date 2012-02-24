@@ -29,6 +29,7 @@
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
+#include <private/qsgrendernode_p.h>
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
     : QQuickItem(viewportItem)
@@ -109,57 +110,22 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     drawingArea->paintToCurrentGLContext(transform, opacity, clipRect);
 }
 
-struct PageProxyMaterial;
-struct PageProxyNode;
-
-// FIXME: temporary until Qt Scenegraph will support custom painting.
-struct PageProxyMaterialShader : public QSGMaterialShader {
-    virtual void updateState(const RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial);
-    virtual char const* const* attributeNames() const
+struct PageProxyNode : public QSGRenderNode {
+    PageProxyNode(QQuickWebPagePrivate* page)
+        : m_pagePrivate(page)
     {
-        static char const* const attr[] = { "vertex", 0 };
-        return attr;
     }
 
-    // vertexShader and fragmentShader are no-op shaders.
-    // All real painting is gone by TextureMapper through LayerTreeHostProxy.
-    virtual const char* vertexShader() const
+    virtual StateFlags changedStates()
     {
-        return "attribute highp vec4 vertex; \n"
-               "void main() { gl_Position = vertex; }";
+        return StateFlags(DepthState) | StencilState | ScissorState | ColorState | BlendState
+               | CullState | ViewportState;
     }
 
-    virtual const char* fragmentShader() const
+    virtual void render(const RenderState &)
     {
-        return "void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); }";
-    }
-};
-
-struct PageProxyMaterial : public QSGMaterial {
-    PageProxyMaterial(PageProxyNode* node) : m_node(node) { }
-
-    QSGMaterialType* type() const
-    {
-        static QSGMaterialType type;
-        return &type;
-    }
-
-    QSGMaterialShader* createShader() const
-    {
-        return new PageProxyMaterialShader;
-    }
-
-    PageProxyNode* m_node;
-};
-
-struct PageProxyNode : public QSGGeometryNode {
-    PageProxyNode(QQuickWebPagePrivate* page) :
-        m_pagePrivate(page)
-      , m_material(this)
-      , m_geometry(QSGGeometry::defaultAttributes_Point2D(), 4)
-    {
-        setGeometry(&m_geometry);
-        setMaterial(&m_material);
+        if (m_pagePrivate)
+            m_pagePrivate->paintToCurrentGLContext();
     }
 
     ~PageProxyNode()
@@ -169,21 +135,7 @@ struct PageProxyNode : public QSGGeometryNode {
     }
 
     QQuickWebPagePrivate* m_pagePrivate;
-    PageProxyMaterial m_material;
-    QSGGeometry m_geometry;
 };
-
-void PageProxyMaterialShader::updateState(const RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial)
-{
-    if (!newMaterial)
-        return;
-
-    PageProxyNode* node = static_cast<PageProxyMaterial*>(newMaterial)->m_node;
-    // FIXME: Normally we wouldn't paint inside QSGMaterialShader::updateState,
-    // but this is a temporary hack until custom paint nodes are available.
-    if (node->m_pagePrivate)
-        node->m_pagePrivate->paintToCurrentGLContext();
-}
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
