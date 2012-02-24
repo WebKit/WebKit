@@ -692,14 +692,15 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
                 shiftLineTerminator();
             else if (m_current == 'x') {
                 shift();
-                if (isASCIIHexDigit(m_current) && isASCIIHexDigit(peek(1))) {
-                    int prev = m_current;
-                    shift();
-                    if (shouldBuildStrings)
-                        record8(convertHex(prev, m_current));
-                    shift();
-                } else if (shouldBuildStrings)
-                    record8('x');
+                if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
+                    m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
+                    return false;
+                }
+                int prev = m_current;
+                shift();
+                if (shouldBuildStrings)
+                    record8(convertHex(prev, m_current));
+                shift();
             } else {
                 setOffset(startingOffset);
                 setLineNumber(startingLineNumber);
@@ -756,14 +757,15 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shiftLineTerminator();
             else if (m_current == 'x') {
                 shift();
-                if (isASCIIHexDigit(m_current) && isASCIIHexDigit(peek(1))) {
-                    int prev = m_current;
-                    shift();
-                    if (shouldBuildStrings)
-                        record16(convertHex(prev, m_current));
-                    shift();
-                } else if (shouldBuildStrings)
-                    record16('x');
+                if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
+                    m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
+                    return false;
+                }
+                int prev = m_current;
+                shift();
+                if (shouldBuildStrings)
+                    record16(convertHex(prev, m_current));
+                shift();
             } else if (m_current == 'u') {
                 shift();
                 int character = getUnicodeCharacter();

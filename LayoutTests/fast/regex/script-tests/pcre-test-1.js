@@ -1036,7 +1036,7 @@ shouldBe('regex68.exec(input1);', 'results');
 var input2 = "A\0Z";
 var results = null;
 shouldBe('regex68.exec(input2);', 'results');
-var input3 = "A\0\x0\0\x0Z";
+var input3 = "A\0\0\0\0Z";
 var results = null;
 shouldBe('regex68.exec(input3);', 'results');
 

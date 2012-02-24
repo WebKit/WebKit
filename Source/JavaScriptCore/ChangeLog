@@ -1,3 +1,20 @@
+2012-02-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Should not allow malformed \x escapes
+        https://bugs.webkit.org/show_bug.cgi?id=79462
+
+        Reviewed by Oliver Hunt.
+
+        * parser/Lexer.cpp:
+        (JSC::::parseString):
+        (JSC::::parseStringSlowCase):
+            - Prohibit malformed '\x' escapes
+        * tests/mozilla/ecma/Array/15.4.5.1-1.js:
+        * tests/mozilla/ecma/LexicalConventions/7.7.4.js:
+        * tests/mozilla/ecma_2/RegExp/hex-001.js:
+        * tests/mozilla/js1_2/regexp/hexadecimal.js:
+            - Remove erroneous test cases (correct behaviour is tested by LayoutTests/sputnik).
+
 2012-02-24  Daniel Bates  <dbates@webkit.org>
 
         Fix change log entry for changeset r108819; add bug URL

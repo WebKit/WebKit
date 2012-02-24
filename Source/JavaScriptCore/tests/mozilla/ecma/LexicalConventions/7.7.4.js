@@ -170,9 +170,9 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION, "\\x0F0",      String.fromCharCode(15)+"0",         "\x0F0" );
 
     // G is out of hex range
-
-    array[item++] = new TestCase( SECTION, "\\xG",        "xG",                                 "\xG" );
-    array[item++] = new TestCase( SECTION, "\\xCG",       "xCG",      				"\xCG" );
+// Invalid hex escapes are syntax error; these are covered in the sputnik test suite.
+//    array[item++] = new TestCase( SECTION, "\\xG",        "xG",                                 "\xG" );
+//    array[item++] = new TestCase( SECTION, "\\xCG",       "xCG",      				"\xCG" );
 
     // DoubleStringCharacter::EscapeSequence::CharacterEscapeSequence::\ NonEscapeCharacter
     array[item++] = new TestCase( SECTION, "\\a",    "a",        "\a" );
@@ -193,7 +193,8 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION, "\\u",    "u",        "\u" );
 
     array[item++] = new TestCase( SECTION, "\\w",    "w",        "\w" );
-    array[item++] = new TestCase( SECTION, "\\x",    "x",        "\x" );
+// Invalid hex escapes are syntax error; these are covered in the sputnik test suite.
+//    array[item++] = new TestCase( SECTION, "\\x",    "x",        "\x" );
     array[item++] = new TestCase( SECTION, "\\y",    "y",        "\y" );
     array[item++] = new TestCase( SECTION, "\\z",    "z",        "\z" );
     array[item++] = new TestCase( SECTION, "\\9",    "9",        "\9" );
