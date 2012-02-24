@@ -2555,7 +2555,7 @@ void tst_QWebFrame::setHtmlWithBaseURL()
     // As we are using a local file as baseUrl, its security origin should be able to load local resources.
 
     if (!QDir(TESTS_SOURCE_DIR).exists())
-        QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
+        W_QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
 
     QDir::setCurrent(TESTS_SOURCE_DIR);
 

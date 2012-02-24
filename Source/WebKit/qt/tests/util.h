@@ -77,4 +77,9 @@ static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
         } \
         QCOMPARE(__expr, __expected); \
     } while(0)
+
+// Compatibility for Qt5
+#define W_QSKIP(a, b) QSKIP(a, b)
+#else
+#define W_QSKIP(a, b) QSKIP(a)
 #endif

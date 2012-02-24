@@ -139,7 +139,7 @@ void tst_QDeclarativeWebView::basicProperties()
 
 void tst_QDeclarativeWebView::elementAreaAt()
 {
-    QSKIP("This test should be changed to test 'heuristicZoom' instead.", SkipAll);
+    W_QSKIP("This test should be changed to test 'heuristicZoom' instead.", SkipAll);
     QDeclarativeEngine engine;
     QDeclarativeComponent component(&engine, QUrl("qrc:///resources/elements.qml"));
     checkNoErrors(component);

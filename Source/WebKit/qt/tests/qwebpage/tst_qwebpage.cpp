@@ -305,7 +305,7 @@ void tst_QWebPage::geolocationRequestJS()
 
     if (newPage->mainFrame()->evaluateJavaScript(QLatin1String("!navigator.geolocation")).toBool()) {
         delete newPage;
-        QSKIP("Geolocation is not supported.", SkipSingle);
+        W_QSKIP("Geolocation is not supported.", SkipSingle);
     }
 
     connect(newPage, SIGNAL(featurePermissionRequested(QWebFrame*, QWebPage::Feature)),
@@ -535,7 +535,7 @@ void tst_QWebPage::loadHtml5Video()
     QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65452", Continue);
     QCOMPARE(mUrl.toEncoded(), url);
 #else
-    QSKIP("This test requires Qt Multimedia", SkipAll);
+    W_QSKIP("This test requires Qt Multimedia", SkipAll);
 #endif
 }
 
@@ -2744,7 +2744,7 @@ void tst_QWebPage::screenshot_data()
 void tst_QWebPage::screenshot()
 {
     if (!QDir(TESTS_SOURCE_DIR).exists())
-        QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
+        W_QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
 
     QDir::setCurrent(TESTS_SOURCE_DIR);
 

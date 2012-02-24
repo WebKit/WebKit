@@ -1,3 +1,28 @@
+2012-02-24  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        [Qt] Build fix. macro "QSKIP" now only takes 1 argument on Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=79328
+
+        Reviewed by Csaba Osztrogonác.
+
+        Introduce an alternative QSKIP that can work with both Qt4
+        and Qt5 without adding #ifdef to each usage site.
+
+        * tests/benchmarks/loading/tst_loading.cpp:
+        (tst_Loading::load):
+        * tests/benchmarks/painting/tst_painting.cpp:
+        (tst_Painting::paint):
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::elementAreaAt):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setHtmlWithBaseURL):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::geolocationRequestJS):
+        (tst_QWebPage::loadHtml5Video):
+        (tst_QWebPage::screenshot):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+
 2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         SpellCheckRequest needs to know the context where the spellcheck happened.
