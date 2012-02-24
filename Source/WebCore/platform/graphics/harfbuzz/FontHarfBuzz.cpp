@@ -195,8 +195,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         setupForTextPainting(&strokePaint, gc->strokeColor().rgb());
     }
 
-    ComplexTextController controller(run, point.x(), point.y(), wordSpacing(), letterSpacing(), run.expansion(), this);
-
+    ComplexTextController controller(this, run, point.x(), point.y());
     if (run.rtl())
         controller.setupForRTL();
 
@@ -228,7 +227,7 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const
 {
-    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
+    ComplexTextController controller(this, run, 0, 0);
     return controller.widthOfFullRun();
 }
 
@@ -242,7 +241,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
 
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
-    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
+    ComplexTextController controller(this, run, 0, 0);
     if (run.rtl())
         controller.setupForRTL();
     return controller.offsetForPosition(targetX);
@@ -253,7 +252,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
                                             const FloatPoint& point, int height,
                                             int from, int to) const
 {
-    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
+    ComplexTextController controller(this, run, 0, 0);
     if (run.rtl())
         controller.setupForRTL();
     return controller.selectionRect(point, height, from, to);

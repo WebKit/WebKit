@@ -45,6 +45,7 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
     platform/graphics/harfbuzz/FontHarfBuzz.cpp
     platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp
+    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
     platform/graphics/harfbuzz/HarfBuzzSkia.cpp
     platform/graphics/skia/FontCacheSkia.cpp
     platform/graphics/skia/GlyphPageTreeNodeSkia.cpp

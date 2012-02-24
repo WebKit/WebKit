@@ -52,35 +52,33 @@ static int truncateFixedPointToInteger(HB_Fixed value)
     return value >> 6;
 }
 
-ComplexTextController::ComplexTextController(const TextRun& run, int startingX, int startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font* font)
-    : m_font(font)
-    , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
+ComplexTextController::ComplexTextController(const Font* font, const TextRun& run, int startingX, int startingY)
+    : HarfBuzzShaperBase(font, run)
 {
-    // Do not use |run| inside this constructor. Use |m_run| instead.
+    NormalizeMode mode = m_run.rtl() ? NormalizeMirrorChars : DoNotNormalizeMirrorChars;
+    setNormalizedBuffer(mode);
 
     memset(&m_item, 0, sizeof(m_item));
     // We cannot know, ahead of time, how many glyphs a given script run
     // will produce. We take a guess that script runs will not produce more
     // than twice as many glyphs as there are code points plus a bit of
     // padding and fallback if we find that we are wrong.
-    createGlyphArrays((m_run.length() + 2) * 2);
+    createGlyphArrays((m_normalizedBufferLength + 2) * 2);
 
-    m_item.log_clusters = new unsigned short[m_run.length()];
+    m_item.log_clusters = new unsigned short[m_normalizedBufferLength];
 
     m_item.face = 0;
     m_item.font = allocHarfbuzzFont();
 
     m_item.item.bidiLevel = m_run.rtl();
 
-    m_item.string = m_run.characters();
-    m_item.stringLength = m_run.length();
+    m_item.string = m_normalizedBuffer.get();
+    m_item.stringLength = m_normalizedBufferLength;
 
     reset(startingX);
     m_startingY = startingY;
 
-    setWordSpacingAdjustment(wordSpacing);
-    setLetterSpacingAdjustment(letterSpacing);
-    setPadding(padding);
+    setPadding(m_run.expansion());
 }
 
 ComplexTextController::~ComplexTextController()
@@ -88,59 +86,6 @@ ComplexTextController::~ComplexTextController()
     fastFree(m_item.font);
     deleteGlyphArrays();
     delete[] m_item.log_clusters;
-}
-
-bool ComplexTextController::isWordBreak(unsigned index)
-{
-    return index && isCodepointSpace(m_item.string[index]) && !isCodepointSpace(m_item.string[index - 1]);
-}
-
-int ComplexTextController::determineWordBreakSpacing(unsigned logClustersIndex)
-{
-    int wordBreakSpacing = 0;
-    // The first half of the conjunction works around the case where
-    // output glyphs aren't associated with any codepoints by the
-    // clusters log.
-    if (logClustersIndex < m_item.item.length
-        && isWordBreak(m_item.item.pos + logClustersIndex)) {
-        wordBreakSpacing = m_wordSpacingAdjustment;
-
-        if (m_padding > 0) {
-            int toPad = roundf(m_padPerWordBreak + m_padError);
-            m_padError += m_padPerWordBreak - toPad;
-
-            if (m_padding < toPad)
-                toPad = m_padding;
-            m_padding -= toPad;
-            wordBreakSpacing += toPad;
-        }
-    }
-    return wordBreakSpacing;
-}
-
-// setPadding sets a number of pixels to be distributed across the TextRun.
-// WebKit uses this to justify text.
-void ComplexTextController::setPadding(int padding)
-{
-    m_padding = padding;
-    m_padError = 0;
-    if (!m_padding)
-        return;
-
-    // If we have padding to distribute, then we try to give an equal
-    // amount to each space. The last space gets the smaller amount, if
-    // any.
-    unsigned numWordBreaks = 0;
-
-    for (unsigned i = 0; i < m_item.stringLength; i++) {
-        if (isWordBreak(i))
-            numWordBreaks++;
-    }
-
-    if (numWordBreaks)
-        m_padPerWordBreak = m_padding / numWordBreaks;
-    else
-        m_padPerWordBreak = 0;
 }
 
 void ComplexTextController::reset(int offset)
@@ -166,9 +111,9 @@ void ComplexTextController::setupForRTL()
 bool ComplexTextController::nextScriptRun()
 {
     // Ensure we're not pointing at the small caps buffer.
-    m_item.string = m_run.characters();
+    m_item.string = m_normalizedBuffer.get();
 
-    if (!hb_utf16_script_run_next(0, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
+    if (!hb_utf16_script_run_next(0, &m_item.item, m_normalizedBuffer.get(), m_normalizedBufferLength, &m_indexOfNextScriptRun))
         return false;
 
     // It is actually wrong to consider script runs at all in this code.
@@ -254,7 +199,7 @@ void ComplexTextController::setupFontForScriptRun()
     // case change while in small-caps mode always results in different
     // FontData, so we only need to check the first character's case.
     if (m_font->isSmallCaps() && u_islower(m_item.string[m_item.item.pos])) {
-        m_smallCapsString = String(m_run.data(m_item.item.pos), m_item.item.length);
+        m_smallCapsString = String(m_normalizedBuffer.get() + m_item.item.pos, m_item.item.length);
         m_smallCapsString.makeUpper();
         m_item.string = m_smallCapsString.characters();
         m_item.item.pos = 0;
@@ -346,16 +291,17 @@ void ComplexTextController::setGlyphPositions(bool isRTL)
 
     // logClustersIndex indexes logClusters for the first codepoint of the current glyph.
     // Each time we advance a glyph, we skip over all the codepoints that contributed to the current glyph.
-    int logClustersIndex = 0;
+    size_t logClustersIndex = 0;
 
     // Iterate through the glyphs in logical order, flipping for RTL where necessary.
     // Glyphs are positioned starting from m_offsetX; in RTL mode they go leftwards from there.
     for (size_t i = 0; i < m_item.num_glyphs; ++i) {
-        while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && m_item.log_clusters[logClustersIndex] < i)
+        while (logClustersIndex < m_item.item.length && m_item.log_clusters[logClustersIndex] < i)
             logClustersIndex++;
 
         // If the current glyph is just after a space, add in the word spacing.
-        position += determineWordBreakSpacing(logClustersIndex);
+        if (logClustersIndex < m_item.item.length && isWordEnd(m_item.item.pos + logClustersIndex))
+            position += determineWordBreakSpacing();
 
         m_glyphs16[i] = m_item.glyphs[i];
         double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
@@ -378,79 +324,6 @@ void ComplexTextController::setGlyphPositions(bool isRTL)
     }
     m_pixelWidth = std::max(position, 0.0);
     m_offsetX += m_pixelWidth * rtlFlip;
-}
-
-void ComplexTextController::normalizeSpacesAndMirrorChars(const UChar* source, bool rtl, UChar* destination, int length)
-{
-    int position = 0;
-    bool error = false;
-    // Iterate characters in source and mirror character if needed.
-    while (position < length) {
-        UChar32 character;
-        int nextPosition = position;
-        U16_NEXT(source, nextPosition, length, character);
-        if (Font::treatAsSpace(character))
-            character = ' ';
-        else if (Font::treatAsZeroWidthSpace(character))
-            character = zeroWidthSpace;
-        else if (rtl)
-            character = u_charMirror(character);
-        U16_APPEND(destination, position, length, character, error);
-        ASSERT_UNUSED(error, !error);
-        position = nextPosition;
-    }
-}
-
-const TextRun& ComplexTextController::getNormalizedTextRun(const TextRun& originalRun, OwnPtr<TextRun>& normalizedRun, OwnArrayPtr<UChar>& normalizedBuffer)
-{
-    // Normalize the text run in three ways:
-    // 1) Convert the |originalRun| to NFC normalized form if combining diacritical marks
-    // (U+0300..) are used in the run. This conversion is necessary since most OpenType
-    // fonts (e.g., Arial) don't have substitution rules for the diacritical marks in
-    // their GSUB tables.
-    //
-    // Note that we don't use the icu::Normalizer::isNormalized(UNORM_NFC) API here since
-    // the API returns FALSE (= not normalized) for complex runs that don't require NFC
-    // normalization (e.g., Arabic text). Unless the run contains the diacritical marks,
-    // Harfbuzz will do the same thing for us using the GSUB table.
-    // 2) Convert spacing characters into plain spaces, as some fonts will provide glyphs
-    // for characters like '\n' otherwise.
-    // 3) Convert mirrored characters such as parenthesis for rtl text.
-
-    // Convert to NFC form if the text has diacritical marks.
-    icu::UnicodeString normalizedString;
-    UErrorCode error = U_ZERO_ERROR;
-
-    for (int i = 0; i < originalRun.length(); ++i) {
-        UChar ch = originalRun[i];
-        if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
-            icu::Normalizer::normalize(icu::UnicodeString(originalRun.characters(),
-                                       originalRun.length()), UNORM_NFC, 0 /* no options */,
-                                       normalizedString, error);
-            if (U_FAILURE(error))
-                return originalRun;
-            break;
-        }
-    }
-
-    // Normalize space and mirror parenthesis for rtl text.
-    int normalizedBufferLength;
-    const UChar* sourceText;
-    if (normalizedString.isEmpty()) {
-        normalizedBufferLength = originalRun.length();
-        sourceText = originalRun.characters();
-    } else {
-        normalizedBufferLength = normalizedString.length();
-        sourceText = normalizedString.getBuffer();
-    }
-
-    normalizedBuffer = adoptArrayPtr(new UChar[normalizedBufferLength + 1]);
-
-    normalizeSpacesAndMirrorChars(sourceText, originalRun.rtl(), normalizedBuffer.get(), normalizedBufferLength);
-
-    normalizedRun = adoptPtr(new TextRun(originalRun));
-    normalizedRun->setText(normalizedBuffer.get(), normalizedBufferLength);
-    return *normalizedRun;
 }
 
 int ComplexTextController::glyphIndexForXPositionInScriptRun(int targetX) const

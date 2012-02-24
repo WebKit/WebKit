@@ -1,5 +1,47 @@
 2012-02-23  Kenichi Ishibashi  <bashi@chromium.org>
 
+        [Chromium] Add HarfBuzzShaperBase class
+        https://bugs.webkit.org/show_bug.cgi?id=79336
+
+        Extract a part of ComplexTextControllerHarfBuzz class as
+        HarfBuzzShaperBase class. This patch intends to share the code between
+        old HarfBuzz and HarfBuzz-ng.
+
+        Reviewed by Tony Chang.
+
+        No new tests. No behavior change. Existing tests in fast/text should pass.
+
+        * PlatformBlackBerry.cmake: Added HarfBuzzShaperBase.cpp.
+        * WebCore.gyp/WebCore.gyp: Added HarfBuzzShaperBase.(cpp|h).
+        * WebCore.gypi: Ditto.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Removed redundant arguments.
+        (WebCore::ComplexTextController::nextScriptRun): Use m_normalizedBuffer and m_normalizedBufferLength instead of m_run.
+        (WebCore::ComplexTextController::setupFontForScriptRun): Ditto.
+        (WebCore::ComplexTextController::setGlyphPositions): Ditto.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.h:
+        (ComplexTextController):
+        * platform/graphics/harfbuzz/FontHarfBuzz.cpp:
+        (WebCore::Font::drawComplexText): Removed redundant arguments of ComplexTextController constructor.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Ditto.
+        (WebCore::Font::selectionRectForComplexText): Ditto.
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp: Added.
+        (WebCore):
+        (WebCore::HarfBuzzShaperBase::HarfBuzzShaperBase):
+        (WebCore::normalizeSpacesAndMirrorChars):
+        (WebCore::HarfBuzzShaperBase::setNormalizedBuffer):
+        (WebCore::HarfBuzzShaperBase::isWordEnd):
+        (WebCore::HarfBuzzShaperBase::determineWordBreakSpacing):
+        (WebCore::HarfBuzzShaperBase::setPadding):
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.h: Added.
+        (WebCore):
+        (HarfBuzzShaperBase):
+        (WebCore::HarfBuzzShaperBase::~HarfBuzzShaperBase):
+        (WebCore::HarfBuzzShaperBase::isCodepointSpace):
+
+2012-02-23  Kenichi Ishibashi  <bashi@chromium.org>
+
         Adding WebSocket per-frame DEFLATE extension
         https://bugs.webkit.org/show_bug.cgi?id=77522
 

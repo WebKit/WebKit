@@ -3472,6 +3472,8 @@
             'platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h',
             'platform/graphics/harfbuzz/HarfBuzzSkia.cpp',
             'platform/graphics/harfbuzz/HarfBuzzSkia.h',
+            'platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp',
+            'platform/graphics/harfbuzz/HarfBuzzShaperBase.h',
             'platform/graphics/mac/ColorMac.mm',
             'platform/graphics/mac/ComplexTextController.cpp',
             'platform/graphics/mac/ComplexTextController.h',

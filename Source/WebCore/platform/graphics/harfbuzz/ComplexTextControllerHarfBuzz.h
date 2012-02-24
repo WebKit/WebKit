@@ -31,6 +31,7 @@
 #ifndef ComplexTextControllerHarfBuzz_h
 #define ComplexTextControllerHarfBuzz_h
 
+#include "HarfBuzzShaperBase.h"
 #include "HarfBuzzSkia.h"
 #include "SkPoint.h"
 #include "SkScalar.h"
@@ -63,31 +64,16 @@ class SimpleFontData;
 // Once you have setup the object, call |nextScriptRun| to get the first script
 // run. This will return false when the iteration is complete. At any time you
 // can call |reset| to start over again.
-class ComplexTextController {
+class ComplexTextController : public HarfBuzzShaperBase {
 public:
-    ComplexTextController(const TextRun&, int startingX, int startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font*);
-    ~ComplexTextController();
+    ComplexTextController(const Font*, const TextRun&, int startingX, int startingY);
+    virtual ~ComplexTextController();
 
-    bool isWordBreak(unsigned);
-    int determineWordBreakSpacing(unsigned);
-    // setPadding sets a number of pixels to be distributed across the TextRun.
-    // WebKit uses this to justify text.
-    void setPadding(int);
     void reset(int offset);
     // Advance to the next script run, returning false when the end of the
     // TextRun has been reached.
     bool nextScriptRun();
     float widthOfFullRun();
-
-    // setWordSpacingAdjustment sets a delta (in pixels) which is applied at
-    // each word break in the TextRun.
-    void setWordSpacingAdjustment(int wordSpacingAdjustment) { m_wordSpacingAdjustment = wordSpacingAdjustment; }
-
-    // setLetterSpacingAdjustment sets an additional number of pixels that is
-    // added to the advance after each output cluster. This matches the behaviour
-    // of WidthIterator::advance.
-    void setLetterSpacingAdjustment(int letterSpacingAdjustment) { m_letterSpacing = letterSpacingAdjustment; }
-    int letterSpacing() const { return m_letterSpacing; }
 
     void setupForRTL();
     bool rtl() const { return m_run.rtl(); }
@@ -126,15 +112,8 @@ private:
     void shapeGlyphs();
     void setGlyphPositions(bool);
 
-    static void normalizeSpacesAndMirrorChars(const UChar* source, bool rtl, UChar* destination, int length);
-    static const TextRun& getNormalizedTextRun(const TextRun& originalRun, OwnPtr<TextRun>& normalizedRun, OwnArrayPtr<UChar>& normalizedBuffer);
-
-    // This matches the logic in RenderBlock::findNextLineBreak
-    static bool isCodepointSpace(HB_UChar16 c) { return c == ' ' || c == '\t'; }
-
     int glyphIndexForXPositionInScriptRun(int targetX) const;
 
-    const Font* const m_font;
     const SimpleFontData* m_currentFontData;
     HB_ShaperItem m_item;
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
@@ -145,17 +124,6 @@ private:
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_glyphsArrayCapacity; // Current size of all the Harfbuzz arrays.
 
-    OwnPtr<TextRun> m_normalizedRun;
-    OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.
-    const TextRun& m_run;
-    int m_wordSpacingAdjustment; // delta adjustment (pixels) for each word break.
-    float m_padding; // pixels to be distributed over the line at word breaks.
-    float m_padPerWordBreak; // pixels to be added to each word break.
-    float m_padError; // |m_padPerWordBreak| might have a fractional component.
-                      // Since we only add a whole number of padding pixels at
-                      // each word break we accumulate error. This is the
-                      // number of pixels that we are behind so far.
-    int m_letterSpacing; // pixels to be added after each glyph.
     String m_smallCapsString; // substring of m_run converted to small caps.
 };
 
