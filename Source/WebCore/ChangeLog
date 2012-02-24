@@ -1,3 +1,32 @@
+2012-02-24  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc(): handle non-negative values
+        https://bugs.webkit.org/show_bug.cgi?id=79188
+
+        Reviewed by Daniel Bates.
+
+        Some CSS properties (e.g. padding) are required to be non-negative. These
+        are now restricted to the correct range.
+
+        Tests: css3/calc/negative-padding-expected.html
+               css3/calc/negative-padding.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore):
+        (WebCore::CSSCalcValue::clampToPermittedRange): Added
+        (WebCore::CSSCalcValue::doubleValue):
+        (WebCore::CSSCalcValue::isNegative): Added
+        (WebCore::CSSCalcValue::computeLengthPx):
+        (WebCore::CSSCalcValue::create):
+        * css/CSSCalculationValue.h:
+        (CSSCalcValue):
+        (WebCore::CSSCalcValue::CSSCalcValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validCalculationUnit):
+        (WebCore::CSSParser::parseCalculation):
+        * css/CSSParser.h:
+        * platform/CalculationValue.h:
+
 2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] xhr tests are crashing after r108506.

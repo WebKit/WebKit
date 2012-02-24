@@ -209,7 +209,7 @@ public:
     bool parseTextEmphasisStyle(bool important);
 
     bool parseLineBoxContain(bool important);
-    bool parseCalculation(CSSParserValue*);
+    bool parseCalculation(CSSParserValue*, CalculationPermittedValueRange);
 
     bool parseFontFeatureTag(CSSValueList*);
     bool parseFontFeatureSettings(bool important);

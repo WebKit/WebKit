@@ -43,7 +43,12 @@ enum CalcOperator {
     CalcAdd = '+',
     CalcSubtract = '-',
     CalcMultiply = '*',
-    CalcDivide = '/',
+    CalcDivide = '/'
+};
+
+enum CalculationPermittedValueRange {
+    CalculationRangeAll,
+    CalculationRangeNonNegative
 };
 
 } // namespace WebCore

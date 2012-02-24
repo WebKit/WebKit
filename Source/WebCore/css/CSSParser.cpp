@@ -711,7 +711,9 @@ Document* CSSParser::findDocument() const
 
 bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
 {
-    if (!parseCalculation(value))
+    bool mustBeNonNegative = unitflags & FNonNeg;
+
+    if (!parseCalculation(value, mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll))
         return false;
 
     bool b = false;
@@ -721,17 +723,15 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
         break;
     case CalcPercent:
         b = (unitflags & FPercent);
-        // FIXME calc (http://webkit.org/b/16662): test FNonNeg here, eg
-        // if (b && (unitflags & FNonNeg) && m_parsedCalculation->doubleValue() < 0)
-        //    b = false;
+        if (b && mustBeNonNegative && m_parsedCalculation->isNegative())
+            b = false;
         break;
     case CalcNumber:
         b = (unitflags & FNumber);
         if (!b && (unitflags & FInteger) && m_parsedCalculation->isInt())
             b = true;
-        // FIXME calc (http://webkit.org/b/16662): test FNonNeg here, eg
-        // if (b && (unitflags & FNonNeg) && m_parsedCalculation->doubleValue() < 0)
-        //    b = false;
+        if (b && mustBeNonNegative && m_parsedCalculation->isNegative())
+            b = false;
         break;
     case CalcPercentLength:
         b = (unitflags & FPercent) && (unitflags & FLength);
@@ -7419,7 +7419,7 @@ bool CSSParser::parseFontVariantLigatures(bool important)
     return true;
 }
 
-bool CSSParser::parseCalculation(CSSParserValue* value) 
+bool CSSParser::parseCalculation(CSSParserValue* value, CalculationPermittedValueRange range) 
 {
     ASSERT(isCalculation(value));
     
@@ -7428,7 +7428,7 @@ bool CSSParser::parseCalculation(CSSParserValue* value)
         return false;
 
     ASSERT(!m_parsedCalculation);
-    m_parsedCalculation = CSSCalcValue::create(value->function->name, args);
+    m_parsedCalculation = CSSCalcValue::create(value->function->name, args, range);
     
     if (!m_parsedCalculation)
         return false;

@@ -76,15 +76,20 @@ String CSSCalcValue::customCssText() const
 {
     return "";
 }
-
+    
+double CSSCalcValue::clampToPermittedRange(double value) const
+{
+    return m_nonNegative && value < 0 ? 0 : value;
+}    
+    
 double CSSCalcValue::doubleValue() const 
 { 
-    return m_expression->doubleValue();
+    return clampToPermittedRange(m_expression->doubleValue());
 }
-    
+
 double CSSCalcValue::computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize) const
 {
-    return m_expression->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
+    return clampToPermittedRange(m_expression->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize));
 }
     
 CSSCalcExpressionNode::~CSSCalcExpressionNode() 
@@ -381,7 +386,7 @@ private:
     }
 };
 
-PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueList* parserValueList)
+PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueList* parserValueList, CalculationPermittedValueRange range)
 {    
     CSSCalcExpressionNodeParser parser;    
     RefPtr<CSSCalcExpressionNode> expression;
@@ -390,7 +395,7 @@ PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserVal
         expression = parser.parseCalc(parserValueList);    
     // FIXME calc (http://webkit.org/b/16662) Add parsing for min and max here
 
-    return expression ? adoptRef(new CSSCalcValue(expression)) : 0;
+    return expression ? adoptRef(new CSSCalcValue(expression, range)) : 0;
 }
 
 } // namespace WebCore

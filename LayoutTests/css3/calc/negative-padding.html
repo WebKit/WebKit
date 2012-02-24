@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<style>
+    p { width:200px; height:120px; background-color: lightgreen; }
+    .control        { padding: -100px; }
+    .simple-px      { padding: -webkit-calc(100px - 200px); }
+    .simple-percent { padding: -webkit-calc(50% - 60%); }
+</style>
+
+<div style="background-color: yellow;">
+    <p class="control">This element should have zero padding.</p>
+    <p class="simple-px">This element should have zero padding.</p>
+    <p class="simple-percent">This element should have zero padding.</p>
+</div>
